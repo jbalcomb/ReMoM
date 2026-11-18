@@ -4,6 +4,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -103,7 +104,9 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
     }
     else
     {
-        player_idx = battle_units[battle_unit_idx].controller_idx;  /* OGBUG: not a player_idx, battle_unit_idx is not even initialized here; same as in Combat_Cast_Dispel() */
+        /* OGBUG  a battle-unit caster (caster_idx < 20) takes its side from battle_units[SI].controller_idx, SI being the caller's register (Combat_Cast_Apply_Spell_Effect()'s target_idx), not from caster_idx: the side whose combat enchantments, city enchantments, warped nodes and vortices are spared is whatever that record holds, so a hero can strip its own side's enchantments and spare the enemy's */
+        // player_idx = battle_units[battle_unit_idx].controller_idx;
+        /* HACK */  player_idx = Stack_Garbage_Range(INT8_MIN, INT8_MAX);  /* CLAUDE */  /* OG: cbw of battle_units[caller's SI].controller_idx; battle_unit_idx is not set here */
     }
     notify_count = 0;
     Copy_On_To_Off_Page();
@@ -117,7 +120,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
         side = 0;
         enemy_player_idx = _combat_attacker_player;
     }
-    /* OGBUG: neutral units can cast Combat Enchantments too */
+    /* OGBUG  the combat-enchantment loop is skipped when the enemy side is the neutral player, so Mana Leak, Darkness, Wrack, etc. cast by neutral creatures (lair / node defenders, raiders) are never dispelled */
     if(enemy_player_idx != NEUTRAL_PLAYER_IDX)
     {
         /* 1 pair per iteration */
@@ -148,7 +151,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
                     {
                         if(notify_count < 4)
                         {
-                            _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
+                            String_Copy_Far(GUI_NearMsgString, spell_data_table[spell_idx].name);
                             stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                         }
                         else
@@ -187,7 +190,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
             }
         }
     }
-    /* OGBUG: a vortex sharing a square with an active unit is rolled against twice — once here, once via the Combat_Cast_Dispel pass at the end */
+    /* OGBUG  an enemy vortex on the square of an active battle unit is rolled against twice: once here, then again by the Combat_Cast_Dispel() pass at the end, whose vortex loop has no owner test and can also dispel the caster's own vortex */
     /* OGBUG: dispels the vortex silently, should call Notify2 */
     for(itr_vortexes = 0; itr_vortexes < _vortex_count; itr_vortexes++)
     {
@@ -204,7 +207,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
             }
         }
     }
-    /* OGBUG: reads only battlefield->city_enchantments, so combat-cast Wall spells are ignored */
+    /* OGBUG  walls are found only through the battlefield->city_enchantments copy; Wall_Rise() sets only battlefield->wall_of_fire / wall_of_darkness, so a Wall of Fire / Wall of Darkness cast during the battle is never dispelled */
     /* OGBUG: prices Wall of Fire and Wall of Darkness at their city-enchantment cost, not the overland cost that placed them */
     ptr_enchantments = (int8_t *)&battlefield->city_enchantments;
     /* OGBUG: NUM_CITY_ENCHANTMENTS is 26 and slot 25 is Nightshade, which is not an enchantment — Get_Spell_For_City_Enchantment returns spl_NONE for it and the difficulty is then read from spell_data_table[0] */
@@ -237,7 +240,7 @@ void Combat_Cast_Disenchant(int16_t caster_idx, int16_t strength)
                 {
                     if(notify_count < 4)
                     {
-                        _fstrcpy(GUI_NearMsgString, spell_data_table[spell_idx].name);
+                        String_Copy_Far(GUI_NearMsgString, spell_data_table[spell_idx].name);
                         stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                     }
                     else
@@ -334,7 +337,9 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
     }
     else
     {
-        player_idx = battle_units[battle_unit_idx].controller_idx;  /* OGBUG: not a player_idx, battle_unit_idx is not even initialized here; same as in Combat_Cast_Disenchant() */
+        /* OGBUG  a battle-unit caster (caster_idx < 20) takes its side from battle_units[DI].controller_idx, DI being the caller's register (spell_idx in Combat_Cast_Apply_Spell_Effect(), the last threshold in Combat_Cast_Disenchant()), not from caster_idx: which units count as its own (curses dispelled) and as the enemy's (enchantments dispelled) is whatever that record holds */
+        // player_idx = battle_units[battle_unit_idx].controller_idx;
+        /* HACK */  player_idx = Stack_Garbage_Range(INT8_MIN, INT8_MAX);  /* CLAUDE */  /* OG: cbw of battle_units[caller's DI].controller_idx, a record past the battle units for spell_idx 42 / 202; battle_unit_idx is not set here */
     }
     if(player_idx == _combat_attacker_player)
     {
@@ -345,6 +350,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
         enemy_player_idx = _combat_attacker_player;
     }
     /* Dispel Magic Vortexes from the Combat Grid Cell */
+    /* OGBUG  no owner test: every vortex on the square is rolled against, so the caster's own vortex can be dispelled, and Combat_Cast_Disenchant() gives enemy vortices on a unit's square a second roll */
     for(itr = 0; itr < _vortex_count; itr++)
     {
         if(_vortexes[itr].cgx == cgx && _vortexes[itr].cgy == cgy)
@@ -367,14 +373,14 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
             (battle_units[battle_unit_idx].cgy == cgy)
         )
         {
-            /* OGBUG: matches on square and owner only, so dead, fled, recalled, and uninvolved units are dispelled too */
+            /* OGBUG  no status test: every battle unit on the square is processed, dead / fled / recalled / uninvolved ones included */
             if(battle_units[battle_unit_idx].controller_idx == player_idx)
             {
                 /* OGBUG: walks all 14 combat-effect bits, so it dispels Possession and Creature Binding as well as curses */
                 for(bit_idx = 0; bit_idx < 14; bit_idx++)
                 {
                     combat_effect_bit = (1 << bit_idx);
-                    if((battle_units[battle_unit_idx].combat_effects & combat_effect_bit) > 0)  /* OGBUG: should be `!=`, not `>` */
+                    if((battle_units[battle_unit_idx].combat_effects & combat_effect_bit) > 0)
                     {
                         if(
                             (combat_effect_bit != bue_Haste)
@@ -388,7 +394,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         {
                             threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[dispel_combat_effect_bits[bit_idx]].casting_cost, enemy_player_idx, spell_data_table[dispel_combat_effect_bits[bit_idx]].magic_realm));
                             threshold = (int16_t)(((int32_t)250 * strength) / threshold);
-                            /* OGBUG: should be Random(250) <= threshold, not threshold + 500 — Random returns 1..250, so this always succeeds */
+                            /* OGBUG  the roll is Random(250) <= threshold + 500; Random(250) is at most 250, so it always succeeds and every curse on the unit is dispelled, whatever the strength */
                             if(Random(250) <= (threshold + 500))
                             {
                                 if(combat_effect_bit == bue_Web)
@@ -404,7 +410,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 {
                                     if(*notify_count < 4)
                                     {
-                                        _fstrcpy(GUI_NearMsgString, spell_data_table[dispel_combat_effect_bits[bit_idx]].name);
+                                        String_Copy_Far(GUI_NearMsgString, spell_data_table[dispel_combat_effect_bits[bit_idx]].name);
                                         stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                                     }
                                     else
@@ -423,12 +429,11 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
             }
             else  /* (battle_units[battle_unit_idx].controller_idx != player_idx) */
             {
-                /* OGBUG: should also test battle_units[].enchantments — only the overland set is checked, so combat-cast Spell Lock does not protect */
+                /* OGBUG  Spell Lock is tested only in the overland _UNITS[].enchantments, not in battle_units[].enchantments, so a Spell Lock cast during the battle does not protect the unit; Haste (below) is not protected either */
                 if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & UE_SPELL_LOCK) != 0)
                 {
                     threshold = (strength + Calculate_Dispel_Difficulty(150, battle_units[battle_unit_idx].controller_idx, spell_data_table[spl_Spell_Lock].magic_realm));
                     threshold = (int16_t)(((int32_t)250 * strength) / threshold);
-                    // ; BUG: Haste is not protected by Spell Lock
                     if(Random(250) <= threshold)
                     {
                         _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= UE_SPELL_LOCK;
@@ -436,13 +441,13 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                 }
                 else
                 {
-                    /* OGBUG: bound should be 32, not 31 — bit 31 is never tested, so Invulnerability (UEs[31]) can never be dispelled */
+                    /* OGBUG  the loop stops at bit 30: bit 31, Invulnerability, is never rolled, so it is never dispelled */
                     for(bit_idx = 0; bit_idx < 31; bit_idx++)
                     {
                         enchantment_bit = (1 << bit_idx);
-                        if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & enchantment_bit) > 0)  /* OGBUG: should be `!=`, not `>` */
+                        if((_UNITS[battle_units[battle_unit_idx].unit_idx].enchantments & enchantment_bit) > 0)
                         {
-                            /* OGBUG: uses casting_cost * 5 as a stand-in for spells with no combat cost, which overprices some and underprices others */
+                            /* OGBUG  every bit resists at casting_cost x 5, the price Casting_Cost() charges overland only for spells also castable in combat (Eligibility 0 / 2 / 3): an enchantment castable only overland is paid at x 1 and still resists at x 5 */
                             threshold = (strength + Calculate_Dispel_Difficulty((spell_data_table[dispel_enchantment_bits[bit_idx]].casting_cost * 5), battle_units[battle_unit_idx].controller_idx, spell_data_table[dispel_enchantment_bits[bit_idx]].magic_realm));
                             threshold = (int16_t)(((int32_t)250 * strength) / threshold);
                             if(Random(250) <= threshold)
@@ -464,7 +469,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                     notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
                                     if(*notify_count < 4)
                                     {
-                                        _fstrcpy(GUI_NearMsgString, spell_data_table[dispel_enchantment_bits[bit_idx]].name);
+                                        String_Copy_Far(GUI_NearMsgString, spell_data_table[dispel_enchantment_bits[bit_idx]].name);
                                         stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                                     }
                                     else
@@ -478,7 +483,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                             }
                         }
                     }
-                    /* OGBUG: bound should be 32, not 31 — bit 31 is never tested, so Invulnerability (UEs[31]) can never be dispelled */
+                    /* OGBUG  the loop stops at bit 30: bit 31, Invulnerability, is never rolled, so it is never dispelled */
                     for(bit_idx = 0; bit_idx < 31; bit_idx++)
                     {
                         enchantment_bit = (1 << bit_idx);
@@ -505,15 +510,17 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 continue;
                             }
                         }
+                        /* OGBUG  Holy Arms is read from _players[player_idx], the dispelling side, not from the unit's owner (enemy_player_idx): the caster's own Holy Arms shields the enemy's Holy Weapon, and the enemy's Holy Arms does not */
                         if(
                             (enchantment_bit == UE_HOLY_WEAPON)
                             &&
-                            (_players[player_idx].Globals[HOLY_ARMS] > 0)
+                            // (_players[player_idx].Globals[HOLY_ARMS] > 0)
+                            /* HACK */  ((((player_idx < 0) || (player_idx >= NUM_PLAYERS)) ? Stack_Garbage() : _players[player_idx].Globals[HOLY_ARMS]) > 0)  /* CLAUDE */  /* OG: _players[player_idx] with the garbage player_idx reads past _players */
                         )
                         {
                             continue;
                         }
-                        if((battle_units[battle_unit_idx].enchantments & enchantment_bit) > 0)  /* OGBUG: should `!=`, not `>` */
+                        if((battle_units[battle_unit_idx].enchantments & enchantment_bit) > 0)
                         {
                             threshold = (strength + Calculate_Dispel_Difficulty(spell_data_table[dispel_enchantment_bits[bit_idx]].casting_cost, battle_units[battle_unit_idx].controller_idx, spell_data_table[dispel_enchantment_bits[bit_idx]].magic_realm));
                             threshold = (int16_t)(((int32_t)250 * strength) / threshold);
@@ -522,7 +529,8 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 Mark_Block(_screen_seg);
                                 // SPECFX.LBX, 051  "DISPELL1"  ""
                                 notify_background_seg = LBX_Reload_Next(specfx_lbx_file__ovr131__2of2, 51, _screen_seg);
-                                _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= enchantment_bit;  // turn off the enchantment
+                                // _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments ^= enchantment_bit;  // turn off the enchantment
+                                battle_units[battle_unit_idx].enchantments ^= enchantment_bit;  /* CLAUDE */  /* REBUG */  /* asm: xor of s_BATTLE_UNIT.enchantments, written back to battle_units[DI] */
                                 if(bit_idx == BIT_POS(UE_HEROISM))
                                 {
                                     _UNITS[battle_units[battle_unit_idx].unit_idx].Level = (int8_t)Calc_Unit_Level(battle_units[battle_unit_idx].unit_idx);
@@ -536,7 +544,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                                 {
                                     if(*notify_count < 4)
                                     {
-                                        _fstrcpy(GUI_NearMsgString, spell_data_table[dispel_enchantment_bits[bit_idx]].name);
+                                        String_Copy_Far(GUI_NearMsgString, spell_data_table[dispel_enchantment_bits[bit_idx]].name);
                                         stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                                     }
                                     else
@@ -569,7 +577,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         {
                             if(*notify_count < 4)
                             {
-                                _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Haste].name);
+                                String_Copy_Far(GUI_NearMsgString, spell_data_table[spl_Haste].name);
                                 stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                             }
                             else
@@ -615,7 +623,7 @@ void Combat_Cast_Dispel(int16_t cgx, int16_t cgy, int16_t caster_idx, int16_t st
                         {
                             if(*notify_count < 4)
                             {
-                                _fstrcpy(GUI_NearMsgString, spell_data_table[spl_Confusion].name);
+                                String_Copy_Far(GUI_NearMsgString, spell_data_table[spl_Confusion].name);
                                 stu_strcat(GUI_NearMsgString, cnst_Dispel_Msg);  // " has been dispelled."
                             }
                             else
@@ -698,6 +706,9 @@ XREF:
     Combat_Spell_Animation()
     NX_j_Combat_Battlefield_Instant()
 
+...each of Death Spell, Holy Word, Flame Strike and Mass Healing only takes effect if(frame_count + 4) / 2 == itr2.
+Neither local is ever set on this path, so whether the spell works depends on leftover stack.
+ReMoM initialises both to 0, so the test is 2 == 0 and the spells never take effect.
 */
 void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t anims_on, int16_t caster_idx)
 {
@@ -708,6 +719,8 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
     int16_t frame_count = 0;
     int16_t itr2 = 0;
     int16_t itr1 = 0;
+    /* HACK */  frame_count = Stack_Garbage();  /* OGBUG: frame_count is uninitialized */
+    /* HACK */  itr2 = Stack_Garbage();  /* OGBUG: itr2 is uninitialized */
     if(spell_idx == spl_Call_Chaos)
     {
         Cast_Call_Chaos(caster_idx, anims_on);
@@ -718,30 +731,30 @@ void Combat_Battlefield_Instant(int16_t player_idx, int16_t spell_idx, int16_t a
         {
             if(spell_idx == spl_Death_Spell)
             {
-                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test, frame_count and itr2 are uninitialized */
                 {
                     Apply_Death_Spell(player_idx);
                 }
             }
             if(spell_idx == spl_Holy_Word)
             {
-                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test, frame_count and itr2 are uninitialized */
                 {
                     Apply_Holy_Word(player_idx);
                 }
             }
             if(spell_idx == spl_Flame_Strike)
             {
-                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test, frame_count and itr2 are uninitialized */
                 {
                     Apply_Flame_Strike(player_idx);
                 }
             }
             if(spell_idx == spl_Mass_Healing)
             {
-                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test */
+                if(((frame_count + 4) / 2) == itr2)  /* OGBUG: bogus test, frame_count and itr2 are uninitialized */
                 {
-                    if(spell_idx == spl_Mass_Healing)
+                    for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
                     {
                         if(
                             (battle_units[itr1].controller_idx == player_idx)
@@ -884,8 +897,9 @@ void Apply_Flame_Strike(int16_t player_idx)
             (battle_units[battle_unit_idx].status == bus_Active)
         )
         {
+            /* OGBUG  a unit with Wraith Form (UE_WRAITH_FORM, 0x20, the bit the Magic Immunity ability has in Attribs_1) in its unit / battle / item enchantments is skipped, so Wraith Form shields it from Flame Strike */
             if(
-                ((enchantments & UE_WRAITH_FORM) == 0)  /* OGBUG: 'Wraith Form' should not grant immunity here */
+                ((enchantments & UE_WRAITH_FORM) == 0)
                 &&
                 ((enchantments & UE_RIGHTEOUSNESS) == 0)
             )
@@ -919,8 +933,9 @@ void Apply_Holy_Word(int16_t player_idx)
             (battle_units[battle_unit_idx].status == bus_Active)
         )
         {
+            /* OGBUG  a unit with Wraith Form (UE_WRAITH_FORM, 0x20, the bit the Magic Immunity ability has in Attribs_1) in its unit / battle / item enchantments is skipped, so Wraith Form shields it from Holy Word */
             if(
-                ((enchantments & UE_WRAITH_FORM) == 0)  /* OGBUG: 'Wraith Form' should not grant immunity here */
+                ((enchantments & UE_WRAITH_FORM) == 0)
                 &&
                 ((enchantments & UE_SPELL_LOCK) == 0)
                 &&
@@ -928,7 +943,8 @@ void Apply_Holy_Word(int16_t player_idx)
             )
             {
                 resistance_modifier = -2;
-                if((_UNITS[battle_units[battle_unit_idx].unit_idx].mutations & UM_UNDEAD) == 0)
+                // if((_UNITS[battle_units[battle_unit_idx].unit_idx].mutations & UM_UNDEAD) == 0)
+                if((_UNITS[battle_units[battle_unit_idx].unit_idx].mutations & UM_UNDEAD) != 0)  /* CLAUDE */  /* REBUG */  /* asm: test mutations, UM_UNDEAD / jz skips the -5 */
                 {
                     resistance_modifier += -5;
                 }
@@ -936,7 +952,8 @@ void Apply_Holy_Word(int16_t player_idx)
                 for(itr = 0; itr < figure_count; itr++)
                 {
                     damage_types[dt_Doom] = 0;
-                    if(Combat_Resistance_Check(battle_units[battle_unit_idx], -2, sbr_Death) > 0)
+                    // if(Combat_Resistance_Check(battle_units[battle_unit_idx], -2, sbr_Death) > 0)
+                    if(Combat_Resistance_Check(battle_units[battle_unit_idx], resistance_modifier, sbr_Life) > 0)  /* CLAUDE */  /* REBUG */  /* asm: push sbr_Life, push [bp+resistance_modifier] */
                     {
                         damage_types[dt_Doom] = battle_units[battle_unit_idx].hits;
                         Battle_Unit_Commit_Damage(battle_unit_idx, &damage_types[0]);
@@ -968,8 +985,9 @@ void Apply_Death_Spell(int16_t player_idx)
             (battle_units[battle_unit_idx].status == bus_Active)
         )
         {
+            /* OGBUG  a unit with Wraith Form (UE_WRAITH_FORM, 0x20, the bit the Magic Immunity ability has in Attribs_1) in its unit / battle / item enchantments is skipped, so Wraith Form shields it from Death Spell */
             if(
-                ((enchantments & UE_WRAITH_FORM) == 0)  /* OGBUG: 'Wraith Form' should not grant immunity here */
+                ((enchantments & UE_WRAITH_FORM) == 0)
                 &&
                 ((battle_units[battle_unit_idx].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
             )
@@ -1169,8 +1187,10 @@ void Combat_Spell_Animation(int16_t cgx, int16_t cgy, int16_t spell_idx, int16_t
 */
 void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_t cgy)
 {
-    char * Target_Name_Ptr_List[(MAX_STACK - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Target_BU_List[(MAX_STACK - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    // char * Target_Name_Ptr_List[(MAX_STACK - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    // int16_t Target_BU_List[(MAX_STACK - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */  char * Target_Name_Ptr_List[(MAX_BATTLE_UNIT_SLOT_COUNT + 1)] = { 0 };  /* CLAUDE */  /* OG: 8 words at bp-24h; sized so a 9th+ candidate and the empty-string terminator stay inside the array */
+    /* HACK */  int16_t Target_BU_List[(MAX_BATTLE_UNIT_SLOT_COUNT + 1)] = { 0 };  /* CLAUDE */  /* OG: 8 words at bp-14h, followed by Picked_Target and Target_Count */
     int16_t Picked_Target = 0;
     int16_t Target_Count = 0;
     int16_t itr = 0;  // _DI_
@@ -1184,32 +1204,26 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     Copy_Off_To_Back();
 
     // ; create a list of target BU indexes, and another of the pointers to their names
-    // ; BUG: considers non-involved, recalled, and fleeing  units as valid targets
-    // ; BUG: the arrays are only 8 elements long, need 9+
     // ; BUG? considers the Chosen as an invalid target
-    // ; BUG: writes to the name pointers instead of assigning  to them
     Target_Count = 0;
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        // ; BUG: allows "raising" uninvolved, recalled, or even
-        // ; fleeing units (gone is checked later)
+        /* OGBUG  the filter takes any status > bus_Active except bus_Gone, so recalled (1), fleeing (2) and uninvolved (3) units are listed with the dead (4 / 5); raising one pulls it into the battle at half figures (one-figure units at half hits) with its enchantments wiped */
         if(
             (battle_units[itr].status > bus_Active)
             &&
             (battle_units[itr].controller_idx == player_idx)
+            &&
+            (battle_units[itr].race < rt_Arcane)  /* CLAUDE */  /* REBUG */  /* asm: cmp s_BATTLE_UNIT.race, rt_Arcane / jl */
             &&
             (battle_units[itr].status != bus_Gone)
             &&
             (_UNITS[battle_units[itr].unit_idx].wp != 9)
         )
         {
-            // ; BUG: this list can only hold 8 units - it needs at
-            // ; least 9 even if combat summons can't be raised
+            /* OGBUG  Target_BU_List has 8 entries and no bound: a 9th candidate is written over Picked_Target (reassigned below, so harmless), a 10th over Target_Count */
             Target_BU_List[Target_Count] = itr;
-            // ; BUG: this list can only hold 8 units - it needs at
-            // ; least 9 even if combat summons can't be raised
-            // ; BUG: this will copy the string to a random address
-            // ; instead of saving its pointer here
+            /* OGBUG  strcpy(Target_Name_Ptr_List[Target_Count], name): the uninitialised stack word is used as the destination, so each name is copied to whatever DS address it holds (the 9th to DS:Target_BU_List[0]), and the list is not ended by an empty string, so Selection_Box() counts on into stack garbage and the scrolling dialog (7+ candidates) can return an index past the real entries */
             // // BUGBUG  stu_strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
             // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
@@ -1261,7 +1275,7 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
     {
         if(player_idx != HUMAN_PLAYER_IDX)
         {
-            // ; BUG: will enter an infinite loop if all 9 squares in the selected area are occupied or invalid
+            /* OGBUG  no try limit: when all nine squares of the 3 x 3 block (x 11..13 or 8..10, y 9..11) are taken, the loop never ends and the battle hangs */
             do
             {
                 if(player_idx == _combat_attacker_player)
@@ -1281,8 +1295,9 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
         // ~ Prepare_Battle_Unit()
         if(battle_units[battle_unit_idx].figure_max > 1)
         {
-            battle_units[battle_unit_idx].front_figure_damage = 0;
+            // battle_units[battle_unit_idx].front_figure_damage = 0;
             battle_units[battle_unit_idx].figure_cnt = (battle_units[battle_unit_idx].figure_max / 2);
+            battle_units[battle_unit_idx].front_figure_damage = 0;  /* CLAUDE */  /* REBUG */  /* asm: figure_cnt is written first */
         }
         else
         {
@@ -1332,8 +1347,10 @@ void Cast_Raise_Dead(int16_t player_idx, int16_t caster_idx, int16_t cgx, int16_
 */
 void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
 {
-    char * Target_Name_Ptr_List[(MAX_BATTLE_UNIT_COUNT - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Target_BU_List[(MAX_BATTLE_UNIT_COUNT - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // char * Target_Name_Ptr_List[(MAX_BATTLE_UNIT_COUNT - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // int16_t Target_BU_List[(MAX_BATTLE_UNIT_COUNT - 1)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */  char * Target_Name_Ptr_List[(MAX_BATTLE_UNIT_SLOT_COUNT + 1)] = { 0 };  /* CLAUDE */  /* OG: 17 words at bp-4Ch; sized so an 18th+ candidate and the empty-string terminator stay inside the array */
+    /* HACK */  int16_t Target_BU_List[(MAX_BATTLE_UNIT_SLOT_COUNT + 1)] = { 0 };  /* CLAUDE */  /* OG: 17 words at bp-2Ah, followed by cgy, cgx, Picked_Target and Target_Count */
     int16_t cgx = 0;
     int16_t cgy = 0;
     int16_t Picked_Target = 0;
@@ -1352,35 +1369,42 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
 
     // ; create a list of target BU indexes, and another of
     // ; the pointers to their names
-    // ; BUG: considers non-involved, recalled, and fleeing
-    // ;  units as valid targets
-    // ; BUG: the arrays are only 17 elements long, need 35
-    // ; BUG: writes to the name pointers instead of assigning
-    // ;  to them
     for(itr = 0; itr < _combat_total_unit_count; itr++)
     {
-        // ; BUG: allows "animating" uninvolved, recalled, or even
-        // ; fleeing units
+        /* OGBUG  the filter takes any status > bus_Active except bus_Gone, so recalled (1), fleeing (2) and uninvolved (3) units are listed with the dead (4 / 5); animating one pulls it into the battle with its enchantments wiped and makes it Undead */
+        // if(
+        //     (battle_units[itr].status > bus_Active)
+        //     &&
+        //     (battle_units[itr].status != bus_Gone)
+        //     &&
+        //     (battle_units[itr].controller_idx == player_idx)
+        //     &&
+        //     (_UNITS[battle_units[itr].unit_idx].Hero_Slot == -1)
+        //     &&
+        //     (_UNITS[battle_units[itr].unit_idx].wp != 9)
+        // )
+        /* CLAUDE */  /* REBUG */  /* asm: status > bus_Active, != bus_Gone, race != rt_Death, a Magic Immune unit only if it is the caster's, Hero_Slot == -1, wp != 9 */
         if(
             (battle_units[itr].status > bus_Active)
             &&
             (battle_units[itr].status != bus_Gone)
             &&
-            (battle_units[itr].controller_idx == player_idx)
+            (battle_units[itr].race != rt_Death)
+            &&
+            (
+                ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                ||
+                (battle_units[itr].controller_idx == player_idx)
+            )
             &&
             (_UNITS[battle_units[itr].unit_idx].Hero_Slot == -1)
             &&
             (_UNITS[battle_units[itr].unit_idx].wp != 9)
         )
         {
-            // ; BUG: this list can only hold 17 units - it needs the
-            // ; 35 to account for every scenario
+            /* OGBUG  Target_BU_List has 17 entries and no bound: an 18th / 19th / 20th candidate is written over cgy / cgx / Picked_Target (all reassigned below, so harmless), a 21st over Target_Count */
             Target_BU_List[Target_Count] = itr;
-            // ; BUG: this list can only hold 17 units - it needs the
-            // ; 35 to account for every scenario
-            // ; BUG: this will copy the string to a random address
-            // ; instead of saving its pointer here
-            // ; dest
+            /* OGBUG  strcpy(Target_Name_Ptr_List[Target_Count], name): the uninitialised stack word is used as the destination, so each name is copied to whatever DS address it holds, and the list is not ended by an empty string, so Selection_Box() counts on into stack garbage and the scrolling dialog (7+ candidates) can return an index past the real entries */
             // BUGBUG  stu_strcpy(Target_Name_Ptr_List[Target_Count], _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name);
             // Target_Name_Ptr_List[Target_Count] = _unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
             Target_Name_Ptr_List[Target_Count] = (char *)*_unit_type_table[_UNITS[battle_units[itr].unit_idx].type].name;
@@ -1393,17 +1417,20 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
     {
         // Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
         // Picked_Target = Selection_Box(Target_Count, Target_Name_Ptr_List, 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-        Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        // Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        Picked_Target = Selection_Box(Target_Count, &Target_Name_Ptr_List[0], 0, cnst_AnimDead_Msg);  /* CLAUDE */  /* REBUG */  // "Select a unit to Animate"
     }
     else
     {
         // Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
         // Picked_Target = Selection_Box(6, Target_Name_Ptr_List, 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
-        Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        // Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_RaiseDead_Msg);  // "Select a unit to Raise"
+        Picked_Target = Selection_Box(6, &Target_Name_Ptr_List[0], 1, cnst_AnimDead_Msg);  /* CLAUDE */  /* REBUG */  // "Select a unit to Animate"
     }
 
     if(Picked_Target != ST_UNDEFINED)
     {
+        /* OGBUG  no try limit: when all nine squares of the 3 x 3 block (x 11..13 or 8..10, y 9..11) are taken, the loop never ends and the battle hangs */
         do
         {
             if(player_idx == _combat_attacker_player)
@@ -1417,33 +1444,35 @@ void Cast_Animate_Dead(int16_t player_idx, int16_t caster_idx)
             cgy = (8 + Random(3));
         }
         while(g_combat_grid_action_map[cgy][cgx] >= 0);
-    }
+    // }  /* CLAUDE */  /* asm: Picked_Target == ST_UNDEFINED jumps to @@Done, past all of the below */
 
-// Severity Code Description Project File Line Suppression State Details
-//     Warning C6385 Reading invalid data from 'Target_BU_List'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Spells131.C 344		
-    if(Picked_Target > ST_UNDEFINED)
+    // Severity Code Description Project File Line Suppression State Details
+    //     Warning C6385 Reading invalid data from 'Target_BU_List'.sdl2_ReMoM C :\STU\devel\ReMoM\src\Spells131.C 344		
+        // if(Picked_Target > ST_UNDEFINED)
         battle_unit_idx = Target_BU_List[Picked_Target];
 
-    // ~ Prepare_Battle_Unit()
-    battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;  // ; BUG: fails to set the overland owner of the unit
-    battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
-    battle_units[battle_unit_idx].front_figure_damage = 0;
-    battle_units[battle_unit_idx].combat_effects = 0;
-    battle_units[battle_unit_idx].enchantments = 0;
-    battle_units[battle_unit_idx].move_anim_ctr = 0;
-    battle_units[battle_unit_idx].outline_magic_realm = 0;
-    battle_units[battle_unit_idx].Atk_FigLoss = 0;
-    battle_units[battle_unit_idx].mid_move = ST_FALSE;
-    battle_units[battle_unit_idx].action = bua_Ready;
-    _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = 0;
-    _UNITS[battle_units[battle_unit_idx].unit_idx].mutations |= UM_UNDEAD;
-    battle_units[battle_unit_idx].cgx = cgx;
-    battle_units[battle_unit_idx].cgy = cgy;
-    // ¿ BUGBUG  doesn't set target_cgx,cgy, like 'Raise Dead' ?
-    battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
-    battle_units[battle_unit_idx].status = bus_Active;
-    Battle_Unit_Regular_Stats(&battle_units[battle_unit_idx]);
-    Battle_Unit_Special_Stats(&battle_units[battle_unit_idx]);
-    Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Animate_Dead, caster_idx);
+        // ~ Prepare_Battle_Unit()
+        /* OGBUG  only battle_units[].controller_idx is set to the caster; _UNITS[].owner_idx is not written, so an animated enemy unit keeps its former owner in the overland record */
+        battle_units[battle_unit_idx].controller_idx = (int8_t)player_idx;
+        battle_units[battle_unit_idx].figure_cnt = battle_units[battle_unit_idx].figure_max;
+        battle_units[battle_unit_idx].front_figure_damage = 0;
+        battle_units[battle_unit_idx].combat_effects = 0;
+        battle_units[battle_unit_idx].enchantments = 0;
+        battle_units[battle_unit_idx].move_anim_ctr = 0;
+        battle_units[battle_unit_idx].outline_magic_realm = 0;
+        battle_units[battle_unit_idx].Atk_FigLoss = 0;
+        battle_units[battle_unit_idx].mid_move = ST_FALSE;
+        battle_units[battle_unit_idx].action = bua_Ready;
+        _UNITS[battle_units[battle_unit_idx].unit_idx].enchantments = 0;
+        _UNITS[battle_units[battle_unit_idx].unit_idx].mutations |= UM_UNDEAD;
+        battle_units[battle_unit_idx].cgx = cgx;
+        battle_units[battle_unit_idx].cgy = cgy;
+        // ¿ BUGBUG  doesn't set target_cgx,cgy, like 'Raise Dead' ?
+        battle_units[battle_unit_idx].bufpi = Combat_Figure_Load(_UNITS[battle_units[battle_unit_idx].unit_idx].type, Battle_Unit_Pict_Open());
+        battle_units[battle_unit_idx].status = bus_Active;
+        Battle_Unit_Regular_Stats(&battle_units[battle_unit_idx]);
+        Battle_Unit_Special_Stats(&battle_units[battle_unit_idx]);
+        Battle_Unit_Summon_Animation(battle_unit_idx, cgx, cgy, spl_Animate_Dead, caster_idx);
+    }  /* CLAUDE */  /* (Picked_Target != ST_UNDEFINED) */
 
 }

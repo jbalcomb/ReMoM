@@ -14,6 +14,7 @@
 #define STU_LOG_H
 
 #include <stdarg.h>
+#include <stddef.h>   /* size_t for STU_Log_Path_For */
 #include <stdint.h>   /* uint64_t for g_random_call_count */
 
 #ifdef __cplusplus
@@ -47,9 +48,9 @@ extern "C" {
         LOG_CAT_SDL3_INIT = 14,
         LOG_CAT_SDL3_PFL = 15,
         LOG_CAT_WIN_PFL = 16,
-        LOG_CAT_HEMOM = 17,
+        LOG_CAT_DEMOM = 17,
         LOG_CAT_REMOM = 18,
-        LOG_CAT_ARTIFICIAL_HUMAN_PLAYER = 19,
+        LOG_CAT_AUTOMATION_DRIVER = 19,
         LOG_CAT_GAME_SAVE_DUMP = 20,
         LOG_CAT_STU_WRLD = 21,
         LOG_CAT_STU_VLD = 22,
@@ -92,8 +93,12 @@ extern "C" {
        before STU_Log_Startup(); pass NULL/"" to reset to the CWD.  The runtime
        precedence is REMOM_LOG_DIR (env) -> this base dir -> CWD; an unwritable dir
        falls back to the CWD.  ReMoM passes the resolved XDG state dir here;
-       HeMoM / tests / matchup never call it, so they keep logging to the CWD. */
+       DeMoM / tests / matchup never call it, so they keep logging to the CWD. */
     void STU_Log_Set_Base_Dir(const char * dir);
+
+    /* "<effective log dir>/<filename>" (the bare filename when the log dir is the CWD), for companion log files such as STU_CLOG's.  The log dir is
+       resolved by STU_Log_Startup(), so call this after it. */
+    void STU_Log_Path_For(char * out, size_t cap, const char * filename);
 
     /* ini_path: path to an INI file with a [Logging] section, or NULL for built-in defaults. Missing file or missing section is non-fatal — defaults apply. */
     void STU_Log_Startup(const char * ini_path);
@@ -150,6 +155,42 @@ extern "C" {
 #endif
 
 #define LOG_FATAL(cat, ...) do { STU_Log_Write_At(LOG_SEV_FATAL, (cat), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); STU_Log_Flush_All(); } while(0)
+
+/*
+    CALL_TRACE function-boundary events -- the [FN-ENTER] / [FN-EXIT] stream that merge-remom-trace.py / compare-call-paths.py (STU-Extras STU-DOSBox)
+    align against the OG-side trace by name and rng_call.  The text is a contract with those tools (ReMoM-CallTrace-PRD.md F3):
+        [FN-ENTER] name=<fn> rng_call=<N>
+        [FN-EXIT]  name=<fn> rng_call=<N>          <- two spaces after "[FN-EXIT]", so the name= columns line up
+    rng_call is g_random_call_count, the number of Random() calls completed when the event is logged.
+    These are written at TRACE severity in the CALL_TRACE category, but they have their own compile-time switch, STU_CALL_TRACE, so they do NOT depend on
+    STU_LOG_MIN_SEVERITY: a Release build can strip TRACE/DEBUG and still carry the call trace for an OG-matchup run.
+        compile time:  STU_CALL_TRACE  1 = built in, 0 = sizeof-noop.  Defaults to 1 with STU_DEBUG, else 0.  CMake: -DREMOM_CALL_TRACE=ON turns it on for every config.
+        run time:      the [Logging] INI -- the CALL_TRACE category enabled and severity_threshold = TRACE.
+    TRACE_ENTER() / TRACE_EXIT()                      name = the enclosing function (__func__)
+    TRACE_ENTER_NAMED(name) / TRACE_EXIT_NAMED(name)  name = a given string, for a wrapper that reports the function it wraps (stu_fopen -> "fopen")
+    TRACE_EXIT_NOTE("note")                           __func__ name, with a string-literal note appended after rng_call (an early-out exit)
+    The names are the PRD's (F2).  The PRD sketches TRACE_ENTER(name_str, fmt, ...); these take no format -- the PRD's name_str form is the _NAMED pair.
+    See doc/@Devel/Logging-And-Instrumentation.md.
+*/
+#ifndef STU_CALL_TRACE
+#ifdef STU_DEBUG
+#define STU_CALL_TRACE 1
+#else
+#define STU_CALL_TRACE 0
+#endif
+#endif
+
+#if STU_CALL_TRACE
+#define STU_CALL_TRACE_WRITE(...)  STU_Log_Write_At(LOG_SEV_TRACE, LOG_CAT_CALL_TRACE, __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#else
+#define STU_CALL_TRACE_WRITE(...)  LOG__NOOP(LOG_CAT_CALL_TRACE, __VA_ARGS__)
+#endif
+
+#define TRACE_ENTER()             STU_CALL_TRACE_WRITE("[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count)
+#define TRACE_EXIT()              STU_CALL_TRACE_WRITE("[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count)
+#define TRACE_ENTER_NAMED(name_)  STU_CALL_TRACE_WRITE("[FN-ENTER] name=%s rng_call=%llu", (name_), (unsigned long long)g_random_call_count)
+#define TRACE_EXIT_NAMED(name_)   STU_CALL_TRACE_WRITE("[FN-EXIT]  name=%s rng_call=%llu", (name_), (unsigned long long)g_random_call_count)
+#define TRACE_EXIT_NOTE(note_)    STU_CALL_TRACE_WRITE("[FN-EXIT]  name=%s rng_call=%llu " note_, __func__, (unsigned long long)g_random_call_count)
 
 #ifdef __cplusplus
 }

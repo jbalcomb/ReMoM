@@ -1,0 +1,19 @@
+module_num=336
+module=C:\GCL520\C_ALL\GFC_MEM.C
+source=0336-gfc_mem.c.md
+range[0]=1:0x0014E0F0 linear=0x0015E0F0 size=176
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m336f001    1    -      0x0015E0F0  1:0x0014E0F0  code  AllocateGreenleafPortStructure  AllocateGreenleafPortStructure_  regions/07-object-1/001E3654-001E3E53.txt
+m336f002    2    -      0x0015E108  1:0x0014E108  code  FreeGreenleafPortStructure      FreeGreenleafPortStructure_      regions/07-object-1/001E3654-001E3E53.txt
+m336f003    3    1/3    0x0015E124  1:0x0014E124  code  AllocateXferBuffer              AllocateXferBuffer_              regions/07-object-1/001E3654-001E3E53.txt
+m336f003_2  3    2/3    0x0015E124  1:0x0014E124  code  AllocateGenericStructure        AllocateGenericStructure_        regions/07-object-1/001E3654-001E3E53.txt
+m336f003_3  3    3/3    0x0015E124  1:0x0014E124  code  AllocateDriverStructure         AllocateDriverStructure_         regions/07-object-1/001E3654-001E3E53.txt
+m336f004    4    1/3    0x0015E134  1:0x0014E134  code  FreeXferBuffer                  FreeXferBuffer_                  regions/07-object-1/001E3654-001E3E53.txt
+m336f004_2  4    2/3    0x0015E134  1:0x0014E134  code  FreeGenericStructure            FreeGenericStructure_            regions/07-object-1/001E3654-001E3E53.txt
+m336f004_3  4    3/3    0x0015E134  1:0x0014E134  code  FreeDriverStructure             FreeDriverStructure_             regions/07-object-1/001E3654-001E3E53.txt
+m336f005    5    -      0x0015E13C  1:0x0014E13C  code  AllocateTXBuffer                AllocateTXBuffer_                regions/07-object-1/001E3654-001E3E53.txt
+m336f006    6    -      0x0015E154  1:0x0014E154  code  FreeTXBuffer                    FreeTXBuffer_                    regions/07-object-1/001E3654-001E3E53.txt
+m336f007    7    -      0x0015E16C  1:0x0014E16C  code  AllocateRXBuffer                AllocateRXBuffer_                regions/07-object-1/001E3654-001E3E53.txt
+m336f008    8    -      0x0015E184  1:0x0014E184  code  FreeRXBuffer                    FreeRXBuffer_                    regions/07-object-1/001E3654-001E3E53.txt

@@ -8,6 +8,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"  /* CLAUDE */  // Stack_Garbage()
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
@@ -170,22 +171,40 @@ void Spellbook_Screen(void)
     player_is_casting = ST_FALSE;
     for(itr_spellbook_page_count = 0; ((itr_spellbook_page_count < m_spellbook_page_count) && (player_is_casting == ST_FALSE)); itr_spellbook_page_count++)
     {
-        for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count > itr_page_spell_count; itr_page_spell_count++)
+        // for(itr_page_spell_count = 0; m_spellbook_pages[itr_spellbook_page_count].count > itr_page_spell_count; itr_page_spell_count++)
+        // {
+        //     if(player_is_casting == ST_FALSE)
+        //     {
+        //         if(m_spellbook_pages[itr_spellbook_page_count].spell[itr_page_spell_count] == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
+        //         {
+        //             if((itr_spellbook_page_count % 2) != 1)
+        //             {
+        //                 g_spellbook_left_page = itr_spellbook_page_count;
+        //             }
+        //             else
+        //             {
+        //                 g_spellbook_left_page = (itr_spellbook_page_count - 1);
+        //             }
+        //             player_is_casting = ST_TRUE;
+        //         }
+        //     }
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm 101-104: cmp ax, [bp+itr_page_spell_count] / jle / cmp [bp+player_is_casting], e_ST_FALSE / jz - the casting test is in the loop condition */
+        for(itr_page_spell_count = 0; ((m_spellbook_pages[itr_spellbook_page_count].count > itr_page_spell_count) && (player_is_casting == ST_FALSE)); itr_page_spell_count++)
         {
-            if(player_is_casting == ST_FALSE)
+            /* CLAUDE */  /* REBUG */  /* asm 72-75: push [bx+s_SPELL_BOOK_PAGE__2.spell] / call abs / cmp ax, [_players.casting_spell_idx] */
+            if(abs(m_spellbook_pages[itr_spellbook_page_count].spell[itr_page_spell_count]) == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
             {
-                if(m_spellbook_pages[itr_spellbook_page_count].spell[itr_page_spell_count] == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
+                /* CLAUDE */  /* REBUG */  /* asm 81-88: cmp dx, 1 / jnz loc_B8BFB - the odd page is the then-branch */
+                if((itr_spellbook_page_count % 2) == 1)
                 {
-                    if((itr_spellbook_page_count % 2) != 1)
-                    {
-                        g_spellbook_left_page = itr_spellbook_page_count;
-                    }
-                    else
-                    {
-                        g_spellbook_left_page = (itr_spellbook_page_count - 1);
-                    }
-                    player_is_casting = ST_TRUE;
+                    g_spellbook_left_page = (itr_spellbook_page_count - 1);
                 }
+                else
+                {
+                    g_spellbook_left_page = itr_spellbook_page_count;
+                }
+                player_is_casting = ST_TRUE;
             }
         }
     }
@@ -202,15 +221,16 @@ void Spellbook_Screen(void)
     y_start = 12;
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
-        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+        spellbook_pages[(itr_spellbook_page_fields + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), "", ST_UNDEFINED);
     }
     for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
     {
-        spellbook_pages[(itr_spellbook_page_fields + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+        spellbook_pages[(itr_spellbook_page_fields + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), "", ST_UNDEFINED);
     }
-    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)hotkey_F__ovr134[0], ST_UNDEFINED);
-    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)hotkey_b__ovr134[0], ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, "", ST_UNDEFINED);
+    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, hotkey_F__ovr134, ST_UNDEFINED);
+    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, hotkey_b__ovr134, ST_UNDEFINED);
     leave_screen = ST_FALSE;
     while(leave_screen == ST_FALSE)
     {
@@ -237,7 +257,9 @@ void Spellbook_Screen(void)
         {
             if(m_spellbook_pages[g_spellbook_left_page + 1].count > itr)
             {
-                if(abs(m_spellbook_pages[g_spellbook_left_page + 1].spell[itr]) == HLP_PAGE_BACK)
+                // if(abs(m_spellbook_pages[g_spellbook_left_page + 1].spell[itr]) == HLP_PAGE_BACK)
+                /* OGBUG  the right page's Spell of Return test (spell 214 == HLP_PAGE_BACK) reads the LEFT page's spell (asm loc_B8E5C: [SBK_OpenPage] with no inc): a right-page slot gets HLP_SPELL_OF_RETURN when the left page has Spell of Return in that slot, and a right-page Spell of Return gets help entry 214 (HLP_PAGE_BACK) */
+                /* CLAUDE */  if(abs(m_spellbook_pages[g_spellbook_left_page].spell[itr]) == HLP_PAGE_BACK)
                 {
                     _help_entries[9 + itr].help_idx = HLP_SPELL_OF_RETURN;
                 }
@@ -315,14 +337,20 @@ void Spellbook_Screen(void)
                             }
                         }
                     }
+                    /* CLAUDE */  /* REBUG */  /* asm loc_B9045: mov [bp+spell_idx], e_ST_UNDEFINED - was missing, so an empty slot reused the spell_idx of an earlier click */
+                    else
+                    {
+                        spell_idx = ST_UNDEFINED;
+                    }
                 }
                 else  /* (itr_spellbook_page_fields >= 6) */
                 {
                     if(m_spellbook_pages[(g_spellbook_left_page + 1)].count > (itr_spellbook_page_fields - 6))
                     {
                         Play_Left_Click();
-                        spellbook_page_spell_index = (itr_spellbook_page_fields - 6);
+                        // spellbook_page_spell_index = (itr_spellbook_page_fields - 6);
                         spell_idx = m_spellbook_pages[(g_spellbook_left_page + 1)].spell[(itr_spellbook_page_fields - 6)];
+                        spellbook_page_spell_index = itr_spellbook_page_fields;  /* CLAUDE */  /* REBUG */  /* asm 591-592: mov [bp+spell_idx], ax / mov [bp+spellbook_page_spell_index], _SI_itr - 6..11 for the right page; Spellbook_Mana_Adder_Screen() tests > 5 for the right page */
                         if(spell_idx == _players[HUMAN_PLAYER_IDX].casting_spell_idx)
                         {
                             spell_idx = ST_UNDEFINED;
@@ -336,10 +364,16 @@ void Spellbook_Screen(void)
                                 _players[HUMAN_PLAYER_IDX].casting_cost_remaining = 0;
                                 _players[HUMAN_PLAYER_IDX].casting_cost_original = 0;
                                 _players[HUMAN_PLAYER_IDX].casting_spell_idx = spl_NONE;
-                                spell_idx = ST_UNDEFINED;
+                                // spell_idx = ST_UNDEFINED;
+                                /* CLAUDE */  /* REBUG */  /* asm 639-642: the right page's abort sets remaining / original / casting_spell_idx and leave_screen only; spell_idx is already -1 (asm 596) */
                                 leave_screen = ST_TRUE;
                             }
                         }
+                    }
+                    /* CLAUDE */  /* REBUG */  /* asm loc_B911B: mov [bp+spell_idx], e_ST_UNDEFINED - was missing, so an empty slot reused the spell_idx of an earlier click */
+                    else
+                    {
+                        spell_idx = ST_UNDEFINED;
                     }
                 }
                 if(spell_idx > ST_UNDEFINED)
@@ -387,15 +421,15 @@ void Spellbook_Screen(void)
             y_start = 12;
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
-                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+                spellbook_pages[(0 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 16), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 137), (y_start + (itr_spellbook_page_fields * 22) + 34), "", ST_UNDEFINED);
             }
             for(itr_spellbook_page_fields = 0; itr_spellbook_page_fields < 6; itr_spellbook_page_fields++)
             {
-                spellbook_pages[(6 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), 0, ST_UNDEFINED);
+                spellbook_pages[(6 + itr_spellbook_page_fields)] = Add_Hidden_Field((x_start + 148), (y_start + (itr_spellbook_page_fields * 22) + 17), (x_start + 268), (y_start + (itr_spellbook_page_fields * 22) + 34), "", ST_UNDEFINED);
             }
-            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, (int16_t)hotkey_ESC__ovr134[0], ST_UNDEFINED);
-            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)hotkey_F__ovr134[0],   ST_UNDEFINED);
-            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)hotkey_b__ovr134[0],   ST_UNDEFINED);
+            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, hotkey_ESC__ovr134, ST_UNDEFINED);
+            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, hotkey_F__ovr134,   ST_UNDEFINED);
+            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, hotkey_b__ovr134,   ST_UNDEFINED);
             Set_Page_Off();
             Spellbook_Screen_Draw();
             PageFlip_FX();
@@ -456,16 +490,29 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
 
     _players[player_idx].casting_spell_idx = spell_idx;
 
-    if(_players[player_idx].Skill_Left > _players[player_idx].mana_reserve)
+    // if(_players[player_idx].Skill_Left > _players[player_idx].mana_reserve)
+    // {
+    //     instant_mana = _players[player_idx].mana_reserve;
+    // }
+    // else
+    // {
+    //     instant_mana = _players[player_idx].Skill_Left;
+    // }
+    /* CLAUDE */  /* REBUG */  // asm: cmp Skill_Left, mana_reserve; jle -> Skill_Left; fall-through mana_reserve; single store => ternary
+    instant_mana = ((_players[player_idx].Skill_Left > _players[player_idx].mana_reserve) ? _players[player_idx].mana_reserve : _players[player_idx].Skill_Left);
+
+    // if( (spell_data_table[spell_idx].type < scc_Infusable_Spell) || (player_idx != HUMAN_PLAYER_IDX) )
+    /* CLAUDE */  /* REBUG */  // asm: cmp type, scc_Infusable_Spell; jl -> else; or player_idx; jnz -> else; fall-through Spellbook_Mana_Adder_Screen()
+    if(
+        (spell_data_table[spell_idx].type >= scc_Infusable_Spell)
+        &&
+        (player_idx == HUMAN_PLAYER_IDX)
+    )
     {
-        instant_mana = _players[player_idx].mana_reserve;
+        _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
+        Spellbook_Mana_Adder_Screen(spell_idx, spellbook_page_spell_index);
     }
     else
-    {
-        instant_mana = _players[player_idx].Skill_Left;
-    }
-
-    if( (spell_data_table[spell_idx].type < scc_Infusable_Spell) || (player_idx != HUMAN_PLAYER_IDX) )
     {
         if(spell_data_table[spell_idx].type == scc_Crafting_Spell)
         {
@@ -474,14 +521,16 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 0);
-                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;  /* OGBUG  should be MAX_ITEM_COUNT, not 136 */
+                    /* OGBUG  Item_Make_Screen() builds the item in _ITEMS[137], but casting_cost_original is read from _ITEMS[136] (asm [es:bx+1AB2h] = 136 * 32h + s_ITEM.cost), a different record, so the human's casting_cost_original is not the forged item's cost */
+                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;
                     Allocate_Reduced_Map();
                 }
                 else
                 {
                     item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 1000);
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    /* OGBUG  cost_reduction is never written; the AI's remaining cost is reduced by an uninitialized percentage */
+                    /* OGBUG  casting_cost_remaining is never set for the AI's item: it keeps its stale value from the previous spell and is then reduced by cost_reduction (bp-8), which is never written; a remaining cost of 0 then cancels the cast below */
+                    /* HACK */  cost_reduction = Stack_Garbage();  // DNE in Dasm
                     _players[player_idx].casting_cost_remaining = (_players[player_idx].casting_cost_remaining - (int16_t)(((int32_t)_players[player_idx].casting_cost_remaining * (int32_t)cost_reduction) / 100));
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
                     Remove_Item(item_idx);
@@ -492,14 +541,17 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 if(player_idx == HUMAN_PLAYER_IDX)
                 {
                     _players[player_idx].casting_cost_remaining = Item_Make_Screen(0, 1);
-                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;  /* OGBUG  should be MAX_ITEM_COUNT, not 136 */
+                    /* OGBUG  as for Enchant Item: the forged item is in _ITEMS[137], casting_cost_original is read from _ITEMS[136] */
+                    _players[player_idx].casting_cost_original = _ITEMS[136].cost;
                     Allocate_Reduced_Map();
                 }
                 else
                 {
-                    item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
+                    // item_idx = Make_Item(1, &_players[player_idx].spellranks[0], 30000);
+                    item_idx = Make_Item(2, &_players[player_idx].spellranks[0], 30000);  /* CLAUDE */  /* REBUG */  // asm: mov ax, 2; push ax; call j_Make_Item
                     _players[player_idx].casting_cost_original = _ITEMS[item_idx].cost;
-                    /* OGBUG  cost_reduction is never written; the AI's remaining cost is reduced by an uninitialized percentage */
+                    /* OGBUG  casting_cost_remaining is never set for the AI's item: it keeps its stale value from the previous spell and is then reduced by cost_reduction (bp-8), which is never written; a remaining cost of 0 then cancels the cast below */
+                    /* HACK */  cost_reduction = Stack_Garbage();  // DNE in Dasm
                     _players[player_idx].casting_cost_remaining = (_players[player_idx].casting_cost_remaining - (int16_t)(((int32_t)_players[player_idx].casting_cost_remaining * (int32_t)cost_reduction) / 100));
                     memcpy(&_ITEMS[(136 - player_idx)], &_ITEMS[item_idx], sizeof(struct s_ITEM));
                     Remove_Item(item_idx);
@@ -538,17 +590,20 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
             }
         }
     }
-    else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
-    {
-        _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
-        Spellbook_Mana_Adder_Screen(spell_idx, spellbook_page_spell_index);
-    }
+    // else  /* ((spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (player_idx == HUMAN_PLAYER_IDX)) */
+    // {
+    //     _players[player_idx].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, ST_FALSE);
+    //     Spellbook_Mana_Adder_Screen(spell_idx, spellbook_page_spell_index);
+    // }
 
-    if(_players[player_idx].casting_spell_idx == spl_NONE)
-    {
-        _players[player_idx].casting_cost_original = 0;
-    }
-    else
+    // if(_players[player_idx].casting_spell_idx == spl_NONE)
+    // {
+    //     _players[player_idx].casting_cost_original = 0;
+    // }
+    // else
+    // {
+    /* CLAUDE */  /* REBUG */  // asm: cmp casting_spell_idx, spl_NONE; jz -> casting_cost_original = 0; fall-through the human instant-cast block
+    if(_players[player_idx].casting_spell_idx != spl_NONE)
     {
         if(player_idx == HUMAN_PLAYER_IDX)
         {
@@ -575,6 +630,10 @@ int16_t Cast_Spell_Overland_Do(int16_t player_idx, int16_t spell_idx, int16_t sp
                 Cast_Spell_Overland(player_idx);
             }
         }
+    }
+    else
+    {
+        _players[player_idx].casting_cost_original = 0;
     }
 
     if(spell_idx > spl_NONE)
@@ -849,7 +908,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
     }
 
-    _fstrcpy(temp_string, spell_data_table[spell_idx].name);
+    String_Copy_Far(temp_string, spell_data_table[spell_idx].name);
 
     stu_strcat(GUI_NearMsgString, temp_string);
 
@@ -885,7 +944,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 /*
 OON XREF  IDK_Spell_Cityscape_1()
 */
-void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t good_bad)
+void Load_City_Enchantment_Music(int16_t spell_idx, int16_t good_bad)
 {
 
 // MUSIC.LBX, 000 "MOM81 XM"    "Good Arcane"
@@ -1260,7 +1319,7 @@ void Spell_Animation_Screen__WIP(int16_t wx, int16_t wy, int16_t wp)
 
     map_p = _map_plane;
 
-    OVL_BringIntoView(&_map_x, &_map_y, wx, wy, wp);
+    Bring_Square_Into_View(&_map_x, &_map_y, wx, wy, wp);
 
     _map_plane = wp;
 

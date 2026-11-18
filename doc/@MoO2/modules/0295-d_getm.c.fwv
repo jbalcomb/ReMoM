@@ -1,0 +1,11 @@
+module_num=295
+module=C:\GCL520\C_ALL\D_GETM.C
+source=0295-d_getm.c.md
+range[0]=1:0x001427E0 linear=0x001527E0 size=96
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m295f001  1    -      0x001527E0  1:0x001427E0  code  GetDsr  GetDsr_  regions/07-object-1/001D7654-001D7E53.txt
+m295f002  2    -      0x001527F4  1:0x001427F4  code  GetCd   GetCd_   regions/07-object-1/001D7654-001D7E53.txt
+m295f003  3    -      0x0015280C  1:0x0014280C  code  GetRi   GetRi_   regions/07-object-1/001D7E54-001D8653.txt
+m295f004  4    -      0x00152820  1:0x00142820  code  GetCts  GetCts_  regions/07-object-1/001D7E54-001D8653.txt

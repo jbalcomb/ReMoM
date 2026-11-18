@@ -66,7 +66,7 @@ temp_GfxBuf_2400B = GfxBuf_2400B;
     GfxBuf_2400B = battle_unit_picts_seg[battle_units[battle_unit_idx].bufpi];
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
-    Combat_Unit_Enchantment_Outline_Draw(outline_magic_realm);
+    Draw_Combat_Enchantment_Outline(outline_magic_realm);
     Combat_Figure_Effect(IMG_Effect);
     Combat_Figure_Active_Red_Outline(battle_unit_idx);
 

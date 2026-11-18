@@ -17,6 +17,7 @@ MoO2
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "../../MoX/src/MOM_DEF.h"
 
@@ -62,6 +63,9 @@ MoO2
 
 
 
+
+
+
 /*
     WIZARDS.EXE  ovr084
 */
@@ -69,39 +73,39 @@ MoO2
 void Diplomacy_Screen__WIP(void);
 // WZD o84p02
 static void Diplomacy_Screen_Draw__WIP(void);
-// WZD o84p01
-// IDK_Diplo_Add_Spell_Or_Gold_To_Message()
-// WZD o84p02
-// sub_6ED5D()
 // WZD o84p03
-static void Get_Main_Diplomacy_Choices(void);
+int16_t Diplomacy_Add_Incentive_To_Message(int16_t spell_idx, int16_t gold);
 // WZD o84p04
-static void Diplomacy_Propose_Treaty__WIP(void);
+// sub_6ED5D()
 // WZD o84p05
-static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx, int16_t type);
+static void Get_Main_Diplomacy_Choices(void);
 // WZD o84p06
-static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2);
+static void Diplomacy_Propose_Treaty__WIP(void);
 // WZD o84p07
-static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0);
+static int16_t Diplomacy_Choose_Other_Wizard(int16_t break_alliance);
 // WZD o84p08
-static void Diplomacy_Display_Response_Draw(void);
+static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2);
 // WZD o84p09
-static void Diplomacy_Break_Treaty(void);
+static int16_t Diplomacy_Ask_For_Sweetener(int16_t diplomacy_test_result);
 // WZD o84p10
-static void Start_Diplomacy_Music(int16_t IDK);
+static void Diplomacy_Display_Response_Draw(void);
 // WZD o84p11
-static void Diplomacy_Screen_Draw_Portrait_Mouth_Animation(void);
+static void Diplomacy_Break_Treaty(void);
 // WZD o84p12
-static void Diplomacy_Screen_Load__WIP(void);
+static void Start_Diplomacy_Music(int16_t IDK);
 // WZD o84p13
-static void DIPL_LoadTalkGFX(void);
+static void Diplomacy_Screen_Draw_Portrait_Mouth_Animation(void);
 // WZD o84p14
-static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void);
+static void Diplomacy_Screen_Load__WIP(void);
 // WZD o84p15
-static void Diplomacy_Screen_Fade_In(void);
+static void DIPL_LoadTalkGFX(void);
 // WZD o84p16
-// sub_7038D()
+static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void);
 // WZD o84p17
+static void Diplomacy_Screen_Fade_In(void);
+// WZD o84p18
+// sub_7038D()
+// WZD o84p19
 static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2, int32_t * value1, int32_t * value2);
 /*
     WIZARDS.EXE  ovr085
@@ -148,7 +152,8 @@ static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2);
 // WZD o86p01
 static void Npc_Diplomacy_Screen(void);
 // WZD o86p02
-void NPC_To_NPC_Treaty_Negotiations(void);
+// void NPC_To_NPC_Treaty_Negotiations(void);
+int16_t NPC_To_NPC_Treaty_Negotiations(void);
 // WZD o86p03
 static int16_t DIPL_sub_72DB6__STUB(void);
 // DIPL_sub_72DB6()
@@ -189,9 +194,9 @@ void Modifier_Diplomacy_Adjustments(void);
 // WZD o88p04
 int16_t s88p04_empty_function(int16_t player);
 // WZD o88p05
-// sub_74E38()
+int16_t Army_Strength_Random_Difference__NIU(int16_t player1_idx, int16_t player2_idx);
 // WZD o88p06
-// sub_74F4A()
+int16_t Population_Random_Difference__NIU(int16_t player1_idx, int16_t player2_idx);
 
 
 
@@ -211,6 +216,8 @@ int16_t m_other_wizard_count_declare_war = 0;
 
 // WZD dseg:4C70
 // LBuff@ db '[ Agree    ',0
+char LBuff[] = "[ Agree    \0[ Forget It\0";  /* dseg:4C70 / 4C7C, 12 bytes each, + the empty entry at dseg:4C88 that ends the list */
+char * LBuff_list[1] = { LBuff };  /* Get_List_Field() walks text_string[0] in string_width (12) steps */
 // WZD dseg:4C7C
 // aForgetIt_2 db '[ Forget It',0
 // WZD dseg:4C88 00                                              db    0
@@ -310,14 +317,23 @@ char * off_3B742 = aYouProposeATre;  // "You propose a treaty: "
 char * off_3B744 = aYourActions;  // "Your actions: "
 
 // WZD dseg:4DF1 20 73 70 65 6C 6C 00                            aSpell db ' spell',0
+char aSpell[] = " spell";
 // WZD dseg:4DF8 20 67 6F 6C 64 00                               aGold db ' gold',0
+char aGold[] = " gold";
 // WZD dseg:4DFE 5B 20 00                                        asc_3B89E db '[ ',0
+char asc_3B89E[] = "[ ";
 // WZD dseg:4E01 57 68 6F 20 73 68 6F 75 6C 64 20 49 20 64 65 63+aWhoShouldIDecl db 'Who should I declare war on?',0
+char aWhoShouldIDecl[] = "Who should I declare war on?";
 // WZD dseg:4E1E 57 68 6F 20 73 68 6F 75 6C 64 20 49 20 62 72 65+aWhoShouldIBrea db 'Who should I break my treaty with?',0
+char aWhoShouldIBrea[] = "Who should I break my treaty with?";
 // WZD dseg:4E41 50 65 72 68 61 70 73 20 69 66 20 79 6F 75 20 77+aPerhapsIfYouWe db 'Perhaps if you were to throw in ',0
+char aPerhapsIfYouWe[] = "Perhaps if you were to throw in ";
 // WZD dseg:4E62 20 77 65 20 63 6F 75 6C 64 20 64 65 61 6C 2E 00 aWeCouldDeal_ db ' we could deal.',0
+char aWeCouldDeal_[] = " we could deal.";
 // WZD dseg:4E72 49 66 20 79 6F 75 20 61 6C 73 6F 20 6F 66 66 65+aIfYouAlsoOffer db 'If you also offer me ',0
+char aIfYouAlsoOffer[] = "If you also offer me ";
 // WZD dseg:4E88 20 49 20 77 6F 75 6C 64 20 61 63 63 65 70 74 2E+aIWouldAccept_ db ' I would accept.',0
+char aIWouldAccept_[] = " I would accept.";
 
 // WZD dseg:4E99
 char music_lbx_file__ovr084[] = "MUSIC";
@@ -605,9 +621,10 @@ void Diplomacy_Screen__WIP(void)
 
     m_IDK_diplomatic_flag = 6;
 
+    /* OGBUG  the pending AI message (Dipl_Action) is read and never cleared here: while one is pending, every audience the human asks for with that wizard shows only that response (flag 6) and no menu; orders 2 and 45..49 set flag 2, which has no case in the input loop below, so leave_screen is never set */
     m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     if(
         (m_IDK_diplomatic_order == 54)
@@ -724,7 +741,7 @@ void Diplomacy_Screen__WIP(void)
         )
         {
 
-            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr084[0], ST_UNDEFINED);
+            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr084, ST_UNDEFINED);
 
         }
 
@@ -810,10 +827,50 @@ void Diplomacy_Screen_Draw__WIP(void)
 }
 
 
-// WZD o84p01
-// IDK_Diplo_Add_Spell_Or_Gold_To_Message()
+// WZD o84p03
+/*
+appends the AI's incentive to m_diplomacy_message: '<spell name> spell' if spell_idx is set, else '<gold> gold'
+called by DIPL_sub_72DB6() ('What if we were to also offer ...' / 'Perhaps you would reconsider if we also provided ...') with offer_spell / offer_gold
+*/
+int16_t Diplomacy_Add_Incentive_To_Message(int16_t spell_idx, int16_t gold)
+{
+    char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-// WZD o84p02
+    /* OGBUG  gold is tested before spell_idx: a spell-only incentive (offer_gold 0, which the 1:4 spell branch of the offer code leaves) appends nothing, so the message reads 'What if we were to also offer ?' */
+    if(gold == 0)
+    {
+
+        return 0;
+
+    }
+
+    if(spell_idx != spl_NONE)
+    {
+
+        stu_strcpy(string, spell_data_table[spell_idx].name);  /* asm: String_Copy_Far(0000:string, name) - segment 0, which String_Copy_Far takes as DS */
+
+        stu_strcat(m_diplomacy_message, string);
+
+        stu_strcat(m_diplomacy_message, aSpell);
+
+    }
+    else
+    {
+
+        stu_itoa(gold, string, 10);
+
+        stu_strcat(m_diplomacy_message, string);
+
+        stu_strcat(m_diplomacy_message, aGold);
+
+    }
+
+    /* HACK */  return 0;  /* the OG falls off the end with AX = strcat()'s return; the caller ignores it */
+
+}
+
+
+// WZD o84p04
 // TODO  Message	VCR003	Function '_sub_6ED5D_Draw' can be made static		C:\STU\devel\ReMoM\MoM\src\DIPLOMAC.c	811		
 static void _sub_6ED5D_Draw(void)
 {
@@ -854,7 +911,7 @@ static void _sub_6ED5D_Draw(void)
 }
 
 
-// WZD o84p03
+// WZD o84p05
 // MoO2  Module: DIP-SCRN  Get_Main_Diplomacy_Choices_();  Diplomacy_Set_Main_Options_();
 /*
 
@@ -899,9 +956,9 @@ static void Get_Main_Diplomacy_Choices(void)
         Get_Exchange_Spell_List(_current_player_idx, m_diplomac_player_idx, 0);
 
         if(
-            (_players[HUMAN_PLAYER_IDX].gold_reserve <= 25)
+            (_players[HUMAN_PLAYER_IDX].gold_reserve < 25)
             &&
-            (list_item_active_flags[2] == 0)
+            (m_exchange_spell_count == 0)
         )
         {
 
@@ -909,6 +966,7 @@ static void Get_Main_Diplomacy_Choices(void)
 
         }
 
+        /* OGBUG  ends the audience ('tired of talks', 71) on the lowest interest alone (< -100), before the first menu; Diplomacy_Greeting() refuses only when Hidden_Rel + lowest interest + personality mod <= -100, so with a positive hidden relation or a friendly personality the wizard greets normally and then at once says he is out of time */
         if(Find_Worst_Modifier() < -100)
         {
 
@@ -1004,7 +1062,7 @@ static void Get_Main_Diplomacy_Choices(void)
 }
 
 
-// WZD o84p04
+// WZD o84p06
 /*
 
 */
@@ -1053,7 +1111,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
 
     }
 
-    if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] >= DIPL_NoTreaty)
+    if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] >= DIPL_War)
     {
 
         active_flag[3] = ST_FALSE;  // "Declaration of War on Another Wizard"
@@ -1070,13 +1128,13 @@ static void Diplomacy_Propose_Treaty__WIP(void)
             &&
             (_players[HUMAN_PLAYER_IDX].Dipl.Contacted[itr] == 1)
             &&
-            (_players[m_diplomac_player_idx].Dipl.Dipl_Status[itr] != DIPL_War)
+            (_players[m_diplomac_player_idx].Dipl.Dipl_Status[itr] < DIPL_War)
             &&
             (itr != m_diplomac_player_idx)
         )
         {
 
-            m_other_wizard_list_declare_war[m_other_wizard_count_declare_war] = (unsigned char)itr;
+            SET_2B_OFS(m_other_wizard_list_declare_war, (m_other_wizard_count_declare_war * 2), itr);
 
             m_other_wizard_count_declare_war++;
 
@@ -1096,18 +1154,17 @@ static void Diplomacy_Propose_Treaty__WIP(void)
     for(itr = 1; itr < _num_players; itr++)
     {
 
+        /* OGBUG  the Break Alliance list needs only the partner to have met the wizard - unlike the war list above, there is no test that the human has met it */
         if(
             (_players[m_diplomac_player_idx].Dipl.Contacted[itr] == 1)
             &&
-            (_players[HUMAN_PLAYER_IDX].Dipl.Contacted[itr] == 1)
-            &&
-            (_players[m_diplomac_player_idx].Dipl.Dipl_Status[itr] != DIPL_Alliance)
+            (_players[m_diplomac_player_idx].Dipl.Dipl_Status[itr] == DIPL_Alliance)
             &&
             (itr != m_diplomac_player_idx)
         )
         {
 
-            m_other_wizard_list_break_alliance[m_other_wizard_count_break_alliance] = (unsigned char)itr;
+            SET_2B_OFS(m_other_wizard_list_break_alliance, (m_other_wizard_count_break_alliance * 2), itr);
 
             m_other_wizard_count_break_alliance++;
 
@@ -1163,11 +1220,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
             )
             {
 
-                // TODO  DIPLO ROUND 2  diplomacy_test_result = IDK_Npc_Counteroffer__STUB(diplomacy_test_result);
-                if(Random(2) == 1)
-                {
-                    diplomacy_test_result = 3;
-                }
+                diplomacy_test_result = Diplomacy_Ask_For_Sweetener(diplomacy_test_result);  /* CLAUDE */  /* asm: push diplomacy_test_result / call IDK_Npc_Counteroffer__STUB / mov diplomacy_test_result, ax - replaces the non-asm Random(2) placeholder */
 
             }
 
@@ -1205,11 +1258,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
             )
             {
 
-                // TODO  DIPLO ROUND 2  diplomacy_test_result = IDK_Npc_Counteroffer__STUB(diplomacy_test_result);
-                if(Random(2) == 1)
-                {
-                    diplomacy_test_result = 3;
-                }
+                diplomacy_test_result = Diplomacy_Ask_For_Sweetener(diplomacy_test_result);  /* CLAUDE */  /* asm: push diplomacy_test_result / call IDK_Npc_Counteroffer__STUB / mov diplomacy_test_result, ax - replaces the non-asm Random(2) placeholder */
 
             }
 
@@ -1227,6 +1276,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         case 2:  /* Peace Treaty */
         {
 
+            /* OGBUG  the human's peace proposal is scored on the TREATY interest: type 0 (treaty_modifier); Diplomacy_Test's peace type (2) is not used */
             diplomacy_test_result = Diplomacy_Test(60, 0);
 
             if(
@@ -1236,11 +1286,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
             )
             {
 
-                // TODO  DIPLO ROUND 2  diplomacy_test_result = IDK_Npc_Counteroffer__STUB(diplomacy_test_result);
-                if(Random(2) == 1)
-                {
-                    diplomacy_test_result = 3;
-                }
+                diplomacy_test_result = Diplomacy_Ask_For_Sweetener(diplomacy_test_result);  /* CLAUDE */  /* asm: push diplomacy_test_result / call IDK_Npc_Counteroffer__STUB / mov diplomacy_test_result, ax - replaces the non-asm Random(2) placeholder */
 
             }
 
@@ -1262,7 +1308,9 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         case 3:  /* Declaration of War on Another Wizard */
         {
 
-            Target_Player = IDK_Npc_Target_Player__STUB(HUMAN_PLAYER_IDX, 0);
+            // Target_Player = IDK_Npc_Target_Player__STUB(HUMAN_PLAYER_IDX, 0);
+            /* CLAUDE */  /* REBUG */  /* asm: xor ax, ax / push ax / call IDK_Npc_Target_Player__STUB / pop cx - one argument, the list selector 0 */
+            Target_Player = Diplomacy_Choose_Other_Wizard(ST_FALSE);
 
             diplomacy_test_result = 2;
 
@@ -1280,7 +1328,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 if(
                     (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] == DIPL_Alliance)
                     &&
-                    (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[Target_Player] == DIPL_Alliance)
+                    (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[Target_Player] == DIPL_War)
                 )
                 {
 
@@ -1301,6 +1349,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 else
                 {
 
+                    /* OGBUG  var_6 = partner-to-target treaty status x 30 + 150 is computed and never read; the difficulty passed is 150 + the partner's relation to the target, so a pact or alliance with the target does not make the request harder */
                     var_6 = (150 + (_players[m_diplomac_player_idx].Dipl.Dipl_Status[Target_Player] * 30));
 
                     diplomacy_test_result = Diplomacy_Test((150 + _players[m_diplomac_player_idx].Dipl.Visible_Rel[Target_Player]), 0);
@@ -1314,11 +1363,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 )
                 {
 
-                    // TODO  DIPLO ROUND 2  diplomacy_test_result = IDK_Npc_Counteroffer__STUB(diplomacy_test_result);
-                    if(Random(2) == 1)
-                    {
-                        diplomacy_test_result = 3;
-                    }
+                    diplomacy_test_result = Diplomacy_Ask_For_Sweetener(diplomacy_test_result);  /* CLAUDE */  /* asm: push diplomacy_test_result / call IDK_Npc_Counteroffer__STUB / mov diplomacy_test_result, ax - replaces the non-asm Random(2) placeholder */
 
                 }
 
@@ -1338,7 +1383,9 @@ static void Diplomacy_Propose_Treaty__WIP(void)
         case 4:  /* Break Alliance with Another Wizard */
         {
 
-            m_break_treaty_player3 = IDK_Npc_Target_Player__STUB(HUMAN_PLAYER_IDX, 0);
+            // m_break_treaty_player3 = IDK_Npc_Target_Player__STUB(1, 0);
+            /* CLAUDE */  /* REBUG */  /* asm: mov ax, 1 / push ax / call IDK_Npc_Target_Player__STUB / pop cx - one argument, the list selector 1 */
+            m_break_treaty_player3 = Diplomacy_Choose_Other_Wizard(ST_TRUE);
 
             if(m_break_treaty_player3 == HUMAN_PLAYER_IDX)
             {
@@ -1349,7 +1396,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
             else
             {
 
-                if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] > 24)
+                if(_players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] > 24)
                 {
 
                     diplomacy_test_result = Diplomacy_Test((175 + _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_break_treaty_player3]), 0);
@@ -1369,11 +1416,7 @@ static void Diplomacy_Propose_Treaty__WIP(void)
                 )
                 {
 
-                    // TODO  DIPLO ROUND 2  diplomacy_test_result = IDK_Npc_Counteroffer__STUB(diplomacy_test_result);
-                    if(Random(2) == 1)
-                    {
-                        diplomacy_test_result = 3;
-                    }
+                    diplomacy_test_result = Diplomacy_Ask_For_Sweetener(diplomacy_test_result);  /* CLAUDE */  /* asm: push diplomacy_test_result / call IDK_Npc_Counteroffer__STUB / mov diplomacy_test_result, ax - replaces the non-asm Random(2) placeholder */
 
                 }
 
@@ -1420,19 +1463,109 @@ static void Diplomacy_Propose_Treaty__WIP(void)
 }
 
 
-// WZD o84p05
+// WZD o84p07
 // sub_6F3E4()
-static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx, int16_t type)
+/*
+the human names the wizard the diplomacy partner should declare war on (break_alliance == ST_FALSE) or break its alliance with (ST_TRUE)
+the choices are m_other_wizard_list_declare_war[] / m_other_wizard_list_break_alliance[], built by Diplomacy_Propose_Treaty__WIP(), then '[ Forget It'
+
+returns  the chosen wizard's player_idx;  0 for Forget It or Esc (both lists start at player 1)
+*/
+static int16_t Diplomacy_Choose_Other_Wizard(int16_t break_alliance)
 {
+    int16_t list_choice = 0;
+    int16_t other_wizard_count = 0;
+    int16_t itr = 0;  // _SI_
 
+    if(break_alliance == ST_FALSE)
+    {
 
-    return Random(_num_players);
+        other_wizard_count = m_other_wizard_count_declare_war;
 
+    }
+    else
+    {
+
+        other_wizard_count = m_other_wizard_count_break_alliance;
+
+    }
+
+    for(itr = 0; itr < other_wizard_count; itr++)
+    {
+
+        stu_strcpy(G_Some_DIPL_Allocs_7[itr], asc_3B89E);
+
+        if(break_alliance == ST_FALSE)
+        {
+
+            stu_strcat(G_Some_DIPL_Allocs_7[itr], _players[GET_2B_OFS(m_other_wizard_list_declare_war, (itr * 2))].name);
+
+        }
+        else
+        {
+
+            stu_strcat(G_Some_DIPL_Allocs_7[itr], _players[GET_2B_OFS(m_other_wizard_list_break_alliance, (itr * 2))].name);
+
+        }
+
+    }
+
+    stu_strcpy(G_Some_DIPL_Allocs_7[itr], aForgetIt);
+
+    *G_Some_DIPL_Allocs_7[(itr + 1)] = '\0';
+
+    if(break_alliance == ST_FALSE)
+    {
+
+        stu_strcpy(m_diplomacy_message, aWhoShouldIDecl);
+
+    }
+    else
+    {
+
+        stu_strcpy(m_diplomacy_message, aWhoShouldIBrea);
+
+    }
+
+    /* asm pushes only 1, 4, 3: color3 is the caller's stack (BQ #371); ST_NULL marks it missing */
+    Set_Font_Style(1, 4, 3, ST_NULL);
+
+    Set_Alias_Color(187);
+
+    /* DNE  list_choice = 0;  - Diplomacy_Ask_For_Sweetener() stores its list_choice before its Get_List_Field(); here the asm passes lea ax, [bp+_variable] with nothing stored, and Get_List_Field() reads *variable */
+    list_choice = Get_List_Field(38, 142, 245, str_empty_string__ovr084, G_Some_DIPL_Allocs_7, 100, &list_choice, ST_NULL, 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+    if(list_choice == ST_UNDEFINED)
+    {
+
+        return 0;
+
+    }
+
+    if(list_choice == other_wizard_count)  /* '[ Forget It' */
+    {
+
+        return 0;
+
+    }
+
+    if(break_alliance == ST_FALSE)
+    {
+
+        return GET_2B_OFS(m_other_wizard_list_declare_war, (list_choice * 2));
+
+    }
+    else
+    {
+
+        return GET_2B_OFS(m_other_wizard_list_break_alliance, (list_choice * 2));
+
+    }
 
 }
 
 
-// WZD o84p06
+// WZD o84p08
 // MoO2  Module: DIP-SCRN  Diplomacy_Display_Response_()
 /*
 
@@ -1596,7 +1729,7 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 
     Clear_Fields();
 
-    full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr084[0], ST_UNDEFINED);
+    full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr084, ST_UNDEFINED);
 
     while(leave_screen == ST_FALSE)
     {
@@ -1626,28 +1759,39 @@ static void Diplomacy_Display_Response(int16_t diplomatic_order, int16_t IDK2)
 }
 
 
-// WZD o84p07
-// sub_6F6BB()
+// WZD o84p09
+// drake178: N/A  sub_6F6BB()
 // ¿ MoO2  Module: DIP-SCRN  Diplomacy_Need_Better_Offer_() ?
-static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0)
+/*
+AI counter-offer: the AI asks the human to add gold ((Random(8) + Random(8)) x _turn, rounded down to 25s, if the human can pay it) or the first of the human's exchange spells
+the human picks Agree / Forget It from a list
+
+returns  0 nothing to ask for;  1 refused (or Esc);  3 accepted (the gold or the spell is handed over)
+*/
+static int16_t Diplomacy_Ask_For_Sweetener(int16_t diplomacy_test_result)
 {
-    char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char strP[80] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t var_A = 0;
-    int16_t var_8 = 0;
-    int16_t var_6 = 0;
-    int16_t _variable = 0;
+    char spell_name[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char sweetener_text[80] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t message_height = 0;
+    int16_t sweetener_is_gold = 0;
+    int16_t niu_var_6 = 0;
+    int16_t list_choice = 0;
     int16_t spell_idx = 0;
-    int16_t player2_idx = 0;
+    int16_t has_exchange_spell = 0;  // _DI_
+    int16_t gold_amount = 0;  // _SI_
 
-    var_6 = 0;
+    /* OGBUG  has_exchange_spell is register DI, and the only store is the 0 when there is NO exchange spell: with a spell it keeps the caller's DI, which is
+       Diplomacy_Propose_Treaty__WIP()'s itr - its last loop (cmp itr, 6 / jl) leaves it at 6 before all five calls - so it reads as TRUE only by that accident */
+    /* HACK */  has_exchange_spell = NUM_PLAYERS;  /* stand-in for the caller's DI (6) */
 
-    player2_idx = ((((Random(8) + Random(8)) * _turn) / 25) * 25);
+    niu_var_6 = 0;  /* asm: stored, never read */
 
-    if(player2_idx > _players[HUMAN_PLAYER_IDX].gold_reserve)
+    gold_amount = ((((Random(8) + Random(8)) * _turn) / 25) * 25);
+
+    if(gold_amount > _players[HUMAN_PLAYER_IDX].gold_reserve)
     {
 
-        player2_idx = 0;
+        gold_amount = 0;
 
     }
 
@@ -1656,14 +1800,135 @@ static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0)
     if(m_exchange_spell_count > 0)
     {
 
+        spell_idx = m_exchange_spell_list[0];
+
+    }
+    else
+    {
+
+        has_exchange_spell = ST_FALSE;
+
     }
 
-    return 0;
+    if(
+        (gold_amount == 0)
+        &&
+        (has_exchange_spell == ST_FALSE)
+    )
+    {
+
+        return 0;
+
+    }
+
+    if(
+        (
+            (has_exchange_spell != ST_FALSE)
+            &&
+            (diplomacy_test_result == 1)
+        )
+        ||
+        (gold_amount == 0)
+    )
+    {
+
+        stu_strcpy(spell_name, spell_data_table[spell_idx].name);  /* asm: String_Copy_Far(0000:spell_name, name) - segment 0, which String_Copy_Far takes as DS */
+
+        stu_strcpy(sweetener_text, spell_name);
+
+        stu_strcat(sweetener_text, aSpell);
+
+        sweetener_is_gold = ST_FALSE;
+
+    }
+    else
+    {
+
+        stu_itoa(gold_amount, sweetener_text, 10);
+
+        stu_strcat(sweetener_text, aGold);
+
+        sweetener_is_gold = ST_TRUE;
+
+    }
+
+    if(Random(2) == 1)
+    {
+
+        stu_strcpy(m_diplomacy_message, aPerhapsIfYouWe);
+
+        stu_strcat(m_diplomacy_message, sweetener_text);
+
+        stu_strcat(m_diplomacy_message, aWeCouldDeal_);
+
+    }
+    else
+    {
+
+        stu_strcpy(m_diplomacy_message, aIfYouAlsoOffer);
+
+        stu_strcat(m_diplomacy_message, sweetener_text);
+
+        stu_strcat(m_diplomacy_message, aIWouldAccept_);
+
+    }
+
+    Assign_Auto_Function(Diplomacy_Display_Response_Draw, 3);
+
+    Set_Input_Delay(1);
+
+    list_choice = 0;
+
+    /* asm pushes only 4, 4: color2 and color3 are the caller's stack (BQ #371); ST_NULL marks them missing */
+    Set_Font_Style(4, 4, ST_NULL, ST_NULL);
+
+    Set_Outline_Color(ST_TRANSPARENT);
+
+    Set_Alias_Color(187);
+
+    Set_Font_LF(1);
+
+    message_height = Get_Paragraph_Max_Height(245, m_diplomacy_message);  /* asm pushes a third word (0) that Get_Paragraph_Max_Height() never reads */
+
+    /* asm pushes 1, 4, 3: color3 is the caller's stack (BQ #371); ST_NULL marks it missing */
+    Set_Font_Style(1, 4, 3, ST_NULL);
+
+    Set_Alias_Color(187);
+
+    list_choice = Get_List_Field(38, (message_height + 142), 245, str_empty_string__ovr084, &LBuff_list[0], 12, &list_choice, ST_NULL, 15, 11, 0, 0, 0, ST_UNDEFINED);
+
+    if(
+        (list_choice == ST_UNDEFINED)
+        ||
+        (list_choice == 1)
+    )
+    {
+
+        return 1;
+
+    }
+
+    if(sweetener_is_gold == ST_FALSE)
+    {
+
+        Diplomacy_Player_Gets_Spell(m_diplomac_player_idx, spell_idx);
+
+    }
+    else
+    {
+
+        _players[HUMAN_PLAYER_IDX].gold_reserve -= gold_amount;
+
+        Player_Add_Gold(m_diplomac_player_idx, gold_amount);
+
+    }
+
+    return 3;
 
 }
 
 
-// WZD o84p08
+// WZD o84p10
 /*
 vs. Diplomacy_Screen_Draw__WIP()
 doesn't check flag for call to IDK_DiplAnim_s6FDA1()
@@ -1696,7 +1961,7 @@ static void Diplomacy_Display_Response_Draw(void)
 }
 
 
-// WZD o84p09
+// WZD o84p11
 /*
 
 */
@@ -1739,7 +2004,7 @@ static void Diplomacy_Break_Treaty(void)
 
     }
 
-    var_24 = 0;
+    // DNE  var_24 = 0;  /* asm: [bp+var_24] is active_flag[1] (-24h = -26h + 2), written only by the Alliance test above */
 
     for(itr = 0; itr < 5; itr++)
     {
@@ -1747,6 +2012,8 @@ static void Diplomacy_Break_Treaty(void)
         stu_strcpy(G_Some_DIPL_Allocs_7[itr], IDK_Diplo_msg[(14 + itr)]);
 
     }
+
+    *G_Some_DIPL_Allocs_7[5] = '\0';
 
     Set_Font_Style(1, 4, 3, ST_NULL);
 
@@ -1787,7 +2054,8 @@ static void Diplomacy_Break_Treaty(void)
                     if(value1 > 0)
                     {
 
-                        threat_modifier = (-50 + ((value2 * 100) / value1));
+                        /* OGBUG  a token force on his continent scores -50 - 100 x (his army / yours), far worse than having no units at all (-100); the 32-bit quotient is cut to 16 bits */
+                        threat_modifier = (-50 - ((value2 * 100) / value1));
 
                     }
                     else
@@ -1804,6 +2072,7 @@ static void Diplomacy_Break_Treaty(void)
                     if(value2 > 0)
                     {
 
+                        /* OGBUG  only the low 16 bits of 100 x (your army / his) are kept: outnumbering him more than ~328:1 wraps negative, so he declares war instead of giving in */
                         threat_modifier = (-50 + ((value1 * 100) / value2));
 
                     }
@@ -1816,12 +2085,7 @@ static void Diplomacy_Break_Treaty(void)
 
                 }
 
-                relations = (_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
-                    + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
-                    + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]
-                    + threat_modifier
-                    + Random(100)
-                    + Random(100));
+                relations = (_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx] + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality] + threat_modifier + Random(100) + Random(100));
 
                 _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[m_diplomac_player_idx] -= Random(5);
 
@@ -1864,10 +2128,11 @@ static void Diplomacy_Break_Treaty(void)
 
                         Get_Exchange_Spell_List(m_diplomac_player_idx, HUMAN_PLAYER_IDX, 0);
 
+                        /* OGBUG  no else: a threat scoring >= 200 when he has no spell to give is "ignored" (message 67) instead of falling through to the gold payment */
                         if(m_exchange_spell_count > 0)
                         {
 
-                            _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)Random(15);
+                            _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)(Random(15) + 5);
 
                             diplomacy_message_id = 70;
 
@@ -1884,7 +2149,7 @@ static void Diplomacy_Break_Treaty(void)
                         if(relations >= 90)
                         {
 
-                            Amount = ((((2 + Random(8)) * 25) / 25) * 25);
+                            Amount = (int16_t)(((((int32_t)(Random(8) + 2) * _turn) / 25) * 25));
 
                             if(_players[m_diplomac_player_idx].gold_reserve < Amount)
                             {
@@ -1892,7 +2157,7 @@ static void Diplomacy_Break_Treaty(void)
                                 if(_players[m_diplomac_player_idx].gold_reserve > 0)
                                 {
 
-                                    Amount = _players[m_diplomac_player_idx].gold_reserve;
+                                    Amount = (_players[m_diplomac_player_idx].gold_reserve / 4);
                                     
                                 }
                                 else
@@ -1907,8 +2172,9 @@ static void Diplomacy_Break_Treaty(void)
                             if(Amount != 0)
                             {
 
-                                _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)Random(15);
+                                _players[HUMAN_PLAYER_IDX].peace_duration[m_diplomac_player_idx] = (uint8_t)(Random(15) + 5);
 
+                                /* OGBUG  the reparations are created from nothing: his gold_reserve is only read to cap Amount, it is never reduced */
                                 Player_Add_Gold(_current_player_idx, Amount);
 
                                 diplomacy_message_id = 69;
@@ -1936,6 +2202,7 @@ static void Diplomacy_Break_Treaty(void)
         
     }
 
+    /* OGBUG  runs on every exit, including Forget It and Esc: leaving the Threaten / Break submenu without doing anything still costs -100 to the treaty, trade and peace interests */
     for(itr = 0; itr < 10; itr++)
     {
 
@@ -1959,7 +2226,7 @@ static void Diplomacy_Break_Treaty(void)
 }
 
 
-// WZD o84p10
+// WZD o84p12
 // MoO2  Module: DIP-SCRN  Start_Diplomacy_Music_()
 /*
 Maybe, good,bad,neutral music
@@ -2001,7 +2268,7 @@ static void Start_Diplomacy_Music(int16_t diplomacy_music)
 
 }
 
-// WZD o84p11
+// WZD o84p13
 /*
 draws m_diplomac_talk_portrait_seg or m_diplomac_mood_portrait_seg
 checks and updates m_diplomacy_message_IDK_group
@@ -2201,7 +2468,7 @@ static void Diplomacy_Screen_Draw_Portrait_Mouth_Animation(void)
 }
 
 
-// WZD o84p12
+// WZD o84p14
 static void Diplomacy_Screen_Load__WIP(void)
 {
     int16_t var_2 = 0;
@@ -2216,6 +2483,7 @@ static void Diplomacy_Screen_Load__WIP(void)
     // DOMSDOS  _CITIES = SA_MK_FP0(Allocate_First_Block(World_Data, 714));
     _CITIES = (struct s_CITY *)Allocate_First_Block(World_Data, 714);
 
+    /* OGBUG  the partner's Good / Bad music is loaded into World_Data right after the 714-paragraph _CITIES block - over the map layers (Combat_Cache_Write() saved them; Combat_Cache_Read() restores them when the audience ends); in between, Invader_Army_Strength_Comparison() reads _landmasses and sees music bytes, so the threat / proposal army terms count units by an arbitrary byte, fixed per portrait */
     sound_buffer1 = LBX_Reload_Next(music_lbx_file__ovr084, (MUSIC_Merlin_Good + (_players[m_diplomac_player_idx].wizard_id * 2)), World_Data);
     sound_buffer1_size = lbxload_entry_length;
 
@@ -2301,7 +2569,7 @@ static void Diplomacy_Screen_Load__WIP(void)
 }
 
 
-// WZD o84p13
+// WZD o84p15
 static void DIPL_LoadTalkGFX(void)
 {
     int16_t niu_relationship_level = 0;
@@ -2414,7 +2682,7 @@ static void DIPL_LoadTalkGFX(void)
 }
 
 
-// WZD o84p14
+// WZD o84p16
 /*
 
 11 pictures
@@ -2446,7 +2714,7 @@ static void Diplomacy_Screen_Draw_Gargoyle_Eyes(void)
 }
 
 
-// WZD o84p15
+// WZD o84p17
 // MoO2  Module: DIP-SCRN  Diplomacy_Fade_In_();  Draw_Diplomacy_Fade_In_Screen_();
 /*
 OON XREF
@@ -2501,11 +2769,11 @@ static void Diplomacy_Screen_Fade_In(void)
 }
 
 
-// WZD o84p16
+// WZD o84p18
 // sub_7038D()
 
 
-// WZD o84p17
+// WZD o84p19
 // ~ MoO2  Module: DIPLOMAC  Fleet_Strength_Comparison_()
 // drake178: DIPL_GetInvasionStr()
 /*
@@ -2538,6 +2806,7 @@ static int16_t Invader_Army_Strength_Comparison(int16_t player1, int16_t player2
 
     }
 
+    /* OGBUG  inside a diplomacy audience _landmasses holds the partner's music (see Diplomacy_Screen_Load__WIP()): the fortress 'landmass' and every unit's are music bytes, so value1 / value2 sum the units whose square holds the same byte, not the units on the partner's continent */
     landmass = GET_LANDMASS(_FORTRESSES[player2].wx, _FORTRESSES[player2].wy, _FORTRESSES[player2].wp);
 
     plane = _FORTRESSES[player2].wp;
@@ -2602,17 +2871,18 @@ static void Diplomacy_Greeting(void)
 
     worst_modifier_value = Find_Worst_Modifier();
 
-// // ; added to chance of forming treaties
-// // ; added to chance of avoiding superiority wars
-// int16_t TBL_AI_PRS_IDK_Mod[6] = { 0, 10, 20, 30, 40, 50 };
-    relationship_level = (worst_modifier_value
-        + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
+    /* added to chance of forming treaties; added to chance of avoiding superiority wars */
+    relationship_level = (
+        _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
         + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
-        + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
+        + worst_modifier_value
+        + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]
+    );
 
-    //OSG  back out the "Diplomatic Relations Scale" "position" portion of the "Core Reaction"
+    /* OSG  back out the "Diplomatic Relations Scale" "position" portion of the "Core Reaction" */
     IDK_nonvisible_relationship_level = (relationship_level - _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]);
 
+    /* OGBUG  refuses the audience only when relationship_level - Visible_Rel (= Hidden_Rel + lowest interest + personality mod) <= -100, while Get_Main_Diplomacy_Choices() ends the talk on the lowest interest < -100 alone - see there */
     if(IDK_nonvisible_relationship_level <= -100)  /* //OSG 50% chance of War */
     {
 
@@ -2691,8 +2961,6 @@ static void Diplomacy_Greeting(void)
  *
  * @see Change_Relations(), End_Of_Turn_Diplomacy_Adjustments(), Random()
  */
-void gd_dump_players(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void Diplomacy_Growth(void)
 {
     int16_t too_strong_treshold = 0;
@@ -2704,13 +2972,12 @@ void Diplomacy_Growth(void)
     int16_t itr1 = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CLAUDE: GD point 628 -- _players BEFORE Diplomacy_Growth (the diplomacy-phase
      * pass that updates treaty/peace/exchange modifiers, downstream of the
      * All_Outpost_Population_Growth RNG desync).  Fire once. */
-    { static int gd620_done = 0;
-      if(!gd620_done) { gd620_done = 1; gd_dump_players("628_Diplomacy_Growth_Entry_P"); } }
+    STU_GD_ONCE("628_Diplomacy_Growth_Entry_P", STU_GD_Dump_Players("628_Diplomacy_Growth_Entry_P"));  /* CLAUDE */
 
     for(itr1 = 0; itr1 < _num_players; itr1++)
     {
@@ -2751,6 +3018,7 @@ void Diplomacy_Growth(void)
                 (_players[itr1].astrologer.army_strength > 0)
             )
             {
+                /* OGBUG  only a wizard WEAKER than the human can be upset, and the weaker he is the less likely: t = 50 x human / his, hit when Random(100) >= t and Random(20) == 1 - about 2.5% a turn at near-equal armies, 0.05% at 2:1, never beyond - the reverse of the strategy guide's rule */
                 too_strong_treshold = (((int32_t)human_army_strength * 50) / _players[itr1].astrologer.army_strength);
                 if(
                     (Random(100) >= too_strong_treshold)
@@ -2768,6 +3036,7 @@ void Diplomacy_Growth(void)
         for(itr1 = 0; itr1 < _num_players; itr1++)
         {
             human_player_city_count = 0;
+            /* OGBUG  counts the HUMAN's cities inside the per-wizard loop: every wizard itr1 (half the penalty for an AI) loses relation with everyone it has met by the human's city count; an AI's own city count never matters */
             for(itr2 = 0; itr2 < _cities; itr2++)
             {
                 if(_CITIES[itr2].owner_idx == HUMAN_PLAYER_IDX)
@@ -2857,8 +3126,7 @@ void Diplomacy_Growth(void)
     /* CLAUDE: GD point 629 -- _players AFTER Diplomacy_Growth.  Pairs with 628 to show
      * whether the treaty/peace/exchange modifier divergence is introduced by this pass
      * (drawing from the desynced RNG stream) or already present on entry.  Fire once. */
-    { static int gd621_done = 0;
-      if(!gd621_done) { gd621_done = 1; gd_dump_players("629_Diplomacy_Growth_Return_P"); } }
+    STU_GD_ONCE("629_Diplomacy_Growth_Return_P", STU_GD_Dump_Players("629_Diplomacy_Growth_Return_P"));  /* CLAUDE */
 }
 
 
@@ -2912,6 +3180,7 @@ static int16_t Npc_Proposal__WIP(void)
 
         m_IDK_diplomatic_order = do_IDK_war;
 
+        /* OGBUG  the ally the human must drop is stored in field_7E, which nothing in the game reads; the message's third wizard comes from war_request (break_treaty, copied to m_IDK_break_alliance_player3 by Npc_Diplomacy_Screen), so it names whichever wizard was last asked to be warred on, or none - agreeing still breaks the treaty with the right ally */
         _players[HUMAN_PLAYER_IDX].Dipl.field_7E[m_diplomac_player_idx] = (int8_t)other_player;
 
         m_diplomsg_1_record_sub_number = ST_UNDEFINED;
@@ -2927,7 +3196,7 @@ static int16_t Npc_Proposal__WIP(void)
 
             SETMIN(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx], -100);
 
-            _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_diplomac_player_idx] = -100;
+            _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = -100;
 
             // DEDU  right? ...double-check Dasm, do some test code in BCPP30
             _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = -100;
@@ -3014,46 +3283,44 @@ static int16_t Diplomacy_Test(int16_t type_modifier, int16_t type)
 
     }
 
-    relations = (temporary_modifier
-        + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
-        + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]
-        + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
+    relations = (_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx] + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality] + temporary_modifier);
 
     value1 = 0;
     value2 = 0;
 
     Invader_Army_Strength_Comparison(_current_player_idx, m_diplomac_player_idx, &value1, &value2);
 
-    if(value2 < value1)  /* invader is stronger */
-    {
-
-        if(value2 > 0)
-        {
-
-            threat_modifier = (-50 + (value1 * 100 / value2));
-
-        }
-        else
-        {
-
-            threat_modifier = 50;
-
-        }
-
-    }
-    else  /* invader is weaker */
+    if(value2 > value1)
     {
 
         if(value1 > 0)
         {
 
-            threat_modifier = (-50 + (value2 * 100 / value1));
+            /* OGBUG  same shape as Diplomacy_Break_Treaty(): no units on his continent scores -50, a token force -50 - 100 x (his army / yours), far worse; the 32-bit quotient is cut to 16 bits */
+            threat_modifier = (-50 - ((value2 * 100) / value1));
 
         }
         else
         {
 
             threat_modifier = -50;
+
+        }
+
+    }
+    else
+    {
+
+        if(value2 > 0)
+        {
+
+            threat_modifier = (-50 + ((value1 * 100) / value2));
+
+        }
+        else
+        {
+
+            threat_modifier = 50;
 
         }
 
@@ -3071,36 +3338,24 @@ static int16_t Diplomacy_Test(int16_t type_modifier, int16_t type)
 
     Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
 
-    switch(type)
+    if(type == 0)
     {
 
-        case 0:
-        {
+        _players[HUMAN_PLAYER_IDX].Dipl.treaty_modifier[m_diplomac_player_idx] -= (20 + Random(30));
 
-            _players[HUMAN_PLAYER_IDX].Dipl.treaty_modifier[m_diplomac_player_idx] -= (20 + Random(30));
+    }
 
-        } break;
+    if(type == 2)
+    {
 
-        case 1:
-        {
+        _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx] -= (50 + Random(50));
 
-            // DNE - 'trade_modifier'
+    }
 
-        } break;
+    if(type == 3)
+    {
 
-        case 2:
-        {
-
-            _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx] -= (50 + Random(50));
-
-        } break;
-
-        case 3:
-        {
-
-            _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx] -= (20 + Random(50));
-
-        } break;
+        _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx] -= (20 + Random(50));
 
     }
 
@@ -3167,14 +3422,16 @@ static int16_t Find_Worst_Modifier(void)
     else
     {
 
-        if(_players[HUMAN_PLAYER_IDX].Dipl.treaty_modifier[m_diplomac_player_idx] < _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx])
+        interest = _players[HUMAN_PLAYER_IDX].Dipl.treaty_modifier[m_diplomac_player_idx];
+
+        if(_players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx] < interest)
         {
 
-            interest = _players[HUMAN_PLAYER_IDX].Dipl.treaty_modifier[m_diplomac_player_idx];
+            interest = _players[HUMAN_PLAYER_IDX].Dipl.exchange_modifier[m_diplomac_player_idx];
 
         }
 
-        if(interest < _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx])
+        if(_players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx] < interest)
         {
 
             interest = _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx];
@@ -3241,6 +3498,7 @@ void G_DIPL_PickSides(void)
     int _SI_i;
     int _DI_j;
     int Third_Player_Index;
+    /* OGBUG  both inner loops start above _SI_i and the outer one at 1: a wizard allied to two wizards at war with each other is fixed only when it has the lowest index of the three, and the human is never involved */
     for(_SI_i = 1; _SI_i < _num_players; _SI_i++)
     {
         for(_DI_j = _SI_i + 1; _DI_j < _num_players; _DI_j++)
@@ -3317,12 +3575,13 @@ static void Declare_Peace(int16_t player1, int16_t player2)
     Start_Treaty(player1, player2, 0);
 
 
+    /* OGBUG  the +40 is an 8-bit add before the cap: a relation of 88..100 wraps to -128..-116 */
     _players[player1].Dipl.Visible_Rel[player2] += 40;
-    _players[player1].Dipl.Visible_Rel[player2] += 40;
+    // DNE  _players[player1].Dipl.Visible_Rel[player2] += 40;
 
     SETMAX(_players[player1].Dipl.Visible_Rel[player2], 100);
 
-    _players[player1].Dipl.Visible_Rel[player2] = _players[player2].Dipl.Visible_Rel[player1];
+    _players[player2].Dipl.Visible_Rel[player1] = _players[player1].Dipl.Visible_Rel[player2];
 
     if(player1 == HUMAN_PLAYER_IDX)
     {
@@ -3510,6 +3769,7 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                             _players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[defender_idx] = spell_idx;
                             _players[HUMAN_PLAYER_IDX].Dipl.DA_City[defender_idx] = (int8_t)city_idx;
                         }
+                        return;
                     }
                     else
                     {
@@ -3653,11 +3913,13 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                     */
                     if(relation_value != 0)  /* Block A (war/overextension path) didn't trigger, do Block B (normal apply path) instead */
                     {
+                        /* OGBUG  the relation is added as a byte (mov al / add al, [byte ptr value]) before the -100..100 clamp: a total below -128 wraps positive - e.g. a Lawful observer with relation 1..71 sees -50 x 2 x 2 = -200 and ends at relation + 56, then the 65 cap */
                         _players[defender_idx].Dipl.Visible_Rel[attacker_idx] += relation_value;
                         SETMIN(_players[defender_idx].Dipl.Visible_Rel[attacker_idx], -100);
                         SETMAX(_players[defender_idx].Dipl.Visible_Rel[attacker_idx],  100);
                         _players[defender_idx].Dipl.treaty_modifier[attacker_idx] += relation_value;
                         _players[defender_idx].Dipl.exchange_modifier[attacker_idx] += relation_value;
+                        /* OGBUG  the observer's treaty and exchange interest are copied onto the actor's row: when the actor is the human this overwrites _players[0].X[observer], the row every human-AI talk reads and spends, so any relation event the human causes restores the interest spent in talks */
                         _players[attacker_idx].Dipl.treaty_modifier[defender_idx] = _players[defender_idx].Dipl.treaty_modifier[attacker_idx];
                         _players[attacker_idx].Dipl.exchange_modifier[defender_idx] = _players[defender_idx].Dipl.exchange_modifier[attacker_idx];
                         if(relation_value_pre_charisma < 0)  /* relation change is negative */
@@ -3669,6 +3931,7 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                         {
                             _players[defender_idx].Dipl.peace_modifier[attacker_idx] += relation_value_pre_charisma;
                         }
+                        /* OGBUG  the 10% war roll tests the last argument against spl_Earth_Lore (10): Change_Relations_For_Enchantments passes type 10 with spell_idx = spl_Spell_Of_Mastery, so it never fires there; it fires instead when the last argument happens to be 10 - Cast_Spell_Overland's hostile unit spells pass the target unit index, so a curse on unit #10 gives its caster a 10% chance to declare war on the owner */
                         if(
                             (spell_idx == spl_Earth_Lore)  /* OGBUG: should be spl_Spell_Of_Mastery, not spl_Earth_Lore */
                             &&
@@ -3683,12 +3946,12 @@ void Change_Relations(int16_t value, int16_t attacker_idx, int16_t defender_idx,
                             (type != dipact_AuraOfMajesty)
                         )
                         {
-                            if(abs(relation_value) > abs(_players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX]))
+                            if(abs(relation_value) > abs(_players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[defender_idx]))
                             {
-                                _players[defender_idx].Dipl.DA_Strength[HUMAN_PLAYER_IDX] = relation_value;
-                                _players[defender_idx].Dipl.Dipl_Action[HUMAN_PLAYER_IDX] = (int8_t)type;
-                                _players[defender_idx].Dipl.DA_Spell[HUMAN_PLAYER_IDX] = spell_idx;
-                                _players[defender_idx].Dipl.DA_City[HUMAN_PLAYER_IDX] = (int8_t)city_idx;
+                                _players[HUMAN_PLAYER_IDX].Dipl.DA_Strength[defender_idx] = relation_value;
+                                _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[defender_idx] = (int8_t)type;
+                                _players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[defender_idx] = spell_idx;
+                                _players[HUMAN_PLAYER_IDX].Dipl.DA_City[defender_idx] = (int8_t)city_idx;
                             }
                         }
                     }  /* if(relation_value != 0) */
@@ -3763,6 +4026,7 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx)
 
     Break_Treaties(attacker_idx, defender_idx);
 
+    /* OGBUG  the base relation drops by 5 both ways as a byte with no floor: from -100 the sixth war between the same pair wraps it to about +126 */
     _players[attacker_idx].Dipl.Default_Rel[defender_idx] += -5;
     _players[defender_idx].Dipl.Default_Rel[attacker_idx] += -5;
 
@@ -3770,10 +4034,9 @@ void Declare_War(int16_t attacker_idx, int16_t defender_idx)
     _players[defender_idx].Dipl.Visible_Rel[attacker_idx] = _players[attacker_idx].Dipl.Visible_Rel[defender_idx];
 
     _players[attacker_idx].Dipl.Dipl_Status[defender_idx] = DIPL_War;
-    _players[defender_idx].Dipl.Visible_Rel[attacker_idx] = DIPL_War;
+    _players[defender_idx].Dipl.Dipl_Status[attacker_idx] = DIPL_War;
 
-
-    // 1oom: treaty, trade, tech, peace
+    /* 1oom: treaty, trade, tech, peace */
 
     _players[attacker_idx].Dipl.treaty_modifier[defender_idx] = -200;
     _players[defender_idx].Dipl.treaty_modifier[attacker_idx] = -200;
@@ -3848,8 +4111,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
         Rel_Modifier = (Rel_Modifier * 2);  // could be 0 * 2 = 0
     }
 
-    // ; BUG: subtracting a negative number
-    // ; BUG: no overflow check
+    /* OGBUG  the penalty is negative (-10 pact / -20 alliance, doubled when the BREAKER is Lawful) and is SUBTRACTED: the breaker's hidden relation toward the victim goes UP by 10..40 (a byte, no clamp), and for an alliance so does the base relation below (clamped only below -100, so a base above 87 can wrap and land on -100) */
     _players[attacker_idx].Dipl.Hidden_Rel[defender_idx] -= Rel_Modifier;
 
 
@@ -3872,9 +4134,9 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
     if(_players[attacker_idx].Dipl.Dipl_Status[defender_idx] == DIPL_Alliance)
     {
         _players[attacker_idx].Dipl.Default_Rel[defender_idx] -= Rel_Modifier;
+        SETMIN(_players[attacker_idx].Dipl.Default_Rel[defender_idx], -100);
+        _players[defender_idx].Dipl.Default_Rel[attacker_idx] = _players[attacker_idx].Dipl.Default_Rel[defender_idx];
     }
-    SETMIN(_players[attacker_idx].Dipl.Default_Rel[defender_idx], -100);
-    _players[defender_idx].Dipl.Default_Rel[attacker_idx] = _players[attacker_idx].Dipl.Default_Rel[defender_idx];
 
 
     // What does it mean for Rel_Modifier to not be zero?
@@ -3915,8 +4177,6 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx)
 ; fills the corresponding global variables with up to
 ; 10 spells and their values that the first player
 ; could tribute to the second
-; BUG: only stores the low order byte of the spell
-; values, invalidating all comparisons
 */
 /*
 
@@ -3951,7 +4211,7 @@ static int16_t Get_Exchange_Spell_List(int16_t player1, int16_t player2, int16_t
         for(itr = 0; m_exchange_spell_count > itr; itr++)
         {
 
-            // ; BUG: value doesn't fit into a byte
+            /* OGBUG  stores only the low byte of the spell value: Exchange Spells and Offer Tribute pass it back to Get_Differential_Spell_List() as min_value, so the threshold is the value mod 256 (compared against full values) */
             m_exchange_spell_values[itr] = (uint8_t)Calc_Spell_Value(player2, m_exchange_spell_list[itr]);
 
         }
@@ -3998,6 +4258,7 @@ static void Diplomacy_Offer_Tribute(void)
     /*
         BEGIN: gold
     */
+    /* OGBUG  the gold choices are sized by the AI partner's treasury, not the human's: an AI with less than 25 gold gives list_count 0 - no gold option at all */
     gold = _players[m_diplomac_player_idx].gold_reserve;
 
     SETMAX(gold, MAX_GOLD_RESERVE);
@@ -4050,7 +4311,7 @@ static void Diplomacy_Offer_Tribute(void)
 
         stu_strcat(G_Some_DIPL_Allocs_7[itr], aGold_0);
 
-        if(gold_amounts[itr] < _players[_current_player_idx].gold_reserve)
+        if(gold_amounts[itr] > _players[_current_player_idx].gold_reserve)
         {
 
             list_item_active_flags[itr] = ST_FALSE;
@@ -4085,9 +4346,58 @@ static void Diplomacy_Offer_Tribute(void)
     )
     {
 
-        if(_variable >= list_count)
+        if(_variable < list_count)
         {
 
+            if(_players[m_diplomac_player_idx].astrologer.army_strength != 0)
+            {
+
+                var_6 = ((_variable + 1) * 4);
+
+            }
+            else
+            {
+
+                var_6 = 8;
+
+            }
+
+            itr = Random(3);
+
+            var_8 = (int16_t)(((int32_t)var_6 * ((int32_t)(_variable + 1) * itr)) / 10);
+
+            _players[HUMAN_PLAYER_IDX].gold_reserve -= gold_amounts[_variable];
+
+            Player_Add_Gold(m_diplomac_player_idx, gold_amounts[_variable]);
+
+            SETMAX(var_8, 100);
+
+            // DNE  _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
+
+            if((_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] + var_8) > 100)
+            {
+
+                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = 100;
+
+            }
+            else
+            {
+
+                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
+
+            }
+
+            SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx], 100);
+
+            _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
+
+            Diplomacy_Display_Response(1, 3);
+
+        }
+        else
+        {
+
+            /* OGBUG  min_value is byte_42E39[itr] with itr = the number of gold options: a stale byte left by the last Exchange Spells (or AI spell offer); a high leftover value hides tribute spells */
             Get_Exchange_Spell_List(HUMAN_PLAYER_IDX, m_diplomac_player_idx, byte_42E39[itr]);
 
             if(m_exchange_spell_count > 0)
@@ -4101,7 +4411,7 @@ static void Diplomacy_Offer_Tribute(void)
 
                     stu_strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
 
-                    _fstrcpy(string, spell_data_table[m_exchange_spell_list[itr]].name);
+                    String_Copy_Far(string, spell_data_table[m_exchange_spell_list[itr]].name);
 
                     stu_strcat(G_Some_DIPL_Allocs_7[itr], string);
 
@@ -4109,7 +4419,7 @@ static void Diplomacy_Offer_Tribute(void)
 
                 stu_strcpy(G_Some_DIPL_Allocs_7[itr], aForgetIt_0);
 
-                *G_Some_DIPL_Allocs_7[1] = '\0';
+                *G_Some_DIPL_Allocs_7[(1 + itr)] = '\0';
 
                 stu_strcpy(m_diplomacy_message, off_3B95A);
 
@@ -4152,12 +4462,11 @@ static void Diplomacy_Offer_Tribute(void)
 
                         _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
 
-                        // BUGBUG  improvement should be added to CP, not HP
                         _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx] += var_8;
 
-                        SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx], 100);
+                        SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[m_diplomac_player_idx], 200);
 
-                        // BUGBUG  improvement should be added to CP, not HP
+                        /* OGBUG  the tribute raises _players[0].Hidden_Rel[m], which the diplomacy screen reads (Diplomacy_Greeting, Diplomacy_Test, NPC_To_Human_Diplomacy, DIPL_HumanWarOrPeace), but not _players[m].Hidden_Rel[0], which AI_Evaluate_Hostility() and AI_Select_Spell_Group() read; nothing copies one to the other, so a tribute makes the AI friendlier in talks but does not lower its war hostility toward the human */
                         _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx] += (2 + Random(8));
 
                         SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx], 30);
@@ -4178,54 +4487,6 @@ static void Diplomacy_Offer_Tribute(void)
                 Diplomacy_Display_Response(do_IDK_exchange_spell_goodbye, 3);
 
             }
-
-        }
-        else  /* (_variable < var_4) */
-        {
-
-            if(_players[m_diplomac_player_idx].astrologer.army_strength != 0)
-            {
-
-                var_6 = ((_variable + 1) * 4);
-
-            }
-            else
-            {
-
-                var_6 = 8;
-
-            }
-
-            itr = Random(3);
-
-            var_8 = ((var_6 * itr) / 10);
-
-            _players[HUMAN_PLAYER_IDX].gold_reserve -= gold_amounts[_variable];
-
-            Player_Add_Gold(m_diplomac_player_idx, gold_amounts[_variable]);
-
-            SETMAX(var_8, 100);
-
-            _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
-
-            if(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] > 100)
-            {
-
-                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = 100;
-
-            }
-            else
-            {
-
-                _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] += var_8;
-
-            }
-
-            SETMAX(_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx], 100);
-
-            _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
-
-            Diplomacy_Display_Response(1, 3);
 
         }
         
@@ -4270,17 +4531,13 @@ static void Diplomacy_Exchange_Spell__WIP(void)
     if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[m_diplomac_player_idx] == DIPL_Alliance)
     {
 
-        temporary_modifier += 35;
+        temporary_modifier += 25;
 
     }
 
+    relations = (_players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx] + (_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] / 2) + var_10 + (TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality] * 2) + temporary_modifier - 125);
 
-    relations = (-125
-        + _players[HUMAN_PLAYER_IDX].Dipl.Hidden_Rel[m_diplomac_player_idx]
-        + (_players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] / 2)
-        + var_10
-        + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]);
-
+    /* OGBUG  the AI's acceptance roll is computed and stored but final_value is never read: the AI accepts every exchange it lists */
     final_value = relations + Random(100);
 
     Get_Exchange_Spell_List(m_diplomac_player_idx, HUMAN_PLAYER_IDX, 0);
@@ -4295,8 +4552,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 
             byte_42E43[itr] = m_exchange_spell_list[itr];
 
-            // ; BUG: these don't fit into a byte variable!
-
+            /* OGBUG  the spell value was already cut to its low byte by Get_Exchange_Spell_List(); as the min_value of the counter-offer list below, the threshold is the offered spell's value mod 256 (e.g., 300 -> 44) */
             byte_42E39[itr] = m_exchange_spell_values[itr];
 
         }
@@ -4344,7 +4600,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 
                 stu_strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
 
-                _fstrcpy(string, spell_data_table[byte_42E2E[itr]].name);
+                String_Copy_Far(string, spell_data_table[byte_42E2E[itr]].name);
 
                 stu_strcat(G_Some_DIPL_Allocs_7[itr], string);
 
@@ -4376,13 +4632,13 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 
                     stu_strcpy(G_Some_DIPL_Allocs_7[itr], lstr_gold);
 
-                    _fstrcpy(string, spell_data_table[IDK_DIPLO_NIU[((var_E * 10) + itr)]].name);
+                    String_Copy_Far(string, spell_data_table[IDK_DIPLO_NIU[((var_E * 10) + itr)]].name);
 
                     stu_strcat(G_Some_DIPL_Allocs_7[itr], string);
 
                 }
 
-                stu_strcat(G_Some_DIPL_Allocs_7[itr], aForgetIt_0);
+                stu_strcpy(G_Some_DIPL_Allocs_7[itr], aForgetIt_0);
 
                 var_6 = itr;
 
@@ -4413,7 +4669,7 @@ static void Diplomacy_Exchange_Spell__WIP(void)
 
                     Diplomacy_Player_Gets_Spell(m_diplomac_player_idx, Spell_Index);
 
-                    if(spell_data_table[spell_idx].research_cost < spell_data_table[Spell_Index].research_cost)
+                    if((uint16_t)spell_data_table[spell_idx].research_cost < (uint16_t)spell_data_table[Spell_Index].research_cost)
                     {
 
                         Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
@@ -4480,6 +4736,7 @@ static void Cancel_Players_City_Enchantments(int16_t player1, int16_t player2)
 
             enchantments = &_CITIES[city_idx].enchantments[0];
 
+            /* OGBUG  loops all NUM_CITY_ENCHANTMENTS slots, including enchantments[NIGHTSHADE], which holds a count of Nightshade squares, not an owner + 1: a count equal to the other wizard's index + 1 is cleared to 0 */
             for(ench_idx = 0; ench_idx < NUM_CITY_ENCHANTMENTS; ench_idx++)
             {
 
@@ -4555,7 +4812,7 @@ static void Npc_Diplomacy_Screen(void)
 
     m_IDK_diplomatic_order = _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[m_diplomac_player_idx];
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     if(
         (m_IDK_diplomatic_order == 54)
@@ -4698,12 +4955,11 @@ static void Npc_Diplomacy_Screen(void)
 
                             }
 
-                            // ¿ BUGBUG  should be setting them equivalent, not to a player's relations with itself ?
-                            _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx] = _players[m_diplomac_player_idx].Dipl.Visible_Rel[m_diplomac_player_idx];
+                            _players[m_diplomac_player_idx].Dipl.Visible_Rel[HUMAN_PLAYER_IDX] = _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx];
 
                             Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
 
-                            Adjust_Diplomat_Modifiers(m_diplomac_player_idx, HUMAN_PLAYER_IDX);
+                            Adjust_Diplomat_Modifiers(HUMAN_PLAYER_IDX, m_diplomac_player_idx);
 
                         }
 
@@ -4714,6 +4970,7 @@ static void Npc_Diplomacy_Screen(void)
 
                         }
 
+                        /* OGBUG  accepting a pact / alliance / peace proposal always pays the AI's prepared offer_gold and offer_spell to the human, even when the human accepted at once and they were never offered */
                         if(
                             (m_IDK_diplomatic_order == do_IDK_treaty1)
                             ||
@@ -4743,7 +5000,8 @@ static void Npc_Diplomacy_Screen(void)
                     )
                     {
 
-                        Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.field_A8[((m_diplomac_player_idx * 12) + input_field_idx)]);
+                        /* OGBUG  only the human receives the chosen spell; the AI never receives the spell it asked for */
+                        Diplomacy_Player_Gets_Spell(HUMAN_PLAYER_IDX, _players[HUMAN_PLAYER_IDX].Dipl.field_A8[((m_diplomac_player_idx * 6) + input_field_idx)]);
 
                     }
 
@@ -4803,7 +5061,7 @@ static void Npc_Diplomacy_Screen(void)
         )
         {
 
-            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr086[0], ST_UNDEFINED);
+            full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr086, ST_UNDEFINED);
 
         }
 
@@ -4891,7 +5149,9 @@ static void Npc_Diplomacy_Screen(void)
  *      G_DIPL_NeedForWar(), DIPL_GetOffMyLawn(), Get_Differential_Spell_List(),
  *      Diplomacy_Player_Gets_Spell(), Declare_War()
  */
-void NPC_To_NPC_Treaty_Negotiations(void)
+// void NPC_To_NPC_Treaty_Negotiations(void)
+/* CLAUDE */  /* REBUG */  /* asm: the early exit is xor ax, ax / jmp @@Done (a return 0 in an int function); the other path falls into @@Done without a return value; no caller reads AX */
+int16_t NPC_To_NPC_Treaty_Negotiations(void)
 {
     int16_t Total_Score = 0;
     int16_t Other_Players_Count = 0;
@@ -4903,10 +5163,12 @@ void NPC_To_NPC_Treaty_Negotiations(void)
     int16_t itr_players1 = 0;
     int16_t itr_players2 = 0;
 
-    /* OGBUG: drake178: what does this have to do with AI-AI diplomacy? */
+    /* OGBUG  the whole AI-vs-AI pass (treaties, trades, peace, the war checks and the allied-war pass below) is skipped on every turn the human is casting Spell of Return */
     if(_players[_current_player_idx].casting_spell_idx == spl_Spell_Of_Return)
+
     {
-        return;
+        // return;
+        return 0;  /* CLAUDE */  /* REBUG */  /* asm: xor ax, ax / jmp @@Done */
     }
 
     for(itr_players1 = 1; itr_players1 < _num_players; itr_players1++)
@@ -4928,12 +5190,14 @@ void NPC_To_NPC_Treaty_Negotiations(void)
                 continue;
             }
 
+            /* OGBUG  this rare roll (1 in 15 - 2 x difficulty per ordered pair) gates the whole body, so G_DIPL_PickSides(), G_DIPL_NeedForWar() and DIPL_GetOffMyLawn() at its end run only on the same roll as the friendly treaty / trade tests: AIs seldom break treaties with or declare war on each other */
             if(Random(15 - _difficulty * 2) != 1)
             {
                 continue;
             }
 
             if(_players[itr_players1].Dipl.Contacted[itr_players2] != ST_TRUE)
+
             {
                 continue;
             }
@@ -4955,6 +5219,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
                 Total_Score += 20;
             }
 
+            /* OGBUG  alliance straight from no treaty or war (no Declare_Peace, pact skipped); with the identical test below, an existing alliance is turned back into a pact */
             if((Total_Score + _players[itr_players1].Dipl.treaty_modifier[itr_players2]) > 150)
             {
                 if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] != DIPL_Alliance)
@@ -4973,6 +5238,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
                 }
             }
 
+            /* OGBUG  inverted: a higher exchange_modifier makes a trade less likely */
             if((_players[itr_players1].Dipl.exchange_modifier[itr_players2] + 80) < Total_Score)
             {
                 Trade_Spell_Count = Get_Differential_Spell_List(itr_players1, itr_players2, 1, m_exchange_spell_list);
@@ -4983,6 +5249,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
 
                 if(Trade_Spell_Count > 0 && Other_Players_Count > 0)
                 {
+                    /* OGBUG  crossed: each wizard is given a spell it already knows; nothing is traded, but Player_Gets_Spell() still lowers som_research_cost */
                     Diplomacy_Player_Gets_Spell(itr_players2, First_Trade_Spell);
                     Diplomacy_Player_Gets_Spell(itr_players1, Trade_For_Spell);
                 }
@@ -4996,6 +5263,7 @@ void NPC_To_NPC_Treaty_Negotiations(void)
 
             if(_players[itr_players1].Dipl.Dipl_Status[itr_players2] == DIPL_War)
             {
+                /* OGBUG  the AI-vs-AI peace test adds m_diplomsg_1_record_sub_number, the diplomacy screen's message-variant index (ST_UNDEFINED or a Random() variant) left from the last diplomacy screen */
                 if((m_diplomsg_1_record_sub_number + _players[itr_players1].Dipl.peace_modifier[itr_players2]) > 100)
                 {
                     Declare_Peace(itr_players1, itr_players2);
@@ -5061,6 +5329,8 @@ void NPC_To_NPC_Treaty_Negotiations(void)
         }
     }
 
+    /* HACK */  /* CLAUDE */  /* no return value in the asm here (AX is whatever the last call left); no caller reads it */
+    return 0;
 }
 
 
@@ -5206,6 +5476,7 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
         if(_num_players == 2)
         {
 
+            /* OGBUG  two-player game: Random(IDK_count) - 2 gives -1 .. IDK_count - 2, floored to 0 below - the last variant never appears and variant 0 is twice as likely */
             m_diplomsg_1_record_sub_number = (Random(m_diplomacy_message_record_data.IDK_count) - 2);
 
         }
@@ -5227,331 +5498,302 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
             200
         );
 
-        for(itr = 0; itr < 200; itr++)
+        for(itr = 0; ((itr < 200) && (G_DIPL_ComposedMessage[itr] != 0)); itr++)
         {
 
-            if(G_DIPL_ComposedMessage[itr] != 0)
+            m_diplomacy_message[pos] = G_DIPL_ComposedMessage[itr];
+
+            code = ((uint8_t)m_diplomacy_message[pos] - 128);
+
+            if((uint16_t)code > 20)
+            {
+                pos++;
+            }
+            else
             {
 
-                m_diplomacy_message[pos] = G_DIPL_ComposedMessage[itr];
-
-                // // code = (m_diplomacy_message[pos] - 128);
-                // code = m_diplomacy_message[pos];
-                // code -= 128;
-                // ...
-                // 0x7F  127 - 128 = -1
-                // 0x80  128 - 128 =  0
-                // ...
-                // 0x94  148 - 128 = 20
-                // ...
-                // 0xFF  255 - 128 = 127
-                code = m_diplomacy_message[pos];
-                code &= 0x7F;
-
-
-                if(code > 20)
-                {
-                    pos++;
-                }
-                else
+                switch(code)
                 {
 
-                    switch(code)
+                    case 0:
                     {
 
-                        case 0:
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, _players[HUMAN_PLAYER_IDX].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 1:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, _players[player_idx].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 2:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 3:
+                    {
+
+                        String_Copy_Far(&m_diplomacy_message[pos], _CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 4:
+                    {
+
+                        stu_strcpy(&m_diplomacy_message[pos], _city_size_names[_CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].size]);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 5:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.break_treaty[player_idx]].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 6:
+                    {
+
+                        pos++;
+
+                    } break;
+
+                    case 7:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.niu_attack_bounty[player_idx]].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 8:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_itoa((int16_t)GET_2B_OFS(_players[HUMAN_PLAYER_IDX].Dipl.field_114, (player_idx * 2)), string, 10);
+                        assert(string[30] == 0);
+
+                        stu_strcat(m_diplomacy_message, string);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 9:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        String_Copy_Far(string, spell_data_table[(int16_t)GET_2B_OFS(_players[HUMAN_PLAYER_IDX].Dipl.niu_au_want_tech, (player_idx * 2))].name);
+                        assert(string[30] == 0);
+
+                        stu_strcat(m_diplomacy_message, string);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 10:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_itoa((int16_t)GET_2B_OFS(_players[HUMAN_PLAYER_IDX].Dipl.field_114, (player_idx * 2)), string, 10);
+                        assert(string[30] == 0);
+
+                        stu_strcat(m_diplomacy_message, string);
+
+                        stu_strcat(m_diplomacy_message, aGold_2);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 11:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 2)
                         {
 
-                            m_diplomacy_message[pos] = 0;
+                            stu_strcat(m_diplomacy_message, aAlliance_0);
 
-                            stu_strcat(m_diplomacy_message, _players[HUMAN_PLAYER_IDX].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 1:
+                        }
+                        else if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 1)
                         {
 
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_strcat(m_diplomacy_message, _players[player_idx].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 2:
+                            stu_strcat(m_diplomacy_message, aWizardPact_0);
+                            
+                        }
+                        else
                         {
 
-                            m_diplomacy_message[pos] = 0;
+                            stu_strcat(m_diplomacy_message, aTreaty);
 
-                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+                        }
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                        } break;
+                    } break;
 
-                        case 3:
+                    case 12:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        String_Copy_Far(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+                        assert(string[30] == 0);
+
+                        stu_strcat(m_diplomacy_message, string);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 13:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, *_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 14:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        stu_strcat(m_diplomacy_message, An(*_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name));
+
+                        pos = (int16_t)strlen(m_diplomacy_message);
+
+                    } break;
+
+                    case 15:
+                    {
+
+                        m_diplomacy_message[pos] = 0;
+
+                        if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 2)
                         {
 
-                            m_diplomacy_message[pos] = 0;
+                            stu_strcat(m_diplomacy_message, aAlliance_0);
 
-                            _fstrcpy(&m_diplomacy_message[pos], _CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 4:
+                        }
+                        else if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 1)
                         {
 
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_strcpy(&m_diplomacy_message[pos], _city_size_names[_CITIES[_players[HUMAN_PLAYER_IDX].Dipl.DA_City[player_idx]].size]);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 5:
+                            stu_strcat(m_diplomacy_message, aWizardPact_0);
+                            
+                        }
+                        else
                         {
 
-                            m_diplomacy_message[pos] = 0;
+                            stu_strcat(m_diplomacy_message, aTreaty);
 
-                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.break_treaty[player_idx]].name);
+                        }
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                        } break;
+                    } break;
 
-                        case 6:
-                        {
+                    case 16:
+                    {
 
-                            // DNE or default or increment position?
-                            STU_DEBUG_BREAK();
+                        m_diplomacy_message[pos] = 0;
 
-                        } break;
+                        stu_itoa((1400 + (_turn / 12)), string, 10);
+                        assert(string[30] == 0);
 
-                        case 7:
-                        {
+                        stu_strcat(m_diplomacy_message, string);
 
-                            m_diplomacy_message[pos] = 0;
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                            stu_strcat(m_diplomacy_message, _players[_players[HUMAN_PLAYER_IDX].Dipl.niu_attack_bounty[player_idx]].name);
+                    } break;
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                    case 17:
+                    {
 
-                        } break;
+                        m_diplomacy_message[pos] = 0;
 
-                        case 8:
-                        {
+                        String_Copy_Far(string, spell_data_table[Spell_Index].name);
+                        assert(string[30] == 0);
 
-                            m_diplomacy_message[pos] = 0;
+                        stu_strcat(m_diplomacy_message, string);
 
-                            stu_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
-                            assert(string[30] == 0);
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                            stu_strcat(m_diplomacy_message, string);
+                    } break;
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                    case 18:
+                    {
 
-                        } break;
+                        m_diplomacy_message[pos] = 0;
 
-                        case 9:
-                        {
+                        stu_strcat(m_diplomacy_message, _players[Target_Player].name);
 
-                            m_diplomacy_message[pos] = 0;
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.niu_au_want_tech[player_idx]].name);
-                            assert(string[30] == 0);
+                    } break;
 
-                            stu_strcat(m_diplomacy_message, string);
+                    case 19:
+                    {
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                        m_diplomacy_message[pos] = 0;
 
-                        } break;
+                        stu_strcat(m_diplomacy_message, _players[m_break_treaty_player3].name);
 
-                        case 10:
-                        {
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                            m_diplomacy_message[pos] = 0;
+                    } break;
 
-                            stu_itoa(_players[HUMAN_PLAYER_IDX].Dipl.field_114[player_idx], string, 10);
-                            assert(string[30] == 0);
+                    case 20:
+                    {
 
-                            stu_strcat(m_diplomacy_message, string);
+                        m_diplomacy_message[pos] = 0;
 
-                            stu_strcat(m_diplomacy_message, aGold_2);
+                        stu_itoa(word_42E66, string, 10);
+                        assert(string[30] == 0);
 
-                            pos = (int16_t)strlen(m_diplomacy_message);
+                        stu_strcat(m_diplomacy_message, string);
 
-                        } break;
+                        pos = (int16_t)strlen(m_diplomacy_message);
 
-                        case 11:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 2)
-                            {
-
-                                stu_strcat(m_diplomacy_message, aAlliance_0);
-
-                            }
-                            else if(_players[HUMAN_PLAYER_IDX].Dipl.Broken_Treaty[player_idx] == 1)
-                            {
-
-                                stu_strcat(m_diplomacy_message, aWizardPact_0);
-                                
-                            }
-                            else
-                            {
-
-                                stu_strcat(m_diplomacy_message, aTreaty);
-
-                            }
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 12:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            _fstrcpy(string, spell_data_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
-                            assert(string[30] == 0);
-
-                            stu_strcat(m_diplomacy_message, string);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 13:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_strcat(m_diplomacy_message, *_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 14:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-    
-                            stu_strcat(m_diplomacy_message, An(*_unit_type_table[_players[HUMAN_PLAYER_IDX].Dipl.DA_Spell[player_idx]].name));
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 15:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 2)
-                            {
-
-                                stu_strcat(m_diplomacy_message, aAlliance_0);
-
-                            }
-                            else if(_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == 1)
-                            {
-
-                                stu_strcat(m_diplomacy_message, aWizardPact_0);
-                                
-                            }
-                            else
-                            {
-
-                                stu_strcat(m_diplomacy_message, aTreaty);
-
-                            }
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 16:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_itoa((1400 + (_turn / 12)), string, 10);
-                            assert(string[30] == 0);
-
-                            stu_strcat(m_diplomacy_message, string);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 17:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            _fstrcpy(string, spell_data_table[Spell_Index].name);
-                            assert(string[30] == 0);
-
-                            stu_strcat(m_diplomacy_message, string);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 18:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_strcat(m_diplomacy_message, _players[Target_Player].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 19:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_strcat(m_diplomacy_message, _players[m_break_treaty_player3].name);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        case 20:
-                        {
-
-                            m_diplomacy_message[pos] = 0;
-
-                            stu_itoa(word_42E66, string, 10);
-                            assert(string[30] == 0);
-
-                            stu_strcat(m_diplomacy_message, string);
-
-                            pos = (int16_t)strlen(m_diplomacy_message);
-
-                        } break;
-
-                        default:
-                        {
-
-                            STU_DEBUG_BREAK();
-
-                        } break;
-
-                    }
+                    } break;
 
                 }
 
@@ -5561,13 +5803,14 @@ void Get_Diplomacy_Statement(int16_t diplomsg_0_record_number, int16_t player_id
 
         m_diplomacy_message[pos] = 0;
 
+        /* the copy isn't pointless. stu_strcpy(G_DIPL_ComposedMessage, m_diplomacy_message) saves the finished message, with the names and numbers filled in. The cache path at DIPLOMAC.c:5318 later reads that copy back. The callers at DIPLOMAC.c:643, 1582, 3049, 4703 and 4776 set the index to -1 to force a fresh compose. */
+        stu_strcpy(G_DIPL_ComposedMessage, m_diplomacy_message);  /* this copy fills the cache that the != ST_UNDEFINED path reads */ 
+
+        Start_Diplomacy_Music(m_diplomacy_message_record_data.IDK_mood);
+
+        m_diplomacy_message_IDK_group = m_diplomacy_message_record_data.IDK_group;
+
     }
-
-    stu_strcpy(G_DIPL_ComposedMessage, m_diplomacy_message);  // pointless?
-
-    Start_Diplomacy_Music(m_diplomacy_message_record_data.IDK_mood);
-
-    m_diplomacy_message_IDK_group = m_diplomacy_message_record_data.IDK_group;
 
 }
 
@@ -5606,6 +5849,7 @@ void Determine_First_Contacts(void)
         )
         {
             _players[_current_player_idx].Dipl.contact_stage[itr] = pcs_Greeted;
+            /* OGBUG  contact is made mid-turn (Contacted[] set both ways in Update_Scouted_And_Contacted() / Contact_Other_Player()), but contact_stage stays pcs_Unmet until here: any Dipl_Status set in the turn of first contact (e.g. a treaty) is reset to DIPL_NoTreaty both ways */
             _players[_current_player_idx].Dipl.Dipl_Status[itr] = DIPL_NoTreaty;
             _players[itr].Dipl.Dipl_Status[_current_player_idx] = DIPL_NoTreaty;
         }
@@ -5666,6 +5910,7 @@ void NPC_To_Human_Diplomacy(void)
                     + Lowest_Interest
                     + TBL_AI_PRS_IDK_Mod[_players[m_diplomac_player_idx].Personality]
                 );
+                /* OGBUG  inverted: the offense / peace / proposal logic below runs only when bias + 2 x relation + lowest interest + personality mod is BELOW -100; for every friendlier AI the pending message is just cleared to do_None */
                 if((Total_Score + _players[HUMAN_PLAYER_IDX].Dipl.Visible_Rel[m_diplomac_player_idx]) >= -100)
                 {
                     _players[HUMAN_PLAYER_IDX].Dipl.Dipl_Action[player_idx] = do_None;
@@ -5691,7 +5936,7 @@ void NPC_To_Human_Diplomacy(void)
                     else
                     {
                         if(
-                            (_players[_current_player_idx].Dipl.Dipl_Status[player_idx] == DIPL_War)
+                            (_players[HUMAN_PLAYER_IDX].Dipl.Dipl_Status[player_idx] == DIPL_War)
                             &&
                             ((30 + Random(100)) < _players[HUMAN_PLAYER_IDX].Dipl.peace_modifier[player_idx])
                         )
@@ -5746,11 +5991,11 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
 {
     int32_t Defense_Strength;
     int32_t Invasion_Strength;
-    int Superiority_Modifier;
-    int LoopVar_2;
-    int LoopVar_1;
-    int Human_Wars;
-    int Comparison_Score;
+    int16_t Superiority_Modifier;
+    int16_t LoopVar_2;
+    int16_t LoopVar_1;
+    int16_t Human_Wars;
+    int16_t Comparison_Score;
 
     if(AI_Dipl_Unset_0) {
         for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
@@ -5763,21 +6008,26 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         return;
     }
 
-    if(Player_1 == _current_player_idx && _turn < 100) {
+    if(Player_1 == _current_player_idx && _turn < 100)
+    {
         return;
     }
 
-    if(_players[Player_1].Dipl.Dipl_Status[Player_2] >= DIPL_War || _players[Player_1].Dipl.Contacted[Player_2] != 1) {
+    if(_players[Player_1].Dipl.Dipl_Status[Player_2] >= DIPL_War || _players[Player_1].Dipl.Contacted[Player_2] != 1)
+    {
         return;
     }
 
-    if(_FORTRESSES[Player_1].active == 0) {
+    if(_FORTRESSES[Player_1].active == 0)
+    {
         return;
     }
 
-    if(_players[Player_2].Personality == PRS_Chaotic) {
+    if(_players[Player_2].Personality == PRS_Chaotic)
+    {
         if(Random(300) <= _difficulty) {
-            if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
+            if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1)
+            {
                 _players[Player_1].Dipl.Dipl_Action[Player_2] = 40;
                 _players[Player_1].Dipl.DA_Strength[Player_2] = 2000;
                 Declare_War(Player_2, Player_1);
@@ -5786,8 +6036,10 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
         }
     }
 
-    if(Random(20) == 1) {
-        if(_players[Player_2].Objective == OBJ_Militarist || _players[Player_2].Objective == OBJ_Expansionist) {
+    if(Random(20) == 1)
+    {
+        if(_players[Player_2].Objective == OBJ_Militarist || _players[Player_2].Objective == OBJ_Expansionist)
+        {
             if(_players[Player_2].Personality != PRS_Lawful) {
                 if(Player_1 != 0 || _players[Player_1].peace_duration[Player_2] < 1) {
                     Invasion_Strength = 0L;
@@ -5797,13 +6049,13 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                         if(Invasion_Strength <= 0L) {
                             Superiority_Modifier = -100;
                         } else {
-                            Superiority_Modifier = -(((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                            Superiority_Modifier = (-(int16_t)((Defense_Strength * 100) / Invasion_Strength) - 50);
                         }
                     } else {
                         if(Defense_Strength <= 0L) {
                             Superiority_Modifier = 100;
                         } else {
-                            Superiority_Modifier = ((Invasion_Strength * 100) / Defense_Strength) - 50;
+                            Superiority_Modifier = ((int16_t)((Invasion_Strength * 100) / Defense_Strength) - 50);
                         }
                     }
 
@@ -5812,8 +6064,9 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                                      + TBL_AI_PRS_IDK_Mod[_players[Player_2].Personality]
                                      + _players[Player_1].Dipl.Hidden_Rel[Player_2];
 
-                    if(Comparison_Score <= -150) {
-                        G_DIPL_SuperiorityWar(Player_2, Player_1);
+                    if(Comparison_Score <= -150)
+                    {
+                        G_DIPL_SuperiorityWar(Player_1, Player_2);
                     }
                 }
             }
@@ -5829,13 +6082,13 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                 if(Invasion_Strength <= 0L) {
                     Superiority_Modifier = -100;
                 } else {
-                    Superiority_Modifier = -(((Defense_Strength * 100) / Invasion_Strength)) - 50;
+                    Superiority_Modifier = (-(int16_t)((Defense_Strength * 100) / Invasion_Strength) - 50);
                 }
             } else {
                 if(Defense_Strength <= 0L) {
                     Superiority_Modifier = 100;
                 } else {
-                    Superiority_Modifier = ((Invasion_Strength * 100) / Defense_Strength) - 50;
+                    Superiority_Modifier = ((int16_t)((Invasion_Strength * 100) / Defense_Strength) - 50);
                 }
             }
 
@@ -5845,19 +6098,20 @@ void G_DIPL_NeedForWar(int16_t Player_1, int16_t Player_2)
                              + _players[Player_1].Dipl.Hidden_Rel[Player_2];
 
             if(Comparison_Score <= -150) {
-                G_DIPL_SuperiorityWar(Player_2, Player_1);
+                /* CLAUDE */  /* REBUG */  G_DIPL_SuperiorityWar(Player_1, Player_2);  /* asm: push player2_idx / push player1_idx - (Player_1, Player_2); was (Player_2, Player_1) */
             }
         }
     }
 
 loc_73CC0:
+    /* OGBUG  tests the HUMAN's war list (_players[0].Dipl_Status[k]), not Player_1's: Player_2 allied to some k the human is at war with moves (1 in 10) to war with Player_1, even when Player_1 is another AI */
     for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
         if(_players[0].Dipl.Dipl_Status[LoopVar_1] == DIPL_War) {
             if(_players[Player_2].Dipl.Dipl_Status[LoopVar_1] == DIPL_Alliance) {
                 if(_players[Player_1].peace_duration[Player_2] < 1) {
                     if(Random(10) == 1) {
                         if(_players[Player_2].Dipl.Dipl_Status[Player_1] != DIPL_Alliance) {
-                            G_DIPL_SuperiorityWar(Player_2, Player_1);
+                            /* CLAUDE */  /* REBUG */  G_DIPL_SuperiorityWar(Player_1, Player_2);  /* asm: push player2_idx / push player1_idx - (Player_1, Player_2); was (Player_2, Player_1) */
                         }
                     }
                 }
@@ -5866,6 +6120,7 @@ loc_73CC0:
     }
 
     if(_difficulty >= 2) {
+        /* OGBUG  counts the HUMAN's wars for every pair: while the human has fewer wars than the difficulty level, any Player_2 with relation < -30 to Player_1 and no peace timer rolls Random(15) <= -relation / 10 to move to war with Player_1, even when both are AIs */
         Human_Wars = 0;
         for(LoopVar_1 = 1; LoopVar_1 < _num_players; LoopVar_1++) {
             if(_players[0].Dipl.Dipl_Status[LoopVar_1] >= DIPL_War) {
@@ -5878,7 +6133,7 @@ loc_73CC0:
                 if(_players[Player_1].peace_duration[Player_2] < 1) {
                     Comparison_Score = -(_players[Player_1].Dipl.Visible_Rel[Player_2]) / 10;
                     if(Random(15) <= Comparison_Score) {
-                        G_DIPL_SuperiorityWar(Player_2, Player_1);
+                        /* CLAUDE */  /* REBUG */  G_DIPL_SuperiorityWar(Player_1, Player_2);  /* asm: push player2_idx / push player1_idx - (Player_1, Player_2); was (Player_2, Player_1) */
                     }
                 }
             }
@@ -5978,6 +6233,7 @@ void NPC_Required_Alliances(int16_t target_player_idx)
             _players[player1_idx].Dipl.break_treaty[player2_idx] = matched_player_idx;
         }
     }
+    /* OGBUG  the picked war target is stored in war_request (break_treaty), then the pending message is CLEARED instead of set to the 'join my war' audience (0x2F): nothing else queues 0x2F for the human, so that audience is unreachable */
     _players[player1_idx].Dipl.Dipl_Action[player2_idx] = 0;
 }
 
@@ -6110,6 +6366,7 @@ void Decrease_Peace_Duration(void)
             {
                 continue;
             }
+            /* OGBUG  AI_Next_Turn() also decrements the AI's own row (_players[player_idx].peace_duration[], when != 0), so an AI's Random(6) + 7 turn no-attack truce runs at double speed; only the human's row ticks once a turn */
             _players[itr_players1].peace_duration[itr_players2] -= 1;
             if(_players[itr_players1].peace_duration[itr_players2] < 0)
             {
@@ -6263,6 +6520,9 @@ IDK_message= word ptr -2
             {
                 continue;
             }
+            // if(_players[player2_idx].Dipl.Dipl_Status[itr_players] >= DIPL_War &&
+            //     _players[_current_player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
+            /* CLAUDE */  /* REBUG */  /* asm: mov ax, [_human_player_idx] */
             if(_players[player2_idx].Dipl.Dipl_Status[itr_players] >= DIPL_War &&
                 _players[_current_player_idx].Dipl.Contacted[itr_players] != ST_TRUE)
             {
@@ -6279,11 +6539,15 @@ IDK_message= word ptr -2
             if(_players[player1_idx].Dipl.niu_attack_bounty[player2_idx] == HUMAN_PLAYER_IDX)
             {
                 Get_Exchange_Spell_List(player2_idx, 0, 0);
-                *( (int *)&divisor + 1 ) = 0;
+                // *( (int *)&divisor + 1 ) = 0;
+                /* CLAUDE */  /* REBUG */  /* asm: mov [word ptr bp+divisor+2], 0 - the high WORD of the dword; (int *) + 1 wrote 4 bytes past divisor */
+                *( (int16_t *)&divisor + 1 ) = 0;
                 if(m_exchange_spell_count == 0)
                 {
                     int temp = (Random(3) + 1) * _turn;
-                    *( (int *)&divisor + 1 ) = (temp / 50) * 50;
+                    // *( (int *)&divisor + 1 ) = (temp / 50) * 50;
+                    /* CLAUDE */  /* REBUG */
+                    *( (int16_t *)&divisor + 1 ) = (int16_t)((temp / 50) * 50);
                 }
             }
         }
@@ -6332,7 +6596,9 @@ IDK_message= word ptr -2
                 divisor = 50;
             }
 
-            Get_Exchange_Spell_List(player2_idx, 0, 0);
+            // Get_Exchange_Spell_List(player2_idx, 0, 0);
+            /* CLAUDE */  /* REBUG */  /* asm loc_7474E: push 0 / push player2_idx / push 0 - (0, player2_idx, 0) */
+            Get_Exchange_Spell_List(0, player2_idx, 0);
             if(m_exchange_spell_count > 0)
             {
                 byte_42E43[0] = m_exchange_spell_list[0];
@@ -6387,7 +6653,9 @@ IDK_message= word ptr -2
                 {
                     int field_F0_val = _players[0].Dipl.niu_au_tech_trade_num[player2_idx];
                     int offset_A8 = player2_idx * 6 + field_F0_val;
-                    ((int *)_players[0].Dipl.field_A8)[offset_A8] = m_exchange_spell_list[itr_players];
+                    // ((int *)_players[0].Dipl.field_A8)[offset_A8] = m_exchange_spell_list[itr_players];
+                    /* CLAUDE */  /* REBUG */  /* asm: mov [word ptr _players.Dipl.field_A8+bx], ax with bx = player2_idx * 12 + num * 2 - a word store; (int *) wrote 4-byte ints at twice the offset */
+                    _players[0].Dipl.field_A8[offset_A8] = m_exchange_spell_list[itr_players];
                     _players[0].Dipl.niu_au_tech_trade_num[player2_idx]++;
                 }
             }
@@ -6395,7 +6663,9 @@ IDK_message= word ptr -2
             if(_players[0].Dipl.niu_au_tech_trade_num[player2_idx] > 0)
             {
                 _players[0].Dipl.Dipl_Action[player2_idx] = do_IDK_exchange;
-                _players[0].Dipl.niu_au_want_tech[player2_idx] = byte_42E43[0];
+                // _players[0].Dipl.niu_au_want_tech[player2_idx] = byte_42E43[0];
+                /* CLAUDE */  /* REBUG */  /* asm: mov [word ptr _players.Dipl.niu_au_want_tech+bx], ax with bx = player2_idx shl 1 */
+                SET_2B_OFS(_players[0].Dipl.niu_au_want_tech, (player2_idx * 2), (uint16_t)byte_42E43[0]);
             }
 
             _players[player2_idx].Dipl.exchange_modifier[0] = 0;
@@ -6413,19 +6683,31 @@ IDK_message= word ptr -2
                 {
                     if(Random(8) == 1)  /* 12.5% */
                     {
-                        if(Random(4) <= 1)  /* 1:4 */
+                        // if(Random(4) <= 1)  /* 1:4 */
+                        // {
+                        //     Get_Exchange_Spell_List(player2_idx, 0, 0);
+                        //     if(m_exchange_spell_count > 0)
+                        //     {
+                        //         _players[0].Dipl.offer_spell[player2_idx] = m_exchange_spell_list[0];
+                        //     }
+                        // }
+                        // else  /* 3:4 */
+                        /* CLAUDE */  /* REBUG */  /* asm: cmp ax, 1 / jle loc_7495A - the gold block falls through first, the spell block is the jump target */
+                        if(Random(4) > 1)  /* 3:4 */
+                        {
+                            int rnd_div = Random(3) + 1;
+                            /* OGBUG  the incentive gold is sized by the AI's population stat (empire_mini_pops), not its treasury: (pop / (Random(3) + 1) + _turn) / 25 x 25 - about the turn rounded down to 25, and 0 before turn ~25; Npc_Diplomacy_Screen pays it to the human and never takes it from the AI */
+                            int temp_gold = (_players[player2_idx].empire_mini_pops / rnd_div) + _turn;
+                            _players[0].Dipl.offer_gold[player2_idx] = (temp_gold / 25) * 25;
+                        }
+                        /* CLAUDE */
+                        else  /* 1:4 */
                         {
                             Get_Exchange_Spell_List(player2_idx, 0, 0);
                             if(m_exchange_spell_count > 0)
                             {
                                 _players[0].Dipl.offer_spell[player2_idx] = m_exchange_spell_list[0];
                             }
-                        }
-                        else  /* 3:4 */
-                        {
-                            int rnd_div = Random(3) + 1;
-                            int temp_gold = (_players[player2_idx].empire_mini_pops / rnd_div) + _turn;
-                            _players[0].Dipl.offer_gold[player2_idx] = (temp_gold / 25) * 25;
                         }
                     }
                 }
@@ -6484,11 +6766,13 @@ void DIPL_HumanWarOrPeace(int16_t player_idx)
             );
             if(modded_score <= -100)
             {
-                if(_players[0].Dipl.field_126[player_idx] <= 0)
-                {
-                    _players[0].Dipl.field_126[player_idx] = 1;
-                }
-                else
+                // if(_players[0].Dipl.field_126[player_idx] <= 0)
+                // {
+                //     _players[0].Dipl.field_126[player_idx] = 1;
+                // }
+                // else
+                /* CLAUDE */  /* REBUG */  /* asm: cmp field_126, 0 / jle loc_74A99 - the > 0 block falls through first, = 1 is the jump target */
+                if(_players[0].Dipl.field_126[player_idx] > 0)
                 {
                     _players[0].Dipl.field_126[player_idx]++;
                     if(
@@ -6510,6 +6794,11 @@ void DIPL_HumanWarOrPeace(int16_t player_idx)
                         Break_Treaties(player_idx, 0);
                     }
                 }
+                /* CLAUDE */
+                else
+                {
+                    _players[0].Dipl.field_126[player_idx] = 1;
+                }
             }
         }
     }
@@ -6526,6 +6815,7 @@ void DIPL_HumanWarOrPeace(int16_t player_idx)
                     if(Random(4) > 1)  /* 3:4 */
                     {
                         divisor = Random(3) + 1;
+                        /* OGBUG  the peace incentive gold is sized by the AI's population stat (empire_mini_pops), not its treasury: (pop / (Random(3) + 1) + _turn) / 25 x 25; Npc_Diplomacy_Screen pays it to the human and never takes it from the AI */
                         _players[0].Dipl.offer_gold[player_idx] = (((_players[player_idx].empire_mini_pops / divisor) + _turn) / 25) * 25;
                     }
                     else  /* 1:4 */
@@ -6628,7 +6918,158 @@ return ST_FALSE;
 
 // WZD o88p05
 // sub_74E38()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, sub_34C24, has no callers)
+how far player1's army strength (astrologer.army_strength) is above or below player2's, in percent, clamped to -300 .. 300,
+returned as a random value of the same sign: Random(percent), -Random(-percent), or 0
+*/
+int16_t Army_Strength_Random_Difference__NIU(int16_t player1_idx, int16_t player2_idx)
+{
+    int32_t percent_difference = 0;
+    int32_t player2_value = 0;
+    int32_t player1_value = 0;
+    int16_t random_range = 0;  // _SI_
+
+    player1_value = _players[player1_idx].astrologer.army_strength;
+
+    player2_value = _players[player2_idx].astrologer.army_strength;
+
+    /* NOTE  army_strength is an int16_t, so this cap of 3,250,000 can never be reached */
+    if(player1_value > 3250000)
+    {
+
+        player1_value = 3250000;
+
+    }
+
+    if(player1_value == 0)
+    {
+
+        player1_value = 1;
+
+    }
+
+    if(player2_value > 3250000)
+    {
+
+        player2_value = 3250000;
+
+    }
+
+    if(player2_value == 0)
+    {
+
+        player2_value = 1;
+
+    }
+
+    percent_difference = (((player1_value - player2_value) * 100) / player2_value);
+
+    if(percent_difference > 300)
+    {
+
+        percent_difference = 300;
+
+    }
+
+    if(percent_difference < -300)
+    {
+
+        percent_difference = -300;
+
+    }
+
+    random_range = (int16_t)percent_difference;
+
+    if(random_range == 0)
+    {
+
+        return 0;
+
+    }
+    else if(random_range < 0)
+    {
+
+        return -Random(-random_range);
+
+    }
+    else
+    {
+
+        return Random(random_range);
+
+    }
+
+}
 
 
 // WZD o88p06
 // sub_74F4A()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, sub_34C29, has no callers)
+the same as Army_Strength_Random_Difference__NIU(), on empire_mini_pops - except that only player2's value is capped and kept from 0
+*/
+int16_t Population_Random_Difference__NIU(int16_t player1_idx, int16_t player2_idx)
+{
+    int32_t percent_difference = 0;
+    int32_t player2_value = 0;
+    int32_t player1_value = 0;
+    int16_t random_range = 0;  // _SI_
+
+    player1_value = _players[player1_idx].empire_mini_pops;  /* asm: cwd - read as signed */
+
+    player2_value = _players[player2_idx].empire_mini_pops;  /* asm: cwd - read as signed */
+
+    /* NOTE  empire_mini_pops is a 16-bit word, so this cap of 3,250,000 can never be reached */
+    if(player2_value > 3250000)
+    {
+
+        player2_value = 3250000;
+
+    }
+
+    if(player2_value == 0)
+    {
+
+        player2_value = 1;
+
+    }
+
+    percent_difference = (((player1_value - player2_value) * 100) / player2_value);
+
+    if(percent_difference > 300)
+    {
+
+        percent_difference = 300;
+
+    }
+
+    if(percent_difference < -300)
+    {
+
+        percent_difference = -300;
+
+    }
+
+    random_range = (int16_t)percent_difference;
+
+    if(random_range == 0)
+    {
+
+        return 0;
+
+    }
+    else if(random_range < 0)
+    {
+
+        return -Random(-random_range);
+
+    }
+    else
+    {
+
+        return Random(random_range);
+
+    }
+
+}

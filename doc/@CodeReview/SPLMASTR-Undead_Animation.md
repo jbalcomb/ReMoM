@@ -77,7 +77,7 @@ for (si = 0; si < _combat_total_unit_count; si++)
             for (di = 0; di < 3; di++)
             {
                 Item_Index = _players[Player_Index].Heroes[ _UNITS[battle_units[si].unit_idx].Hero_Slot ].Items[di];
-                if (Item_Index > -1 && (_ITEMS[Item_Index].Powers & IP_Vampiric))
+                if (Item_Index > -1 && (_ITEMS[Item_Index].powers & IP_Vampiric))
                 {
                     Highest_Value = 10;
                     Result        = 10;
@@ -106,7 +106,7 @@ Notes on the mapping:
 | `UA_CREATEUNDEAD` = 0x0080 | [MOM_DEF.h:708](../../MoX/src/MOM_DEF.h#L708) |
 | literal `6` (asm 96) | `MOO_MONSTER_PLAYER_IDX` = 6 ([MOX_DEF.h:613](../../MoX/src/MOX_DEF.h#L613)) |
 | `IP_Vampiric` | `IP_VAMPIRIC` (also used by [ItemView.c:329](../../MoM/src/ItemView.c#L329), [UnitView.c:1184](../../MoM/src/UnitView.c#L1184)) |
-| `s_ITEM.enchantments` | `s_ITEM.Powers` (`uint32_t`, `0x2E`) — the `IP_` bit family |
+| `s_ITEM.enchantments` | `s_ITEM.powers` (`uint32_t`, `0x2E`) — the `IP_` bit family |
 
 ## B1 — cross-player hero-slot index (preserved OG behaviour — do not "fix")
 
@@ -129,7 +129,7 @@ All three animation bodies map to the asm call-for-call:
 
 And the creator query:
 
-- **`Find_Undead_Creator_Type`** ([Combat.c:22225](../../MoM/src/Combat.c#L22225)) — matches the asm's scoring and ordering: `highest_value = -1` / `unit_type = 10` seed, the `controller_idx == player_idx` + (`Att_LifeSteal` | `UA_CREATEUNDEAD`) qualifier, `upkeep + 100` scoring with the `> highest_value` then `> ut_Chosen` nesting (asm 57-71, both tests in that order), the `continue` that skips the fallback for a qualifying unit (asm `loc_A68BC` → `loc_A696D`), the `highest_value < 10 && player_idx < MOO_MONSTER_PLAYER_IDX` latch (asm 91/96), the `Hero_Slot > -1` test, the 3-slot item loop, and `_ITEMS[item_idx].Powers & IP_VAMPIRIC` setting both `highest_value` and `unit_type` to 10. Return value is `unit_type` (asm 171).
+- **`Find_Undead_Creator_Type`** ([Combat.c:22225](../../MoM/src/Combat.c#L22225)) — matches the asm's scoring and ordering: `highest_value = -1` / `unit_type = 10` seed, the `controller_idx == player_idx` + (`Att_LifeSteal` | `UA_CREATEUNDEAD`) qualifier, `upkeep + 100` scoring with the `> highest_value` then `> ut_Chosen` nesting (asm 57-71, both tests in that order), the `continue` that skips the fallback for a qualifying unit (asm `loc_A68BC` → `loc_A696D`), the `highest_value < 10 && player_idx < MOO_MONSTER_PLAYER_IDX` latch (asm 91/96), the `Hero_Slot > -1` test, the 3-slot item loop, and `_ITEMS[item_idx].powers & IP_VAMPIRIC` setting both `highest_value` and `unit_type` to 10. Return value is `unit_type` (asm 171).
 
 ## Cross-reference — the `sdt_201` idiom
 

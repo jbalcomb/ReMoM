@@ -1,0 +1,60 @@
+module_num=293
+module=C:\GCL520\C_ALL\MODEM.C
+source=0293-modem.c.md
+range[0]=1:0x00141D40 linear=0x00151D40 size=2672
+range[1]=2:0x00004214 linear=0x00174214 size=96
+range[2]=2:0x000117C0 linear=0x001817C0 size=16
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                          SYMBOL                         CHUNK
+m293f001  1    -      0x00151D40  1:0x00141D40  code         HMReset                       HMReset_                       regions/07-object-1/001D6E54-001D7653.txt
+m293f002  2    -      0x00151D54  1:0x00141D54  static,code  _icat                         _icat_                         regions/07-object-1/001D6E54-001D7653.txt
+m293f003  3    -      0x00151DA8  1:0x00141DA8  code         HMSetRegister                 HMSetRegister_                 regions/07-object-1/001D6E54-001D7653.txt
+m293f004  4    -      0x00151EAC  1:0x00141EAC  code         HMSetAutoAnswerRingCount      HMSetAutoAnswerRingCount_      regions/07-object-1/001D6E54-001D7653.txt
+m293f005  5    -      0x00151EB8  1:0x00141EB8  code         HMGetIncomingRingCount        HMGetIncomingRingCount_        regions/07-object-1/001D6E54-001D7653.txt
+m293f006  6    -      0x00151EC8  1:0x00141EC8  code         HMSetEscapeCode               HMSetEscapeCode_               regions/07-object-1/001D6E54-001D7653.txt
+m293f007  7    -      0x00151EDC  1:0x00141EDC  code         HMSetEndOfLineCharacter       HMSetEndOfLineCharacter_       regions/07-object-1/001D6E54-001D7653.txt
+m293f008  8    -      0x00151EF0  1:0x00141EF0  code         HMSetLineFeedCharacter        HMSetLineFeedCharacter_        regions/07-object-1/001D6E54-001D7653.txt
+m293f009  9    -      0x00151F04  1:0x00141F04  code         HMSetBackspaceCharacter       HMSetBackspaceCharacter_       regions/07-object-1/001D6E54-001D7653.txt
+m293f010  10   -      0x00151F18  1:0x00141F18  code         HMSetWaitForDialToneTime      HMSetWaitForDialToneTime_      regions/07-object-1/001D6E54-001D7653.txt
+m293f011  11   -      0x00151F28  1:0x00141F28  code         HMSetWaitTimeForCarrier       HMSetWaitTimeForCarrier_       regions/07-object-1/001D6E54-001D7653.txt
+m293f012  12   -      0x00151F38  1:0x00141F38  code         HMSetPauseTimeForComma        HMSetPauseTimeForComma_        regions/07-object-1/001D6E54-001D7653.txt
+m293f013  13   -      0x00151F48  1:0x00141F48  code         HMSetCDResponseTime           HMSetCDResponseTime_           regions/07-object-1/001D6E54-001D7653.txt
+m293f014  14   -      0x00151F58  1:0x00141F58  code         HMSetCarrierDisconnectTime    HMSetCarrierDisconnectTime_    regions/07-object-1/001D6E54-001D7653.txt
+m293f015  15   -      0x00151F68  1:0x00141F68  code         HMSetTouchToneDuration        HMSetTouchToneDuration_        regions/07-object-1/001D6E54-001D7653.txt
+m293f016  16   -      0x00151F78  1:0x00141F78  code         HMSetEscapeCodeGuardTime      HMSetEscapeCodeGuardTime_      regions/07-object-1/001D6E54-001D7653.txt
+m293f017  17   -      0x00151F88  1:0x00141F88  code         HMGetUARTStatus               HMGetUARTStatus_               regions/07-object-1/001D6E54-001D7653.txt
+m293f018  18   -      0x00151F98  1:0x00141F98  code         HMGetOptionRegister           HMGetOptionRegister_           regions/07-object-1/001D6E54-001D7653.txt
+m293f019  19   -      0x00151FA8  1:0x00141FA8  code         HMGetFlagRegister             HMGetFlagRegister_             regions/07-object-1/001D6E54-001D7653.txt
+m293f020  20   -      0x00151FB8  1:0x00141FB8  code         HMGoOnline                    HMGoOnline_                    regions/07-object-1/001D6E54-001D7653.txt
+m293f021  21   -      0x00151FD4  1:0x00141FD4  code         HMSetDialingMethod            HMSetDialingMethod_            regions/07-object-1/001D6E54-001D7653.txt
+m293f022  22   -      0x00151FF8  1:0x00141FF8  code         HMDial                        HMDial_                        regions/07-object-1/001D6E54-001D7653.txt
+m293f023  23   -      0x00152088  1:0x00142088  code         HMRepeatLastCommand           HMRepeatLastCommand_           regions/07-object-1/001D7654-001D7E53.txt
+m293f024  24   -      0x001520A4  1:0x001420A4  code         HMDialInAnswerMode            HMDialInAnswerMode_            regions/07-object-1/001D7654-001D7E53.txt
+m293f025  25   -      0x0015215C  1:0x0014215C  code         HMDialAndReturnToCommandMode  HMDialAndReturnToCommandMode_  regions/07-object-1/001D7654-001D7E53.txt
+m293f026  26   -      0x00152214  1:0x00142214  code         HMAnswer                      HMAnswer_                      regions/07-object-1/001D7654-001D7E53.txt
+m293f027  27   -      0x00152230  1:0x00142230  static,code  _hm3                          _hm3_                          regions/07-object-1/001D7654-001D7E53.txt
+m293f028  28   -      0x001522D8  1:0x001422D8  code         HMSetCarrier                  HMSetCarrier_                  regions/07-object-1/001D7654-001D7E53.txt
+m293f029  29   -      0x001522F8  1:0x001422F8  code         HMSetEchoMode                 HMSetEchoMode_                 regions/07-object-1/001D7654-001D7E53.txt
+m293f030  30   -      0x00152318  1:0x00142318  code         HMSetFullDuplexMode           HMSetFullDuplexMode_           regions/07-object-1/001D7654-001D7E53.txt
+m293f031  31   -      0x00152338  1:0x00142338  code         HMSetHookSwitch               HMSetHookSwitch_               regions/07-object-1/001D7654-001D7E53.txt
+m293f032  32   -      0x00152358  1:0x00142358  code         HMSetSpeaker                  HMSetSpeaker_                  regions/07-object-1/001D7654-001D7E53.txt
+m293f033  33   -      0x00152378  1:0x00142378  code         HMReturnNoResultCodes         HMReturnNoResultCodes_         regions/07-object-1/001D7654-001D7E53.txt
+m293f034  34   -      0x00152398  1:0x00142398  code         HMSelectExtendedResultCodes   HMSelectExtendedResultCodes_   regions/07-object-1/001D7654-001D7E53.txt
+m293f035  35   -      0x001523B8  1:0x001423B8  code         HMSetVerboseMode              HMSetVerboseMode_              regions/07-object-1/001D7654-001D7E53.txt
+m293f036  36   -      0x001523D8  1:0x001423D8  code         HMWaitForOK                   HMWaitForOK_                   regions/07-object-1/001D7654-001D7E53.txt
+m293f037  37   -      0x001523E4  1:0x001423E4  code         HMFixedDelay                  HMFixedDelay_                  regions/07-object-1/001D7654-001D7E53.txt
+m293f038  38   -      0x001523EC  1:0x001423EC  code         HMSetUpEchoRoutine            HMSetUpEchoRoutine_            regions/07-object-1/001D7654-001D7E53.txt
+m293f039  39   -      0x001523F4  1:0x001423F4  code         HMSetUpAbortKey               HMSetUpAbortKey_               regions/07-object-1/001D7654-001D7E53.txt
+m293f040  40   -      0x001523FC  1:0x001423FC  code         HMSendString                  HMSendString_                  regions/07-object-1/001D7654-001D7E53.txt
+m293f041  41   -      0x001524D0  1:0x001424D0  code         HMSendStringNoWait            HMSendStringNoWait_            regions/07-object-1/001D7654-001D7E53.txt
+m293f042  42   -      0x001524FC  1:0x001424FC  code         HMGetRegister                 HMGetRegister_                 regions/07-object-1/001D7654-001D7E53.txt
+m293f043  43   -      0x00152690  1:0x00142690  code         HMInputLine                   HMInputLine_                   regions/07-object-1/001D7654-001D7E53.txt
+m293f044  44   -      0x00152754  1:0x00142754  code         HMSetBackspaceCharacterVB     HMSetBackspaceCharacterVB_     regions/07-object-1/001D7654-001D7E53.txt
+m293f045  45   -      0x00152768  1:0x00142768  code         HMSetEndOfLineCharacterVB     HMSetEndOfLineCharacterVB_     regions/07-object-1/001D7654-001D7E53.txt
+m293f046  46   -      0x0015277C  1:0x0014277C  code         HMSetEscapeCodeVB             HMSetEscapeCodeVB_             regions/07-object-1/001D7654-001D7E53.txt
+m293f047  47   -      0x00152790  1:0x00142790  code         HMSetLineFeedCharacterVB      HMSetLineFeedCharacterVB_      regions/07-object-1/001D7654-001D7E53.txt
+-         -    -      0x001817C0  2:0x000117C0  static,data  _hm_delay_value               _hm_delay_value                regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817C4  2:0x000117C4  static,data  _hm_match_string              _hm_match_string               regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817C8  2:0x000117C8  static,data  _hm_character_printer         _hm_character_printer          regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817CC  2:0x000117CC  data         __hm_abort_key                __hm_abort_key                 regions/08-object-2/001FF654-001FFE53.txt

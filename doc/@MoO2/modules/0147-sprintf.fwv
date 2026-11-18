@@ -1,0 +1,9 @@
+module_num=147
+module=sprintf
+source=0147-sprintf.md
+range[0]=1:0x001165DF linear=0x001265DF size=67
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME      SYMBOL     CHUNK
+m147f001  1    -      0x001265DF  1:0x001165DF  static,code  mem_putc  mem_putc_  regions/07-object-1/001AB654-001ABE53.txt
+m147f002  2    -      0x001265F2  1:0x001165F2  code         sprintf   sprintf_   regions/07-object-1/001AB654-001ABE53.txt

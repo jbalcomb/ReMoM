@@ -3104,7 +3104,7 @@ Dead code: 585e:14c9 hyphenating print (thunk never called), 585e:0dbe whole-row
             new races. The real fortresses do not move, so the rule only re-rolls races until no High Elf AI is
             'rejected'. Stray records 6..11 land in the slack of p_fortresses' 3-paragraph block (24 of 48 bytes used);
             a 7th retry in one world would reach the next heap block's header (rough odds 0.28^7). SAVE CENSUS: of the
-            6 distinct game worlds one has a High Elf AI capital (work/hemom SAVE9.GAM, wizard 4) - on grassland 0xa2.
+            6 distinct game worlds one has a High Elf AI capital (work/demom SAVE9.GAM, wizard 4) - on grassland 0xa2.
             [HIGH ELF CAPITAL]
             In game (2026-10-24, tools/harness/regress.py 359): High Elf AI capitals (world, player, terrain) [('004',
             2, 180), ('005', 1, 387), ('009', 3, 260), ('012', 2, 184), ('012', 3, 178), ('015', 2, 180), ('024', 1,

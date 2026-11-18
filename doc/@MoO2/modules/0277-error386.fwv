@@ -1,0 +1,8 @@
+module_num=277
+module=error386
+source=0277-error386.md
+range[0]=1:0x0014000C linear=0x0015000C size=19
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m277f001  1    -      0x0015000C  1:0x0014000C  code  __doserror  __doserror_  regions/07-object-1/001D5654-001D5E53.txt

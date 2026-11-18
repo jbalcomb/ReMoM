@@ -421,6 +421,11 @@ void EMM_Startup(void)
     }
 }
 
+
+// WZD s13p15
+// EMM_CheckHandleOpen()
+
+
 // WZD s13p16
 void EMM_ReleaseAll__STUB(void)
 {
@@ -513,16 +518,16 @@ SAMB_ptr EMM_GetHandle(int16_t page_count, const char *handle_name, int16_t rese
 // WZD s13p25
 SAMB_ptr EMMDATAH_Map(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(_EMMDATAH_seg == NULL) {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu (NULL early)", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT_NOTE("(NULL early)");
         return NULL;
     }
 
     EMM_MapFourPages(0, _EMMDATAH_seg);
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     
     return EMS_PFBA;
 }
@@ -597,9 +602,9 @@ void UU_EMM_Data_Undo(void)
 // WZD s13p31
 void EMM_Set_Minimum(int amount)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     EMM_MinKB = amount;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // WZD s13p32

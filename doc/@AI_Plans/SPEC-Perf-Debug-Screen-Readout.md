@@ -127,6 +127,6 @@ Note `Perf_Live_Get_Stats()` **sorts a 256-entry ring on every call** — cheap 
 1. Add a cached-string accessor to the perf layer (e.g. `Perf_Live_Get_Display_Lines(const char **l1, **l2, **l3)`), populated on the existing 1 Hz rollover in `PFL_Perf.c`.
 2. In `Main_Screen_Draw_Debug_Information()`, after the existing rows, `Print` the three lines at `x = 2`, `y = 22 + 8*pos`, continuing `pos`.
 3. Verify legibility over dark terrain — the overlay already relies on `Set_Font_Style_Shadow_Down` + `Set_Outline_Color(0)`; reuse, do not restyle.
-4. Manual verification only. Headless never presents, so no automated test can exercise this; it needs a windowed run with `Z` pressed on the Main Screen.
+4. Manual verification only. Windowless never presents, so no automated test can exercise this; it needs a windowed run with `Z` pressed on the Main Screen.
 
 Estimated: small — one accessor plus one block of `Print` calls. The research above was the actual cost, not the code.

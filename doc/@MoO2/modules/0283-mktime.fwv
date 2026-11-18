@@ -1,0 +1,8 @@
+module_num=283
+module=mktime
+source=0283-mktime.md
+range[0]=1:0x00140AEA linear=0x00150AEA size=340
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m283f001  1    -      0x00150AEA  1:0x00140AEA  code  mktime  mktime_  regions/07-object-1/001D5E54-001D6653.txt

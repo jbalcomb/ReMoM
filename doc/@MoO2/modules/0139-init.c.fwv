@@ -1,0 +1,108 @@
+module_num=139
+module=F:\WLIBS\init\init.c
+source=0139-init.c.md
+range[0]=1:0x00103D47 linear=0x00113D47 size=286
+range[1]=2:0x0000C460 linear=0x0017C460 size=4
+range[2]=2:0x000386F8 linear=0x001A86F8 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                 SYMBOL               CHUNK
+m139f001  1    -      0x00113D47  1:0x00103D47  code  Init_Drivers         Init_Drivers_        regions/07-object-1/00198E54-00199653.txt
+m139f002  2    -      0x00113DBD  1:0x00103DBD  code  Reset_System         Reset_System_        regions/07-object-1/00198E54-00199653.txt
+m139f003  3    -      0x00113E08  1:0x00103E08  code  Create_IO_Buffer     Create_IO_Buffer_    regions/07-object-1/00198E54-00199653.txt
+-         -    -      0x001A86F8  2:0x000386F8  data  _io_buffer_seg       _io_buffer_seg       -
+-         -    -      0x001A86FC  2:0x000386FC  data  _io_buffer           _io_buffer           -
+-         -    -      0x001A8700  2:0x00038700  data  _io_buffer_selector  _io_buffer_selector  -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                TYPE
+0x001A86F8  2:0x000386F8  io_buffer_seg       unsigned int
+0x001A86FC  2:0x000386FC  io_buffer           char *
+0x001A8700  2:0x00038700  io_buffer_selector  short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME              TYPE                CHUNK
+m139f001  0x00113D47  1:0x00103D47  118   23        8         0x14     -    EAX,EDX     Init_Drivers      void (int, char *)  regions/07-object-1/00198E54-00199653.txt
+m139f002  0x00113DBD  1:0x00103DBD  75    24        7         0x18     -    -           Reset_System      void (void)         regions/07-object-1/00198E54-00199653.txt
+m139f003  0x00113E08  1:0x00103E08  93    24        9         0x18     -    -           Create_IO_Buffer  void (void)         regions/07-object-1/00198E54-00199653.txt
+
+[Locals]
+KEY       ROUTINE           BLOCK  LOCAL                         LOCATION              TYPE
+m139f001  Init_Drivers      -      video_mode                    [EBP-0x8]             int
+m139f001  Init_Drivers      -      font_file                     [EBP-0x4]             char *
+m139f002  Reset_System      -      re_entrant_reset_system_flag  address 2:0x0000C460  int
+m139f003  Create_IO_Buffer  -      seg_start                     [EBP-0x4]             int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   typedef    wchar_t         name for unsigned short (#7)
+31   typedef    wchar_t         name for unsigned short (#7)
+32   scalar     void            void 1 bytes
+33   procedure  -               near386; returns void ()
+34   pointer    onexit_t        near386; of void (void) (#33)
+35   typedef    onexit_t        name for void (void) * (#34)
+36   procedure  -               near386; returns void (int, char *)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m139f001  16    0x00113D47  1:0x00103D47  0x0019939B
+m139f001  18    0x00113D64  1:0x00103D64  0x001993B8
+m139f001  20    0x00113D69  1:0x00103D69  0x001993BD
+m139f001  21    0x00113D71  1:0x00103D71  0x001993C5
+m139f001  22    0x00113D76  1:0x00103D76  0x001993CA
+m139f001  23    0x00113D7B  1:0x00103D7B  0x001993CF
+m139f001  25    0x00113D80  1:0x00103D80  0x001993D4
+m139f001  27    0x00113D85  1:0x00103D85  0x001993D9
+m139f001  28    0x00113D8D  1:0x00103D8D  0x001993E1
+m139f001  29    0x00113D92  1:0x00103D92  0x001993E6
+m139f001  30    0x00113D94  1:0x00103D94  0x001993E8
+m139f001  32    0x00113D9C  1:0x00103D9C  0x001993F0
+m139f001  34    0x00113DA1  1:0x00103DA1  0x001993F5
+m139f001  35    0x00113DAB  1:0x00103DAB  0x001993FF
+m139f001  36    0x00113DB0  1:0x00103DB0  0x00199404
+m139f001  38    0x00113DB5  1:0x00103DB5  0x00199409
+m139f002  44    0x00113DBD  1:0x00103DBD  0x00199411
+m139f002  48    0x00113DD5  1:0x00103DD5  0x00199429
+m139f002  51    0x00113DDE  1:0x00103DDE  0x00199432
+m139f002  52    0x00113DE3  1:0x00103DE3  0x00199437
+m139f002  53    0x00113DE8  1:0x00103DE8  0x0019943C
+m139f002  54    0x00113DED  1:0x00103DED  0x00199441
+m139f002  55    0x00113DF2  1:0x00103DF2  0x00199446
+m139f002  57    0x00113DF7  1:0x00103DF7  0x0019944B
+m139f002  58    0x00113E01  1:0x00103E01  0x00199455
+m139f003  61    0x00113E08  1:0x00103E08  0x0019945C
+m139f003  65    0x00113E20  1:0x00103E20  0x00199474
+m139f003  66    0x00113E32  1:0x00103E32  0x00199486
+m139f003  68    0x00113E3F  1:0x00103E3F  0x00199493
+m139f003  69    0x00113E4B  1:0x00103E4B  0x0019949F
+m139f003  70    0x00113E5C  1:0x00103E5C  0x001994B0

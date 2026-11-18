@@ -217,9 +217,7 @@ void Chancellor_Screen__WIP(int16_t flag)
     int16_t itr_msgs = 0;  // _SI_
     int16_t scroll_text_line_count = 0;  // _DI_
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Chancellor_Screen__WIP()", __FILE__, __LINE__);
-#endif
 
     scroll_text_line_count = 0;
 
@@ -512,9 +510,9 @@ void Chancellor_Screen__WIP(int16_t flag)
     if(m_report_scroll_text_height > 127)
     {
 
-        hotkey_U = Add_Hidden_Field(28, 9, 288, 25, str_hotkey_U__ovr126[0], ST_UNDEFINED);
+        hotkey_U = Add_Hidden_Field(28, 9, 288, 25, str_hotkey_U__ovr126, ST_UNDEFINED);
 
-        hotkey_D = Add_Hidden_Field(28, 170, 288, 190, str_hotkey_D__ovr126[0], ST_UNDEFINED);
+        hotkey_D = Add_Hidden_Field(28, 170, 288, 190, str_hotkey_D__ovr126, ST_UNDEFINED);
 
     }
     else
@@ -526,7 +524,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     }
 
-    full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr126[0], ST_UNDEFINED);
+    full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr126, ST_UNDEFINED);
 
     while(leave_screen == ST_FALSE)
     {
@@ -580,9 +578,7 @@ void Chancellor_Screen__WIP(int16_t flag)
 
     Copy_On_To_Off_Page();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Chancellor_Screen__WIP()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -862,7 +858,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
             if(MSG_UnitKilled_Array[itr].Unit_Type <= ut_Chosen)
             {
-                _fstrcpy(GUI_NearMsgString, hero_names_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
+                String_Copy_Far(GUI_NearMsgString, hero_names_table[MSG_UnitKilled_Array[itr].Unit_Type].name);
             }
             else
             {
@@ -871,7 +867,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
             stu_strcat(GUI_NearMsgString, aKilledBy);
 
-            _fstrcpy(temp_string, spell_data_table[MSG_UnitKilled_Array[itr].Spell].name);
+            String_Copy_Far(temp_string, spell_data_table[MSG_UnitKilled_Array[itr].Spell].name);
 
             stu_strcat(GUI_NearMsgString, temp_string);
 
@@ -880,7 +876,7 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
 
                 stu_strcat(GUI_NearMsgString, aIn);
 
-                _fstrcpy(temp_string, _CITIES[MSG_UnitKilled_Array[itr].City].name);
+                String_Copy_Far(temp_string, _CITIES[MSG_UnitKilled_Array[itr].City].name);
 
                 stu_strcat(GUI_NearMsgString, temp_string);
 
@@ -899,7 +895,8 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
-        Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCityGrowth);
+        // Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCityGrowth);
+        Clipped_Print_Centered(158, (_scroll_start_x + _scroll_text_top + x_add), aCityGrowth);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 158 */
 
         x_add += 11;
 
@@ -927,7 +924,8 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
-        Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCityDeaths);
+        // Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCityDeaths);
+        Clipped_Print_Centered(158, (_scroll_start_x + _scroll_text_top + x_add), aCityDeaths);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 158 */
 
         x_add += 11;
 
@@ -955,7 +953,8 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
-        Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aUnitsKilled);
+        // Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aUnitsKilled);
+        Clipped_Print_Centered(158, (_scroll_start_x + _scroll_text_top + x_add), aDestroyedBui_0);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, offset aDestroyedBui_0 / ... / mov ax, 158 */
 
         x_add += 11;
 
@@ -983,7 +982,8 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
-        Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aUnitSpellsDiss);
+        // Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aUnitSpellsDiss);
+        Clipped_Print_Centered(158, (_scroll_start_x + _scroll_text_top + x_add), aUnitSpellsDiss);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 158 */
 
         x_add += 11;
 
@@ -994,7 +994,9 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
         for(itr = 0; MSG_UEsLost_Count > itr; itr++)
         {
 
-            var_2 = Clipped_Print((var_2 + 1), (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[MSG_UEsLost_Array[itr]].name);
+            /* OGBUG  MSG_UEsLost_Array holds UNIT indices (WIZ_RemoveUEs stores the unit index as a byte), but this prints _unit_type_table[entry].name, the name of the unit TYPE with that number: the list names the wrong units */
+            // var_2 = Clipped_Print((var_2 + 1), (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[MSG_UEsLost_Array[itr]].name);
+            var_2 = Clipped_Print(70, (_scroll_start_x + _scroll_text_top + x_add), *_unit_type_table[MSG_UEsLost_Array[itr]].name);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 70 */
 
             x_add += 7;
 
@@ -1007,7 +1009,8 @@ void Chancellor_Screen_Scroll_Draw__WIP(int16_t flag)
     {
         Set_Font_Colors_15(4, &colors1[0]);
 
-        Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCitySpellsDiss);
+        // Clipped_Print_Centered(165, (_scroll_start_x + _scroll_text_top + x_add), aCitySpellsDiss);
+        Clipped_Print_Centered(158, (_scroll_start_x + _scroll_text_top + x_add), aCitySpellsDiss);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 158 */
 
         x_add += 11;
 

@@ -76,7 +76,7 @@
 
 // WZD 0003E2E6                                                 BEGIN: seg022 - Initialized Data
 
-// 0003E2E6 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+// 0003E2E6 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6^w ...
 
 // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
 // WZD dseg:784A
@@ -127,7 +127,7 @@ int16_t UU_DBG_OptionsFont = 0;
 ; drawing fullscreen color #00 rectangles into them
 */
 /*
-OON XREF:  City_Screen__WIP()
+OON XREF:  City_Screen()
 
 */
 void Clear_Screens(void)
@@ -518,7 +518,7 @@ void Set_Memory(int8_t * s, int32_t n, int16_t c)
 ; takes a byte
 ; duplicates the byte into all four bytes
 ; copies 4 bytes at a time, as it's able
-Set_Memory_         proc near                                                                       ; CODE XREF: Overlapped_Ship_Icon_Button_+9Dp ...
+Set_Memory_         proc near                                                                       ; CODE XREF: Overlapped_Ship_Icon_Button_+9D^p ...
                     pusha
                     cmp edx, 0                                                                      ; count/size
                     jz  short @@Done
@@ -533,7 +533,7 @@ Set_Memory_         proc near                                                   
                     mov eax, ebx
                     stosb
                     dec edx
-loc_12769A:                                                                                         ; CODE XREF: Set_Memory_+1Cj
+loc_12769A:                                                                                         ; CODE XREF: Set_Memory_+1C^j
                     mov ecx, edx
                     shr ecx, 2
                     mov eax, ebx
@@ -542,7 +542,7 @@ loc_12769A:                                                                     
                     and ecx, 3
                     jz  short @@Done
                     rep stosb
-@@Done:                                                                                             ; CODE XREF: Set_Memory_+4j ...
+@@Done:                                                                                             ; CODE XREF: Set_Memory_+4^j ...
                     popa
                     retn
 Set_Memory_         endp
@@ -860,7 +860,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
             UU_VGA_DrawDblRect(120, 130, 200, 145, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 136, a1);
             /* cnst_ZeroString_2 likely represents an empty string "" for hotkey */
-            response_1 = Add_Hidden_Field(120, 130, 200, 145, 0, ST_UNDEFINED);
+            response_1 = Add_Hidden_Field(120, 130, 200, 145, "", ST_UNDEFINED);
         }
 
         /* Option 2 */
@@ -868,7 +868,7 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         {
             UU_VGA_DrawDblRect(120, 150, 200, 165, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 156, A2_ptr);
-            response_2 = Add_Hidden_Field(120, 150, 200, 165, 0, ST_UNDEFINED);
+            response_2 = Add_Hidden_Field(120, 150, 200, 165, "", ST_UNDEFINED);
         }
 
         /* Option 3 */
@@ -876,11 +876,11 @@ int UU_DBG_SelectDialog(char /* near */ *Q_ptr, char /* near */ *A1_ptr, char /*
         {
             UU_VGA_DrawDblRect(120, 170, 200, 185, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor, UU_DBG_OptionBoxColor);
             Print_Centered(160, 176, A3_ptr);
-            response_3 = Add_Hidden_Field(120, 170, 200, 185, 0, ST_UNDEFINED);
+            response_3 = Add_Hidden_Field(120, 170, 200, 185, "", ST_UNDEFINED);
         }
 
         /* Screen-wide field to handle clicks outside buttons (Abort) */
-        abort_id = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        abort_id = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
         
         Toggle_Pages();
     }

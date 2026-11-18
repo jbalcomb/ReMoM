@@ -1,0 +1,9 @@
+module_num=215
+module=initargv
+source=0215-initargv.md
+range[0]=1:0x0012F007 linear=0x0013F007 size=465
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m215f001  1    -      0x0013F007  1:0x0012F007  code         __Init_Argv  __Init_Argv_  regions/07-object-1/001C4654-001C4E53.txt
+m215f002  2    -      0x0013F0C8  1:0x0012F0C8  static,code  _SplitParms  _SplitParms_  regions/07-object-1/001C4654-001C4E53.txt

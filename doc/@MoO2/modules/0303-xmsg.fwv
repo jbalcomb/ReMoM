@@ -1,0 +1,9 @@
+module_num=303
+module=xmsg
+source=0303-xmsg.md
+range[0]=1:0x00143E8D linear=0x00153E8D size=34
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                   SYMBOL                  CHUNK
+m303f001  1    -      0x00153E8D  1:0x00143E8D  code  __exit_with_msg        __exit_with_msg_        regions/07-object-1/001D8E54-001D9653.txt
+m303f002  2    -      0x00153E92  1:0x00143E92  code  __fatal_runtime_error  __fatal_runtime_error_  regions/07-object-1/001D8E54-001D9653.txt

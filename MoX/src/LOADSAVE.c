@@ -35,7 +35,7 @@
 
 uint8_t _save_gam[LEN_SAVE_GAM_FILE];
 
-/* CLAUDE: test-support -- when non-NULL, Load_SAVE_GAM() opens this file instead of deriving the name from the slot index. One-shot: cleared on use so normal slot loads are unaffected afterwards. Set by HeMoM's --combat mode to load named fixture saves (e.g. SAVECMBT.GAM). */
+/* CLAUDE: test-support -- when non-NULL, Load_SAVE_GAM() opens this file instead of deriving the name from the slot index. One-shot: cleared on use so normal slot loads are unaffected afterwards. Set by DeMoM's --combat mode to load named fixture saves (e.g. SAVECMBT.GAM). */
 const char * g_load_save_gam_name_override = NULL;
 
 
@@ -48,7 +48,7 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
     FILE * file_pointer = NULL;
     long file_pointer_position = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(save_gam_idx == ST_UNDEFINED)
     {
@@ -64,6 +64,12 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
 
     file_pointer = STU_GRAF_Open_User(file_name, "wb");  /* CLAUDE: save -> user-data (HEADLESS: CWD) */
     assert(file_pointer != NULL);
+    /* CLAUDE */  /* no asm counterpart: the OG (gfopen: int 21h / mov [_gf_fhandle], ax, no carry test) writes to the DOS error code used as a handle; ReMoM would pass NULL to the writes */
+    if(file_pointer == NULL)
+    {
+        LOG_ERROR(LOG_CAT_LOADSAVE, "Save_SAVE_GAM() failed to open \"%s\" for writing; the game was not saved", file_name);
+        return;
+    }
 
     file_pointer_position = stu_ftell(file_pointer);
     assert(file_pointer_position == 0);
@@ -201,12 +207,20 @@ void Save_SAVE_GAM(int16_t save_gam_idx)
         {
             magic_set.Have_Save[save_gam_idx] = ST_TRUE;
             file_pointer = STU_GRAF_Open_User("MAGIC.SET", "wb");  /* CLAUDE: -> user-data */
+            /* CLAUDE */  /* no asm counterpart: the OG (gfopen: int 21h / mov [_gf_fhandle], ax, no carry test) writes to the DOS error code used as a handle; ReMoM would pass NULL to the writes */
+            if(file_pointer == NULL)
+            {
+                LOG_ERROR(LOG_CAT_LOADSAVE, "Save_SAVE_GAM() failed to open \"MAGIC.SET\" for writing; the settings were not saved");
+            }
+            else
+            {
             stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             fclose(file_pointer);
+            }
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -221,7 +235,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     int16_t file_size_flag = 0;
     long file_pointer_position = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* _unit trajectory: snapshot BEFORE Load_SAVE_GAM does anything,
      * so we can compare against OG-MoM trace where _unit's first
@@ -234,7 +248,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
     /* CLAUDE: --load trace point 3 of 3 -- right before g_load_save_gam_name_override is USED.
        save_gam_idx is logged alongside it because the override replaces only the FILENAME: the index
-       keeps whatever the caller passed (scr_Continue passes 8, HeMoM's named-save path passes
+       keeps whatever the caller passed (scr_Continue passes 8, DeMoM's named-save path passes
        ST_UNDEFINED), and anything downstream keying off the index still sees the caller's value. */
     LOG_INFO(LOG_CAT_LOADSAVE, "[--load] USE Load_SAVE_GAM: save_gam_idx=%d  g_load_save_gam_name_override=%p \"%s\"", save_gam_idx, (void *)g_load_save_gam_name_override, (g_load_save_gam_name_override != NULL) ? g_load_save_gam_name_override : "(null)");
 
@@ -432,15 +446,18 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
     else
     {
+        /* OGBUG  a short (old-format) save clears the hero-names block with 545 (0x221) bytes, but it is 560 (35 x 16): the last 15 bytes keep the previous game's data */
         Clear_Memory((int8_t *)hero_names_table, 545);
     }
 
     file_pointer_position = stu_ftell(file_pointer);
-    assert(file_pointer_position == LEN_SAVE_GAM_FILE);
+    // assert(file_pointer_position == LEN_SAVE_GAM_FILE);
+    /* CLAUDE */  /* no asm counterpart; a short (old-format) save skips the 560-byte hero block and ends at 122740, so test the full length only for a full save */
+    assert((file_size_flag != ST_FALSE) || (file_pointer_position == LEN_SAVE_GAM_FILE));
 
     stu_fclose(file_pointer);
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 

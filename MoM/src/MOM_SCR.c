@@ -2,6 +2,7 @@
 // #ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 #include "../../STU/src/STU_PRN.h"
 // #endif
 
@@ -14,6 +15,7 @@
 #include "../../MoX/src/Fields.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
+#include "../../MoX/src/LBX_Load.h" /* LBX_Load_Data_Static() */
 #include "../../MoX/src/LOADSAVE.h"
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/Mouse.h"
@@ -28,7 +30,6 @@
 #include "CityList.h"
 #include "CityScr.h"
 #include "Combat.h"
-#include "INITGAME.h"  /* gd_dump_cities (post-load GD capture) */
 #include "DIPLOMAC.h"
 #include "ItemScrn.h"
 #include "LOADER.h"
@@ -56,6 +57,15 @@
 
 
 
+// MGC dseg:28D2
+// WZD dseg:29DE
+// 31D1:28D2 54 45 52 52 53 54 41 54 00                      terrstat_lbx_file db 'TERRSTAT',0       ; DATA XREF: Load_TERRSTAT+11o
+// char terrstat_lbx_file[] = "TERRSTAT";
+// MGC 31D1:28DB
+char cnst_HLPENTRY_File[] = "hlpentry";
+
+
+
 /* ST_TRUE once a game has reached the Main Screen; the globals then hold that game's state and need resetting before the next one */
 static int16_t dirty_game_state = ST_FALSE;
 /* Allocate_Space() returns its 16-byte header as element 0's first bytes; a fresh process still has it there, so a reset puts it back */
@@ -73,7 +83,7 @@ clears the game state when starting a new 'New Game'
 static void Reset_Game_State(void)
 {
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* set the random seed for the new game path, with support for deterministic behavior */
     if(_cmd_line_seed != 0)
@@ -108,8 +118,28 @@ static void Reset_Game_State(void)
     memcpy(_ITEMS, items_samb_header, SAMB_HEADER_BYTES);
     memcpy(_LAIRS, lairs_samb_header, SAMB_HEADER_BYTES);
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
+
+
+
+// MGC s001p09
+// UU_HLP_Load_MainMenu()
+/*
+; Unused in MoM
+; loads and sets the GUI help entry area array for the banner selection screen
+*/
+/*
+31D1:28D2 54 45 52 52 53 54 41 54 00                      terrstat_lbx_file db 'TERRSTAT',0       ; DATA XREF: Load_TERRSTAT+11o
+31D1:28DB 68 6C 70 65 6E 74 72 79 00                      cnst_HLPENTRY_File db 'hlpentry',0      ; DATA XREF: UU_HLP_Load_MainMenu+16o
+*/
+void UU_HLP_Load_MainMenu(void)
+{
+    // TODO  HLPENTRY.LBX, 025 ...
+    LBX_Load_Data_Static(cnst_HLPENTRY_File, 25, (SAMB_ptr)_help_entries, 0, 4, 10);  // "hlpentry"
+    Set_Help_List(_help_entries, 4);
+}
+
 
 // WZD s01p02
 // ~== MGC s01p03  Menu_Screen_Control()
@@ -139,7 +169,7 @@ void Screen_Control(void)
     int16_t DBG_food_total = 0;
     int16_t DBG_mana_total = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     quit_flag = ST_FALSE;
 
@@ -158,10 +188,8 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Main_Menu\n", (unsigned long long)Platform_Get_Millies());
 #endif
-#ifdef STU_DEBUG
                 LOG_TRACE(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
                 LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] ENTER scr_Main_Menu_Screen");
-#endif
                 /* game-state reset for {New, Continue, Load}, from four paths; (NOTE: Load during a running game does not reset state) */
                 if(dirty_game_state == ST_TRUE)
                 {
@@ -185,19 +213,15 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu LEAVE screen=Main_Menu next=%d\n", (unsigned long long)Platform_Get_Millies(), current_screen);
 #endif
-#ifdef STU_DEBUG
                 LOG_TRACE(LOG_CAT_GENERAL, "[SCR] LEAVE scr_Main_Menu_Screen -> next=%d", current_screen);
                 LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] LEAVE scr_Main_Menu_Screen -> next=%d", current_screen);
-#endif
             } break;
 
             case scr_Continue:
             {
-#ifdef STU_DEBUG
-                LOG_INFO(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
+                LOG_DEBUG(LOG_CAT_MOM_SCR, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
                 LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: Screen_Control(): swicth(): scr_Continue", __FILE__, __LINE__);
-#endif
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Continue\n", (unsigned long long)Platform_Get_Millies());
 #endif
@@ -221,29 +245,34 @@ void Screen_Control(void)
                 // FU CLAUDE  /* HACK */  Load_WZD_Resources();
                 /* HACK */ Load_WZD_Resources_Once();  /* CLAUDE  L57 */
 
+                /* CLAUDE */  /* WIZARDS.EXE _main: call Release_Version / call Enable_Cancel / ... / call Load_SAVE_GAM - the game runs with right-click cancel off
+                                 (mouse_cancel_disabled = ST_TRUE), so a right-click reaches Main_Screen as -field; MAGIC's Disable_Cancel() (ReMoM_Init_Engine(),
+                                 Newgame_Screen_4()) was still in effect here, so every right-click in the game came back as -1 (cancel) */
+                Enable_Cancel();
+
                 Load_SAVE_GAM(8);
 
                 /* 300-series: snapshot every save-loaded array right after Load_SAVE_GAM
                  * (matches OG's gd_wzd_landmark_probe @ Load_SAVE_GAM on-return). Numbered
                  * in save-load order; gaps (303/304/306/312/313) are Phase 2. */
-                gd_dump_heroes          ("301_Load_Heroes_H");
-                gd_dump_players         ("302_Load_Players_P");
-                gd_dump_world_map       ("303_Load_World_Maps_W");
-                gd_dump_landmasses      ("304_Load_Landmasses_L");
-                gd_dump_nodes           ("305_Load_Nodes_N");
-                gd_dump_fortresses      ("306_Load_Fortresses_F");
-                gd_dump_towers          ("307_Load_Towers_T");
-                gd_dump_lairs           ("308_Load_Lairs_L");
-                gd_dump_items           ("309_Load_Items_I");
-                gd_dump_cities          ("310_Load_Cities_C");
-                gd_dump_units           ("311_Load_Units_U");
-                gd_dump_terrain_specials("312_Load_Terrain_Specials_T");
-                gd_dump_map_square_flags("313_Load_Map_Flags_M");
+                STU_GD_DO(STU_GD_Dump_Heroes("301_Load_Heroes_H"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Players("302_Load_Players_P"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_World_Map("303_Load_World_Maps_W"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Landmasses("304_Load_Landmasses_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Nodes("305_Load_Nodes_N"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Fortresses("306_Load_Fortresses_F"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Towers("307_Load_Towers_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Lairs("308_Load_Lairs_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Items("309_Load_Items_I"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Cities("310_Load_Cities_C"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Units("311_Load_Units_U"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Terrain_Specials("312_Load_Terrain_Specials_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Map_Square_Flags("313_Load_Map_Flags_M"));  /* CLAUDE */
                 /* 314: _ai_continents is derived AI scratch state, NOT saved data
                  * (no loader) -- appended after the 13 canonical load arrays as an
                  * at-load in-memory baseline, to compare against 603 (AICWL entry)
                  * and 610 (AI_Reevaluate_Continent entry). */
-                gd_dump_ai_continents   ("314_Load_Continents");
+                STU_GD_DO(STU_GD_Dump_AI_Continents("314_Load_Continents"));  /* CLAUDE */
 
                 Load_Palette(0, ST_UNDEFINED, ST_NULL);
                 Calculate_Remap_Colors();
@@ -272,6 +301,11 @@ void Screen_Control(void)
                 /* HACK */ Load_WZD_Resources_Once();  /* CLAUDE  L57 */
                 prev__Settings_BG_Music = magic_set.background_music;
                 Load_Screen();  /* ... |-> Loaded_Game_Update() */
+                /* CLAUDE */  /* a game was loaded: as for scr_Continue, WIZARDS.EXE _main's Enable_Cancel(); a return to MAGIC's main menu keeps MAGIC's Disable_Cancel() */
+                if(current_screen == scr_Main_Screen)
+                {
+                    Enable_Cancel();
+                }
 #ifdef STU_DEBUG
                 Print_Unit_Structure(0);
 #endif
@@ -332,10 +366,8 @@ void Screen_Control(void)
 #ifdef MOUSE_DEBUG
                 MOUSE_LOG("SCR t=%llu ENTER screen=Quit\n", (unsigned long long)Platform_Get_Millies());
 #endif
-#ifdef STU_DEBUG
                 LOG_TRACE(LOG_CAT_GENERAL, "[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag");
                 LOG_DEBUG(LOG_CAT_GENERAL, "[SCR] ENTER scr_Quit_To_DOS -> setting quit_flag");
-#endif
                 // TODO  Auto_Save_Game()  ~== F-10 Quick_Save()
                 quit_flag = ST_TRUE;
                 // TODO  Exit_With_Message("Thank you for playing Master of Magic!\n\n");
@@ -374,7 +406,7 @@ void Screen_Control(void)
             case scr_City_Screen: /* WZD 0x00 */
             {
 
-                City_Screen__WIP();
+                City_Screen();
 
             } break;
             // scr_Load = 101,
@@ -514,6 +546,6 @@ void Screen_Control(void)
 
     }  /* while(quit_flag == ST_FALSE) */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }

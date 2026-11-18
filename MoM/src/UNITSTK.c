@@ -234,12 +234,12 @@ int16_t Move_Stack(int16_t move_x, int16_t move_y, int16_t player_idx, int16_t *
         { int16_t _prev_unit_dbg = _unit; _unit = unit_array[0];
           LOG_INFO(LOG_CAT_GENERAL, "[_unit ASSIGN] %d -> %d", _prev_unit_dbg, _unit); }
 
-        if(OVL_MapVar3 == ST_TRUE)
+        if(_stack_selection_changed == ST_TRUE)
         {
-            OVL_MapVar3 = ST_FALSE;
-            CRP_OVL_Obstacle_Var1 = ST_FALSE;
+            _stack_selection_changed = ST_FALSE;
+            _move_stack_hook_called = ST_FALSE;
         }
-        if(CRP_OVL_Obstacle_Var1 == ST_FALSE)
+        if(_move_stack_hook_called == ST_FALSE)
         {
             o58p03_empty_function();
         }
@@ -331,7 +331,7 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
     int16_t itr_troops = 0;
     struct s_UNIT * unit_ptr;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* Build the stack of units for moving, filtering for road builders if necessary */
     Build_RoadBuilder_Stack(&troop_count, &troops[0], dst_wx, dst_wy, player_idx, unit_idx);
@@ -430,7 +430,7 @@ int16_t Stack_Move_To(int16_t player_idx, int16_t unit_idx, int16_t dst_wx, int1
         Reset_Draw_Active_Stack();
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     
     return did_move_stack;
 }
@@ -464,7 +464,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
     while(done == ST_FALSE)
     {
 
-        CRP_OverlandVar_3 = ST_FALSE;
+        niu_next_stack_has_goto = ST_FALSE;
 
         all_done_none_available = Next_Unit_Nearest_Available(player_idx, map_p);  // updates `_unit`
 
@@ -496,7 +496,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
                 next_unit_dst_wx = _UNITS[_unit].dst_wx;
                 next_unit_dst_wy = _UNITS[_unit].dst_wy;
 
-                CRP_OverlandVar_3 = ST_TRUE;
+                niu_next_stack_has_goto = ST_TRUE;
 
                 // handling the end of the 'Go To' & 'Build Road'
                 if(
@@ -541,7 +541,7 @@ void WIZ_NextIdleStack(int16_t player_idx, int16_t * map_x, int16_t * map_y, int
         Set_Entities_On_Map_Window(*map_x, *map_y, *map_p);
     }
 
-    OVL_MapVar3 = ST_TRUE;
+    _stack_selection_changed = ST_TRUE;
 
 }
 /* GEMINI */
@@ -565,7 +565,7 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
 
     while(done == ST_FALSE)
     {
-        CRP_OverlandVar_3 = ST_FALSE;
+        niu_next_stack_has_goto = ST_FALSE;
         
         AllUnitsMoved = Next_Unit_Nearest_Available(player_idx, &map_plane);
 
@@ -593,7 +593,7 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
                 {
                     next_unit_dst_wx = _UNITS[_unit].dst_wx;
                     next_unit_dst_wy = _UNITS[_unit].dst_wy;
-                    CRP_OverlandVar_3 = ST_TRUE;
+                    niu_next_stack_has_goto = ST_TRUE;
 
                     /* Check if unit reached destination and is not busy with road construction */
                     if((_UNITS[_unit].wx == next_unit_dst_wx) && 
@@ -633,7 +633,7 @@ static void WIZ_NextIdleStack_GEMINI(int16_t player_idx, int16_t *map_x, int16_t
         Set_Entities_On_Map_Window(*map_x, *map_y, map_plane);
     }
 
-    OVL_MapVar3 = ST_TRUE;
+    _stack_selection_changed = ST_TRUE;
 }
 
 
@@ -752,6 +752,7 @@ int16_t Next_Unit_Nearest_Available(int16_t player_idx, int16_t * map_plane)
                 _active_world_x = _UNITS[_unit].wx;
                 _active_world_y = _UNITS[_unit].wy;
             }
+            /* OGBUG  the waiting units of this plane are taken (and every waiting unit reset to us_Ready) before the other plane is tried: after Wait the selection keeps cycling this plane's waiting units, and ready units on the other plane are never offered */
             else if(Closest_Waiting_Unit != ST_UNDEFINED)
             {
                 if(current_world_plane == 2)
@@ -1063,6 +1064,7 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                 transport_load = 0;
                 for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                 {
+                    /* OGBUG  boatriders_idx only advances when a boat rider is taken: the first boat rider left over (boats full, not a hero) stops the matching, so every later boat rider, heroes too, stays behind */
                     if(boatriders[boatriders_idx] == _unit_stack[itr_stack].unit_idx)
                     {
                         if(
@@ -1090,6 +1092,7 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                         (Unit_Has_WindWalking(_unit_stack[itr_stack].unit_idx) == ST_TRUE) ||
                         (Unit_Has_AirTravel(_unit_stack[itr_stack].unit_idx) == ST_TRUE))
                     {
+                        /* OGBUG  a self-propelled unit on us_GOTO is left behind */
                         if(_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO)
                         {
                             troops[l_troop_count] = _unit_stack[itr_stack].unit_idx;
@@ -1105,6 +1108,7 @@ void Build_Moveable_Stack(int16_t * troop_count, int16_t troops[])
                 {
                     for(itr_stack = 0; itr_stack < _unit_stack_count; itr_stack++)
                     {
+                        /* OGBUG  Army_Boatriders() found no unit that needs carrying: every non-transport unit comes along, active or not, EXCEPT a unit on us_GOTO, which stays behind */
                         if((_UNITS[_unit_stack[itr_stack].unit_idx].Status != us_GOTO) && (_unit_type_table[_UNITS[_unit_stack[itr_stack].unit_idx].type].Transport < 1))
                         {
                             troops[l_troop_count] = _unit_stack[itr_stack].unit_idx;
@@ -1300,13 +1304,12 @@ void Build_RoadBuilder_Stack(int16_t * troop_count, int16_t troops[], int16_t ds
                 {
                     unit_idx = entire_stack[itr];
                     /* OGBUG  heroes are tested against transport capacity before the hero test; once the boats are full a hero is left behind, though it never takes a seat */
-                    /* OGBUG  lets one more passenger board on Go To than the ship's capacity */
+                    /* OGBUG  passenger_count <= transport_capacity (Build_Moveable_Stack() uses <): on Go To the boats take one non-hero unit more than their capacity, e.g. 3 on a boat with room for 2 */
                     if((boatriders[boatrider_idx] == unit_idx) && (passenger_count <= transport_capacity))
                     {
                         troops[l_troop_count] = unit_idx;
                         l_troop_count++;
                         boatrider_idx++;
-                        // drake178: ; BUG: incorrect order of operations - heroes should be checked for before evaluating the passenger count
                         if(_UNITS[unit_idx].type > ut_Chosen)
                         {
                             passenger_count++;

@@ -1,0 +1,9 @@
+module_num=166
+module=clockxib
+source=0166-clockxib.md
+range[0]=1:0x00119FE4 linear=0x00129FE4 size=5
+range[1]=2:0x00012FEC linear=0x00182FEC size=6
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m166f001  1    -      0x00129FE4  1:0x00119FE4  code  clock  clock_  regions/07-object-1/001AEE54-001AF653.txt

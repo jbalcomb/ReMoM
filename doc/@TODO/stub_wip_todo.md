@@ -28,8 +28,8 @@
 - [x] AI_Stacks_Roamers_Target_Or_Deploy
 - [x] AI_Stacks_Order_To_War_Landmass
 - [x] AI_Stacks_Ferry_Add_Location
-- [x] AI_Stacks_Survey_Expedition_Forces
-- [x] AI_Stacks_Survey_Expedition_Forces_Stack
+- [x] AI_Survey_Expedition_Forces
+- [x] AI_Survey_Expedition_Stack
 - [x] AI_Stacks_Reorder_Settle_Elsewhere — renamed from AI_SendToColonize__WIP; done-done 2026-06-03 (R1 + Y-bounds fixed, GEMINI variant deleted)
 - [ ] AI_Set_Unit_Orders
 - [x] AI_Reevaluate_Continent
@@ -79,10 +79,10 @@
 - [ ] Cityscape_Window__WIP
 
 ## CityScr
-- [ ] City_Screen__WIP
+- [x] City_Screen__WIP — renamed to City_Screen (CityScr.c:178); done-done 2026-11-11 (1:1 with ovr054/City_Screen__WIP.asm: 6 loop breaks, inverted stack flag, enchantment else, missing Deactivate_Help_List, unit-first product names)
 - [ ] City_Screen_Add_Fields__WIP
 - [ ] City_Screen_Draw2__WIP
-- [ ] City_Screen_Draw__WIP
+- [x] City_Screen_Draw__WIP — renamed to City_Screen_Draw (CityScr.c:1023); done-done 2026-11-11 (1:1 with ovr054/City_Screen_Draw__WIP.asm: building-maintenance gold help test, unsigned byte compares, cityscape loop break)
 
 ## Combat
 - [x] Tactical_Combat_Draw_Buttons — impl (Combat.c:5496); done-done 2026-08-27 (doc/@CodeReview/Combat-Combat_Screen.md; faithful 1:1, builds clean)
@@ -255,7 +255,7 @@
 - [ ] Update_Scouted_And_Contacted — renamed from Update_Scouted_And_Contacted__WIP; impl (Explore.c:292), needs done-done review (name verified 2026-07-21)
 
 ## Fields
-- [ ] GUI_MoveDlgHighlight__STUB
+- [x] GUI_MoveDlgHighlight__STUB  (now Move_Dialog_Highlight, Fields.c)
 
 ## FLIC_Draw
 - [x] Shear_Bitmap_Y            // WZD s30p03
@@ -302,7 +302,7 @@
 - [ ] Process_Direction_Key__STUB
 
 ## Items
-- [ ] AI_Process_Item_Pool__STUB
+- [x] AI_Process_Item_Pool__STUB  (now AI_Process_Item_Pool)
 
 ## Lair
 - [ ] Lair_Combat__WIP
@@ -325,18 +325,18 @@
 
 ## NewGame
 - [ ] GAME_WizardsLaunch__WIP
-- [ ] NEWG_DrawDefShelf__WIP
+- [x] NEWG_DrawDefShelf__WIP  (now Draw_Default_Bookshelf)
 - [ ] NEWG_FinalizeTables__WIP
-- [ ] Newgame_Screen_1__WIP
-- [ ] Newgame_Screen_2__WIP
-- [ ] Newgame_Screen_3__WIP
-- [ ] Newgame_Screen_3_Draw__WIP
-- [ ] Newgame_Screen_4__WIP
-- [ ] Newgame_Screen_4_Draw__WIP
-- [ ] Newgame_Screen_6__WIP
-- [ ] Newgame_Screen_6_Draw__WIP
-- [ ] Newgame_Screen_7__WIP
-- [ ] Newgame_Screen_7_Draw__WIP
+- [x] Newgame_Screen_1__WIP  (now Newgame_Screen_1)
+- [x] Newgame_Screen_2__WIP  (now Newgame_Screen_2)
+- [x] Newgame_Screen_3__WIP  (now Newgame_Screen_3)
+- [x] Newgame_Screen_3_Draw__WIP  (now Newgame_Screen_3_Draw)
+- [x] Newgame_Screen_4__WIP  (now Newgame_Screen_4)
+- [x] Newgame_Screen_4_Draw__WIP  (now Newgame_Screen_4_Draw)
+- [x] Newgame_Screen_6__WIP  (now Newgame_Screen_6)
+- [x] Newgame_Screen_6_Draw__WIP  (now Newgame_Screen_6_Draw; matches the asm via the mom131-source-map SelectRace_Redraw)
+- [x] Newgame_Screen_7__WIP  (now Newgame_Screen_7)
+- [x] Newgame_Screen_7_Draw__WIP  (now Newgame_Screen_7_Draw)
 
 ## NEXTTURN
 - [ ] Create_Unit
@@ -481,8 +481,8 @@
 - [x] Combat_Spell_Counter_Message_Box_Draw — done-done 2026-08-17 (doc/@CodeReview/Combat-Combat_Spell_Dispel.md); Combat.c:12018, faithful against ovr113/Combat_Spell_Dispel_Attempt.asm (142 asm lines)
 - [x] Combat_Spell_Dispel_Attempt — done-done 2026-08-17 (doc/@CodeReview/Combat-Combat_Spell_Dispel.md); Spells133.c:651, faithful against ovr133/Combat_Spell_Dispel_Attempt.asm (58 asm lines)
 ## Spells137
-- [ ] Cast_Spell_City_Enchantment_Animation_1__WIP
-- [ ] Cast_Spell_City_Enchantment_Animation_2__WIP
+- [ ] City_Enchantment_Anim_1__WIP
+- [ ] City_Enchantment_Anim_2__WIP
 - [x] Summon_Animation — was IDK_SummonAnim; done-done 2026-07-21 (walkthrough doc/@CodeReview/Spells137-Summon_Animation.md; faithful 1:1)
 - [x] Summon_Animation_Draw — was IDK_SummonAnim_Draw; done-done 2026-07-21
 - [x] Summon_Animation_Load — was IDK_SummonAnim_Load; done-done 2026-07-21 (former R1 monster-index resolved faithful; B1 type_or_other==0 gap preserved)
@@ -499,8 +499,8 @@
 - [x] Undead_Animation — was CMB_CreateUndeadAnim; done-done 2026-07-23 (walkthrough doc/@CodeReview/SPLMASTR-Undead_Animation.md; faithful 1:1, builds clean)
 - [x] Undead_Animation_Draw — was CMB_DrawUndeadAnim; done-done 2026-07-23
 - [x] Undead_Animation_Load — was CMB_LoadUndeadAnim; done-done 2026-07-23 (segment globals declared+renamed; uy_BeastSwordsmen resolved to MONSTER.LBX 47)
-- [ ] Spell_Target_Global_Enchantment_Bind__WIP
-- [ ] Spell_Target_Global_Enchantment_Disjunct__WIP
+- [ ] Global_Enchantment_Bind__WIP
+- [ ] Global_Enchantment_Disjunct__WIP
 
 ## TEXTBOX
 - [ ] Draw_Help_Entry__WIP

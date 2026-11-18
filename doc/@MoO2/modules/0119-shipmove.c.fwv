@@ -1,0 +1,31 @@
+module_num=119
+module=D:\MOX\OTHERS\SHIPMOVE.C
+source=0119-shipmove.c.md
+range[0]=1:0x000EF496 linear=0x000FF496 size=5536
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                      SYMBOL                                     CHUNK
+m119f001  1    -      0x000FF496  1:0x000EF496  code         Ship_Range                                Ship_Range_                                regions/07-object-1/00184654-00184E53.txt
+m119f002  2    -      0x000FF4E9  1:0x000EF4E9  static,code  Star_In_Range_Of_Player_Aux1              Star_In_Range_Of_Player_Aux1_              regions/07-object-1/00184654-00184E53.txt
+m119f003  3    -      0x000FF593  1:0x000EF593  static,code  Star_In_Range_Of_Player_Aux2              Star_In_Range_Of_Player_Aux2_              regions/07-object-1/00184654-00184E53.txt
+m119f004  4    -      0x000FF5F8  1:0x000EF5F8  code         Star_In_Range_Of_Player                   Star_In_Range_Of_Player_                   regions/07-object-1/00184654-00184E53.txt
+m119f005  5    -      0x000FF666  1:0x000EF666  code         Star_In_Normal_Range_Of_Player            Star_In_Normal_Range_Of_Player_            regions/07-object-1/00184654-00184E53.txt
+m119f006  6    -      0x000FF68A  1:0x000EF68A  code         Star_In_Extended_Range_Of_Player          Star_In_Extended_Range_Of_Player_          regions/07-object-1/00184654-00184E53.txt
+m119f007  7    -      0x000FF6BE  1:0x000EF6BE  code         Can_Order_Ship                            Can_Order_Ship_                            regions/07-object-1/00184654-00184E53.txt
+m119f008  8    -      0x000FF799  1:0x000EF799  code         Ships_Try_To_Move_To                      Ships_Try_To_Move_To_                      regions/07-object-1/00184654-00184E53.txt
+m119f009  9    -      0x000FFBD6  1:0x000EFBD6  code         Player_N_Turns_From_Star_To_Star          Player_N_Turns_From_Star_To_Star_          regions/07-object-1/00184E54-00185653.txt
+m119f010  10   -      0x000FFD08  1:0x000EFD08  code         Make_Ships_Move_To                        Make_Ships_Move_To_                        regions/07-object-1/00184E54-00185653.txt
+m119f011  11   -      0x000FFDC9  1:0x000EFDC9  code         Ship_Is_Moving                            Ship_Is_Moving_                            regions/07-object-1/00184E54-00185653.txt
+m119f012  12   -      0x000FFDDA  1:0x000EFDDA  static,code  Make_Ship_Arrive_At_Star                  Make_Ship_Arrive_At_Star_                  regions/07-object-1/00184E54-00185653.txt
+m119f013  13   -      0x000FFEEA  1:0x000EFEEA  code         Move_All_Ships_Toward_Stars               Move_All_Ships_Toward_Stars_               regions/07-object-1/00184E54-00185653.txt
+m119f014  14   -      0x00100010  1:0x000F0010  code         Create_Nonplayer_Ship                     Create_Nonplayer_Ship_                     regions/07-object-1/00185654-00185E53.txt
+m119f015  15   -      0x0010011B  1:0x000F011B  code         Allocate_New_Ship_Slots                   Allocate_New_Ship_Slots_                   regions/07-object-1/00185654-00185E53.txt
+m119f016  16   -      0x0010034D  1:0x000F034D  static,code  Update_Player_Ship_Range                  Update_Player_Ship_Range_                  regions/07-object-1/00185654-00185E53.txt
+m119f017  17   -      0x0010038C  1:0x000F038C  code         Update_All_Ship_Ranges                    Update_All_Ship_Ranges_                    regions/07-object-1/00185654-00185E53.txt
+m119f018  18   -      0x001003F2  1:0x000F03F2  code         Ship_Destination_Star                     Ship_Destination_Star_                     regions/07-object-1/00185654-00185E53.txt
+m119f019  19   -      0x0010041C  1:0x000F041C  code         Update_Ship_ETAs                          Update_Ship_ETAs_                          regions/07-object-1/00185654-00185E53.txt
+m119f020  20   -      0x00100519  1:0x000F0519  code         Do_Wormhole_Event                         Do_Wormhole_Event_                         regions/07-object-1/00185654-00185E53.txt
+m119f021  21   -      0x00100618  1:0x000F0618  code         Do_Hyperspace_Beast                       Do_Hyperspace_Beast_                       regions/07-object-1/00185654-00185E53.txt
+m119f022  22   -      0x00100828  1:0x000F0828  code         Unmark_Just_Built_AI_Ships                Unmark_Just_Built_AI_Ships_                regions/07-object-1/00185E54-00186653.txt
+m119f023  23   -      0x0010087D  1:0x000F087D  code         Reset_Needless_Ignore_Combat_Ships_Flags  Reset_Needless_Ignore_Combat_Ships_Flags_  regions/07-object-1/00185E54-00186653.txt
+m119f024  24   -      0x001009C3  1:0x000F09C3  code         Player_Has_Ships_Pestering_Other_Player   Player_Has_Ships_Pestering_Other_Player_   regions/07-object-1/00185E54-00186653.txt

@@ -1,4 +1,6 @@
 
+
+bugfixes-from-OPP.md
 C:\STU\devel\ReMoM\doc\@TODO\ReMoM-fixes-for-Claude.txt (from TheQ)
 C:\STU\devel\ReMoM\doc\@CodeReview\Amiga-Port-Reports-Triage.md
 
@@ -48,7 +50,7 @@ L57 and L58: load the WZD resources once, and use one reusable buffer in place o
 L61: a per-game reset for single-process New Game. That's a design task of its own, so I'd write a PRD for it rather than fold it into this batch.
 
 Once you've made the amiga-port-reports branch, I'll start fixing the 30 ReMoM items, crash and corruption ones first: L14, L13, L40, L43, L48, L23.
-Each will follow the comment-out-and-replace rule, with a HeMoM test wherever the path can run headless.
+Each will follow the comment-out-and-replace rule, with a DeMoM test wherever the path can run windowless.
 
 ...
 

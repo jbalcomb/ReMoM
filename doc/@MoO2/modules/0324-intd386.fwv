@@ -1,0 +1,8 @@
+module_num=324
+module=intd386
+source=0324-intd386.md
+range[0]=1:0x0014C6DE linear=0x0015C6DE size=82
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m324f001  1    -      0x0015C6DE  1:0x0014C6DE  code  intdos  intdos_  regions/07-object-1/001E1654-001E1E53.txt

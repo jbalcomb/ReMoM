@@ -1,0 +1,64 @@
+module_num=20
+module=D:\MOX\OTHERS\CMBTFIR2.C
+source=0020-cmbtfir2.c.md
+range[0]=1:0x00025251 linear=0x00035251 size=14029
+range[1]=2:0x00000CD8 linear=0x00170CD8 size=156
+range[2]=2:0x00008EC8 linear=0x00178EC8 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                           SYMBOL                          CHUNK
+m020f001  1    -      0x00035251  1:0x00025251  code  Apply_Internal_Damage          Apply_Internal_Damage_          regions/07-object-1/000BA654-000BAE53.txt
+m020f002  2    -      0x00035821  1:0x00025821  code  Repair_Combat_Ship             Repair_Combat_Ship_             regions/07-object-1/000BAE54-000BB653.txt
+m020f003  3    -      0x00035C3A  1:0x00025C3A  code  Clear_Internal_Space           Clear_Internal_Space_           regions/07-object-1/000BAE54-000BB653.txt
+m020f004  4    -      0x00035C56  1:0x00025C56  code  Combat_Bonus                   Combat_Bonus_                   regions/07-object-1/000BAE54-000BB653.txt
+m020f005  5    -      0x00035C7F  1:0x00025C7F  code  Computer_Bonus                 Computer_Bonus_                 regions/07-object-1/000BAE54-000BB653.txt
+m020f006  6    -      0x00035CAD  1:0x00025CAD  code  Crew_Boarding_Combat_Bonus     Crew_Boarding_Combat_Bonus_     regions/07-object-1/000BAE54-000BB653.txt
+m020f007  7    -      0x00035CCD  1:0x00025CCD  code  Crew_Defensive_Combat_Bonus    Crew_Defensive_Combat_Bonus_    regions/07-object-1/000BAE54-000BB653.txt
+m020f008  8    -      0x00035CED  1:0x00025CED  code  Crew_Offensive_Combat_Bonus    Crew_Offensive_Combat_Bonus_    regions/07-object-1/000BAE54-000BB653.txt
+m020f009  9    -      0x00035D0D  1:0x00025D0D  code  Defensive_Combat_Bonus         Defensive_Combat_Bonus_         regions/07-object-1/000BAE54-000BB653.txt
+m020f010  10   -      0x00035E0C  1:0x00025E0C  code  Get_Fleet_Engineer_Bonus       Get_Fleet_Engineer_Bonus_       regions/07-object-1/000BAE54-000BB653.txt
+m020f011  11   -      0x00035E6A  1:0x00025E6A  code  Fighter_Pilot_Bonus            Fighter_Pilot_Bonus_            regions/07-object-1/000BAE54-000BB653.txt
+m020f012  12   -      0x00035EAE  1:0x00025EAE  code  Get_Fleet_Pilot_Bonus          Get_Fleet_Pilot_Bonus_          regions/07-object-1/000BAE54-000BB653.txt
+m020f013  13   -      0x00035F0A  1:0x00025F0A  code  Set_Combat_Ordnance_Values     Set_Combat_Ordnance_Values_     regions/07-object-1/000BAE54-000BB653.txt
+m020f014  14   -      0x00035F4D  1:0x00025F4D  code  Leader_Ordnance_Bonus          Leader_Ordnance_Bonus_          regions/07-object-1/000BAE54-000BB653.txt
+m020f015  15   -      0x00035F7E  1:0x00025F7E  code  Get_Fleet_Ordnance_Bonus       Get_Fleet_Ordnance_Bonus_       regions/07-object-1/000BAE54-000BB653.txt
+m020f016  16   -      0x00035FDA  1:0x00025FDA  code  Get_Fleet_Commando_Bonus       Get_Fleet_Commando_Bonus_       regions/07-object-1/000BAE54-000BB653.txt
+m020f017  17   -      0x00036036  1:0x00026036  code  Commando_Bonus                 Commando_Bonus_                 regions/07-object-1/000BB654-000BBE53.txt
+m020f018  18   -      0x0003607A  1:0x0002607A  code  Engineer_Bonus                 Engineer_Bonus_                 regions/07-object-1/000BB654-000BBE53.txt
+m020f019  19   -      0x000360AA  1:0x000260AA  code  Get_Fleet_Security_Bonus       Get_Fleet_Security_Bonus_       regions/07-object-1/000BB654-000BBE53.txt
+m020f020  20   -      0x00036106  1:0x00026106  code  Security_Bonus                 Security_Bonus_                 regions/07-object-1/000BB654-000BBE53.txt
+m020f021  21   -      0x00036139  1:0x00026139  code  Fleet_Defensive_Bonus          Fleet_Defensive_Bonus_          regions/07-object-1/000BB654-000BBE53.txt
+m020f022  22   -      0x00036266  1:0x00026266  code  Fleet_Offensive_Bonus          Fleet_Offensive_Bonus_          regions/07-object-1/000BB654-000BBE53.txt
+m020f023  23   -      0x00036391  1:0x00026391  code  Heal_System                    Heal_System_                    regions/07-object-1/000BB654-000BBE53.txt
+m020f024  24   -      0x00036470  1:0x00026470  code  Init_Internal_Space            Init_Internal_Space_            regions/07-object-1/000BB654-000BBE53.txt
+m020f025  25   -      0x000366AF  1:0x000266AF  code  Kill_Crew                      Kill_Crew_                      regions/07-object-1/000BB654-000BBE53.txt
+m020f026  26   -      0x000366DD  1:0x000266DD  code  Offensive_Combat_Bonus         Offensive_Combat_Bonus_         regions/07-object-1/000BB654-000BBE53.txt
+m020f027  27   -      0x0003677D  1:0x0002677D  code  Helmsman_Bonus                 Helmsman_Bonus_                 regions/07-object-1/000BB654-000BBE53.txt
+m020f028  28   -      0x000367AE  1:0x000267AE  code  Weaponry_Bonus                 Weaponry_Bonus_                 regions/07-object-1/000BB654-000BBE53.txt
+m020f029  29   -      0x000367DF  1:0x000267DF  code  Galactic_Lore_Bonus            Galactic_Lore_Bonus_            regions/07-object-1/000BB654-000BBE53.txt
+m020f030  30   -      0x00036810  1:0x00026810  code  Select_Internal                Select_Internal_                regions/07-object-1/000BBE54-000BC653.txt
+m020f031  31   -      0x00036A63  1:0x00026A63  code  Ship_Specials_Defensive_Bonus  Ship_Specials_Defensive_Bonus_  regions/07-object-1/000BBE54-000BC653.txt
+m020f032  32   -      0x00036B46  1:0x00026B46  code  Ship_Specials_Offensive_Bonus  Ship_Specials_Offensive_Bonus_  regions/07-object-1/000BBE54-000BC653.txt
+m020f033  33   -      0x00036B64  1:0x00026B64  code  Total_Internal_Space           Total_Internal_Space_           regions/07-object-1/000BBE54-000BC653.txt
+m020f034  34   -      0x00036BE2  1:0x00026BE2  code  Max_Total_Internal_Space       Max_Total_Internal_Space_       regions/07-object-1/000BBE54-000BC653.txt
+m020f035  35   -      0x00036C60  1:0x00026C60  code  Weapons_Left                   Weapons_Left_                   regions/07-object-1/000BBE54-000BC653.txt
+m020f036  36   -      0x00036C9C  1:0x00026C9C  code  Final_Fire                     Final_Fire_                     regions/07-object-1/000BBE54-000BC653.txt
+m020f037  37   -      0x00036ED1  1:0x00026ED1  code  Defensive_Fire_Check           Defensive_Fire_Check_           regions/07-object-1/000BBE54-000BC653.txt
+m020f038  38   -      0x00037173  1:0x00027173  code  Max_Defensive_Fire_Range       Max_Defensive_Fire_Range_       regions/07-object-1/000BC654-000BCE53.txt
+m020f039  39   -      0x00037254  1:0x00027254  code  Get_Combat_Ship_Special_Id     Get_Combat_Ship_Special_Id_     regions/07-object-1/000BC654-000BCE53.txt
+m020f040  40   -      0x000372BD  1:0x000272BD  code  Init_Boarding_Action           Init_Boarding_Action_           regions/07-object-1/000BC654-000BCE53.txt
+m020f041  41   -      0x00037308  1:0x00027308  code  Resolve_Raid                   Resolve_Raid_                   regions/07-object-1/000BC654-000BCE53.txt
+m020f042  42   -      0x00037DA8  1:0x00027DA8  code  Resolve_Capture                Resolve_Capture_                regions/07-object-1/000BCE54-000BD653.txt
+m020f043  43   -      0x00038312  1:0x00028312  code  Capture_Ship                   Capture_Ship_                   regions/07-object-1/000BD654-000BDE53.txt
+m020f044  44   -      0x000384A8  1:0x000284A8  code  Select_Raid_Internal           Select_Raid_Internal_           regions/07-object-1/000BD654-000BDE53.txt
+m020f045  45   -      0x00038656  1:0x00028656  code  Damage_From_Ship_Exploding     Damage_From_Ship_Exploding_     regions/07-object-1/000BD654-000BDE53.txt
+m020f046  46   -      0x0003868F  1:0x0002868F  code  Apply_Combat_Artemis_Net       Apply_Combat_Artemis_Net_       regions/07-object-1/000BD654-000BDE53.txt
+m020f047  47   -      0x0003883A  1:0x0002883A  code  Combat_Ship_Done               Combat_Ship_Done_               regions/07-object-1/000BDE54-000BE653.txt
+m020f048  48   -      0x00038858  1:0x00028858  code  Set_Combat_Ship_Done           Set_Combat_Ship_Done_           regions/07-object-1/000BDE54-000BE653.txt
+m020f049  49   -      0x00038876  1:0x00028876  code  Used_Teleporter                Used_Teleporter_                regions/07-object-1/000BDE54-000BE653.txt
+m020f050  50   -      0x0003888C  1:0x0002888C  code  Set_Teleporter_Used            Set_Teleporter_Used_            regions/07-object-1/000BDE54-000BE653.txt
+m020f051  51   -      0x000388A2  1:0x000288A2  code  Already_Boarded                Already_Boarded_                regions/07-object-1/000BDE54-000BE653.txt
+m020f052  52   -      0x000388B8  1:0x000288B8  code  Set_Boarded_Flag               Set_Boarded_Flag_               regions/07-object-1/000BDE54-000BE653.txt
+m020f053  53   -      0x000388CE  1:0x000288CE  code  Being_Captured                 Being_Captured_                 regions/07-object-1/000BDE54-000BE653.txt
+m020f054  54   -      0x000388E7  1:0x000288E7  code  Set_Capturing_Flag             Set_Capturing_Flag_             regions/07-object-1/000BDE54-000BE653.txt
+m020f055  55   -      0x00038900  1:0x00028900  code  Clear_Capturing_Flag           Clear_Capturing_Flag_           regions/07-object-1/000BDE54-000BE653.txt

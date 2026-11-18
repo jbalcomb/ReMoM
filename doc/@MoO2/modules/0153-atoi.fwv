@@ -1,0 +1,8 @@
+module_num=153
+module=atoi
+source=0153-atoi.md
+range[0]=1:0x0011760B linear=0x0012760B size=109
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m153f001  1    -      0x0012760B  1:0x0011760B  code  atoi  atoi_   regions/07-object-1/001AC654-001ACE53.txt

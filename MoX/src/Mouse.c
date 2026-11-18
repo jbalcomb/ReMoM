@@ -57,7 +57,9 @@ int16_t mouse_enabled = ST_FALSE;
 int16_t mouse_driver_installed = ST_FALSE;
 
 // WZD dseg:78C0
-int16_t MOUSE_Usable = ST_FALSE;
+// drake178: MOUSE_Usable
+/* OGBUG  written only by Set_Mouse_Usable() (from Init_Mouse_Keyboard()); its only reader, UU_MOUSE_Usable(), is called nowhere in WIZARDS.EXE or MAGIC.EXE */
+int16_t mouse_usable = ST_FALSE;
 
 // WZD dseg:78C2
 // MoO2  Module: video  signed integer (2 bytes) mouse_x  Address: 02 : 001B3A38
@@ -229,12 +231,39 @@ the current button state is returned as a button bitmask,
   (where X is generally 1 for the left, 2 for middle, 3 for the right button)
 x and y are set to the mouse cursor position relative to the focus window
 */
+#if defined(__DOS16__)
+/* CLAUDE */  /* the OG MS-DOS body (seg035 is hand-written asm: no bp frame, result left in AX); Borland inline asm, never compiled in a ReMoM build */
+int16_t Mouse_Button(void)
+{
+    asm push es
+    asm push ds
+    asm mov ax, seg mouse_driver_installed
+    asm mov ds, ax
+    asm cmp word ptr [mouse_driver_installed], ST_FALSE
+    /* OGBUG  with no mouse driver this returns AX = the DGROUP segment ('buttons held', nonzero) instead of 0; every live caller tests for a mouse first, and the one that does not (Wait_Ticks_Or_Input) has no callers */
+    asm jz short Done
+    asm mov ax, 3
+    asm mov bx, 0
+    asm mov cx, 0
+    asm mov dx, 0
+    asm cli
+    asm int 33h
+    asm sti
+    asm and bx, 11b
+    asm mov ax, bx
+Done:
+    asm pop ds
+    asm pop es
+}
+#else
+/* CLAUDE */  /* platform replacement for the OG MS-DOS body above */
 int16_t Mouse_Button(void)
 {
     Platform_Event_Handler();
 
     return Platform_Get_Mouse_Button_State();
 }
+#endif
 
 // WZD s35p06
 void Mouse_Wait(void)
@@ -281,9 +310,10 @@ int16_t Init_Mouse_Driver(void)
 
 
 // WZD s35p08
-void RP_Mouse_SetUsable(void)
+// drake178: RP_MOUSE_SetUsable()
+void Set_Mouse_Usable(void)
 {
-    MOUSE_Usable = ST_TRUE;
+    mouse_usable = ST_TRUE;
 }
 
 
@@ -386,6 +416,18 @@ void Restore_Mouse_State(void)
 {
     mouse_enabled = mouse_state;
 }
+
+// WZD s35p15
+void UU_MOUSE_Usable(void)
+{
+    // TODO
+}
+
+// WZD s35p16
+// Keyboard.c  int16_t Keyboard_Status(void)
+
+// WZD s35p17
+// Keyboard.c  uint8_t Read_Key(void)
 
 // WZD s35p18
 int16_t Pointer_X(void)
@@ -516,10 +558,12 @@ void Check_Mouse_Buffer(int16_t x, int16_t y, int16_t buttons)
 // ? DSP & RSP ? Front & Back || On & Off || "draw_page_num" vs. "current_page_flag" {1,2,3} ?
 
 
-// WZD s35p30  AKA CRL_Save_RSP();
-// WZD s35p31  AKA Save_Mouse_Off_Page();  CRL_Save_DSP();
-// WZD s35p32  AKA IN_CRL_Save_RSP();  VGA_SaveCursorArea();
-
+// WZD s35p30
+// AKA CRL_Save_RSP()
+/*
+vs. WZD s35p31  AKA Save_Mouse_Off_Page();  CRL_Save_DSP();
+vs. WZD s35p32  AKA IN_CRL_Save_RSP();  VGA_SaveCursorArea();
+*/
 void Save_Mouse_On_Page(int16_t x, int16_t y)
 {
     uint8_t * screen_page;
@@ -530,14 +574,14 @@ void Save_Mouse_On_Page(int16_t x, int16_t y)
     uint16_t itr_width;
     uint16_t itr_height;
 
-    // if(current_pointer_image_number != 0)
-    // if(previous_pointer_image_number != 0)
-    // if(previous_pointer_image_number == 0 && mouse_save_flag != ST_FALSE)
-    // mouse_save_flag == ST_TRUE
-    // if(current_pointer_image_number == 0 && previous_pointer_image_number == 0 && GUI_HaveAreaSave == ST_FALSE) { return; }
-    if(current_pointer_image_number != 0)
+    /* OGBUG  nothing ever resets mouse_save_flag: with no pointer image, only the first call saves the area under the cursor */
+    if(current_pointer_image_number == 0)
     {
-
+        if(mouse_save_flag != ST_FALSE)
+        {
+            return;
+        }
+        mouse_save_flag = ST_TRUE;
     }
     // clip the cursor image to the right and the bottom of the screen
     if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH ; } else { width  = SCREEN_WIDTH  - x; }
@@ -562,6 +606,8 @@ void Save_Mouse_On_Page(int16_t x, int16_t y)
 
 }
 
+
+// WZD s35p31
 void Save_Mouse_Off_Page(int16_t x, int16_t y)
 {
     uint8_t * screen_page;
@@ -572,11 +618,18 @@ void Save_Mouse_Off_Page(int16_t x, int16_t y)
     uint16_t itr_width;
     uint16_t itr_height;
 
-    // if(current_pointer_image_number != 0)
-    // if(previous_pointer_image_number != 0)
-    // if(previous_pointer_image_number == 0 && mouse_save_flag != ST_FALSE)
-    // mouse_save_flag == ST_TRUE
-    // if(current_pointer_image_number == 0 && previous_pointer_image_number == 0 && GUI_HaveAreaSave == ST_FALSE) { return; }
+    if(
+        (current_pointer_image_number == 0)
+        &&
+        (previous_pointer_image_number == 0)
+    )
+    {
+        if(mouse_save_flag != ST_FALSE)
+        {
+            return;
+        }
+        mouse_save_flag = ST_TRUE;
+    }
 
     // clip the cursor image to the right and the bottom of the screen
     if(x + CURSOR_WIDTH  < SCREEN_WIDTH ) { width  = CURSOR_WIDTH ; } else { width  = SCREEN_WIDTH  - x; }
@@ -601,6 +654,8 @@ void Save_Mouse_Off_Page(int16_t x, int16_t y)
 
 }
 
+
+// WZD s35p32
 void Save_Mouse_On_Page_(int16_t x, int16_t y)
 {
     uint8_t * screen_page;
@@ -634,8 +689,8 @@ void Save_Mouse_On_Page_(int16_t x, int16_t y)
 
 }
 
-// WZD s35p33
 
+// WZD s35p33
 void Copy_Mouse_Off_To_Mouse_Back(void)
 {
     uint16_t * src_mouse_buffer;
@@ -651,9 +706,12 @@ void Copy_Mouse_Off_To_Mouse_Back(void)
     }
 }
 
-// WZD s35p34  Restore_Mouse_On_Page   CRL_Restore_RSP     VGA_RestoreCursrArea
-// WZD s35p35  Restore_Mouse_Off_Page  CRL_Restore_DSP     VGA_RestoreDrawCArea
 
+// WZD s35p34
+// AKA CRL_Restore_RSP()  VGA_RestoreCursrArea()
+/*
+vs. WZD s35p35  Restore_Mouse_Off_Page  CRL_Restore_DSP     VGA_RestoreDrawCArea
+*/
 void Restore_Mouse_On_Page(void)
 {
     uint8_t * screen_page;
@@ -663,6 +721,12 @@ void Restore_Mouse_On_Page(void)
     uint16_t height;
     uint16_t itr_width;
     uint16_t itr_height;
+
+    /* CLAUDE */  /* REBUG */  /* asm seg035/Restore_Mouse_On_Page.asm: cmp [previous_pointer_image_number], 0 / jnz loc_261A7 - else return */
+    if(previous_pointer_image_number == crsr_None)
+    {
+        return;
+    }
 
     mouse_buffer = &mouse_background_buffer[0];
     screen_page_offset = *mouse_buffer++;
@@ -680,6 +744,9 @@ void Restore_Mouse_On_Page(void)
     }
 
 }
+
+
+// WZD s35p35
 void Restore_Mouse_Off_Page(void)
 {
     uint8_t * screen_page;
@@ -690,8 +757,13 @@ void Restore_Mouse_Off_Page(void)
     uint16_t itr_width;
     uint16_t itr_height;
 
-    // if(previous_pointer_image_number != crsr_None)
+    if(previous_pointer_image_number == crsr_None)
+    {
+        return;
+    }
 
+    /* OGBUG  restores the OTHER page (1 - draw_page_num) from mouse_background_buffer, the buffer Save_Mouse_On_Page fills for the displayed page, while Save_Mouse_Off_Page saves into
+       mouse_off_page_buffer; it is right only when Copy_Mouse_Off_To_Mouse_Back (off -> background) ran in between */
     mouse_buffer = &mouse_background_buffer[0];
     screen_page_offset = *mouse_buffer++;
     width = *mouse_buffer++;
@@ -709,11 +781,14 @@ void Restore_Mouse_Off_Page(void)
 
 }
 
-// WZD s35p37  Draw_Mouse_On_Page    CRH_Draw_RSP  GUI_DisplayCursor
-// WZD s35p38  Draw_Mouse_Off_Page   CRH_Draw_DSP  GUI_DrawCursor
-// WZD s35p39  Draw_Mouse_On_Page_   CRL_Draw_RSP  VGA_DisplayCursor
-// WZD s35p40  Draw_Mouse_Off_Page_  CRL_Draw_DSP  VGA_DrawCursor
 
+// WZD s35p36
+void UU_VGA_RestoreToFrame3(void)
+{
+    // TODO
+}
+
+// WZD s35p37  Draw_Mouse_On_Page    CRH_Draw_RSP  GUI_DisplayCursor
 void Draw_Mouse_On_Page(int16_t x, int16_t y)
 {
 
@@ -724,6 +799,8 @@ void Draw_Mouse_On_Page(int16_t x, int16_t y)
 
 }
 
+
+// WZD s35p38  Draw_Mouse_Off_Page   CRH_Draw_DSP  GUI_DrawCursor
 void Draw_Mouse_Off_Page(int16_t x, int16_t y)
 {
 
@@ -734,6 +811,8 @@ void Draw_Mouse_Off_Page(int16_t x, int16_t y)
 
 }
 
+
+// WZD s35p39  Draw_Mouse_On_Page_   CRL_Draw_RSP  VGA_DisplayCursor
 void Draw_Mouse_On_Page_(int16_t x, int16_t y)
 {
     uint8_t * mouse_image;
@@ -773,6 +852,8 @@ void Draw_Mouse_On_Page_(int16_t x, int16_t y)
 
 }
 
+
+// WZD s35p40  Draw_Mouse_Off_Page_  CRL_Draw_DSP  VGA_DrawCursor
 void Draw_Mouse_Off_Page_(int16_t x, int16_t y)
 {
     uint8_t * mouse_image;

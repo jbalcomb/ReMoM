@@ -1,0 +1,1449 @@
+lbx           entry  record  field  chars  case   text
+DIPLOMAT.LBX      1      15      0    101  Mixed  Hail Emperor \x83. The \x81 empire genuinely thanks you for your generous tribute in difficult times.
+DIPLOMAT.LBX      1      16      0    120  Title  Many \x81s have looked to the \x80 empire with great distrust, but your tribute has now won over the conviction of many.
+DIPLOMAT.LBX      1      17      0     86  Title  Your tribute has been accepted as reparations for your crimes against the \x81 empire.
+DIPLOMAT.LBX      1      18      0    151  Title  Diplomatic channels between the \x80 and \x81 empires have been tenuous at best, but your tribute now offers a way to significantly reduce the tension.
+DIPLOMAT.LBX      1      19      0     93  Title  Emperor \x83, the \x81 empire applauds your generous tribute and welcomes future cooperation.
+DIPLOMAT.LBX      1      20      0     78  Title  You have made a wise choice in offering tribute to an obviously superior race.
+DIPLOMAT.LBX      1      21      0     86  Title  The \x81 empire greatly appreciates your support with such a magnanimous contribution.
+DIPLOMAT.LBX      1      22      0     91  Title  Emperor \x83, your generous tribute has laid many \x81 grievances with your empire to rest.
+DIPLOMAT.LBX      1      23      0    134  Title  Emperor \x83, your magnificent contribution will go far toward establishing a lasting peace and a hopeful future for both our peoples.
+DIPLOMAT.LBX      1      24      0     99  Title  With tribute such as this, both our empires will soon be able to exist together in perfect harmony.
+DIPLOMAT.LBX      1      30      0    104  Title  Your contributions to establish mutual trade between our two empires has greatly enhanced our relations.
+DIPLOMAT.LBX      1      31      0     91  Title  The trade between the \x80 and the \x81 empires has greatly relaxed current tension levels.
+DIPLOMAT.LBX      1      32      0    149  Title  Emperor \x83, the trade between our two empires has not only increased our production but has also formed a basis for mutual respect and cooperation.
+DIPLOMAT.LBX      1      33      0    125  Title  The prosperous trade between our two empires has formed a solid financial foundation from which both our empires can benefit.
+DIPLOMAT.LBX      1      34      0    113  Title  Although our empires have had disagreements in the past, mutual trade has certainly relieved some of the tension.
+DIPLOMAT.LBX      1      35      0    134  Title  Continued trade between the \x80 and the \x81 empires is of extreme importance if both our empires are to resist the threat of others.
+DIPLOMAT.LBX      1      36      0     90  Title  The trade you offered has given our two empires an opportunity to strengthen our alliance.
+DIPLOMAT.LBX      1      37      0    145  Title  The prosperous trade between the \x80 and the \x81 empires has provided excellent incentives to maintain a lasting peace between our two empires.
+DIPLOMAT.LBX      1      38      0     91  Title  Our mutual trade has marked a new era of cooperation between the \x80 and the \x81 empires.
+DIPLOMAT.LBX      1      45      0     70  Title  Together our empires can challenge the threat of the evil \x86 empire.
+DIPLOMAT.LBX      1      46      0     80  Title  Your attacks against the insidious \x86 proves the honor in your words of peace.
+DIPLOMAT.LBX      1      47      0    101  Title  Emperor \x83, you to must now realize the incredible threat the \x86 empire poses to both our worlds.
+DIPLOMAT.LBX      1      48      0     78  Title  It would seem that both our empires share a common enemy, the loathsome \x86s.
+DIPLOMAT.LBX      1      49      0    100  Mixed  Obviously the \x86 menace has even reached the \x80 empire. Together we will smite the infidel dogs.
+DIPLOMAT.LBX      1      60      0     94  Mixed  Watch yourself Emperor \x83. We will no longer tolerate espionage attempts against our empire.
+DIPLOMAT.LBX      1      61      0     92  Title  We have known of your espionage operations for quite some time, and our patience wears thin.
+DIPLOMAT.LBX      1      62      0    135  Title  We have had great restraint thus far tolerating your bungling espionage attempts, but soon you shall feel the wrath of the \x81 empire.
+DIPLOMAT.LBX      1      63      0     80  Title  The \x81 empire is compelled to protest your persistent \x84 espionage attempts.
+DIPLOMAT.LBX      1      64      0    144  Mixed  Obviously you have underestimated our patience in dealing with \x84 espionage. If you continue, it will most certainly lead to open hostilities.
+DIPLOMAT.LBX      1      65      0     88  Title  Your \x84 espionage attempts are creating tension between the \x80 and \x81 the empires.
+DIPLOMAT.LBX      1      90      0    161  Title  In the past the \x81 empire has been kind to inferior species, but if you persist in the sabotage of our \x82 we will eliminate the \x80 threat once and for all.
+DIPLOMAT.LBX      1      91      0     96  Mixed  Surely Emperor \x83, you must realize that sabotage will surely jeopardize any future relations.
+DIPLOMAT.LBX      1      92      0    127  Title  Continued sabotage against our \x82 in the \x85 star system will soon place our empires precariously close to the brink of war.
+DIPLOMAT.LBX      1      93      0     83  Title  Continue to sabotage our \x82 and you will plunge us into a foolish and costly war.
+DIPLOMAT.LBX      1      94      0    135  Mixed  Emperor \x83, hear this. Discontinue any further attempts of sabotage against the \x81 empire or face the consequences of your actions.
+DIPLOMAT.LBX      1      95      0     90  Title  Your bungling attempts to sabotage our \x82 is shattering what little peace we still have.
+DIPLOMAT.LBX      1      96      0    117  Mixed  The \x81 empire will not stand for acts of terrorism such as the sabotage attempt at \x85. Wars have begun over less.
+DIPLOMAT.LBX      1      97      0    141  Title  Emperor \x83, if you wish to avert a senseless war you will immediately discontinue all sabotage operations launched against the \x81 empire.
+DIPLOMAT.LBX      1     120      0    100  Mixed  Too many \x80 ships have been amassing along our border. Remove the ships or face the perils of war.
+DIPLOMAT.LBX      1     121      0    119  Mixed  Do you take us for complete morons? The build up of ships along our border can only be interpreted as a prelude to war.
+DIPLOMAT.LBX      1     122      0    117  Mixed  It is doubtful you believe our conviction. Continue to amass star ships along our borders and soon we will be at war.
+DIPLOMAT.LBX      1     123      0    120  Mixed  Despite our warnings, \x80 star ships have been seen moving through \x81 territory. Continue and they will be destroyed.
+DIPLOMAT.LBX      1     124      0    107  Title  Unless you reduce the number of \x80 ships along our border, we will be forced to take pre-emptive actions.
+DIPLOMAT.LBX      1     125      0    108  Mixed  The \x80 empire has grown far too large. Continue to expand and we will be forced to take militant measures.
+DIPLOMAT.LBX      1     126      0    109  Mixed  Your reckless expansion is beginning to intrude upon \x81 territory. Withdraw from our space or be destroyed.
+DIPLOMAT.LBX      1     127      0    131  Mixed  Your ambitious expansion cannot remain unchecked. Unless you begin to withdraw we will be forced to reclaim our territory by force.
+DIPLOMAT.LBX      1     128      0     77  Title  Cease your expansion into \x81 territory or we will crush your pathetic race.
+DIPLOMAT.LBX      1     135      0    135  Mixed  You are the source of perpetual humor. If you believe we would willingly condone the destruction of our ships you are greatly mistaken.
+DIPLOMAT.LBX      1     136      0    134  Mixed  Many within the \x81 empire are restless and crave action. Another attack like the one at \x85 and you will give us an excuse for war.
+DIPLOMAT.LBX      1     137      0     88  Title  In the future make it a point to stay out of \x81 space, or you will be crushed utterly.
+DIPLOMAT.LBX      1     138      0    105  Title  The \x81s order you to cease all hostilities in the \x85 system or face the consequences of your actions.
+DIPLOMAT.LBX      1     139      0    141  Mixed  \x80 star ships have engaged in unlawful penetration of \x81 territory. You will discontinue such operations or suffer immediate retaliation.
+DIPLOMAT.LBX      1     140      0    106  Title  The \x81s order you to immediately remove all vessels from the \x85 star system or they will be destroyed.
+DIPLOMAT.LBX      1     141      0    133  Mixed  We are not fools. Surely you do not expect us to believe that the attack on the \x85 star system was initiated by renegade activists.
+DIPLOMAT.LBX      1     142      0     81  Title  Conflicts such as the battle at \x85 can only be interpreted as a prelude to war.
+DIPLOMAT.LBX      1     143      0    134  Mixed  Emperor \x83 you can not simply attack \x81 starships with impunity. Even as I speak, the \x81 empire is preparing for full scale war.
+DIPLOMAT.LBX      1     144      0    124  Title  Emperor \x83, if you wish to avoid a pointless war between our two peoples, you must stop randomly attacking \x81 starships.
+DIPLOMAT.LBX      1     145      0    135  Mixed  Consider yourself fortunate Emperor \x83 that the \x81 empire is not yet ready to enter into a senseless war over the incident at \x85.
+DIPLOMAT.LBX      1     146      0     92  Title  Peace talks will soon break down if the \x80 empire does not cease attacking \x81 starships.
+DIPLOMAT.LBX      1     150      0    137  Mixed  The relations between our two empires is becoming quite dire. The attack on the \x85 star system was unprovoked and may soon lead to war.
+DIPLOMAT.LBX      1     151      0    127  Mixed  Attacking our colony at \x85 was quite unwise. The \x81 empire will no longer sit idle while our people are slain by \x80 dogs.
+DIPLOMAT.LBX      1     152      0    121  Mixed  Emperor, \x83, \x80 star ships have invaded and violated \x81 space. Such actions can only be construed as an act or war.
+DIPLOMAT.LBX      1     153      0    127  Title  Whereas the destruction of our ships can be endured, the wholesale slaughtering of \x81 colonists will certainly guarantee war.
+DIPLOMAT.LBX      1     154      0    100  Title  The ruthless storming of the \x85 colony has destroyed whatever future our two empires may have had.
+DIPLOMAT.LBX      1     155      0     97  Title  Venture near the \x85 star system again and we will be forced to annihilate the entire \x80 race.
+DIPLOMAT.LBX      1     156      0     69  Title  How can you not expect retaliation for the unprovoked attack at \x85.
+DIPLOMAT.LBX      1     157      0    102  Title  Your senseless attack on the \x85 star system has endangered the lives of billions on both our worlds.
+DIPLOMAT.LBX      1     158      0     86  Title  The \x81 empire considers the attack on the \x85 star system an unprovoked act of war.
+DIPLOMAT.LBX      1     159      0    150  Mixed  Emperor \x83, you will pay dearly for blatantly disregarding \x81 space and attacking the outpost at \x85. Soon you will pay dearly for your misdeeds.
+DIPLOMAT.LBX      1     160      0    120  Mixed  Blast you, Emperor \x83! You are jeopardizing the future of both our peoples by your senseless attacks on \x81 colonies.
+DIPLOMAT.LBX      1     161      0    105  Mixed  How dare you enter \x81 space and attack one of our colonies. Such audacity can only be answered in kind.
+DIPLOMAT.LBX      1     165      0    104  Title  Emperor \x83, simple rhetoric will not excuse you from using biological weapons in the \x85 star system.
+DIPLOMAT.LBX      1     166      0     74  Title  Use of biological weapons has placed both our empires on the brink of war.
+DIPLOMAT.LBX      1     167      0     84  Title  There can be no truth or honor in the words of one who would use biological weapons.
+DIPLOMAT.LBX      1     168      0     82  Mixed  \x80 scum. You will pay dearly for using biological weapons on innocent colonists.
+DIPLOMAT.LBX      1     169      0    100  Title  No pathetic excuse you can offer will forgive the use of biological weapons on the \x85 star system.
+DIPLOMAT.LBX      1     170      0     87  Title  There can be no justification whatsoever for the biological attacks on the \x85 colony.
+DIPLOMAT.LBX      1     171      0    138  Mixed  Obviously the \x80s are led by a madman willing to use biological weapons on a whim. Soon the \x81 empire will put an end to your madness.
+DIPLOMAT.LBX      1     180      0     99  Mixed  The \x80 empire has become far too powerful. Expand any further and you will have to be eliminated.
+DIPLOMAT.LBX      1     181      0    111  Mixed  The \x80 empire has become a threat to the entire galaxy. Cease expanding or face the wrath of the \x81 empire.
+DIPLOMAT.LBX      1     182      0    128  Mixed  The \x81 empire is tired of looking the other way while the \x80s take over the galaxy. Withdraw or prepare to die Emperor \x83.
+DIPLOMAT.LBX      1     183      0    114  Mixed  We will not allow the \x80s to take over the galaxy. If necessary we will save the universe from the \x80 madness.
+DIPLOMAT.LBX      1     184      0    146  Mixed  You have spread like a plague throughout the galaxy. Cease your reckless expansion or we will be forced to eliminate your threat once and for all.
+DIPLOMAT.LBX      1     185      0     65  Mixed  Our patience is exhausted. Continue to expand and it will be war.
+DIPLOMAT.LBX      1     195      0     89  Mixed  Your interference has been tolerated long enough. Of course you know, this means war!\x8A
+DIPLOMAT.LBX      1     196      0     77  Mixed  You cannot escape the wrath of the \x81 empire. Prepare to die \x80 scum.\x8A
+DIPLOMAT.LBX      1     197      0     66  Mixed  The \x81 empire will soon cure the galaxy of the \x80 madness.\x8A
+DIPLOMAT.LBX      1     198      0    106  Mixed  We will follow you to the ends of space and rid the universe of the \x80 infestation wherever it lies.\x8A
+DIPLOMAT.LBX      1     199      0     77  Mixed  The \x81 empire is determined to free the universe from the \x80 tyranny!\x8A
+DIPLOMAT.LBX      1     200      0    112  Mixed  Your actions have irrevocably changed the fate of our two empires and plunged us into a war neither can win.\x8A
+DIPLOMAT.LBX      1     201      0     87  Mixed  You have left the \x81s with only one choice: to reduce your empire to cosmic dust.\x8A
+DIPLOMAT.LBX      1     202      0    142  Mixed  Although the \x81 empire has been reluctant to enter an intergalactic war, your insufferable acts of terrorism can no longer be permitted.\x8A
+DIPLOMAT.LBX      1     203      0     68  Mixed  Soon the \x81 empire will put an end to your pathetic existence.\x8A
+DIPLOMAT.LBX      1     204      0    109  Mixed  Time after time we have attempted to reason with you. Now you have left us with no other option than war.\x8A
+DIPLOMAT.LBX      1     205      0    100  Mixed  We shall make an example of you for other worlds that would resist the might of the \x81 empire.\x8A
+DIPLOMAT.LBX      1     206      0    158  Mixed  So Emperor \x83, you have answered our requests for peace with unprovoked acts of war. So be it. We will crush the \x80 madness that plagues the universe.\x8A
+DIPLOMAT.LBX      1     207      0     89  Mixed  \x80 slime. Warnings were not enough. Now you will feel the might of the \x81 empire.\x8A
+DIPLOMAT.LBX      1     208      0     98  Mixed  Your actions can no longer be tolerated. Prepare to perish beneath the wake of the \x81 storm.\x8A
+DIPLOMAT.LBX      1     210      0     56  Title  The \x81 empire wishes no contact with the filthy \x80s.
+DIPLOMAT.LBX      1     211      0     63  Mixed  Stay clear of \x81 territory. Your mere existence makes us ill.
+DIPLOMAT.LBX      1     212      0     66  Title  Emperor \x83, enter \x81 space and you will be destroyed on sight.
+DIPLOMAT.LBX      1     213      0     92  Mixed  The \x81s are not interested in the affairs of lesser species. Stay clear of our territory.
+DIPLOMAT.LBX      1     225      0     89  Mixed  Beware Emperor \x83, the \x81 empire has arrived to free the galaxy from the \x80 terror.
+DIPLOMAT.LBX      1     226      0     92  Mixed  Shudder Emperor \x83. Soon the entire galaxy shall fall to the iron fist of the \x81 empire.
+DIPLOMAT.LBX      1     227      0     89  Mixed  Surrender now Emperor \x83 and save yourself from the inevitable fall to the \x81 empire.
+DIPLOMAT.LBX      1     228      0     96  Mixed  Resistance is futile. The fate of the \x80s is inevitable. Prepare to submit to the \x81 Empire.
+DIPLOMAT.LBX      1     240      0     77  Title  Your race is pathetic and worthless in the light of the glorious \x81 empire.
+DIPLOMAT.LBX      1     241      0     81  Mixed  Harken Emperor \x83, the magnificent, illustrious and godlike \x81s have arrived.
+DIPLOMAT.LBX      1     242      0     82  Title  The \x81 and \x80 empires will do fine so long as you acknowledge our superiority.
+DIPLOMAT.LBX      1     243      0     88  Mixed  The \x81 Empire greets the \x80s warmly, and hopes that you will prosper under our rule.
+DIPLOMAT.LBX      1     255      0    101  Mixed  Beware Emperor \x83. Any aggression will be answered with immediate retaliation from the \x81 empire.
+DIPLOMAT.LBX      1     256      0     93  Title  Now that we are aware of the \x80 presence, we will watch closely and tolerate no aggression.
+DIPLOMAT.LBX      1     257      0    107  Mixed  Make no mistake Emperor \x83. The \x81 empire absolutely will not tolerate any interference from the \x80s.
+DIPLOMAT.LBX      1     258      0    103  Mixed  So, another race has entered \x81 space. Be careful to not irritate the powerful and wise Emperor \x89.
+DIPLOMAT.LBX      1     270      0    125  Mixed  The \x81 empire realizes the difficulties of first contact with another race. Hopefully we will overcome our mutual distrust.
+DIPLOMAT.LBX      1     271      0     97  Title  Now that we share common territory, the survival of both our races depends on mutual cooperation.
+DIPLOMAT.LBX      1     272      0     74  Title  Oh illustrious \x83, surely our two empires can live in peace and harmony.
+DIPLOMAT.LBX      1     273      0    105  Mixed  We are delighted by our first contact with the \x80s. Let us work for a mutually beneficial relationship.
+DIPLOMAT.LBX      1     285      0     73  Mixed  Hail Emperor \x83. The \x81 empire greatly welcomes our future relations.
+DIPLOMAT.LBX      1     286      0     43  Mixed  Long live Emperor \x83 and the \x80 empire.
+DIPLOMAT.LBX      1     287      0     94  Mixed  Hail wise and just Emperor \x83. The \x81s welcome a new age of honor between our two empires.
+DIPLOMAT.LBX      1     288      0     91  Title  Emperor \x89 sends greetings to you, and desires a peaceful future between our two empires.
+DIPLOMAT.LBX      1     289      0     84  Mixed  Peace unto you, Emperor \x83! The \x81s desire a future free of conflict and strife.
+DIPLOMAT.LBX      1     300      0     56  Title  The \x81 ambassador was withdrawn when war was declared.
+DIPLOMAT.LBX      1     301      0     58  Title  The \x81 ambassador will return when tensions have cooled.
+DIPLOMAT.LBX      1     302      0     56  Title  Emperor \x89 is not prepared to bargain with warmongers.
+DIPLOMAT.LBX      1     303      0     44  Mixed  War has begun. The time for talk has passed.
+DIPLOMAT.LBX      1     315      0     45  Title  The \x81 ambassador is currently unavailable.
+DIPLOMAT.LBX      1     316      0     52  Title  Emperor \x89 has more pressing matters to attend to.
+DIPLOMAT.LBX      1     317      0     74  Mixed  We cannot speak at this time. More important issues require our attention.
+DIPLOMAT.LBX      1     318      0     88  Title  Emperor \x89 sends his regrets that affairs of state preclude negotiations at this time.
+DIPLOMAT.LBX      1     319      0     71  Title  Emperor \x89 feels that discussion would be inappropriate at this time.
+DIPLOMAT.LBX      1     330      0     81  Mixed  Hail mighty Emperor \x83. I bear greetings from the most wise: \x89 of the \x81s.
+DIPLOMAT.LBX      1     331      0     75  Mixed  Hail glorious Emperor \x83. I bear greetings from \x89, ruler of the \x81s.
+DIPLOMAT.LBX      1     332      0     41  Mixed  Greetings from \x89 Emperor of the \x81s.
+DIPLOMAT.LBX      1     333      0     85  Mixed  Hail revered Emperor of the \x80s. \x89 bears greetings from the most powerful \x81s.
+DIPLOMAT.LBX      1     345      0     84  Title  Despite your insolence and arrogant pride, \x89 of the \x81s grants you an audience.
+DIPLOMAT.LBX      1     346      0     59  Title  We expect you have come to offer amends to the \x81 people.
+DIPLOMAT.LBX      1     347      0     72  Mixed  Emperor \x89 grants a short audience with the dishonorable Emperor \x83.
+DIPLOMAT.LBX      1     348      0     72  Mixed  We reluctantly grant you an audience. Be brief for our time is precious.
+DIPLOMAT.LBX      1     349      0     46  Title  Emperor \x89 has little time to spare for you.
+DIPLOMAT.LBX      1     360      0    109  Mixed  In the interest of future peace, the \x81 empire proposes a Non-Aggression Pact between our two great powers.
+DIPLOMAT.LBX      1     361      0    136  Mixed  Expansion is dangerous. No one can outguess the other's deployments, so we propose a Non-Aggression Pact to prevent accidental conflict.
+DIPLOMAT.LBX      1     362      0    101  Mixed  We bear no ill will toward the \x80s. Let us agree to a Non-Aggression Pact to ensure future harmony.
+DIPLOMAT.LBX      1     363      0    124  Mixed  Our concerns are not with the \x80 empire. Let us agree to a Non-Aggression Pact so we may concentrate our forces on others.
+DIPLOMAT.LBX      1     375      0     67  Title  The time has come for our two empires to forge an undying alliance.
+DIPLOMAT.LBX      1     376      0     99  Title  The \x80 and \x81 empires are now at a point where both our peoples can coexist in perfect harmony.
+DIPLOMAT.LBX      1     377      0     70  Mixed  The \x81s offers the \x80 Empire their undying loyalty and allegiance.
+DIPLOMAT.LBX      1     378      0     61  Title  The \x81 empire pledges their eternal friendship and loyalty.
+DIPLOMAT.LBX      1     379      0     62  Mixed  Emperor \x83, let us cement our relationship with an Alliance.
+DIPLOMAT.LBX      1     390      0     88  Mixed  The \x81 empire wishes to acquire a trade agreement for an exchange of \x87 BC per year.
+DIPLOMAT.LBX      1     391      0     85  Mixed  Trade between our empires would benefit us both. Would you agree to \x87 BC per year?
+DIPLOMAT.LBX      1     392      0     70  Mixed  The \x81s desire your goods. Can we agree to trading \x87 BC per year?
+DIPLOMAT.LBX      1     405      0     86  Mixed  Emperor \x83, you must break your treaty with the \x8Cs if you expect to deal with us.
+DIPLOMAT.LBX      1     406      0     77  Mixed  We will not deal with a friend of the \x8Cs. End your treaty with them first.
+DIPLOMAT.LBX      1     407      0     89  Mixed  Once you have ended your dealings with the \x8C empire, we can discuss our mutual future.
+DIPLOMAT.LBX      1     408      0    104  Mixed  The friend of our enemy is our enemy. If you would deal with us, break your treaty with the \x8Cs first.
+DIPLOMAT.LBX      1     420      0    104  Title  Emperor \x83, the \x88s represent a threat to both our empires and we offer a reward for attacking them.
+DIPLOMAT.LBX      1     421      0     86  Title  Emperor \x83, we will reward you greatly if you aided us by attacking the \x88 forces.
+DIPLOMAT.LBX      1     422      0     85  Title  Our people will bestow lavish rewards on anyone who proves their hatred of the \x88s.
+DIPLOMAT.LBX      1     423      0     52  Title  Emperor \x89 has placed a bounty on the \x88 forces.
+DIPLOMAT.LBX      1     424      0     68  Title  Any attacks on the \x88s will be greatly rewarded by our government.
+DIPLOMAT.LBX      1     435      0    108  Mixed  The \x81 empire is in great need of \x8E. Perhaps you are willing to exchange it for some of our technology.
+DIPLOMAT.LBX      1     436      0     89  Mixed  We know you have the secret of \x8E. Can we offer you some of our technology in exchange?
+DIPLOMAT.LBX      1     437      0     84  Mixed  Emperor \x89 wishes the secret of \x8E Will you exchange it for one of our advances?
+DIPLOMAT.LBX      1     438      0     82  Mixed  The \x81 race is awed by the wonders of \x8E What can we offer you for its secret?
+DIPLOMAT.LBX      1     450      0    123  Mixed  Great \x83, our war has been a tremendous strain on both our peoples. Sign a peace treaty so we can end this senseless war.
+DIPLOMAT.LBX      1     451      0     79  Mixed  This war between us is senseless. Let us call an end to it with a peace treaty.
+DIPLOMAT.LBX      1     452      0     76  Mixed  Both our races have suffered greatly. Isn't it time we sought peace instead?
+DIPLOMAT.LBX      1     453      0     78  Mixed  Emperor \x83, I bring you an offer of peace from our illustrious leader, \x89.
+DIPLOMAT.LBX      1     454      0    110  Mixed  Do you still wish to suffer more? The \x81 empire sees no need to continue hostilities. Let us agree to peace.
+DIPLOMAT.LBX      1     455      0     94  Mixed  We can no longer sustain this horrible war. We offer a peace treaty to the powerful \x80 race.
+DIPLOMAT.LBX      1     465      0     35  Title  We are not interested at this time.
+DIPLOMAT.LBX      1     466      0     36  Title  Your offer does not seem fair to us.
+DIPLOMAT.LBX      1     467      0     35  Title  We respectfully decline your offer.
+DIPLOMAT.LBX      1     468      0     48  Title  The \x81s do not consider your offer a fair one.
+DIPLOMAT.LBX      1     469      0     64  Mixed  Perhaps you mistook us for gullible fools. We reject your offer.
+DIPLOMAT.LBX      1     470      0     30  Title  We are afraid we must decline.
+DIPLOMAT.LBX      1     471      0     22  Title  Emperor \x89 declines.
+DIPLOMAT.LBX      1     472      0     54  Title  The \x81s have considered your offer, and rejected it.
+DIPLOMAT.LBX      1     473      0     71  Title  It would not be in our best interest to accept your offer at this time.
+DIPLOMAT.LBX      1     480      0     76  Mixed  Emperor \x83, the \x97 is no longer convenient. We need more room to expand.
+DIPLOMAT.LBX      1     481      0     87  Mixed  The \x97 was made in haste. Our needs have changed. We must expand in order to survive.
+DIPLOMAT.LBX      1     482      0    106  Mixed  Times change and we are in dire need of new star systems. We regret the necessity, but our \x97 is broken.
+DIPLOMAT.LBX      1     483      0     80  Mixed  The \x81 empire must expand. The \x97 is too constraining and must be dissolved.
+DIPLOMAT.LBX      1     484      0    102  Mixed  A cry has rung out through our empire for new colonies. I have no other choice than to break our \x97.
+DIPLOMAT.LBX      1     495      0    106  Title  We are unwilling to enter into a treaty at this time because you have broken treaties with us in the past.
+DIPLOMAT.LBX      1     496      0     81  Mixed  You have not honored your past agreements. We see little reason to trust you now.
+DIPLOMAT.LBX      1     497      0     72  Title  Why should we trust you now, when you have broken so many past treaties?
+DIPLOMAT.LBX      1     498      0     77  Title  We see no reason to agree with someone who has not lived up to past promises.
+DIPLOMAT.LBX      1     499      0     46  Title  We will not deal with \x80s who have no honor.
+DIPLOMAT.LBX      1     510      0     76  Title  How can you expect us to accept when your spies are stealing our technology.
+DIPLOMAT.LBX      1     511      0     37  Title  Remove your spies, then we will talk.
+DIPLOMAT.LBX      1     512      0     78  Mixed  You thieving dogs, you steal the fruits of our research. We deny your request.
+DIPLOMAT.LBX      1     513      0    104  Mixed  Our technology is for the \x81 race. You have no right to steal it. We will talk when you stop stealing.
+DIPLOMAT.LBX      1     514      0     78  Mixed  Why should we give you anything? Your spies already steal everything you need!
+DIPLOMAT.LBX      1     540      0     77  Mixed  What! You expect us to agree when you are sabotaging our factories and bases?
+DIPLOMAT.LBX      1     541      0     85  Title  When you stop sabotaging our factories and bases, we can consider the matter further.
+DIPLOMAT.LBX      1     542      0    122  Mixed  We have not forgotten your last sabotage incident. Until you have proven to be more trustworthy we will not deal with you.
+DIPLOMAT.LBX      1     543      0     87  Mixed  Our people have suffered from your sabotage. We will not deal with you until it ceases.
+DIPLOMAT.LBX      1     544      0     65  Mixed  You destroy our factories and bases. Why should we deal with you?
+DIPLOMAT.LBX      1     570      0     69  Title  We will not talk of it while you are amassing ships near our borders.
+DIPLOMAT.LBX      1     571      0    101  Mixed  Remove your ships along our borders and we will consider accepting. Until then we are not interested.
+DIPLOMAT.LBX      1     572      0     70  Mixed  Your fleets intrude on \x81 space. Move them away, then we shall talk.
+DIPLOMAT.LBX      1     573      0     87  Mixed  Your ships on our borders are no threat to us. But we refuse to deal while they remain.
+DIPLOMAT.LBX      1     574      0     84  Title  If you wish to deal with the \x81s, then send your ships to threaten others, not us.
+DIPLOMAT.LBX      1     585      0     84  Mixed  You attack our ships without provocation and expect us to accept? We refuse to deal.
+DIPLOMAT.LBX      1     586      0     58  Title  We cannot accept an offer from one who attacks our fleets.
+DIPLOMAT.LBX      1     587      0     58  Title  Once your fleets have stopped attacking ours, we can talk.
+DIPLOMAT.LBX      1     588      0     64  Title  If you wish to deal with the \x81s, then leave our fleets alone.
+DIPLOMAT.LBX      1     589      0     82  Mixed  Emperor \x89 does not appreciate your destruction of our fleets. We do not accept.
+DIPLOMAT.LBX      1     600      0     89  Mixed  We have not forgotten the attack on the \x85 colony. There is no way that we will accept.
+DIPLOMAT.LBX      1     601      0     85  Mixed  The dead of \x85 cry out for retribution. We hear their cries louder than your offer.
+DIPLOMAT.LBX      1     602      0     66  Title  Your unjustified assault of \x85 gives you little room to bargain.
+DIPLOMAT.LBX      1     603      0     81  Mixed  Our people do not wish to deal with the butchers of \x85. Make your amends first.
+DIPLOMAT.LBX      1     604      0     67  Mixed  The blood from \x85 smears your words. We cannot accept your offer.
+DIPLOMAT.LBX      1     615      0     78  Title  The \x81 will not make any deals with a race who would use biological weapons.
+DIPLOMAT.LBX      1     616      0     72  Title  We cannot deal with anybody desperate enough to use biological weaponry.
+DIPLOMAT.LBX      1     617      0    103  Mixed  You use weapons that cause untold horrors on innocent populations. We refuse to deal with such madness.
+DIPLOMAT.LBX      1     618      0     98  Mixed  The gods abhor those who would destroy planets with biological weaponry. The \x81 cannot allow it.
+DIPLOMAT.LBX      1     619      0     94  Mixed  The cries of those killed by your biological weapons fill our ears. We cannot hear your offer.
+DIPLOMAT.LBX      1     630      0     60  Mixed  Stop all espionage operations or we will terminate our \x8B.
+DIPLOMAT.LBX      1     631      0     93  Mixed  Your \x84 espionage is jeopardizing our \x8B. Persist and we may be thrust into unwanted war.
+DIPLOMAT.LBX      1     632      0     94  Mixed  Your spies have been caught stealing \x84 secrets. If this happens again, we must take action.
+DIPLOMAT.LBX      1     633      0     72  Title  How can you claim to be our friend when your spies steal our technology?
+DIPLOMAT.LBX      1     634      0    104  Mixed  The \x81s are angered by your theft of our research. Cease at once, or it will destroy our relationship.
+DIPLOMAT.LBX      1     635      0     59  Title  Withdraw your spies at once, or deal with the consequences!
+DIPLOMAT.LBX      1     660      0     84  Mixed  If you attempt to sabotage any more of our \x82 we will be forced to break our \x8B.
+DIPLOMAT.LBX      1     661      0     70  Title  How could the \x80s claim friendship when your spies destroy our \x82?
+DIPLOMAT.LBX      1     662      0     65  Mixed  Your sabotage of our planets threatens the stability of our \x8B.
+DIPLOMAT.LBX      1     663      0     80  Mixed  When you destroy our \x82, be careful that our \x8B is not buried in the rubble.
+DIPLOMAT.LBX      1     664      0     72  Mixed  If you sabotage any more of our facilities, we will not uphold our \x8B.
+DIPLOMAT.LBX      1     690      0    106  Mixed  Emperor \x83, if you continue to deploy ships along our border we will break our \x8B and prepare for war.
+DIPLOMAT.LBX      1     691      0     86  Mixed  Your ships on our border do not indicate the level of trust that our \x8B should have.
+DIPLOMAT.LBX      1     692      0     81  Mixed  Friend \x83, the \x81s feel threatened by your ships. Please remove them at once.
+DIPLOMAT.LBX      1     693      0     96  Mixed  Our \x8B should be enough to ensure your security. You do not need so many forces on our border.
+DIPLOMAT.LBX      1     694      0     74  Mixed  Your ships near our space lead us to believe you intend to break our \x8B.
+DIPLOMAT.LBX      1     705      0     81  Mixed  Attacking \x81 ships is intolerable. Another incident and we will break our \x8B.
+DIPLOMAT.LBX      1     706      0     59  Mixed  Friends do not attack friends. Be you friend or be you foe?
+DIPLOMAT.LBX      1     707      0     53  Mixed  Attacking our ships is a clear violation of our \x8B!
+DIPLOMAT.LBX      1     708      0     78  Mixed  You sign a treaty with one hand, and attack with the other. Have you no honor?
+DIPLOMAT.LBX      1     709      0     55  Mixed  Be careful that your own ships do not destroy our \x8B.
+DIPLOMAT.LBX      1     720      0     71  Mixed  Attack our colonists again and our \x8B will be broken off immediately.
+DIPLOMAT.LBX      1     721      0     55  Mixed  Can we hold our \x8B when you attack colonists at \x85?
+DIPLOMAT.LBX      1     722      0     67  Mixed  The families of those killed at \x85 demand that we break our \x8B.
+DIPLOMAT.LBX      1     723      0     69  Mixed  The butchers of \x85 claim to be our friends. How can we believe you?
+DIPLOMAT.LBX      1     724      0     66  Mixed  You sign treaties with us, then attack our planets! What villainy!
+DIPLOMAT.LBX      1     735      0     73  Mixed  Use biological weapons again and our \x8B will be broken off immediately.
+DIPLOMAT.LBX      1     736      0     91  Mixed  We cannot maintain a treaty with someone who uses such horrible weapons. Cease immediately!
+DIPLOMAT.LBX      1     737      0     99  Title  Anybody who would use biological weapons on an innocent populace will not remain our ally for long.
+DIPLOMAT.LBX      1     738      0     99  Mixed  Are you mad? We cannot maintain a relationship with one who would sanction such biological weapons!
+DIPLOMAT.LBX      1     750      0     95  Mixed  Emperor \x83, your persistent espionage attempts leave us with no choice but to break our \x8B.
+DIPLOMAT.LBX      1     751      0     64  Mixed  Due to your continued theft of technology, we must end our \x8B.
+DIPLOMAT.LBX      1     752      0     76  Mixed  We can no longer maintain any \x8B with a pack of thieves such as the \x80s.
+DIPLOMAT.LBX      1     753      0    120  Mixed  You have stolen too much from the \x81s. Our \x8B is over.Emperor \x89 is furious over your thievery. Our \x8B ends now!
+DIPLOMAT.LBX      1     780      0     64  Mixed  Emperor \x83, sabotage can not be tolerated. Our \x8B is broken.
+DIPLOMAT.LBX      1     781      0     74  Mixed  You have persisted in your mad destruction of our \x82. Our \x8B ends now!
+DIPLOMAT.LBX      1     782      0     83  Mixed  Your sabotage proves you cannot be trusted. We regret that we must cancel our \x8B.
+DIPLOMAT.LBX      1     783      0     92  Mixed  Do you expect to maintain our relationship while destroying our \x82? Our \x8B must end now!
+DIPLOMAT.LBX      1     784      0     59  Mixed  Emperor \x89 has seen enough sabotage. Our \x8B is forfeit.
+DIPLOMAT.LBX      1     810      0     98  Mixed  Amassing a fleet along the border can only be interpreted as a prelude to war. Our \x8B is broken.
+DIPLOMAT.LBX      1     811      0     86  Mixed  Your fleets on our border will prove your undoing. We now end our \x8B with the \x80s.
+DIPLOMAT.LBX      1     812      0     96  Mixed  You thought we would ignore your military buildup? Our \x8B ends now, and you will rue this day!
+DIPLOMAT.LBX      1     813      0    107  Mixed  We no longer believe \x80 words of peace when your warships threaten \x81 space. Our \x8B is null and void.
+DIPLOMAT.LBX      1     814      0     68  Mixed  Emperor \x89 does not fear your fleet! Our \x8B is ripped to shreds!
+DIPLOMAT.LBX      1     825      0     76  Mixed  Emperor \x83, you attacked our fleet after being warned. Our \x8B is broken.
+DIPLOMAT.LBX      1     826      0     79  Mixed  You back-stabbing infidels! You agree to our \x8B, then attack us! It ends now!
+DIPLOMAT.LBX      1     827      0     83  Mixed  Your attack on \x81 ships proves there is no honor in our \x8B. Consider it broken.
+DIPLOMAT.LBX      1     828      0     51  Mixed  You have destroyed \x81 ships. The \x8B is no more.
+DIPLOMAT.LBX      1     829      0     85  Mixed  Emperor \x89 will not stand for allies destroying \x81 ships. Our agreement ends now.
+DIPLOMAT.LBX      1     840      0    128  Mixed  Emperor \x83, your tyrannical nature has forced us to break our \x8B. Another attack like the one at \x85 and we will be at war.
+DIPLOMAT.LBX      1     841      0     76  Mixed  Your attack on \x85 proves that the \x80s have no honor. Our treaty is over.
+DIPLOMAT.LBX      1     842      0     65  Title  We will hold no treaties with lying \x80s who attack our planets.
+DIPLOMAT.LBX      1     843      0     81  Mixed  Our \x8B must end now. Another attack like the one at \x85 and we must retaliate.
+DIPLOMAT.LBX      1     844      0     49  Title  Emperor \x89 maintains no treaties with butchers.
+DIPLOMAT.LBX      1     855      0    101  Mixed  Emperor \x83, the \x81 refuses to associate with anyone using biological weapons. Our \x8B is broken.
+DIPLOMAT.LBX      1     856      0    100  Mixed  The \x81 will not keep any treaties with a race who would use biological weapons. Our \x8B ends now.
+DIPLOMAT.LBX      1     857      0     90  Mixed  We cannot deal with anybody desperate enough to use biological weaponry. Our \x8B is over!
+DIPLOMAT.LBX      1     858      0    119  Mixed  You use weapons that cause untold horrors on innocent populations. The \x81s refuse to keep a treaty with such madness.
+DIPLOMAT.LBX      1     859      0    132  Mixed  The gods abhor those who would destroy planets with biological weaponry. Emperor \x89 ends our treaty and prays for your redemption.
+DIPLOMAT.LBX      1     860      0     86  Mixed  Those killed by your biological weapons demand justice. We no longer hold to our \x8B.
+DIPLOMAT.LBX      1     870      0     59  Mixed  As a reward for attacking the \x88s we offer a gift of \x8D
+DIPLOMAT.LBX      1     871      0     52  Mixed  For attacking the vile \x88s we offer a gift of \x8D
+DIPLOMAT.LBX      1     872      0     86  Mixed  You have proven a valuable ally in attacking the \x88s. Accept \x8D from Emperor \x89.
+DIPLOMAT.LBX      1     873      0     74  Mixed  Emperor \x89 is grateful for your attack on the \x88s. He awards you \x8D.
+DIPLOMAT.LBX      1     874      0     92  Mixed  Emperor \x83, your attack on \x88s has pleased Emperor \x89. Accept \x8D with our gratitude.
+DIPLOMAT.LBX      1     885      0     52  Title  The \x80 empire is weak and will soon be eliminated.
+DIPLOMAT.LBX      1     886      0     79  Mixed  You still resist the New Repulic. You and your entire race will be erradicated.
+DIPLOMAT.LBX      1     887      0     90  Mixed  The New Republic will not tolerate dissidents. Surrender and you will be spared execution.
+DIPLOMAT.LBX      1     888      0    104  Mixed  The New Republic is on the verge of taking over the galaxy. Soon the \x80 empire will fall to our might.
+DIPLOMAT.LBX      1     889      0    107  Mixed  Our patience is exhausted. Surrender to the New Republic and save yourself from anymore grief Emperor \x83.
+DIPLOMAT.LBX      1     890      0    148  Mixed  The New Republic has decided to eliminate any who will not follow. All races not submitting will be exterminated, starting with the miserable \x80s.
+DIPLOMAT.LBX      1     891      0     62  Mixed  The time has come to unite the galaxy. Follow or be destroyed.
+DIPLOMAT.LBX      1     892      0     86  Mixed  Shudder Emperor \x83, the \x81 storm has arrived to pave the way for the New Republic.
+DIPLOMAT.LBX      1     893      0    119  Mixed  We understand that even emporers make foolish mistakes. Surrender and you will be spared the shame of being overthrown.
+DIPLOMAT.LBX      1     900      0     95  Mixed  The \x81 empire is tired of playing diplomatic games. Shudder Emperor \x83 for we come for you.
+DIPLOMAT.LBX      1     901      0    121  Mixed  Maintaining relations with your pitiful race is no longer beneficial. We are mobilizing our fleets and preparing for war.
+DIPLOMAT.LBX      1     902      0     86  Mixed  While our ambassadors promised peace, Emperor \x89 prepared for war. You will die now.
+DIPLOMAT.LBX      1     903      0     85  Title  We have known all along that the \x80s could not be trusted, so we will strike first!
+DIPLOMAT.LBX      1     904      0     65  Mixed  Our sincere apologies, Emperor \x83, but we must destroy you now.
+DIPLOMAT.LBX      1     905      0     84  Mixed  Pardon us, we forgot to mention that we have decided to destroy the \x80 Empire now.
+DIPLOMAT.LBX      1     915      0     78  Title  Emperor \x89 grows bored of diplomatic games and now wishes to play war games.
+DIPLOMAT.LBX      1     916      0    115  Mixed  The \x80s hide behind a mask of diplomatic friendship. We will strike first before you can reveal your true nature.
+DIPLOMAT.LBX      1     917      0     86  Title  The conjunction of planets indicates that we must eradicate the \x80s from the galaxy.
+DIPLOMAT.LBX      1     918      0    117  Mixed  In a vision, the ancients decreed to Emperor \x89 that we must smite the infidel \x80s. Prepare to die heathen trash.
+DIPLOMAT.LBX      1     919      0     58  Mixed  It looks like a nice year for war. Farewell, Emperor \x83!
+DIPLOMAT.LBX      1     920      0     64  Mixed  Emperor \x89 has declared it to be \x80 season. The hunt begins!
+DIPLOMAT.LBX      1     921      0     73  Mixed  To quote a famous \x81 author, 'Cry havoc, and let slip the dogs of war!'
+DIPLOMAT.LBX      1     930      0    151  Mixed  In the year \x8F the \x81 empire pledges to adhere to a Non-Aggression Pact and not to attack \x80 fleets unless they are orbiting one of our colonies.
+DIPLOMAT.LBX      1     931      0    137  Mixed  The \x81s agree to a Non-Aggression Pact. Neither side will attack the other's fleets, unless they enter the orbit of an opposing colony.
+DIPLOMAT.LBX      1     932      0    107  Title  If you agree not to send ships to any of our colonies, the \x81 people vow to not attack any of your ships.
+DIPLOMAT.LBX      1     933      0     96  Mixed  Emperor \x89 agrees to your proposed Non-Aggression Pact. So it is written, so shall it be done!
+DIPLOMAT.LBX      1     934      0    111  Mixed  Agreed, then. As long as you do not attack our colonies, the \x81 Empire will abide by the Non-Aggression Pact.
+DIPLOMAT.LBX      1     945      0    129  Mixed  In the year \x8F the \x81 and \x80 empires agree to form an alliance in which neither will attack the other's fleets or colonies.
+DIPLOMAT.LBX      1     946      0    102  Mixed  So our Alliance is forged. Your ships may visit our colonies as you wish, and get fuel from our bases.
+DIPLOMAT.LBX      1     947      0     69  Mixed  Emperor \x89 welcomes an Alliance with our good friend, Emperor \x83.
+DIPLOMAT.LBX      1     948      0     92  Mixed  The \x81 and \x80 empires today forge an Alliance between our peoples. Death to our enemies!
+DIPLOMAT.LBX      1     949      0     75  Mixed  Emperor \x89 sees the wisdom in an Alliance with the \x80 Empire. So be it!
+DIPLOMAT.LBX      1     960      0     73  Mixed  Effective \x8F the \x81 and \x80 empires agree to trade \x95 BC per year.
+DIPLOMAT.LBX      1     961      0     38  Mixed  A trade pact of \x95 BC is acceptable.
+DIPLOMAT.LBX      1     962      0    105  Mixed  The \x81s eagerly await the fine goods that the \x80s offer. We accept an agreement for \x95 BC per year.
+DIPLOMAT.LBX      1     963      0     46  Mixed  Emperor \x89 agrees to trade \x95 BC per year.
+DIPLOMAT.LBX      1     964      0     84  Mixed  Well, Emperor \x83, we find your offer of \x95 BC per year to be fair and equitable.
+DIPLOMAT.LBX      1     975      0     78  Mixed  In the year \x8F the \x81 and \x80 empires agree to terminate all hostilities.
+DIPLOMAT.LBX      1     976      0     70  Title  Emperor \x89 hereby orders all hostilities to end between our empires.
+DIPLOMAT.LBX      1     977      0     59  Title  We agree that the time has come to end our petty bickering.
+DIPLOMAT.LBX      1     978      0     91  Mixed  We accept your offer of peace. Cease fire on \x81 forces, and we will stop attacking yours.
+DIPLOMAT.LBX      1     979      0     82  Mixed  We grow weary of this senseless destruction. The \x81s accept your offer of peace.
+DIPLOMAT.LBX      1     990      0     56  Title  How could we refuse one who gave us the secrets of \x90?
+DIPLOMAT.LBX      1     991      0     91  Mixed  Your willingness to help us develop \x90 technology has made us grateful to you. We accept.
+DIPLOMAT.LBX      1     992      0     81  Mixed  The \x81 empire still remembers your generous gift of \x90 technology. We accept.
+DIPLOMAT.LBX      1     993      0     66  Mixed  Your generous gift of \x90 proved invaluable. How could we refuse?
+DIPLOMAT.LBX      1    1005      0    126  Mixed  Yes, Emperor \x83, the time has come for both our empires to strike out against the \x91s and eliminate them once and for all.
+DIPLOMAT.LBX      1    1006      0     56  Title  The \x80s and \x81s must unite to strike down the \x91s.
+DIPLOMAT.LBX      1    1007      0     75  Title  The \x91 empire must fall before the combined might of the \x80s and \x81s.
+DIPLOMAT.LBX      1    1008      0     58  Title  With \x81s and \x80s allied, the \x91s will not last long.
+DIPLOMAT.LBX      1    1009      0     93  Mixed  In the year \x8F, the \x81 and \x80 empires join forces to rid the galaxy of the \x91 menace.
+DIPLOMAT.LBX      1    1010      0     98  Mixed  In view of the threat from the \x91 Empire, the \x80 and \x81 empires have no choice but to unite!
+DIPLOMAT.LBX      1    1020      0     88  Title  We agree, the \x92s are no longer trustworthy and we have broken our alliance with them.
+DIPLOMAT.LBX      1    1021      0     67  Title  Though it pains us to turn our backs on the \x92s, we have done so.
+DIPLOMAT.LBX      1    1022      0     50  Mixed  The \x92 Empire is no longer an ally of the \x81s.
+DIPLOMAT.LBX      1    1023      0     76  Mixed  The Alliance of the \x81 and \x92 empires now lies in shreds under our feet.
+DIPLOMAT.LBX      1    1024      0     56  Title  As you wish, we no longer shall call the \x92s our ally.
+DIPLOMAT.LBX      1    1035      0     49  Title  We ignore the hollow threats of a raving lunatic.
+DIPLOMAT.LBX      1    1036      0     63  Mixed  You bluff poorly, Emperor \x83. Your threats do not concern us.
+DIPLOMAT.LBX      1    1037      0     79  Mixed  Make your childish threats. The young of the \x81 often throw tantrums as well.
+DIPLOMAT.LBX      1    1038      0     90  Mixed  You presume to threaten the mighty Emperor \x89! You do not know who you are dealing with!
+DIPLOMAT.LBX      1    1039      0     45  Mixed  Your threats fall on deaf ears, Emperor \x83.
+DIPLOMAT.LBX      1    1040      0     87  Mixed  You bray like a Rigellian jackass, Emperor \x83, and we take your threats as seriously.
+DIPLOMAT.LBX      1    1041      0     90  Mixed  Do not make such threats idly, Emperor \x83. The wrath of the \x81s is terrible to behold.
+DIPLOMAT.LBX      1    1050      0     75  Title  We will stop attacking the border colonies and cease all spying activities.
+DIPLOMAT.LBX      1    1051      0     49  Title  Our attacking ships will be recalled immediately.
+DIPLOMAT.LBX      1    1052      0     82  Mixed  We do not wish to offend the mighty \x80 Empire. Our ships will leave immediately.
+DIPLOMAT.LBX      1    1053      0     80  Mixed  As you wish, Emperor \x83. Our star fleet and spies will bother you no further.
+DIPLOMAT.LBX      1    1054      0     66  Mixed  The \x81 Empire respectfully withdraws our ships from your domain.
+DIPLOMAT.LBX      1    1065      0     57  Mixed  We offer \x93 BC to appease the great and powerful \x80s.
+DIPLOMAT.LBX      1    1066      0     59  Mixed  We pray that \x93 BC will suffice to regain your good will.
+DIPLOMAT.LBX      1    1067      0     38  Mixed  Here, Emperor \x83. A gift of \x93 BC.
+DIPLOMAT.LBX      1    1068      0     48  Mixed  The \x81 people offer \x93 BC to the kind \x80s.
+DIPLOMAT.LBX      1    1069      0     52  Mixed  Emperor \x89 orders payment of \x93 BC to the \x80s.
+DIPLOMAT.LBX      1    1080      0     59  Title  We offer \x94 tech to appease the great and powerful \x80s.
+DIPLOMAT.LBX      1    1081      0     77  Title  The \x81s are happy to share the secrets of \x94 with our friends, the \x80s.
+DIPLOMAT.LBX      1    1082      0     76  Title  Emperor \x89 offers you \x94 tech as a sign of our good will and friendship.
+DIPLOMAT.LBX      1    1083      0     97  Title  We hope that you will benefit greatly from \x94 technology, and remember well where it came from.
+DIPLOMAT.LBX      1    1084      0     89  Mixed  The \x81 people have no choice but to give you the secrets of \x94. Relish in our genius.
+DIPLOMAT.LBX      1    1095      0     22  Title  We will remember this.
+DIPLOMAT.LBX      1    1096      0     63  Title  As we expected, the \x80s have proven themselves without honor.
+DIPLOMAT.LBX      1    1097      0     73  Mixed  The \x80 Empire will crumble under the weight of its own broken promises.
+DIPLOMAT.LBX      1    1098      0     69  Mixed  So, Emperor \x83, you cannot keep your word. We will not forget this.
+DIPLOMAT.LBX      1    1099      0     79  Mixed  An Emperor that does not honor treaties is lower than a Denebian Sewer Crawler.
+DIPLOMAT.LBX      1    1100      0     85  Mixed  We will inscribe the words of your broken treaties upon your tombstone, Emperor \x83.
+DIPLOMAT.LBX      1    1110      0     80  Mixed  We tire of diplomatic negotiations. We can continue discussions at a later time.
+DIPLOMAT.LBX      1    1111      0     51  Mixed  These talks get us nowhere. We must take our leave.
+DIPLOMAT.LBX      1    1112      0     57  Mixed  Emperor \x89 has heard enough. We will talk again later.
+DIPLOMAT.LBX      1    1113      0     73  Mixed  Emperor \x83, you try our patience. Perhaps you should speak again later.
+DIPLOMAT.LBX      1    1114      0     58  Mixed  A thousand apologies, Emperor \x83, but other duties call.
+DIPLOMAT.LBX      1    1115      0     68  Mixed  We have little time and much to do. Perhaps we can talk again later.
+DIPLOMAT.LBX      1    1116      0     80  Mixed  The \x80s are creatures of much wind and little action. We tire of your prattle.
+DIPLOMAT.LBX      1    1117      0     10  Title  We go now.
+DIPLOMAT.LBX      1    1118      0     37  Title  Pardon us, but our time is at an end.
+DIPLOMAT.LBX      1    1125      0     42  Title  You have no technology which interests us.
+DIPLOMAT.LBX      1    1126      0     29  Title  We have no need of \x80 toys.
+DIPLOMAT.LBX      1    1127      0     45  Title  Your primitive inventions do not interest us.
+DIPLOMAT.LBX      1    1128      0     42  Title  The \x81s are far beyond your technology.
+DIPLOMAT.LBX      1    1129      0     68  Title  Emperor \x83, we have little need for what your scientists offer us.
+DIPLOMAT.LBX      1    1130      0     56  Title  Emperor \x89 sees little of interest in your technology.
+DIPLOMAT.LBX      1    1140      0    105  Mixed  The \x92s have declared war on our empire. Will you honor our alliance and assault the treacherous \x92s?
+DIPLOMAT.LBX      1    1141      0    114  Mixed  The \x92s have declared war on our empire. Will you honor our alliance and join forces to battle our common enemy?
+DIPLOMAT.LBX      1    1155      0     58  Mixed  You have dishonored the agreement. The alliance is broken.
+DIPLOMAT.LBX      1    1156      0     76  Mixed  Very well. Your untrustworthy intentions have shown. The alliance is broken.
+DIPLOMAT.LBX      1    1157      0     77  Mixed  We have little need of treaties that are not honored. The alliance is broken.
+DIPLOMAT.LBX      1    1158      0     33  Mixed  So be it. The alliance is broken.
+DIPLOMAT.LBX      1    1170      0    126  Mixed  Yes, Emperor \x83, the time has come for both our empires to strike out against the \x92s and eliminate them once and for all.
+DIPLOMAT.LBX      1    1171      0     56  Title  The \x80s and \x81s must unite to strike down the \x92s.
+DIPLOMAT.LBX      1    1172      0     75  Title  The \x92 empire must fall before the combined might of the \x80s and \x81s.
+DIPLOMAT.LBX      1    1173      0     58  Title  With \x81s and \x80s allied, the \x92s will not last long.
+DIPLOMAT.LBX      1    1174      0     93  Mixed  In the year \x8F, the \x81 and \x80 empires join forces to rid the galaxy of the \x92 menace.
+DIPLOMAT.LBX      1    1175      0     98  Mixed  In view of the threat from the \x92 Empire, the \x80 and \x81 empires have no choice but to unite!
+DIPLOMAT.LBX      1    1185      0     57  Title  We are not amused that you have cast your lot against us.
+DIPLOMAT.LBX      1    1186      0     95  Mixed  How could you vote for the vain \x86s? If you continue to rouse my ire, you will know my wrath.
+DIPLOMAT.LBX      1    1187      0    155  Mixed  We have learned to keep our friends close and our enemies even closer. Vote against me again in the Galactic Council and we may be within laser distance...
+DIPLOMAT.LBX      1    1188      0    152  Mixed  Your vote cast against the \x81 race has made us a mockery throughout the galaxy. We will not soon forget the humiliation that you have wrought upon us.
+DIPLOMAT.LBX      1    1189      0    144  Mixed  As your Galactic Council vote indicates, those who are not for us are against us. Consider yourself moved up several places on our to kill list.
+DIPLOMAT.LBX      1    1190      0    135  Mixed  Et tu, \x83 Beware, for if I should pluck your dagger from my back, I know how to weild it and will teach you to vote against me again.
+DIPLOMAT.LBX      1    1191      0    109  Mixed  You realize, of course, the power I wield, and I will squash you like an insect for your electoral treachery.
+DIPLOMAT.LBX      1    1192      0     74  Title  There are penalties for voting against the \x81, as you may soon find out.
+DIPLOMAT.LBX      1    1193      0    104  Mixed  Stabbed in the back, right under my nose! Your voting record reads like a political assassin's handbook.
+DIPLOMAT.LBX      1    1194      0    125  Title  If your vile attacks on our good reputation continue, we shall write your deceitful little handbook a most unpleasant ending.
+DIPLOMAT.LBX      1    1195      0    145  Mixed  While deceit becomes you, our patience is wearing thin. Casting votes against the \x81 race is the sort of mistake that should only be made once.
+DIPLOMAT.LBX      1    1200      0    108  Title  Although we did not win the election, we are most pleased that you decided to cast your votes with the \x81.
+DIPLOMAT.LBX      1    1201      0    120  Mixed  Well, \x83, this could be the beginning of a beautiful friendship. Thanks for your vote in the Galactic Council meeting.
+DIPLOMAT.LBX      1    1202      0    109  Mixed  We are pleased with your voting. With your continued enlightened voting, Emperor \x89 shall unite the galaxy.
+DIPLOMAT.LBX      1    1203      0    127  Mixed  We are flattered that you have voted for the \x81 s. You must pay us a formal visit very soon. Perhaps we can return the favor.
+DIPLOMAT.LBX      1    1204      0    120  Mixed  You show wisdom in casting your votes with us. Despite our natural misgivings, perhaps we will have a prosperous future.
+DIPLOMAT.LBX      1    1205      0    110  Mixed  We take your vote for us as clear gesture that you wish to improve your relations with the mighty \x81 Empire.
+DIPLOMAT.LBX      1    1206      0     81  Mixed  Hurrah! And remember, a vote for \x89 is a vote for galactic peace and stability.
+DIPLOMAT.LBX      1    1207      0    106  Title  Although we greatly appreciate your vote, the cynics among us wonder what strings might be attached to it.
+EVENTMSG.LBX      0       0      0    133  Mixed  A virulent plague has broken out on \x80. The disease has the potential to kill millions. Scientists need to research to find a cure.
+EVENTMSG.LBX      0       1      0    140  Mixed  The plague continues on \x80. \x81 million colonists died last year. Scientists believe that they are \x82 research points away from a cure.
+EVENTMSG.LBX      0       2      0     87  Mixed  Scientists have found the cure for the plague on \x80. The pestilence will finally end.
+EVENTMSG.LBX      0       4      0     97  Mixed  A virulent plague has struck the \x84 colony on \x80. Millions of colonists fear for their lives.
+EVENTMSG.LBX      0       5      0     90  Mixed  \x84 scientists finally found a cure for the \x80 plague. The pestilence will finally end.
+EVENTMSG.LBX      0       7      0    100  Title  A violent quake hit the colony on \x80 killing \x81 million colonists and destroying \x82 factories.
+EVENTMSG.LBX      0      11      0    105  Title  A violent quake hit the \x84 colony on \x80 killing \x81 million colonists and destroying \x82 factories.
+EVENTMSG.LBX      0      14      0    162  Mixed  Scientists predict that the star in the \x80 system will go super nova within \x81 year\x83. If a research solution cannot be found, the colony will be destroyed.
+EVENTMSG.LBX      0      15      0    130  Mixed  Only \x81 year\x83 remain\x8D before the \x80 star goes super nova. Scientists still need \x82 research points to find a solution.
+EVENTMSG.LBX      0      16      0    108  Title  Scientists on \x80 have developed a solar rejuvenator thus ending the threat of their star going super nova.
+EVENTMSG.LBX      0      17      0     89  Title  The star in \x80 has gone super nova, destroying most of the planet and killing millions.
+EVENTMSG.LBX      0      18      0     90  lower  \x84 scientists are predicting that their star in the \x80 system will soon go super nova.
+EVENTMSG.LBX      0      19      0    110  lower  \x84 scientists managed to save the \x80 colony by inventing and using a solar rejuvenator on the star's core.
+EVENTMSG.LBX      0      20      0     90  Title  The star \x80 has gone super nova destroying most of the \x84 colony and killing millions.
+EVENTMSG.LBX      0      21      0    143  Mixed  A major industrial accident on \x80 has irradiated the entire planet. The intense radiation levels threaten to kill millions unless cleaned up.
+EVENTMSG.LBX      0      22      0    119  Title  The radiation from the industrial accident on \x80 has been cleaned up, but the ecology has already been badly damaged.
+EVENTMSG.LBX      0      25      0    147  Mixed  A major industrial accident on the \x84 colony of \x80 has irradiated the entire planet. The intense pollution levels will certainly kill millions.
+EVENTMSG.LBX      0      26      0     84  Title  The radiation from the \x84 industrial accident on \x80 has been finally cleaned up.
+EVENTMSG.LBX      0      28      0    156  Mixed  Without sanction the \x84 ambassador attempted to assassinate emperor \x8C and failed. His motives are unclear, but personal revenge may have been involved.
+EVENTMSG.LBX      0      35      0    142  Mixed  An insidious computer virus struck the main \x86 research network destroying \x82 research points. It may take years to recover from the loss.
+EVENTMSG.LBX      0      39      0    147  Mixed  An insidious computer virus struck the \x84 main \x86 research network destroying \x82 research points. It may take years to recover from the loss.
+EVENTMSG.LBX      0      42      0    163  Mixed  Astronomers predict that a comet will collide with the \x80 colony within \x81 year\x83. Unless the star fleet can destroy the comet, the colony will be destroyed.
+EVENTMSG.LBX      0      43      0    100  Title  Our fleet has destroyed \x82 percent of the comet due to strike our colony on \x80 in \x81 year\x83.
+EVENTMSG.LBX      0      44      0     80  Title  Our glorious star fleet has destroyed the comet that threatened the \x80 system.
+EVENTMSG.LBX      0      45      0     56  Title  The dreaded comet has utterly destroyed the \x80 colony.
+EVENTMSG.LBX      0      46      0    170  Mixed  \x84 astronomers predict that a comet will collide with the \x80 colony within \x81 year\x83. Unless their star fleet can destroy the comet, the colony will be destroyed.
+EVENTMSG.LBX      0      47      0    124  Title  The \x84 star fleet managed to destroy the comet threatening the \x80 system before it could inflict damage on their colony.
+EVENTMSG.LBX      0      48      0     61  Title  The dreaded comet has utterly destroyed the \x84 \x80 colony.
+EVENTMSG.LBX      0      49      0    148  Mixed  Pirates based in the \x80 star system have begun disrupting trade routes. More ships are needed to patrol the area if the pirates are to be stopped.
+EVENTMSG.LBX      0      50      0    146  Mixed  Pirate activity in the \x80 system reduced annual trade revenues by \x81 percent last year. Merchants are demanding more ships to patrol the area.
+EVENTMSG.LBX      0      51      0     60  Title  Pirate activity in the \x80 star system has been eliminated.
+EVENTMSG.LBX      0      53      0     90  Title  Pirates based in the \x80 star system have begun raiding and disrupting \x84 trade routes.
+EVENTMSG.LBX      0      54      0     74  Title  The \x84 fleet has managed to erradicate the pirates plaguing their trade.
+EVENTMSG.LBX      0      56      0    130  lower  \x84 scouts discovered an ancient derelict from which their scientists uncovered numerous weapon and shield technological secrets.
+EVENTMSG.LBX      0      63      0    150  Mixed  \x80 has rebelled and refuses to contribute to the empire. At least \x81 million rebels control the colony. Troops must be sent to quell the uprising.
+EVENTMSG.LBX      0      64      0    119  Mixed  \x80 has joined the rebellion, refusing to contribute to the empire. Rebel forces number at least \x81 million troops .
+EVENTMSG.LBX      0      65      0     62  lower  \x84 troops have vanquished the rebel forces controlling \x80.
+EVENTMSG.LBX      0      66      0    112  Mixed  \x80 has rebelled and refuses to contribute to the \x84 empire. At least \x81 million rebels control the colony.
+EVENTMSG.LBX      0      67      0    124  Mixed  \x80 has joined the \x84 rebellion, refusing to contribute to the empire. Rebel forces number at least \x81 million troops .
+EVENTMSG.LBX      0      68      0     62  lower  \x84 troops have vanquished the rebel forces controlling \x80.
+EVENTMSG.LBX      0      70      0    100  Title  Long range scanners have begun tracking a crystal life form traveling at warp speed into our galaxy.
+EVENTMSG.LBX      0      71      0     99  Mixed  The \x84 star fleet has finally destroyed the Space Crystal that was threatening the entire galaxy.
+EVENTMSG.LBX      0      72      0     67  Mixed  For some inexplicable reason the Space Crystal has left our galaxy.
+EVENTMSG.LBX      0      73      0    145  Mixed  The Space Crystal has killed millions of colonists on \x80. The colony structures have remained intact but all of the colonists have disappeared.
+EVENTMSG.LBX      0      76      0     86  Mixed  The Space Crystal has killed millions of colonists on \x80 destroying the \x84 empire.
+EVENTMSG.LBX      0      77      0    101  Title  Long range scanners have begun tracking an amoebic life form traveling at warp speed into our galaxy.
+EVENTMSG.LBX      0      78      0     85  Mixed  The glorious \x84 fleet met and destroyed the alien Space Amoeba plaguing the galaxy.
+EVENTMSG.LBX      0      79      0     66  Mixed  For some inexplicable reason the Space Amoeba has left our galaxy.
+EVENTMSG.LBX      0      80      0    115  Mixed  The Space Amoeba has utterly destroyed the \x80 system. All that is left of the world is a radiated, lifeless hulk.
+EVENTMSG.LBX      0      83      0     72  Mixed  The Space Amoeba has killed millions on \x80 destroying the \x84 empire.
+EVENTMSG.LBX      0      84      0    109  Title  A sudden shift of the \x80 colony's planetary axis has resulted in a dramatic improvement of the environment.
+EVENTMSG.LBX      0      88      0    114  Title  A sudden shift of the \x84 \x80 colony's planetary axis has resulted in a dramatic improvement of the environment.
+EVENTMSG.LBX      0      91      0    130  Title  Deep mining operations on \x80 have discovered substantial deposits of neutronium making the planet a rich source for development.
+EVENTMSG.LBX      0      95      0    146  Title  Deep mining operations on the \x84 \x80 colony have discovered substantial deposits of neutronium making the planet a rich source for development.
+EVENTMSG.LBX      0      98      0    100  Mixed  A wealthy merchant has decided to support the \x84 cause with a substantial contribution of \x81 BC.
+EVENTMSG.LBX      0     102      0    100  Mixed  A wealthy merchant has decided to support the \x84 cause with a substantial contribution of \x81 BC.
+EVENTMSG.LBX      0     105      0     91  Title  The heavy metals on \x80 have been depleted to the point of making the planet mineral poor.
+EVENTMSG.LBX      0     109      0    110  Title  The heavy metals on the \x84 colony \x80 have been depleted to the point of rendering the planet mineral poor.
+EVENTMSG.LBX      0     112      0     88  Mixed  The \x84s have conquered Orion and claimed the throne world in the name of Emperor \x8C.
+EVENTMSG.LBX      0     116      0     88  Mixed  The \x84s have conquered Orion and claimed the throne world in the name of Emperor \x8C.
+EVENTMSG.LBX      0     119      0    160  Mixed  A new leader emerged from within the \x84 empire. Rumors indicate the new emperor is a\x8E\x88 \x89. Relations have become neutral and trade has been disrupted.
+EVENTMSG.LBX      0     120      0    154  Mixed  The \x84 empire has gone into revolt. Rumors indicate the new emperor is a\x8E\x88 \x89. Relations shifted toward neutrality and trade has been disrupted.
+EVENTMSG.LBX      0     121      0    124  Mixed  Civil war has erupted throughout the \x84 empire. Rebels have stormed the imperial palace, slaying Emperor \x8C mercilessly.
+EVENTMSG.LBX      0     126      0     78  Mixed  The \x84 empire has grown in strength. Already they control \x81 star systems.
+EVENTMSG.LBX      0     127      0     77  Title  The \x84 empire now spans \x81 star systems outstripping all the other races.
+EVENTMSG.LBX      0     128      0    117  Mixed  The \x84 empire now numbers \x81 star systems. If their expansion is not contained they will soon control the galaxy.
+EVENTMSG.LBX      0     129      0    120  Mixed  The \x84 empire nearly controls a majority of the galaxy. Leaders are already preparing to merge with the mighty empire.
+EVENTMSG.LBX      0     133      0     38  Title  Current rankings of empire production:
+EVENTMSG.LBX      0     134      0     42  Title  The census rankings of empire populations:
+EVENTMSG.LBX      0     135      0     39  Title  Current leaders of advanced technology:
+EVENTMSG.LBX      0     136      0     41  Title  Current ranking of space fleet strengths:
+EVENTMSG.LBX      0     140      0     59  Title  The \x84 empire has been completely destroyed by the \x85s.
+EVENTMSG.LBX      0     143      0    112  Mixed  With the destruction of the last \x84 colony, \x8C was slain and the imperial palace was completely obliterated.
+EVENTMSG.LBX      0     147      0    166  Mixed  The guardian of Orion has been defeated by the glorious \x84 star fleet. Furthermore, landing parties have discovered a cache of new technology on the planet surface.
+EVENTMSG.LBX      0     148      0    138  Mixed  The guardian of Orion has been defeated by the glorious \x84 star fleet. Rumors indicate that new technology was discovered on the planet.
+HELP.LBX          0       0      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0       0      1     15  Mixed  Main Movement 1
+HELP.LBX          0       0      2    137  Mixed  Red ratio bars indicate that the production bar has been locked and will not change. Click on the ratio title to lock/unlock ratio bars.
+HELP.LBX          0       0      3     21  Mixed  Ship Production Ratio
+HELP.LBX          0       0      4     24  Mixed  Defense Production Ratio
+HELP.LBX          0       0      5     25  Mixed  Industry Production Ratio
+HELP.LBX          0       0      6     24  Mixed  Ecology Production Ratio
+HELP.LBX          0       0      7     27  Mixed  Technology Production Ratio
+HELP.LBX          0       0      8     55  Title  Each star system divides its production into five areas
+HELP.LBX          0       0      9     55  Title  Ratio bars show the breakdown of a planet's production.
+HELP.LBX          0       1      0     10  UPPER  TRANS2.FLI
+HELP.LBX          0       1      1     13  Title  Transport 2nd
+HELP.LBX          0       1      2    190  Mixed  Select the number of colony transports to send as a ratio of the current planet's population. The number of colonists to transport is limited to one half the population of the sending world.
+HELP.LBX          0       1      3     63  Title  Combat troops are sent if the planet is owned by another player
+HELP.LBX          0       1      4    244  Mixed  \x06\x05\x06\x06\x06\x07\x06\x08\x06\x09\x06\n\x06\x0B\x06\x0C\x06\r\x06\x0E\x06\x0F\x06\x10\x06\x11\x06\x12\x06\x13\x06\xFF\xFF\x15\x06\x16\x06\x17\x06\x18\x06\x19\x06\x1A\x06\x1B\x06\x1C\x06\x1D\x06\x1E\x06\x1F\x06 \x06!\x06"\x06#\x06$\x06%\x06
+HELP.LBX          0       1      5    182  Mixed  \x06(\x06\xFF\xFF*\x06\xFF\xFF\xFF\xFF-\x06.\x06/\x060\x061\x062\x063\x064\x065\x066\x067\x068\x069\x06:\x06;\x06<\x06=\x06>\x06?\x06@\x06A\x06B\x06\xFF\xFFD\x06E\x06F\x06G\x06H\x06I
+HELP.LBX          0       1      6    170  Mixed  \x06K\x06L\x06M\x06N\x06O\x06P\x06Q\x06R\x06S\x06T\x06U\x06V\x06W\x06X\x06Y\x06Z\x06[\x06\\x06]\x06^\x06_\x06`\x06a\x06b\x06c\x06d\x06e\x06f\x06g\x06h\x06i\x06j\x06k\x06l
+HELP.LBX          0       1      7    221  Mixed  \x06n\x06o\x06p\x06q\x06r\x06s\x06t\x06u\x06v\x06w\x06x\x06y\x06z\x06{\x06|\x06}\x06~\x06\x7F\x06\x80\x06\x81\x06\x82\x06\x83\x06\x84\x06\x85\x06\x86\x06\x87\x06\xFF\xFF\xFF\xFF\xFF\xFF\x8B\x06\x8C\x06\x8D\x06\x8E\x06\x8F
+HELP.LBX          0       1      8    272  Mixed  \x06\x91\x06\x92\x06\x93\x06\x94\x06\x95\x06\x96\x06\x97\x06\x98\x06\x99\x06\x9A\x06\x9B\x06\x9C\x06\x9D\x06\x9E\x06\x9F\x06\xA0\x06\xA1\x06\xA2\x06\xA3\x06\xA4\x06\xA5\x06\xA6\x06\xA7\x06\xFF\xFF\xA9\x06\xAA\x06\xAB\x06\xAC\x06\xAD\x06\xAE\x06\xAF\x06\xB0\x06\xB1\x06\xB2
+HELP.LBX          0       1      9    272  Mixed  \x06\xB4\x06\xB5\x06\xB6\x06\xB7\x06\xB8\x06\xB9\x06\xBA\x06\xBB\x06\xBC\x06\xBD\x06\xBE\x06\xBF\x06\xC0\x06\xC1\x06\xC2\x06\xC3\x06\xC4\x06\xC6\x06\xF7\xFF\xC7\x06\xC8\x06\xC9\x06\xFF\xFF\xCB\x06\xCC\x06\xCD\x06\xCE\x06\xCF\x06\xD0\x06\xD1\x06\xD2\x06\xD3\x06\xD4\x06\xD5
+HELP.LBX          0       1     10    272  Mixed  \x06\xD7\x06\xD8\x06\xD9\x06\xDA\x06\xDB\x06\xDC\x06\xDD\x06\xDE\x06\xDF\x06\xE0\x06\xE1\x06\xE2\x06\xE3\x06\xE4\x06\xE5\x06\xE6\x06\xE7\x06\xE8\x06\xE9\x06\xEA\x06\xEB\x06\xEC\x06\xED\x06\xEE\x06\xEF\x06\xF0\x06\xF1\x06\xFF\xFF\xFF\xFF\xFF\xFF\xF5\x06\xF6\x06\xFF\xFF\xF8
+HELP.LBX          0       2      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0       2      1     15  Mixed  Main Movement 2
+HELP.LBX          0       2      2     45  Title  Change ship design to build in the star dock.
+HELP.LBX          0       2      3     42  Title  Relocate ship production to another colony
+HELP.LBX          0       2      4     62  Title  Transport population to another  colony or invade enemy planet
+HELP.LBX          0       2      5     26  Title  Total planetary production
+HELP.LBX          0       2      6     62  Title  Actual production adjusted for maintenance, spying, and trade.
+HELP.LBX          0       2      7     31  Title  Number of colonists in millions
+HELP.LBX          0       2      8     23  Title  Number of missile bases
+HELP.LBX          0       3      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0       3      1     15  Mixed  Main Movement 3
+HELP.LBX          0       3      2     49  Mixed  Save/load games. Music and sound effects settings
+HELP.LBX          0       3      3     43  Title  Fleet report and ship design specifications
+HELP.LBX          0       3      4     38  Title  Diplomacy and intelligence information
+HELP.LBX          0       3      5     57  Title  Change research priorities. reports on current technology
+HELP.LBX          0       4      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0       4      1     15  Mixed  Main Movement 4
+HELP.LBX          0       4      2     63  Title  Create new ship designs to take advantage of current technology
+HELP.LBX          0       4      3     52  Title  View reduced galaxy map with ship and planetary data
+HELP.LBX          0       4      4     25  Title  Overview of your colonies
+HELP.LBX          0       4      5     29  Mixed  2\x0C\x02Advance to next year
+HELP.LBX          0       5      0      7  UPPER  DE2.FLI
+HELP.LBX          0       5      1      3  UPPER  FLI
+HELP.LBX          0       5      2      9  Title  Designs 1
+HELP.LBX          0       5      3     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0       5      4     22  Mixed  Change Battle computer
+HELP.LBX          0       5      5     18  Title  Change shield type
+HELP.LBX          0       5      6      5  Title  Ratio
+HELP.LBX          0       5      7     20  Title  Change ecm generator
+HELP.LBX          0       5      8      4  lower  atio
+HELP.LBX          0       5      9     57  Mixed  Set ship hull size. Appears darkened if too small to fit.
+HELP.LBX          0       5     10     16  Title  Choose ship icon
+HELP.LBX          0       5     11     10  Mixed  tion Ratio
+HELP.LBX          0       5     12     22  Title  Change ship class name
+HELP.LBX          0       5     13     34  Title  Leave design screen. abort changes
+HELP.LBX          0       5     14     17  Title  Accept new design
+HELP.LBX          0       5     15     17  lower  lus trade revenue
+HELP.LBX          0       5     16     17  Title  Clear all devices
+HELP.LBX          0       5     17     39  lower   maintenance costs, spying, and tribute
+HELP.LBX          0       6      0     11  UPPER  DESIGNS.FLI
+HELP.LBX          0       6      1      9  Title  Designs 2
+HELP.LBX          0       6      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0       6      3     17  Title  Change armor type
+HELP.LBX          0       6      4      4  lower  uter
+HELP.LBX          0       6      5     18  Title  Change engine type
+HELP.LBX          0       6      6      5  Title  Ratio
+HELP.LBX          0       6      7     19  Title  Change combat speed
+HELP.LBX          0       6      8      4  lower  atio
+HELP.LBX          0       6      9     25  Title  Add/change special device
+HELP.LBX          0       6     10     22  Title  Add/change weapon type
+HELP.LBX          0       6     11      4  lower  atio
+HELP.LBX          0       6     12     26  Title  Increase number of weapons
+HELP.LBX          0       6     13     26  Title  Decrease number of weapons
+HELP.LBX          0       6     14      7  lower  changes
+HELP.LBX          0       6     15     12  lower  ccept design
+HELP.LBX          0       6     16     21  lower  on plus trade revenue
+HELP.LBX          0       6     17     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0       7      0     10  UPPER  COMBAT.FLI
+HELP.LBX          0       7      1      8  Title  Combat 1
+HELP.LBX          0       7      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0       7      3     66  Mixed  Allow computer to control combat. Clicking anywhere turns auto off
+HELP.LBX          0       7      4     48  Title  View enemy ships if equipped with battle scanner
+HELP.LBX          0       7      5     33  Title  Current ship retreats from combat
+HELP.LBX          0       7      6     57  Title  End turn for current ship and prepare to defensively fire
+HELP.LBX          0       7      7     17  Mixed  dd Special Device
+HELP.LBX          0       7      8      8  Mixed  on Ratio
+HELP.LBX          0       7      9     21  lower  hange ship class name
+HELP.LBX          0       7     10     33  lower  eave design screen. abort changes
+HELP.LBX          0       7     11     12  lower  ccept design
+HELP.LBX          0       7     12     21  lower  on plus trade revenue
+HELP.LBX          0       7     13     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0       8      0     10  UPPER  NFLEET.FLI
+HELP.LBX          0       8      1     12  Mixed  Fleet Screen
+HELP.LBX          0       8      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0       8      3      6  Title   Ratio
+HELP.LBX          0       8      4     11  Mixed  ction Ratio
+HELP.LBX          0       8      5     17  Title  Scroll fleet list
+HELP.LBX          0       8      6      6  Title   Ratio
+HELP.LBX          0       8      7     24  Title  View ship specifications
+HELP.LBX          0       8      8      2  lower  io
+HELP.LBX          0       8      9     16  Title  Scrap ship class
+HELP.LBX          0       8     10      5  lower   bar
+HELP.LBX          0       8     11     11  Title  Exit screen
+HELP.LBX          0       8     12      3  lower  ngs
+HELP.LBX          0       8     13     59  Title  Clicking anywhere in a row exits to fleet deployment screen
+HELP.LBX          0       8     14     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0       9      0      7  UPPER  MAP.FLI
+HELP.LBX          0       9      1     10  Mixed  Map Screen
+HELP.LBX          0       9      2     90  Title  Clicking on a planet returns the view back to the main screen viewing the selected planet.
+HELP.LBX          0       9      3     25  Title  Show location of colonies
+HELP.LBX          0       9      4     32  Title  Environments of explored planets
+HELP.LBX          0       9      5     50  Title  Shows mineral rich, artifacts, and fertile planets
+HELP.LBX          0       9      6     30  Title  Return to main movement screen
+HELP.LBX          0       9      7     23  lower  iew ship specifications
+HELP.LBX          0       9      8      2  lower  io
+HELP.LBX          0       9      9     15  lower  crap ship class
+HELP.LBX          0       9     10      5  lower   bar
+HELP.LBX          0       9     11     10  lower  xit screen
+HELP.LBX          0       9     12      3  lower  ngs
+HELP.LBX          0       9     13     58  lower  licking anywhere in a row exits to fleet deployment screen
+HELP.LBX          0       9     14     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      10      0      9  UPPER  RACES.FLI
+HELP.LBX          0      10      1      7  Title  Races 1
+HELP.LBX          0      10      2    128  Mixed  Resources allocated to creating new spy networks is taken from all of your planets. No more than 10% can allocated to each race.
+HELP.LBX          0      10      3     19  Title  Order spies to hide
+HELP.LBX          0      10      4     51  Title  Order spies to sabotage factories and missile bases
+HELP.LBX          0      10      5     31  Title  Order spies to steal technology
+HELP.LBX          0      10      6     60  Title  Allocate production to internal security to a maximum of 20%
+HELP.LBX          0      10      7     28  Title  Current diplomatic relations
+HELP.LBX          0      10      8     10  lower  xit screen
+HELP.LBX          0      10      9      3  lower  ngs
+HELP.LBX          0      10     10     58  lower  licking anywhere in a row exits to fleet deployment screen
+HELP.LBX          0      10     11     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      11      0      9  UPPER  RACES.FLI
+HELP.LBX          0      11      1      7  Title  Races 2
+HELP.LBX          0      11      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0      11      3     39  Title  Report on overall status of all empires
+HELP.LBX          0      11      4     40  Title  Intelligence report on a specific empire
+HELP.LBX          0      11      5      7  lower  e bases
+HELP.LBX          0      11      6     32  Title  Initiate diplomatic negotiations
+HELP.LBX          0      11      7     30  Title  Return to main movement screen
+HELP.LBX          0      11      8     11  lower  al security
+HELP.LBX          0      11      9      5  lower   bar
+HELP.LBX          0      11     10     10  lower  xit screen
+HELP.LBX          0      11     11      3  lower  ngs
+HELP.LBX          0      11     12     58  lower  licking anywhere in a row exits to fleet deployment screen
+HELP.LBX          0      11     13     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      12      0     10  UPPER  COMBAT.FLI
+HELP.LBX          0      12      1      8  Title  Combat 2
+HELP.LBX          0      12      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0      12      3     22  Title  View planet statistics
+HELP.LBX          0      12      4     43  Mixed  ol combat. Clicking anywhere turns off auto
+HELP.LBX          0      12      5     20  Title  Turn missles on/off
+HELP.LBX          0      12      6     11  lower  tle scanner
+HELP.LBX          0      12      7     45  Title  Turn stasis field or sphere generator on/off
+HELP.LBX          0      12      8     58  Title  Delay turn of current ship until all other ships have gone
+HELP.LBX          0      12      9     17  Mixed  dd Special Device
+HELP.LBX          0      12     10      8  Mixed  on Ratio
+HELP.LBX          0      12     11     21  lower  hange ship class name
+HELP.LBX          0      12     12     33  lower  eave design screen. abort changes
+HELP.LBX          0      12     13     12  lower  ccept design
+HELP.LBX          0      12     14     21  lower  on plus trade revenue
+HELP.LBX          0      12     15     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      13      0      8  UPPER  TECH.FLI
+HELP.LBX          0      13      1      6  Title  Tech 1
+HELP.LBX          0      13      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0      13      3     32  Title  Choose technology area to review
+HELP.LBX          0      13      4     33  Title   Clicking anywhere turns off auto
+HELP.LBX          0      13      5     49  Title  List of technology aquired in area being reviewed
+HELP.LBX          0      13      6     25  Title  Scroll list of technology
+HELP.LBX          0      13      7      7  lower   combat
+HELP.LBX          0      13      8     56  Title  Detailed description of device highlighted in above list
+HELP.LBX          0      13      9     30  Title  Return to main movement screen
+HELP.LBX          0      13     10     21  lower  hange ship class name
+HELP.LBX          0      13     11     33  lower  eave design screen. abort changes
+HELP.LBX          0      13     12     12  lower  ccept design
+HELP.LBX          0      13     13     21  lower  on plus trade revenue
+HELP.LBX          0      13     14     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      14      0      8  UPPER  TECH.FLI
+HELP.LBX          0      14      1      6  Title  Tech 2
+HELP.LBX          0      14      2    127  Title  When the light bulbs fills up, there is a percentage chance each turn of discovering the technology currently being researched.
+HELP.LBX          0      14      3     30  Title  Allocate research to computers
+HELP.LBX          0      14      4      4  lower  auto
+HELP.LBX          0      14      5     33  Title  Allocate research to construction
+HELP.LBX          0      14      6      8  lower  reviewed
+HELP.LBX          0      14      7     33  Title  Allocate research to force fields
+HELP.LBX          0      14      8     32  Title  Allocate research to planetology
+HELP.LBX          0      14      9     23  lower  ghlighted in above list
+HELP.LBX          0      14     10     31  Title  Allocate research to propulsion
+HELP.LBX          0      14     11     28  Title  Allocate research to weapons
+HELP.LBX          0      14     12     52  Title  Click on technology name to lock or unlock ratio bar
+HELP.LBX          0      14     13     56  lower  otal production - maintenance costs, spying, and tribute
+HELP.LBX          0      15      0     10  UPPER  STATUS.FLI
+HELP.LBX          0      15      1     13  Mixed  Status Screen
+HELP.LBX          0      15      2     52  lower  lanetary production is allocated using ratio bars.
+HELP.LBX          0      15      3     48  Title  Combat potential of fleet on a logarithmic scale
+HELP.LBX          0      15      4     30  Title  Simple count of all population
+HELP.LBX          0      15      5     37  Title  Sum of technology levels in each area
+HELP.LBX          0      15      6     55  Mixed  Total number of planets with at least 100 BC production
+HELP.LBX          0      15      7     39  Title  Total production on a logarithmic scale
+HELP.LBX          0      15      8     38  Title  Power rating relative to stongest race
+HELP.LBX          0      15      9      6  lower  o bar
+HELP.LBX          0      15     10     14  lower  hange settings
+HELP.LBX          0      16      0     12  UPPER  NEWDEPLO.FLI
+HELP.LBX          0      16      1     16  Mixed  Fleet Deployment
+HELP.LBX          0      16      2     91  Title  The '<' and '>' keys move increments of 5% when the number of ships is larger than 20 ships
+HELP.LBX          0      16      3     32  Title  Increase number of ships to move
+HELP.LBX          0      16      4     32  Title  Decrease number of ships to move
+HELP.LBX          0      16      5     27  Title  Move no ships of this class
+HELP.LBX          0      16      6      7  lower  duction
+HELP.LBX          0      16      7     42  Title  Moves all ships of this class in the fleet
+HELP.LBX          0      16      8     37  lower  ower rating relative to stongest race
+HELP.LBX          0      16      9      6  lower  o bar
+HELP.LBX          0      16     10     14  lower  hange settings
+HELP.LBX          0      17      0     10  UPPER  TRANS1.FLI
+HELP.LBX          0      17      1     13  Title  Transport 1st
+HELP.LBX          0      17      2    207  Mixed  Before sending out transports the destination world must already be colonized with a colony base or by another player. Furthermore, if the planet is hostile, you must have the appropriate landing technology.
+HELP.LBX          0      17      3     31  lower  ecrease number of ships to move
+HELP.LBX          0      17      4     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      17      5     32  lower  ets number of ships to move to 0
+HELP.LBX          0      17      6     15  Mixed  0 BC production
+HELP.LBX          0      17      7     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      17      8     37  lower  ower rating relative to stongest race
+HELP.LBX          0      17      9      6  lower  o bar
+HELP.LBX          0      17     10     14  lower  hange settings
+HELP.LBX          0      18      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      18      1     15  Mixed  Build Msl Bases
+HELP.LBX          0      18      2      2  lower  es
+HELP.LBX          0      18      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      18      4    177  Title  Now that your home planet has a substantial population and industry, you should begin allocating resources toward building missle bases by increasing the planet's defense ratio.
+HELP.LBX          0      18      5      6  lower  ion to
+HELP.LBX          0      18      6     31  lower  ecrease number of ships to move
+HELP.LBX          0      18      7     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      18      8     32  lower  ets number of ships to move to 0
+HELP.LBX          0      18      9     15  Mixed  0 BC production
+HELP.LBX          0      18     10     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      18     11     37  lower  ower rating relative to stongest race
+HELP.LBX          0      18     12      6  lower  o bar
+HELP.LBX          0      18     13     14  lower  hange settings
+HELP.LBX          0      19      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      19      1     11  lower  1st contact
+HELP.LBX          0      19      2      6  Title   Bases
+HELP.LBX          0      19      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      19      4    176  Mixed  Now that you have made contact with another race, you can negotiate with them for treaties and trade agreements to improve relations (see Audience underneath the Races screen).
+HELP.LBX          0      19      5      6  lower  ion to
+HELP.LBX          0      19      6     31  lower  ecrease number of ships to move
+HELP.LBX          0      19      7     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      19      8     32  lower  ets number of ships to move to 0
+HELP.LBX          0      19      9     15  Mixed  0 BC production
+HELP.LBX          0      19     10     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      19     11     37  lower  ower rating relative to stongest race
+HELP.LBX          0      19     12      6  lower  o bar
+HELP.LBX          0      19     13     14  lower  hange settings
+HELP.LBX          0      20      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      20      1     14  Mixed  Scrap Obsolete
+HELP.LBX          0      20      2      2  lower  es
+HELP.LBX          0      20      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      20      4    158  Mixed  As technology advances you should be sure to scrap obsolete designs.   Ships that are 10 or more levels behind existing enemy technology are  next to useless.
+HELP.LBX          0      20      5      6  lower  ion to
+HELP.LBX          0      20      6     31  lower  ecrease number of ships to move
+HELP.LBX          0      20      7     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      20      8     32  lower  ets number of ships to move to 0
+HELP.LBX          0      20      9     15  Mixed  0 BC production
+HELP.LBX          0      20     10     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      20     11     37  lower  ower rating relative to stongest race
+HELP.LBX          0      20     12      6  lower  o bar
+HELP.LBX          0      20     13     14  lower  hange settings
+HELP.LBX          0      21      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      21      1     16  Title  Refueling tanker
+HELP.LBX          0      21      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      21      3    167  Title  Although you have discovered a star system that you can not yet form a colony on, you may still reach systems beyond it by stationing a ship with refueling tanks there
+HELP.LBX          0      21      4      6  lower  ion to
+HELP.LBX          0      21      5     31  lower  ecrease number of ships to move
+HELP.LBX          0      21      6     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      21      7     32  lower  ets number of ships to move to 0
+HELP.LBX          0      21      8     15  Mixed  0 BC production
+HELP.LBX          0      21      9     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      21     10     37  lower  ower rating relative to stongest race
+HELP.LBX          0      21     11      6  lower  o bar
+HELP.LBX          0      21     12     14  lower  hange settings
+HELP.LBX          0      22      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      22      1     10  Title  Technology
+HELP.LBX          0      22      2      5  lower   ship
+HELP.LBX          0      22      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      22      4    137  Title  To remain competitive with your enemies, you must not fall behind in  the technology race, especially in weapons and computer technology.
+HELP.LBX          0      22      5     19  lower  re  next to useless
+HELP.LBX          0      22      6      6  lower  ion to
+HELP.LBX          0      22      7     31  lower  ecrease number of ships to move
+HELP.LBX          0      22      8     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      22      9     32  lower  ets number of ships to move to 0
+HELP.LBX          0      22     10     15  Mixed  0 BC production
+HELP.LBX          0      22     11     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      22     12     37  lower  ower rating relative to stongest race
+HELP.LBX          0      22     13      6  lower  o bar
+HELP.LBX          0      22     14     14  lower  hange settings
+HELP.LBX          0      23      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      23      1     11  Title  New weapons
+HELP.LBX          0      23      2      4  lower  ship
+HELP.LBX          0      23      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      23      4    118  Title  Now that you have developed a weapon  better than lasers, you should design a new ship that uses the improved  weapon.
+HELP.LBX          0      23      5     14  lower  er technology.
+HELP.LBX          0      23      6     19  lower  re  next to useless
+HELP.LBX          0      23      7      6  lower  ion to
+HELP.LBX          0      23      8     31  lower  ecrease number of ships to move
+HELP.LBX          0      23      9     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      23     10     32  lower  ets number of ships to move to 0
+HELP.LBX          0      23     11     15  Mixed  0 BC production
+HELP.LBX          0      23     12     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      23     13     37  lower  ower rating relative to stongest race
+HELP.LBX          0      23     14      6  lower  o bar
+HELP.LBX          0      23     15     14  lower  hange settings
+HELP.LBX          0      24      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      24      1     11  Mixed  New Engines
+HELP.LBX          0      24      2      4  lower  ship
+HELP.LBX          0      24      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      24      4    119  Title  Now that you have developed a new engine type, you should design new ships to take advantage of the increased mobility.
+HELP.LBX          0      24      5      3  lower  gy.
+HELP.LBX          0      24      6     19  lower  re  next to useless
+HELP.LBX          0      24      7      6  lower  ion to
+HELP.LBX          0      24      8     31  lower  ecrease number of ships to move
+HELP.LBX          0      24      9     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      24     10     32  lower  ets number of ships to move to 0
+HELP.LBX          0      24     11     15  Mixed  0 BC production
+HELP.LBX          0      24     12     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      24     13     37  lower  ower rating relative to stongest race
+HELP.LBX          0      24     14      6  lower  o bar
+HELP.LBX          0      24     15     14  lower  hange settings
+HELP.LBX          0      25      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      25      1     21  lower  suitable colony found
+HELP.LBX          0      25      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      25      3    114  Title  Now that you have found a star system suitable for colonization, send your colony ship there to form a new colony.
+HELP.LBX          0      25      4      3  lower  gy.
+HELP.LBX          0      25      5     19  lower  re  next to useless
+HELP.LBX          0      25      6      6  lower  ion to
+HELP.LBX          0      25      7     31  lower  ecrease number of ships to move
+HELP.LBX          0      25      8     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      25      9     32  lower  ets number of ships to move to 0
+HELP.LBX          0      25     10     15  Mixed  0 BC production
+HELP.LBX          0      25     11     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      25     12     37  lower  ower rating relative to stongest race
+HELP.LBX          0      25     13      6  lower  o bar
+HELP.LBX          0      25     14     14  lower  hange settings
+HELP.LBX          0      26      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      26      1      5  Title  Waste
+HELP.LBX          0      26      2     10  lower  ing tanker
+HELP.LBX          0      26      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      26      4    194  Mixed  With the increased growth of your industry, waste reduction will begin costing an increasing percentage of your production. Reduce the amount of waste with construction and planetology research.
+HELP.LBX          0      26      5      6  lower  ion to
+HELP.LBX          0      26      6     31  lower  ecrease number of ships to move
+HELP.LBX          0      26      7     63  lower  +' and '-' keys move increments of 10% if large number of ships
+HELP.LBX          0      26      8     32  lower  ets number of ships to move to 0
+HELP.LBX          0      26      9     15  Mixed  0 BC production
+HELP.LBX          0      26     10     37  lower  oves all ships in fleet of this class
+HELP.LBX          0      26     11     37  lower  ower rating relative to stongest race
+HELP.LBX          0      26     12      6  lower  o bar
+HELP.LBX          0      26     13     14  lower  hange settings
+HELP.LBX          0      27      0     11  UPPER  PLANETS.FLI
+HELP.LBX          0      27      1     14  Mixed  Planets Report
+HELP.LBX          0      27      2     72  Title  Clicking anywhere on a colony exits to planet production for that colony
+HELP.LBX          0      27      3     13  lower  he home world
+HELP.LBX          0      27      4     22  Title  Population growth rate
+HELP.LBX          0      27      5     22  Title  Planetary shield class
+HELP.LBX          0      27      6     19  Title  Number of factories
+HELP.LBX          0      27      7    169  Mixed  \x0E\x06\x0F\x06\x10\x06\x11\x06\x12\x06\x13\x06\xFF\xFF\x15\x06\x16\x06\x17\x06\x18\x06\x19\x06\x1A\x06\x1B\x06\x1C\x06\x1D\x06\x1E\x06\x1F\x06 \x06!\x06"\x06#\x06$\x06
+HELP.LBX          0      27      8     23  Title  Number of missile bases
+HELP.LBX          0      27      9    108  Mixed  3\x064\x065\x066\x067\x068\x069\x06:\x06;\x06<\x06=\x06>\x06?\x06@\x06A\x06B\x06\xFF\xFFD\x06E\x06F\x06G\x06
+HELP.LBX          0      27     10     17  Title  Accumulated waste
+HELP.LBX          0      27     11     95  Mixed  X\x06Y\x06Z\x06[\x06\\x06]\x06^\x06_\x06`\x06a\x06b\x06c\x06d\x06e\x06f\x06g\x06h\x06i\x06j\x06
+HELP.LBX          0      27     12     16  Title  Total production
+HELP.LBX          0      27     13    169  Mixed  \x06v\x06w\x06x\x06y\x06z\x06{\x06|\x06}\x06~\x06\x7F\x06\x80\x06\x81\x06\x82\x06\x83\x06\x84\x06\x85\x06\x86\x06\x87\x06\xFF\xFF\xFF\xFF\xFF\xFF\x8B\x06\x8C\x06\x8D\x06
+HELP.LBX          0      27     14     13  Title  Scroll arrows
+HELP.LBX          0      27     15     84  Mixed  \x06\xA7\x06\xFF\xFF\xA9\x06\xAA\x06\xAB\x06\xAC\x06\xAD\x06\xAE\x06\xAF\x06\xB0\x06
+HELP.LBX          0      27     16    272  Mixed  \x06\xB4\x06\xB5\x06\xB6\x06\xB7\x06\xB8\x06\xB9\x06\xBA\x06\xBB\x06\xBC\x06\xBD\x06\xBE\x06\xBF\x06\xC0\x06\xC1\x06\xC2\x06\xC3\x06\xC4\x06\xC6\x06\xF7\xFF\xC7\x06\xC8\x06\xC9\x06\xFF\xFF\xCB\x06\xCC\x06\xCD\x06\xCE\x06\xCF\x06\xD0\x06\xD1\x06\xD2\x06\xD3\x06\xD4\x06\xD5
+HELP.LBX          0      27     17    272  Mixed  \x06\xD7\x06\xD8\x06\xD9\x06\xDA\x06\xDB\x06\xDC\x06\xDD\x06\xDE\x06\xDF\x06\xE0\x06\xE1\x06\xE2\x06\xE3\x06\xE4\x06\xE5\x06\xE6\x06\xE7\x06\xE8\x06\xE9\x06\xEA\x06\xEB\x06\xEC\x06\xED\x06\xEE\x06\xEF\x06\xF0\x06\xF1\x06\xFF\xFF\xFF\xFF\xFF\xFF\xF5\x06\xF6\x06\xFF\xFF\xF8
+HELP.LBX          0      28      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      28      1     14  lower  planet shields
+HELP.LBX          0      28      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      28      3    120  Title  With the invention of planetary shields, you should begin allocating resources to defense in order to build the shields.
+HELP.LBX          0      28      4     20  Mixed  hip Production Ratio
+HELP.LBX          0      28      5     23  Mixed  efense Production Ratio
+HELP.LBX          0      28      6     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      28      7     23  Mixed  cology Production Ratio
+HELP.LBX          0      28      8     26  Mixed  echnology Production Ratio
+HELP.LBX          0      28      9     44  lower  lick on ratio title to lock/unlck ratio bar
+HELP.LBX          0      28     10     14  lower  hange settings
+HELP.LBX          0      29      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      29      1     15  lower  soil enrichment
+HELP.LBX          0      29      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      29      3    290  Mixed  Now that you have developed Soil Enrichment technology, you should increase the ecology ratio on planets with standard environments to change them into fertile environments. Any resources allocated to ecology beyond the requirements to eliminate waste are used to transform the environment.
+HELP.LBX          0      29      4     20  Mixed  hip Production Ratio
+HELP.LBX          0      29      5     23  Mixed  efense Production Ratio
+HELP.LBX          0      29      6     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      29      7     23  Mixed  cology Production Ratio
+HELP.LBX          0      29      8     26  Mixed  echnology Production Ratio
+HELP.LBX          0      29      9     44  lower  lick on ratio title to lock/unlck ratio bar
+HELP.LBX          0      29     10     14  lower  hange settings
+HELP.LBX          0      30      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      30      1     21  lower  atmospheric terraform
+HELP.LBX          0      30      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      30      3    281  Mixed  With the invention of Atmosheric Terraforming technology, you should increase the ecology ratio on planets with hostile environments to change them into standard environments. Any resources allocated beyond the requirements to eliminate waste are used to transform the environment.
+HELP.LBX          0      30      4      8  lower  ronment.
+HELP.LBX          0      30      5     20  Mixed  hip Production Ratio
+HELP.LBX          0      30      6     23  Mixed  efense Production Ratio
+HELP.LBX          0      30      7     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      30      8     23  Mixed  cology Production Ratio
+HELP.LBX          0      30      9     26  Mixed  echnology Production Ratio
+HELP.LBX          0      30     10     44  lower  lick on ratio title to lock/unlck ratio bar
+HELP.LBX          0      30     11     14  lower  hange settings
+HELP.LBX          0      31      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      31      1     13  Title  Advanced soil
+HELP.LBX          0      31      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      31      3    259  Mixed  With the development of Advanced Soil Enrichment you can convert standard and fertile planets into gais which double poplulation growth rates. Any resources allocated beyond the requirements to eliminate industrial waste are used to transform the environment.
+HELP.LBX          0      31      4     20  Mixed  hip Production Ratio
+HELP.LBX          0      31      5     23  Mixed  efense Production Ratio
+HELP.LBX          0      31      6     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      31      7     23  Mixed  cology Production Ratio
+HELP.LBX          0      31      8     26  Mixed  echnology Production Ratio
+HELP.LBX          0      31      9     54  lower  ach star system divides its production into five area:
+HELP.LBX          0      31     10     54  lower  atio bars show the breakdown of a planet's production.
+HELP.LBX          0      32      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      32      1     10  Mixed  Star Gates
+HELP.LBX          0      32      2      4  lower  nt 1
+HELP.LBX          0      32      3     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      32      4    245  Mixed  With the development of Star Gates it becomes essential that you begin building star gates on all of your planets by selecting star gates in the space dock to build instead of ships. Star gates are unsurpassed for accelerating fleet deployments.
+HELP.LBX          0      32      5     20  Mixed  hip Production Ratio
+HELP.LBX          0      32      6     23  Mixed  efense Production Ratio
+HELP.LBX          0      32      7     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      32      8     23  Mixed  cology Production Ratio
+HELP.LBX          0      32      9     26  Mixed  echnology Production Ratio
+HELP.LBX          0      32     10     54  lower  ach star system divides its production into five area:
+HELP.LBX          0      32     11     54  lower  atio bars show the breakdown of a planet's production.
+HELP.LBX          0      33      0     12  UPPER  MAINMOVE.FLI
+HELP.LBX          0      33      1     11  Mixed  Reduced Eco
+HELP.LBX          0      33      2     14  UPPER  MASTER'S NOTES
+HELP.LBX          0      33      3    169  Mixed  Any time you develop either Reduced Industrial Waste or Ecological Restoration technology you should review all of your planet's ecology ratios to decrease where needed.
+HELP.LBX          0      33      4     69  Mixed  ships. Star gates are unsurpassed for accelerating fleet deployments.
+HELP.LBX          0      33      5     20  Mixed  hip Production Ratio
+HELP.LBX          0      33      6     23  Mixed  efense Production Ratio
+HELP.LBX          0      33      7     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      33      8     23  Mixed  cology Production Ratio
+HELP.LBX          0      33      9     26  Mixed  echnology Production Ratio
+HELP.LBX          0      33     10     54  lower  ach star system divides its production into five area:
+HELP.LBX          0      33     11     54  lower  atio bars show the breakdown of a planet's production.
+HELP.LBX          0      34      0     11  UPPER  DESIGNS.FLI
+HELP.LBX          0      34      1     11  Mixed  Click Mouse
+HELP.LBX          0      34      2     44  Mixed  Click the mouse or press Return to continue.
+HELP.LBX          0      34      3     92  Mixed  ar has been locked and will not change. Click on the ratio title to lock/unlock ratio bars.
+HELP.LBX          0      34      4     20  Mixed  hip Production Ratio
+HELP.LBX          0      34      5     23  Mixed  efense Production Ratio
+HELP.LBX          0      34      6     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      34      7     23  Mixed  cology Production Ratio
+HELP.LBX          0      34      8     26  Mixed  echnology Production Ratio
+HELP.LBX          0      34      9     54  lower  ach star system divides its production into five area:
+HELP.LBX          0      34     10     54  lower  atio bars show the breakdown of a planet's production.
+HELP.LBX          0      35      0     12  UPPER  SCRDMP00.FLI
+HELP.LBX          0      35      1      7  Title  Specs 1
+HELP.LBX          0      35      2      3  lower  use
+HELP.LBX          0      35      3     43  Mixed  lick the mouse or press Return to continue.
+HELP.LBX          0      35      4     92  Mixed  ar has been locked and will not change. Click on the ratio title to lock/unlock ratio bars.
+HELP.LBX          0      35      5     56  Mixed  Beam Defense: manueverability + size modifier + specials
+HELP.LBX          0      35      6     43  Mixed  Missile Defense: beam defense + ecm bonuses
+HELP.LBX          0      35      7     40  Mixed  Attack Level: battle computer + specials
+HELP.LBX          0      35      8     45  Mixed  Ship Hits: hull hits modified by battle armor
+HELP.LBX          0      35      9     57  Mixed  Shield Rating: absorbs the class in hits from all attacks
+HELP.LBX          0      35     10      6  lower   area:
+HELP.LBX          0      36      0     12  UPPER  SCRDMP00.FLI
+HELP.LBX          0      36      1      7  Title  Specs 2
+HELP.LBX          0      36      2      3  lower  use
+HELP.LBX          0      36      3     43  Mixed  lick the mouse or press Return to continue.
+HELP.LBX          0      36      4     92  Mixed  ar has been locked and will not change. Click on the ratio title to lock/unlock ratio bars.
+HELP.LBX          0      36      5     35  Mixed  Total Number of Ships in Commission
+HELP.LBX          0      36      6     20  lower   modifier + specials
+HELP.LBX          0      36      7     45  Mixed  Warp Speed: movement in parsecs on galaxy map
+HELP.LBX          0      36      8     56  Title  Maneuverability: ship's speed in combat and base defense
+HELP.LBX          0      36      9     17  Mixed  Scrap Ship Design
+HELP.LBX          0      36     10      2  lower  or
+HELP.LBX          0      36     11     44  lower  : absorbs the class in hits from all attacks
+HELP.LBX          0      36     12     32  Mixed  Click Mouse or Press Esc to Exit
+HELP.LBX          0      36     13      6  lower   area:
+HELP.LBX          0      37      0      9  UPPER  NPLAN.FLI
+HELP.LBX          0      37      1     15  Mixed  Planet Report 1
+HELP.LBX          0      37      2     89  Title  Clicking anywhere on a colony returns you to the galaxy map viewing the selected planet.
+HELP.LBX          0      37      3     43  lower  the ratio title to lock/unlock ratio bars.
+HELP.LBX          0      37      4     18  Mixed  Current Population
+HELP.LBX          0      37      5     37  lower  verability + size modifier + specials
+HELP.LBX          0      37      6     18  Mixed  Last Year's Growth
+HELP.LBX          0      37      7     24  lower  am defense + ecm bonuses
+HELP.LBX          0      37      8     16  Mixed  Planetary Shield
+HELP.LBX          0      37      9     23  lower  tle computer + specials
+HELP.LBX          0      37     10      9  Title  Factories
+HELP.LBX          0      37     11     34  lower  hull hits modified by battle armor
+HELP.LBX          0      37     12     13  Mixed  Missile Bases
+HELP.LBX          0      37     13     43  lower   absorbs the class in hits from all attacks
+HELP.LBX          0      37     14      6  lower   area:
+HELP.LBX          0      37     15     19  Mixed  Scroll List Up/Down
+HELP.LBX          0      37     16     60  Title  Maintenance and extra costs reduce each planet's production.
+HELP.LBX          0      38      0      9  UPPER  NPLAN.FLI
+HELP.LBX          0      38      1     15  Mixed  Planet Report 2
+HELP.LBX          0      38      2    107  Mixed  Reserve Ratio Bar. Up to 20% of all of your planet's production can be directed into the reserve each turn.
+HELP.LBX          0      38      3     29  lower  e to lock/unlock ratio bars.
+HELP.LBX          0      38      4     25  Mixed  Planet's Total Production
+HELP.LBX          0      38      5     30  lower  ity + size modifier + specials
+HELP.LBX          0      38      6     24  Mixed  Current Industrial Waste
+HELP.LBX          0      38      7     18  lower  ense + ecm bonuses
+HELP.LBX          0      38      8     27  Mixed  Current Ship Being Produced
+HELP.LBX          0      38      9     12  lower  r + specials
+HELP.LBX          0      38     10     40  Title  Amount being added to reserve next turn.
+HELP.LBX          0      38     11     61  Title  Transfer a portion of the total reserve to a specific planet.
+HELP.LBX          0      38     12      6  lower   area:
+HELP.LBX          0      38     13     18  Mixed  croll List Up/Down
+HELP.LBX          0      38     14     59  lower  aintenance and extra costs reduce each planet's production.
+HELP.LBX          0      39      0     11  UPPER  DESIGNS.FLI
+HELP.LBX          0      39      1     14  Mixed  ain Movement 1
+HELP.LBX          0      39      2     73  Title  Highlighted technology corresponds to technology that you do not possess.
+HELP.LBX          0      39      3     63  Mixed  ot change. Click on the ratio title to lock/unlock ratio bars.
+HELP.LBX          0      39      4     20  Mixed  hip Production Ratio
+HELP.LBX          0      39      5     23  Mixed  efense Production Ratio
+HELP.LBX          0      39      6     24  Mixed  ndustry Production Ratio
+HELP.LBX          0      39      7     23  Mixed  cology Production Ratio
+HELP.LBX          0      39      8     26  Mixed  echnology Production Ratio
+HELP.LBX          0      39      9     54  lower  ach star system divides its production into five areas
+HELP.LBX          0      39     10     54  lower  atio bars show the breakdown of a planet's production.
+NAMES.LBX         0       0      0      9  Mixed  Durash IV
+NAMES.LBX         0       1      0      9  Title  Alexander
+NAMES.LBX         0       2      0      7  Title  Strader
+NAMES.LBX         0       3      0     10  Mixed  Johann III
+NAMES.LBX         0       4      0      7  Title  Lasitus
+NAMES.LBX         0       5      0     10  Mixed  Bladrov II
+NAMES.LBX         0       6      0      6  Title  Prrsha
+NAMES.LBX         0       7      0      6  Title  Miamar
+NAMES.LBX         0       8      0      6  Title  Mirana
+NAMES.LBX         0       9      0      7  Title  Shandra
+NAMES.LBX         0      10      0      6  Title  Jasana
+NAMES.LBX         0      11      0      6  Title  Yalara
+NAMES.LBX         0      12      0      7  Title  Igneous
+NAMES.LBX         0      13      0      8  Title  Crystous
+NAMES.LBX         0      14      0      5  Title  Geode
+NAMES.LBX         0      15      0      6  Title  Carnax
+NAMES.LBX         0      16      0      7  Title  Sedimin
+NAMES.LBX         0      17      0      6  Title  Granid
+NAMES.LBX         0      18      0      5  Title  Hissa
+NAMES.LBX         0      19      0      7  Title  Kryssta
+NAMES.LBX         0      20      0      6  Title  Sauron
+NAMES.LBX         0      21      0      7  Title  Tyranid
+NAMES.LBX         0      22      0      6  Title  Guanar
+NAMES.LBX         0      23      0      6  Title  Saurak
+NAMES.LBX         0      24      0      7  Title  Tachaon
+NAMES.LBX         0      25      0      5  Title  Quark
+NAMES.LBX         0      26      0      5  Title  Meson
+NAMES.LBX         0      27      0      6  Title  Kelvan
+NAMES.LBX         0      28      0      7  Title  Dynalon
+NAMES.LBX         0      29      0      7  Title  Zygot
+NAMES.LBX         0      30      0      7  Title  Farseer
+NAMES.LBX         0      31      0      7  Title  Skylord
+NAMES.LBX         0      32      0      5  Title  Ariel
+NAMES.LBX         0      33      0      7  Title  Redwing
+NAMES.LBX         0      34      0      8  Title  Highsoar
+NAMES.LBX         0      35      0      9  Title  Sharpclaw
+NAMES.LBX         0      36      0      7  Title  Ixitixl
+NAMES.LBX         0      37      0      7  Title  K'kalak
+NAMES.LBX         0      38      0      7  Title  Kikitik
+NAMES.LBX         0      39      0      6  Title  Xantak
+NAMES.LBX         0      40      0      5  Title  Kaxal
+NAMES.LBX         0      41      0      7  Title  Klaquan
+NAMES.LBX         0      42      0      5  Title  Grunk
+NAMES.LBX         0      43      0      6  Title  Bullux
+NAMES.LBX         0      44      0      6  Title  Krungo
+NAMES.LBX         0      45      0      5  Title  Monch
+NAMES.LBX         0      46      0      5  Title  Durpp
+NAMES.LBX         0      47      0      6  Title  Smurch
+NAMES.LBX         0      49      0      7  UPPER  TX-1138
+NAMES.LBX         0      50      0      6  UPPER  CB-715
+NAMES.LBX         0      51      0      6  UPPER  QX-537
+NAMES.LBX         0      52      0      7  UPPER  INT-986
+NAMES.LBX         0      53      0      6  UPPER  TVC-15
+NAMES.LBX         0      54      0      7  Title  Ssithra
+NAMES.LBX         0      55      0      6  Title  Nazgur
+NAMES.LBX         0      56      0      7  Title  Darquan
+NAMES.LBX         0      57      0      7  Title  Morfane
+NAMES.LBX         0      58      0      6  Title  Shador
+NAMES.LBX         0      59      0      7  Title  Narzina
+RESEARCH.LBX      1       0      0     14  Mixed  Battle Scanner
+RESEARCH.LBX      1       0      1     17  Mixed  Ecm Jammer Mark I
+RESEARCH.LBX      1       0      2     18  Mixed  Deep Space Scanner
+RESEARCH.LBX      1       0      3     23  Mixed  Battle Computer Mark II
+RESEARCH.LBX      1       0      4     18  Mixed  Ecm Jammer Mark II
+RESEARCH.LBX      1       0      5     29  Mixed  Improved Robotic Controls III
+RESEARCH.LBX      1       0      6     24  Mixed  Battle Computer Mark III
+RESEARCH.LBX      1       0      7     19  Mixed  Ecm Jammer Mark III
+RESEARCH.LBX      1       0      8     22  Mixed  Improved Space Scanner
+RESEARCH.LBX      1       0      9     23  Mixed  Battle Computer Mark IV
+RESEARCH.LBX      1       0     10     18  Mixed  Ecm Jammer Mark IV
+RESEARCH.LBX      1       0     11     28  Mixed  Improved Robotic Controls IV
+RESEARCH.LBX      1       0     12     22  Mixed  Battle Computer Mark V
+RESEARCH.LBX      1       0     13     17  Mixed  Ecm Jammer Mark V
+RESEARCH.LBX      1       0     14     22  Mixed  Advanced Space Scanner
+RESEARCH.LBX      1       0     15     23  Mixed  Battle Computer Mark VI
+RESEARCH.LBX      1       0     16     18  Mixed  Ecm Jammer Mark VI
+RESEARCH.LBX      1       0     17     27  Mixed  Improved Robotic Controls V
+RESEARCH.LBX      1       0     18     24  Mixed  Battle Computer Mark VII
+RESEARCH.LBX      1       0     19     19  Mixed  Ecm Jammer Mark VII
+RESEARCH.LBX      1       0     20     25  Mixed  Hyperspace Communications
+RESEARCH.LBX      1       0     21     25  Mixed  Battle Computer Mark VIII
+RESEARCH.LBX      1       0     22     20  Mixed  Ecm Jammer Mark VIII
+RESEARCH.LBX      1       0     23     28  Mixed  Improved Robotic Controls VI
+RESEARCH.LBX      1       0     24     23  Mixed  Battle Computer Mark IX
+RESEARCH.LBX      1       0     25     18  Mixed  Ecm Jammer Mark IX
+RESEARCH.LBX      1       0     26     22  Mixed  Battle Computer Mark X
+RESEARCH.LBX      1       0     27     16  Mixed  Oracle Interface
+RESEARCH.LBX      1       0     28     17  Mixed  Ecm Jammer Mark X
+RESEARCH.LBX      1       0     29     29  Mixed  Improved Robotic Controls VII
+RESEARCH.LBX      1       0     30     20  Mixed  Technology Nullifier
+RESEARCH.LBX      1       0     31     23  Mixed  Battle Computer Mark XI
+RESEARCH.LBX      1       0     32     18  Mixed  Reserve Fuel Tanks
+RESEARCH.LBX      1       0     33     26  Mixed  Improved Industrial Tech 9
+RESEARCH.LBX      1       0     34     28  Mixed  Reduced Industrial Waste 80%
+RESEARCH.LBX      1       0     35     26  Mixed  Improved Industrial Tech 8
+RESEARCH.LBX      1       0     36     14  Mixed  Duralloy Armor
+RESEARCH.LBX      1       0     37     12  Mixed  Battle Suits
+RESEARCH.LBX      1       0     38     26  Mixed  Improved Industrial Tech 7
+RESEARCH.LBX      1       0     39     23  Mixed  Automated Repair System
+RESEARCH.LBX      1       0     40     28  Mixed  Reduced Industrial Waste 60%
+RESEARCH.LBX      1       0     41     13  Mixed  Zortium Armor
+RESEARCH.LBX      1       0     42     26  Mixed  Improved Industrial Tech 6
+RESEARCH.LBX      1       0     43     26  Mixed  Improved Industrial Tech 5
+RESEARCH.LBX      1       0     44     19  Mixed  Armored Exoskeleton
+RESEARCH.LBX      1       0     45     28  Mixed  Reduced Industrial Waste 40%
+RESEARCH.LBX      1       0     46     13  Mixed  Andrium Armor
+RESEARCH.LBX      1       0     47     26  Mixed  Improved Industrial Tech 4
+RESEARCH.LBX      1       0     48     26  Mixed  Improved Industrial Tech 3
+RESEARCH.LBX      1       0     49     15  Mixed  Tritanium Armor
+RESEARCH.LBX      1       0     50     28  Mixed  Reduced Industrial Waste 20%
+RESEARCH.LBX      1       0     51     23  Mixed  Advanced Damage Control
+RESEARCH.LBX      1       0     52     26  Mixed  Improved Industrial Tech 2
+RESEARCH.LBX      1       0     53     13  Mixed  Powered Armor
+RESEARCH.LBX      1       0     54     16  Mixed  Adamantium Armor
+RESEARCH.LBX      1       0     55     28  Mixed  Industrial Waste Elimination
+RESEARCH.LBX      1       0     56     16  Mixed  Neutronium Armor
+RESEARCH.LBX      1       0     57     25  Mixed  Class I Deflector Shields
+RESEARCH.LBX      1       0     58     26  Mixed  Class II Deflector Shields
+RESEARCH.LBX      1       0     59     25  Mixed  Personal Deflector Shield
+RESEARCH.LBX      1       0     60     27  Mixed  Class III Deflector Shields
+RESEARCH.LBX      1       0     61     24  Mixed  Class V Planetary Shield
+RESEARCH.LBX      1       0     62     26  Mixed  Class IV Deflector Shields
+RESEARCH.LBX      1       0     63     13  Mixed  Repulsor Beam
+RESEARCH.LBX      1       0     64     25  Mixed  Class V Deflector Shields
+RESEARCH.LBX      1       0     65     26  Mixed  Personal Absorption Shield
+RESEARCH.LBX      1       0     66     24  Mixed  Class X Planetary Shield
+RESEARCH.LBX      1       0     67     26  Mixed  Class VI Deflector Shields
+RESEARCH.LBX      1       0     68     15  Mixed  Cloaking Device
+RESEARCH.LBX      1       0     69     27  Mixed  Class VII Deflector Shields
+RESEARCH.LBX      1       0     70     11  Mixed  Zyro Shield
+RESEARCH.LBX      1       0     71     25  Mixed  Class XV Planetary Shield
+RESEARCH.LBX      1       0     72     26  Mixed  Class IX Deflector Shields
+RESEARCH.LBX      1       0     73     12  Mixed  Stasis Field
+RESEARCH.LBX      1       0     74     23  Mixed  Personal Barrier Shield
+RESEARCH.LBX      1       0     75     26  Mixed  Class XI Deflector Shields
+RESEARCH.LBX      1       0     76     25  Mixed  Class XX Planetary Shield
+RESEARCH.LBX      1       0     77     20  Mixed  Black Hole Generator
+RESEARCH.LBX      1       0     78     28  Mixed  Class XIII Deflector Shields
+RESEARCH.LBX      1       0     79     16  Mixed  Lightning Shield
+RESEARCH.LBX      1       0     80     26  Mixed  Class XV Deflector Shields
+RESEARCH.LBX      1       0     81     22  Mixed  Ecological Restoration
+RESEARCH.LBX      1       0     82     25  Mixed  Improved Terraforming +10
+RESEARCH.LBX      1       0     83     29  Mixed  Controlled Barren Environment
+RESEARCH.LBX      1       0     84     24  Mixed  Improved Eco Restoration
+RESEARCH.LBX      1       0     85     29  Mixed  Controlled Tundra Environment
+RESEARCH.LBX      1       0     86     25  Mixed  Improved Terraforming +20
+RESEARCH.LBX      1       0     87     27  Mixed  Controlled Dead Environment
+RESEARCH.LBX      1       0     88     12  Mixed  Death Spores
+RESEARCH.LBX      1       0     89     30  Mixed  Controlled Inferno Environment
+RESEARCH.LBX      1       0     90     24  Mixed  Enhanced Eco Restoration
+RESEARCH.LBX      1       0     91     25  Mixed  Improved Terraforming +30
+RESEARCH.LBX      1       0     92     28  Mixed  Controlled Toxic Environment
+RESEARCH.LBX      1       0     93     15  Mixed  Soil Enrichment
+RESEARCH.LBX      1       0     94     18  Mixed  Bio Toxin Antidote
+RESEARCH.LBX      1       0     95     31  Mixed  Controlled Radiated Environment
+RESEARCH.LBX      1       0     96     25  Mixed  Improved Terraforming +40
+RESEARCH.LBX      1       0     97      7  Title  Cloning
+RESEARCH.LBX      1       0     98     24  Mixed  Atmospheric Terraforming
+RESEARCH.LBX      1       0     99     24  Mixed  Advanced Eco Restoration
+RESEARCH.LBX      1       0    100     25  Mixed  Improved Terraforming +50
+RESEARCH.LBX      1       0    101     10  Mixed  Doom Virus
+RESEARCH.LBX      1       0    102     24  Mixed  Advanced Soil Enrichment
+RESEARCH.LBX      1       0    103     25  Mixed  Improved Terraforming +60
+RESEARCH.LBX      1       0    104     24  Mixed  Complete Eco Restoration
+RESEARCH.LBX      1       0    105     18  Mixed  Universal Antidote
+RESEARCH.LBX      1       0    106     25  Mixed  Improved Terraforming +80
+RESEARCH.LBX      1       0    107     14  Mixed  Bio Terminator
+RESEARCH.LBX      1       0    108     16  Mixed  Advanced Cloning
+RESEARCH.LBX      1       0    109     26  Mixed  Improved Terraforming +100
+RESEARCH.LBX      1       0    110     21  Mixed  Complete Terraforming
+RESEARCH.LBX      1       0    111     13  Mixed  Retro Engines
+RESEARCH.LBX      1       0    112     29  Mixed  Hydrogen Fuel Cells (Range 4)
+RESEARCH.LBX      1       0    113     30  Mixed  Deuterium Fuel Cells (Range 5)
+RESEARCH.LBX      1       0    114     15  Mixed  Nuclear Engines
+RESEARCH.LBX      1       0    115     29  Mixed  Irridium Fuel Cells (Range 6)
+RESEARCH.LBX      1       0    116     19  Mixed  Inertial Stabilizer
+RESEARCH.LBX      1       0    117     16  Mixed  Sub-Light Drives
+RESEARCH.LBX      1       0    118     27  Mixed  Dotomite Crystals (Range 7)
+RESEARCH.LBX      1       0    119     13  Mixed  Energy Pulsar
+RESEARCH.LBX      1       0    120     13  Mixed  Fusion Drives
+RESEARCH.LBX      1       0    121     28  Mixed  Uridium Fuel Cells (Range 8)
+RESEARCH.LBX      1       0    122     15  Mixed  Warp Dissipator
+RESEARCH.LBX      1       0    123     30  Mixed  Reajax II Fuel Cells (Range 9)
+RESEARCH.LBX      1       0    124     14  Mixed  Impulse Drives
+RESEARCH.LBX      1       0    125     24  Mixed  Intergalactic Star Gates
+RESEARCH.LBX      1       0    126     30  Mixed  Trilithium Crystals (Range 10)
+RESEARCH.LBX      1       0    127     10  Mixed  Ion Drives
+RESEARCH.LBX      1       0    128     17  Mixed  High Energy Focus
+RESEARCH.LBX      1       0    129     18  Mixed  Anti-Matter Drives
+RESEARCH.LBX      1       0    130     20  Mixed  Sub Space Teleporter
+RESEARCH.LBX      1       0    131     12  Mixed  Ionic Pulsar
+RESEARCH.LBX      1       0    132     31  Mixed  Thorium Cells (Unlimited Range)
+RESEARCH.LBX      1       0    133     19  Mixed  Inter-Phased Drives
+RESEARCH.LBX      1       0    134     21  Mixed  Sub Space Interdictor
+RESEARCH.LBX      1       0    135     19  Mixed  Combat Transporters
+RESEARCH.LBX      1       0    136     18  Mixed  Inertial Nullifier
+RESEARCH.LBX      1       0    137     12  Mixed  Hyper Drives
+RESEARCH.LBX      1       0    138     19  Mixed  Displacement Device
+RESEARCH.LBX      1       0    139      6  Title  Lasers
+RESEARCH.LBX      1       0    140     11  Mixed  Hand Lasers
+RESEARCH.LBX      1       0    141     15  Mixed  Hyper-V Rockets
+RESEARCH.LBX      1       0    142     13  Mixed  Gatling Laser
+RESEARCH.LBX      1       0    143     20  Mixed  Anti-Missile Rockets
+RESEARCH.LBX      1       0    144     18  Mixed  Neutron Pellet Gun
+RESEARCH.LBX      1       0    145     15  Mixed  Hyper-X Rockets
+RESEARCH.LBX      1       0    146     11  Mixed  Fusion Bomb
+RESEARCH.LBX      1       0    147     10  Mixed  Ion Cannon
+RESEARCH.LBX      1       0    148     22  Mixed  Scatter Pack V Rockets
+RESEARCH.LBX      1       0    149      9  Mixed  Ion Rifle
+RESEARCH.LBX      1       0    150     11  Mixed  Mass Driver
+RESEARCH.LBX      1       0    151     18  Mixed  Merculite Missiles
+RESEARCH.LBX      1       0    152     15  Mixed  Neutron Blaster
+RESEARCH.LBX      1       0    153     16  Mixed  Anti-Matter Bomb
+RESEARCH.LBX      1       0    154     13  Mixed  Graviton Beam
+RESEARCH.LBX      1       0    155     16  Mixed  Stinger Missiles
+RESEARCH.LBX      1       0    156      9  Mixed  Hard Beam
+RESEARCH.LBX      1       0    157     11  Mixed  Fusion Beam
+RESEARCH.LBX      1       0    158     20  Mixed  Ion Stream Projector
+RESEARCH.LBX      1       0    159     12  Mixed  Omega-V Bomb
+RESEARCH.LBX      1       0    160     21  Mixed  Anti-Matter Torpedoes
+RESEARCH.LBX      1       0    161     12  Mixed  Fusion Rifle
+RESEARCH.LBX      1       0    162     15  Mixed  Megabolt Cannon
+RESEARCH.LBX      1       0    163      6  Title  Phasor
+RESEARCH.LBX      1       0    164     25  Mixed  Scatter Pack VII Missiles
+RESEARCH.LBX      1       0    165     12  Mixed  Auto Blaster
+RESEARCH.LBX      1       0    166     15  Mixed  Pulson Missiles
+RESEARCH.LBX      1       0    167     12  Mixed  Tachyon Beam
+RESEARCH.LBX      1       0    168     11  Mixed  Hand Phasor
+RESEARCH.LBX      1       0    169     16  Mixed  Gauss Autocannon
+RESEARCH.LBX      1       0    170     13  Mixed  Particle Beam
+RESEARCH.LBX      1       0    171     17  Mixed  Hercular Missiles
+RESEARCH.LBX      1       0    172     13  Mixed  Plasma Cannon
+RESEARCH.LBX      1       0    173      9  Mixed  Death Ray
+RESEARCH.LBX      1       0    174      9  Title  Disruptor
+RESEARCH.LBX      1       0    175     12  Mixed  Pulse Phasor
+RESEARCH.LBX      1       0    176     15  Mixed  Neutronium Bomb
+RESEARCH.LBX      1       0    177     18  Mixed  Hellfire Torpedoes
+RESEARCH.LBX      1       0    178     13  Mixed  Zeon Missiles
+RESEARCH.LBX      1       0    179     12  Mixed  Plasma Rifle
+RESEARCH.LBX      1       0    180     16  Mixed  Proton Torpedoes
+RESEARCH.LBX      1       0    181     23  Mixed  Scatter Pack X Missiles
+RESEARCH.LBX      1       0    182     23  Mixed  Tri-Focus Plasma Cannon
+RESEARCH.LBX      1       0    183     17  Mixed  Stellar Converter
+RESEARCH.LBX      1       0    184     24  Mixed  Neutron Stream Projector
+RESEARCH.LBX      1       0    185     13  Mixed  Mauler Device
+RESEARCH.LBX      1       0    186     16  Mixed  Plasma Torpedoes
+RESEARCH.LBX      2       0      0     63  Title  Reveals technical specifications of enemy spacecraft in combat.
+RESEARCH.LBX      2       1      0     54  Title  Adds 1 level to defense against enemy missile attacks.
+RESEARCH.LBX      2       3      0     94  Title  Detects enemy ships up to 5 parsecs away from your colonies and 1 parsec away from your ships.
+RESEARCH.LBX      2       4      0     37  Title  Increases weapon accuracy to level 2.
+RESEARCH.LBX      2       6      0     55  Title  Adds 2 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2       7      0    152  Mixed  Allows up to three factories to be operated per population. The refit cost to upgrade to Robotic Controls III is half the standard cost of each factory.
+RESEARCH.LBX      2       9      0     37  Title  Increases weapon accuracy to level 3.
+RESEARCH.LBX      2      11      0     55  Title  Adds 3 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      12      0    157  Mixed  Detects enemy ships up to 7 parsecs away from your colonies and 2 parsecs away from your ships. Enemy destinations and ETA can also be accurately determined.
+RESEARCH.LBX      2      14      0     37  Title  Increases weapon accuracy to level 4.
+RESEARCH.LBX      2      16      0     55  Title  Adds 4 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      17      0    145  Mixed  Allows up to four factories to be operated per population. The refit cost to upgrade to Robotic Controls IV is the standard cost of each factory.
+RESEARCH.LBX      2      19      0     37  Title  Increases weapon accuracy to level 5.
+RESEARCH.LBX      2      21      0     55  Title  Adds 5 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      22      0    130  Title  Allows exploration of planets from colony bases up to 9 parsecs away and detects enemy ships up to 3 parsecs away from your ships.
+RESEARCH.LBX      2      24      0     37  Title  Increases weapon accuracy to level 6.
+RESEARCH.LBX      2      26      0     55  Title  Adds 6 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      27      0    165  Mixed  Allows up to five factories to be operated per population. The refit cost to upgrade to Robotic Controls V is one and a half times the standard cost of each factory.
+RESEARCH.LBX      2      29      0     37  Title  Increases weapon accuracy to level 7.
+RESEARCH.LBX      2      31      0     56  Title  Adds 7 levels to defense against enemy missile attacks..
+RESEARCH.LBX      2      33      0    112  Title  Allows you to communicate with ships and transports in hyperspace, and change their destinations while in route.
+RESEARCH.LBX      2      34      0     37  Title  Increases weapon accuracy to level 8.
+RESEARCH.LBX      2      36      0     55  Title  Adds 8 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      37      0    150  Mixed  Allows up to six factories to be operated per population. The refit cost to upgrade to Robotic Controls VI is twice the standard cost of each factory.
+RESEARCH.LBX      2      39      0     37  Title  Increases weapon accuracy to level 9.
+RESEARCH.LBX      2      41      0     55  Title  Adds 9 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      44      0     38  Title  Increases weapon accuracy to level 10.
+RESEARCH.LBX      2      45      0    122  Title  Coordinates all beam weapon attacks into one simultaneous burst of concentrated fire, halving the enemy's shield strength.
+RESEARCH.LBX      2      46      0     56  Title  Adds 10 levels to defense against enemy missile attacks.
+RESEARCH.LBX      2      47      0    157  Mixed  Allows up to seven factories to be operated per population. The refit cost to upgrade to Robotic Controls VII is 2.5 times the standard cost of each factory.
+RESEARCH.LBX      2      48      0    152  Mixed  Scrambles enemy battle computers, reducing the level of the computers up to 2-6 levels each time the nullifier is fired. The weapon has a 4 space range.
+RESEARCH.LBX      2      49      0     38  Title  Increases weapon accuracy to level 11.
+RESEARCH.LBX      2      50      0     55  Title  Extends the range of a ship by an additional 3 parsecs.
+RESEARCH.LBX      2      52      0     48  Mixed  Reduces factory construction costs to 9 BC each.
+RESEARCH.LBX      2      54      0     61  Title  Decreases factory pollution levels to 80% of the normal rate.
+RESEARCH.LBX      2      57      0     48  Mixed  Reduces factory construction costs to 8 BC each.
+RESEARCH.LBX      2      59      0    128  Mixed  Increases the hit points of ships and transports by 50%. Personal combat armor is also enhanced, adding 5 to all ground attacks.
+RESEARCH.LBX      2      60      0     90  Mixed  Armor that not only protects but also boosts strength. Adds 10 to all ground combat rolls.
+RESEARCH.LBX      2      62      0     48  Mixed  Reduces factory construction costs to 7 BC each.
+RESEARCH.LBX      2      63      0     89  Title  Undestroyed ships can repair up to 15% of their total hit points at the end of each turn.
+RESEARCH.LBX      2      64      0     61  Title  Decreases factory pollution levels to 60% of the normal rate.
+RESEARCH.LBX      2      66      0    130  Mixed  Increases the hit points of ships and transports by 100%. Personal combat armor is also enhanced, adding 10 to all ground attacks.
+RESEARCH.LBX      2      67      0     48  Mixed  Reduces factory construction costs to 6 BC each.
+RESEARCH.LBX      2      72      0     48  Mixed  Reduces factory construction costs to 5 BC each.
+RESEARCH.LBX      2      73      0    153  Mixed  Advanced mobile suits that not only boost power and increase defenses but also offer limited flight to ground troops. Adds 20 to all ground combat rolls.
+RESEARCH.LBX      2      74      0     61  Title  Decreases factory pollution levels to 40% of the normal rate.
+RESEARCH.LBX      2      75      0    130  Mixed  Increases the hit points of ships and transports by 150%. Personal combat armor is also enhanced, adding 15 to all ground attacks.
+RESEARCH.LBX      2      77      0     48  Mixed  Reduces factory construction costs to 4 BC each.
+RESEARCH.LBX      2      82      0     48  Mixed  Reduces factory construction costs to 3 BC each.
+RESEARCH.LBX      2      83      0    130  Mixed  Increases the hit points of ships and transports by 200%. Personal combat armor is also enhanced, adding 20 to all ground attacks.
+RESEARCH.LBX      2      84      0     61  Title  Decreases factory pollution levels to 20% of the normal rate.
+RESEARCH.LBX      2      85      0     89  Title  Undestroyed ships can repair up to 30% of their total hit points at the end of each turn.
+RESEARCH.LBX      2      87      0     48  Mixed  Reduces factory construction costs to 2 BC each.
+RESEARCH.LBX      2      89      0    164  Mixed  Combines high mobility, anti-grav flight, and heavy armored plating to form the most advanced armor available for ground troops. Adds 30 to all ground combat rolls.
+RESEARCH.LBX      2      91      0    130  Mixed  Increases the hit points of ships and transports by 250%. Personal combat armor is also enhanced, adding 25 to all ground attacks.
+RESEARCH.LBX      2      94      0     27  Title  Factories cease to pollute.
+RESEARCH.LBX      2      99      0    171  Mixed  Provides the best internal protection of any armor and increases the hit points of a ship by 300%. Personal combat armor is also enhanced, adding 30 to all ground attacks.
+RESEARCH.LBX      2     100      0     43  Title  Absorbs 1 point of damage from all attacks.
+RESEARCH.LBX      2     103      0     44  Title  Absorbs 2 points of damage from all attacks.
+RESEARCH.LBX      2     107      0    104  Mixed  Protects individual ground troops with a directional force field. Adds +10 to all ground combat battles.
+RESEARCH.LBX      2     109      0     44  Title  Absorbs 3 points of damage from all attacks.
+RESEARCH.LBX      2     111      0    119  Title  Absorbs 5 points of damage from attacks against planet surfaces, and is cumulative with missile base deflector shields.
+RESEARCH.LBX      2     113      0     44  Title  Absorbs 4 points of damage from all attacks.
+RESEARCH.LBX      2     115      0    103  Mixed  Repels enemy ships back one space away from the attacking ship. The special weapon has a 1 space range.
+RESEARCH.LBX      2     119      0     44  Title  Absorbs 5 points of damage from all attacks.
+RESEARCH.LBX      2     120      0     75  Mixed  Absorbs damage from all hand weapons. Adds 20 to all ground combat battles.
+RESEARCH.LBX      2     121      0    124  Title  Absorbs 10 points of damage from all attacks against planet surfaces, and is cumulative with missile base deflector shields.
+RESEARCH.LBX      2     123      0     44  Title  Absorbs 6 points of damage from all attacks.
+RESEARCH.LBX      2     126      0    118  Mixed  Renders ships nearly invisible until they attack. While cloaked ships receive a +5 to their missile and beam defenses.
+RESEARCH.LBX      2     129      0     44  Title  Absorbs 7 points of damage from all attacks.
+RESEARCH.LBX      2     130      0    119  Title  An energy field that destroys incoming missiles and torpedoes 75% of the time, -1% per technology level of the missile.
+RESEARCH.LBX      2     131      0    124  Title  Absorbs 15 points of damage from all attacks against planet surfaces, and is cumulative with missile base deflector shields.
+RESEARCH.LBX      2     133      0     44  Title  Absorbs 9 points of damage from all attacks.
+RESEARCH.LBX      2     136      0    111  Mixed  Freezes one group of enemy ships up to one space away, for one turn. Frozen ships cannot attack or be attacked.
+RESEARCH.LBX      2     137      0    106  Mixed  Completely encases the soldier in an nearly impenetrable force field. Adds +30 to all ground combat rolls.
+RESEARCH.LBX      2     139      0     45  Title  Absorbs 11 points of damage from all attacks.
+RESEARCH.LBX      2     141      0    124  Title  Absorbs 20 points of damage from all attacks against planet surfaces, and is cumulative with missile base deflector shields.
+RESEARCH.LBX      2     142      0    145  Title  Creates a sub-space field that warps normal space creating an instantaneous black hole, destroying 25%-100% of enemy ships, -2% per shield class.
+RESEARCH.LBX      2     143      0     45  Title  Absorbs 13 points of damage from all attacks.
+RESEARCH.LBX      2     145      0    126  Title  An energy field that destroys incoming enemy missiles and torpedoes 100% of the time, -1% per technology level of the missile.
+RESEARCH.LBX      2     149      0     45  Title  Absorbs 15 points of damage from all attacks.
+RESEARCH.LBX      2     150      0     58  Mixed  Eliminates 2 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX      2     151      0     83  Mixed  Increases the population capacity of planets by 10M for a cost of 5 BC per million.
+RESEARCH.LBX      2     152      0     43  Title  Permits the colonization of barren planets.
+RESEARCH.LBX      2     154      0     58  Mixed  Eliminates 3 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX      2     155      0     43  Title  Permits the colonization of tundra planets.
+RESEARCH.LBX      2     157      0     83  Mixed  Increases the population capacity of planets by 20M for a cost of 5 BC per million.
+RESEARCH.LBX      2     158      0     41  Title  Permits the colonization of dead planets.
+RESEARCH.LBX      2     159      0    106  Title  Horrible biological weapons capable of reducing the maximum planetary populations by 1 million per attack.
+RESEARCH.LBX      2     161      0     44  Title  Permits the colonization of inferno planets.
+RESEARCH.LBX      2     162      0     58  Mixed  Eliminates 5 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX      2     163      0     83  Mixed  Increases the population capacity of planets by 30M for a cost of 4 BC per million.
+RESEARCH.LBX      2     164      0     42  Title  Permits the colonization of toxic planets.
+RESEARCH.LBX      2     165      0    160  Mixed  Converts standard planets to fertile enviroments, increasing population growth by 50% and raising the base planetary size by +25% for a one time cost of 150 BC.
+RESEARCH.LBX      2     166      0     73  Title  Reduces casualties taken from biological weapons by 1 million per attack.
+RESEARCH.LBX      2     167      0     45  Title  Permits the colonization of radiated planets.
+RESEARCH.LBX      2     169      0     83  Mixed  Increases the population capacity of planets by 40M for a cost of 4 BC per million.
+RESEARCH.LBX      2     170      0     70  Mixed  Allows bio engineered colonists to be grown at a rate of 1M per 10 BC.
+RESEARCH.LBX      2     171      0    119  Mixed  Converts hostile planets to standard minimal environments, normalizing population growth for a one time cost of 200 BC.
+RESEARCH.LBX      2     173      0     59  Mixed  Eliminates 10 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX      2     175      0     83  Mixed  Increases the population capacity of planets by 50M for a cost of 3 BC per million.
+RESEARCH.LBX      2     176      0     94  Title  Dreadful biological weapons capable of reducing planetary populations by 2 million per attack.
+RESEARCH.LBX      2     179      0    157  Mixed  Converts standard and fertile planets to gaias, doubling the population growth and increasing the planet's base size by +50% for the one time cost of 300 BC.
+RESEARCH.LBX      2     181      0     83  Mixed  Increases the population capacity of planets by 60M for a cost of 3 BC per million.
+RESEARCH.LBX      2     183      0     59  Mixed  Eliminates 20 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX      2     185      0     73  Title  Reduces casualties taken from biological weapons by 2 million per attack.
+RESEARCH.LBX      2     187      0     83  Mixed  Increases the population capacity of planets by 80M for a cost of 2 BC per million.
+RESEARCH.LBX      2     189      0     96  Title  Abominable biological weapons capable of reducing planetary populations by 3 million per attack.
+RESEARCH.LBX      2     191      0     69  Mixed  Allows bio engineered colonists to be grown at a rate of 1M per 5 BC.
+RESEARCH.LBX      2     193      0     84  Mixed  Increases the population capacity of planets by 100M for a cost of 2 BC per million.
+RESEARCH.LBX      2     199      0     84  Mixed  Increases the population capacity of planets by 120M for a cost of 2 BC per million.
+RESEARCH.LBX      2     200      0    104  Mixed  Moves ships at warp one (1 parsecs per turn), and allows a maximum maneuverability of class I in combat.
+RESEARCH.LBX      2     202      0     75  Title  Fuel reserves allow ships to move up to 4 parsecs away from colony planets.
+RESEARCH.LBX      2     204      0     75  Title  Fuel reserves allow ships to move up to 5 parsecs away from colony planets.
+RESEARCH.LBX      2     205      0    105  Mixed  Moves ships at warp two (2 parsecs per turn), and allows a maximum maneuverability of class II in combat.
+RESEARCH.LBX      2     208      0     75  Title  Fuel reserves allow ships to move up to 6 parsecs away from colony planets.
+RESEARCH.LBX      2     209      0    134  Title  Generates a field that reduces the inertia of ships, and adds 2 classes of maneuverability in combat (+2 defense and +1 combat speed).
+RESEARCH.LBX      2     211      0    108  Mixed  Moves ships at warp three (3 parsecs per turn), and allows a maximum maneuverability of class III in combat.
+RESEARCH.LBX      2     213      0     75  Title  Fuel reserves allow ships to move up to 7 parsecs away from colony planets.
+RESEARCH.LBX      2     215      0    158  Title  A potent engine modification which generates a sudden spherical burst of energy striking all adjacent ships for up to 5 points of damage plus 1 per two ships.
+RESEARCH.LBX      2     217      0    106  Mixed  Moves ships at warp four (4 parsecs per turn), and allows a maximum maneuverability of class IV in combat.
+RESEARCH.LBX      2     218      0     75  Title  Fuel reserves allow ships to move up to 8 parsecs away from colony planets.
+RESEARCH.LBX      2     219      0    132  Title  Specialized weapon that disrupts the warp fields surrounding enemy ships, reducing their speed by 0-1 each turn the weapon is fired.
+RESEARCH.LBX      2     222      0     75  Title  Fuel reserves allow ships to move up to 9 parsecs away from colony planets.
+RESEARCH.LBX      2     223      0    105  Mixed  Moves ships at warp five (5 parsecs per turn), and allows a maximum maneuverability of class V in combat.
+RESEARCH.LBX      2     226      0    116  Mixed  Allows your ships to move between any two planets equipped with star gates in only one turn. Costs 3000 BC to build.
+RESEARCH.LBX      2     228      0     76  Title  Fuel reserves allow ships to move up to 10 parsecs away from colony planets.
+RESEARCH.LBX      2     229      0    105  Mixed  Moves ships at warp six (6 parsecs per turn), and allows a maximum maneuverability of class VI in combat.
+RESEARCH.LBX      2     233      0     58  Title  Increases the firing range of all energy weapons by three.
+RESEARCH.LBX      2     235      0    108  Mixed  Moves ships at warp seven (7 parsecs per turn), and allows a maximum maneuverability of class VII in combat.
+RESEARCH.LBX      2     237      0     98  Title  Teleports ships to any space on the combat map and gives first initiative to the teleporting ship.
+RESEARCH.LBX      2     239      0    164  Title  A powerful engine modification capable of generating a spherical burst of phased energy striking all adjacent ships for up to 10 points of damage plus one per ship.
+RESEARCH.LBX      2     240      0     82  Title  Self-replenishing fuel that allows ships to move any distance from colony planets.
+RESEARCH.LBX      2     241      0    109  Mixed  Moves ships at warp eight (8 parsecs per turn), and allows a maximum maneuverability of class VIII in combat.
+RESEARCH.LBX      2     242      0    185  Mixed  Surrounds colony planets with an intense gravity well, rendering sub space teleporters useless and halving combat transporter effectiveness. The device is a placed in all missile bases.
+RESEARCH.LBX      2     244      0    156  Title  Transports equipped with these devices have a 50% chance of beaming down onto enemy surfaces before the transports can be attacked by enemy ships and bases.
+RESEARCH.LBX      2     245      0    133  Title  Generates a field that negates the inertia of ships and adds 2 classes of maneuverability in combat (+4 defense and +2 combat speed).
+RESEARCH.LBX      2     247      0    106  Mixed  Moves ships at warp nine (9 parsecs per turn), and allows a maximum maneuverability of class IX in combat.
+RESEARCH.LBX      2     249      0    123  Title  Randomly shifts the equipped ship in and out of normal space, allowing the ship to avoid one third of all non-area attacks.
+RESEARCH.LBX      2     250      0    124  Mixed  Direct-fire beam weapon that inflicts 1-4 points of damage. Heavy lasers have a two space range and do 1-7 points of damage.
+RESEARCH.LBX      2     251      0     55  Title  Personal lasers that add 5 to your ground combat rolls.
+RESEARCH.LBX      2     253      0     77  Title  Swift missiles that explode for 6 points of damage and move at a speed of 2.5
+RESEARCH.LBX      2     254      0     94  Title  An advanced laser that fires up to four times per turn for 1-4 points of damage with each hit.
+RESEARCH.LBX      2     255      0    123  Title  Trans-light rockets capable of destroying incoming enemy missiles 40% of the time, -1% per technology level of the missile.
+RESEARCH.LBX      2     256      0    120  Title  Heavy particle stream weapon that halves the effectiveness of enemy deflector shields and inflicts 2-5 points of damage.
+RESEARCH.LBX      2     257      0    157  Title  Missiles equipped with high energy warheads that explode for 8 points of damage, move at a speed of 2.5, and are controlled by a +1 level targeting computer.
+RESEARCH.LBX      2     258      0     71  Title  Bombs that explode for 5-20 points of damage on planetary targets only.
+RESEARCH.LBX      2     259      0    131  Mixed  High intensity beam weapons capable of inflicting 3-8 points of damage. Heavy ion cannons strike for 3-15 and have a 2 space range.
+RESEARCH.LBX      2     260      0    139  Mixed  Mirv versions of Hyper-V Rockets, splitting into five separate warheads that each explode for 6 points of damage and move at a speed of 2.5
+RESEARCH.LBX      2     261      0     57  Title  Personal beam weapons that add 10 to your ground attacks.
+RESEARCH.LBX      2     262      0    112  Title  A linear accelerator that halves the effectiveness of enemy deflector shields and inflicts 5-8 points of damage.
+RESEARCH.LBX      2     263      0    141  Title  Hard-hitting, swift missiles that explode for 10 points of damage, move at a speed of 3, and are controlled by a +2 level targeting computer.
+RESEARCH.LBX      2     264      0    142  Mixed  High powered beam weapons capable of inflicting 3-12 points of damage. Heavy neutron blasters strike for 3-24 points and have a 2 space range.
+RESEARCH.LBX      2     265      0     72  Title  Bombs that explode for 10-40 points of damage on planetary targets only.
+RESEARCH.LBX      2     266      0    185  Mixed  Tractor-repulsor beam capable of rending ships to pieces. The beam strikes for 1-15, and the continuous streaming effect of the ray allows damage to carry over from one ship to another.
+RESEARCH.LBX      2     267      0    149  Title  Slow, hyper-accurate missiles that do 15 points of damage, move at a speed of 3.5, and are controlled by a sophisticated +3 level targeting computer.
+RESEARCH.LBX      2     268      0    125  Title  An energy-to-matter beam weapon that halves the effectiveness of enemy deflector shields, and inflicts 8-12 points of damage.
+RESEARCH.LBX      2     269      0    134  Mixed  High intensity beam weapon capable of doing 4-16 points of damage. Heavy fusion beams strike for 4-30 points and have a 2 space range.
+RESEARCH.LBX      2     270      0    132  Mixed  Fires an intense ionic blast reducing an opponents armor by 20% plus 1% per two firing ships. The projector has a range of 2 spaces.
+RESEARCH.LBX      2     271      0     83  Title  High yield bombs that explode for 20-50 points of damage on planetary targets only.
+RESEARCH.LBX      2     272      0    164  Mixed  High energy tracking torpedoes that deliver 30 points of damage but may only be fired every other turn. Each torpedo is equipped with a +4 level targeting computer.
+RESEARCH.LBX      2     273      0     88  Title  Inaccurate but incredibly powerful beam weapons that add 20 to your ground combat rolls.
+RESEARCH.LBX      2     274      0    128  Mixed  Releases multiple bolts of pure energy in a wide field. It has a +30% bonus chance to hit and strikes for 2-20 points of damage.
+RESEARCH.LBX      2     275      0    137  Mixed  Phased energy beams capable of inflicting 5-20 points of damage. Heavy phasors strike for 5-40 points of damage and have a 2 space range.
+RESEARCH.LBX      2     276      0    186  Mixed  Mirv versions of Hyper-X Rockets, splitting into seven separate warheads that each explode for 10 points of damage, move at a speed of 3, and are guided by a +2 level targeting computer.
+RESEARCH.LBX      2     277      0    106  Title  An advanced neutron blaster that fires up to three times per turn for 4-16 points of damage with each hit.
+RESEARCH.LBX      2     278      0    160  Title  Powerful missiles equipped with anti-matter warheads that explode for 20 points of damage, move at speed 4, and are controlled by a +4 level targeting computer.
+RESEARCH.LBX      2     279      0    182  Mixed  Fires an intense stream of tachyon particles that strike enemy ships for 1-25 hits. The continous streaming effect of the ray allows it to carry damage over from one ship to another.
+RESEARCH.LBX      2     280      0    124  Mixed  Potent hand held energy weapons capable of reducing an opponent to his component atoms. Adds 25 to your ground combat rolls.
+RESEARCH.LBX      2     281      0    183  Mixed  An advanced linear accelerator capable of firing four explosive rounds per turn that inflict 7-10 points of damage each. The projectile rounds half the effectiveness of enemy shields.
+RESEARCH.LBX      2     282      0    147  Title  High intensity particle accelerators capable of striking enemy ships for 10-20 points of damage and halving the effectiveness of deflector shields.
+RESEARCH.LBX      2     283      0    154  Mixed  Highly advanced missile that explodes for 25 points of damage. The hercular missile moves at speed 4.5 and is controlled by a +5 level targeting computer.
+RESEARCH.LBX      2     284      0     65  Title  Fires intense bolts of energy that inflict 6-30 points of damage.
+RESEARCH.LBX      2     285      0    113  Title  An ancient weapon of unbelievably destructive power that inflicts 200-1000 points of damage with a 1 space range.
+RESEARCH.LBX      2     286      0    119  Title  Unleashes tremendous bolts of pure energy that can strike enemy targets up to 2 spaces away for 10-40 points of damage.
+RESEARCH.LBX      2     287      0     99  Title  An advanced phasor capable of firing three bursts per turn for 5-20 points of damage with each hit.
+RESEARCH.LBX      2     288      0     74  Title  Devastating bombs that explode for 40-70 points of damage on planets only.
+RESEARCH.LBX      2     289      0    168  Mixed  Enveloping energy torpedoes that simultaneously strike all shields, delivering damage equivalent to four 25 point attacks. They may only be fired once every other turn.
+RESEARCH.LBX      2     290      0    177  Mixed  Most advanced missile available. Capable of striking enemy ships for 30 points of damage and moving at a speed of 5. The zeon missile is guided by a +6 level targeting computer.
+RESEARCH.LBX      2     291      0     80  Mixed  The most devastating hand held weapon available. Adds 30 to your ground attacks.
+RESEARCH.LBX      2     292      0    161  Mixed  High yield energy torpedoes that deliver 75 points of damage but may only be fired every other turn. Each torpedo is equipped with a +6 level targeting computer.
+RESEARCH.LBX      2     293      0    182  Mixed  Mirv versions of Stinger Missiles, splitting into ten separate warheads that each explode for 15 points of damage, move at speed 3.5, and are guided by a +3 level targeting computer.
+RESEARCH.LBX      2     294      0     90  Title  Fires a triad of high intensity plasma beams capable of inflicting 20-50 points of damage.
+RESEARCH.LBX      2     295      0    145  Mixed  Surrounds the target with an extremely powerful matter-energy conversion field, inflicting four 10-35 point attacks.  It has a range of 3 spaces.
+RESEARCH.LBX      2     296      0    142  Mixed  Fires a blast of concentrated neutrino rays reducing an opponents armor by 40% plus 1% per firing ship. The projector has a range of 2 spaces.
+RESEARCH.LBX      2     297      0     98  Title  Unleashes enormous amounts of focused energy at enemy targets, inflicting 20-100 points of damage.
+RESEARCH.LBX      2     299      0    171  Mixed  Pure energy torpedoes that deliver 150 points of damage, but lose 15 strength per space traveled. The launcher fires every other turn and has a +7 level guidance computer.

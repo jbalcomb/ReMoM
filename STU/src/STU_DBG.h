@@ -43,8 +43,37 @@ extern uint32_t DBG__cmbt_cancel_button_seg_size;
 
 
 
-extern int16_t STU_DBG_trigger_event;
-extern int16_t STU_DBG_trigger_research;
+extern int16_t DBG_trigger_research;
+
+/* debug triggers and the Z-hotkey debug flag -- moved from MoM/src/MOM_DBG.h */
+extern int16_t DBG_trigger_event;
+extern int16_t DBG_trigger_event_plague;
+extern int16_t DBG_trigger_event_population_boom;
+extern int16_t DBG_trigger_event_good_moon;
+extern int16_t DBG_trigger_event_bad_moon;
+extern int16_t DBG_trigger_event_conjunction_chaos;
+extern int16_t DBG_trigger_event_conjunction_nature;
+extern int16_t DBG_trigger_event_conjunction_sorcery;
+extern int16_t DBG_trigger_event_mana_short;
+extern int16_t DBG_trigger_offer_item;
+extern int16_t DBG_trigger_offer_merc;
+extern int16_t DBG_trigger_offer_hero;
+extern int16_t DBG_trigger_complete_research_spell;
+
+extern uint8_t DBG_debug_flag;
+
+/* map-square trace filter -- moved from MoM/src/MainScr_Maps.c; set DBG_TRACE_FIX_WX/WY/WP to filter a single square, leave STU_UNDEFINED for all */
+extern int16_t DBG_TRACE_FIX_WX;
+extern int16_t DBG_TRACE_FIX_WY;
+extern int16_t DBG_TRACE_FIX_WP;
+extern int16_t DBG_TRACE_FIX_BUDGET;
+#ifdef __cplusplus
+extern "C" {
+#endif
+int16_t DBG_Trace_Fix_Match(int16_t wx, int16_t wy, int16_t wp);
+#ifdef __cplusplus
+}
+#endif
 
 
 

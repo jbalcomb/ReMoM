@@ -24,7 +24,7 @@ Purely cosmetic: most ocean tiles render as static `tte_Ocean`, but a scattered 
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:646](../../MoM/src/MAPGEN.c#L646) | Followed by `gd_dump_world_map("29_Animate_Oceans_W")` ([647](../../MoM/src/MAPGEN.c#L647)). Single call; both planes handled by its own `wp` loop. |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:494](../../MoM/src/MAPGEN.c#L494) | Followed by `STU_GD_Dump_World_Map("130_Animate_Oceans_W")` ([495](../../MoM/src/MAPGEN.c#L495)). Single call; both planes handled by its own `wp` loop. |
 
 ## How it works
 

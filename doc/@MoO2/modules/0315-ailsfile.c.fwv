@@ -1,0 +1,21 @@
+module_num=315
+module=R:\NET\LIBS\AIL\DEV3\FLAT\ailsfile.c
+source=0315-ailsfile.c.md
+range[0]=1:0x00147CA8 linear=0x00157CA8 size=1608
+range[1]=2:0x000044D4 linear=0x001744D4 size=164
+range[2]=2:0x000124AC linear=0x001824AC size=4
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m315f001    1    -      0x00157CA8  1:0x00147CA8  code         AILSFILE_start                 AILSFILE_start_                 regions/07-object-1/001DCE54-001DD653.txt
+m315f002    2    -      0x00157CD4  1:0x00147CD4  static,code  AIL_VOC_block_len              _AIL_VOC_block_len              regions/07-object-1/001DCE54-001DD653.txt
+m315f003    3    1/2    0x00157CDE  1:0x00147CDE  static,code  AIL_VOC_terminate              _AIL_VOC_terminate              regions/07-object-1/001DCE54-001DD653.txt
+m315f003_2  3    2/2    0x00157CDE  1:0x00147CDE  static,code  AIL_WAV_EOS                    _AIL_WAV_EOS                    regions/07-object-1/001DCE54-001DD653.txt
+m315f004    4    -      0x00157D3C  1:0x00147D3C  static,code  AIL_process_VOC_block          _AIL_process_VOC_block          regions/07-object-1/001DCE54-001DD653.txt
+m315f005    5    -      0x00157FA9  1:0x00147FA9  static,code  AIL_VOC_EOS                    _AIL_VOC_EOS                    regions/07-object-1/001DCE54-001DD653.txt
+m315f006    6    -      0x00157FB9  1:0x00147FB9  static,code  AIL_process_WAV_image          _AIL_process_WAV_image          regions/07-object-1/001DCE54-001DD653.txt
+m315f007    7    -      0x001580A3  1:0x001480A3  code         AIL_API_allocate_file_sample   _AIL_API_allocate_file_sample   regions/07-object-1/001DD654-001DDE53.txt
+m315f008    8    -      0x001581CE  1:0x001481CE  code         AIL_API_set_sample_file        _AIL_API_set_sample_file        regions/07-object-1/001DD654-001DDE53.txt
+m315f009    9    -      0x001582A6  1:0x001482A6  code         AIL_API_register_EOF_callback  _AIL_API_register_EOF_callback  regions/07-object-1/001DD654-001DDE53.txt
+m315f010    10   -      0x001582C2  1:0x001482C2  code         AILSFILE_end                   AILSFILE_end_                   regions/07-object-1/001DD654-001DDE53.txt
+-           -    -      0x001824AC  2:0x000124AC  static,data  _locked                        _locked                         regions/08-object-2/00200654-00200E53.txt

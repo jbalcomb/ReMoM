@@ -64,7 +64,7 @@ int16_t Combat_Screen_TST_001(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     Assign_Auto_Function(Combat_Screen_TST_001_Draw, 1);
 
@@ -76,7 +76,7 @@ int16_t Combat_Screen_TST_001(int16_t combat_attacker_player_idx, int16_t combat
 
         Clear_Fields();
 
-        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -151,7 +151,7 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     Assign_Auto_Function(Combat_Screen_TST_002_Draw, 1);
 
@@ -164,7 +164,7 @@ int16_t Combat_Screen_TST_002(int16_t combat_attacker_player_idx, int16_t combat
 
         Clear_Fields();
 
-        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -243,7 +243,7 @@ int16_t Combat_Screen_TST_003(int16_t combat_attacker_player_idx, int16_t combat
         END: Combat Screen Compose Background
     */
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     Assign_Auto_Function(Combat_Screen_TST_003_Draw, 1);
 
@@ -255,7 +255,7 @@ int16_t Combat_Screen_TST_003(int16_t combat_attacker_player_idx, int16_t combat
 
         Clear_Fields();
 
-        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -329,14 +329,16 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
     Set_Page_Off();
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
     Toggle_Pages();
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     // Allocate_Combat_Base_Blocks()
 
     // battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, 348);  // 348 PR, 5568 B
     battlefield = (struct s_BATTLEFIELD *)Allocate_First_Block(_screen_seg, ((sizeof(struct s_BATTLEFIELD) + 15) / 16));
     
-    combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
+    // combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, 482);  // 482 PR, 7712 B
+    /* HACK */  /* CLAUDE */  /* 482 paragraphs hold the OG's 257 30-byte entities (count > MAX_ENTITIES stops at 257); ReMoM's s_COMBAT_ENTITY is 40 bytes (int64_t union), so size the block for 257 of them */
+    combat_grid_entities = (struct s_COMBAT_ENTITY *)Allocate_Next_Block(_screen_seg, ((((MAX_ENTITIES + 1) * sizeof(struct s_COMBAT_ENTITY)) / SZ_PARAGRAPH_B) + 1));
 
     // Combat_Screen_Load_Resources()
 
@@ -401,7 +403,7 @@ int16_t Combat_Screen_TST_004(int16_t combat_attacker_player_idx, int16_t combat
 
         Clear_Fields();
 
-        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        hotkey_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 

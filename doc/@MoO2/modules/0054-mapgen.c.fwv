@@ -1,0 +1,95 @@
+module_num=54
+module=D:\MOX\OTHERS\MAPGEN.C
+source=0054-mapgen.c.md
+range[0]=1:0x0007BB39 linear=0x0008BB39 size=10634
+range[1]=2:0x000017E4 linear=0x001717E4 size=432
+range[2]=2:0x0000A244 linear=0x0017A244 size=4
+range[3]=2:0x000241A4 linear=0x001941A4 size=376
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                             SYMBOL                            CHUNK
+m054f001  1    -      0x0008BB50  1:0x0007BB50  code         Assert_Class_To_Group            Assert_Class_To_Group_            regions/07-object-1/00110E54-00111653.txt
+m054f002  2    -      0x0008BB51  1:0x0007BB51  code         Assign_Marooned_Heroes           Assign_Marooned_Heroes_           regions/07-object-1/00110E54-00111653.txt
+m054f003  3    -      0x0008BC02  1:0x0007BC02  code         Write_Map_Gen_Data               Write_Map_Gen_Data_               regions/07-object-1/00110E54-00111653.txt
+m054f004  4    -      0x0008BC03  1:0x0007BC03  code         Clear_Planets_In_Star_Structure  Clear_Planets_In_Star_Structure_  regions/07-object-1/00110E54-00111653.txt
+m054f005  5    -      0x0008BC39  1:0x0007BC39  code         Enforce_Planet_Max               Enforce_Planet_Max_               regions/07-object-1/00110E54-00111653.txt
+m054f006  6    -      0x0008BE4D  1:0x0007BE4D  code         Gas_Giants                       Gas_Giants_                       regions/07-object-1/00110E54-00111653.txt
+m054f007  7    -      0x0008BEAB  1:0x0007BEAB  code         Generate_Climate                 Generate_Climate_                 regions/07-object-1/00110E54-00111653.txt
+m054f008  8    -      0x0008BFA3  1:0x0007BFA3  code         Generate_Food_Per_Farmer         Generate_Food_Per_Farmer_         regions/07-object-1/00110E54-00111653.txt
+m054f009  9    -      0x0008BFE0  1:0x0007BFE0  code         Generate_Gravity_Class           Generate_Gravity_Class_           regions/07-object-1/00110E54-00111653.txt
+m054f010  10   -      0x0008C01E  1:0x0007C01E  code         Generate_Max_Farms               Generate_Max_Farms_               regions/07-object-1/00111654-00111E53.txt
+m054f011  11   -      0x0008C05B  1:0x0007C05B  code         Generate_Mineral_Class           Generate_Mineral_Class_           regions/07-object-1/00111654-00111E53.txt
+m054f012  12   -      0x0008C099  1:0x0007C099  code         Generate_Nebulas                 Generate_Nebulas_                 regions/07-object-1/00111654-00111E53.txt
+m054f013  13   -      0x0008C4D3  1:0x0007C4D3  code         Generate_Number_Of_Nebulas       Generate_Number_Of_Nebulas_       regions/07-object-1/00111654-00111E53.txt
+m054f014  14   -      0x0008C527  1:0x0007C527  code         Generate_Number_Of_Satellites    Generate_Number_Of_Satellites_    regions/07-object-1/00111654-00111E53.txt
+m054f015  15   -      0x0008C567  1:0x0007C567  code         Generate_Orbit                   Generate_Orbit_                   regions/07-object-1/00111654-00111E53.txt
+m054f016  16   -      0x0008C5D7  1:0x0007C5D7  code         Generate_Satellite               Generate_Satellite_               regions/07-object-1/00111654-00111E53.txt
+m054f017  17   -      0x0008C6C0  1:0x0007C6C0  code         Set_Secondary_Planet_Data        Set_Secondary_Planet_Data_        regions/07-object-1/00111654-00111E53.txt
+m054f018  18   -      0x0008C6FE  1:0x0007C6FE  code         Generate_Satellite_Type          Generate_Satellite_Type_          regions/07-object-1/00111654-00111E53.txt
+m054f019  19   -      0x0008C7D1  1:0x0007C7D1  static,code  Generate_Size                    Generate_Size_                    regions/07-object-1/00111654-00111E53.txt
+m054f020  20   -      0x0008C807  1:0x0007C807  code         Generate_Spectral_Class          Generate_Spectral_Class_          regions/07-object-1/00111E54-00112653.txt
+m054f021  21   -      0x0008C840  1:0x0007C840  code         Get_A_Planet_Or_Star_Special     Get_A_Planet_Or_Star_Special_     regions/07-object-1/00111E54-00112653.txt
+m054f022  22   -      0x0008CB93  1:0x0007CB93  code         Generate_Star_Special            Generate_Star_Special_            regions/07-object-1/00111E54-00112653.txt
+m054f023  23   -      0x0008CC15  1:0x0007CC15  code         Generate_Wormhole_Links          Generate_Wormhole_Links_          regions/07-object-1/00111E54-00112653.txt
+m054f024  24   -      0x0008CD02  1:0x0007CD02  code         Get_Climate_Modifier             Get_Climate_Modifier_             regions/07-object-1/00111E54-00112653.txt
+m054f025  25   -      0x0008CD40  1:0x0007CD40  code         Get_Minerals_Extracted           Get_Minerals_Extracted_           regions/07-object-1/00111E54-00112653.txt
+m054f026  26   -      0x0008CD55  1:0x0007CD55  code         Get_Planet_Group                 Get_Planet_Group_                 regions/07-object-1/00111E54-00112653.txt
+m054f027  27   -      0x0008CDA9  1:0x0007CDA9  code         Get_Random_Orbit                 Get_Random_Orbit_                 regions/07-object-1/00111E54-00112653.txt
+m054f028  28   -      0x0008CE12  1:0x0007CE12  code         Get_Valid_Orbit                  Get_Valid_Orbit_                  regions/07-object-1/00111E54-00112653.txt
+m054f029  29   -      0x0008CEAC  1:0x0007CEAC  code         Home_Planet                      Home_Planet_                      regions/07-object-1/00111E54-00112653.txt
+m054f030  30   -      0x0008CF09  1:0x0007CF09  code         Init_Main_Screen                 Init_Main_Screen_                 regions/07-object-1/00111E54-00112653.txt
+m054f031  31   -      0x0008CF59  1:0x0007CF59  code         Nebula_Data_Test                 Nebula_Data_Test_                 regions/07-object-1/00111E54-00112653.txt
+m054f032  32   -      0x0008CFFF  1:0x0007CFFF  static,code  Set_Star_XYs                     Set_Star_XYs_                     regions/07-object-1/00111E54-00112653.txt
+m054f033  33   -      0x0008D43D  1:0x0007D43D  static,code  Star_XY_Invalid                  Star_XY_Invalid_                  regions/07-object-1/00112654-00112E53.txt
+m054f034  34   -      0x0008D602  1:0x0007D602  code         Randomize_Star_Names             Randomize_Star_Names_             regions/07-object-1/00112654-00112E53.txt
+m054f035  35   -      0x0008D65D  1:0x0007D65D  code         Set_Black_Hole_Visited_Flags     Set_Black_Hole_Visited_Flags_     regions/07-object-1/00112654-00112E53.txt
+m054f036  36   -      0x0008D687  1:0x0007D687  code         Set_Default_Nebula_Data          Set_Default_Nebula_Data_          regions/07-object-1/00112654-00112E53.txt
+m054f037  37   -      0x0008D6D6  1:0x0007D6D6  code         Set_Wormhole_Id                  Set_Wormhole_Id_                  regions/07-object-1/00112654-00112E53.txt
+m054f038  38   -      0x0008D8A1  1:0x0007D8A1  static,code  Black_Hole_Fix                   Black_Hole_Fix_                   regions/07-object-1/00112E54-00113653.txt
+m054f039  39   -      0x0008DA07  1:0x0007DA07  code         Load_Nebula_Pictures             Load_Nebula_Pictures_             regions/07-object-1/00112E54-00113653.txt
+m054f040  40   -      0x0008DAE8  1:0x0007DAE8  code         Universe_Generation              Universe_Generation_              regions/07-object-1/00112E54-00113653.txt
+m054f041  41   -      0x0008E27F  1:0x0007E27F  code         Write_Other_Mapgen_Stuff         Write_Other_Mapgen_Stuff_         regions/07-object-1/00113654-00113E53.txt
+m054f042  42   -      0x0008E280  1:0x0007E280  static,code  Planet_Generation                Planet_Generation_                regions/07-object-1/00113654-00113E53.txt
+m054f043  43   -      0x0008E304  1:0x0007E304  code         N_Empty_Stars                    N_Empty_Stars_                    regions/07-object-1/00113654-00113E53.txt
+m054f044  44   -      0x0008E341  1:0x0007E341  static,code  Build_Min_Point_Distances        Build_Min_Point_Distances_        regions/07-object-1/00113654-00113E53.txt
+m054f045  45   -      0x0008E491  1:0x0007E491  static,code  Get_Star_Name                    Get_Star_Name_                    regions/07-object-1/00113654-00113E53.txt
+-         -    -      0x0017A244  2:0x0000A244  static,data  _n_marooned_heroes               _n_marooned_heroes                regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A245  2:0x0000A245  static,data  _n_wormholes                     _n_wormholes                      regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A246  2:0x0000A246  static,data  _first_time_map_is_generated     _first_time_map_is_generated      regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A247  2:0x0000A247  data         _MAPGEN_TRACE                    _MAPGEN_TRACE                     regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x001941A4  2:0x000241A4  data         _planet_group_type_stat          _planet_group_type_stat           -
+-         -    -      0x001941B4  2:0x000241B4  data         _planet_type_stat                _planet_type_stat                 -
+-         -    -      0x001941DC  2:0x000241DC  data         _climate_stat                    _climate_stat                     -
+-         -    -      0x00194204  2:0x00024204  static,data  _tests_failed                    _tests_failed                     -
+-         -    -      0x0019420C  2:0x0002420C  data         _satellite_stat                  _satellite_stat                   -
+-         -    -      0x00194224  2:0x00024224  data         _stat_count                      _stat_count                       -
+-         -    -      0x00194228  2:0x00024228  data         _gravity_stat                    _gravity_stat                     -
+-         -    -      0x00194234  2:0x00024234  data         _spectral_class_stat             _spectral_class_stat              -
+-         -    -      0x00194250  2:0x00024250  data         _nebula_stat                     _nebula_stat                      -
+-         -    -      0x00194264  2:0x00024264  data         _total_planets                   _total_planets                    -
+-         -    -      0x00194268  2:0x00024268  data         _planet_special_stat             _planet_special_stat              -
+-         -    -      0x00194274  2:0x00024274  data         _gen                             _gen                              -
+-         -    -      0x00194278  2:0x00024278  data         _planet_size_stat                _planet_size_stat                 -
+-         -    -      0x0019428C  2:0x0002428C  data         _star_size_stat                  _star_size_stat                   -
+-         -    -      0x00194298  2:0x00024298  data         _atmosphere_stat                 _atmosphere_stat                  -
+-         -    -      0x001942A4  2:0x000242A4  data         _mineral_type_stat               _mineral_type_stat                -
+-         -    -      0x001942B8  2:0x000242B8  static,data  _fMapgenxy                       _fMapgenxy                        -
+-         -    -      0x001942BC  2:0x000242BC  static,data  _name_index                      _name_index                       -
+-         -    -      0x001942C0  2:0x000242C0  static,data  _name_seg                        _name_seg                         -
+-         -    -      0x001942C4  2:0x000242C4  static,data  _n_planets                       _n_planets                        -
+-         -    -      0x001942C8  2:0x000242C8  static,data  _fMapgen                         _fMapgen                          -
+-         -    -      0x001942CC  2:0x000242CC  static,data  _num_maps_to_generate            _num_maps_to_generate             -
+-         -    -      0x001942D0  2:0x000242D0  data         _pl                              _pl                               -
+-         -    -      0x001942D4  2:0x000242D4  static,data  _special_count                   _special_count                    -
+-         -    -      0x001942E0  2:0x000242E0  static,data  _n_stars                         _n_stars                          -
+-         -    -      0x001942E4  2:0x000242E4  data         _fill_msg_bitmap                 _fill_msg_bitmap                  -
+-         -    -      0x001942E8  2:0x000242E8  static,data  _evan_ptr                        _evan_ptr                         -
+-         -    -      0x001942EC  2:0x000242EC  static,data  _star_count                      _star_count                       -
+-         -    -      0x001942EE  2:0x000242EE  static,data  _t_roll                          _t_roll                           -
+-         -    -      0x001942F0  2:0x000242F0  data         _fill_msg_ctr                    _fill_msg_ctr                     -
+-         -    -      0x001942F2  2:0x000242F2  data         _companion_star                  _companion_star                   -
+-         -    -      0x001942F4  2:0x000242F4  data         _fill_msg                        _fill_msg                         -
+-         -    -      0x00194317  2:0x00024317  static,data  _gen_stats                       _gen_stats                        -
+-         -    -      0x00194318  2:0x00024318  static,data  _n_maps_generated                _n_maps_generated                 -
+-         -    -      0x00194319  2:0x00024319  data         _n_space_monsters                _n_space_monsters                 -
+-         -    -      0x0019431A  2:0x0002431A  data         _make_food_planet                _make_food_planet                 -

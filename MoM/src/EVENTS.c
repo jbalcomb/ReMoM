@@ -7,6 +7,8 @@
 */
 
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_DBG.h"  /* DBG_trigger_event */  /* CLAUDE */
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/Fields.h"
@@ -31,7 +33,6 @@
 #include "ItemScrn.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "MOM_DBG.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
@@ -220,7 +221,7 @@ char * m_event_message;
     WIZARDS.EXE  ovr080
 */
 
-// WZD s080p01
+// WZD o080p01
 void Determine_Event(void)
 {
     int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -240,7 +241,7 @@ void Determine_Event(void)
     int16_t event_pressure_accumulator = 0;
     int16_t event_type = 0;
     int16_t player_idx = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     if(g_random_events_enabled == ST_FALSE)
     {
         events_table->Meteor_Status = 3;
@@ -280,7 +281,7 @@ void Determine_Event(void)
         event_pressure_accumulator = (_turn - events_table->last_event_turn);
         SETMIN(event_pressure_accumulator, 0);
     }
-    /* OGBUG: events can not be processed in the first 5 turns after launching the game, should be _turn based for 'Load Game' */
+    /* OGBUG  _event_delay_count is a DS global (0 at program start) that is not saved: after every program start / load the event chance is forced to 0 for 5 turns, as if an event had just happened */
     if(_event_delay_count < 5)
     {
         _event_delay_count++;
@@ -296,15 +297,14 @@ void Determine_Event(void)
         /* Impossible is 100% */
     }
     
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
     /* DEBUG HACK */  if(DBG_trigger_event == ST_TRUE) { event_pressure_accumulator = 512; }  /* force it to fire off an event */
+#endif
 
     /* CLAUDE: GD point 620 -- Determine_Event's random-event gate inputs, paired with the
      * OG capture at its Random(512) call: event_pressure_accumulator (finalized here) +
      * the global _event_delay_count (post the "< 5" increment above).  Fire once. */
-    { static int gd640_done = 0;
-      if(!gd640_done) { gd640_done = 1;
-        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 620_Determine_Event event_pressure_accumulator = %d", (int)event_pressure_accumulator);
-        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 620_Determine_Event _event_delay_count = %d", (int)_event_delay_count); } }
+    STU_GD_ONCE("620_Determine_Event", STU_GD_WRITE("[GD] 620_Determine_Event event_pressure_accumulator = %d", (int)event_pressure_accumulator); STU_GD_WRITE("[GD] 620_Determine_Event _event_delay_count = %d", (int)_event_delay_count));  /* CLAUDE */
 
     /* fire test  (¿ power of two avoids modulo bias ?)*/
     if(Random(512) > event_pressure_accumulator)
@@ -318,19 +318,24 @@ void Determine_Event(void)
         event_type = Random(18);
 
         /* pick a victim appropriate to the event's good/bad alignment */
-        if(event_type > ST_UNDEFINED)
-        {
-            player_idx = Get_Event_Victim(m_event_good_array[event_type]);
-        }
+        // if(event_type > ST_UNDEFINED)
+        // {
+        //     player_idx = Get_Event_Victim(m_event_good_array[event_type]);
+        // }
+        player_idx = Get_Event_Victim(m_event_good_array[event_type]);  /* CLAUDE */  /* REBUG */  /* asm: push [m_event_good_array+bx] / call j_Get_Event_Victim / mov di, ax - no test of event_type (Random(18) is 1..18) */
 
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
         /* DEBUG HACK */  if(DBG_trigger_event == ST_TRUE) { player_idx = HUMAN_PLAYER_IDX; }
+#endif
 
         if(player_idx == ST_UNDEFINED)
         {
             event_type = ST_UNDEFINED;
         }
 
-        if(_FORTRESSES[player_idx].active == ST_FALSE)
+        /* OGBUG  when Get_Event_Victim() finds no victim (player_idx == ST_UNDEFINED) this reads _FORTRESSES[-1].active, 4 bytes before the table; event_type is already ST_UNDEFINED either way */
+        // if(_FORTRESSES[player_idx].active == ST_FALSE)
+        if((player_idx > ST_UNDEFINED) && (_FORTRESSES[player_idx].active == ST_FALSE))  /* CLAUDE */  /* HACK */  /* asm: cmp [es:bx+s_FORTRESS.active], e_ST_FALSE with no player_idx test; bounded so ReMoM does not read before the table */
         {
             event_type = ST_UNDEFINED;
         }
@@ -452,13 +457,21 @@ void Determine_Event(void)
                 Army_At_City(city_idx, &troop_count, &troops[0]);
                 for(itr_troops = 0; ((itr_troops < troop_count) && (event_type == et_Rebellion)); itr_troops++)
                 {
-                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type < rt_Arcane)
+                    // if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type < rt_Arcane)
+                    // {
+                    //     normal_units++;
+                    // }
+                    // else
+                    // {
+                    //     summoned_units++;
+                    // }
+                    if(_unit_type_table[_UNITS[troops[itr_troops]].type].race_type >= rt_Arcane)  /* CLAUDE */  /* REBUG */  /* asm: cmp race_type, rt_Arcane / jl loc_6B2DE (else) / inc summoned_units / jmp / loc_6B2DE: inc normal_units */
                     {
-                        normal_units++;
+                        summoned_units++;
                     }
                     else
                     {
-                        summoned_units++;
+                        normal_units++;
                     }
                     if(_UNITS[troops[itr_troops]].Hero_Slot > -1)
                     {
@@ -474,7 +487,7 @@ void Determine_Event(void)
 
         if(event_type == et_Depletion)
         {
-            if(EVNT_TargetDepletion__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
+            if(Depletion_Event(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
                 event_type = ST_UNDEFINED;
             }
@@ -482,7 +495,7 @@ void Determine_Event(void)
 
         if(event_type == et_New_Mine)
         {
-            if(EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
+            if(New_Mineral_Event(player_idx, &wx, &wy, &wp, &terrain_special) == ST_UNDEFINED)
             {
                 event_type = ST_UNDEFINED;
             }
@@ -511,6 +524,7 @@ void Determine_Event(void)
 
     events_table->last_event_turn = _turn;
     _event_delay_count = 0;
+    /* OGBUG  niu_escalation_scalar is computed here and never read: dead store */
     switch(_difficulty)
     {
         case god_Intro:      { niu_escalation_scalar = (_turn / 20); } break;
@@ -555,7 +569,8 @@ void Determine_Event(void)
         {
             events_table->Pirates_Status = 1;
             events_table->Pirates_Player = player_idx;
-            conjunction_active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
+            // conjunction_active = ((_players[player_idx].gold_reserve * 100) / (29 + Random(21)));
+            conjunction_active = (int16_t)(((int32_t)_players[player_idx].gold_reserve * ((int32_t)Random(21) + 29)) / 100);  /* CLAUDE */  /* REBUG */  /* asm: gold_reserve (cwd) * (Random(21) cwd, add 29, adc 0) via LXMUL@, then LDIV@ by the 100L pushed first (the divisor): 30%..50% of the gold */
             conjunction_active -= (conjunction_active % 10);
             events_table->Pirates_Data = conjunction_active;
         } break;
@@ -619,11 +634,11 @@ void Determine_Event(void)
         } break;
     }
 Done:
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
-// WZD s080p02
+// WZD o080p02
 // MoO2  Module: Events  Event_Twiddle_()
 /**
  * @brief Advances and resolves all currently active world events for the turn.
@@ -678,7 +693,9 @@ void Event_Twiddle(void)
     int16_t itr_players = 0;
     int16_t city_idx = 0;
 
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
     if(DBG_trigger_event == ST_TRUE) { DBG_trigger_event = ST_FALSE; }
+#endif
 
     niu_event_twiddle_flag = 0;
 
@@ -730,7 +747,8 @@ void Event_Twiddle(void)
         niu_event_twiddle_type_flag = 0;
         m_current_event = et_Gift;
         m_event_city_idx = 0;
-        events_table->Gift_Player = m_event_player_idx;
+        // events_table->Gift_Player = m_event_player_idx;
+        m_event_player_idx = events_table->Gift_Player;  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [Gift.Player] / mov [m_event_player_idx], ax */
         events_table->Gift_Status = es_Nothing;
         if(events_table->Gift_Player == _current_player_idx)
         {
@@ -753,6 +771,7 @@ void Event_Twiddle(void)
             PageFlip_FX();
             Copy_On_To_Off_Page();
             troops[0] = events_table->Gift_Data;
+            /* OGBUG  the item is handed over only to the human: for an AI receiver the 'was given' message is shown and the item record (created when the event was rolled) stays allocated with no owner */
             Process_Item_Pool(1, &troops[0]);
         }
     }
@@ -799,7 +818,8 @@ void Event_Twiddle(void)
         EVNT_MsgDataValue = events_table->marriage_neutral_city_idx;
         m_current_event = et_Marriage;
         m_event_player_idx = events_table->marriage_player_idx;
-        if(events_table->marriage_player_idx == _current_player_idx)
+        // if(events_table->marriage_player_idx == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -822,7 +842,7 @@ void Event_Twiddle(void)
         _CITIES[city_idx].sold_building = ST_FALSE;
         if(player_idx == _current_player_idx)  /* ¿ current player ? */
         {
-            Set_Map_Square_Explored_Flags_XYP_Range(CITYX(), CITYY(), CITYP(), 3);
+            Set_Square_Explored_Flags_Range(CITYX(), CITYY(), CITYP(), 3);
         }
         NOOP_Current_Player_All_City_Areas();
         Do_City_Calculations(city_idx);
@@ -846,7 +866,8 @@ void Event_Twiddle(void)
         EVNT_MsgDataValue = 0;
         m_event_city_idx = events_table->Earthquake_Data;
         events_table->Earthquake_Status = es_Nothing;
-        if(events_table->Earthquake_Player == _current_player_idx)
+        // if(events_table->Earthquake_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -887,7 +908,8 @@ void Event_Twiddle(void)
         m_event_player_idx = events_table->Pirates_Player;
         EVNT_MsgDataValue = events_table->Pirates_Data;
         events_table->Pirates_Status = es_Nothing;
-        if(events_table->Pirates_Player == _current_player_idx)
+        // if(events_table->Pirates_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -912,7 +934,8 @@ void Event_Twiddle(void)
         m_current_event = et_Plague;
         m_event_city_idx = events_table->Plague_Data;
         m_event_player_idx = events_table->Plague_Player;
-        if(events_table->Plague_Player == _current_player_idx)
+        // if(events_table->Plague_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -943,6 +966,7 @@ void Event_Twiddle(void)
                 }
             }
             events_table->Plague_Duration += 1;
+            /* OGBUG  the plague itself never takes a town below 2 (population > 2 test above), so this fires only for a plague that started in a size-1 town, which then grows to 2 */
             if(_CITIES[events_table->Plague_Data].population < 2)
             {
                 events_table->Plague_Status = es_Nothing;
@@ -972,7 +996,8 @@ void Event_Twiddle(void)
         m_event_player_idx = events_table->Rebellion_Player;
         m_current_event = et_Rebellion;
         events_table->Rebellion_Status = es_Nothing;
-        if(events_table->Rebellion_Player == _current_player_idx)
+        // if(events_table->Rebellion_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = emt_Started;
         }
@@ -983,13 +1008,21 @@ void Event_Twiddle(void)
         Army_At_City(m_event_city_idx, &post_event_troop_count, &troops[0]);
         for(itr_players = 0; itr_players < post_event_troop_count; itr_players++)
         {
-            if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type < rt_Arcane)
+            // if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type < rt_Arcane)
+            // {
+            //     _UNITS[troops[itr_players]].owner_idx = NEUTRAL_PLAYER_IDX;
+            // }
+            // else
+            // {
+            //     Dismiss_Unit(troops[itr_players]);
+            // }
+            if(_unit_type_table[_UNITS[troops[itr_players]].type].race_type >= rt_Arcane)  /* CLAUDE */  /* REBUG */  /* asm: cmp race_type, rt_Arcane / jl loc_6BEDA (else) / push [troops+si*2] / call j_Dismiss_Unit / jmp / loc_6BEDA: owner_idx = e_NEUTRAL_PLAYER_IDX */
             {
-                _UNITS[troops[itr_players]].owner_idx = NEUTRAL_PLAYER_IDX;
+                Dismiss_Unit(troops[itr_players]);
             }
             else
             {
-                Dismiss_Unit(troops[itr_players]);
+                _UNITS[troops[itr_players]].owner_idx = NEUTRAL_PLAYER_IDX;
             }
         }
         Change_City_Ownership(m_event_city_idx, NEUTRAL_PLAYER_IDX);
@@ -1009,7 +1042,8 @@ void Event_Twiddle(void)
         m_current_event = et_Donation;
         m_event_player_idx = events_table->Donation_Player;
         EVNT_MsgDataValue = events_table->Donation_Data;
-        if(events_table->Donation_Player == _current_player_idx)
+        // if(events_table->Donation_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -1033,12 +1067,13 @@ void Event_Twiddle(void)
         player_idx = events_table->Depletion_Player;
         m_current_event = et_Depletion;
         m_event_player_idx = events_table->Depletion_Player;
-        /* TODO */  itr_players = EVNT_TargetDepletion__STUB(player_idx, &wx, &wy, &wp, &terrain_special);
+        itr_players = Depletion_Event(player_idx, &wx, &wy, &wp, &terrain_special);
         events_table->Depletion_Data = itr_players;
         m_event_city_idx = events_table->Depletion_Data;
         Clear_Terrain_Specials(wx, wy, wp);
         EVNT_MsgDataValue = terrain_special;
-        if(events_table->Depletion_Player == _current_player_idx)
+        // if(events_table->Depletion_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -1061,12 +1096,14 @@ void Event_Twiddle(void)
         player_idx = events_table->minerals_player;
         m_current_event = et_New_Mine;
         m_event_player_idx = events_table->minerals_player;
-        /* TODO */  itr_players = EVNT_FindNewMineral__STUB(player_idx, &wx, &wy, &wp, &terrain_special);
+        itr_players = New_Mineral_Event(player_idx, &wx, &wy, &wp, &terrain_special);
         events_table->minerals_data = itr_players;
-        m_event_city_idx = events_table->minerals_data;
-        /* TODO */  TILE_ReplaceMinerals__STUB(wx, wy, wp, terrain_special);
+        // m_event_city_idx = events_table->minerals_data;
+        m_event_city_idx = itr_players;  /* CLAUDE */  /* REBUG */  /* asm: mov [m_event_city_idx], _SI_itr_players (Depletion reads it back from Depletion.Data; Minerals does not) */
+        Replace_Minerals(wx, wy, wp, terrain_special);
         EVNT_MsgDataValue = terrain_special;
-        if(events_table->minerals_player == _current_player_idx)
+        // if(events_table->minerals_player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -1090,7 +1127,8 @@ void Event_Twiddle(void)
         m_current_event = et_Population_Boom;
         m_event_player_idx = events_table->Population_Boom_Player;
         m_event_city_idx = events_table->Population_Boom_Data;
-        if(events_table->Population_Boom_Player == _current_player_idx)
+        // if(events_table->Population_Boom_Player == _current_player_idx)
+        if(player_idx == _current_player_idx)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+player_idx] / cmp ax, [_human_player_idx] */
         {
             m_event_message_type = 0;
         }
@@ -1320,7 +1358,7 @@ void Event_Twiddle(void)
 }
 
 
-// WZD s080p03
+// WZD o080p03
 // drake178: WIZ_HaveAnyGlobals()
 /*
     returns {F,T} - any player has an overland enchantment in effect
@@ -1356,7 +1394,7 @@ int16_t Any_Overland_Enchantments(void)
     WIZARDS.EXE  ovr081
 */
 
-// WZD s081p01
+// WZD o081p01
 // drake178: EVNT_ShowMessage()
 void Show_Event_Message(void)
 {
@@ -1461,7 +1499,7 @@ void Show_Event_Message(void)
 }
 
 
-// WZD s081p02
+// WZD o081p02
 // drake178: EVNT_ComposeMessage()
 // MoO2  Module: EVENTS  Get_Event_Message_()
 /*
@@ -1642,7 +1680,7 @@ void Get_Event_Message(void)
 }
 
 
-// WZD s081p03
+// WZD o081p03
 // MoO2  Module: EVENTS  Get_Event_Victim_()
 /**
  * @brief Selects a target wizard for a random event using weighted power.
@@ -1750,7 +1788,7 @@ int16_t Get_Event_Victim(int16_t event_type)
 }
 
 
-// WZD s081p04
+// WZD o081p04
 // drake178: EVNT_PickCity()
 // MoO2  Module: Events  ~ Pick_Random_Colony_No_Outpost_()  || Pick_Random_Colony_No_Capitol_()
 /*

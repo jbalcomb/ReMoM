@@ -1,0 +1,65 @@
+module_num=42
+module=D:\MOX\OTHERS\EVANHELP.C
+source=0042-evanhelp.c.md
+range[0]=1:0x0005F280 linear=0x0006F280 size=2724
+range[1]=2:0x00009768 linear=0x00179768 size=2172
+range[2]=2:0x000239BC linear=0x001939BC size=1280
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                       SYMBOL                                     CHUNK
+m042f001  1    -      0x0006F280  1:0x0005F280  code         Set_Main_Screen_Help_List                  Set_Main_Screen_Help_List_                 regions/07-object-1/000F4654-000F4E53.txt
+m042f002  2    -      0x0006F52D  1:0x0005F52D  code         Set_PlntSum_Screen_Help_List               Set_PlntSum_Screen_Help_List_              regions/07-object-1/000F4654-000F4E53.txt
+m042f003  3    -      0x0006F544  1:0x0005F544  code         Set_Design_Screen_Help_List                Set_Design_Screen_Help_List_               regions/07-object-1/000F4654-000F4E53.txt
+m042f004  4    -      0x0006F5C1  1:0x0005F5C1  code         Set_Weapon_Replacement_Screen_Help_List    Set_Weapon_Replacement_Screen_Help_List_   regions/07-object-1/000F4654-000F4E53.txt
+m042f005  5    -      0x0006F826  1:0x0005F826  code         Set_Main_Game_Screen_Help_List             Set_Main_Game_Screen_Help_List_            regions/07-object-1/000F4E54-000F5653.txt
+m042f006  6    -      0x0006F83B  1:0x0005F83B  code         Set_Scrap_Freighters_Help_List             Set_Scrap_Freighters_Help_List_            regions/07-object-1/000F4E54-000F5653.txt
+m042f007  7    -      0x0006F850  1:0x0005F850  code         Set_Load_Game_Screen_Help_List             Set_Load_Game_Screen_Help_List_            regions/07-object-1/000F4E54-000F5653.txt
+m042f008  8    -      0x0006F865  1:0x0005F865  code         Set_Save_Game_Screen_Help_List             Set_Save_Game_Screen_Help_List_            regions/07-object-1/000F4E54-000F5653.txt
+m042f009  9    -      0x0006F87A  1:0x0005F87A  code         Set_Options_Game_Screen_Help_List          Set_Options_Game_Screen_Help_List_         regions/07-object-1/000F4E54-000F5653.txt
+m042f010  10   -      0x0006F88F  1:0x0005F88F  code         Set_Fleet_Screen_Help_List                 Set_Fleet_Screen_Help_List_                regions/07-object-1/000F4E54-000F5653.txt
+m042f011  11   -      0x0006F95F  1:0x0005F95F  code         Set_ColOff_Screen_Help_List                Set_ColOff_Screen_Help_List_               regions/07-object-1/000F4E54-000F5653.txt
+m042f012  12   -      0x0006F9BD  1:0x0005F9BD  code         Set_ShipOff_Screen_Help_List               Set_ShipOff_Screen_Help_List_              regions/07-object-1/000F4E54-000F5653.txt
+m042f013  13   -      0x0006FAC0  1:0x0005FAC0  code         Set_Main_Menu_Screen_Help_List             Set_Main_Menu_Screen_Help_List_            regions/07-object-1/000F4E54-000F5653.txt
+m042f014  14   -      0x0006FAD5  1:0x0005FAD5  code         Set_Multi_Player_Setup_Screen_Help_List    Set_Multi_Player_Setup_Screen_Help_List_   regions/07-object-1/000F4E54-000F5653.txt
+m042f015  15   -      0x0006FAEA  1:0x0005FAEA  code         Set_Modem_Setup_Screen_Help_List           Set_Modem_Setup_Screen_Help_List_          regions/07-object-1/000F4E54-000F5653.txt
+m042f016  16   -      0x0006FB1F  1:0x0005FB1F  code         Set_Null_Modem_Setup_Screen_Help_List      Set_Null_Modem_Setup_Screen_Help_List_     regions/07-object-1/000F4E54-000F5653.txt
+m042f017  17   -      0x0006FB5E  1:0x0005FB5E  code         Set_Input_Box_Help_List                    Set_Input_Box_Help_List_                   regions/07-object-1/000F4E54-000F5653.txt
+m042f018  18   -      0x0006FB73  1:0x0005FB73  code         Set_Diplomacy_Request_Help_List            Set_Diplomacy_Request_Help_List_           regions/07-object-1/000F4E54-000F5653.txt
+m042f019  19   -      0x0006FB88  1:0x0005FB88  code         Set_Hotseat_Setup_Screen_Help_List         Set_Hotseat_Setup_Screen_Help_List_        regions/07-object-1/000F4E54-000F5653.txt
+m042f020  20   -      0x0006FB9D  1:0x0005FB9D  code         Append_Help_List                           Append_Help_List_                          regions/07-object-1/000F4E54-000F5653.txt
+m042f021  21   -      0x0006FBEA  1:0x0005FBEA  code         Get_Application_Description                Get_Application_Description_               regions/07-object-1/000F4E54-000F5653.txt
+m042f022  22   -      0x0006FC59  1:0x0005FC59  code         Get_Help_LBX_Message                       Get_Help_LBX_Message_                      regions/07-object-1/000F4E54-000F5653.txt
+m042f023  23   -      0x0006FC7E  1:0x0005FC7E  static,code  Offset_Help_Field_XYs                      Offset_Help_Field_XYs_                     regions/07-object-1/000F4E54-000F5653.txt
+m042f024  24   -      0x0006FCAB  1:0x0005FCAB  code         Save_Help_List                             Save_Help_List_                            regions/07-object-1/000F4E54-000F5653.txt
+m042f025  25   -      0x0006FCCE  1:0x0005FCCE  code         Restore_Help_List                          Restore_Help_List_                         regions/07-object-1/000F4E54-000F5653.txt
+m042f026  26   -      0x0006FD10  1:0x0005FD10  static,code  My_Set_Help_List                           My_Set_Help_List_                          regions/07-object-1/000F4E54-000F5653.txt
+-         -    -      0x00179768  2:0x00009768  static,data  _main_screen_help_list                     _main_screen_help_list                     regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179862  2:0x00009862  static,data  _plntsum_screen_help_list                  _plntsum_screen_help_list                  regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x001798F8  2:0x000098F8  static,data  _static_design_screen_help_list            _static_design_screen_help_list            regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x0017997A  2:0x0000997A  static,data  _main_game_screen_help_list                _main_game_screen_help_list                regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x001799F2  2:0x000099F2  static,data  _scrap_freighters_help_list                _scrap_freighters_help_list                regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x001799FC  2:0x000099FC  static,data  _load_game_screen_help_list                _load_game_screen_help_list                regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179A42  2:0x00009A42  static,data  _save_game_screen_help_list                _save_game_screen_help_list                regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179A88  2:0x00009A88  static,data  _options_game_screen_help_list             _options_game_screen_help_list             regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179B3C  2:0x00009B3C  static,data  _static_fleet_screen_help_list             _static_fleet_screen_help_list             regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179C7C  2:0x00009C7C  static,data  _static_coloff_screen_help_list            _static_coloff_screen_help_list            regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179D1C  2:0x00009D1C  static,data  _static_shipoff_screen_help_list           _static_shipoff_screen_help_list           regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179E66  2:0x00009E66  static,data  _main_menu_screen_help_list                _main_menu_screen_help_list                regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179EA2  2:0x00009EA2  static,data  _multi_player_setup_screen_help_list       _multi_player_setup_screen_help_list       regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179F06  2:0x00009F06  static,data  _static_modem_setup_screen_help_list       _static_modem_setup_screen_help_list       regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179F60  2:0x00009F60  static,data  _static_null_modem_setup_screen_help_list  _static_null_modem_setup_screen_help_list  regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179F88  2:0x00009F88  static,data  _input_box_help_list                       _input_box_help_list                       regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179F92  2:0x00009F92  static,data  _static_diplomacy_request_help_list        _static_diplomacy_request_help_list        regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x00179FBA  2:0x00009FBA  static,data  _static_hotseat_setup_screen_help_list     _static_hotseat_setup_screen_help_list     regions/08-object-2/001F7E54-001F8653.txt
+-         -    -      0x001939BC  2:0x000239BC  static,data  _null_modem_setup_screen_help_list         _null_modem_setup_screen_help_list         -
+-         -    -      0x001939E4  2:0x000239E4  static,data  _hotseat_setup_screen_help_list            _hotseat_setup_screen_help_list            -
+-         -    -      0x00193A0C  2:0x00023A0C  static,data  _diplomacy_request_help_list               _diplomacy_request_help_list               -
+-         -    -      0x00193A34  2:0x00023A34  static,data  _coloff_screen_help_list                   _coloff_screen_help_list                   -
+-         -    -      0x00193AD4  2:0x00023AD4  static,data  _fleet_screen_help_list                    _fleet_screen_help_list                    -
+-         -    -      0x00193C14  2:0x00023C14  static,data  _weapon_replacement_screen_help_list       _weapon_replacement_screen_help_list       -
+-         -    -      0x00193C8C  2:0x00023C8C  static,data  _prev_help_struct_pointer                  _prev_help_struct_pointer                  -
+-         -    -      0x00193C90  2:0x00023C90  static,data  _shipoff_screen_help_list                  _shipoff_screen_help_list                  -
+-         -    -      0x00193DDA  2:0x00023DDA  static,data  _modem_setup_screen_help_list              _modem_setup_screen_help_list              -
+-         -    -      0x00193E34  2:0x00023E34  static,data  _design_screen_help_list                   _design_screen_help_list                   -
+-         -    -      0x00193EB6  2:0x00023EB6  static,data  _prev_help_list_active                     _prev_help_list_active                     -
+-         -    -      0x00193EB8  2:0x00023EB8  static,data  _prev_help_list_count                      _prev_help_list_count                      -

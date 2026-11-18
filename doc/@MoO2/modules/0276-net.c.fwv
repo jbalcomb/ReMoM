@@ -1,0 +1,692 @@
+module_num=276
+module=F:\WLIBS\net\net.c
+source=0276-net.c.md
+range[0]=1:0x0013F19F linear=0x0014F19F size=3693
+range[1]=2:0x0000409C linear=0x0017409C size=216
+range[2]=2:0x00011708 linear=0x00181708 size=24
+range[3]=2:0x0004BCE4 linear=0x001BBCE4 size=1036
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m276f001  1    -      0x0014F19F  1:0x0013F19F  static,code  StartNovellConnection      StartNovellConnection_      regions/07-object-1/001D4654-001D4E53.txt
+m276f002  2    -      0x0014F297  1:0x0013F297  code         NetOpen                    NetOpen_                    regions/07-object-1/001D4654-001D4E53.txt
+m276f003  3    -      0x0014F2F3  1:0x0013F2F3  code         NetSend                    NetSend_                    regions/07-object-1/001D4654-001D4E53.txt
+m276f004  4    -      0x0014F435  1:0x0013F435  code         NetPoll                    NetPoll_                    regions/07-object-1/001D4654-001D4E53.txt
+m276f005  5    -      0x0014F4CE  1:0x0013F4CE  code         NetEnd                     NetEnd_                     regions/07-object-1/001D4654-001D4E53.txt
+m276f006  6    -      0x0014F591  1:0x0013F591  static,code  EnterNet                   EnterNet_                   regions/07-object-1/001D4654-001D4E53.txt
+m276f007  7    -      0x0014F887  1:0x0013F887  static,code  SendAssertStationPDU       SendAssertStationPDU_       regions/07-object-1/001D4E54-001D5653.txt
+m276f008  8    -      0x0014F93A  1:0x0013F93A  code         AddHostToDescStation       AddHostToDescStation_       regions/07-object-1/001D4E54-001D5653.txt
+m276f009  9    -      0x0014FB47  1:0x0013FB47  code         AddThisHostToDescStation   AddThisHostToDescStation_   regions/07-object-1/001D4E54-001D5653.txt
+m276f010  10   -      0x0014FCB0  1:0x0013FCB0  code         RemoveHostFromDescStation  RemoveHostFromDescStation_  regions/07-object-1/001D4E54-001D5653.txt
+m276f011  11   -      0x0014FD3B  1:0x0013FD3B  code         GetTempStationID           GetTempStationID_           regions/07-object-1/001D4E54-001D5653.txt
+m276f012  12   -      0x0014FDC5  1:0x0013FDC5  code         Get_Network_Address        Get_Network_Address_        regions/07-object-1/001D4E54-001D5653.txt
+m276f013  13   -      0x0014FEE6  1:0x0013FEE6  code         Load_Kernel                Load_Kernel_                regions/07-object-1/001D4E54-001D5653.txt
+-         -    -      0x00181708  2:0x00011708  data         _thisHost                  _thisHost                   regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018170A  2:0x0001170A  data         _kernel_selector           _kernel_selector            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018170C  2:0x0001170C  data         _kernel_segment            _kernel_segment             regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018170E  2:0x0001170E  data         _HostDescPtr               _HostDescPtr                regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181712  2:0x00011712  data         _MultiPlayerStatus         _MultiPlayerStatus          regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181713  2:0x00011713  data         _kernelLoaded              _kernelLoaded               regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181714  2:0x00011714  data         _mynetwork                 _mynetwork                  regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181718  2:0x00011718  data         _mynetwork_node1           _mynetwork_node1            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018171C  2:0x0001171C  data         _mynetwork_node2           _mynetwork_node2            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001BBCE4  2:0x0004BCE4  data         _compBuff                  _compBuff                   -
+-         -    -      0x001BC0E4  2:0x0004C0E4  data         _sendTimer                 _sendTimer                  -
+-         -    -      0x001BC0E8  2:0x0004C0E8  data         _stations                  _stations                   -
+-         -    -      0x001BC0EE  2:0x0004C0EE  static,data  _inCommsInit               _inCommsInit                -
+
+[Module variables]
+LINEAR      SEGOFF        NAME               TYPE
+0x001BBCE4  2:0x0004BCE4  compBuff           unsigned char[1024]
+0x00181718  2:0x00011718  mynetwork_node1    int
+0x00181714  2:0x00011714  mynetwork          int
+0x001BC0E4  2:0x0004C0E4  sendTimer          unsigned long
+0x0018170E  2:0x0001170E  HostDescPtr        DosStationDesc *
+0x001BC0E8  2:0x0004C0E8  stations           DosStationTable
+0x0018171C  2:0x0001171C  mynetwork_node2    short
+0x0018170C  2:0x0001170C  kernel_segment     short
+0x0018170A  2:0x0001170A  kernel_selector    short
+0x00181708  2:0x00011708  thisHost           unsigned short
+0x001BC0EE  2:0x0004C0EE  inCommsInit        uchar
+0x00181712  2:0x00011712  MultiPlayerStatus  char
+0x00181713  2:0x00011713  kernelLoaded       char
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                       TYPE                                                  CHUNK
+m276f001  0x0014F19F  1:0x0013F19F  248   24        9         0x18     -    EAX              StartNovellConnection      int (NetOpenRequest *); returns in EAX                regions/07-object-1/001D4654-001D4E53.txt
+m276f002  0x0014F297  1:0x0013F297  92    24        9         0x18     -    EAX              NetOpen                    int (NetOpenRequest *); returns in EAX                regions/07-object-1/001D4654-001D4E53.txt
+m276f003  0x0014F2F3  1:0x0013F2F3  322   24        9         0x18     -    EAX              NetSend                    int (NetSendRequest *); returns in EAX                regions/07-object-1/001D4654-001D4E53.txt
+m276f004  0x0014F435  1:0x0013F435  153   24        9         0x18     -    EAX              NetPoll                    int (NetPollRequest *); returns in EAX                regions/07-object-1/001D4654-001D4E53.txt
+m276f005  0x0014F4CE  1:0x0013F4CE  195   24        9         0x18     -    -                NetEnd                     int (void); returns in EAX                            regions/07-object-1/001D4654-001D4E53.txt
+m276f006  0x0014F591  1:0x0013F591  758   24        9         0x18     -    -                EnterNet                   int (void); returns in EAX                            regions/07-object-1/001D4654-001D4E53.txt
+m276f007  0x0014F887  1:0x0013F887  179   24        9         0x18     -    EAX              SendAssertStationPDU       uint (int); returns in EAX                            regions/07-object-1/001D4E54-001D5653.txt
+m276f008  0x0014F93A  1:0x0013F93A  525   21        8         0xC      -    EAX,EDX,EBX,ECX  AddHostToDescStation       void (ushort, long, ushort, char *, int, int, short)  regions/07-object-1/001D4E54-001D5653.txt
+m276f009  0x0014FB47  1:0x0013FB47  361   21        6         0xC      -    EAX,EDX,EBX,ECX  AddThisHostToDescStation   void (ushort, long, ushort, char *)                   regions/07-object-1/001D4E54-001D5653.txt
+m276f010  0x0014FCB0  1:0x0013FCB0  139   24        9         0x18     -    EAX              RemoveHostFromDescStation  void (ushort)                                         regions/07-object-1/001D4E54-001D5653.txt
+m276f011  0x0014FD3B  1:0x0013FD3B  138   24        9         0x18     -    EAX              GetTempStationID           ushort (ushort); returns in AX                        regions/07-object-1/001D4E54-001D5653.txt
+m276f012  0x0014FDC5  1:0x0013FDC5  289   22        7         0x10     -    EAX,EDX,EBX      Get_Network_Address        void (int *, int *, short *)                          regions/07-object-1/001D4E54-001D5653.txt
+m276f013  0x0014FEE6  1:0x0013FEE6  294   24        9         0x18     -    EAX              Load_Kernel                void (char *)                                         regions/07-object-1/001D4E54-001D5653.txt
+
+[Locals]
+KEY       ROUTINE                    BLOCK           LOCAL           LOCATION    TYPE
+m276f001  StartNovellConnection      -               openReq         [EBP-0x8]   NetOpenRequest *
+m276f001  StartNovellConnection      -               fullfilename    [EBP-0x80]  char[120]
+m276f002  NetOpen                    -               openReq         [EBP-0x8]   NetOpenRequest *
+m276f003  NetSend                    0x0014F35E+196  i               [EBP-0x18]  int
+m276f003  NetSend                    0x0014F35E+196  st              [EBP-0x14]  DosStationDesc *
+m276f003  NetSend                    -               sendReq         [EBP-0x10]  NetSendRequest *
+m276f003  NetSend                    -               ReturnValue     [EBP-0xC]   int
+m276f003  NetSend                    -               timeNow         [EBP-0x8]   ulong
+m276f004  NetPoll                    -               pollReq         [EBP-0x14]  NetPollRequest *
+m276f004  NetPoll                    -               ECB_Status      [EBP-0x10]  int
+m276f004  NetPoll                    -               gp              [EBP-0xC]   int
+m276f004  NetPoll                    -               compSize        [EBP-0x8]   int
+m276f005  NetEnd                     -               st              [EBP-0x8]   DosStationDesc *
+m276f005  NetEnd                     -               next            [EBP-0xC]   DosStationDesc *
+m276f005  NetEnd                     -               regs            [EBP-0x28]  union REGS
+m276f006  EnterNet                   -               othertime       [EBP-0x34]  long
+m276f006  EnterNet                   -               pduhdr          [EBP-0x30]  PDUHeaderType *
+m276f006  EnterNet                   -               pdukeepalive    [EBP-0x2C]  PDUKeepAliveType *
+m276f006  EnterNet                   -               status          [EBP-0x28]  int
+m276f006  EnterNet                   -               assertMsgCnt    [EBP-0x24]  int
+m276f006  EnterNet                   -               stationrequest  [EBP-0x8]   ushort
+m276f006  EnterNet                   -               tempstationid   [EBP-0x4]   ushort
+m276f006  EnterNet                   -               wait            [EBP-0x18]  unsigned long
+m276f006  EnterNet                   -               cptr            [EBP-0x14]  char *
+m276f006  EnterNet                   -               lastTime        [EBP-0x10]  unsigned long
+m276f006  EnterNet                   -               curTime         [EBP-0xC]   unsigned long
+m276f006  EnterNet                   -               startTime       [EBP-0x20]  unsigned long
+m276f007  SendAssertStationPDU       -               stationid       [EBP-0x10]  int
+m276f007  SendAssertStationPDU       -               dest            [EBP-0xC]   char *
+m276f007  SendAssertStationPDU       -               pduptr          [EBP-0x8]   PDUHeaderType *
+m276f008  AddHostToDescStation       -               stationID       [EBP-0x8]   ushort
+m276f008  AddHostToDescStation       -               timeinit        [EBP-0x20]  long
+m276f008  AddHostToDescStation       -               open            [EBP-0x4]   ushort
+m276f008  AddHostToDescStation       -               gameID          [EBP-0x1C]  char *
+m276f008  AddHostToDescStation       -               network         [EBP+0x10]  int
+m276f008  AddHostToDescStation       -               network_node1   [EBP+0x14]  int
+m276f008  AddHostToDescStation       -               network_node2   [EBP+0x18]  short
+m276f008  AddHostToDescStation       -               st              [EBP-0xC]   DosStationDesc *
+m276f008  AddHostToDescStation       -               temp            [EBP-0x18]  DosStationDesc *
+m276f008  AddHostToDescStation       -               t2              [EBP-0x14]  DosStationDesc *
+m276f008  AddHostToDescStation       -               done            [EBP-0x10]  int
+m276f009  AddThisHostToDescStation   -               stationID       [EBP-0x8]   ushort
+m276f009  AddThisHostToDescStation   -               timeinit        [EBP-0x28]  long
+m276f009  AddThisHostToDescStation   -               groupID         [EBP-0xC]   ushort
+m276f009  AddThisHostToDescStation   -               gameID          [EBP-0x20]  char *
+m276f009  AddThisHostToDescStation   -               temp            [EBP-0x1C]  DosStationDesc *
+m276f009  AddThisHostToDescStation   -               t2              [EBP-0x2C]  DosStationDesc *
+m276f009  AddThisHostToDescStation   -               st              [EBP-0x14]  DosStationDesc *
+m276f009  AddThisHostToDescStation   -               done            [EBP-0x24]  int
+m276f009  AddThisHostToDescStation   -               network         [EBP-0x18]  int
+m276f009  AddThisHostToDescStation   -               network_node1   [EBP-0x10]  int
+m276f009  AddThisHostToDescStation   -               network_node2   [EBP-0x4]   short
+m276f010  RemoveHostFromDescStation  -               stationID       [EBP-0x4]   ushort
+m276f010  RemoveHostFromDescStation  -               pSt             [EBP-0xC]   DosStationDesc *
+m276f010  RemoveHostFromDescStation  -               pLastSt         [EBP-0x8]   DosStationDesc *
+m276f011  GetTempStationID           -               hostID          [EBP-0x8]   ushort
+m276f011  GetTempStationID           -               used            [EBP-0xC]   int
+m276f011  GetTempStationID           -               st              [EBP-0x10]  DosStationDesc *
+m276f012  Get_Network_Address        -               network         [EBP-0xC]   int *
+m276f012  Get_Network_Address        -               node1           [EBP-0x14]  int *
+m276f012  Get_Network_Address        -               node2           [EBP-0x10]  short *
+m276f012  Get_Network_Address        -               regs_for_dpmi   [EBP-0x48]  struct s_regs_for_dpmi
+m276f012  Get_Network_Address        -               temp_int_ptr    [EBP-0x8]   int *
+m276f012  Get_Network_Address        -               temp_short_ptr  [EBP-0x4]   short *
+m276f013  Load_Kernel                -               filename        [EBP-0x14]  char *
+m276f013  Load_Kernel                -               f               [EBP-0x18]  FILE *
+m276f013  Load_Kernel                -               size            [EBP-0xC]   int
+m276f013  Load_Kernel                -               buffer          [EBP-0x8]   char *
+m276f013  Load_Kernel                -               i               [EBP-0x10]  int
+m276f013  Load_Kernel                -               temp            [EBP-0x4]   short
+m276f013  Load_Kernel                -               inregs          [EBP-0x34]  union REGS
+m276f013  Load_Kernel                -               outregs         [EBP-0x50]  union REGS
+
+[Types]
+NUM  KIND       NAME                    DETAILS
+-    cue table  -                       source file table (C++)
+1    scope      struct                  -
+2    scope      union                   -
+3    scope      enum                    -
+4    scalar     signed char             int 1 bytes
+5    scalar     unsigned char           unsigned 1 bytes
+6    scalar     short                   int 2 bytes
+7    scalar     unsigned short          unsigned 2 bytes
+8    scalar     int                     int 4 bytes
+9    scalar     unsigned int            unsigned 4 bytes
+10   typedef    char                    name for unsigned char (#5)
+11   typedef    char                    name for unsigned char (#5)
+12   scalar     unsigned long           unsigned 4 bytes
+13   typedef    time_t                  name for unsigned long (#12)
+14   typedef    size_t                  name for unsigned int (#9)
+15   typedef    ino_t                   name for unsigned int (#9)
+16   typedef    dev_t                   name for int (#8)
+17   scalar     long                    int 4 bytes
+18   typedef    off_t                   name for long (#17)
+19   typedef    ushort                  name for unsigned short (#7)
+20   typedef    ulong                   name for unsigned long (#12)
+21   typedef    uint                    name for unsigned int (#9)
+22   typedef    uchar                   name for unsigned char (#5)
+23   typedef    boolean                 name for int (#8)
+24   scalar     float                   float 4 bytes
+25   typedef    bigScalar               name for float (#24)
+26   typedef    smallScalar             name for float (#24)
+27   typedef    wchar_t                 name for unsigned short (#7)
+28   typedef    wchar_t                 name for unsigned short (#7)
+29   scalar     void                    void 1 bytes
+30   procedure  -                       near386; returns void ()
+31   pointer    onexit_t                near386; of void (void) (#30)
+32   typedef    onexit_t                name for void (void) * (#31)
+33   pointer    -                       near386; of char (#10)
+34   array      __va_list               0..0; of char * (#33)
+35   typedef    __va_list               name for char *[1] (#34)
+36   typedef    fpos_t                  name for long (#17)
+37   typedef    fpos_t                  name for long (#17)
+38   typedef    clock_t                 name for unsigned long (#12)
+39   typedef    uchar                   name for unsigned char (#5)
+40   array      -                       0..1023; of unsigned char (#5)
+41   array      -                       0..9; of uchar (#22)
+42   struct     NetStationDesc          6 fields, 22 bytes
+43   typedef    NetStationDesc          name for struct #42 (#42)
+44   typedef    dosdesc                 struct name for struct #46 (#46)
+45   pointer    -                       near386; of struct dosdesc (#44)
+46   struct     struct dosdesc          4 fields, 34 bytes
+47   typedef    DosStationDesc          name for struct dosdesc (#44)
+48   pointer    -                       near386; of DosStationDesc (#47)
+49   struct     struct dosstationtable  2 fields, 6 bytes
+50   typedef    dosstationtable         struct name for struct #49 (#49)
+51   typedef    DosStationTable         name for struct dosstationtable (#50)
+52   array      -                       0..9; of char (#10)
+53   struct     NetOpenRequest          3 fields, 18 bytes
+54   typedef    NetOpenRequest          name for struct #53 (#53)
+55   pointer    -                       near386; of NetOpenRequest (#54)
+56   procedure  -                       near386; returns int (NetOpenRequest *)
+57   array      -                       0..119; of char (#10)
+58   struct     NetSendRequest          4 fields, 16 bytes
+59   typedef    NetSendRequest          name for struct #58 (#58)
+60   pointer    -                       near386; of NetSendRequest (#59)
+61   procedure  -                       near386; returns int (NetSendRequest *)
+62   struct     NetPollRequest          4 fields, 16 bytes
+63   typedef    NetPollRequest          name for struct #62 (#62)
+64   pointer    -                       near386; of NetPollRequest (#63)
+65   procedure  -                       near386; returns int (NetPollRequest *)
+66   procedure  -                       near386; returns int ()
+67   struct     struct DWORDREGS        7 fields, 28 bytes
+68   typedef    DWORDREGS               struct name for struct #67 (#67)
+69   struct     struct WORDREGS         13 fields, 28 bytes
+70   typedef    WORDREGS                struct name for struct #69 (#69)
+71   struct     struct BYTEREGS         12 fields, 16 bytes
+72   typedef    BYTEREGS                struct name for struct #71 (#71)
+73   struct     union REGS              3 fields, 28 bytes
+74   typedef    REGS                    union name for struct #73 (#73)
+75   procedure  -                       near386; returns int (void)
+76   array      -                       0..9; of uchar (#22)
+77   struct     struct pduheader        8 fields, 28 bytes
+78   typedef    pduheader               struct name for struct #77 (#77)
+79   typedef    PDUHeaderType           name for struct pduheader (#78)
+80   pointer    -                       near386; of PDUHeaderType (#79)
+81   struct     struct keepalivepdu     3 fields, 34 bytes
+82   typedef    keepalivepdu            struct name for struct #81 (#81)
+83   typedef    PDUKeepAliveType        name for struct keepalivepdu (#82)
+84   pointer    -                       near386; of PDUKeepAliveType (#83)
+85   procedure  -                       near386; returns uint (int)
+86   procedure  -                       near386; returns void (ushort, long, ushort, char *, int, int, short)
+87   procedure  -                       near386; returns void (ushort, long, ushort, char *)
+88   procedure  -                       near386; returns void (ushort)
+89   procedure  -                       near386; returns ushort (ushort)
+90   pointer    -                       near386; of int (#8)
+91   pointer    -                       near386; of short (#6)
+92   procedure  -                       near386; returns void (int *, int *, short *)
+93   struct     struct s_regs_for_dpmi  17 fields, 50 bytes
+94   typedef    s_regs_for_dpmi         struct name for struct #93 (#93)
+95   procedure  -                       near386; returns void (char *)
+96   pointer    -                       near386; of unsigned char (#5)
+97   struct     struct __iobuf          8 fields, 26 bytes
+98   typedef    __iobuf                 struct name for struct #97 (#97)
+99   typedef    FILE                    name for struct __iobuf (#98)
+100  pointer    -                       near386; of FILE (#99)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER               OFFSET_VALUE  TYPE              TYPE_NAME
+42        field        stationId            0             uchar             NetStationDesc
+42        field        open                 1             uchar             NetStationDesc
+42        field        gameId               2             uchar[10]         NetStationDesc
+42        field        network              12            int               NetStationDesc
+42        field        network_node1        16            int               NetStationDesc
+42        field        network_node2        20            short             NetStationDesc
+46        field        stationdesc          0             NetStationDesc    struct dosdesc
+46        field        lastKeepAliveMsg     22            ulong             struct dosdesc
+46        field        stationinittime      26            long              struct dosdesc
+46        field        next                 30            struct dosdesc *  struct dosdesc
+49        field        numstations          0             unsigned short    struct dosstationtable
+49        field        stationTable         2             DosStationDesc *  struct dosstationtable
+53        field        stationId            0             int               NetOpenRequest
+53        field        gameId               4             char[10]          NetOpenRequest
+53        field        maxMessageSize       14            int               NetOpenRequest
+58        field        messageDestination   0             int               NetSendRequest
+58        field        messageDataBuffer    4             char *            NetSendRequest
+58        field        messageDataCount     8             int               NetSendRequest
+58        field        messagePriority      12            int               NetSendRequest
+62        field        messageOriginator    0             int               NetPollRequest
+62        field        messageDataBuffer    4             char *            NetPollRequest
+62        field        messageDataCount     8             int               NetPollRequest
+62        field        messageCount         12            int               NetPollRequest
+67        field        eax                  0             unsigned int      struct DWORDREGS
+67        field        ebx                  4             unsigned int      struct DWORDREGS
+67        field        ecx                  8             unsigned int      struct DWORDREGS
+67        field        edx                  12            unsigned int      struct DWORDREGS
+67        field        esi                  16            unsigned int      struct DWORDREGS
+67        field        edi                  20            unsigned int      struct DWORDREGS
+67        field        cflag                24            unsigned int      struct DWORDREGS
+69        field        ax                   0             unsigned short    struct WORDREGS
+69        field        _1                   2             unsigned short    struct WORDREGS
+69        field        bx                   4             unsigned short    struct WORDREGS
+69        field        _2                   6             unsigned short    struct WORDREGS
+69        field        cx                   8             unsigned short    struct WORDREGS
+69        field        _3                   10            unsigned short    struct WORDREGS
+69        field        dx                   12            unsigned short    struct WORDREGS
+69        field        _4                   14            unsigned short    struct WORDREGS
+69        field        si                   16            unsigned short    struct WORDREGS
+69        field        _5                   18            unsigned short    struct WORDREGS
+69        field        di                   20            unsigned short    struct WORDREGS
+69        field        _6                   22            unsigned short    struct WORDREGS
+69        field        cflag                24            unsigned int      struct WORDREGS
+71        field        al                   0             unsigned char     struct BYTEREGS
+71        field        ah                   1             unsigned char     struct BYTEREGS
+71        field        _1                   2             unsigned short    struct BYTEREGS
+71        field        bl                   4             unsigned char     struct BYTEREGS
+71        field        bh                   5             unsigned char     struct BYTEREGS
+71        field        _2                   6             unsigned short    struct BYTEREGS
+71        field        cl                   8             unsigned char     struct BYTEREGS
+71        field        ch                   9             unsigned char     struct BYTEREGS
+71        field        _3                   10            unsigned short    struct BYTEREGS
+71        field        dl                   12            unsigned char     struct BYTEREGS
+71        field        dh                   13            unsigned char     struct BYTEREGS
+71        field        _4                   14            unsigned short    struct BYTEREGS
+73        field        h                    0             struct BYTEREGS   union REGS
+73        field        w                    0             struct WORDREGS   union REGS
+73        field        x                    0             struct DWORDREGS  union REGS
+77        field        PDUType              0             ushort            struct pduheader
+77        field        PDULength            2             ushort            struct pduheader
+77        field        sourceHost           4             ushort            struct pduheader
+77        field        destinationType      6             ushort            struct pduheader
+77        field        gameName             8             uchar[10]         struct pduheader
+77        field        network              18            int               struct pduheader
+77        field        network_node1        22            int               struct pduheader
+77        field        network_node2        26            short             struct pduheader
+81        field        hdr                  0             PDUHeaderType     struct keepalivepdu
+81        field        open                 28            ushort            struct keepalivepdu
+81        field        commInitTime         30            long              struct keepalivepdu
+93        field        edi                  0             long              struct s_regs_for_dpmi
+93        field        esi                  4             long              struct s_regs_for_dpmi
+93        field        ebp                  8             long              struct s_regs_for_dpmi
+93        field        reserver_for_system  12            long              struct s_regs_for_dpmi
+93        field        ebx                  16            long              struct s_regs_for_dpmi
+93        field        edx                  20            long              struct s_regs_for_dpmi
+93        field        ecx                  24            long              struct s_regs_for_dpmi
+93        field        eax                  28            long              struct s_regs_for_dpmi
+93        field        flags                32            short             struct s_regs_for_dpmi
+93        field        es                   34            short             struct s_regs_for_dpmi
+93        field        ds                   36            short             struct s_regs_for_dpmi
+93        field        fs                   38            short             struct s_regs_for_dpmi
+93        field        gs                   40            short             struct s_regs_for_dpmi
+93        field        ip                   42            short             struct s_regs_for_dpmi
+93        field        cs                   44            short             struct s_regs_for_dpmi
+93        field        sp                   46            short             struct s_regs_for_dpmi
+93        field        ss                   48            short             struct s_regs_for_dpmi
+97        field        _ptr                 0             unsigned char *   struct __iobuf
+97        field        _cnt                 4             int               struct __iobuf
+97        field        _base                8             unsigned char *   struct __iobuf
+97        field        _flag                12            unsigned int      struct __iobuf
+97        field        _handle              16            int               struct __iobuf
+97        field        _bufsize             20            unsigned int      struct __iobuf
+97        field        _ungotten            24            unsigned char     struct __iobuf
+97        field        _tmpfchar            25            unsigned char     struct __iobuf
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m276f001  107   0x0014F19F  1:0x0013F19F  0x001D47F3
+m276f001  111   0x0014F1BA  1:0x0013F1BA  0x001D480E
+m276f001  113   0x0014F1C7  1:0x0013F1C7  0x001D481B
+m276f001  114   0x0014F1D2  1:0x0013F1D2  0x001D4826
+m276f001  116   0x0014F1E0  1:0x0013F1E0  0x001D4834
+m276f001  117   0x0014F1ED  1:0x0013F1ED  0x001D4841
+m276f001  119   0x0014F1FA  1:0x0013F1FA  0x001D484E
+m276f001  120   0x0014F206  1:0x0013F206  0x001D485A
+m276f001  123   0x0014F210  1:0x0013F210  0x001D4864
+m276f001  125   0x0014F218  1:0x0013F218  0x001D486C
+m276f001  128   0x0014F220  1:0x0013F220  0x001D4874
+m276f001  130   0x0014F22A  1:0x0013F22A  0x001D487E
+m276f001  132   0x0014F22F  1:0x0013F22F  0x001D4883
+m276f001  133   0x0014F234  1:0x0013F234  0x001D4888
+m276f001  136   0x0014F239  1:0x0013F239  0x001D488D
+m276f001  137   0x0014F243  1:0x0013F243  0x001D4897
+m276f001  143   0x0014F248  1:0x0013F248  0x001D489C
+m276f001  145   0x0014F257  1:0x0013F257  0x001D48AB
+m276f001  148   0x0014F25E  1:0x0013F25E  0x001D48B2
+m276f001  149   0x0014F267  1:0x0013F267  0x001D48BB
+m276f001  151   0x0014F271  1:0x0013F271  0x001D48C5
+m276f001  152   0x0014F27D  1:0x0013F27D  0x001D48D1
+m276f001  153   0x0014F284  1:0x0013F284  0x001D48D8
+m276f001  154   0x0014F28B  1:0x0013F28B  0x001D48DF
+m276f002  169   0x0014F297  1:0x0013F297  0x001D48EB
+m276f002  171   0x0014F2B2  1:0x0013F2B2  0x001D4906
+m276f002  174   0x0014F2CA  1:0x0013F2CA  0x001D491E
+m276f002  177   0x0014F2D3  1:0x0013F2D3  0x001D4927
+m276f002  180   0x0014F2E0  1:0x0013F2E0  0x001D4934
+m276f002  181   0x0014F2E7  1:0x0013F2E7  0x001D493B
+m276f003  210   0x0014F2F3  1:0x0013F2F3  0x001D4947
+m276f003  215   0x0014F30E  1:0x0013F30E  0x001D4962
+m276f003  217   0x0014F314  1:0x0013F314  0x001D4968
+m276f003  220   0x0014F320  1:0x0013F320  0x001D4974
+m276f003  222   0x0014F32E  1:0x0013F32E  0x001D4982
+m276f003  225   0x0014F33A  1:0x0013F33A  0x001D498E
+m276f003  228   0x0014F346  1:0x0013F346  0x001D499A
+m276f003  230   0x0014F34E  1:0x0013F34E  0x001D49A2
+m276f003  232   0x0014F35E  1:0x0013F35E  0x001D49B2
+m276f003  233   0x0014F365  1:0x0013F365  0x001D49B9
+m276f003  235   0x0014F36D  1:0x0013F36D  0x001D49C1
+m276f003  236   0x0014F377  1:0x0013F377  0x001D49CB
+m276f003  237   0x0014F381  1:0x0013F381  0x001D49D5
+m276f003  239   0x0014F38A  1:0x0013F38A  0x001D49DE
+m276f003  241   0x0014F3A2  1:0x0013F3A2  0x001D49F6
+m276f003  243   0x0014F3A8  1:0x0013F3A8  0x001D49FC
+m276f003  245   0x0014F3BC  1:0x0013F3BC  0x001D4A10
+m276f003  247   0x0014F3CA  1:0x0013F3CA  0x001D4A1E
+m276f003  248   0x0014F3D5  1:0x0013F3D5  0x001D4A29
+m276f003  249   0x0014F3E0  1:0x0013F3E0  0x001D4A34
+m276f003  251   0x0014F3ED  1:0x0013F3ED  0x001D4A41
+m276f003  254   0x0014F3EF  1:0x0013F3EF  0x001D4A43
+m276f003  256   0x0014F3F5  1:0x0013F3F5  0x001D4A49
+m276f003  257   0x0014F3FE  1:0x0013F3FE  0x001D4A52
+m276f003  265   0x0014F400  1:0x0013F400  0x001D4A54
+m276f003  266   0x0014F40B  1:0x0013F40B  0x001D4A5F
+m276f003  267   0x0014F410  1:0x0013F410  0x001D4A64
+m276f003  268   0x0014F41A  1:0x0013F41A  0x001D4A6E
+m276f003  269   0x0014F422  1:0x0013F422  0x001D4A76
+m276f003  272   0x0014F429  1:0x0013F429  0x001D4A7D
+m276f004  293   0x0014F435  1:0x0013F435  0x001D4A89
+m276f004  295   0x0014F450  1:0x0013F450  0x001D4AA4
+m276f004  296   0x0014F457  1:0x0013F457  0x001D4AAB
+m276f004  299   0x0014F45E  1:0x0013F45E  0x001D4AB2
+m276f004  300   0x0014F46A  1:0x0013F46A  0x001D4ABE
+m276f004  302   0x0014F472  1:0x0013F472  0x001D4AC6
+m276f004  304   0x0014F478  1:0x0013F478  0x001D4ACC
+m276f004  306   0x0014F484  1:0x0013F484  0x001D4AD8
+m276f004  308   0x0014F48F  1:0x0013F48F  0x001D4AE3
+m276f004  310   0x0014F497  1:0x0013F497  0x001D4AEB
+m276f004  311   0x0014F49D  1:0x0013F49D  0x001D4AF1
+m276f004  315   0x0014F4A6  1:0x0013F4A6  0x001D4AFA
+m276f004  317   0x0014F4B2  1:0x0013F4B2  0x001D4B06
+m276f004  322   0x0014F4BB  1:0x0013F4BB  0x001D4B0F
+m276f004  323   0x0014F4C2  1:0x0013F4C2  0x001D4B16
+m276f005  346   0x0014F4CE  1:0x0013F4CE  0x001D4B22
+m276f005  348   0x0014F4E6  1:0x0013F4E6  0x001D4B3A
+m276f005  349   0x0014F4EE  1:0x0013F4EE  0x001D4B42
+m276f005  352   0x0014F4F6  1:0x0013F4F6  0x001D4B4A
+m276f005  354   0x0014F4FF  1:0x0013F4FF  0x001D4B53
+m276f005  355   0x0014F509  1:0x0013F509  0x001D4B5D
+m276f005  356   0x0014F50E  1:0x0013F50E  0x001D4B62
+m276f005  358   0x0014F515  1:0x0013F515  0x001D4B69
+m276f005  359   0x0014F524  1:0x0013F524  0x001D4B78
+m276f005  360   0x0014F52B  1:0x0013F52B  0x001D4B7F
+m276f005  361   0x0014F535  1:0x0013F535  0x001D4B89
+m276f005  363   0x0014F545  1:0x0013F545  0x001D4B99
+m276f005  364   0x0014F54B  1:0x0013F54B  0x001D4B9F
+m276f005  367   0x0014F555  1:0x0013F555  0x001D4BA9
+m276f005  369   0x0014F55B  1:0x0013F55B  0x001D4BAF
+m276f005  370   0x0014F564  1:0x0013F564  0x001D4BB8
+m276f005  371   0x0014F56C  1:0x0013F56C  0x001D4BC0
+m276f005  372   0x0014F572  1:0x0013F572  0x001D4BC6
+m276f005  374   0x0014F574  1:0x0013F574  0x001D4BC8
+m276f005  377   0x0014F57E  1:0x0013F57E  0x001D4BD2
+m276f005  378   0x0014F585  1:0x0013F585  0x001D4BD9
+m276f006  381   0x0014F591  1:0x0013F591  0x001D4BE5
+m276f006  387   0x0014F5A9  1:0x0013F5A9  0x001D4BFD
+m276f006  392   0x0014F5B0  1:0x0013F5B0  0x001D4C04
+m276f006  394   0x0014F5B7  1:0x0013F5B7  0x001D4C0B
+m276f006  395   0x0014F5BF  1:0x0013F5BF  0x001D4C13
+m276f006  400   0x0014F5C6  1:0x0013F5C6  0x001D4C1A
+m276f006  401   0x0014F5CD  1:0x0013F5CD  0x001D4C21
+m276f006  403   0x0014F5D5  1:0x0013F5D5  0x001D4C29
+m276f006  405   0x0014F5EB  1:0x0013F5EB  0x001D4C3F
+m276f006  407   0x0014F5F8  1:0x0013F5F8  0x001D4C4C
+m276f006  409   0x0014F5FE  1:0x0013F5FE  0x001D4C52
+m276f006  411   0x0014F606  1:0x0013F606  0x001D4C5A
+m276f006  413   0x0014F616  1:0x0013F616  0x001D4C6A
+m276f006  414   0x0014F61E  1:0x0013F61E  0x001D4C72
+m276f006  418   0x0014F65A  1:0x0013F65A  0x001D4CAE
+m276f006  419   0x0014F668  1:0x0013F668  0x001D4CBC
+m276f006  422   0x0014F66E  1:0x0013F66E  0x001D4CC2
+m276f006  425   0x0014F673  1:0x0013F673  0x001D4CC7
+m276f006  426   0x0014F681  1:0x0013F681  0x001D4CD5
+m276f006  430   0x0014F6B4  1:0x0013F6B4  0x001D4D08
+m276f006  432   0x0014F6C2  1:0x0013F6C2  0x001D4D16
+m276f006  434   0x0014F6CC  1:0x0013F6CC  0x001D4D20
+m276f006  436   0x0014F6D9  1:0x0013F6D9  0x001D4D2D
+m276f006  438   0x0014F6E3  1:0x0013F6E3  0x001D4D37
+m276f006  440   0x0014F6EB  1:0x0013F6EB  0x001D4D3F
+m276f006  442   0x0014F6FF  1:0x0013F6FF  0x001D4D53
+m276f006  443   0x0014F707  1:0x0013F707  0x001D4D5B
+m276f006  446   0x0014F73C  1:0x0013F73C  0x001D4D90
+m276f006  448   0x0014F749  1:0x0013F749  0x001D4D9D
+m276f006  449   0x0014F750  1:0x0013F750  0x001D4DA4
+m276f006  450   0x0014F75E  1:0x0013F75E  0x001D4DB2
+m276f006  452   0x0014F769  1:0x0013F769  0x001D4DBD
+m276f006  453   0x0014F77F  1:0x0013F77F  0x001D4DD3
+m276f006  457   0x0014F789  1:0x0013F789  0x001D4DDD
+m276f006  459   0x0014F7A2  1:0x0013F7A2  0x001D4DF6
+m276f006  461   0x0014F7A8  1:0x0013F7A8  0x001D4DFC
+m276f006  463   0x0014F7B2  1:0x0013F7B2  0x001D4E06
+m276f006  465   0x0014F7BB  1:0x0013F7BB  0x001D4E0F
+m276f006  466   0x0014F7C1  1:0x0013F7C1  0x001D4E15
+m276f006  467   0x0014F7CA  1:0x0013F7CA  0x001D4E1E
+m276f006  469   0x0014F7D5  1:0x0013F7D5  0x001D4E29
+m276f006  471   0x0014F7E0  1:0x0013F7E0  0x001D4E34
+m276f006  472   0x0014F7E7  1:0x0013F7E7  0x001D4E3B
+m276f006  473   0x0014F7F5  1:0x0013F7F5  0x001D4E49
+m276f006  475   0x0014F800  1:0x0013F800  0x001D4E54
+m276f006  476   0x0014F816  1:0x0013F816  0x001D4E6A
+m276f006  485   0x0014F820  1:0x0013F820  0x001D4E74
+m276f006  486   0x0014F828  1:0x0013F828  0x001D4E7C
+m276f006  487   0x0014F831  1:0x0013F831  0x001D4E85
+m276f006  489   0x0014F837  1:0x0013F837  0x001D4E8B
+m276f006  490   0x0014F83D  1:0x0013F83D  0x001D4E91
+m276f006  491   0x0014F844  1:0x0013F844  0x001D4E98
+m276f006  492   0x0014F84A  1:0x0013F84A  0x001D4E9E
+m276f006  494   0x0014F855  1:0x0013F855  0x001D4EA9
+m276f006  496   0x0014F85A  1:0x0013F85A  0x001D4EAE
+m276f006  498   0x0014F872  1:0x0013F872  0x001D4EC6
+m276f006  499   0x0014F87B  1:0x0013F87B  0x001D4ECF
+m276f007  508   0x0014F887  1:0x0013F887  0x001D4EDB
+m276f007  513   0x0014F8A2  1:0x0013F8A2  0x001D4EF6
+m276f007  514   0x0014F8AA  1:0x0013F8AA  0x001D4EFE
+m276f007  515   0x0014F8B2  1:0x0013F8B2  0x001D4F06
+m276f007  516   0x0014F8BB  1:0x0013F8BB  0x001D4F0F
+m276f007  518   0x0014F8C4  1:0x0013F8C4  0x001D4F18
+m276f007  519   0x0014F8CE  1:0x0013F8CE  0x001D4F22
+m276f007  520   0x0014F8DF  1:0x0013F8DF  0x001D4F33
+m276f007  522   0x0014F8E9  1:0x0013F8E9  0x001D4F3D
+m276f007  524   0x0014F8F2  1:0x0013F8F2  0x001D4F46
+m276f007  526   0x0014F904  1:0x0013F904  0x001D4F58
+m276f007  528   0x0014F908  1:0x0013F908  0x001D4F5C
+m276f007  530   0x0014F918  1:0x0013F918  0x001D4F6C
+m276f007  532   0x0014F927  1:0x0013F927  0x001D4F7B
+m276f007  533   0x0014F92E  1:0x0013F92E  0x001D4F82
+m276f008  536   0x0014F93A  1:0x0013F93A  0x001D4F8E
+m276f008  540   0x0014F95B  1:0x0013F95B  0x001D4FAF
+m276f008  547   0x0014F963  1:0x0013F963  0x001D4FB7
+m276f008  549   0x0014F970  1:0x0013F970  0x001D4FC4
+m276f008  551   0x0014F97F  1:0x0013F97F  0x001D4FD3
+m276f008  552   0x0014F988  1:0x0013F988  0x001D4FDC
+m276f008  554   0x0014F992  1:0x0013F992  0x001D4FE6
+m276f008  555   0x0014F99A  1:0x0013F99A  0x001D4FEE
+m276f008  556   0x0014F9A4  1:0x0013F9A4  0x001D4FF8
+m276f008  557   0x0014F9AC  1:0x0013F9AC  0x001D5000
+m276f008  558   0x0014F9B5  1:0x0013F9B5  0x001D5009
+m276f008  559   0x0014F9C3  1:0x0013F9C3  0x001D5017
+m276f008  560   0x0014F9CC  1:0x0013F9CC  0x001D5020
+m276f008  561   0x0014F9D5  1:0x0013F9D5  0x001D5029
+m276f008  562   0x0014F9DF  1:0x0013F9DF  0x001D5033
+m276f008  563   0x0014F9E8  1:0x0013F9E8  0x001D503C
+m276f008  564   0x0014F9F5  1:0x0013F9F5  0x001D5049
+m276f008  566   0x0014F9FE  1:0x0013F9FE  0x001D5052
+m276f008  569   0x0014FA03  1:0x0013FA03  0x001D5057
+m276f008  570   0x0014FA09  1:0x0013FA09  0x001D505D
+m276f008  572   0x0014FA0F  1:0x0013FA0F  0x001D5063
+m276f008  574   0x0014FA20  1:0x0013FA20  0x001D5074
+m276f008  575   0x0014FA2D  1:0x0013FA2D  0x001D5081
+m276f008  577   0x0014FA32  1:0x0013FA32  0x001D5086
+m276f008  578   0x0014FA3B  1:0x0013FA3B  0x001D508F
+m276f008  581   0x0014FA3D  1:0x0013FA3D  0x001D5091
+m276f008  583   0x0014FA50  1:0x0013FA50  0x001D50A4
+m276f008  585   0x0014FA5A  1:0x0013FA5A  0x001D50AE
+m276f008  586   0x0014FA64  1:0x0013FA64  0x001D50B8
+m276f008  587   0x0014FA6C  1:0x0013FA6C  0x001D50C0
+m276f008  588   0x0014FA75  1:0x0013FA75  0x001D50C9
+m276f008  589   0x0014FA7E  1:0x0013FA7E  0x001D50D2
+m276f008  590   0x0014FA87  1:0x0013FA87  0x001D50DB
+m276f008  591   0x0014FA91  1:0x0013FA91  0x001D50E5
+m276f008  592   0x0014FA9F  1:0x0013FA9F  0x001D50F3
+m276f008  593   0x0014FAA8  1:0x0013FAA8  0x001D50FC
+m276f008  595   0x0014FAB5  1:0x0013FAB5  0x001D5109
+m276f008  599   0x0014FABC  1:0x0013FABC  0x001D5110
+m276f008  601   0x0014FAC8  1:0x0013FAC8  0x001D511C
+m276f008  602   0x0014FAD1  1:0x0013FAD1  0x001D5125
+m276f008  603   0x0014FAD9  1:0x0013FAD9  0x001D512D
+m276f008  606   0x0014FADB  1:0x0013FADB  0x001D512F
+m276f008  608   0x0014FAE2  1:0x0013FAE2  0x001D5136
+m276f008  610   0x0014FAE8  1:0x0013FAE8  0x001D513C
+m276f008  612   0x0014FAF1  1:0x0013FAF1  0x001D5145
+m276f008  614   0x0014FB00  1:0x0013FB00  0x001D5154
+m276f008  615   0x0014FB09  1:0x0013FB09  0x001D515D
+m276f008  616   0x0014FB12  1:0x0013FB12  0x001D5166
+m276f008  617   0x0014FB1B  1:0x0013FB1B  0x001D516F
+m276f008  620   0x0014FB22  1:0x0013FB22  0x001D5176
+m276f008  622   0x0014FB24  1:0x0013FB24  0x001D5178
+m276f008  623   0x0014FB2D  1:0x0013FB2D  0x001D5181
+m276f008  625   0x0014FB34  1:0x0013FB34  0x001D5188
+m276f008  626   0x0014FB3D  1:0x0013FB3D  0x001D5191
+m276f008  628   0x0014FB3F  1:0x0013FB3F  0x001D5193
+m276f009  631   0x0014FB47  1:0x0013FB47  0x001D519B
+m276f009  636   0x0014FB68  1:0x0013FB68  0x001D51BC
+m276f009  642   0x0014FB70  1:0x0013FB70  0x001D51C4
+m276f009  644   0x0014FB7D  1:0x0013FB7D  0x001D51D1
+m276f009  646   0x0014FB83  1:0x0013FB83  0x001D51D7
+m276f009  649   0x0014FB8D  1:0x0013FB8D  0x001D51E1
+m276f009  650   0x0014FB9B  1:0x0013FB9B  0x001D51EF
+m276f009  651   0x0014FBA3  1:0x0013FBA3  0x001D51F7
+m276f009  652   0x0014FBAB  1:0x0013FBAB  0x001D51FF
+m276f009  655   0x0014FBB4  1:0x0013FBB4  0x001D5208
+m276f009  657   0x0014FBBC  1:0x0013FBBC  0x001D5210
+m276f009  658   0x0014FBC6  1:0x0013FBC6  0x001D521A
+m276f009  659   0x0014FBCE  1:0x0013FBCE  0x001D5222
+m276f009  660   0x0014FBDA  1:0x0013FBDA  0x001D522E
+m276f009  661   0x0014FBE3  1:0x0013FBE3  0x001D5237
+m276f009  662   0x0014FBEC  1:0x0013FBEC  0x001D5240
+m276f009  664   0x0014FBF6  1:0x0013FBF6  0x001D524A
+m276f009  665   0x0014FC04  1:0x0013FC04  0x001D5258
+m276f009  667   0x0014FC0D  1:0x0013FC0D  0x001D5261
+m276f009  671   0x0014FC14  1:0x0013FC14  0x001D5268
+m276f009  673   0x0014FC1A  1:0x0013FC1A  0x001D526E
+m276f009  674   0x0014FC22  1:0x0013FC22  0x001D5276
+m276f009  677   0x0014FC27  1:0x0013FC27  0x001D527B
+m276f009  679   0x0014FC33  1:0x0013FC33  0x001D5287
+m276f009  680   0x0014FC3C  1:0x0013FC3C  0x001D5290
+m276f009  681   0x0014FC44  1:0x0013FC44  0x001D5298
+m276f009  684   0x0014FC46  1:0x0013FC46  0x001D529A
+m276f009  686   0x0014FC4D  1:0x0013FC4D  0x001D52A1
+m276f009  688   0x0014FC53  1:0x0013FC53  0x001D52A7
+m276f009  690   0x0014FC5C  1:0x0013FC5C  0x001D52B0
+m276f009  692   0x0014FC6B  1:0x0013FC6B  0x001D52BF
+m276f009  693   0x0014FC74  1:0x0013FC74  0x001D52C8
+m276f009  694   0x0014FC7D  1:0x0013FC7D  0x001D52D1
+m276f009  695   0x0014FC86  1:0x0013FC86  0x001D52DA
+m276f009  698   0x0014FC8D  1:0x0013FC8D  0x001D52E1
+m276f009  700   0x0014FC8F  1:0x0013FC8F  0x001D52E3
+m276f009  701   0x0014FC98  1:0x0013FC98  0x001D52EC
+m276f009  703   0x0014FC9F  1:0x0013FC9F  0x001D52F3
+m276f009  704   0x0014FCA8  1:0x0013FCA8  0x001D52FC
+m276f009  705   0x0014FCAA  1:0x0013FCAA  0x001D52FE
+m276f010  708   0x0014FCB0  1:0x0013FCB0  0x001D5304
+m276f010  710   0x0014FCCB  1:0x0013FCCB  0x001D531F
+m276f010  711   0x0014FCD3  1:0x0013FCD3  0x001D5327
+m276f010  713   0x0014FCDA  1:0x0013FCDA  0x001D532E
+m276f010  715   0x0014FCE0  1:0x0013FCE0  0x001D5334
+m276f010  717   0x0014FCF1  1:0x0013FCF1  0x001D5345
+m276f010  718   0x0014FCF7  1:0x0013FCF7  0x001D534B
+m276f010  719   0x0014FD03  1:0x0013FD03  0x001D5357
+m276f010  720   0x0014FD05  1:0x0013FD05  0x001D5359
+m276f010  722   0x0014FD10  1:0x0013FD10  0x001D5364
+m276f010  723   0x0014FD18  1:0x0013FD18  0x001D536C
+m276f010  724   0x0014FD1F  1:0x0013FD1F  0x001D5373
+m276f010  727   0x0014FD21  1:0x0013FD21  0x001D5375
+m276f010  728   0x0014FD27  1:0x0013FD27  0x001D537B
+m276f010  729   0x0014FD30  1:0x0013FD30  0x001D5384
+m276f010  731   0x0014FD32  1:0x0013FD32  0x001D5386
+m276f011  734   0x0014FD3B  1:0x0013FD3B  0x001D538F
+m276f011  739   0x0014FD56  1:0x0013FD56  0x001D53AA
+m276f011  741   0x0014FD5C  1:0x0013FD5C  0x001D53B0
+m276f011  743   0x0014FD67  1:0x0013FD67  0x001D53BB
+m276f011  744   0x0014FD6F  1:0x0013FD6F  0x001D53C3
+m276f011  747   0x0014FD75  1:0x0013FD75  0x001D53C9
+m276f011  748   0x0014FD7C  1:0x0013FD7C  0x001D53D0
+m276f011  750   0x0014FD82  1:0x0013FD82  0x001D53D6
+m276f011  751   0x0014FD93  1:0x0013FD93  0x001D53E7
+m276f011  753   0x0014FD9A  1:0x0013FD9A  0x001D53EE
+m276f011  754   0x0014FDA3  1:0x0013FDA3  0x001D53F7
+m276f011  756   0x0014FDA5  1:0x0013FDA5  0x001D53F9
+m276f011  759   0x0014FDAB  1:0x0013FDAB  0x001D53FF
+m276f011  760   0x0014FDB1  1:0x0013FDB1  0x001D5405
+m276f011  762   0x0014FDB3  1:0x0013FDB3  0x001D5407
+m276f011  763   0x0014FDB9  1:0x0013FDB9  0x001D540D
+m276f012  766   0x0014FDC5  1:0x0013FDC5  0x001D5419
+m276f012  773   0x0014FDE4  1:0x0013FDE4  0x001D5438
+m276f012  774   0x0014FDF5  1:0x0013FDF5  0x001D5449
+m276f012  775   0x0014FE06  1:0x0013FE06  0x001D545A
+m276f012  776   0x0014FE15  1:0x0013FE15  0x001D5469
+m276f012  778   0x0014FE26  1:0x0013FE26  0x001D547A
+m276f012  779   0x0014FE2D  1:0x0013FE2D  0x001D5481
+m276f012  780   0x0014FE34  1:0x0013FE34  0x001D5488
+m276f012  781   0x0014FE3E  1:0x0013FE3E  0x001D5492
+m276f012  783   0x0014FE45  1:0x0013FE45  0x001D5499
+m276f012  784   0x0014FE4E  1:0x0013FE4E  0x001D54A2
+m276f012  785   0x0014FE55  1:0x0013FE55  0x001D54A9
+m276f012  786   0x0014FE5C  1:0x0013FE5C  0x001D54B0
+m276f012  787   0x0014FE65  1:0x0013FE65  0x001D54B9
+m276f012  788   0x0014FE79  1:0x0013FE79  0x001D54CD
+m276f012  790   0x0014FE81  1:0x0013FE81  0x001D54D5
+m276f012  792   0x0014FE9A  1:0x0013FE9A  0x001D54EE
+m276f012  793   0x0014FEA2  1:0x0013FEA2  0x001D54F6
+m276f012  795   0x0014FEAB  1:0x0013FEAB  0x001D54FF
+m276f012  796   0x0014FEB5  1:0x0013FEB5  0x001D5509
+m276f012  797   0x0014FEC0  1:0x0013FEC0  0x001D5514
+m276f012  799   0x0014FECC  1:0x0013FECC  0x001D5520
+m276f012  800   0x0014FED5  1:0x0013FED5  0x001D5529
+m276f012  801   0x0014FEDF  1:0x0013FEDF  0x001D5533
+m276f013  805   0x0014FEE6  1:0x0013FEE6  0x001D553A
+m276f013  815   0x0014FF01  1:0x0013FF01  0x001D5555
+m276f013  817   0x0014FF11  1:0x0013FF11  0x001D5565
+m276f013  818   0x0014FF17  1:0x0013FF17  0x001D556B
+m276f013  820   0x0014FF21  1:0x0013FF21  0x001D5575
+m276f013  822   0x0014FF30  1:0x0013FF30  0x001D5584
+m276f013  823   0x0014FF3B  1:0x0013FF3B  0x001D558F
+m276f013  825   0x0014FF43  1:0x0013FF43  0x001D5597
+m276f013  827   0x0014FF4F  1:0x0013FF4F  0x001D55A3
+m276f013  828   0x0014FF56  1:0x0013FF56  0x001D55AA
+m276f013  830   0x0014FF65  1:0x0013FF65  0x001D55B9
+m276f013  832   0x0014FF75  1:0x0013FF75  0x001D55C9
+m276f013  833   0x0014FF7B  1:0x0013FF7B  0x001D55CF
+m276f013  835   0x0014FF85  1:0x0013FF85  0x001D55D9
+m276f013  837   0x0014FF91  1:0x0013FF91  0x001D55E5
+m276f013  839   0x0014FF97  1:0x0013FF97  0x001D55EB
+m276f013  840   0x0014FFA5  1:0x0013FFA5  0x001D55F9
+m276f013  843   0x0014FFAF  1:0x0013FFAF  0x001D5603
+m276f013  844   0x0014FFB5  1:0x0013FFB5  0x001D5609
+m276f013  846   0x0014FFBE  1:0x0013FFBE  0x001D5612
+m276f013  847   0x0014FFC4  1:0x0013FFC4  0x001D5618
+m276f013  849   0x0014FFCD  1:0x0013FFCD  0x001D5621
+m276f013  850   0x0014FFDC  1:0x0013FFDC  0x001D5630
+m276f013  852   0x0014FFF4  1:0x0013FFF4  0x001D5648
+m276f013  854   0x0014FFFC  1:0x0013FFFC  0x001D5650
+m276f013  856   0x00150003  1:0x00140003  0x001D5657

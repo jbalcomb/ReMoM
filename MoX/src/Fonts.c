@@ -33,6 +33,7 @@
 
 #include "Init_Data/FONTS_LBX.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_CLOG.h"  /* CLAUDE: drawing catalog -- STU_CLOG_Palette_Loaded() */
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 
@@ -45,8 +46,8 @@ uint16_t outline_color = 0;
 // WZD dseg:783E
 int16_t draw_alias_flag = 0;
 
-// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4w
-// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181w ...
+// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4^w
+// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181^w ...
 
 // WZD dseg:7844                                                 seg020  MoO2 Module: palette
 /*
@@ -54,7 +55,7 @@ int16_t draw_alias_flag = 0;
 */
 int16_t cycle_direction_flag = ST_UNDEFINED;
 
-// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6^w ...
 
 
 
@@ -193,7 +194,7 @@ uint8_t * current_palette;
 uint8_t * palette_flags;
 
 
-// WZD  s14o03
+// WZD  s14p03
 /*
     MoO2  Module  init
 */
@@ -201,11 +202,9 @@ void Load_Font_File(char * font_file)
 {
     int itr = 0;
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_FONTS, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_FONTS, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Font_File()", __FILE__, __LINE__);
-#endif
 
     stu_strcpy(font_name, font_file);
 
@@ -449,7 +448,7 @@ void Restore_Alias_Colors(void)
 // PLATFORM  MSDOS  int16_t Print_Far(int16_t x, int16_t y, unsigned short int src_ofst, unsigned short int src_sgmt)
 // PLATFORM  MSDOS  {
 // PLATFORM  MSDOS      int16_t next_x;
-// PLATFORM  MSDOS      _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+// PLATFORM  MSDOS      String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
 // PLATFORM  MSDOS      next_x = Print(x, y, near_buffer);
 // PLATFORM  MSDOS      return next_x;
 // PLATFORM  MSDOS  }
@@ -460,13 +459,13 @@ Here are the standard definitions found inside <dos.h>:
 #define FP_SEG(fp)   ((unsigned)(void _seg *)(fp))
 #define FP_OFF(fp)   ((unsigned)(fp))
 F_SCOPY@ — Borland's own far block copy
-seg000/F_SCOPY.asm does essentially the same job as _fstrcpy (copy DS:SI → ES:DI, save/restore DS), and it unambiguously takes two far pointers:
+seg000/F_SCOPY.asm does essentially the same job as String_Copy_Far (copy DS:SI → ES:DI, save/restore DS), and it unambiguously takes two far pointers:
 
 */
 /*
 36AA:D49A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+near_buffer db 100 dup(0)
 
-1573:00E1                                                 proc _fstrcpy far                       ; CODE XREF: Print_Far+10P ...
+1573:00E1                                                 proc String_Copy_Far far                       ; CODE XREF: Print_Far+10vP ...
 1573:00E1                                                 dst_ofst= word ptr  6
 1573:00E1                                                 dst_sgmt= word ptr  8
 1573:00E1                                                 src_ofst= word ptr  0Ah
@@ -481,19 +480,19 @@ seg000/F_SCOPY.asm does essentially the same job as _fstrcpy (copy DS:SI → ES:
 1573:00EC 75 05                                               jnz short loc_15823
 1573:00EE 8C D8                                               mov ax, ds
 1573:00F0 89 46 08                                            mov [bp+dst_sgmt], ax
-1573:00F3                                                 loc_15823:                              ; CODE XREF: _fstrcpy+Bj
+1573:00F3                                                 loc_15823:                              ; CODE XREF: String_Copy_Far+B^j
 1573:00F3 83 7E 0C 00                                         cmp [bp+src_sgmt], 0
 1573:00F7 75 05                                               jnz short loc_1582E
 1573:00F9 8C D8                                               mov ax, ds
 1573:00FB 89 46 0C                                            mov [bp+src_sgmt], ax
-1573:00FE                                                 loc_1582E:                              ; CODE XREF: _fstrcpy+16j
+1573:00FE                                                 loc_1582E:                              ; CODE XREF: String_Copy_Far+16^j
 1573:00FE 8B 46 08                                            mov ax, [bp+dst_sgmt]
 1573:0101 8E C0                                               mov es, ax
 1573:0103 8B 76 0A                                            mov si, [bp+src_ofst]
 1573:0106 8B 7E 06                                            mov di, [bp+dst_ofst]
 1573:0109 8B 46 0C                                            mov ax, [bp+src_sgmt]
 1573:010C 8E D8                                               mov ds, ax
-1573:010E                                                 loc_1583E:                              ; CODE XREF: _fstrcpy+31j
+1573:010E                                                 loc_1583E:                              ; CODE XREF: String_Copy_Far+31vj
 1573:010E AC                                                  lodsb
 1573:010F AA                                                  stosb
 1573:0110 3C 00                                               cmp al, 0
@@ -504,9 +503,9 @@ seg000/F_SCOPY.asm does essentially the same job as _fstrcpy (copy DS:SI → ES:
 1573:0117 5E                                                  pop si
 1573:0118 5D                                                  pop bp
 1573:0119 CB                                                  retf
-1573:0119                                                 endp _fstrcpy
+1573:0119                                                 endp String_Copy_Far
 
-; char far * _fstrcpy(char far *dest, const char far *src);
+; char far * String_Copy_Far(char far *dest, const char far *src);
 19B4:0323                                                 proc Print_Far far
 19B4:0323                                                 x   = word ptr  6
 19B4:0323                                                 y   = word ptr  8
@@ -520,7 +519,7 @@ seg000/F_SCOPY.asm does essentially the same job as _fstrcpy (copy DS:SI → ES:
 19B4:032E 50                                                  push ax                             ; dst_sgmt
 19B4:032F B8 9A D4                                            mov ax, offset near_buffer
 19B4:0332 50                                                  push ax                             ; dst_ofst
-19B4:0333 9A E1 00 73 15                                      call _fstrcpy
+19B4:0333 9A E1 00 73 15                                      call String_Copy_Far
 19B4:0338 83 C4 08                                            add sp, 8
 19B4:033B B8 9A D4                                            mov ax, offset near_buffer
 19B4:033E 50                                                  push ax                             ; string
@@ -539,8 +538,8 @@ int16_t Print_Far(int16_t x, int16_t y, char /* FAR */ * string)
 {
     int16_t next_x;
 
-    // MSDOS  _fstrcpy(near_buffer, 0, FP_SEG(string), FP_OFF(string));
-    _fstrcpy(near_buffer, string);
+    // MSDOS  String_Copy_Far(near_buffer, 0, FP_SEG(string), FP_OFF(string));
+    String_Copy_Far(near_buffer, string);
 
     next_x = Print(x, y, near_buffer);
 
@@ -562,8 +561,8 @@ int16_t Print_Centered_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
 
     next_x = Print_Centered(x, y, near_buffer);
 
@@ -578,8 +577,8 @@ int16_t Print_Right_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
 
     next_x = Print(x, y, near_buffer);
 
@@ -593,8 +592,8 @@ int16_t Clipped_Print_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
 
     next_x = Clipped_Print(x, y, near_buffer);
 
@@ -608,8 +607,8 @@ int16_t Clipped_Print_Centered_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
 
     next_x = Clipped_Print_Centered(x, y, near_buffer);
 
@@ -623,8 +622,8 @@ int16_t Clipped_Print_Right_Far(int16_t x, int16_t y, char * src)
 {
     int16_t next_x;
 
-    // _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
-    _fstrcpy(near_buffer, src);
+    // String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
+    String_Copy_Far(near_buffer, src);
 
     next_x = Clipped_Print_Right(x, y, near_buffer);
 
@@ -1262,7 +1261,7 @@ void PSTRS(int16_t x, int16_t y, char * string)
 {
     if(Check_Release_Version() != ST_TRUE)
     {
-        _fstrcpy(near_buffer, string);
+        String_Copy_Far(near_buffer, string);
         Disp_PSTR(x, y, near_buffer);
     }
 }
@@ -1733,8 +1732,8 @@ int16_t Get_Current_Special_Color(void)
 void String_Copy_Far_To_Near(int offset, char * src)
 {
 
-    // _fstrcpy(near_buffer[offset], 0, src_ofst, src_sgmt);
-    _fstrcpy((char *)&near_buffer[offset], src);
+    // String_Copy_Far(near_buffer[offset], 0, src_ofst, src_sgmt);
+    String_Copy_Far((char *)&near_buffer[offset], src);
 
 }
 
@@ -1778,7 +1777,6 @@ Module: strings
 */
 /*
 ; trims white space from the beginning and end of the passed string
-; BUGGED: will only remove one trailing space if there are multiple
 */
 void Trim(char * string)
 {
@@ -1789,14 +1787,18 @@ void Trim(char * string)
     itr1 = 0;
     while(string[itr1] == ' ') { itr1++; }
 
+    /* CLAUDE  was missing; asm seg017 Trim: `push string + itr1; push string; call strcpy` - memmove because the overlapping strcpy() is undefined behaviour in C (Borland's copies forward) */
+    memmove(string, &string[itr1], (strlen(&string[itr1]) + 1));
+
     itr2 = 0;
     Trailing_Space = ST_UNDEFINED;
 
+    /* OGBUG  Trailing_Space is set at every space and reset at every other character, so it ends at the LAST space of a trailing run, not the first: only one trailing space is removed ("Abc   " becomes "Abc  ") */
     while(string[itr2] != '\0')
     {
         if(string[itr2] == ' ')
         {
-            Trailing_Space = itr2;  //  ; BUG: will only register the final trailing space if there are multiple
+            Trailing_Space = itr2;
         }
         else
         {
@@ -2112,7 +2114,7 @@ int16_t Print_Full_To_Bitmap(int16_t x, int16_t y, char * string, int16_t right_
 int16_t Print_To_Bitmap_Far(int16_t x, int16_t y, char * string, SAMB_ptr bitmap)
 {
     int16_t next_x;  // DNE in Dasm
-    // TODO  _fstrcpy(near_buffer, 0, src_ofst, src_sgmt);
+    // TODO  String_Copy_Far(near_buffer, 0, src_ofst, src_sgmt);
     stu_strcpy(near_buffer, string);
     next_x = Print_To_Bitmap(x, y, near_buffer, bitmap);
     return next_x;
@@ -2213,9 +2215,14 @@ void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t co
 {
     int16_t itr = 0;
 
-    color1 = (color1 < COLOR_SET_COUNT) ? color1 : 0;
-    color2 = (color2 < COLOR_SET_COUNT) ? color2 : 0;
-    color3 = (color3 < COLOR_SET_COUNT) ? color3 : 0;
+    // color1 = (color1 < COLOR_SET_COUNT) ? color1 : 0;
+    // color2 = (color2 < COLOR_SET_COUNT) ? color2 : 0;
+    // color3 = (color3 < COLOR_SET_COUNT) ? color3 : 0;
+    /* OGBUG  53 WIZARDS call sites push only three words (e.g. Lair_Confirm, Confirmation_Box: 15, 4, 4), so color3 is whatever word lies on the caller's stack, kept when < 16 (else 0);
+       ReMoM's call sites pass ST_NULL there */
+    color1 = ((uint16_t)color1 < COLOR_SET_COUNT) ? color1 : 0;  /* CLAUDE  asm seg018 Set_Font_Style: `cmp ax, e_COLOR_SET_COUNT; jb` is unsigned */
+    color2 = ((uint16_t)color2 < COLOR_SET_COUNT) ? color2 : 0;  /* CLAUDE */
+    color3 = ((uint16_t)color3 < COLOR_SET_COUNT) ? color3 : 0;  /* CLAUDE */
 
     m_current_font_style = font_idx;
     m_current_normal_color = color1;
@@ -2246,7 +2253,8 @@ void Set_Font_Style(int16_t font_idx, int16_t color1, int16_t color2, int16_t co
 
     font_header->current_vertical_spacing = font_header->vertical_spacing[font_idx];
 
-    font_header->current_base_height = font_header->height;
+    // font_header->current_base_height = font_header->height;
+    font_header->current_base_height = font_header->current_vertical_spacing + font_header->height;  /* CLAUDE  asm: `lodsw` vertical_spacing, `stosw`, `add ax, [ds:s_FONT_HEADER.height]`, `stosw` to current_base_height */
 
     font_header->current_horizontal_spacing = font_header->horizontal_spacing[font_idx];
 
@@ -2902,9 +2910,7 @@ void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset)
     WIZARDS.EXE  seg019
 */
 
-// WZD s19p01
-// Print_Paragraph()
-
+// WZD s19p01   // Print_Paragraph()
 // WZD s19p02
 // WZD s19p03
 // WZD s19p04
@@ -2913,20 +2919,16 @@ void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset)
 // WZD s19p07
 // WZD s19p08
 // WZD s19p09
+// WZD s19p10   // Remove_Paragraph_Marks()
 
-// WZD s19p10
+// WZD s19p11
 int16_t Get_Font_Height(void)
 {
     int16_t font_height;
-
-    // DOS  farpeekw(font_style_data, 0x10); // s_FONT_HEADER.height
-
     font_height = GET_2B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
-
     return font_height;
 }
 
-// WZD s19p11
 // WZD s19p12
 // WZD s19p13
 // WZD s19p14
@@ -2949,7 +2951,7 @@ void Load_Palette(int entry, int start_color, int end_color)
     int color_count;
     int itr;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if((entry == 0) && (FONTS_LBX_ENTRY_2_SIZE > 0))
     {
@@ -3000,6 +3002,10 @@ void Load_Palette(int entry, int start_color, int end_color)
     {
         *(current_palette + (color_start * 3) + itr) = *(palette_data + (color_start * 3) + itr);
     }
+#if STU_CLOG
+    /* CLAUDE: drawing catalog -- a base palette; LBX_Load_Entry named palette_data, except for the embedded copy of entry 0 */
+    STU_CLOG_Palette_Loaded((STU_CLOG_Asset_Name(palette_data)[0] != '\0') ? STU_CLOG_Asset_Name(palette_data) : "FONTS.LBX:2(embedded)", -1, (int16_t)color_start, (int16_t)color_count);
+#endif
 
     Set_Font_Style(0, 0, 0, 0);
 
@@ -3013,7 +3019,7 @@ void Load_Palette(int entry, int start_color, int end_color)
         Set_Palette_Changes(start_color, end_color);
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Load_Palette rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -3206,7 +3212,7 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
     }
 
     /* 4. Interpolate the other two colors based on the primary color */
-    switch (primary_color) {
+    switch(primary_color) {
         case 0: /* Red is Primary */
             store_red = cycle_color_value;
             store_green = ((green_max - green_min) * (cycle_color_value - red_min)) / (red_max - red_min) + green_min;
@@ -3278,45 +3284,91 @@ void Cycle_Palette_Color(int16_t color_num, int16_t red_min, int16_t green_min, 
  */
 void Update_Cycle(int16_t *color_min, int16_t * color_max)
 {
-    if(cycle_direction_flag == 0) {
-        /* Moving "Forward" */
-        if(*color_max > *color_min) {
+//     if(cycle_direction_flag == 0) {
+//         /* Moving "Forward" */
+//         if(*color_max > *color_min) {
+//             cycle_color_value += cycle_step_value;
+            
+//             /* Did we overshoot the maximum? */
+//             if(cycle_color_value >= *color_max) {
+//                 cycle_color_value = *color_max - 1; /* Bounce back */
+//                 cycle_direction_flag = 1;           /* Switch direction */
+//             }
+//         } else {
+//             /* Max is actually lower than Min (Negative gradient) */
+//             cycle_color_value -= cycle_step_value;
+            
+//             /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
+//             if(cycle_color_value <= *color_min) {
+//                 cycle_color_value = *color_min + 1; /* Bounce back */
+//                 cycle_direction_flag = 1;           /* Switch direction */
+//             }
+//         }
+        
+//     } else {
+//         /* Moving "Backward" (cycle_direction_flag != 0) */
+//         if(*color_max > *color_min) {
+//             cycle_color_value -= cycle_step_value;
+            
+//             /* Did we overshoot the minimum? */
+//             if(cycle_color_value <= *color_min) {
+//                 cycle_color_value = *color_min + 1; /* Bounce back */
+//                 cycle_direction_flag = 0;           /* Switch direction */
+//             }
+//         } else {
+//             /* Max is actually lower than Min (Negative gradient) */
+//             cycle_color_value += cycle_step_value;
+            
+//             /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
+//             if(cycle_color_value >= *color_max) {
+//                 cycle_color_value = *color_max - 1; /* Bounce back */
+//                 cycle_direction_flag = 0;           /* Switch direction */
+//             }
+//         }
+//     }
+    /* CLAUDE  the turn tests are strict in the asm (seg020 Update_Cycle: `cmp ax, [cycle_color_value]` / `jge` and `cmp ax, [cycle_color_value]` / `jle` skip the turn):
+       the old code above turned on >= / <= */
+    if(cycle_direction_flag == 0)
+    {
+        if(*color_max > *color_min)
+        {
             cycle_color_value += cycle_step_value;
-            
-            /* Did we overshoot the maximum? */
-            if(cycle_color_value >= *color_max) {
-                cycle_color_value = *color_max - 1; /* Bounce back */
-                cycle_direction_flag = 1;           /* Switch direction */
-            }
-        } else {
-            /* Max is actually lower than Min (Negative gradient) */
-            cycle_color_value -= cycle_step_value;
-            
-            /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value <= *color_max) ? */
-            if(cycle_color_value <= *color_min) {
-                cycle_color_value = *color_min + 1; /* Bounce back */
-                cycle_direction_flag = 1;           /* Switch direction */
+            if(*color_max < cycle_color_value)
+            {
+                cycle_color_value = (*color_max - 1);
+                cycle_direction_flag = 1;
             }
         }
-        
-    } else {
-        /* Moving "Backward" (cycle_direction_flag != 0) */
-        if(*color_max > *color_min) {
+        else
+        {
             cycle_color_value -= cycle_step_value;
-            
-            /* Did we overshoot the minimum? */
-            if(cycle_color_value <= *color_min) {
-                cycle_color_value = *color_min + 1; /* Bounce back */
-                cycle_direction_flag = 0;           /* Switch direction */
+            /* OGBUG  when color_max <= color_min the turn tests compare the opposite ends (color_min here, color_max in the reverse branch), so the value jumps between color_min + 1 and color_max - 1, outside the range, every step */
+            if(*color_min > cycle_color_value)
+            {
+                cycle_color_value = (*color_min + 1);
+                cycle_direction_flag = 1;
             }
-        } else {
-            /* Max is actually lower than Min (Negative gradient) */
+        }
+    }
+    else
+    {
+        if(*color_max > *color_min)
+        {
+            cycle_color_value -= cycle_step_value;
+            if(*color_min > cycle_color_value)
+            {
+                cycle_color_value = (*color_min + 1);
+                cycle_direction_flag = 0;
+            }
+        }
+        else
+        {
             cycle_color_value += cycle_step_value;
-            
-            /* ¿ OGBUG: Claude feels strongly that this should be (cycle_color_value >= *color_min) ? */
-            if(cycle_color_value >= *color_max) {
-                cycle_color_value = *color_max - 1; /* Bounce back */
-                cycle_direction_flag = 0;           /* Switch direction */
+            /* OGBUG  see above: tests color_max where color_min is the far end */
+            if(*color_max < cycle_color_value)
+            {
+                cycle_color_value = (*color_max - 1);
+                cycle_direction_flag = 0;
             }
         }
     }
@@ -3345,15 +3397,15 @@ void Update_Cycle(int16_t *color_min, int16_t * color_max)
 // uint16_t CS_blue1;
 // // WZD seg021:0010 00 00                                           
 // uint16_t CS_green1;
-// // WZD seg021:0012 00 00                                           Pass1_DstColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+18w ...
-// // WZD seg021:0014 00 00                                           Pass1_Count dw 0                        ; DATA XREF: VGA_SlideColors+23w ...
-// // WZD seg021:0016 00 00                                           Pass1_SrcColor1 dw 0                    ; DATA XREF: VGA_SlideColors+2Aw ...
-// // WZD seg021:0018 00 00                                           Pass2_DstColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+31w ...
-// // WZD seg021:001A 00 00                                           Pass2_Count dw 0                        ; DATA XREF: VGA_SlideColors+38w ...
-// // WZD seg021:001C 00 00                                           Pass2_SrcColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+45w ...
-// // WZD seg021:001E 00 00                                           Color_Wave_Start dw 0                   ; DATA XREF: UU_VGA_ColorWave+1Fw ...
-// // WZD seg021:0020 00 00                                           Color_Wave_HalfSize dw 0                ; DATA XREF: UU_VGA_ColorWave+27w ...
-// // WZD seg021:0022 00 00                                           Color_Wave_Step dw 0                    ; DATA XREF: UU_VGA_ColorWave+17w ...
+// // WZD seg021:0012 00 00                                           Pass1_DstColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+18vw ...
+// // WZD seg021:0014 00 00                                           Pass1_Count dw 0                        ; DATA XREF: VGA_SlideColors+23vw ...
+// // WZD seg021:0016 00 00                                           Pass1_SrcColor1 dw 0                    ; DATA XREF: VGA_SlideColors+2Avw ...
+// // WZD seg021:0018 00 00                                           Pass2_DstColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+31vw ...
+// // WZD seg021:001A 00 00                                           Pass2_Count dw 0                        ; DATA XREF: VGA_SlideColors+38vw ...
+// // WZD seg021:001C 00 00                                           Pass2_SrcColor_1 dw 0                   ; DATA XREF: VGA_SlideColors+45vw ...
+// // WZD seg021:001E 00 00                                           Color_Wave_Start dw 0                   ; DATA XREF: UU_VGA_ColorWave+1Fvw ...
+// // WZD seg021:0020 00 00                                           Color_Wave_HalfSize dw 0                ; DATA XREF: UU_VGA_ColorWave+27vw ...
+// // WZD seg021:0022 00 00                                           Color_Wave_Step dw 0                    ; DATA XREF: UU_VGA_ColorWave+17vw ...
 // // WZD seg021:0024 00 00                                           
 // uint16_t CS_closest;
 // // WZD seg021:0026 00 00                                           
@@ -3470,7 +3522,7 @@ void Apply_Palette(void)
     // uint8_t * pal;
     int itr;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     // pal = (uint8_t*)current_palette;
     // 
@@ -3506,7 +3558,7 @@ void Apply_Palette(void)
 
     // HERE: in MoO1 and MoM, it clears the palette change flags - REP STOSW of 0 128 times
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Apply_Palette rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // #endif
@@ -3629,103 +3681,192 @@ void Tint_Palette(int16_t percent, int16_t red, int16_t grn, int16_t blu)
     uint16_t new_grn = 0;
     uint16_t new_blu = 0;
 
+//     vpercent = (100 - percent);
+
+//     if(vpercent <= 0)               /* (percent >= 100) */
+//     {
+
+//         Apply_Palette();
+
+//     }
+//     else if(vpercent >= 100)        /* (percent <= 0) */
+//     {
+
+// // TODO  IDGI         for(itr = 0; itr < 256; itr++)
+// // TODO  IDGI         {
+// // TODO  IDGI 
+// // TODO  IDGI             if(PALETTE_FLAG(itr))
+// // TODO  IDGI             {
+// // TODO  IDGI 
+// // TODO  IDGI                 platform_palette_buffer[itr].r = (red_add << 2);  // CS_red1
+// // TODO  IDGI                 platform_palette_buffer[itr].g = (grn_add << 2);  // CS_green1
+// // TODO  IDGI                 platform_palette_buffer[itr].b = (blu_add << 2);  // CS_blue1
+// // TODO  IDGI                 platform_palette_buffer[itr].a = 0xFF;
+// // TODO  IDGI 
+// // TODO  IDGI             }
+// // TODO  IDGI 
+// // TODO  IDGI         }
+
+//     }
+//     else                            /* (percent > 0) && (percent < 100) */
+//     {
+
+// // mov     bx, 256
+// // mul     bx
+// // mov     bx, 100
+// // div     bx
+// // mov     [cs:color1_multiplier], ax      ; original color percent * 256 / 100
+
+//         multi = (vpercent * 256) / 100;
+
+// // mov     ax, [bp+percent]
+// // mov     bx, 256
+// // mul     bx
+// // mov     bx, 100
+// // div     bx
+// // mov     bx, ax
+
+//         scale = (percent * 256) / 100;
+
+// // mov     ax, [bp+red]
+// // mul     bl
+// // mov     al, ah
+// // xor     ah, ah
+// // mov     [cs:CS_red1], ax
+// // 
+// // mov     ax, [bp+green]
+// // mul     bl
+// // mov     al, ah
+// // xor     ah, ah
+// // mov     [cs:CS_green1], ax
+// // 
+// // mov     ax, [bp+blue]
+// // mul     bl
+// // mov     al, ah
+// // xor     ah, ah
+// // mov     [cs:CS_blue1], ax
+
+//         red_add = (red * scale) >> 8;  // CS_red1
+
+//         grn_add = (grn * scale) >> 8;  // CS_green1
+
+//         blu_add = (blu * scale) >> 8;  // CS_blue1
+
+
+
+//         /*
+//             get color from color-map, add tint value, write to the platform palette
+//         */
+        
+//         for(itr = 0; itr < 256; itr++)
+//         {
+
+//             if(PALETTE_FLAG(itr))
+//             {
+
+//                 ofst = itr * 3;
+
+//                 cur_red = *(current_palette + ofst++);
+//                 cur_grn = *(current_palette + ofst++);
+//                 cur_blu = *(current_palette + ofst++);
+
+//                 new_red = (((cur_red * multi) >> 8) + red_add);
+//                 new_grn = (((cur_grn * multi) >> 8) + grn_add);
+//                 new_blu = (((cur_blu * multi) >> 8) + blu_add);
+
+//                 // ~== Platform_Palette_Update()
+//                 platform_palette_buffer[itr].r = (new_red << 2);
+//                 platform_palette_buffer[itr].g = (new_grn << 2);
+//                 platform_palette_buffer[itr].b = (new_blu << 2);
+//                 platform_palette_buffer[itr].a = 0xFF;
+
+//             }
+
+//         }
+
+//     }
+
+
+//     // ~== REP STOSW
+//     memset((uint8_t *)(current_palette + 768), 0x00, 256);  // ~== `REP STOSB`
+
+//     Platform_Video_Update();
+
+    /* CLAUDE  rebuilt to the asm's three paths (seg021 Tint_Palette): `100 - percent` then `ja` is an UNSIGNED test, so percent >= 100 (and any negative percent) takes the
+       stale-tint path at loc_1D02F; percent == 0 takes Apply_Palette() and returns at loc_1D025 without clearing the change flags; only 1..99 blends.
+       The old code above had the >= 100 and <= 0 paths swapped and blended color 0. */
     vpercent = (100 - percent);
 
-    if(vpercent <= 0)               /* (percent >= 100) */
+    if((uint16_t)percent < 100)
     {
 
-        Apply_Palette();
+        if(vpercent < 100)          /* (percent > 0) && (percent < 100) */
+        {
+
+            multi = (vpercent * 256) / 100;
+
+            scale = (percent * 256) / 100;
+
+            red_add = (red * scale) >> 8;  // CS_red1
+
+            grn_add = (grn * scale) >> 8;  // CS_green1
+
+            blu_add = (blu * scale) >> 8;  // CS_blue1
+
+            /* OGBUG  the blend starts at color 1 (asm `mov bh, 1` / `mov di, 771`): color 0 is never updated on this path */
+            for(itr = 1; itr < 256; itr++)
+            {
+
+                if(PALETTE_FLAG(itr))
+                {
+
+                    ofst = itr * 3;
+
+                    cur_red = *(current_palette + ofst++);
+                    cur_grn = *(current_palette + ofst++);
+                    cur_blu = *(current_palette + ofst++);
+
+                    new_red = (((cur_red * multi) >> 8) + red_add);
+                    new_grn = (((cur_grn * multi) >> 8) + grn_add);
+                    new_blu = (((cur_blu * multi) >> 8) + blu_add);
+
+                    // ~== Platform_Palette_Update()
+                    platform_palette_buffer[itr].r = (new_red << 2);
+                    platform_palette_buffer[itr].g = (new_grn << 2);
+                    platform_palette_buffer[itr].b = (new_blu << 2);
+                    platform_palette_buffer[itr].a = 0xFF;
+
+                }
+
+            }
+
+        }
+        else                        /* (percent == 0) */
+        {
+
+            Apply_Palette();
+
+            Platform_Video_Update();  /* CLAUDE  platform: the OG's Apply_Palette() writes the DAC directly */
+
+            return;
+
+        }
 
     }
-    else if(vpercent >= 100)        /* (percent <= 0) */
+    else                            /* (percent >= 100), unsigned */
     {
 
-// TODO  IDGI         for(itr = 0; itr < 256; itr++)
-// TODO  IDGI         {
-// TODO  IDGI 
-// TODO  IDGI             if(PALETTE_FLAG(itr))
-// TODO  IDGI             {
-// TODO  IDGI 
-// TODO  IDGI                 platform_palette_buffer[itr].r = (red_add << 2);  // CS_red1
-// TODO  IDGI                 platform_palette_buffer[itr].g = (grn_add << 2);  // CS_green1
-// TODO  IDGI                 platform_palette_buffer[itr].b = (blu_add << 2);  // CS_blue1
-// TODO  IDGI                 platform_palette_buffer[itr].a = 0xFF;
-// TODO  IDGI 
-// TODO  IDGI             }
-// TODO  IDGI 
-// TODO  IDGI         }
-
-    }
-    else                            /* (percent > 0) && (percent < 100) */
-    {
-
-// mov     bx, 256
-// mul     bx
-// mov     bx, 100
-// div     bx
-// mov     [cs:color1_multiplier], ax      ; original color percent * 256 / 100
-
-        multi = (vpercent * 256) / 100;
-
-// mov     ax, [bp+percent]
-// mov     bx, 256
-// mul     bx
-// mov     bx, 100
-// div     bx
-// mov     bx, ax
-
-        scale = (percent * 256) / 100;
-
-// mov     ax, [bp+red]
-// mul     bl
-// mov     al, ah
-// xor     ah, ah
-// mov     [cs:CS_red1], ax
-// 
-// mov     ax, [bp+green]
-// mul     bl
-// mov     al, ah
-// xor     ah, ah
-// mov     [cs:CS_green1], ax
-// 
-// mov     ax, [bp+blue]
-// mul     bl
-// mov     al, ah
-// xor     ah, ah
-// mov     [cs:CS_blue1], ax
-
-        red_add = (red * scale) >> 8;  // CS_red1
-
-        grn_add = (grn * scale) >> 8;  // CS_green1
-
-        blu_add = (blu * scale) >> 8;  // CS_blue1
-
-
-
-        /*
-            get color from color-map, add tint value, write to the platform palette
-        */
-        
+        /* OGBUG  the r, g, b arguments are never stored on this path: every changed color, 0 to 255, is uploaded as the code-segment tint words CS_red1 / CS_green1 / CS_blue1
+           left by the previous call (the last blend's scaled r, g, b, or Create_Remap_Palette()'s raw r, g, b - ReMoM does not share these with Create_Remap_Palette()) */
         for(itr = 0; itr < 256; itr++)
         {
 
             if(PALETTE_FLAG(itr))
             {
 
-                ofst = itr * 3;
-
-                cur_red = *(current_palette + ofst++);
-                cur_grn = *(current_palette + ofst++);
-                cur_blu = *(current_palette + ofst++);
-
-                new_red = (((cur_red * multi) >> 8) + red_add);
-                new_grn = (((cur_grn * multi) >> 8) + grn_add);
-                new_blu = (((cur_blu * multi) >> 8) + blu_add);
-
-                // ~== Platform_Palette_Update()
-                platform_palette_buffer[itr].r = (new_red << 2);
-                platform_palette_buffer[itr].g = (new_grn << 2);
-                platform_palette_buffer[itr].b = (new_blu << 2);
+                platform_palette_buffer[itr].r = (red_add << 2);  // CS_red1
+                platform_palette_buffer[itr].g = (grn_add << 2);  // CS_green1
+                platform_palette_buffer[itr].b = (blu_add << 2);  // CS_blue1
                 platform_palette_buffer[itr].a = 0xFF;
 
             }
@@ -3733,7 +3874,6 @@ void Tint_Palette(int16_t percent, int16_t red, int16_t grn, int16_t blu)
         }
 
     }
-
 
     // ~== REP STOSW
     memset((uint8_t *)(current_palette + 768), 0x00, 256);  // ~== `REP STOSB`
@@ -3809,140 +3949,155 @@ mov     ds, ax
 */
 
 
+// WZD seg021:0012
+uint16_t rotate_pass1_dst_color = 0;  /* Pass1_DstColor_1 - in the code segment (cs:) */
+// WZD seg021:0014
+uint16_t rotate_pass1_count = 0;  /* Pass1_Count */
+// WZD seg021:0016
+uint16_t rotate_pass1_src_color = 0;  /* Pass1_SrcColor1 */
+// WZD seg021:0018
+uint16_t rotate_pass2_dst_color = 0;  /* Pass2_DstColor_1 */
+// WZD seg021:001A
+uint16_t rotate_pass2_count = 0;  /* Pass2_Count */
+// WZD seg021:001C
+uint16_t rotate_pass2_src_color = 0;  /* Pass2_SrcColor_1 */
+
 // WZD s21p04
 // drake178: VGA_SlideColors()
 /*
-    called from Lair_Confirm_Draw()
-    VGA_SlideColors(247, 8, notify_color_slide_cycle);
+rotates count colors of the VGA DAC, from first_color: DAC color (first_color + ((shift + n) % count)) gets current_palette color (first_color + n)
+    writes the DAC directly (two passes, each after a vertical retrace), then clears all 256 palette change flags
+hand-written assembly (seg021)
 
+XREF:
+    Lair_Confirm_Draw()  Rotate_Palette_Colors(247, 8, notify_color_slide_cycle)
+    Notify1_Draw()  Rotate_Palette_Colors(244, 11, ...) / (247, 8, ...)
+    Notify2_Draw()  Rotate_Palette_Colors(244, 11, ...)
 */
-void VGA_SlideColors__STUB(int16_t First_Color, int16_t Count, int16_t ShiftBy)
+void Rotate_Palette_Colors(int16_t first_color, int16_t count, int16_t shift)
 {
+    int16_t itr = 0;  // _CX_
 
-/*
-mov     dx, 0
-mov     ax, [bp+ShiftBy]
-mov     bx, [bp+Count]
-div     bx
-mov     [bp+ShiftBy], dx
+    shift = ((uint16_t)shift % (uint16_t)count);  /* asm: mov dx, 0 / div bx - an unsigned divide */
 
+    rotate_pass1_dst_color = (shift + first_color);
 
-add     dx, [bp+First_Color]
-mov     [cs:Pass1_DstColor_1], dx
+    rotate_pass1_count = (count - shift);
 
+    rotate_pass1_src_color = first_color;
 
-mov     ax, [bp+Count]
-sub     ax, [bp+ShiftBy]
-mov     [cs:Pass1_Count], ax
+    rotate_pass2_dst_color = first_color;
 
+    rotate_pass2_count = shift;
 
-mov     ax, [bp+First_Color]
-mov     [cs:Pass1_SrcColor1], ax
+    rotate_pass2_src_color = ((count - shift) + first_color);
 
+    /* PLATFORM */  /* asm: in al, 3DAh / and al, 8 - waits for the vertical retrace before each pass; platform_palette_buffer[] stands in for the DAC (out 3C8h / 3C9h) */
 
-mov     ax, [bp+First_Color]
-mov     [cs:Pass2_DstColor_1], ax
+    for(itr = 0; itr < rotate_pass1_count; itr++)
+    {
 
+        platform_palette_buffer[(uint8_t)(rotate_pass1_dst_color + itr)].r = (current_palette[(((rotate_pass1_src_color + itr) * 3) + 0)] << 2);  /* asm: mov al, bl - the DAC index is a byte */
+        platform_palette_buffer[(uint8_t)(rotate_pass1_dst_color + itr)].g = (current_palette[(((rotate_pass1_src_color + itr) * 3) + 1)] << 2);
+        platform_palette_buffer[(uint8_t)(rotate_pass1_dst_color + itr)].b = (current_palette[(((rotate_pass1_src_color + itr) * 3) + 2)] << 2);
+        platform_palette_buffer[(uint8_t)(rotate_pass1_dst_color + itr)].a = 0xFF;
 
-mov     ax, [bp+ShiftBy]
-mov     [cs:Pass2_Count], ax
+    }
 
+    if(rotate_pass2_count != 0)
+    {
 
-mov     ax, [bp+Count]
-sub     ax, [bp+ShiftBy]
-add     ax, [bp+First_Color]
-mov     [cs:Pass2_SrcColor_1], ax
+        for(itr = 0; itr < rotate_pass2_count; itr++)
+        {
 
+            platform_palette_buffer[(uint8_t)(rotate_pass2_dst_color + itr)].r = (current_palette[(((rotate_pass2_src_color + itr) * 3) + 0)] << 2);
+            platform_palette_buffer[(uint8_t)(rotate_pass2_dst_color + itr)].g = (current_palette[(((rotate_pass2_src_color + itr) * 3) + 1)] << 2);
+            platform_palette_buffer[(uint8_t)(rotate_pass2_dst_color + itr)].b = (current_palette[(((rotate_pass2_src_color + itr) * 3) + 2)] << 2);
+            platform_palette_buffer[(uint8_t)(rotate_pass2_dst_color + itr)].a = 0xFF;
 
-mov     ax, [current_palette]
-mov     ds, ax
-mov     si, [cs:Pass1_SrcColor1]
-mov     ax, si
-shl     si, 1
-add     si, ax
-mov     bx, [cs:Pass1_DstColor_1]
-mov     cx, [cs:Pass1_Count]
-*/
+        }
 
+    }
 
-// Wait for Vsync
-// Wait for Vsync
-
-
-/*
-loc_1D105:
-cli
-mov     al, bl
-out     dx, al
-inc     dx
-lodsb
-out     dx, al
-lodsb
-out     dx, al
-lodsb
-out     dx, al
-sti
-dec     dx
-inc     bx
-loop    loc_1D105
-*/
-
-/*
-mov     si, [cs:Pass2_SrcColor_1]
-mov     ax, si
-shl     si, 1
-add     si, ax
-mov     bx, [cs:Pass2_DstColor_1]
-mov     cx, [cs:Pass2_Count]
-cmp     cx, 0
-jz      short loc_1D14F
-*/
-
-
-
-// Wait for Vsync
-// Wait for Vsync
-
-
-
-/*
-loc_1D13F:
-cli
-mov     al, bl
-out     dx, al
-inc     dx
-lodsb
-out     dx, al
-lodsb
-out     dx, al
-lodsb
-out     dx, al
-sti
-dec     dx
-inc     bx
-loop    loc_1D13F
-*/
-
-
-
-/*
-// clear all palette change flags
-loc_1D14F:
-mov     ax, ds
-mov     es, ax
-assume es:dseg
-mov     di, 768
-mov     cx, 128
-mov     ax, 0
-rep stosw
-*/
+    memset(&current_palette[768], 0, 256);  /* asm: mov di, 768 / mov cx, 128 / rep stosw - the 256 palette change flags */
 
 }
 
 
+
+// WZD seg021:001E
+uint16_t wave_start_color = 0;  /* Color_Wave_Start - in the code segment (cs:) */
+// WZD seg021:0020
+uint16_t wave_half_size = 0;  /* Color_Wave_HalfSize */
+// WZD seg021:0022
+uint16_t wave_step = 0;  /* Color_Wave_Step */
+
 // WZD s21p05
 // drake178: UU_VGA_ColorWave()
-// NX_VGA_ColorWave()
+// JimBalcomb: NX_VGA_ColorWave()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+sets count DAC colors from first_color to a back-and-forth sweep of the same count current_palette colors: color n gets palette color first_color + w, w = (n + step) folded over [0, count) - 0 .. count-1, then count-1 .. 0
+    then clears all 256 palette change flags
+hand-written assembly (seg021)
+*/
+void Wave_Palette_Colors__NIU(int16_t first_color, int16_t count, int16_t step)
+{
+    int16_t half_size = 0;  // _SI_
+    int16_t wave_idx = 0;  // _AX_
+    int16_t itr = 0;  // _DI_
+
+    step = ((uint16_t)step % ((uint16_t)count * 2));  /* asm: mov dx, 0 / shl bx, 1 / div bx - an unsigned divide */
+
+    wave_step = step;
+
+    wave_start_color = first_color;
+
+    wave_half_size = count;
+
+    /* PLATFORM */  /* asm: in al, 3DAh / and al, 8 - waits for the vertical retrace; platform_palette_buffer[] stands in for the DAC (out 3C8h / 3C9h) */
+
+    for(itr = 0; itr < count; itr++)
+    {
+
+        half_size = wave_half_size;
+
+        wave_idx = (itr + wave_step);
+
+        if((wave_idx - half_size) >= 0)  /* asm: cmp ax, si / js - the sign of the difference */
+        {
+
+            wave_idx -= half_size;
+
+            if((wave_idx - half_size) >= 0)
+            {
+
+                wave_idx -= half_size;
+
+            }
+            else
+            {
+
+                half_size = ((half_size - wave_idx) - 1);
+
+                wave_idx = half_size;
+
+            }
+
+        }
+
+        wave_idx += wave_start_color;
+
+        platform_palette_buffer[(uint8_t)(first_color + itr)].r = (current_palette[((wave_idx * 3) + 0)] << 2);  /* asm: mov al, bl - the DAC index is a byte */
+        platform_palette_buffer[(uint8_t)(first_color + itr)].g = (current_palette[((wave_idx * 3) + 1)] << 2);
+        platform_palette_buffer[(uint8_t)(first_color + itr)].b = (current_palette[((wave_idx * 3) + 2)] << 2);
+        platform_palette_buffer[(uint8_t)(first_color + itr)].a = 0xFF;
+
+    }
+
+    memset(&current_palette[768], 0, 256);  /* asm: mov di, 768 / mov cx, 128 / rep stosw - the 256 palette change flags */
+
+}
 
 
 // WZD s21p06
@@ -3988,22 +4143,6 @@ void Create_Remap_Palette(int16_t block, uint8_t red, uint8_t green, uint8_t blu
     {
         Create_Remap_Palette_(block, red, green, blue, percent);
     }
-
-//     if(vpercent > 0)                    /* percent < 100 */
-//     {
-//         if(vpercent < 100)              /* (percent < 100) && (percent > 0) */
-//         {
-//             Create_Remap_Palette_(block, red, green, blue, percent);
-//         }
-//         else                            /* (percent < 100) && (percent < 0) */
-//         {
-//             Create_Remap_Palette_0(block);
-//         }
-//     }
-//     else                                /* (percent >= 100) */
-//     {
-//         Create_Remap_Palette_1(block, red, green, blue);
-//     }
 
 }
 
@@ -4211,5 +4350,116 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue)
 }
 
 
-// WZD s21p07
-// FLIC_Load_Palette()
+// /* CLAUDE */  draft of WZD s21p07 FLIC_Load_Palette(), see FLIC_Draw.c  (not an id tag)
+// JimBalcomb: FLIC_Load_Palette()
+/* CLAUDE */  /* duplicate of FLIC_Load_Palette() in FLIC_Draw.c (the one that is built and called): this DOS draft (int86 / MK_FP) is kept for reference only */
+#if 0
+/*
+NOT Assembly, but IBM-PC/MS-DOS specific
+*/
+void /* far */ FLIC_Load_Palette(unsigned int sa_FLIC_Header, int frame_index)
+{
+    unsigned int data_seg;
+    unsigned int palette_seg;
+    unsigned int base_offset;
+    unsigned int pal_hdr_offset;
+    unsigned int src_offset;
+    unsigned int dst_offset;
+    unsigned int flag_offset;
+    unsigned int color_start;
+    unsigned int color_count;
+    unsigned char emm_handle;
+    unsigned char emm_page;
+    s_FLIC_HDR /* far */ *flic_hdr;
+    unsigned char /* far */ *src_bytes;
+    unsigned char /* far */ *dst_bytes;
+    union REGS regs;
+
+    data_seg = sa_FLIC_Header;
+    palette_seg = current_palette;
+    flic_hdr = (s_FLIC_HDR /* far */ *)MK_FP(data_seg, 0);
+
+    emm_handle = flic_hdr->emm_handle_number;
+    if (emm_handle != 0)
+    {
+        /* @@HaveEmmHndlNbr: Map EMS logical pages into physical pages 0 and 1 */
+        base_offset = flic_hdr->EMM_Logical_Page_Offset;
+        emm_page = flic_hdr->EMM_Logical_Page_Number;
+
+        /* INT 67h, AH=44h, AL=00h: Map handle page into physical page 0 */
+        regs.x.ax = 0x4400;
+        regs.x.bx = (unsigned int)emm_page;
+        regs.x.dx = (unsigned int)emm_handle;
+        int86(0x67, &regs, &regs);
+
+        /* INT 67h, AH=44h, AL=01h: Map handle page into physical page 1 */
+        /* Note: assembly reloads the same EMM_Logical_Page_Number without incrementing */
+        emm_page = flic_hdr->EMM_Logical_Page_Number;
+        regs.x.ax = 0x4401;
+        regs.x.bx = (unsigned int)emm_page;
+        regs.x.dx = (unsigned int)emm_handle;
+        int86(0x67, &regs, &regs);
+
+        data_seg = EMS_PFBA;
+    }
+    else
+    {
+        base_offset = 0;
+    }
+
+    src_bytes = (unsigned char /* far */ *)MK_FP(data_seg, 0);
+    dst_bytes = (unsigned char /* far */ *)MK_FP(palette_seg, 0);
+
+    /* Read word at offset (base_offset + 0x0E) to get palette header offset */
+    pal_hdr_offset = *(unsigned int /* far */ *)(src_bytes + base_offset + 0x0E) + base_offset;
+
+    if ((frame_index != 0) && (src_bytes[pal_hdr_offset + 6] != 0))
+    {
+        unsigned int frame_entry_offset;
+        unsigned int packed_start_and_count;
+
+        /* Per-frame palette entry at pal_hdr_offset + 8 + ((frame_index - 1) * 4) */
+        frame_entry_offset = pal_hdr_offset + 8 + ((unsigned int)(frame_index - 1) << 2);
+
+        src_offset = *(unsigned int /* far */ *)(src_bytes + frame_entry_offset) + base_offset;
+        packed_start_and_count = *(unsigned int /* far */ *)(src_bytes + frame_entry_offset + 2);
+
+        color_count = (packed_start_and_count >> 8) & 0xFF;
+        if (color_count == 0)
+        {
+            /* @@Done_DoNothing */
+            return;
+        }
+        color_start = packed_start_and_count & 0xFF;
+    }
+    else
+    {
+        /* Default/frame-0 palette header at pal_hdr_offset */
+        src_offset = *(unsigned int /* far */ *)(src_bytes + pal_hdr_offset + 0) + base_offset;
+        color_start = *(unsigned int /* far */ *)(src_bytes + pal_hdr_offset + 2);
+        color_count = *(unsigned int /* far */ *)(src_bytes + pal_hdr_offset + 4);
+    }
+
+    /* loc_1D4C5:
+     * dst_offset = color_start * 3 (3 bytes per RGB entry in 768-byte palette buffer)
+     * flag_offset = color_start + 768 (1 byte per color dirty/present flag following RGB data)
+     */
+    flag_offset = color_start + 768;
+    dst_offset = (color_start << 1) + color_start;
+
+    /* @@CopyColorsAndSetFlag: Copy 3 bytes (movsw + movsb) per color and mark flag byte */
+    while (color_count != 0)
+    {
+        *(unsigned int /* far */ *)(dst_bytes + dst_offset) = *(unsigned int /* far */ *)(src_bytes + src_offset);
+        dst_bytes[dst_offset + 2] = src_bytes[src_offset + 2];
+
+        src_offset += 3;
+        dst_offset += 3;
+
+        dst_bytes[flag_offset] = e_ST_TRUE;
+        flag_offset++;
+
+        color_count--;
+    }
+}
+#endif

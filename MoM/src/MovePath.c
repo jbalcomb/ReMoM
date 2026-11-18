@@ -42,12 +42,13 @@
     WIZARDS.EXE  ovr147
 */
 
-// WZD o147p01
+/*
+    BEGIN:  WZD o147p01  Move_Path_Find()
+*/
 
 int16_t wx;
 int16_t wy;
 // MoM_Data  struct s_MOVE_PATH * movepath_cost_map;
-
 int8_t    a_cost_was_updated = ST_TRUE; /* relaxation "changed" flag */  // WZD ovr147:0000  Code-Segment Variable
 int16_t   origin_row = 0;               // WZD ovr147:0002  Code-Segment Variable
 /* origin_row is the linear (1-D) array index of the first cell of the source square's row — the anchor offset where each pathfinding sweep begins. */
@@ -67,8 +68,6 @@ int8_t    reach_cost;
 int16_t   adj_pos;
 int16_t   curr_wx;
 int16_t   curr_wy;
-
-
 static void Check_Cost(void)
 {
     adjacent_reach_cost = *(movepath_reach_cost + (adj_pos));
@@ -199,7 +198,6 @@ static void Do_Costs_Lst(void)
     movepath_reach_cost++;
     movepath_reach_from++;
 }
-
 /*
     Structure map — see doc/PathFinding/MoM-MovePath-Compare.md
 
@@ -214,6 +212,7 @@ static void Do_Costs_Lst(void)
                       then an upward row pass (Iter_Rows_Up), the alternating-raster (Gauss-Seidel)
                       acceleration that propagates costs both with and against the scan.
 */
+// WZD o147p01
 void Move_Path_Find(int16_t arg_wx, int16_t arg_wy, struct s_MOVE_PATH * arg_movepath_cost_map)
 {
     wx = arg_wx;
@@ -260,6 +259,7 @@ Iter_Rows_Down:
     }
     Do_Costs_Lst();
 
+    /* OGBUG  the down pass stops once ofst_movepath_cost reaches 2320 (row 38 done) and the up pass below once it is under 60 (row 1 done): rows 39 and 0 are never relaxed unless the start square is on them, so no path can reach the polar rows */
     if((incr_flag != 0) && (ofst_movepath_cost < 2320))
     {
         goto Iter_Rows_Down;
@@ -319,3 +319,7 @@ Iter_Rows_Up:
 
     /* Steps 2 (destination-impassable bail), 4 (back-trace Reach_From[] -> source), and 5 (reverse + (x,y)) are done by the caller Make_Move_Path (UnitMove.c). */
 }
+
+/*
+    END:  WZD o147p01  Move_Path_Find()
+*/

@@ -1,0 +1,32 @@
+module_num=214
+module=crwd386
+source=0214-crwd386.md
+range[0]=1:0x0012F006 linear=0x0013F006 size=1
+range[1]=2:0x0000C9F0 linear=0x0017C9F0 size=68
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME               SYMBOL             CHUNK
+m214f001  1    -      0x0013F006  1:0x0012F006  static,code  __null_FPE_rtn     __null_FPE_rtn     regions/07-object-1/001C4654-001C4E53.txt
+-         -    -      0x0017C9F0  2:0x0000C9F0  data         __dynend           __dynend           regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017C9F4  2:0x0000C9F4  data         __curbrk           __curbrk           regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017C9F8  2:0x0000C9F8  data         __LpCmdLine        __LpCmdLine        regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017C9FC  2:0x0000C9FC  data         __LpPgmName        __LpPgmName        regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA00  2:0x0000CA00  data         __psp              __psp              regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA04  2:0x0000CA04  data         __x386_stacklow    __x386_stacklow    regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA04  2:0x0000CA04  data         __STACKLOW         __STACKLOW         regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA08  2:0x0000CA08  data         __STACKTOP         __STACKTOP         regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA0C  2:0x0000CA0C  data         __ASTACKSIZ        __ASTACKSIZ        regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA10  2:0x0000CA10  data         __ASTACKPTR        __ASTACKPTR        regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA14  2:0x0000CA14  data         __cbyte            __cbyte            regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA18  2:0x0000CA18  data         __cbyte2           __cbyte2           regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA1C  2:0x0000CA1C  data         __child            __child            regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA20  2:0x0000CA20  data         __no87             __no87             regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA22  2:0x0000CA22  data         __Extender         __Extender         regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA23  2:0x0000CA23  data         __ExtenderSubtype  __ExtenderSubtype  regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA24  2:0x0000CA24  data         __X32VM            __X32VM            regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA25  2:0x0000CA25  data         __Envptr           __Envptr           regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA29  2:0x0000CA29  data         __Envseg           __Envseg           regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA2B  2:0x0000CA2B  data         __osmajor          __osmajor          regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA2C  2:0x0000CA2C  data         __osminor          __osminor          regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA2D  2:0x0000CA2D  data         __FPE_handler      __FPE_handler      regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA2D  2:0x0000CA2D  data         ___FPE_handler     ___FPE_handler     regions/08-object-2/001FAE54-001FB653.txt

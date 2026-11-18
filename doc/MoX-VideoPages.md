@@ -33,7 +33,7 @@ GUI_PageFlip()
     Restore_Mouse_State();
 
 
-dseg:7898 00 00                                           GUI_DS_Save dw 0                        ; DATA XREF: GUI_PageFlipPrep+3w ...
+dseg:7898 00 00                                           GUI_DS_Save dw 0                        ; DATA XREF: GUI_PageFlipPrep+3^w ...
 
 
 

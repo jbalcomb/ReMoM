@@ -70,9 +70,13 @@ char str_MagicNode[] = " magic node ";
 // WZD dseg:3391
 char str_AsTheTargetFor[] = "as the target for ";
 // WZD dseg:33A4
-char byte_39E44[] = " \x2\x0";
+// char byte_39E44[] = " \x2\x0";
+/* CLAUDE */  /* REBUG */  /* asm: dseg:33A4 db ' ', 2, 0  (3 bytes; the next string starts at 33A7) */
+char str_space_highlight_on[] = " \x02";  // \x02 switches the font to its highlight color, for the spell name
 // WZD dseg:33A7
-char byte_39E47[] = "\x1 spell.";
+// char byte_39E47[] = "\x1 spell.";
+/* CLAUDE */
+char str_highlight_off_spell[] = "\x01 spell.";  // \x01 switches the font back to its normal color
 // WZD dseg:33B0
 char str_Casting[] = "Casting";
 
@@ -89,8 +93,10 @@ int16_t _osc_spell_idx;
 int16_t _osc_map_plane;
 
 // WZD dseg:C142
+/* OGBUG */  /* write-only: Spell_Casting_Screen__WIP() sets it to 1 and nothing in WIZARDS reads it */
 int16_t word_42BE2;
 // WZD dseg:C144
+/* OGBUG */  /* write-only: Spell_Casting_Screen__WIP() sets it to 0 and nothing in WIZARDS reads it */
 int16_t word_42BE4;
 // WZD dseg:C146 00                                              db    0
 // WZD dseg:C147 00                                              db    0
@@ -142,9 +148,13 @@ int16_t _osc_mouse_image_num;
 // struct s_mouse_list * _current_mouse_list;
 struct s_mouse_list * _scastscr_mouse_list;
 // WZD dseg:C170
-int16_t word_42C10;
+// int16_t word_42C10;
+/* CLAUDE */
+int16_t _osc_color_cycle_down;  // see Spell_Casting_Screen_Draw_Panel()
 // WZD dseg:C172
-int16_t word_42C12;
+// int16_t word_42C12;
+/* CLAUDE */
+int16_t _osc_color_cycle_up;  // see Spell_Casting_Screen_Draw_Panel()
 // WZD dseg:C174
 int16_t _osc_cancel_button_field;
 
@@ -170,13 +180,17 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
     int16_t have_valid_target = 0;  // _DI_
     int16_t entity_idx = 0;  // _SI_
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     _osc_spell_idx = _players[_current_player_idx].casting_spell_idx;
 
-    word_42C10 = 0;
+    // word_42C10 = 0;
+    /* CLAUDE */
+    _osc_color_cycle_down = 0;
 
-    word_42C12 = 0;
+    // word_42C12 = 0;
+    /* CLAUDE */
+    _osc_color_cycle_up = 0;
 
     _osc_spell_target_type = spell_target_type;
 
@@ -188,9 +202,9 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
     _osc_wp = ST_UNDEFINED;
 
-    word_42BE4 = 0;
+    word_42BE4 = 0;  /* OGBUG */  /* dead store, nothing reads word_42BE4 */
 
-    word_42BE2 = 1;
+    word_42BE2 = 1;  /* OGBUG */  /* dead store, nothing reads word_42BE2 */
 
     _osc_map_plane = _map_plane;
 
@@ -233,15 +247,15 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
         Spell_Casting_Screen_Add_Fields();
 
-        var_10 = INVALID_FIELD;
+        var_10 = INVALID_FIELD;  /* OGBUG */  /* dead store, var_10 is never read */
 
-        var_12 = INVALID_FIELD;
+        var_12 = INVALID_FIELD;  /* OGBUG */  /* dead store, var_12 is never read */
 
-        var_14 = INVALID_FIELD;
+        var_14 = INVALID_FIELD;  /* OGBUG */  /* dead store, var_14 is never read */
 
         input_field_idx = Get_Input();
 
-        scanned_field = Scan_Input();
+        scanned_field = Scan_Input();  /* OGBUG */  /* dead store, scanned_field is never read */
 
         if(input_field_idx == _osc_cancel_button_field)
         {
@@ -289,23 +303,12 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
             }
 
-            if(entity_idx == ST_UNDEFINED)
+            if(entity_idx != ST_UNDEFINED)
             {
 
                 Play_Left_Click();
 
                 entity_idx = abs(entity_idx);
-
-                if(_osc_spell_target_type == stt_Map_Square)
-                {
-
-                    leave_screen = Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
-
-                }
-
-            }
-            else  /* (entity_idx == ST_UNDEFINED) */
-            {
 
                 if(_osc_spell_target_type == stt_Map_Square)
                 {
@@ -360,41 +363,42 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                         entity_idx -= MAX_UNIT_COUNT;
 
+                        /* CLAUDE */  /* REBUG */  /* asm: the case bodies are in the order 5, 6, 0/1, 2/3; table sw_scs_node covers 0..6 and sends 4 and anything above 6 to the switch exit, so there is no case 4, no case 7 and no default */
                         switch(_osc_spell_target_type)
                         {
 
-                            case stt_Friendly_Unit:
-                            case stt_Friendly_Group:
-                            {
-                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
-                                {
-                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
-                                    if(troop_count > 0)
-                                    {
-                                        entity_idx = troops[0];
-                                        have_valid_target = ST_TRUE;
-                                    }
-                                }
-                            } break;
-
-                            case stt_Enemy_Unit:
-                            case stt_Enemy_Group:
-                            {
-                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
-                                {
-                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
-                                    if(troop_count > 0)
-                                    {
-                                        entity_idx = troops[0];
-                                        have_valid_target = ST_TRUE;
-                                    }
-                                }
-                            } break;
-
-                            case stt_Map_Square:
-                            {
-                                // N/A
-                            } break;
+                            // case stt_Friendly_Unit:
+                            // case stt_Friendly_Group:
+                            // {
+                            //     if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                            //     {
+                            //         Army_At_City(entity_idx, &troop_count, &troops[0]);
+                            //         if(troop_count > 0)
+                            //         {
+                            //             entity_idx = troops[0];
+                            //             have_valid_target = ST_TRUE;
+                            //         }
+                            //     }
+                            // } break;
+                            //
+                            // case stt_Enemy_Unit:
+                            // case stt_Enemy_Group:
+                            // {
+                            //     if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                            //     {
+                            //         Army_At_City(entity_idx, &troop_count, &troops[0]);
+                            //         if(troop_count > 0)
+                            //         {
+                            //             entity_idx = troops[0];
+                            //             have_valid_target = ST_TRUE;
+                            //         }
+                            //     }
+                            // } break;
+                            //
+                            // case stt_Map_Square:
+                            // {
+                            //     // N/A
+                            // } break;
 
                             case stt_Friendly_City:
                             {
@@ -412,14 +416,44 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 }
                             } break;
 
-                            case stt_Node:
+                            // case stt_Node:
+                            // {
+                            //     // N/A
+                            // } break;
+                            //
+                            // default:
+                            // {
+                            //     STU_DEBUG_BREAK();
+                            // } break;
+
+                            /* CLAUDE */  /* REBUG */  /* moved below stt_Enemy_City */
+                            case stt_Friendly_Unit:
+                            case stt_Friendly_Group:
                             {
-                                // N/A
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        entity_idx = troops[0];
+                                        have_valid_target = ST_TRUE;
+                                    }
+                                }
                             } break;
 
-                            default:
+                            /* CLAUDE */  /* REBUG */  /* moved below stt_Enemy_City */
+                            case stt_Enemy_Unit:
+                            case stt_Enemy_Group:
                             {
-                                STU_DEBUG_BREAK();
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        entity_idx = troops[0];
+                                        have_valid_target = ST_TRUE;
+                                    }
+                                }
                             } break;
 
                         }
@@ -445,7 +479,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         {
                             _osc_main_map_grid_x++;
                         }
-                        if(_osc_main_map_grid_x == 11)
+                        if(_osc_main_map_grid_x == MAP_X_MAX)
                         {
                             _osc_main_map_grid_x--;
                         }
@@ -453,13 +487,35 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         {
                             _osc_main_map_grid_y++;
                         }
-                        if(_osc_main_map_grid_y == 9)
+                        if(_osc_main_map_grid_y == MAP_Y_MAX)
                         {
                             _osc_main_map_grid_y--;
                         }
 
+                        /* CLAUDE */  /* REBUG */  /* asm: the case bodies are in the order 4, 5, 6, 0, 1, 2, 3, 7 (off_5CD94); above 7 goes to the switch exit, so there is no default */
                         switch(_osc_spell_target_type)
                         {
+
+                            /* CLAUDE */  /* REBUG */  /* moved above stt_Friendly_Unit */
+                            case stt_Map_Square:
+                            {
+                                Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
+                                leave_screen = ST_TRUE;
+                            } break;
+
+                            /* CLAUDE */  /* REBUG */  /* moved above stt_Friendly_Unit */
+                            case stt_Friendly_City:
+                            {
+                                Set_Spell_Casting_Map_Draw_WX_2(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
+
+                            /* CLAUDE */  /* REBUG */  /* moved above stt_Friendly_Unit */
+                            case stt_Enemy_City:
+                            {
+                                Set_Spell_Casting_Map_Draw_WX_2(entity_idx);
+                                leave_screen = ST_TRUE;
+                            } break;
 
                             case stt_Friendly_Unit:
                             {
@@ -473,7 +529,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 else
                                 {
                                     Deactivate_Help_List();
-                                    Spell_Casting_Screen_Reset_Map_Draw();
+                                    Reset_Spell_Casting_Map_Draw();
                                     Spell_Casting_Screen_Allocate();
                                     Build_Select_Target_String(_osc_spell_target_type, spell_name);
                                     Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
@@ -488,7 +544,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Friendly_Group:
                             {
-                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(entity_idx);
+                                Set_Spell_Casting_Map_Draw_WX_1(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
 
@@ -504,7 +560,7 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                                 else
                                 {
                                     Deactivate_Help_List();
-                                    Spell_Casting_Screen_Reset_Map_Draw();
+                                    Reset_Spell_Casting_Map_Draw();
                                     Spell_Casting_Screen_Allocate();
                                     Build_Select_Target_String(_osc_spell_target_type, spell_name);
                                     Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
@@ -519,44 +575,56 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
 
                             case stt_Enemy_Group:
                             {
-                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(entity_idx);
+                                Set_Spell_Casting_Map_Draw_WX_3(entity_idx);
                                 leave_screen = ST_TRUE;
                             } break;
 
-                            case stt_Map_Square:
-                            {
-                                Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
-                                leave_screen = ST_TRUE;
-                            } break;
-
-                            case stt_Friendly_City:
-                            {
-                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
-                                leave_screen = ST_TRUE;
-                            } break;
-
-                            case stt_Enemy_City:
-                            {
-                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(entity_idx);
-                                leave_screen = ST_TRUE;
-                            } break;
+                            // case stt_Map_Square:
+                            // {
+                            //     Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
+                            //     leave_screen = ST_TRUE;
+                            // } break;
+                            //
+                            // case stt_Friendly_City:
+                            // {
+                            //     Set_Spell_Casting_Map_Draw_WX_2(entity_idx);
+                            //     leave_screen = ST_TRUE;
+                            // } break;
+                            //
+                            // case stt_Enemy_City:
+                            // {
+                            //     Set_Spell_Casting_Map_Draw_WX_2(entity_idx);
+                            //     leave_screen = ST_TRUE;
+                            // } break;
 
                             case stt_Node:
                             {
-                                Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(entity_idx);
+                                Set_Spell_Casting_Map_Draw_WX_4(entity_idx);
                                 leave_screen = ST_TRUE;
 
                             } break;
 
-                            default:
-                            {
-                                STU_DEBUG_BREAK();
-                            } break;
+                            // default:
+                            // {
+                            //     STU_DEBUG_BREAK();
+                            // } break;
 
                         }
-                        
+
                     }
                 }
+            }
+            /* CLAUDE */  /* REBUG */  /* asm: loc_5C9DE, the == ST_UNDEFINED branch */
+            else  /* (entity_idx != ST_UNDEFINED) */
+            {
+
+                if(_osc_spell_target_type == stt_Map_Square)
+                {
+
+                    leave_screen = Map_Square_Is_Targetable((int16_t)_main_map_grid_x, (int16_t)_main_map_grid_y);
+
+                }
+
             }
         }  /* (input_field_idx == _main_map_grid_field) */
         /*
@@ -569,10 +637,10 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         if(abs(input_field_idx) == _minimap_grid_field)
         {
             Play_Left_Click();
-            Reduced_Map_Coords(&x_screen_or_map, &y_screen_or_map, (((12 / 2) + _map_x) % WORLD_WIDTH), ((10 / 2) + _map_y), 58, 30);
+            Reduced_Map_Coords(&x_screen_or_map, &y_screen_or_map, ((_map_x + (MAP_WIDTH / 2)) % WORLD_WIDTH), (_map_y + (MAP_HEIGHT / 2)), REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
             _prev_world_x = (int16_t)(x_screen_or_map + _minimap_grid_x);
             _prev_world_y = (int16_t)(y_screen_or_map + _minimap_grid_y);
-            IDK_CheckSet_MapDisplay_XY();
+            Clamp_Map_Window_Position();
             Center_Map(&_map_x, &_map_y, _prev_world_x, _prev_world_y, _map_plane);
             MainScr_Create_Reduced_Map_Picture();
             Spell_Casting_Screen_Assign_Mouse_Images();
@@ -589,14 +657,20 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
         if(-input_field_idx == _main_map_grid_field)
         {
             entity_idx = GET_MAIN_MAP_ENTITY();
-            if(entity_idx == ST_UNDEFINED)
+            // if(entity_idx == ST_UNDEFINED)
+            // {
+            //     _prev_world_x += (int16_t)(_main_map_grid_x - (12 / 2));
+            //     _prev_world_y += (int16_t)(_main_map_grid_y - (10 / 2));
+            //     IDK_CheckSet_MapDisplay_XY();  // ; updates _prev_world_x,y and _map_x
+            // }
+            // else
+            // {
+            /* CLAUDE */  /* REBUG */  /* asm: cmp si, -1 / jnz <Play_Left_Click, abs, unit/city> / jmp loc_5CCD6 <empty square>  ...the click is on the != branch */
+            if(entity_idx != ST_UNDEFINED)
             {
-                _prev_world_x += (int16_t)(_main_map_grid_x - (12 / 2));
-                _prev_world_y += (int16_t)(_main_map_grid_y - (10 / 2));
-                IDK_CheckSet_MapDisplay_XY();  // ; updates _prev_world_x,y and _map_x
-            }
-            else
-            {
+                /* CLAUDE */  /* REBUG */  /* asm: call Play_Left_Click / push si / call abs / mov si, ax */
+                Play_Left_Click();
+                entity_idx = abs(entity_idx);
                 if(entity_idx < MAX_UNIT_COUNT)
                 {
                     if(_UNITS[entity_idx].owner_idx == _current_player_idx)
@@ -610,7 +684,9 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
                             y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             Deactivate_Help_List();
-                            _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            // _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            /* CLAUDE */  /* REBUG */  /* asm: call j_Unit_List_Window / add sp, 8 / push 1  ...the return value is dropped */
+                            Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
                             Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
                             Spell_Casting_Screen_Allocate();
                             Build_Select_Target_String(_osc_spell_target_type, spell_name);
@@ -633,7 +709,9 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             x_screen_or_map = (int16_t)(_main_map_grid_x * SQUARE_WIDTH);
                             y_screen_or_map = (int16_t)(MAP_SCREEN_Y + (_main_map_grid_y * SQUARE_HEIGHT));
                             Deactivate_Help_List();
-                            _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            // _osc_wx = Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
+                            /* CLAUDE */  /* REBUG */  /* asm: call j_Unit_List_Window / add sp, 8 / push 1  ...the return value is dropped */
+                            Unit_List_Window(entity_idx, 0, x_screen_or_map, y_screen_or_map);
                             Assign_Auto_Function(Spell_Casting_Screen_Draw, 1);
                             Spell_Casting_Screen_Allocate();
                             Build_Select_Target_String(_osc_spell_target_type, spell_name);
@@ -651,31 +729,32 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                 {
                     have_valid_target = ST_FALSE;
                     entity_idx -= MAX_UNIT_COUNT;
+                    /* CLAUDE */  /* REBUG */  /* asm: the case bodies are in the order 5, 6, 0/1, 2/3; table sw_scs_rtck covers 0..6 and sends 4 and anything above 6 to the switch exit, so there is no case 4, no case 7 and no default */
                     switch(_osc_spell_target_type)
                     {
 
-                        case stt_Friendly_Unit:
-                        case stt_Friendly_Group:
-                        {
-                            if(_CITIES[entity_idx].owner_idx == _current_player_idx)
-                            {
-                                have_valid_target = ST_TRUE;
-                            }
-                        } break;
-
-                        case stt_Enemy_Unit:
-                        case stt_Enemy_Group:
-                        {
-                            if(_CITIES[entity_idx].owner_idx != _current_player_idx)
-                            {
-                                have_valid_target = ST_TRUE;
-                            }
-                        } break;
-
-                        case stt_Map_Square:
-                        {
-                            // N/A
-                        } break;
+                        // case stt_Friendly_Unit:
+                        // case stt_Friendly_Group:
+                        // {
+                        //     if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                        //     {
+                        //         have_valid_target = ST_TRUE;
+                        //     }
+                        // } break;
+                        //
+                        // case stt_Enemy_Unit:
+                        // case stt_Enemy_Group:
+                        // {
+                        //     if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                        //     {
+                        //         have_valid_target = ST_TRUE;
+                        //     }
+                        // } break;
+                        //
+                        // case stt_Map_Square:
+                        // {
+                        //     // N/A
+                        // } break;
 
                         case stt_Friendly_City:
                         {
@@ -693,14 +772,34 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                             }
                         } break;
 
-                        case stt_Node:
+                        // case stt_Node:
+                        // {
+                        //     // N/A
+                        // } break;
+                        //
+                        // default:
+                        // {
+                        //     STU_DEBUG_BREAK();
+                        // } break;
+
+                        /* CLAUDE */  /* REBUG */  /* moved below stt_Enemy_City */
+                        case stt_Friendly_Unit:
+                        case stt_Friendly_Group:
                         {
-                            // N/A
+                            if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
                         } break;
 
-                        default:
+                        /* CLAUDE */  /* REBUG */  /* moved below stt_Enemy_City */
+                        case stt_Enemy_Unit:
+                        case stt_Enemy_Group:
                         {
-                            STU_DEBUG_BREAK();
+                            if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                            {
+                                have_valid_target = ST_TRUE;
+                            }
                         } break;
 
                     }
@@ -720,6 +819,13 @@ int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16
                         screen_changed = ST_TRUE;
                     }
                 }
+            }
+            /* CLAUDE */  /* REBUG */  /* asm: loc_5CCD6, the == ST_UNDEFINED branch */
+            else  /* (entity_idx != ST_UNDEFINED) */
+            {
+                _prev_world_x += (int16_t)(_main_map_grid_x - (MAP_WIDTH / 2));
+                _prev_world_y += (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
+                Clamp_Map_Window_Position();  // ; updates _prev_world_x,y and _map_x
             }
         }
         /*
@@ -779,10 +885,10 @@ void Spell_Casting_Screen_Add_Fields(void)
 
     _minimap_grid_field = INVALID_FIELD;
 
-    // DONT  CRP_OVL_UU_Control_4 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_3 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_2 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_1 = INVALID_FIELD;
+    niu_map_screen_field_4 = INVALID_FIELD;
+    niu_map_screen_field_3 = INVALID_FIELD;
+    niu_map_screen_field_2 = INVALID_FIELD;
+    niu_map_screen_field_1 = INVALID_FIELD;
 
     Add_Game_Button_Fields();
 
@@ -804,7 +910,7 @@ void Spell_Casting_Screen_Add_Fields(void)
         _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
-    _osc_cancel_button_field = Add_Button_Field(263, 181, str_empty_string__ovr070, cast_cancel_button, str_hotkey_C__ovr070[0], ST_UNDEFINED);
+    _osc_cancel_button_field = Add_Button_Field(263, 181, str_empty_string__ovr070, cast_cancel_button, str_hotkey_C__ovr070, ST_UNDEFINED);
     
 }
 
@@ -818,10 +924,10 @@ void Spell_Casting_Screen_Draw(void)
     Reset_Window();
     Set_Page_Off();
     Reset_Map_Draw();
-    Draw_Maps(0, 20, 12, 10, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
+    Draw_Maps(MAP_SCREEN_X, MAP_SCREEN_Y, MAP_WIDTH, MAP_HEIGHT, &_map_x, &_map_y, _map_plane, _prev_world_x, _prev_world_y, _current_player_idx);
     FLIC_Draw(0, 0, main_background_seg);
-    Draw_World_Window(251, 21, 58, 30);
-    Main_Screen_Draw_Unit_Action_Locked_Buttons();  // BUGBUG  ¿ isn't this completly hidden by the deselect bk and cancel butt ?
+    Draw_World_Window(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT);
+    Main_Screen_Draw_Unit_Action_Locked_Buttons();  // OGBUG  this is completly hidden by the deselect bk and cancel butt
     Main_Screen_Draw_Game_Buttons();
     Main_Screen_Draw_Status_Window();
     Spell_Casting_Screen_Draw_Panel();
@@ -943,39 +1049,39 @@ e.g.,
 void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 {
 
-    stu_strcpy((char *)_osc_panel_title, str_SelectA);  // "Select a"
+    stu_strcpy(_osc_panel_title, str_SelectA);  // "Select a"
 
     switch(spell_target_type)
     {
-        case 0:
+        case stt_Friendly_Unit:
         {
             stu_strcat(_osc_panel_title, str_FriendlyUnit);
         } break;
-        case 1:
+        case stt_Friendly_Group:
         {
             stu_strcat(_osc_panel_title, str_FriendlyGroup);
         } break;
-        case 2:
+        case stt_Enemy_Unit:
         {
             stu_strcat(_osc_panel_title, str_NEnemyUnit);
         } break;
-        case 3:
+        case stt_Enemy_Group:
         {
             stu_strcat(_osc_panel_title, str_NEnemyGroup);
         } break;
-        case 4:
+        case stt_Map_Square:
         {
             stu_strcat(_osc_panel_title, aSpace);
         } break;
-        case 5:
+        case stt_Friendly_City:
         {
             stu_strcat(_osc_panel_title, str_FriendlyCity);
         } break;
-        case 6:
+        case stt_Enemy_City:
         {
             stu_strcat(_osc_panel_title, str_NEnemyCity);
         } break;
-        case 7:
+        case stt_Node:
         {
             stu_strcat(_osc_panel_title, str_MagicNode);
         } break;
@@ -985,49 +1091,57 @@ void Build_Select_Target_String(int16_t spell_target_type, char * spell_name)
 
     stu_strcat(_osc_panel_title, An(spell_name));
 
-    stu_strcat(_osc_panel_title, byte_39E44);
-    
+    stu_strcat(_osc_panel_title, str_space_highlight_on);
+
     stu_strcat(_osc_panel_title, spell_name);
 
-    stu_strcat(_osc_panel_title, byte_39E47);
+    stu_strcat(_osc_panel_title, str_highlight_off_spell);
 
 }
 
 
 // WZD o70p07
 // drake178: sub_5D0B3()
-// DONT  void UU_IDK_Entirely_On_Map(int16_t * new_mx, int16_t * new_my, int16_t old_mx, int16_t old_my)
-// DONT  {
-// DONT  
-// DONT      *new_mx = old_mx;
-// DONT      *new_my = old_my;
-// DONT  
-// DONT      if(*new_mx == 0)
-// DONT      {
-// DONT          *new_mx++;
-// DONT      }
-// DONT  
-// DONT      if(*new_mx == 11)
-// DONT      {
-// DONT          *new_mx--;
-// DONT      }
-// DONT  
-// DONT      if(*new_my == 0)
-// DONT      {
-// DONT          *new_my++;
-// DONT      }
-// DONT  
-// DONT      if(*new_my == 9)
-// DONT      {
-// DONT          *new_my--;
-// DONT      }
-// DONT  
-// DONT  }
+// TODO  void UU_IDK_Entirely_On_Map(int16_t * new_mx, int16_t * new_my, int16_t old_mx, int16_t old_my)
+// TODO  {
+// TODO  
+// TODO      *new_mx = old_mx;
+// TODO      *new_my = old_my;
+// TODO  
+// TODO      if(*new_mx == 0)
+// TODO      {
+// TODO          // *new_mx++;
+// TODO          /* CLAUDE */  /* REBUG */  /* asm: inc [word ptr si]  ...*new_mx++ steps the pointer, not the value */
+// TODO          (*new_mx)++;
+// TODO      }
+// TODO
+// TODO      if(*new_mx == MAP_X_MAX)
+// TODO      {
+// TODO          // *new_mx--;
+// TODO          /* CLAUDE */  /* REBUG */  /* asm: dec [word ptr si] */
+// TODO          (*new_mx)--;
+// TODO      }
+// TODO
+// TODO      if(*new_my == 0)
+// TODO      {
+// TODO          // *new_my++;
+// TODO          /* CLAUDE */  /* REBUG */  /* asm: inc [word ptr di] */
+// TODO          (*new_my)++;
+// TODO      }
+// TODO
+// TODO      if(*new_my == MAP_Y_MAX)
+// TODO      {
+// TODO          // *new_my--;
+// TODO          /* CLAUDE */  /* REBUG */  /* asm: dec [word ptr di] */
+// TODO          (*new_my)--;
+// TODO      }
+// TODO  
+// TODO  }
 
 
 // WZD o70p08
-// drake178: Spell_Casting_Screen_Reset_Map_Draw()
-void Spell_Casting_Screen_Reset_Map_Draw(void)
+// drake178: Reset_Spell_Casting_Map_Draw()
+void Reset_Spell_Casting_Map_Draw(void)
 {
     _osc_wx = ST_UNDEFINED;
     _osc_wy = ST_UNDEFINED;
@@ -1037,7 +1151,7 @@ void Spell_Casting_Screen_Reset_Map_Draw(void)
 
 // WZD o70p09
 // drake178: sub_5D0FF()
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(int16_t wx)
+void Set_Spell_Casting_Map_Draw_WX_1(int16_t wx)
 {
     _osc_wx = wx;
     _osc_wy = ST_UNDEFINED;
@@ -1047,7 +1161,7 @@ void Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(int16_t wx)
 
 // WZD o70p10
 // drake178: sub_5D116()
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(int16_t wx)
+void Set_Spell_Casting_Map_Draw_WX_2(int16_t wx)
 {
     _osc_wx = wx;
     _osc_wy = ST_UNDEFINED;
@@ -1057,7 +1171,7 @@ void Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(int16_t wx)
 
 // WZD o70p11
 // drake178: sub_5D12D()
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(int16_t wx)
+void Set_Spell_Casting_Map_Draw_WX_3(int16_t wx)
 {
     _osc_wx = wx;
     _osc_wy = ST_UNDEFINED;
@@ -1067,7 +1181,7 @@ void Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(int16_t wx)
 
 // WZD o70p12
 // drake178: sub_5D144()
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(int16_t wx)
+void Set_Spell_Casting_Map_Draw_WX_4(int16_t wx)
 {
     _osc_wx = wx;
     _osc_wy = ST_UNDEFINED;
@@ -1083,9 +1197,9 @@ Map_Square_...as in Main Movement Map
 */
 int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my)
 {
-    int16_t map_sqaure_is_targetable = 0;  // _DI_
+    int16_t square_is_targetable = 0;  // _DI_
 
-    map_sqaure_is_targetable = ST_FALSE;
+    square_is_targetable = ST_FALSE;
 
     _osc_main_map_grid_x = mx;
     _osc_main_map_grid_y = my;
@@ -1095,7 +1209,7 @@ int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my)
         _osc_main_map_grid_x += 1;
     }
 
-    if(_osc_main_map_grid_x == 11)
+    if(_osc_main_map_grid_x == MAP_X_MAX)
     {
         _osc_main_map_grid_x -= 1;
     }
@@ -1105,7 +1219,7 @@ int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my)
         _osc_main_map_grid_y += 1;
     }
 
-    if(_osc_main_map_grid_y == 9)
+    if(_osc_main_map_grid_y == MAP_Y_MAX)
     {
         _osc_main_map_grid_y -= 1;
     }
@@ -1133,10 +1247,10 @@ int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my)
     }
     else
     {
-        map_sqaure_is_targetable = ST_TRUE;
+        square_is_targetable = ST_TRUE;
     }
 
-    return map_sqaure_is_targetable;
+    return square_is_targetable;
 
 }
 
@@ -1206,10 +1320,16 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                     wx -= WORLD_WIDTH;
                 }
                 wy = (_map_y + itr_my);
+                // if(
+                //     SQUARE_UNEXPLORED(wx, wy, _map_plane)
+                //     &&
+                //     (_osc_spell_idx == spl_Earth_Lore)
+                // )
+                /* CLAUDE */  /* REBUG */  /* asm: cmp [_osc_spell_idx], spl_Earth_Lore / jz <skip the red cross> */
                 if(
                     SQUARE_UNEXPLORED(wx, wy, _map_plane)
                     &&
-                    (_osc_spell_idx == spl_Earth_Lore)
+                    (_osc_spell_idx != spl_Earth_Lore)
                 )
                 {
                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
@@ -1250,67 +1370,69 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = crsr_RedCross;
                                 }
                             } break;
-                            case stt_Map_Square:
-                            {
-                                // N/A
-                            } break;
-                            case stt_Friendly_City:
-                            {
-                                // N/A
-                            } break;
-                            case stt_Enemy_City:
-                            {
-                                // N/A
-                            } break;
-                            case stt_Node:
-                            {
-                                // N/A
-                            } break;
-                            default:
-                            {
-                                STU_DEBUG_BREAK();
-                            }
+                            /* CLAUDE */  /* REBUG */  /* asm: table off_5D5CD covers 0..3 and sends anything above 3 to the switch exit, so there are no cases 4..7 and no default */
+                            // case stt_Map_Square:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // case stt_Friendly_City:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // case stt_Enemy_City:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // case stt_Node:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // default:
+                            // {
+                            //     STU_DEBUG_BREAK();
+                            // }
                         }
                     }
                     else if(entity_idx < (MAX_UNIT_COUNT + MAX_CITY_COUNT))
                     {
                         entity_idx -= MAX_UNIT_COUNT;
+                        /* CLAUDE */  /* REBUG */  /* asm: the case bodies are in the order 5, 6, 0/1, 2/3 (off_5D5BF: 0 and 1 share stt_00__01, 2 and 3 share stt_02_03); 4 and anything above 6 go to the switch exit, so there is no case 4, no case 7 and no default */
                         switch(_osc_spell_target_type)
                         {
-                            case stt_Friendly_Unit:
-                            {
-                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
-                                {
-                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
-                                    if(troop_count > 0)
-                                    {
-                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
-                                    }
-                                }
-                            } break;
-                            case stt_Friendly_Group:
-                            {
-                                // N/A
-                            } break;
-                            case stt_Enemy_Unit:
-                            {
-                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
-                                {
-                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
-                                    if(troop_count > 0)
-                                    {
-                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
-                                    }
-                                }
-                            } break;
-                            case stt_Enemy_Group:
-                            {
-                                // N/A
-                            } break;
-                            case stt_Map_Square:
-                            {
-                                // N/A
-                            } break;
+                            // case stt_Friendly_Unit:
+                            // {
+                            //     if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                            //     {
+                            //         Army_At_City(entity_idx, &troop_count, &troops[0]);
+                            //         if(troop_count > 0)
+                            //         {
+                            //             /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                            //         }
+                            //     }
+                            // } break;
+                            // case stt_Friendly_Group:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // case stt_Enemy_Unit:
+                            // {
+                            //     if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                            //     {
+                            //         Army_At_City(entity_idx, &troop_count, &troops[0]);
+                            //         if(troop_count > 0)
+                            //         {
+                            //             /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                            //         }
+                            //     }
+                            // } break;
+                            // case stt_Enemy_Group:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // case stt_Map_Square:
+                            // {
+                            //     // N/A
+                            // } break;
                             case stt_Friendly_City:
                             {
                                 if(_CITIES[entity_idx].owner_idx == _current_player_idx)
@@ -1325,14 +1447,40 @@ void Spell_Casting_Screen_Assign_Mouse_Images(void)
                                     /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
                                 }
                             } break;
-                            case stt_Node:
+                            // case stt_Node:
+                            // {
+                            //     // N/A
+                            // } break;
+                            // default:
+                            // {
+                            //     STU_DEBUG_BREAK();
+                            // }
+                            /* CLAUDE */  /* REBUG */  /* asm: stt_00__01, moved below stt_Enemy_City; Friendly_Group shares Friendly_Unit's code */
+                            case stt_Friendly_Unit:
+                            case stt_Friendly_Group:
                             {
-                                // N/A
+                                if(_CITIES[entity_idx].owner_idx == _current_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    }
+                                }
                             } break;
-                            default:
+                            /* CLAUDE */  /* REBUG */  /* asm: stt_02_03, moved below stt_Enemy_City; Enemy_Group shares Enemy_Unit's code */
+                            case stt_Enemy_Unit:
+                            case stt_Enemy_Group:
                             {
-                                STU_DEBUG_BREAK();
-                            }
+                                if(_CITIES[entity_idx].owner_idx != _current_player_idx)
+                                {
+                                    Army_At_City(entity_idx, &troop_count, &troops[0]);
+                                    if(troop_count > 0)
+                                    {
+                                        /* HACK */  _scastscr_mouse_list[mouse_list_count].image_num = _osc_mouse_image_num;
+                                    }
+                                }
+                            } break;
                         }
                     }
                     else
@@ -1369,19 +1517,22 @@ void Spell_Casting_Screen_Draw_Panel(void)
 {
     uint8_t colors[4] = { 0, 0, 0, 0 };
     int16_t itr = 0;
-    int16_t IDK_first = 0;
-    int16_t var_8[4] = { 0, 0, 0, 0 };
-    int16_t IDK_ctr = 0;  // _SI_
+    int16_t cycle_first_color = 0;
+    // int16_t var_8[4] = { 0, 0, 0, 0 };
+    /* CLAUDE */  /* REBUG */  /* asm: mov [bx], al  ...byte elements, indexed by itr unscaled */
+    uint8_t cycle_colors[4] = { 0, 0, 0, 0 };
+    int16_t cycle_color_count = 0;  // _SI_
 
     FLIC_Draw(242, 173, deselect_button_blockout);
 
-    IDK_first = 124;
+    cycle_first_color = 124;
 
-    IDK_ctr = 4;
+    cycle_color_count = 4;
 
-    for(itr = 0; itr < IDK_ctr; itr++)
+    /* OGBUG */  /* dead stores: cycle_colors[] is filled and never read; the _osc_color_cycle_down/up indexes below step through it and are never read either */
+    for(itr = 0; itr < cycle_color_count; itr++)
     {
-        var_8[itr] = (IDK_first + itr);
+        cycle_colors[itr] = (uint8_t)(cycle_first_color + itr);
     }
 
     FLIC_Draw(240, 76, cast_background);
@@ -1404,19 +1555,19 @@ void Spell_Casting_Screen_Draw_Panel(void)
 
     Set_Outline_Color(148);
 
-    word_42C10--;
-    if(word_42C10 < 0)
+    _osc_color_cycle_down--;
+    if(_osc_color_cycle_down < 0)
     {
-        word_42C10 = (IDK_ctr - 1);
+        _osc_color_cycle_down = (cycle_color_count - 1);
     }
 
-    word_42C12++;
-    if(word_42C12 == IDK_ctr)
+    _osc_color_cycle_up++;
+    if(_osc_color_cycle_up == cycle_color_count)
     {
-        word_42C12 = 0;
+        _osc_color_cycle_up = 0;
     }
 
-    Print_Paragraph(249, 114, 60, (char *)_osc_panel_title, 0);
+    Print_Paragraph(249, 114, 60, _osc_panel_title, 0);
 
     Set_Outline_Color(ST_TRANSPARENT);
 

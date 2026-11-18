@@ -48,7 +48,7 @@ static char g_search_dirs[STU_GRAF_MAX_DIRS][STU_GRAF_PATH_MAX];
 static int  g_search_dir_count = 0;
 
 /* Selected by STU_GRAF_Init(); gates the writable user-family.  Defaults to
-   HEADLESS so any code that never calls STU_GRAF_Init() -- HeMoM, the unit-test
+   HEADLESS so any code that never calls STU_GRAF_Init() -- DeMoM, the unit-test
    binaries, the matchup harness -- keeps the original CWD-relative behavior.
    The user-data redirect is therefore inert until ReMoM opts in with
    STU_GRAF_Init(STU_GRAF_PLAYER). */
@@ -670,7 +670,7 @@ FILE * STU_GRAF_Open_User(const char * name, const char * mode)
         return file_pointer;
     }
 
-    /* HEADLESS (HeMoM / tests / matchup) keeps the original CWD-relative
+    /* HEADLESS (DeMoM / tests / matchup) keeps the original CWD-relative
        behavior so the determinism tooling is byte-for-byte unaffected. */
     if(g_profile == STU_GRAF_HEADLESS)
     {

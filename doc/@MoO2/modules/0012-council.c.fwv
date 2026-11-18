@@ -1,0 +1,55 @@
+module_num=12
+module=D:\MOX\COUNCIL.C
+source=0012-council.c.md
+range[0]=1:0x0000521D linear=0x0001521D size=6705
+range[1]=2:0x00000A24 linear=0x00170A24 size=64
+range[2]=2:0x00008CB0 linear=0x00178CB0 size=28
+range[3]=2:0x00022020 linear=0x00192020 size=192
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                               SYMBOL                              CHUNK
+m012f001  1    -      0x00015239  1:0x00005239  code  Main_Council_Screen                Main_Council_Screen_                regions/07-object-1/0009A654-0009AE53.txt
+m012f002  2    -      0x000153A0  1:0x000053A0  code  Control_Main_Council_Screen        Control_Main_Council_Screen_        regions/07-object-1/0009A654-0009AE53.txt
+m012f003  3    -      0x00015421  1:0x00005421  code  Draw_Main_Council_Screen           Draw_Main_Council_Screen_           regions/07-object-1/0009A654-0009AE53.txt
+m012f004  4    -      0x000156D4  1:0x000056D4  code  Reload_Main_Council_Screen         Reload_Main_Council_Screen_         regions/07-object-1/0009A654-0009AE53.txt
+m012f005  5    -      0x00015B90  1:0x00005B90  code  Calc_Council_Vote                  Calc_Council_Vote_                  regions/07-object-1/0009AE54-0009B653.txt
+m012f006  6    -      0x00015BE9  1:0x00005BE9  code  Get_Council_Message                Get_Council_Message_                regions/07-object-1/0009AE54-0009B653.txt
+m012f007  7    -      0x00015DB0  1:0x00005DB0  code  Next_Council_State                 Next_Council_State_                 regions/07-object-1/0009AE54-0009B653.txt
+m012f008  8    -      0x00015DF8  1:0x00005DF8  code  Council_Finished_Voting            Council_Finished_Voting_            regions/07-object-1/0009AE54-0009B653.txt
+m012f009  9    -      0x00015EBC  1:0x00005EBC  code  Council_Votes                      Council_Votes_                      regions/07-object-1/0009AE54-0009B653.txt
+m012f010  10   -      0x00016021  1:0x00006021  code  Vote_Check                         Vote_Check_                         regions/07-object-1/0009B654-0009BE53.txt
+m012f011  11   -      0x000161E4  1:0x000061E4  code  Council_Vote_Result                Council_Vote_Result_                regions/07-object-1/0009B654-0009BE53.txt
+m012f012  12   -      0x0001633C  1:0x0000633C  code  Council_Player_Vote                Council_Player_Vote_                regions/07-object-1/0009B654-0009BE53.txt
+m012f013  13   -      0x0001660B  1:0x0000660B  code  Council_Accept_Ruling              Council_Accept_Ruling_              regions/07-object-1/0009B654-0009BE53.txt
+m012f014  14   -      0x000168AF  1:0x000068AF  code  Check_For_Council_Meeting          Check_For_Council_Meeting_          regions/07-object-1/0009BE54-0009C653.txt
+m012f015  15   -      0x0001695A  1:0x0000695A  code  Load_Council_Text_Messages         Load_Council_Text_Messages_         regions/07-object-1/0009BE54-0009C653.txt
+m012f016  16   -      0x000169C9  1:0x000069C9  code  Council_Player_Voted_Winner        Council_Player_Voted_Winner_        regions/07-object-1/0009BE54-0009C653.txt
+m012f017  17   -      0x00016A3F  1:0x00006A3F  code  Drive_Council_Player_Voted_Winner  Drive_Council_Player_Voted_Winner_  regions/07-object-1/0009BE54-0009C653.txt
+m012f018  18   -      0x00016AD2  1:0x00006AD2  code  Draw_Council_Player_Voted_Winner   Draw_Council_Player_Voted_Winner_   regions/07-object-1/0009BE54-0009C653.txt
+m012f019  19   -      0x00016BFC  1:0x00006BFC  code  Get_Player_Voted_Winner_Message    Get_Player_Voted_Winner_Message_    regions/07-object-1/0009BE54-0009C653.txt
+-         -    -      0x00178CB0  2:0x00008CB0  data  _council_blank_mouse               _council_blank_mouse                regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00178CBC  2:0x00008CBC  data  _council_normal_colors             _council_normal_colors              regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00178CC4  2:0x00008CC4  data  _council_highlight_colors          _council_highlight_colors           regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00192020  2:0x00022020  data  _council_member_votes              _council_member_votes               -
+-         -    -      0x00192030  2:0x00022030  data  _council_members                   _council_members                    -
+-         -    -      0x00192038  2:0x00022038  data  _council_winner_seg                _council_winner_seg                 -
+-         -    -      0x00192058  2:0x00022058  data  _council_nominees_seg              _council_nominees_seg               -
+-         -    -      0x00192060  2:0x00022060  data  _council_light_race_seg            _council_light_race_seg             -
+-         -    -      0x00192080  2:0x00022080  data  _council_dark_race_seg             _council_dark_race_seg              -
+-         -    -      0x001920A0  2:0x000220A0  data  _player_voted_winner_message_id    _player_voted_winner_message_id     -
+-         -    -      0x001920B4  2:0x000220B4  data  _council_nominee_votes             _council_nominee_votes              -
+-         -    -      0x001920B8  2:0x000220B8  data  _council_no_votes_message          _council_no_votes_message           -
+-         -    -      0x001920BC  2:0x000220BC  data  _council_vote_message              _council_vote_message               -
+-         -    -      0x001920C0  2:0x000220C0  data  _council_mouse_bitmap              _council_mouse_bitmap               -
+-         -    -      0x001920C4  2:0x000220C4  data  _council_message                   _council_message                    -
+-         -    -      0x001920C8  2:0x000220C8  data  _council_nominee_vote_total        _council_nominee_vote_total         -
+-         -    -      0x001920CC  2:0x000220CC  data  _council_votes_message             _council_votes_message              -
+-         -    -      0x001920D0  2:0x000220D0  data  _council_votes_total_message       _council_votes_total_message        -
+-         -    -      0x001920D4  2:0x000220D4  data  _council_vote_cast                 _council_vote_cast                  -
+-         -    -      0x001920D6  2:0x000220D6  data  _council_total_votes               _council_total_votes                -
+-         -    -      0x001920D8  2:0x000220D8  data  _council_nominees                  _council_nominees                   -
+-         -    -      0x001920DA  2:0x000220DA  data  _council_voter                     _council_voter                      -
+-         -    -      0x001920DB  2:0x000220DB  data  _council_total_members             _council_total_members              -
+-         -    -      0x001920DC  2:0x000220DC  data  _winning_player                    _winning_player                     -
+-         -    -      0x001920DD  2:0x000220DD  data  _council_vote_for                  _council_vote_for                   -
+-         -    -      0x001920DE  2:0x000220DE  data  _council_state                     _council_state                      -

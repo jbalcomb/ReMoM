@@ -1,0 +1,38 @@
+module_num=257
+module=animate\shear.asm
+source=0257-shear.asm.md
+range[0]=1:0x001377B4 linear=0x001477B4 size=2668
+range[1]=2:0x00010FC8 linear=0x00180FC8 size=352
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m257f001  1    -      0x001477B4  1:0x001377B4  code  Shear_X_Negative                Shear_X_Negative_                regions/07-object-1/001CC654-001CCE53.txt
+m257f002  2    -      0x001477CF  1:0x001377CF  code  Shear_X_Positive                Shear_X_Positive_                regions/07-object-1/001CC654-001CCE53.txt
+m257f003  3    -      0x001477ED  1:0x001377ED  code  Shear_Y_Negative                Shear_Y_Negative_                regions/07-object-1/001CC654-001CCE53.txt
+m257f004  4    -      0x00147826  1:0x00137826  code  Shear_Y_Positive                Shear_Y_Positive_                regions/07-object-1/001CCE54-001CD653.txt
+m257f005  5    -      0x0014787E  1:0x0013787E  code  Flip_Bitmap_Left_Same           Flip_Bitmap_Left_Same_           regions/07-object-1/001CCE54-001CD653.txt
+m257f006  6    -      0x001478A6  1:0x001378A6  code  Flip_Bitmap_Left_Different      Flip_Bitmap_Left_Different_      regions/07-object-1/001CCE54-001CD653.txt
+m257f007  7    -      0x001478C3  1:0x001378C3  code  Flip_Bitmap_Down_Same           Flip_Bitmap_Down_Same_           regions/07-object-1/001CCE54-001CD653.txt
+m257f008  8    -      0x001478EF  1:0x001378EF  code  Flip_Bitmap_Down_Different      Flip_Bitmap_Down_Different_      regions/07-object-1/001CCE54-001CD653.txt
+m257f009  9    -      0x0014791B  1:0x0013791B  code  Capture_Screen_Block            Capture_Screen_Block_            regions/07-object-1/001CCE54-001CD653.txt
+m257f010  10   -      0x00147935  1:0x00137935  code  Enlarge_Bitmap                  Enlarge_Bitmap_                  regions/07-object-1/001CCE54-001CD653.txt
+m257f011  11   -      0x00147A12  1:0x00137A12  code  Reduce_Bitmap                   Reduce_Bitmap_                   regions/07-object-1/001CCE54-001CD653.txt
+m257f012  12   -      0x00147ABC  1:0x00137ABC  code  Vanish_Bitmap_Pixels            Vanish_Bitmap_Pixels_            regions/07-object-1/001CCE54-001CD653.txt
+m257f013  13   -      0x00147B89  1:0x00137B89  code  Outline_Bitmap_Pixels           Outline_Bitmap_Pixels_           regions/07-object-1/001CCE54-001CD653.txt
+m257f014  14   -      0x00147C6A  1:0x00137C6A  code  Outline_Bitmap_Pixels_No_Glass  Outline_Bitmap_Pixels_No_Glass_  regions/07-object-1/001CCE54-001CD653.txt
+m257f015  15   -      0x00147D53  1:0x00137D53  code  Bitmap_Aura_Pixels              Bitmap_Aura_Pixels_              regions/07-object-1/001CCE54-001CD653.txt
+m257f016  16   -      0x00147DB0  1:0x00137DB0  code  Transpose_Bitmap_Clockwise      Transpose_Bitmap_Clockwise_      regions/07-object-1/001CCE54-001CD653.txt
+m257f017  17   -      0x00147DE7  1:0x00137DE7  code  Transpose_Bitmap_Counter        Transpose_Bitmap_Counter_        regions/07-object-1/001CCE54-001CD653.txt
+m257f018  18   -      0x00147E23  1:0x00137E23  code  Tint_Bitmap_Pixels              Tint_Bitmap_Pixels_              regions/07-object-1/001CCE54-001CD653.txt
+m257f019  19   -      0x00147E61  1:0x00137E61  code  Gray_Scale_Fill_Pixels          Gray_Scale_Fill_Pixels_          regions/07-object-1/001CCE54-001CD653.txt
+m257f020  20   -      0x00147E9F  1:0x00137E9F  code  Jumble_Bitmap_Pixels            Jumble_Bitmap_Pixels_            regions/07-object-1/001CCE54-001CD653.txt
+m257f021  21   -      0x00147F3E  1:0x00137F3E  code  Mask_Bitmap_Pixels              Mask_Bitmap_Pixels_              regions/07-object-1/001CCE54-001CD653.txt
+m257f022  22   -      0x00147F7B  1:0x00137F7B  code  Mask_Brighten_Bitmap_Pixels     Mask_Brighten_Bitmap_Pixels_     regions/07-object-1/001CCE54-001CD653.txt
+m257f023  23   -      0x00147FDF  1:0x00137FDF  code  Mask_Bitmap_Pixels_Inverse      Mask_Bitmap_Pixels_Inverse_      regions/07-object-1/001CCE54-001CD653.txt
+m257f024  24   -      0x0014801C  1:0x0013801C  code  Mask_Bitmap_Colors_Pixels       Mask_Bitmap_Colors_Pixels_       regions/07-object-1/001CD654-001CDE53.txt
+m257f025  25   -      0x00148086  1:0x00138086  code  Texture_Map_Pixels_PUPV         Texture_Map_Pixels_PUPV_         regions/07-object-1/001CD654-001CDE53.txt
+m257f026  26   -      0x001480C8  1:0x001380C8  code  Texture_Map_Pixels_NUPV         Texture_Map_Pixels_NUPV_         regions/07-object-1/001CD654-001CDE53.txt
+m257f027  27   -      0x0014810A  1:0x0013810A  code  Texture_Map_Pixels_PUNV         Texture_Map_Pixels_PUNV_         regions/07-object-1/001CD654-001CDE53.txt
+m257f028  28   -      0x0014814C  1:0x0013814C  code  Texture_Map_Pixels_NUNV         Texture_Map_Pixels_NUNV_         regions/07-object-1/001CD654-001CDE53.txt
+m257f029  29   -      0x0014818E  1:0x0013818E  code  Gray_Scale_Off_Page_ASM         Gray_Scale_Off_Page_ASM_         regions/07-object-1/001CD654-001CDE53.txt
+m257f030  30   -      0x001481C2  1:0x001381C2  code  Interlace_Scale_Off_Page_ASM    Interlace_Scale_Off_Page_ASM_    regions/07-object-1/001CD654-001CDE53.txt

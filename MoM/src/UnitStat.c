@@ -58,7 +58,7 @@ void Building_Allows_List(int16_t bldg_idx, int16_t * allows_list_count, int16_t
 
 
 // WZD dseg:33B8 01 00 20 00 40 00 04 00 02 00 08 00             MoveFlag_Array dw M_Cavalry, M_Forester, M_Mntnr, M_Swimming, M_Sailing, M_Flying
-// WZD dseg:33B8                                                                                         ; DATA XREF: Stack_Movement_Modes+10o
+// WZD dseg:33B8                                                                                         ; DATA XREF: Stack_Movement_Modes+10vo
 
 // WZD dseg:33C4
 char portrait_lbx_file[] = "PORTRAIT";
@@ -91,29 +91,29 @@ char cnst_Disband_Msg2[] = "\x01?";
 // WZD dseg:3408
 char cnst_Dismiss_Msg[] = "Do you wish to dismiss \x02";
 
-// WZD dseg:3421 43 6F 73 74 00                                  cnst_Cost db 'Cost',0                   ; DATA XREF: Unit_Statistics_Popup_Draw+190o
-// WZD dseg:3426 28 00                                           str_PAREN_OPEN db '(',0              ; DATA XREF: Unit_Statistics_Popup_Draw+1C6o
-// WZD dseg:3428 29 00                                           str_PAREN_CLOSE db ')',0              ; DATA XREF: Unit_Statistics_Popup_Draw+202o
-// WZD dseg:342A 54 68 65 00                                     cnst_The db 'The',0                     ; DATA XREF: Unit_Statistics_Popup_Draw+32Co
-// WZD dseg:342E 4D 6F 76 65 73 00                               cnst_Moves_2 db 'Moves',0               ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F1CCo
+// WZD dseg:3421 43 6F 73 74 00                                  cnst_Cost db 'Cost',0                   ; DATA XREF: Unit_Statistics_Popup_Draw+190vo
+// WZD dseg:3426 28 00                                           str_PAREN_OPEN db '(',0              ; DATA XREF: Unit_Statistics_Popup_Draw+1C6vo
+// WZD dseg:3428 29 00                                           str_PAREN_CLOSE db ')',0              ; DATA XREF: Unit_Statistics_Popup_Draw+202vo
+// WZD dseg:342A 54 68 65 00                                     cnst_The db 'The',0                     ; DATA XREF: Unit_Statistics_Popup_Draw+32Cvo
+// WZD dseg:342E 4D 6F 76 65 73 00                               cnst_Moves_2 db 'Moves',0               ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F1CCvo
 // WZD dseg:342E                                                                                         ; could use dseg:6204
-// WZD dseg:3434 48 65 61 64 73 00                               cnst_Heads db 'Heads',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+5FEo
-// WZD dseg:343A 44 61 6D 61 67 65 00                            cnst_Damage db 'Damage',0               ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F2BAo
+// WZD dseg:3434 48 65 61 64 73 00                               cnst_Heads db 'Heads',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+5FEvo
+// WZD dseg:343A 44 61 6D 61 67 65 00                            cnst_Damage db 'Damage',0               ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F2BAvo
 // WZD dseg:343A                                                                                         ; could use dseg:4259
-// WZD dseg:3441 55 70 6B 65 65 70 00                            cnst_Upkeep_2 db 'Upkeep',0             ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F304o
-// WZD dseg:3448 4D 65 6C 65 65 00                               cnst_Melee db 'Melee',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+72Bo
-// WZD dseg:344E 52 61 6E 67 65 00                               cnst_Range db 'Range',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+7A7o
+// WZD dseg:3441 55 70 6B 65 65 70 00                            cnst_Upkeep_2 db 'Upkeep',0             ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F304vo
+// WZD dseg:3448 4D 65 6C 65 65 00                               cnst_Melee db 'Melee',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+72Bvo
+// WZD dseg:344E 52 61 6E 67 65 00                               cnst_Range db 'Range',0                 ; DATA XREF: Unit_Statistics_Popup_Draw+7A7vo
 // WZD dseg:344E                                                                                         ; could use dseg:40c0
-// WZD dseg:3454 41 72 6D 6F 72 00                               cnst_Armor db 'Armor',0                 ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F4C9o
+// WZD dseg:3454 41 72 6D 6F 72 00                               cnst_Armor db 'Armor',0                 ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F4C9vo
 // WZD dseg:3454                                                                                         ; could use dseg:4363 (or dseg:4425)
-// WZD dseg:345A 52 65 73 69 73 74 00                            cnst_Resist db 'Resist',0               ; DATA XREF: Unit_Statistics_Popup_Draw+8BBo
-// WZD dseg:3461 48 69 74 73 00                                  cnst_Hits db 'Hits',0                   ; DATA XREF: Unit_Statistics_Popup_Draw+916o
-// WZD dseg:3466 4D 61 69 6E 74 65 6E 61 6E 63 65 00             cnst_Maintenance db 'Maintenance',0     ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F764o
+// WZD dseg:345A 52 65 73 69 73 74 00                            cnst_Resist db 'Resist',0               ; DATA XREF: Unit_Statistics_Popup_Draw+8BBvo
+// WZD dseg:3461 48 69 74 73 00                                  cnst_Hits db 'Hits',0                   ; DATA XREF: Unit_Statistics_Popup_Draw+916vo
+// WZD dseg:3466 4D 61 69 6E 74 65 6E 61 6E 63 65 00             cnst_Maintenance db 'Maintenance',0     ; DATA XREF: Unit_Statistics_Popup_Draw:loc_5F764vo
 // WZD dseg:3466                                                                                         ; could use dseg:2d3c
-// WZD dseg:3472 41 6C 6C 6F 77 73 00                            cnst_Allows db 'Allows',0               ; DATA XREF: Unit_Statistics_Popup_Draw+C3Bo
-// WZD dseg:3479 2E 00                                           cnst_Dot4 db '.',0                      ; DATA XREF: Unit_Statistics_Popup_Draw+D4Fo
+// WZD dseg:3472 41 6C 6C 6F 77 73 00                            cnst_Allows db 'Allows',0               ; DATA XREF: Unit_Statistics_Popup_Draw+C3Bvo
+// WZD dseg:3479 2E 00                                           cnst_Dot4 db '.',0                      ; DATA XREF: Unit_Statistics_Popup_Draw+D4Fvo
 // WZD dseg:3479                                                                                         ; should use dseg:2b31
-// WZD dseg:347B 55 00                                           cnst_HOTKEY_U_4 db 'U',0                ; DATA XREF: USW_CreateScrollBtns+22o
+// WZD dseg:347B 55 00                                           cnst_HOTKEY_U_4 db 'U',0                ; DATA XREF: USW_CreateScrollBtns+22vo
 // WZD dseg:347B                                                                                         ; should use dseg:2e28
 // WZD dseg:347D 00                                              db    0
 
@@ -121,7 +121,7 @@ char cnst_Dismiss_Msg[] = "Do you wish to dismiss \x02";
 // WZD dseg:347E                                                     BEGIN: DIPLOMAC || Magic Screen - Initialized Data
 // WZD dseg:347E                                                 ?
 // WZD dseg:347E
-// WZD dseg:347E 01 00                                           GAME_AlchemyDir dw 1                    ; DATA XREF: GAME_AlchemyWindow+19Dr ...
+// WZD dseg:347E 01 00                                           GAME_AlchemyDir dw 1                    ; DATA XREF: GAME_AlchemyWindow+19Dvr ...
 
 
 
@@ -419,6 +419,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
     if(uv_combat == ST_FALSE)
     {
         // TODO  HLP_DrawExpanding__TODO(UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), UV_x_start, UV_y_start, (UV_x_start + 282), (UV_y_start + 184),x1, y1, x2, y2, 1);
+        Draw_Expanding_Box_Picture(UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), UV_x_start, UV_y_start, (UV_x_start + 282), (UV_y_start + 184), x1, y1, x2, y2, ST_TRUE);  /* CLAUDE */  /* asm: call j_HLP_DrawExpanding__TODO - was a TODO comment */
     }
 
     uv_fill_base = 0;
@@ -440,33 +441,33 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
         if(view_type != uvt_Cmbt)
         {
             // unitview_ok_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 162), cnst_Ok_BtnMsg_2, red_button_seg, cnst_HOTKEY_O_6, ST_UNDEFINED);
-            unitview_ok_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 162), cnst_Ok_BtnMsg_2, red_button_seg, 'O', -1);
+            unitview_ok_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 162), cnst_Ok_BtnMsg_2, red_button_seg, "O", -1);
         }
 
         unitview_dismiss_button = INVALID_FIELD;
         if(view_type == uvt_Stat)
         {
             // unitview_dismiss_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 143), cnst_Dismiss_BtnMsg, red_button_seg, cnst_HOTKEY_D_4, ST_UNDEFINED);
-            unitview_dismiss_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 143), cnst_Dismiss_BtnMsg, red_button_seg, 'D', -1);
+            unitview_dismiss_button = Add_Button_Field((UV_x_start + 222), (UV_y_start + 143), cnst_Dismiss_BtnMsg, red_button_seg, "D", -1);
         }
 
         // unitview_window = Add_Hidden_Field(UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), cnst_ZeroString_10, -1);
-        unitview_window = Add_Hidden_Field(UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), 0, -1);
+        unitview_window = Add_Hidden_Field(UV_x_start, UV_y_start, (UV_x_start + 217), (UV_y_start + 184), "", -1);
 
         unitview_button_box = INVALID_FIELD;
         if(view_type != uvt_Cmbt)
         {
             // unitview_button_box = Add_Hidden_Field((UV_x_start + 213), (UV_y_start + 133), (UV_x_start + 280), (UV_y_start + 183), cnst_ZeroString_10, ST_UNDEFINED);
-            unitview_button_box = Add_Hidden_Field((UV_x_start + 213), (UV_y_start + 133), (UV_x_start + 280), (UV_y_start + 183), 0, -1);
+            unitview_button_box = Add_Hidden_Field((UV_x_start + 213), (UV_y_start + 133), (UV_x_start + 280), (UV_y_start + 183), "", -1);
         }
 
         // unitview_full_screen = Add_Hidden_Field(0, 0, 319, 199, cnst_ZeroString_10, ST_UNDEFINED);
-        unitview_full_screen = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, ST_UNDEFINED);
+        unitview_full_screen = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         // hotkey_idx_ESC = Add_Hot_Key(cnst_HOTKEY_Esc6);
-        hotkey_idx_ESC = Add_Hot_Key('\x1B');
+        hotkey_idx_ESC = Add_Hot_Key("\x1B");
         // hotkey_idx_X = Add_Hot_Key(cnst_HOTKEY_X_4);
-        hotkey_idx_X = Add_Hot_Key('X');
+        hotkey_idx_X = Add_Hot_Key("X");
 
         UV_Set_Specials_Help_Fields(uv_specials_list_array, uv_specials_list_count, 0);
 
@@ -476,8 +477,8 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
         scanned_field = Scan_Input();
 
 
-        // BUG:  bjorked hotkey 'X' ... ¿ macro of if() with empty body ?
         // mov     ax, [bp+input_field_idx];  cmp     ax, [bp+hotkey_idx_X];  jnz     short $+2;
+        /* OGBUG  the 'X' hot key is added every pass of the loop but its handler is empty (cmp ax, [bp+hotkey_idx_X]; jnz short $+2), so pressing X does nothing; also, UV_Add_UpDn_Buttons() gives the down-arrow button cnst_HOTKEY_D_4, the same 'D' hot key as the Dismiss button added above */
         if(input_field_idx == hotkey_idx_X)
         {
 
@@ -504,7 +505,8 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                     {
                         Deactivate_Help_List();
 
-                        Item_View_Popup(item_idx, (UV_x_start + 16), (UV_y_start + 166 + (17 * itr)));
+                        // Item_View_Popup(item_idx, (UV_x_start + 16), (UV_y_start + 166 + (17 * itr)));
+                        Item_View_Popup(item_idx, (UV_x_start + 16), (UV_y_start + 116 + ((itr + 1) * 17)));  /* CLAUDE */  /* REBUG */  // asm: ((itr + 1) * 17) + uv_y_start + 116
                         
                         Deactivate_Auto_Function();
                         Assign_Auto_Function(Unit_Statistics_Popup_Do_Draw, 1);
@@ -542,6 +544,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                         Set_Unit_View_Help(view_type);
                         UV_Set_Specials_Help_Fields(uv_specials_list_array, uv_specials_list_count, 0);
                     }
+                    break;  /* CLAUDE */  /* REBUG */  // asm: loc_5E7FC: jmp short loc_5E807 (out of the loop)
                 }
             }
         }
@@ -553,9 +556,11 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
             BEGIN:  Left-Click Specials Fields - Icon or Description - Remove Unit Enchantment
         */
         {
-            for(itr = 0; itr < Shown_Effect_Count; itr++)
+            // for(itr = 0; itr < Shown_Effect_Count; itr++)
+            /* CLAUDE */  /* REBUG */  // asm: loc_5E9B1: the loop test is (itr < Shown_Effect_Count) && (enable_disenchant == ST_TRUE)
+            for(itr = 0; ((itr < Shown_Effect_Count) && (enable_disenchant == ST_TRUE)); itr++)
             {
-                if(enable_disenchant == ST_TRUE)
+                // if(enable_disenchant == ST_TRUE)
                 {
                     if(
                         (uv_special_icon_fields[itr] == input_field_idx)
@@ -617,6 +622,7 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                                 Set_Unit_View_Help(view_type);
                                 UV_Set_Specials_Help_Fields(uv_specials_list_array, uv_specials_list_count, 0);
                             }
+                            break;  /* CLAUDE */  /* REBUG */  // asm: loc_5E9AE: jmp short @@CechkDismissButton (out of the loop)
                         }
                     }
                 }
@@ -633,15 +639,26 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
             if(input_field_idx == unitview_dismiss_button)
             {
                 Play_Left_Click();
-                if(_UNITS[uv_unit_idx].Hero_Slot != -1)
-                {
-                    stu_strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
-                    stu_strcat(GUI_String_1, _players[_current_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
-                }
-                else
+                // if(_UNITS[uv_unit_idx].Hero_Slot != -1)
+                // {
+                //     stu_strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
+                //     stu_strcat(GUI_String_1, _players[_current_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
+                // }
+                // else
+                // {
+                //     stu_strcpy(GUI_String_1, cnst_Disband_Msg1);  // "Do you wish to disband the unit of \x02"
+                //     stu_strcat(GUI_String_1, *_unit_type_table[_UNITS[uv_unit_idx].type].name);
+                // }
+                /* CLAUDE */  /* REBUG */  // asm: cmp [es:bx+s_UNIT.Hero_Slot], -1; jnz -> the disband message is the if-branch
+                if(_UNITS[uv_unit_idx].Hero_Slot == -1)
                 {
                     stu_strcpy(GUI_String_1, cnst_Disband_Msg1);  // "Do you wish to disband the unit of \x02"
                     stu_strcat(GUI_String_1, *_unit_type_table[_UNITS[uv_unit_idx].type].name);
+                }
+                else
+                {
+                    stu_strcpy(GUI_String_1, cnst_Dismiss_Msg);  // "Do you wish to dismiss "
+                    stu_strcat(GUI_String_1, _players[_current_player_idx].Heroes[_UNITS[uv_unit_idx].Hero_Slot].name);
                 }
                 stu_strcat(GUI_String_1, cnst_Disband_Msg2);
                 Deactivate_Help_List();
@@ -654,6 +671,12 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
                     Set_Unit_Draw_Priority();
                     Reset_Stack_Draw_Priority();
                 }
+                /* CLAUDE */  /* REBUG */  // asm: loc_5EAD7 (reached whether or not the dismiss was confirmed)
+                Deactivate_Auto_Function();
+                Assign_Auto_Function(Unit_Statistics_Popup_Do_Draw, 1);
+                Set_Unit_View_Help(view_type);
+                UV_Set_Specials_Help_Fields(uv_specials_list_array, uv_specials_list_count, 0);
+                screen_changed = ST_TRUE;
             }
         }
         /*
@@ -713,9 +736,9 @@ void Unit_Statistics_Popup(int16_t x_start, int16_t y_start, int16_t x1, int16_t
 void Unit_Statistics_Popup_Do_Draw(void)
 {
 
-    if(uv_combat != ST_FALSE)
+    if(uv_combat == ST_FALSE)
     {
-        // TODO  G_USW_DrawEHLines__TODO();
+        Redraw_Expanding_Box_Lines();
     }
 
     Thing_View_Draw__WIP(UV_x_start, UV_y_start, uv_view_type, uv_unit_idx, uv_specials_list_array, uv_specials_list_count, UV_item_icon_pict_seg);
@@ -1152,6 +1175,7 @@ if(_CITIES[_city_idx].construction > 298)
         Print((UV_x_start_offset + UV_x_start + 51), (UV_y_start + bldg_pict_y1 + 27), "Moves");
         Moves_Type_Icon(global_battle_unit->Move_Flags, &moves_icon_idx);  // {11,12,13} {"walking", "fly", "swim"}
         bldg_pict_x1 = 0;
+        /* OGBUG  movement_points is in half moves and the icon count is movement_points / 2 (sar ax, 1), so an odd half move is not drawn */
         for(itr = 0; (global_battle_unit->movement_points / 2) > itr; itr++)
         {
             FLIC_Draw((UV_x_start_offset + UV_x_start + bldg_pict_x1 + 84), (UV_y_start + bldg_pict_y1 + 25), unitview_stat_icons_seg[moves_icon_idx]);
@@ -1282,9 +1306,11 @@ void UV_Draw_Upkeep_Icons(int16_t xstart, int16_t ystart, int16_t unit_or_neg_ty
         mana_upkeep = Unit_Mana_Upkeep(unit_idx);
         food_upkeep = 0;
         if(
-            ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+            // ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+            ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) == 0)  /* CLAUDE */  /* REBUG */  /* asm: test Abilities, UA_FANTASTIC / jnz skip */
             &&
-            (_UNITS[unit_idx].type > ut_Trireme)  /* ¿ BUG: should > ut_Chosen ? */
+            /* OGBUG  tests type > ut_Trireme where the real food upkeep (Player_Armies_Food_Upkeep, Players_Normal_Units) tests type > ut_Chosen: a Trireme pays 1 food but its unit view shows none */
+            (_UNITS[unit_idx].type > ut_Trireme)
         )
         {
             food_upkeep = 1;
@@ -1638,6 +1664,7 @@ void Moves_Type_Icon(int16_t move_flags, int16_t * moves_icon_idx)
 
     icon_idx = 11;
 
+    /* OGBUG  MV_WALKING is 0, so this first test (test cx, MV_WALKING) is never true; MV_TELEPORT, MV_FORESTER, MV_MOUNTAINEER and MV_MERGING all set icon 11, the walking icon */
     if((move_flags & MV_WALKING) != 0)
     {
         icon_idx = 11;
@@ -1745,6 +1772,7 @@ void USW_DrawListPage(int16_t xstart, int16_t ystart, struct s_UV_List * special
                 // SPECIAL.LBX, 003  UNICON1   item
                 FLIC_Draw(item_icon_x_start, item_icon_y_start, special_seg[3]);
                 // helps was set to the negative if the hero item slot was -1/invalid/empty so do 'slot' instead of 'item'
+                /* OGBUG  'helps > 0' (cmp [bx+s_UV_List.helps], 0; jle) also rejects item index 0, so _ITEMS[0] is drawn with the plain FLIC_Draw() of picts below instead of Draw_Item_Icon_With_Enchantment_Outline() */
                 if(specials_list->helps[(specials_item + itr)] > 0)
                 {
                     Draw_Item_Icon_With_Enchantment_Outline(specials_list->helps[(specials_item + itr)], item_icon_pict_seg);
@@ -1820,13 +1848,13 @@ void UV_Add_Specials_Fields(int16_t xstart, int16_t ystart, struct s_UV_List * s
         if(specials_list->flags[(specials_index + itr)] == -99)  /* 'Special' is 'Item' */
         {
             uv_item_icon_fields[display_index] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], cnst_ZeroString_10, ST_UNDEFINED);
-            uv_item_desc_fields[display_index] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), 0, ST_UNDEFINED);
+            uv_item_desc_fields[display_index] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), "", ST_UNDEFINED);
             display_index++;
         }
         else
         {
             uv_special_icon_fields[itr] = Add_Picture_Field(xpos, ypos, (SAMB_ptr)specials_list->picts[(specials_index + itr)], cnst_ZeroString_10,  specials_list->helps[(specials_index + itr)]);
-            uv_special_desc_fields[itr] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), 0, specials_list->helps[(specials_index + itr)]);
+            uv_special_desc_fields[itr] = Add_Hidden_Field((xpos + 19), (ypos + 5), (xpos + 93), (ypos + 13), "", specials_list->helps[(specials_index + itr)]);
             uv_specials_fields_ability_flags[itr] = specials_list->flags[(specials_index + itr)];
         }
         ypos += 17;
@@ -1912,8 +1940,8 @@ void UV_Add_UpDn_Buttons(int16_t xstart, int16_t ystart)
 
     if(uv_multipage == ST_TRUE)
     {
-        unitview_up_button = Add_Button_Field(xstart, ystart,        "", unitview_up_arrow_seg, 'U', ST_UNDEFINED);
-        unitview_dn_button = Add_Button_Field(xstart, (ystart + 63), "", unitview_down_arrow_seg, 'D', ST_UNDEFINED);
+        unitview_up_button = Add_Button_Field(xstart, ystart,        "", unitview_up_arrow_seg, "U", ST_UNDEFINED);
+        unitview_dn_button = Add_Button_Field(xstart, (ystart + 63), "", unitview_down_arrow_seg, "D", ST_UNDEFINED);
     }
 
 }
@@ -1994,6 +2022,7 @@ void UV_Handle_Arrow_Buttons(int16_t input_field_idx, int16_t * display_count)
             uv_specials_list_index -= 8;
         }
 
+        /* OGBUG  paging up from the first page of a non-hero list: 0 - 8 = -8, so the index becomes (count / 8) * 8, which equals count when count is a multiple of 8 (16, 24, ...), and the page shown is empty */
         if(uv_specials_list_index < 0)
         {
             if(

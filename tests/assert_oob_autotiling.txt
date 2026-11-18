@@ -11,7 +11,7 @@
 # deterministic end-to-end result; a regression in the pool/inject path (crash,
 # garbage slack, wrong layout) would perturb them. sq = 40*wx + 39, wx = 0..59.
 #
-# Regenerate: run HeMoM_WorldGen_Run, then extract world_map[1][sq] (sq%40==39)
+# Regenerate: run DeMoM_WorldGen_Run, then extract world_map[1][sq] (sq%40==39)
 # from SAVE9.txt.
 
 world_map[1][39] = 0

@@ -1,0 +1,92 @@
+module_num=111
+module=D:\MOX\OTHERS\MULTPLAY.C
+source=0111-multplay.c.md
+range[0]=1:0x000DFA52 linear=0x000EFA52 size=24113
+range[1]=2:0x0000204C linear=0x0017204C size=164
+range[2]=2:0x0000B57C linear=0x0017B57C size=140
+range[3]=2:0x00032C54 linear=0x001A2C54 size=592
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                               SYMBOL                              CHUNK
+m111f001    1    -      0x000EFABA  1:0x000DFABA  static,code  Add_Banner_Field                   Add_Banner_Field_                   regions/07-object-1/00174E54-00175653.txt
+m111f002    2    -      0x000EFB50  1:0x000DFB50  static,code  Add_Choose_Net_Plyrs_Fields        Add_Choose_Net_Plyrs_Fields_        regions/07-object-1/00174E54-00175653.txt
+m111f003    3    -      0x000EFCEA  1:0x000DFCEA  code         Add_Net_Next_Turn_Fields           Add_Net_Next_Turn_Fields_           regions/07-object-1/00174E54-00175653.txt
+m111f004    4    -      0x000EFE7A  1:0x000DFE7A  static,code  Add_Load_MP_Game_Screen_Fields     Add_Load_MP_Game_Screen_Fields_     regions/07-object-1/00174E54-00175653.txt
+m111f005    5    -      0x000EFF87  1:0x000DFF87  static,code  Add_Choose_Multi_Net_Game_Fields   Add_Choose_Multi_Net_Game_Fields_   regions/07-object-1/00174E54-00175653.txt
+m111f006    6    -      0x000F009A  1:0x000E009A  static,code  Add_MP_Setup_Screen_Fields         Add_MP_Setup_Screen_Fields_         regions/07-object-1/00175654-00175E53.txt
+m111f007    7    -      0x000F03F2  1:0x000E03F2  static,code  Add_Modem_Setup_Fields             Add_Modem_Setup_Fields_             regions/07-object-1/00175654-00175E53.txt
+m111f008    8    -      0x000F0678  1:0x000E0678  static,code  Add_Modem_String_Fields            Add_Modem_String_Fields_            regions/07-object-1/00175654-00175E53.txt
+m111f009    9    -      0x000F0801  1:0x000E0801  code         Add_Waiting_For_Joiners_Field      Add_Waiting_For_Joiners_Field_      regions/07-object-1/00175E54-00176653.txt
+m111f010    10   -      0x000F084F  1:0x000E084F  static,code  Print_Modem_Strings                Print_Modem_Strings_                regions/07-object-1/00175E54-00176653.txt
+m111f011    11   -      0x000F0943  1:0x000E0943  static,code  Add_NullModem_Setup_Fields         Add_NullModem_Setup_Fields_         regions/07-object-1/00175E54-00176653.txt
+m111f012    12   -      0x000F0B6D  1:0x000E0B6D  static,code  Valid_Net_Games                    Valid_Net_Games_                    regions/07-object-1/00175E54-00176653.txt
+m111f013    13   -      0x000F0B8C  1:0x000E0B8C  static,code  Check_Modem_Init_Help_Fields       Check_Modem_Init_Help_Fields_       regions/07-object-1/00175E54-00176653.txt
+m111f014    14   -      0x000F0C8E  1:0x000E0C8E  code         Choose_Multi_Network_Game_Screen   Choose_Multi_Network_Game_Screen_   regions/07-object-1/00175E54-00176653.txt
+m111f015    15   -      0x000F0E17  1:0x000E0E17  code         Choose_Network_Plyrs_Screen        Choose_Network_Plyrs_Screen_        regions/07-object-1/00175E54-00176653.txt
+m111f016    16   -      0x000F1066  1:0x000E1066  static,code  Confirmation_Of_Opponent_Joining   Confirmation_Of_Opponent_Joining_   regions/07-object-1/00176654-00176E53.txt
+m111f017    17   -      0x000F1075  1:0x000E1075  code         Draw_Net_Next_Turn_Screen          Draw_Net_Next_Turn_Screen_          regions/07-object-1/00176654-00176E53.txt
+m111f018    18   -      0x000F166E  1:0x000E166E  code         Draw_Choose_Net_Plyrs_Screen       Draw_Choose_Net_Plyrs_Screen_       regions/07-object-1/00176654-00176E53.txt
+m111f019    19   1/2    0x000F19C7  1:0x000E19C7  code         Draw_Generic_Net_Info_Screen       Draw_Generic_Net_Info_Screen_       regions/07-object-1/00176E54-00177653.txt
+m111f019_2  19   2/2    0x000F19C7  1:0x000E19C7  code         Draw_Join_Net_Screen               Draw_Join_Net_Screen_               regions/07-object-1/00176E54-00177653.txt
+m111f020    20   -      0x000F1AF4  1:0x000E1AF4  static,code  Draw_Choose_Multi_Net_Game_Screen  Draw_Choose_Multi_Net_Game_Screen_  regions/07-object-1/00176E54-00177653.txt
+m111f021    21   -      0x000F1CE6  1:0x000E1CE6  static,code  Draw_Load_MP_Game_Screen           Draw_Load_MP_Game_Screen_           regions/07-object-1/00176E54-00177653.txt
+m111f022    22   -      0x000F2082  1:0x000E2082  static,code  Draw_MP_Setup_Screen               Draw_MP_Setup_Screen_               regions/07-object-1/00177654-00177E53.txt
+m111f023    23   -      0x000F21B2  1:0x000E21B2  static,code  Draw_MP_Buttons_Down               Draw_MP_Buttons_Down_               regions/07-object-1/00177654-00177E53.txt
+m111f024    24   -      0x000F22D5  1:0x000E22D5  static,code  Draw_Modem_Setup_Screen            Draw_Modem_Setup_Screen_            regions/07-object-1/00177654-00177E53.txt
+m111f025    25   -      0x000F2742  1:0x000E2742  static,code  Draw_Fill_Seg                      Draw_Fill_Seg_                      regions/07-object-1/00177654-00177E53.txt
+m111f026    26   -      0x000F27B7  1:0x000E27B7  code         Draw_Multi_Player_Banner           Draw_Multi_Player_Banner_           regions/07-object-1/00177654-00177E53.txt
+m111f027    27   -      0x000F28B4  1:0x000E28B4  static,code  Draw_NullModem_Setup_Screen        Draw_NullModem_Setup_Screen_        regions/07-object-1/00177E54-00178653.txt
+m111f028    28   -      0x000F2C8B  1:0x000E2C8B  code         Draw_SendGet_Net_Info_Screen       Draw_SendGet_Net_Info_Screen_       regions/07-object-1/00177E54-00178653.txt
+m111f029    29   -      0x000F2DE5  1:0x000E2DE5  code         Draw_Wait_For_New_Joiners_Screen   Draw_Wait_For_New_Joiners_Screen_   regions/07-object-1/00177E54-00178653.txt
+m111f030    30   -      0x000F2F4E  1:0x000E2F4E  code         Draw_Wait_For_Race_Info_Screen     Draw_Wait_For_Race_Info_Screen_     regions/07-object-1/00177E54-00178653.txt
+m111f031    31   -      0x000F30B9  1:0x000E30B9  static,code  Get_Main_Palette_Base_Colors       Get_Main_Palette_Base_Colors_       regions/07-object-1/00178654-00178E53.txt
+m111f032    32   -      0x000F3119  1:0x000E3119  static,code  Get_Player_Colors                  Get_Player_Colors_                  regions/07-object-1/00178654-00178E53.txt
+m111f033    33   -      0x000F31BB  1:0x000E31BB  static,code  Get_Net_Next_Turn_Player_Colors    Get_Net_Next_Turn_Player_Colors_    regions/07-object-1/00178654-00178E53.txt
+m111f034    34   -      0x000F33AE  1:0x000E33AE  static,code  Get_Valid_MP_Save_Games            Get_Valid_MP_Save_Games_            regions/07-object-1/00178654-00178E53.txt
+m111f035    35   -      0x000F33EE  1:0x000E33EE  static,code  Hotseat_Add_Next_Player_Fields     Hotseat_Add_Next_Player_Fields_     regions/07-object-1/00178654-00178E53.txt
+m111f036    36   -      0x000F34EA  1:0x000E34EA  static,code  Hotseat_Draw_Next_Player           Hotseat_Draw_Next_Player_           regions/07-object-1/00178654-00178E53.txt
+m111f037    37   -      0x000F37FC  1:0x000E37FC  static,code  Hotseat_Get_Colors                 Hotseat_Get_Colors_                 regions/07-object-1/00178654-00178E53.txt
+m111f038    38   -      0x000F38DC  1:0x000E38DC  static,code  Hotseat_Get_N_Valid_Players        Hotseat_Get_N_Valid_Players_        regions/07-object-1/00178E54-00179653.txt
+m111f039    39   -      0x000F390E  1:0x000E390E  static,code  Hotseat_Load_Next_Player           Hotseat_Load_Next_Player_           regions/07-object-1/00178E54-00179653.txt
+m111f040    40   -      0x000F3A27  1:0x000E3A27  static,code  Hotseat_Print_Player_Data          Hotseat_Print_Player_Data_          regions/07-object-1/00178E54-00179653.txt
+m111f041    41   -      0x000F3AC8  1:0x000E3AC8  static,code  Fade_In_Function                   Fade_In_Function_                   regions/07-object-1/00178E54-00179653.txt
+m111f042    42   -      0x000F3AE4  1:0x000E3AE4  code         Hotseat_Select_Player              Hotseat_Select_Player_              regions/07-object-1/00178E54-00179653.txt
+m111f043    43   -      0x000F3D67  1:0x000E3D67  static,code  Hotseat_Set_Next_Player_Status     Hotseat_Set_Next_Player_Status_     regions/07-object-1/00178E54-00179653.txt
+m111f044    44   -      0x000F3E09  1:0x000E3E09  code         Hotseat_Player_Status              Hotseat_Player_Status_              regions/07-object-1/00178E54-00179653.txt
+m111f045    45   -      0x000F3E42  1:0x000E3E42  code         Load_Net_Next_Turn_Screen          Load_Net_Next_Turn_Screen_          regions/07-object-1/00178E54-00179653.txt
+m111f046    46   -      0x000F3FC6  1:0x000E3FC6  static,code  Load_Choose_Net_Plyrs_Screen       Load_Choose_Net_Plyrs_Screen_       regions/07-object-1/00178E54-00179653.txt
+m111f047    47   -      0x000F40D3  1:0x000E40D3  static,code  Load_Choose_Multi_Net_Game_Screen  Load_Choose_Multi_Net_Game_Screen_  regions/07-object-1/00179654-00179E53.txt
+m111f048    48   -      0x000F41AD  1:0x000E41AD  static,code  Load_Load_MP_Game_Screen           Load_Load_MP_Game_Screen_           regions/07-object-1/00179654-00179E53.txt
+m111f049    49   -      0x000F42CA  1:0x000E42CA  static,code  Load_MP_Setup_Pictures             Load_MP_Setup_Pictures_             regions/07-object-1/00179654-00179E53.txt
+m111f050    50   -      0x000F44BB  1:0x000E44BB  static,code  Load_Modem_Setup_Screen            Load_Modem_Setup_Screen_            regions/07-object-1/00179654-00179E53.txt
+m111f051    51   -      0x000F45DB  1:0x000E45DB  static,code  Copy_Modem_Defaults_To_Net_Struct  Copy_Modem_Defaults_To_Net_Struct_  regions/07-object-1/00179654-00179E53.txt
+m111f052    52   -      0x000F46E7  1:0x000E46E7  code         Set_Default_Modem_Settings         Set_Default_Modem_Settings_         regions/07-object-1/00179654-00179E53.txt
+m111f053    53   -      0x000F4760  1:0x000E4760  code         Load_Multi_Player_Game_Screen      Load_Multi_Player_Game_Screen_      regions/07-object-1/00179654-00179E53.txt
+m111f054    54   -      0x000F4981  1:0x000E4981  static,code  Load_NullModem_Setup_Screen        Load_NullModem_Setup_Screen_        regions/07-object-1/00179E54-0017A653.txt
+m111f055    55   -      0x000F4AC8  1:0x000E4AC8  static,code  Modem_Setup_Screen                 Modem_Setup_Screen_                 regions/07-object-1/00179E54-0017A653.txt
+m111f056    56   -      0x000F4D99  1:0x000E4D99  code         Multi_Player_Screen                Multi_Player_Screen_                regions/07-object-1/00179E54-0017A653.txt
+m111f057    57   -      0x000F520A  1:0x000E520A  static,code  NullModem_Setup_Screen             NullModem_Setup_Screen_             regions/07-object-1/0017A654-0017AE53.txt
+m111f058    58   -      0x000F53CB  1:0x000E53CB  code         Reload_Generating_Map_Info         Reload_Generating_Map_Info_         regions/07-object-1/0017A654-0017AE53.txt
+m111f059    59   -      0x000F53D7  1:0x000E53D7  code         Reload_Generic_Net_Info            Reload_Generic_Net_Info_            regions/07-object-1/0017A654-0017AE53.txt
+m111f060    60   -      0x000F54A0  1:0x000E54A0  code         Reload_Getting_Data_Info           Reload_Getting_Data_Info_           regions/07-object-1/0017A654-0017AE53.txt
+m111f061    61   -      0x000F54BE  1:0x000E54BE  code         Reload_Initializing_Net_Info       Reload_Initializing_Net_Info_       regions/07-object-1/0017A654-0017AE53.txt
+m111f062    62   -      0x000F54CF  1:0x000E54CF  code         Reload_Join_Net_Screen             Reload_Join_Net_Screen_             regions/07-object-1/0017A654-0017AE53.txt
+m111f063    63   -      0x000F54D9  1:0x000E54D9  code         Reload_Sending_Data_Info           Reload_Sending_Data_Info_           regions/07-object-1/0017A654-0017AE53.txt
+m111f064    64   -      0x000F551B  1:0x000E551B  code         Reload_Wait_For_Race_Info          Reload_Wait_For_Race_Info_          regions/07-object-1/0017A654-0017AE53.txt
+m111f065    65   -      0x000F552A  1:0x000E552A  code         Reload_Waiting_For_Joiners_Screen  Reload_Waiting_For_Joiners_Screen_  regions/07-object-1/0017A654-0017AE53.txt
+m111f066    66   -      0x000F5573  1:0x000E5573  code         N_Net_Players_Chosen_Positions     N_Net_Players_Chosen_Positions_     regions/07-object-1/0017A654-0017AE53.txt
+m111f067    67   -      0x000F55A4  1:0x000E55A4  code         Chat_Box_Input_Loop                Chat_Box_Input_Loop_                regions/07-object-1/0017A654-0017AE53.txt
+m111f068    68   -      0x000F5691  1:0x000E5691  static,code  Set_Multi_Player_Game_Type         Set_Multi_Player_Game_Type_         regions/07-object-1/0017A654-0017AE53.txt
+m111f069    69   -      0x000F5777  1:0x000E5777  static,code  Change_MP_Game_Name                Change_MP_Game_Name_                regions/07-object-1/0017A654-0017AE53.txt
+-           -    -      0x0017B57C  2:0x0000B57C  static,data  _game_lbx_file                     _game_lbx_file                      regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B580  2:0x0000B580  static,data  _green_pal_colors                  _green_pal_colors                   regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B5C0  2:0x0000B5C0  static,data  _baud_rate_strings                 _baud_rate_strings                  regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B5F0  2:0x0000B5F0  static,data  _low_grn_colors                    _low_grn_colors                     regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B5F8  2:0x0000B5F8  static,data  _normal_grn_colors                 _normal_grn_colors                  regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B600  2:0x0000B600  static,data  _hi_grn_colors                     _hi_grn_colors                      regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x001A2C54  2:0x00032C54  static,data  _global_chat_string                _global_chat_string                 -
+-           -    -      0x001A2CA4  2:0x00032CA4  static,data  _cur_colors                        _cur_colors                         -
+-           -    -      0x001A2CAC  2:0x00032CAC  static,data  _orig_colors                       _orig_colors                        -
+-           -    -      0x001A2CB4  2:0x00032CB4  static,data  _g_mp_screen                       _g_mp_screen                        -
+-           -    -      0x001A2E9F  2:0x00032E9F  data         _allow_chat_mode                   _allow_chat_mode                    -
+-           -    -      0x001A2EA0  2:0x00032EA0  static,data  _draw_game_popup_to_back           _draw_game_popup_to_back            -

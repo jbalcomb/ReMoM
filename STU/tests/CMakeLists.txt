@@ -4,9 +4,11 @@ include(GoogleTest)
 add_executable(test_STU
 	test_STU_LOG.cpp
 	test_STU_LOG_strip.cpp
+	test_STU_LOG_calltrace_off.cpp
 	test_STU_UTIL.cpp
 	test_STU_GRAF.cpp
 	test_STU_HASH.cpp
+	test_STU_GD.cpp
 )
 
 set_source_files_properties(test_STU_LOG_strip.cpp PROPERTIES

@@ -183,21 +183,21 @@ Combat_Screen_Load_Resources()
     // IMG_CMB_TrueLight = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
     combat_enchantment_icon_segs[0] = LBX_Reload_Next(compix_lbx_file__ovr103, 5, _screen_seg);
     ...
-dseg:C4FE 00 00                                           IMG_CMB_TrueLight@ dw 0                 ; DATA XREF: CMB_CE_Refresh__WIP+7Br ...
-dseg:C500 00 00                                           IMG_CMB_Darkness@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+15Ew
-dseg:C502 00 00                                           IMG_CMB_WarpReality@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+175w
-dseg:C504 00 00                                           IMG_CMB_BlackPrayer@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+18Cw
-dseg:C506 00 00                                           IMG_CMB_Wrack@ dw 0                     ; DATA XREF: Combat_Screen_Load_Resources+1A3w
-dseg:C508 00 00                                           IMG_CMB_MetalFires@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+1BAw
-dseg:C50A 00 00                                           IMG_CMB_Prayer@ dw 0                    ; DATA XREF: Combat_Screen_Load_Resources+1D1w
-dseg:C50C 00 00                                           IMG_CMB_HighPrayer@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+1E8w
-dseg:C50E 00 00                                           IMG_CMB_Terror@ dw 0                    ; DATA XREF: Combat_Screen_Load_Resources+1FFw
-dseg:C510 00 00                                           IMG_CMB_CallLightng@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+216w
-dseg:C512 00 00                                           IMG_CMB_CounterMgc@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+22Dw
-dseg:C514 00 00                                           IMG_CMB_MassInvis@ dw 0                 ; DATA XREF: Combat_Screen_Load_Resources+244w
-dseg:C516 00 00                                           IMG_CMB_Entangle@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+25Bw
-dseg:C518 00 00                                           IMG_CMB_ManaLeak@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+272w
-dseg:C51A 00 00                                           IMG_CMB_Blur@ dw 0                      ; DATA XREF: Combat_Screen_Load_Resources+289w
+dseg:C4FE 00 00                                           IMG_CMB_TrueLight@ dw 0                 ; DATA XREF: CMB_CE_Refresh__WIP+7Bvr ...
+dseg:C500 00 00                                           IMG_CMB_Darkness@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+15Evw
+dseg:C502 00 00                                           IMG_CMB_WarpReality@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+175vw
+dseg:C504 00 00                                           IMG_CMB_BlackPrayer@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+18Cvw
+dseg:C506 00 00                                           IMG_CMB_Wrack@ dw 0                     ; DATA XREF: Combat_Screen_Load_Resources+1A3vw
+dseg:C508 00 00                                           IMG_CMB_MetalFires@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+1BAvw
+dseg:C50A 00 00                                           IMG_CMB_Prayer@ dw 0                    ; DATA XREF: Combat_Screen_Load_Resources+1D1vw
+dseg:C50C 00 00                                           IMG_CMB_HighPrayer@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+1E8vw
+dseg:C50E 00 00                                           IMG_CMB_Terror@ dw 0                    ; DATA XREF: Combat_Screen_Load_Resources+1FFvw
+dseg:C510 00 00                                           IMG_CMB_CallLightng@ dw 0               ; DATA XREF: Combat_Screen_Load_Resources+216vw
+dseg:C512 00 00                                           IMG_CMB_CounterMgc@ dw 0                ; DATA XREF: Combat_Screen_Load_Resources+22Dvw
+dseg:C514 00 00                                           IMG_CMB_MassInvis@ dw 0                 ; DATA XREF: Combat_Screen_Load_Resources+244vw
+dseg:C516 00 00                                           IMG_CMB_Entangle@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+25Bvw
+dseg:C518 00 00                                           IMG_CMB_ManaLeak@ dw 0                  ; DATA XREF: Combat_Screen_Load_Resources+272vw
+dseg:C51A 00 00                                           IMG_CMB_Blur@ dw 0                      ; DATA XREF: Combat_Screen_Load_Resources+289vw
 loaded in the same order as seen in the heap
 nonconsequtive ordering in the LBX file
 { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 41, 60, 79, 80 }

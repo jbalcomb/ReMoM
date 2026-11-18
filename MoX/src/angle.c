@@ -146,34 +146,27 @@ static const uint16_t tbl_math_cos[] = {
 //     }
 // }
 /*
-GEMINI
-This assembly code is an implementation of atan2() (arctangent with two arguments). It calculates the angle of a 2D vector (X, Y) from $0^\circ$ to $359^\circ$.
-While the underlying math is definitively an Inverse Tangent (atan2), naming it Get_Angle() tells you exactly what the function is used for in the context of the game engine.
+    OG is hand-written asm; Get_Base_Angle() takes its arguments in registers (AX = opposite, BX = adjacent).
+    Returns 0 .. 360: a small negative y_dist with x_dist >= 0 gives 360 - 0 = 360, not 0.
 */
-/* Main Function: Returns a full 0-359 degree angle based on X and Y distances */
-int16_t Get_Angle(int x_dist, int y_dist) {
-    int angle;
-    if(x_dist >= 0) {
-        if(y_dist >= 0) {
-            /* Quadrant 1 (Bottom-Right, assuming Y goes down on screen) */
-            angle = Get_Base_Angle(y_dist, x_dist);
-        } else {
-            /* Quadrant 4 (Top-Right) */
-            angle = Get_Base_Angle(-y_dist, x_dist);
-            angle = 360 - angle;
+int16_t Get_Angle(int16_t x_dist, int16_t y_dist)
+{
+    if(x_dist >= 0)
+    {
+        if(y_dist < 0)
+        {
+            return (360 - Get_Base_Angle(-y_dist, x_dist));
         }
-    } else {
-        if(y_dist >= 0) {
-            /* Quadrant 2 (Bottom-Left) */
-            angle = Get_Base_Angle(y_dist, -x_dist);
-            angle = 180 - angle;
-        } else {
-            /* Quadrant 3 (Top-Left) */
-            angle = Get_Base_Angle(-y_dist, -x_dist);
-            angle += 180;
-        }
+        return Get_Base_Angle(y_dist, x_dist);
     }
-    return angle;
+    else
+    {
+        if(y_dist < 0)
+        {
+            return (Get_Base_Angle(-y_dist, -x_dist) + 180);
+        }
+        return (180 - Get_Base_Angle(y_dist, -x_dist));
+    }
 }
 
 
@@ -268,370 +261,494 @@ int16_t Get_Angle(int x_dist, int y_dist) {
 //     }
 //     return angle;
 // }
-// GEMINI
-/* Helper Function: Calculates the angle in Quadrant 1 (0 to 90 degrees) */
-int16_t Get_Base_Angle(unsigned int y, unsigned int x) {
-    unsigned int ratio;
-    int i;
+/*
+    OG is hand-written asm; called with AX = y_dist (opposite), BX = x_dist (adjacent), both already non-negative.
+    ratio = (y_dist * 256) / x_dist; Tangents_0_44[] and Tangents_45_89[] hold tan(0) .. tan(44) and tan(45) .. tan(89) in the same 8.8 fixed point.
+    OGBUG: a ratio of 247 .. 255 (44 to 45 degrees) returns 43; that scan's fall-through sets di = 44 and then decrements it.
+    A ratio of 14669 and up (89 to 90 degrees) returns 90, through the same exit as x_dist == 0.
+*/
+int16_t Get_Base_Angle(uint16_t y_dist, uint16_t x_dist)
+{
+    // uint16_t ratio;
+    uint32_t ratio;  /* CLAUDE */  // OG 'div bx' traps (divide overflow) when y_dist >= (256 * x_dist); a 32-bit ratio runs off the tables to the 90 exit instead
+    int16_t angle;              // _DI_
+    int16_t itr;                // _CX_
 
-    /* Prevent divide-by-zero: perfectly vertical means 90 degrees */
-    if(x == 0) {
+    if(x_dist == 0)
+    {
         return 90;
     }
 
-    /* Fixed-point math: (Y * 256) / X
-     * The assembly achieves this by shifting the AX register left by 8 bits 
-     * before dividing by BX.
-     */
-    ratio = (y << 8) / x;
+    ratio = (((uint32_t)y_dist << 8) / x_dist);
 
-    /* The assembly optimizes the lookup by splitting the arrays in half 
-     * so it never has to scan more than 23 values to find the angle. 
-     */
-    if(ratio < 256) {
-        /* Angle is between 0 and 44 degrees */
-        if(ratio < 103) {
-            /* Scan 0 to 21 */
-            for(i = 0; i <= 21; i++) {
-                if(ratio < Tangents_0_44[i]) return i - 1 < 0 ? 0 : i - 1;
+    if(ratio < 256)
+    {
+        if(ratio < 103)
+        {
+            angle = 0;
+            for(itr = 0; itr < 22; itr++)
+            {
+                if(ratio < Tangents_0_44[itr])
+                {
+                    return (angle - 1);
+                }
+                angle++;
             }
-            return 21;
-        } else {
-            /* Scan 22 to 44 */
-            for(i = 22; i <= 44; i++) {
-                if(ratio < Tangents_0_44[i]) return i - 1;
-            }
-            return 44;
+            angle = 22;
+            return (angle - 1);
         }
-    } else {
-        /* Angle is between 45 and 89 degrees */
-        if(ratio < 603) {
-            /* Scan 45 to 66 */
-            for(i = 0; i <= 21; i++) {
-                if(ratio < Tangents_45_89[i]) return i + 45 - 1;
+        else
+        {
+            angle = 22;
+            for(itr = 0; itr < 23; itr++)
+            {
+                if(ratio < Tangents_0_44[(22 + itr)])
+                {
+                    return (angle - 1);
+                }
+                angle++;
             }
-            return 66; /* 45 + 21 */
-        } else {
-            /* Scan 67 to 89 */
-            for(i = 22; i <= 44; i++) {
-                if(ratio < Tangents_45_89[i]) return i + 45 - 1;
+            angle = 44;
+            return (angle - 1);
+        }
+    }
+    else
+    {
+        if(ratio < 603)
+        {
+            angle = 0;
+            for(itr = 0; itr < 22; itr++)
+            {
+                if(ratio < Tangents_45_89[itr])
+                {
+                    return ((angle - 1) + 45);
+                }
+                angle++;
             }
-            return 89;
+            return 66;
+        }
+        else
+        {
+            angle = 0;
+            for(itr = 0; itr < 23; itr++)
+            {
+                if(ratio < Tangents_45_89[(22 + itr)])
+                {
+                    return ((angle - 1) + 67);
+                }
+                angle++;
+            }
+            return 90;
         }
     }
 }
 
 
 // WZD s34p03
+// drake178: Cos()
+// MoO2  Cos()
 /*
-GEMINI
+    OG is hand-written asm; the tables are in the code segment.
+    angle_to_cos[] holds cos(1) .. cos(90), so it is read at [angle - 1]; angle 0 returns radius unscaled.
+    The multiply is unsigned (mul), on |radius|, keeping the high word, so the result rounds toward zero; the sign of radius is put back after.
+    Expects 0 .. 360: a negative angle, or one past 360, indexes before the table.
 */
-/* Assuming angle_to_cos is a global array of 91 unsigned shorts */
-// extern unsigned short angle_to_cos[91];
-int16_t Cos(int16_t angle, int16_t radius) {
-    int sign = 1;
-    unsigned short multiplier;
-    long result;
+int16_t Cos(int16_t angle, int16_t radius)
+{
+    int16_t negate;             // _DX_ / _CX_
+    uint16_t multiplier;        // _AX_ (lodsw)
+    int16_t result;             // _AX_
 
-    /* Fold the 360-degree angle into the 0-90 degree quadrant */
-    if(angle > 90 && angle <= 180) {
-        angle = 180 - angle;
-        sign = -1;
-    } else if(angle > 180 && angle <= 270) {
-        angle = angle - 180;
-        sign = -1;
-    } else if(angle > 270 && angle <= 360) {
-        angle = 360 - angle;
-        /* sign remains positive */
+    negate = ST_FALSE;
+
+    if(angle >= 91)
+    {
+        if(angle < 181)
+        {
+            angle = (180 - angle);
+            negate = ST_TRUE;
+        }
+        else if(angle < 271)
+        {
+            angle = (angle - 180);
+            negate = ST_TRUE;
+        }
+        else
+        {
+            angle = (360 - angle);
+        }
     }
 
-    /* Look up the fixed-point fraction (0 to 65535) */
-    multiplier = angle_to_cos[angle];
-
-    /* Multiply and shift right by 16 (equivalent to assembly's "mov ax, dx") */
-    result = ((long)radius * multiplier) >> 16;
-
-    if(sign == -1) {
-        return (int)(-result);
+    if(angle == 0)
+    {
+        result = radius;
     }
-    return (int)result;
+    else
+    {
+        multiplier = angle_to_cos[(angle - 1)];
+        if(radius >= 0)
+        {
+            result = (int16_t)(((uint32_t)(uint16_t)radius * multiplier) >> 16);
+        }
+        else
+        {
+            result = -(int16_t)(((uint32_t)(uint16_t)-radius * multiplier) >> 16);
+        }
+    }
+
+    if(negate != ST_FALSE)
+    {
+        result = -result;
+    }
+
+    return result;
 }
 
 
 // WZD s34p04
 // drake178: Sin()
+// MoO2  Sin()
 /*
+    OG is hand-written asm; the tables are in the code segment.
+    angle_to_sin[] holds sin(0) .. sin(89), so it is read at [angle]; angle 90 returns radius unscaled.
+    The multiply is unsigned (mul), on |radius|, keeping the high word, so the result rounds toward zero; the sign of radius is put back after.
+    Expects 0 .. 360: a negative angle, or one past 360, indexes before the table.
 */
-/*
-GEMINI
-*/
-/* Assuming angle_to_cos is a global array of unsigned shorts */
-// extern unsigned short angle_to_cos[90]; 
-int16_t Sin(int16_t angle, int16_t radius) {
-    int sign = 1; /* 1 for positive, -1 for negative */
-    unsigned short multiplier;
-    long result;
+int16_t Sin(int16_t angle, int16_t radius)
+{
+    int16_t negate;             // _DX_ / _CX_
+    uint16_t multiplier;        // _AX_ (lodsw)
+    int16_t result;             // _AX_
 
-    /* 1. Fold the 360-degree angle into the 0-90 degree quadrant */
-    if(angle > 90 && angle <= 180) {
-        /* Quadrant 2: Sine is positive, angle counts backward from 180 */
-        angle = 180 - angle;
-    } else if(angle > 180 && angle <= 270) {
-        /* Quadrant 3: Sine is negative, angle counts forward from 180 */
-        angle = angle - 180;
-        sign = -1;
-    } else if(angle > 270 && angle <= 360) {
-        /* Quadrant 4: Sine is negative, angle counts backward from 360 */
-        angle = 360 - angle;
-        sign = -1;
-    }
+    negate = ST_FALSE;
 
-    /* 2. The 90-Degree Shortcut */
-    /* If the angle is exactly 90 (or 270, which folds to 90), sin(90) = 1.0. 
-       1.0 * radius is just radius. The assembly skips the math here. */
-    if(angle == 90) {
-        if(sign == -1) {
-            return -radius;
+    if(angle >= 91)
+    {
+        if(angle < 181)
+        {
+            angle = (180 - angle);
         }
-        return radius;
+        else if(angle < 271)
+        {
+            angle = (angle - 180);
+            negate = ST_TRUE;
+        }
+        else
+        {
+            angle = (360 - angle);
+            negate = ST_TRUE;
+        }
     }
 
-    /* 3. Look up the fixed-point fraction (0 to 65535) */
-    multiplier = angle_to_cos[angle];
-
-    /* 4. Multiply and take the upper 16 bits (divide by 65536) */
-    /* Note: In C, standard signed long math handles negative radii natively, 
-       whereas the assembly had to manually do abs(radius) to use the 'mul' instruction. */
-    result = ((long)radius * multiplier) >> 16;
-
-    /* 5. Apply the quadrant sign */
-    if(sign == -1) {
-        return (int)(-result);
+    if(angle == 90)
+    {
+        result = radius;
     }
-    
-    return (int)result;
+    else
+    {
+        multiplier = angle_to_sin[angle];
+        if(radius >= 0)
+        {
+            result = (int16_t)(((uint32_t)(uint16_t)radius * multiplier) >> 16);
+        }
+        else
+        {
+            result = -(int16_t)(((uint32_t)(uint16_t)-radius * multiplier) >> 16);
+        }
+    }
+
+    if(negate != ST_FALSE)
+    {
+        result = -result;
+    }
+
+    return result;
 }
 
 
 // WZD s34p05
-/* GEMINI */
-/**
- * Standard Opaque Column Engine (Refactored for Linear Framebuffer)
- */
-void VGA_DrawTexture(TextureRenderParams * params)
+// drake178: VGA_DrawTexture()
+// MoO2  Texture_Map_Block()  (32-bit edge-list rewrite; same role)
+/*
+    OG is hand-written asm; its state lives in code-segment variables (Skip_Width, Min_Write_Offset, Max_Write_Offset, Y_Vrt_Slope, Y_Down, Y_Hrz_Slope, Y_Left, Vrt_Read_Skip, Up_Error, Horz_Left_Error, Horz_Down_Error, Col_Height_Frac).
+    The addressing is kept in VGA Mode Y terms: di is a 16-bit offset into one 80-byte-per-row VGA plane, and the plane is the low two bits of x. Only the write is translated to the linear page buffer.
+    That keeps the asm's 16-bit wraparound: a column height of 0 runs 'loop' 65536 times, and 65536 rows of 'di += 80' wrap the whole plane, so the column is drawn top to bottom.
+    The clip test runs after 'inc di', so it tests di + 1 against MinOff / MaxOff.
+*/
+void Texture_Map_Block(TextureRenderParams * params)
 {
-    byte_ptr vga_frame_buffer = current_video_page;
-    // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
+    uint16_t skip_width;
+    uint16_t min_write_offset;
+    uint16_t max_write_offset;
+    uint16_t up_error;
+    uint16_t horz_left_error;
+    uint16_t horz_down_error;
+    uint16_t col_height_frac;
+    uint16_t width;
+    uint16_t dest;              // _DI_
+    uint16_t source_offset;     // _SI_
+    uint8_t plane_mask;         // _AH_
+    uint16_t column_dest;
+    uint16_t column_source_offset;
+    uint16_t row_count;         // _CX_
+    uint16_t y_hrz_error;       // _DX_
+    uint16_t y_vrt_error;       // _BX_
+    uint8_t color;              // _AL_
+    int16_t plane;
 
-    int16_t skip_width          = (int16_t)params->skip_width;
-    uint16_t min_write_offset     = params->min_off;
-    uint16_t max_write_offset     = params->max_off;
-    
-    uint16_t col_height_frac      = params->col1_hgt << 8; 
-    uint16_t up_error             = 128;
-    uint16_t horz_left_error      = 128;
-    uint16_t horz_down_error      = 128;
-    uint16_t current_width        = params->width;
-    
-    /* Establish standard flat memory coordinate starting address index */
-    int dest_pixel_index      = (params->start_y * SCREEN_WIDTH) + params->start_x;
-    int source_pixel_index    = params->read_off;
+    skip_width = params->skip_width;
+    min_write_offset = params->min_off;
+    max_write_offset = params->max_off;
 
-    while(current_width > 0)
+    dest = ((params->start_y * 80) + (params->start_x >> 2));
+    plane = (params->start_x & 3);
+    plane_mask = (1 << plane);
+    source_offset = params->read_off;
+
+    up_error = 128;
+    horz_left_error = 128;
+    horz_down_error = 128;
+
+    col_height_frac = (params->col1_hgt << 8);
+
+    width = params->width;
+
+    for(;;)
     {
-        int col_dest_index   = dest_pixel_index;
-        int col_source_index = source_pixel_index;
-        
-        uint16_t active_col_frac = col_height_frac;
-        uint16_t loop_count      = active_col_frac >> 8; 
+        column_dest = dest;
+        column_source_offset = source_offset;
 
-        if(skip_width < 0) {
-            uint16_t bh_accum = 0;
-            uint16_t dh_accum = 0;
-            uint16_t i;
-
-            for(i = 0; i < loop_count; ++i) {
-                uint8_t texel = params->pict_data[col_source_index];
-                
-                /* Bounds verification mapping safely onto flat linear indices */
-                if(col_dest_index >= (int)min_write_offset && col_dest_index < (int)max_write_offset) {
-                    if(texel != ST_TRANSPARENT)  /* skip */
+        if((int16_t)skip_width < 0)
+        {
+            row_count = (col_height_frac >> 8);
+            y_hrz_error = 0;
+            y_vrt_error = 0;
+            do
+            {
+                color = params->pict_data[source_offset];
+                dest++;
+                if(
+                    (color != 0)
+                    &&
+                    (dest >= min_write_offset)
+                    &&
+                    (dest < max_write_offset)
+                )
+                {
+                    dest--;
+                    // stosb  ES:DI  plane (map mask) / di
+                    if(dest < (80 * SCREEN_HEIGHT))  /* CLAUDE */  // VGA memory past the visible page is not in the linear page buffer
                     {
-                        vga_frame_buffer[col_dest_index] = texel;
+                        current_video_page[(((dest / 80) * SCREEN_WIDTH) + ((dest % 80) * 4) + plane)] = color;  /* CLAUDE */
                     }
+                    dest++;
                 }
-
-                /* Step vertically down exactly one linear stride row */
-                col_dest_index += SCREEN_WIDTH; 
-                col_source_index += params->v_rskip;
-
-                dh_accum += params->y_hslope;
-                if((dh_accum >> 8) > 0) {
-                    dh_accum &= 0xFF;
-                    col_source_index += params->y_left;
+                dest += 79;
+                source_offset += params->v_rskip;
+                y_hrz_error += params->y_hslope;
+                if((y_hrz_error >> 8) != 0)
+                {
+                    y_hrz_error &= 0x00FF;
+                    source_offset += params->y_left;
                 }
-
-                bh_accum += params->y_vslope;
-                if((bh_accum >> 8) > 0) {
-                    bh_accum &= 0xFF;
-                    col_source_index += params->y_down;
+                y_vrt_error += params->y_vslope;
+                if((y_vrt_error >> 8) != 0)
+                {
+                    y_vrt_error &= 0x00FF;
+                    source_offset += params->y_down;
                 }
-            }
+            } while(--row_count != 0);
         }
 
         skip_width--;
-        current_width--;
-        if(current_width == 0) {
+
+        dest = column_dest;
+        source_offset = column_source_offset;
+
+        if(--width == 0)
+        {
             break;
         }
 
-        /* Fixed Point Step Adjustments for the Outer Column Loop */
-        dest_pixel_index += (int16_t)params->ch_incr;
-        
+        dest += params->ch_incr;
         up_error += params->up_slope;
-        if((up_error >> 8) > 0) {
-            up_error &= 0xFF;
-            dest_pixel_index += (int16_t)params->nl;
+        if((up_error >> 8) != 0)
+        {
+            up_error &= 0x00FF;
+            dest += params->nl;
         }
 
         col_height_frac += params->ch_slope;
-        source_pixel_index += params->h_rskip;
 
+        source_offset += params->h_rskip;
         horz_left_error += params->x_hslope;
-        if((horz_left_error >> 8) > 0) {
-            horz_left_error &= 0xFF;
-            source_pixel_index += params->x_left;
+        if((horz_left_error >> 8) != 0)
+        {
+            horz_left_error &= 0x00FF;
+            source_offset += params->x_left;
         }
-
         horz_down_error += params->x_vslope;
-        if((horz_down_error >> 8) > 0) {
-            horz_down_error &= 0xFF;
-            source_pixel_index += params->x_down;
+        if((horz_down_error >> 8) != 0)
+        {
+            horz_down_error &= 0x00FF;
+            source_offset += params->x_down;
         }
 
-        /* CRITICAL CORRECTION: Advance exactly +1 pixel horizontally to next screen column */
-        dest_pixel_index++;
+        plane_mask <<= 1;
+        plane++;
+        if((int8_t)(plane_mask - 9) >= 0)
+        {
+            plane_mask = 1;
+            plane = 0;
+            dest++;
+        }
     }
 }
 
 
 // WZD s34p06
-/* GEMINI */
-/**
- * Executes the affine-mapped column texture draw operation onto a linear surface.
- * Replaces VGA plane-masking with direct index operations into the 8-bit frame buffer.
- */
-/**
- * Translucent/Remapped Column Engine (Refactored for Linear Framebuffer)
- */
-// void VGA_DrawTexture_R(int Start_X, int Start_Y, int Width, int Col1Hgt, int CH_Slope, int CH_Incr, int UpSlope, int NL, int ReadOff, int IMG_Data, int H_RSkip, int X_VSlope, int X_Down, int X_HSlope, int X_Left, int V_RSkip, int Y_VSlope, int Y_Down, int Y_HSlope, int Y_Left, int Skip_Width, int MinOff, int MaxOff)
-void VGA_DrawTexture_R(TextureRenderParams * params)
+// drake178: VGA_DrawTexture_R()
+// MoO2  DNE  (remap variant; named after MoO2's Remap_ prefix convention)
+/*
+    Same engine as Texture_Map_Block(), plus the remap colors: 0 is transparent, 1-231 are written as is, and 232 and up select block (color - 232) of remap_color_palettes
+    (256 bytes each), indexed by the pixel already on the page, so the picture tints or shades whatever is under it.
+    The high nibble of AH carries the plane index for the read-map select (3CEh index 4), so the read and the write hit the same pixel; here that is the same linear offset.
+*/
+void Remap_Texture_Map_Block(TextureRenderParams * params)
 {
-    byte_ptr vga_frame_buffer = current_video_page;
-    // screen_start = current_video_page + (y_start * SCREEN_WIDTH) + x_start;
-    uint8_t remap_block;
-    uint8_t remap_block_index;
-    uint8_t remap_color;
+    uint16_t skip_width;
+    uint16_t min_write_offset;
+    uint16_t max_write_offset;
+    uint16_t up_error;
+    uint16_t horz_left_error;
+    uint16_t horz_down_error;
+    uint16_t col_height_frac;
+    uint16_t width;
+    uint16_t dest;              // _DI_
+    uint16_t source_offset;     // _SI_
+    uint8_t plane_mask;         // _AH_ (low nibble)
+    uint16_t column_dest;
+    uint16_t column_source_offset;
+    uint16_t row_count;         // _CX_
+    uint16_t y_hrz_error;       // _DX_
+    uint16_t y_vrt_error;       // _BX_
+    uint8_t color;              // _AL_
+    int16_t plane;              // _AH_ (high nibble)
+    int32_t page_offset;  /* CLAUDE */
 
-    int16_t skip_width          = (int16_t)params->skip_width;
-    uint16_t min_write_offset     = params->min_off;
-    uint16_t max_write_offset     = params->max_off;
-    
-    uint16_t col_height_frac      = params->col1_hgt << 8; 
-    uint16_t up_error             = 0x80;
-    uint16_t horz_left_error      = 0x80;
-    uint16_t horz_down_error      = 0x80;
-    uint16_t current_width        = params->width;
-    
-    int dest_pixel_index      = (params->start_y * SCREEN_WIDTH) + params->start_x;
-    int source_pixel_index    = params->read_off;
+    skip_width = params->skip_width;
+    min_write_offset = params->min_off;
+    max_write_offset = params->max_off;
 
-    while(current_width > 0)
+    dest = ((params->start_y * 80) + (params->start_x >> 2));
+    plane = (params->start_x & 3);
+    plane_mask = (1 << plane);
+    source_offset = params->read_off;
+
+    up_error = 128;
+    horz_left_error = 128;
+    horz_down_error = 128;
+
+    col_height_frac = (params->col1_hgt << 8);
+
+    width = params->width;
+
+    for(;;)
     {
-        int col_dest_index   = dest_pixel_index;
-        int col_source_index = source_pixel_index;
-        
-        uint16_t active_col_frac = col_height_frac;
-        uint16_t loop_count      = active_col_frac >> 8; 
+        column_dest = dest;
+        column_source_offset = source_offset;
 
-        if(skip_width < 0)
+        if((int16_t)skip_width < 0)
         {
-            uint16_t bh_accum = 0;
-            uint16_t dh_accum = 0;
-            uint16_t i;
-
-            for(i = 0; i < loop_count; ++i)
+            row_count = (col_height_frac >> 8);
+            y_hrz_error = 0;
+            y_vrt_error = 0;
+            do
             {
-                uint8_t texel = params->pict_data[col_source_index];
-                
-                if(col_dest_index >= (int)min_write_offset && col_dest_index < (int)max_write_offset)
+                color = params->pict_data[source_offset];
+                dest++;
+                if(
+                    (color != 0)
+                    &&
+                    (dest >= min_write_offset)
+                    &&
+                    (dest < max_write_offset)
+                )
                 {
-                    if(texel != ST_TRANSPARENT)  /* skip */
+                    dest--;
+                    // stosb  ES:DI  plane (map mask / read map) / di
+                    if(dest < (80 * SCREEN_HEIGHT))  /* CLAUDE */  // VGA memory past the visible page is not in the linear page buffer
                     {
-                        if(texel >= 232)
+                        page_offset = (((dest / 80) * SCREEN_WIDTH) + ((dest % 80) * 4) + plane);  /* CLAUDE */
+                        if(color >= 232)
                         {
-                            // Remap_Draw_Picture_ASM()
-                            // remap_block = data_byte - 232;  /* index of picture_remap_color_list[] */
-                            // remap_block_index = *screen_pos;  // MoO2: "screen_data"
-                            // remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
-                            // *screen_pos = remap_color;
-                            remap_block = texel - 232;
-                            remap_block_index = vga_frame_buffer[col_dest_index];
-                            remap_color = *(remap_color_palettes + (remap_block * (16 * 16)) + remap_block_index);
-                            vga_frame_buffer[col_dest_index] = remap_color;
-                        } else {
-                            vga_frame_buffer[col_dest_index] = texel;
+                            current_video_page[page_offset] = remap_color_palettes[(((color - 232) * 256) + current_video_page[page_offset])];
+                        }
+                        else
+                        {
+                            current_video_page[page_offset] = color;
                         }
                     }
+                    dest++;
                 }
-
-                col_dest_index += SCREEN_WIDTH;
-                col_source_index += params->v_rskip;
-
-                dh_accum += params->y_hslope;
-                if((dh_accum >> 8) > 0) {
-                    dh_accum &= 0xFF;
-                    col_source_index += params->y_left;
+                dest += 79;
+                source_offset += params->v_rskip;
+                y_hrz_error += params->y_hslope;
+                if((y_hrz_error >> 8) != 0)
+                {
+                    y_hrz_error &= 0x00FF;
+                    source_offset += params->y_left;
                 }
-
-                bh_accum += params->y_vslope;
-                if((bh_accum >> 8) > 0) {
-                    bh_accum &= 0xFF;
-                    col_source_index += params->y_down;
+                y_vrt_error += params->y_vslope;
+                if((y_vrt_error >> 8) != 0)
+                {
+                    y_vrt_error &= 0x00FF;
+                    source_offset += params->y_down;
                 }
-            }
+            } while(--row_count != 0);
         }
 
         skip_width--;
-        current_width--;
-        if(current_width == 0) {
+
+        dest = column_dest;
+        source_offset = column_source_offset;
+
+        if(--width == 0)
+        {
             break;
         }
 
-        dest_pixel_index += (int16_t)params->ch_incr;
-        
+        dest += params->ch_incr;
         up_error += params->up_slope;
-        if((up_error >> 8) > 0) {
-            up_error &= 0xFF;
-            dest_pixel_index += (int16_t)params->nl;
+        if((up_error >> 8) != 0)
+        {
+            up_error &= 0x00FF;
+            dest += params->nl;
         }
 
         col_height_frac += params->ch_slope;
-        source_pixel_index += params->h_rskip;
 
+        source_offset += params->h_rskip;
         horz_left_error += params->x_hslope;
-        if((horz_left_error >> 8) > 0) {
-            horz_left_error &= 0xFF;
-            source_pixel_index += params->x_left;
+        if((horz_left_error >> 8) != 0)
+        {
+            horz_left_error &= 0x00FF;
+            source_offset += params->x_left;
         }
-
         horz_down_error += params->x_vslope;
-        if((horz_down_error >> 8) > 0) {
-            horz_down_error &= 0xFF;
-            source_pixel_index += params->x_down;
+        if((horz_down_error >> 8) != 0)
+        {
+            horz_down_error &= 0x00FF;
+            source_offset += params->x_down;
         }
 
-        /* CRITICAL CORRECTION: Advance exactly +1 pixel horizontally to next screen column */
-        dest_pixel_index++;
+        plane_mask <<= 1;
+        plane++;
+        if((int8_t)(plane_mask - 9) >= 0)
+        {
+            plane_mask = 1;
+            plane = 0;
+            dest++;
+        }
     }
 }

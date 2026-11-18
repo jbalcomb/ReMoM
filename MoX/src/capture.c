@@ -341,9 +341,9 @@ static void VGA_ReadScreenLine(int line, char *scanline_buffer)
 // MoO2  Module: capture  Release_Version()  Address: 01:00110B34
 void Release_Version(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     release_flag = ST_TRUE;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // WZD s24p06

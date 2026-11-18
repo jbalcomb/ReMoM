@@ -28,6 +28,7 @@ Elsewhere, ...
 #include "../../MoX/src/MOX_DEF.h"
 #include "../../MoX/src/MOM_DEF.h"
 #include "../../MoX/src/paragrph.h"
+#include "../../MoX/src/special.h"  /* Path_Wrap() */
 #include "../../MoX/src/EMS/EMS.h"
 
 #include "MainScr.h"
@@ -39,6 +40,7 @@ Elsewhere, ...
 #include "Terrain.h"
 #include "MovePath.h"
 
+#include <stdlib.h>     /* abs() */
 #include <string.h>     /* memcpy(), memset() */
 
 
@@ -168,8 +170,13 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 movement_mode_flags[itr_modes] = ST_TRUE;
             }
 
+            // if(
+            //     ((_unit_type_table[unit_type].Move_Flags & movement_mode_flags[itr_modes]) == MV_FLYING) &&
+            //     (_unit_type_table[unit_type].Transport > 0)
+            // )
+            /* CLAUDE */  /* REBUG */  /* asm: and ax, l_movement_modes_array[si] / cmp ax, MV_FLYING */
             if(
-                ((_unit_type_table[unit_type].Move_Flags & movement_mode_flags[itr_modes]) == MV_FLYING) &&
+                ((_unit_type_table[unit_type].Move_Flags & l_movement_modes_array[itr_modes]) == MV_FLYING) &&
                 (_unit_type_table[unit_type].Transport > 0)
             )
             {
@@ -198,8 +205,11 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 movement_mode_flags[itr_modes] = ST_TRUE;
             }
 
+            // if(
+            //     (movement_mode_flags[itr_modes] == MV_FLYING) &&
+            /* CLAUDE */  /* REBUG */  /* asm: cmp l_movement_modes_array[si], MV_FLYING */
             if(
-                (movement_mode_flags[itr_modes] == MV_FLYING) &&
+                (l_movement_modes_array[itr_modes] == MV_FLYING) &&
                 (
                     ((_UNITS[unit_idx].enchantments & UE_WIND_WALKING) != 0) ||
                     ((_unit_type_table[unit_type].Abilities & UA_WINDWALKING) != 0)
@@ -209,8 +219,11 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 movement_mode_flags[itr_modes] = ST_TRUE;
             }
 
+            // if(
+            //     (movement_mode_flags[itr_modes] == MV_FLYING) &&
+            /* CLAUDE */  /* REBUG */  /* asm: cmp l_movement_modes_array[si], MV_FLYING */
             if(
-                (movement_mode_flags[itr_modes] == MV_FLYING) &&
+                (l_movement_modes_array[itr_modes] == MV_FLYING) &&
                 ((_UNITS[unit_idx].enchantments & (UE_WIND_WALKING | UE_FLIGHT)) != 0) &&
                 (_unit_type_table[unit_type].Transport > 0)
             )
@@ -241,13 +254,8 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                     Units_With_Same--;
                 }
 
-                /* OGBUG: drake178: misplaced parentheses in the original code —
-                   the condition is supposed to skip all 4 of the following blocks,
-                   not just the first one.  Preserved faithfully via C operator
-                   precedence (&& binds tighter than ||).  Explicit parentheses
-                   below make that intent visible to the compiler and silence
-                   GCC's -Wparentheses; do NOT regroup as ((MV_FLYING || …) && …)
-                   — that would be the "fixed" behavior, not OG-faithful. */
+                /* OGBUG  (MV_FLYING && Non-Corporeal type) || Wraith Form || item Wraith Form: a Wraith Form unit takes one off Swimming_Units in every mode whose type flag it has, not only in the flying mode */
+                /* the explicit parentheses keep the asm's grouping and silence GCC's -Wparentheses; do NOT regroup */
                 if(
                     (
                         (l_movement_modes_array[itr_modes] == MV_FLYING)
@@ -278,6 +286,7 @@ void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_
                 Swimming_Units++;  // BUGBUG:  drake178: natural swimmers with water walking now count as 2
             }
 
+            /* OGBUG  counted separately from Water Walking above: a Water Walking unit that is also Non-Corporeal / Wraith Form adds 2 to Units_With_Same and Swimming_Units, so the 'every unit can cross water' count can be met one unit short */
             if
             (
                 (l_movement_modes_array[itr_modes] == MV_SWIMMING) &&
@@ -502,8 +511,24 @@ int16_t Unit_Has_Swimming(int16_t unit_idx)
     return has_swimming;
 }
 
+
 // WZD o71p08
-// int16_t UNIT_ReturnZero(int16_t unit_idx);
+int16_t Unit_Has_WindWalkingItem(int16_t unit_idx)
+{
+/*
+proc o71p08_empty_function far
+unit_idx= word ptr  6
+push    bp
+mov     bp, sp
+xor     ax, ax
+jmp     short $+2
+pop     bp
+retf
+endp o71p08_empty_function
+*/
+    return ST_FALSE;
+}
+
 
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx)
@@ -721,8 +746,55 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
 
 // WZD o148p01
 // UU_OVL_Return_2()
+int16_t o148p01_empty_function(void)
+{
+/*
+push    bp
+mov     bp, sp
+mov     ax, 2
+jmp     short $+2
+pop     bp
+ret                                             ; retf after assembly (the -S artifact in the codegen doc)
+*/
+    return 2;
+}
+
+
 // WZD o148p02
-// UU_OVL_GetLinePath()
+// drake178: UU_OVL_GetLinePath()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, j_UU_OVL_GetLinePath, has no callers)
+a straight-line move path (Path_Wrap()) from src to dst, each step costing its square's moves2[] from Init_MovePathMap() alone (no Update_MovePathMap())
+returns its length, or 0 if the destination square is impassable
+*/
+int16_t Move_Path_Straight_Line__NIU(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], struct s_Movement_Modes movement_modes)
+{
+    int16_t path_length = 0;
+    int16_t itr = 0;  // _DI_
+
+    EMMDATAH_Map();
+
+    Init_MovePathMap(movement_modes.Cavalry, movement_modes.Forester, movement_modes.Mountaineer, movement_modes.Swimming, movement_modes.Sailing, movement_modes.Flying, wp);
+
+    if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == (int8_t)INF)
+    {
+
+        return 0;
+
+    }
+
+    path_length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &mvpth_x[0], &mvpth_y[0], WORLD_WIDTH);
+
+    for(itr = 0; itr < path_length; itr++)
+    {
+
+        mvpth_c[itr] = movepath_cost_map->moves2[((mvpth_y[itr] * WORLD_WIDTH) + mvpth_x[itr])];  /* asm: mov al, [bx] / mov ah, 0 - the coordinates are read as unsigned bytes */
+
+    }
+
+    return path_length;
+
+}
 
 
 // WZD o148p03
@@ -745,8 +817,8 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
     ¿ UU_PathingVar2:  debug counter for movement path cache misses ?
     // WZD dseg:CA8A  UU_PathingVar1 dw 0
     // WZD dseg:CA8C  UU_PathingVar2 dw 0
-    UU_DBG_MovePatchCache_Hits
-    UU_DBG_MovePatchCache_Misses
+    dbg_ai_move_path_cache_hits
+    dbg_ai_move_path_cache_misses
     DEDUCE: ¿ the usage here, incrementing without initializing, is another clue that variables initialized to zero can/do get put in the Uninitialized Data Data Segment ?
 
 */
@@ -761,7 +833,7 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx)
         [Skeleton 5]      reverse + 1-D index -> (x, y)
     The inline [Skeleton step N] labels below mark steps 2/4/5; steps 1/3 run inside the Move_Path_Find() call.
 */
-int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t UU_flag, int16_t UU_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
+int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t use_search_box, int16_t stack_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx)
 {
     int16_t ext_y2 = 0;
     int16_t ext_x2 = 0;
@@ -772,134 +844,177 @@ int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t M
     int16_t itr_wx = 0;
     int16_t itr = 0;  // _SI_
     int16_t path_length = 0;  // _DI_
-    int16_t * ptr_reached_from = 0;  // DNE in Dasm
-    int16_t reached_from = 0;  // DNE in Dasm
+    // int16_t * ptr_reached_from = 0;  // DNE in Dasm
+    /* CLAUDE */  /* REBUG */  /* asm: no stores - the two statements that used these had no asm counterpart */
+    // int16_t reached_from = 0;  // DNE in Dasm
 
     EMMDATAH_Map();
 
-    UU_flag = ST_TRUE;
-    UU_moves2 = 8;
-
+    use_search_box = ST_TRUE;
+    stack_moves2 = 8;
     _ai_move_path_idx = ST_UNDEFINED;
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
-        UU_flag = ST_FALSE;
-        goto Calc_Move_Path;
+        use_search_box = ST_FALSE;
     }
     else
     {
-        goto Move_Path_Cache;
+        for(itr = 0; (itr < 140) && (_ai_move_path_table[itr].src_wx != ST_UNDEFINED); itr++)
+        {
+            if(
+                (_ai_move_path_table[itr].src_wx == src_wx)
+                &&
+                (_ai_move_path_table[itr].srx_wy == src_wy)
+                &&
+                (_ai_move_path_table[itr].dst_wx == dst_wx)
+                &&
+                (_ai_move_path_table[itr].dst_wy == dst_wy)
+                &&
+                (_ai_move_path_table[itr].wp == wp))
+            {
+                _ai_move_path_idx = itr;
+            }
+        }
+        if(_ai_move_path_idx != ST_UNDEFINED)
+        {
+            memcpy(&mvpth_x[0], &_ai_move_path_table[_ai_move_path_idx].wx_array[0], _ai_move_path_table[_ai_move_path_idx].length);  /* asm: _fmemcpy(ds:mvpth_x, ...) */
+            memcpy(&mvpth_y[0], &_ai_move_path_table[_ai_move_path_idx].wy_array[0], _ai_move_path_table[_ai_move_path_idx].length);
+            memcpy(&mvpth_c[0], &_ai_move_path_table[_ai_move_path_idx].cost_array[0], _ai_move_path_table[_ai_move_path_idx].length);
+            dbg_ai_move_path_cache_hits++;
+            return _ai_move_path_table[_ai_move_path_idx].length;
+        }
+        else
+        {
+            dbg_ai_move_path_cache_misses++;
+        }
     }
 
-
-Move_Path_Cache:
-{
-
-    // HACK:  hard-coded MovePath Cache Miss 
-    goto Calc_Move_Path;
-
-    goto Done;
-}
-
-
 Calc_Move_Path:
-{
 
-    do
+    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
+
+    // HERE: stack_moves2 has been hard-coded to 8, so ALWAYS jumps over
+    // caps every passable square's cost at 2
+    if(
+        (player_idx == HUMAN_PLAYER_IDX)
+        &&
+        (stack_moves2 == 1)
+    )
     {
-        Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
-
-        // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
-        // min 2 cost
-        if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
+        for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
         {
-            for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
             {
-                for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+                if(
+                    (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] != ST_UNDEFINED) &&
+                    (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] > 2)
+                )
                 {
-                    if(
-                        (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] != ST_UNDEFINED) &&
-                        (movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] > 2)
-                    )
-                    {
-                        movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 2;
-                    }
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = 2;
+                }
+            }
+        }
+    }
+
+    // sets movepath_cost_map->moves2[] from movement_mode_cost_maps[wp].UU_MvMd, walking, forester, mountaineer, swimming, sailing
+    Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
+
+    /* [Skeleton step 2]  Bail if the destination square is impassable (MoM-MovePath-Compare.md, "The shared skeleton"); returns path_length 0 via Done_Return_Zero. */
+    if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == (int8_t)INF)  /* CLAUDE  (int8_t)INF == -1; impassable byte 0xFF on this signed moves2 map */
+    {
+        return 0;
+    }
+
+    if(use_search_box == ST_TRUE)
+    {
+        Move_Path_Search_Box(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
+
+        for(itr_wy = 0; itr_wy < ext_y1; itr_wy++)
+        {
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+                movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;
+            }
+        }
+
+        for(itr_wy = ext_y2 + 1; itr_wy < WORLD_HEIGHT; itr_wy++)
+        {
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+                movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;
+            }
+        }
+
+        /* OGBUG  ext_y2 is never capped (Move_Path_Search_Box()), so for a box near the bottom edge the two loops below run to row 48 and write 0xFF past moves2[], into Reach_Costs[] - harmless in the OG, because Move_Path_Find() resets Reach_Costs[] first */
+        if(ext_x1 < ext_x2)
+        {
+            for(itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
+            {
+                /* HACK */  if(itr_wy >= WORLD_HEIGHT) { continue; }  /* bounds the OG's writes past moves2[]; Move_Path_Find() would reset them anyway */
+                for(itr_wx = 0; itr_wx < ext_x1; itr_wx++)
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;
+                }
+                for(itr_wx = ext_x2 + 1; itr_wx < WORLD_WIDTH; itr_wx++)
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;
+                }
+            }
+        }
+        else  /* the box wraps around the map edge */
+        {
+            for(itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
+            {
+                /* HACK */  if(itr_wy >= WORLD_HEIGHT) { continue; }  /* bounds the OG's writes past moves2[]; Move_Path_Find() would reset them anyway */
+                for(itr_wx = ext_x2 + 1; itr_wx < ext_x1; itr_wx++)
+                {
+                    movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)] = (int8_t)INF;
                 }
             }
         }
 
-        // sets movepath_cost_map->moves2[] from movement_mode_cost_maps[wp].UU_MvMd, walking, forester, mountaineer, swimming, sailing
-        Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
-
-        /* [Skeleton step 2]  Bail if the destination square is impassable (MoM-MovePath-Compare.md, "The shared skeleton"); returns path_length 0 via Done_Return_Zero. */
-        if(movepath_cost_map->moves2[((dst_wy * WORLD_WIDTH) + dst_wx)] == (int8_t)INF)  /* CLAUDE  (int8_t)INF == -1; impassable byte 0xFF on this signed moves2 map */
-        {
-            goto Done_Return_Zero;
-        }
-
-        if(UU_flag != ST_TRUE)
-        {
-            break;
-        }
-
-
-// TODO          // TODO  TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
-// TODO          // iter 0 < ext_y1, 0 < WORLD_WIDTH
-// TODO          // iter ext_2+1 < WORLD_HEIGHT, 0 < WORLD_WIDTH
-// TODO          // if(ext_x1 >= ext_x2)
-// TODO          // iter ext_y1 < ext_y2,ext_x2 < ext_y1
-// TODO          // else
-// TODO          // itr ext_y1 < ext_y2, 0 < ext_x1
-// TODO  
-// TODO          // Move_Path_Find(src_wx, src_wy, (int8_t *)&movepath_cost_map[0]);
-// TODO  
-// TODO          path_length = 0;
-// TODO          dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
-// TODO          while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
-// TODO          {
-// TODO              movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
-// TODO              dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
-// TODO              path_length++;
-// TODO          }
-// TODO  
-// TODO          for(itr = 0; itr < path_length; itr++)
-// TODO          {
-// TODO              itr_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
-// TODO              itr_wy = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] / WORLD_WIDTH);
-// TODO              mvpth_x[itr] = itr_wx;
-// TODO              mvpth_y[itr] = itr_wy;
-// TODO              mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
-// TODO          }
-// TODO  
-// TODO          if(path_length != 0)
-// TODO          {
-// TODO              break;
-// TODO          }
-        
-        UU_flag = ST_FALSE;
-
-    } while(UU_flag == ST_FALSE);
-
-
-    if(UU_flag == ST_FALSE)
-    {
-
-        /* [Skeleton steps 1 + 3]  Move_Path_Find runs the array init + relaxation sweep, filling Reach_Costs[]/Reach_From[]. */
         Move_Path_Find(src_wx, src_wy, movepath_cost_map);
 
-        /* [Skeleton step 4]  Back-trace from the destination through Reach_From[] until a self-link, collecting Reverse_Path[] (path_length stays 0 if dst was never reached). */
         path_length = 0;
-        dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
-        ptr_reached_from = &movepath_cost_map->Reach_From[dst_world_map_idx];
-        reached_from = *ptr_reached_from;
-        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        dst_world_map_idx = (dst_wy * WORLD_WIDTH) + dst_wx;
+
+        while (movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
         {
             movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
             dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
             path_length++;
         }
 
+        for(itr = 0; itr < path_length; itr++)
+        {
+            itr_wx = movepath_cost_map->Reverse_Path[path_length - 1 - itr] % WORLD_WIDTH;
+            itr_wy = movepath_cost_map->Reverse_Path[path_length - 1 - itr] / WORLD_WIDTH;
+            mvpth_x[itr] = (int8_t)itr_wx;
+            mvpth_y[itr] = (int8_t)itr_wy;
+            mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
+        }
+
+        if(path_length == 0)
+        {
+            use_search_box = ST_FALSE;
+            goto Calc_Move_Path;
+        }
+    }
+
+    if(use_search_box == ST_FALSE)
+    {
+        /* [Skeleton steps 1 + 3]  Move_Path_Find runs the array init + relaxation sweep, filling Reach_Costs[]/Reach_From[]. */
+        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
+        /* [Skeleton step 4]  Back-trace from the destination through Reach_From[] until a self-link, collecting Reverse_Path[] (path_length stays 0 if dst was never reached). */
+        path_length = 0;
+        dst_world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
+        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
+        {
+            movepath_cost_map->Reverse_Path[path_length] = dst_world_map_idx;
+            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
+            path_length++;
+        }
         /* [Skeleton step 5]  Reverse the collected indices and convert each 1-D index to (x, y) -> mvpth_x/y/c[]. */
         for(itr = 0; itr < path_length; itr++)
         {
@@ -909,225 +1024,194 @@ Calc_Move_Path:
             mvpth_y[itr] = (int8_t)itr_wy;
             mvpth_c[itr] = movepath_cost_map->moves2[((itr_wy * WORLD_WIDTH) + itr_wx)];
         }
-
     }
-
-    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
-
-    // HERE: UU_moves2 has been hard-coded to 8, so ALWAYS jumps over
-    if((player_idx == HUMAN_PLAYER_IDX) && (UU_moves2 == 1))
-    {
-        // TODO  min 2 costs
-    }
-
-    Update_MovePathMap(&movepath_cost_map->moves2[0], boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
-
-}
-
-    goto Done;
-
-
-Done_Return_Zero:
-    path_length = 0;
-    goto Done;
-
-
-Done:
 
     return path_length;
 }
-/* GEMINI */
-#if 0
-int Make_Move_Path__GEMINI(int MvMd_0, int MvMd_1, int MvMd_2, int MvMd_3, int MvMd_4, int MvMd_5,
-                   int src_wx, int src_wy, int dst_wx, int dst_wy, int wp,
-                   uint8_t *mvpth_x, uint8_t *mvpth_y, uint8_t *mvpth_c,
-                   int UU_flag, int UU_moves2, int boatrider_count, int troop_count, int player_idx)
-{
-    /* Local variables mapped from stack frame */
-    int ext_y2;             /* [bp-0Eh] */
-    int ext_x2;             /* [bp-0Ch] */
-    int ext_y1;             /* [bp-0Ah] */
-    int ext_x1;             /* [bp-08h] */
-    int dst_world_map_idx;  /* [bp-06h] */
-    int itr_wy;             /* [bp-04h] */
-    int itr_wx;             /* [bp-02h] */
-    int _SI_itr;            /* si */
-    int _DI_path_length;    /* di */
-
-    /* Antigravity */
-    EMMDATAH_Map();
-
-    UU_flag = e_ST_TRUE;
-    UU_moves2 = 8;
-
-    ai_move_path_idx = e_ST_UNDEFINED;
-
-    if(player_idx == e_HUMAN_PLAYER_IDX)
-    {
-        UU_flag = e_ST_FALSE;
-        goto loc_D5B50;
-    }
-
-    for (_SI_itr = 0; _SI_itr < 140 && ai_move_path_table[_SI_itr].src_wx != e_ST_UNDEFINED; _SI_itr++)
-    {
-        if(ai_move_path_table[_SI_itr].src_wx == src_wx &&
-            ai_move_path_table[_SI_itr].src_wy == src_wy &&
-            ai_move_path_table[_SI_itr].dst_wx == dst_wx &&
-            ai_move_path_table[_SI_itr].dst_wy == dst_wy &&
-            ai_move_path_table[_SI_itr].Plane == wp)
-        {
-            ai_move_path_idx = _SI_itr;
-        }
-    }
-
-    if(ai_move_path_idx != e_ST_UNDEFINED)
-    {
-        _fmemcpy(mvpth_x, ai_move_path_table[ai_move_path_idx].wx_array, ai_move_path_table[ai_move_path_idx].Length);
-        _fmemcpy(mvpth_y, ai_move_path_table[ai_move_path_idx].wy_array, ai_move_path_table[ai_move_path_idx].Length);
-        _fmemcpy(mvpth_c, ai_move_path_table[ai_move_path_idx].cost_array, ai_move_path_table[ai_move_path_idx].Length);
-        
-        UU_DBG_MovePatchCache_Hits++;
-        
-        return ai_move_path_table[ai_move_path_idx].Length;
-    }
-    else
-    {
-        UU_DBG_MovePatchCache_Misses++;
-    }
-
-loc_D5B50:
-    Init_MovePathMap(MvMd_0, MvMd_1, MvMd_2, MvMd_3, MvMd_4, MvMd_5, wp);
-
-    if(player_idx == e_HUMAN_PLAYER_IDX && UU_moves2 == 1)
-    {
-        for (itr_wy = 0; itr_wy < e_WORLD_HEIGHT; itr_wy++)
-        {
-            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
-            {
-                if(movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] != e_ST_UNDEFINED_DB)
-                {
-                    if(movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] > 2)
-                    {
-                        movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = 2;
-                    }
-                }
-            }
-        }
-    }
-
-    Update_MovePathMap((int8_t far *)movepath_cost_map, boatrider_count, troop_count, wp, player_idx, dst_wx, dst_wy, src_wx, src_wy);
-
-    if(movepath_cost_map->moves2[dst_wy * e_WORLD_WIDTH + dst_wx] == e_ST_UNDEFINED_DB)
-    {
-        return 0;
-    }
-
-    if(UU_flag == e_ST_TRUE)
-    {
-        TILE_ExtendRange(src_wx, src_wy, dst_wx, dst_wy, &ext_x1, &ext_y1, &ext_x2, &ext_y2);
-
-        for (itr_wy = 0; itr_wy < ext_y1; itr_wy++)
-        {
-            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
-            {
-                movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
-            }
-        }
-
-        for (itr_wy = ext_y2 + 1; itr_wy < e_WORLD_HEIGHT; itr_wy++)
-        {
-            for (itr_wx = 0; itr_wx < e_WORLD_WIDTH; itr_wx++)
-            {
-                movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
-            }
-        }
-
-        if(ext_x1 < ext_x2)
-        {
-            for (itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
-            {
-                for (itr_wx = 0; itr_wx < ext_x1; itr_wx++)
-                {
-                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
-                }
-                for (itr_wx = ext_x2 + 1; itr_wx < e_WORLD_WIDTH; itr_wx++)
-                {
-                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
-                }
-            }
-        }
-        else
-        {
-            for (itr_wy = ext_y1; itr_wy <= ext_y2; itr_wy++)
-            {
-                for (itr_wx = ext_x2 + 1; itr_wx < ext_x1; itr_wx++)
-                {
-                    movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx] = e_ST_UNDEFINED_DB;
-                }
-            }
-        }
-
-        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
-
-        _DI_path_length = 0;
-        dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
-        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
-        {
-            movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
-            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
-            _DI_path_length++;
-        }
-
-        for (_SI_itr = 0; _SI_itr < _DI_path_length; _SI_itr++)
-        {
-            int16_t map_idx = movepath_cost_map->Reverse_Path[_DI_path_length - 1 - _SI_itr];
-            itr_wx = map_idx % e_WORLD_WIDTH;
-            itr_wy = map_idx / e_WORLD_WIDTH;
-            mvpth_x[_SI_itr] = itr_wx;
-            mvpth_y[_SI_itr] = itr_wy;
-            mvpth_c[_SI_itr] = movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx];
-        }
-
-        if(_DI_path_length == 0)
-        {
-            UU_flag = e_ST_FALSE;
-            goto loc_D5B50;
-        }
-    }
-    else
-    {
-        Move_Path_Find(src_wx, src_wy, movepath_cost_map);
-
-        _DI_path_length = 0;
-        dst_world_map_idx = dst_wy * e_WORLD_WIDTH + dst_wx;
-        while(movepath_cost_map->Reach_From[dst_world_map_idx] != dst_world_map_idx)
-        {
-            movepath_cost_map->Reverse_Path[_DI_path_length] = dst_world_map_idx;
-            dst_world_map_idx = movepath_cost_map->Reach_From[dst_world_map_idx];
-            _DI_path_length++;
-        }
-
-        for (_SI_itr = 0; _SI_itr < _DI_path_length; _SI_itr++)
-        {
-            int16_t map_idx = movepath_cost_map->Reverse_Path[_DI_path_length - 1 - _SI_itr];
-            itr_wx = map_idx % e_WORLD_WIDTH;
-            itr_wy = map_idx / e_WORLD_WIDTH;
-            mvpth_x[_SI_itr] = itr_wx;
-            mvpth_y[_SI_itr] = itr_wy;
-            mvpth_c[_SI_itr] = movepath_cost_map->moves2[itr_wy * e_WORLD_WIDTH + itr_wx];
-        }
-    }
-
-    return _DI_path_length;
-}
-#endif
 
 
 // WZD o148p04
-// TILE_ExtendRange()
+// drake178: TILE_ExtendRange()
+/*
+the search box Make_Move_Path() uses for an AI path: the rows and columns spanned by src and dst, widened on each side by a quarter of the distance
+    if the two are more than half the map apart (dx > 30) the box wraps around the map edge instead, widened by 5: box_x1 > box_x2
+    box_x1 / box_x2 wrap into 0 .. WORLD_WIDTH - 1;  box_y1 is floored at 0
+*/
+void Move_Path_Search_Box(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t * box_x1, int16_t * box_y1, int16_t * box_x2, int16_t * box_y2)
+{
+    int16_t x_extend = 0;
+    int16_t y_extend = 0;
+    int16_t x_distance = 0;
+
+    y_extend = (abs(src_wy - dst_wy) / 4);
+
+    if(src_wy <= dst_wy)
+    {
+
+        *box_y1 = (src_wy - y_extend);
+
+        *box_y2 = (dst_wy + y_extend);
+
+    }
+    else
+    {
+
+        *box_y1 = (dst_wy - y_extend);
+
+        *box_y2 = (src_wy + y_extend);
+
+    }
+
+    if(*box_y1 < 0)
+    {
+
+        *box_y1 = 0;
+
+    }
+
+    /* OGBUG  clamps box_y1 again where box_y2 was meant: box_y1 is at most the smaller wy, so this never fires, and box_y2 is never capped - it can reach 39 + 39 / 4 = 48 (asm: cmp [word ptr di], e_WORLD_HEIGHT - DI holds the box_y1 pointer) */
+    if(*box_y1 >= WORLD_HEIGHT)
+    {
+
+        *box_y1 = (WORLD_HEIGHT - 1);
+
+    }
+
+    x_distance = abs(src_wx - dst_wx);
+
+    if(x_distance > (WORLD_WIDTH / 2))
+    {
+
+        x_extend = 5;
+
+        if(src_wx <= dst_wx)
+        {
+
+            *box_x1 = (dst_wx - x_extend);
+
+            *box_x2 = (src_wx + x_extend);
+
+        }
+        else
+        {
+
+            *box_x1 = (src_wx - x_extend);
+
+            *box_x2 = (dst_wx + x_extend);
+
+        }
+
+    }
+    else
+    {
+
+        x_extend = (x_distance / 4);
+
+        if(src_wx <= dst_wx)
+        {
+
+            *box_x1 = (src_wx - x_extend);
+
+            *box_x2 = (dst_wx + x_extend);
+
+        }
+        else
+        {
+
+            *box_x1 = (dst_wx - x_extend);
+
+            *box_x2 = (src_wx + x_extend);
+
+        }
+
+    }
+
+    if(*box_x1 < 0)
+    {
+
+        *box_x1 += WORLD_WIDTH;
+
+    }
+
+    if(*box_x2 >= WORLD_WIDTH)
+    {
+
+        *box_x2 -= WORLD_WIDTH;
+
+    }
+
+}
+
 
 // WZD o148p05
 // sub_D601B()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, sub_3626F, has no callers)
+builds a move path from src to dst into mvpth_x[] / mvpth_y[] / mvpth_c[], returns its length
+    straight_line: Path_Wrap()'s straight line, every step costing 2
+    otherwise: the back-trace of movepath_cost_map->Reach_From[] from dst (as in Make_Move_Path()), each step costing its moves2[]
+*/
+int16_t Move_Path_Build__NIU(int16_t straight_line, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[])
+{
+    int16_t world_map_idx = 0;
+    int16_t straight_length = 0;
+    int16_t step_wx = 0;
+    int16_t step_wy = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t path_length = 0;  // _DI_
+
+    EMMDATAH_Map();
+
+    path_length = 0;
+
+    if(straight_line != ST_FALSE)
+    {
+
+        straight_length = Path_Wrap(src_wx, src_wy, dst_wx, dst_wy, &mvpth_x[0], &mvpth_y[0], WORLD_WIDTH);
+
+        for(itr = 0; itr < straight_length; itr++)
+        {
+
+            mvpth_c[itr] = 2;
+
+        }
+
+        return straight_length;
+
+    }
+
+    world_map_idx = ((dst_wy * WORLD_WIDTH) + dst_wx);
+
+    while(movepath_cost_map->Reach_From[world_map_idx] != world_map_idx)
+    {
+
+        movepath_cost_map->Reverse_Path[path_length] = world_map_idx;
+
+        world_map_idx = movepath_cost_map->Reach_From[world_map_idx];
+
+        path_length++;
+
+    }
+
+    for(itr = 0; itr < path_length; itr++)
+    {
+
+        step_wx = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] % WORLD_WIDTH);
+
+        step_wy = (movepath_cost_map->Reverse_Path[((path_length - 1) - itr)] / WORLD_WIDTH);
+
+        mvpth_x[itr] = (int8_t)step_wx;
+
+        mvpth_y[itr] = (int8_t)step_wy;
+
+        mvpth_c[itr] = movepath_cost_map->moves2[((step_wy * WORLD_WIDTH) + step_wx)];
+
+    }
+
+    return path_length;
+
+}
+
 
 // WZD o148p06
 // drake178: STK_SetOvlMoveMap()
@@ -1303,7 +1387,12 @@ Loaded_Game_Update()
 */
 void Invalidate_AI_Move_Path(void)
 {
-    if(_ai_move_path_idx > 0 && _ai_move_path_idx < 140)
+    /* OGBUG  the test is > 0, not >= 0: cache record 0 is never invalidated (its src_wx is never set to ST_UNDEFINED), so the path held in record 0 stays valid in the cache */
+    if(
+        (_ai_move_path_idx > 0)
+        &&
+        (_ai_move_path_idx < 140)
+    )
     {
         _ai_move_path_table[_ai_move_path_idx].src_wx = -1;  // INF / ST_UNDEFINED?
     }
@@ -1333,7 +1422,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     dst_idx = -1;
     
     /* Find the source and destination indices within the provided path arrays */
-    for (i = 0; i < 35; i++)
+    for(i = 0; i < 35; i++)
     {
         if(wx_array[i] == src_wx && wy_array[i] == src_wy)
         {
@@ -1378,7 +1467,7 @@ void Cache_AI_Move_Path(int16_t player_idx, int16_t src_wx, int16_t src_wy, int1
     /* Check if this specific path is already stored in the table */
     /* OGBUG: ignores the plane ... `_ai_move_path_table[i]->wp == plane` */
     duplicate = ST_FALSE;
-    for (i = 0; i < 140; i++)
+    for(i = 0; i < 140; i++)
     {
         if(_ai_move_path_table[i].src_wx == src_wx &&
             _ai_move_path_table[i].srx_wy == src_wy &&

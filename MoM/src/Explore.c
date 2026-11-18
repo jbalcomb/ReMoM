@@ -16,7 +16,7 @@
 
 
 
-// WZD o92p01
+// WZD o092p01
 /**
  * @brief Clears all transient scouted flags for the specified world plane.
  *
@@ -71,7 +71,7 @@ void Clear_Square_Scouted_Flags(int16_t wp)
     }
 }
 
-// WZD o92p02
+// WZD o092p02
 /**
  * @brief Returns whether a world square is currently scouted on the specified plane.
  *
@@ -130,7 +130,7 @@ int16_t Check_Square_Scouted(int16_t wx, int16_t wy, int16_t wp)
     return square_is_scouted;
 }
 
-// WZD o92p03
+// WZD o092p03
 /**
  * @brief Marks a world square as currently scouted in the plane-specific visibility bitfield.
  *
@@ -195,7 +195,7 @@ void Set_Square_Scouted(int16_t wx, int16_t wy, int16_t wp)
     }
 }
 
-// WZD o92p04
+// WZD o092p04
 /**
  * @brief Clears the transient scouted/visible flag for a single world square.
  *
@@ -243,7 +243,7 @@ void Clear_Square_Scouted(int16_t wx, int16_t wy, int16_t wp)
     }
 }
 
-// WZD o92p05
+// WZD o092p05
 /**
  * @brief Rebuilds current scouting visibility and updates diplomatic contact state.
  *
@@ -345,9 +345,12 @@ void Update_Scouted_And_Contacted(void)
                 {
                     scout_level = _UNITS[itr_units].Sight_Range;
                     if( 
-                        (Unit_Has_AirTravel(itr_units) == ST_TRUE) ||
-                        (Unit_Has_WindWalking(itr_units) == ST_TRUE) ||
-                        /* DONT  (o71p08_Empty_pFxn(itr_units) == ST_TRUE) || */
+                        (Unit_Has_AirTravel(itr_units) == ST_TRUE)
+                        ||
+                        (Unit_Has_WindWalking(itr_units) == ST_TRUE)
+                        ||
+                        (Unit_Has_WindWalkingItem(itr_units) == ST_TRUE)
+                        ||
                         (Unit_Has_AirTravel_Item(itr_units) == ST_TRUE)
                     )
                     {
@@ -387,7 +390,7 @@ void Update_Scouted_And_Contacted(void)
                     {
                         scout_level = 5;
                     }
-                    // BUG: Overrides Nature's Eye
+                    /* OGBUG  Oracle is tested last and stores 4 unconditionally, overwriting Nature's Eye's 5; a city with both scouts radius 4 */
                     if(_CITIES[itr_cities].bldg_status[ORACLE] != bs_NotBuilt)
                     {
                         scout_level = 4;
@@ -433,7 +436,7 @@ void Update_Scouted_And_Contacted(void)
 
 }
 
-// WZD o92p06
+// WZD o092p06
 /**
  * @brief Marks explored squares within a sight radius as currently scouted.
  *
@@ -534,7 +537,7 @@ void Set_Square_Scouted_Flags(int16_t wx, int16_t wy, int16_t wp, int16_t scout_
     
 }
 
-// WZD o92p07
+// WZD o092p07
 /* COPILOT */
 /**
  * @brief Establishes diplomatic contact when a visible foreign unit is encountered.
@@ -610,7 +613,7 @@ void Contact_Other_Player(int16_t unit_idx, int16_t wp)
 }
 
 
-// WZD o92p08
+// WZD o092p08
 /**
  * @brief Returns whether a world square has been persistently explored.
  *

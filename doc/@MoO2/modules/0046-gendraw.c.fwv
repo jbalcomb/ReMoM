@@ -1,0 +1,38 @@
+module_num=46
+module=D:\MOX\OTHERS\GENDRAW.C
+source=0046-gendraw.c.md
+range[0]=1:0x00067423 linear=0x00077423 size=1731
+range[1]=2:0x00001334 linear=0x00171334 size=32
+range[2]=2:0x0000A090 linear=0x0017A090 size=24
+range[3]=2:0x00023ED4 linear=0x00193ED4 size=56
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                       SYMBOL                                      CHUNK
+m046f001    1    -      0x00077423  1:0x00067423  code         Message_Box                                Message_Box_                                regions/07-object-1/000FC654-000FCE53.txt
+m046f002    2    -      0x00077433  1:0x00067433  code         Warning_Box                                Warning_Box_                                regions/07-object-1/000FC654-000FCE53.txt
+m046f003    3    1/2    0x0007743A  1:0x0006743A  static,code  Do_Message_Box                             Do_Message_Box_                             regions/07-object-1/000FC654-000FCE53.txt
+m046f003_2  3    2/2    0x0007743A  1:0x0006743A  code         Message_Box_Exploding                      Message_Box_Exploding_                      regions/07-object-1/000FC654-000FCE53.txt
+m046f004    4    1/3    0x00077658  1:0x00067658  static,code  Do_Confirmation_Box                        Do_Confirmation_Box_                        regions/07-object-1/000FC654-000FCE53.txt
+m046f004_2  4    2/3    0x00077658  1:0x00067658  code         Confirmation_Box_Exploding                 Confirmation_Box_Exploding_                 regions/07-object-1/000FC654-000FCE53.txt
+m046f004_3  4    3/3    0x00077658  1:0x00067658  code         Confirmation_Box                           Confirmation_Box_                           regions/07-object-1/000FC654-000FCE53.txt
+m046f005    5    -      0x00077860  1:0x00067860  static,code  Draw_Animating_Message_Box                 Draw_Animating_Message_Box_                 regions/07-object-1/000FCE54-000FD653.txt
+m046f006    6    -      0x000778E4  1:0x000678E4  static,code  Draw_Confirm_Box                           Draw_Confirm_Box_                           regions/07-object-1/000FCE54-000FD653.txt
+m046f007    7    -      0x00077961  1:0x00067961  static,code  Message_Box_Startup                        Message_Box_Startup_                        regions/07-object-1/000FCE54-000FD653.txt
+m046f008    8    -      0x000779FC  1:0x000679FC  static,code  Message_Box_Cleanup                        Message_Box_Cleanup_                        regions/07-object-1/000FCE54-000FD653.txt
+m046f009    9    -      0x00077A74  1:0x00067A74  code         _Print_1_Or_More_Formatted_Lines_Centered  _Print_1_Or_More_Formatted_Lines_Centered_  regions/07-object-1/000FCE54-000FD653.txt
+m046f010    10   -      0x00077AD7  1:0x00067AD7  code         Print_1_Or_More_Formatted_Lines_Centered   Print_1_Or_More_Formatted_Lines_Centered_   regions/07-object-1/000FCE54-000FD653.txt
+-           -    -      0x0017A090  2:0x0000A090  static,data  _confirm_text_colors                       _confirm_text_colors                        regions/08-object-2/001F8654-001F8E53.txt
+-           -    -      0x0017A098  2:0x0000A098  static,data  _message_text_colors                       _message_text_colors                        regions/08-object-2/001F8654-001F8E53.txt
+-           -    -      0x0017A0A0  2:0x0000A0A0  static,data  _warning_text_colors                       _warning_text_colors                        regions/08-object-2/001F8654-001F8E53.txt
+-           -    -      0x00193ED4  2:0x00023ED4  static,data  _box_bitmap                                _box_bitmap                                 -
+-           -    -      0x00193ED8  2:0x00023ED8  static,data  _gendraw_af                                _gendraw_af                                 -
+-           -    -      0x00193EDC  2:0x00023EDC  static,data  _image_seg                                 _image_seg                                  -
+-           -    -      0x00193EE8  2:0x00023EE8  static,data  _message_field_save                        _message_field_save                         -
+-           -    -      0x00193EFA  2:0x00023EFA  static,data  _old_help_list_active                      _old_help_list_active                       -
+-           -    -      0x00193EFC  2:0x00023EFC  static,data  _old_draw_fields_flag                      _old_draw_fields_flag                       -
+-           -    -      0x00193EFE  2:0x00023EFE  static,data  _animation_frame                           _animation_frame                            -
+-           -    -      0x00193F00  2:0x00023F00  static,data  _save_refresh_mode                         _save_refresh_mode                          -
+-           -    -      0x00193F02  2:0x00023F02  static,data  _first_field                               _first_field                                -
+-           -    -      0x00193F04  2:0x00023F04  static,data  _direction                                 _direction                                  -
+-           -    -      0x00193F06  2:0x00023F06  static,data  _message_box_y                             _message_box_y                              -
+-           -    -      0x00193F08  2:0x00023F08  static,data  _warning_box                               _warning_box                                -

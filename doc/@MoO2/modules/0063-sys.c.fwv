@@ -1,0 +1,73 @@
+module_num=63
+module=D:\MOX\OTHERS\SYS.C
+source=0063-sys.c.md
+range[0]=1:0x00091C4E linear=0x000A1C4E size=15699
+range[1]=2:0x00001C1C linear=0x00171C1C size=288
+range[2]=2:0x0000A3E0 linear=0x0017A3E0 size=32
+range[3]=2:0x00024814 linear=0x00194814 size=2844
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                     SYMBOL                                    CHUNK
+m063f001  1    -      0x000A1C4E  1:0x00091C4E  static,code  flag_replacement_colors                  _flag_replacement_colors                  regions/07-object-1/00126E54-00127653.txt
+m063f002  2    -      0x000A1C74  1:0x00091C74  code         Add_System_Display_Popup_Fields          Add_System_Display_Popup_Fields_          regions/07-object-1/00126E54-00127653.txt
+m063f003  3    -      0x000A200E  1:0x0009200E  static,code  Build_System_Popup_Ships                 Build_System_Popup_Ships_                 regions/07-object-1/00127654-00127E53.txt
+m063f004  4    -      0x000A20CD  1:0x000920CD  code         Clear_System_Display_Loaded_Flag         Clear_System_Display_Loaded_Flag_         regions/07-object-1/00127654-00127E53.txt
+m063f005  5    -      0x000A20EC  1:0x000920EC  code         Clear_System_Display_Ship_Fields         Clear_System_Display_Ship_Fields_         regions/07-object-1/00127654-00127E53.txt
+m063f006  6    -      0x000A2123  1:0x00092123  static,code  Do_Print_Planet_Info                     Do_Print_Planet_Info_                     regions/07-object-1/00127654-00127E53.txt
+m063f007  7    -      0x000A26E3  1:0x000926E3  static,code  Do_Print_System_Ship_Data                Do_Print_System_Ship_Data_                regions/07-object-1/00127654-00127E53.txt
+m063f008  8    -      0x000A2C11  1:0x00092C11  static,code  Draw_Colony_Marker                       Draw_Colony_Marker_                       regions/07-object-1/00127E54-00128653.txt
+m063f009  9    -      0x000A2C66  1:0x00092C66  static,code  Draw_Gate_Icons                          Draw_Gate_Icons_                          regions/07-object-1/00127E54-00128653.txt
+m063f010  10   -      0x000A2D2D  1:0x00092D2D  static,code  Draw_Outpost_Marker                      Draw_Outpost_Marker_                      regions/07-object-1/00127E54-00128653.txt
+m063f011  11   -      0x000A2D7C  1:0x00092D7C  static,code  Draw_Planet_With_Pierced_Ring            Draw_Planet_With_Pierced_Ring_            regions/07-object-1/00127E54-00128653.txt
+m063f012  12   -      0x000A3025  1:0x00093025  code         Draw_Sun_Seg                             Draw_Sun_Seg_                             regions/07-object-1/00128654-00128E53.txt
+m063f013  13   -      0x000A30C5  1:0x000930C5  static,code  Draw_System_Display_Border               Draw_System_Display_Border_               regions/07-object-1/00128654-00128E53.txt
+m063f014  14   -      0x000A30FD  1:0x000930FD  static,code  Draw_System_Display_Planets              Draw_System_Display_Planets_              regions/07-object-1/00128654-00128E53.txt
+m063f015  15   -      0x000A31DA  1:0x000931DA  code         Draw_System_Display_Popup                Draw_System_Display_Popup_                regions/07-object-1/00128654-00128E53.txt
+m063f016  16   -      0x000A3A15  1:0x00093A15  static,code  Draw_System_Highlight                    Draw_System_Highlight_                    regions/07-object-1/00128E54-00129653.txt
+m063f017  17   -      0x000A3BC4  1:0x00093BC4  static,code  Draw_System_Ship_Icons                   Draw_System_Ship_Icons_                   regions/07-object-1/00128E54-00129653.txt
+m063f018  18   -      0x000A3D2A  1:0x00093D2A  static,code  Get_Gate_Icon_XY                         Get_Gate_Icon_XY_                         regions/07-object-1/00128E54-00129653.txt
+m063f019  19   -      0x000A3D68  1:0x00093D68  static,code  Get_Planet_Info_Box_Dimensions           Get_Planet_Info_Box_Dimensions_           regions/07-object-1/00128E54-00129653.txt
+m063f020  20   -      0x000A3D84  1:0x00093D84  code         Get_Rotating_Planet_Segment              Get_Rotating_Planet_Segment_              regions/07-object-1/00128E54-00129653.txt
+m063f021  21   -      0x000A3E3D  1:0x00093E3D  static,code  Get_System_Display_Ship_Icon_XY          Get_System_Display_Ship_Icon_XY_          regions/07-object-1/00128E54-00129653.txt
+m063f022  22   -      0x000A3EFC  1:0x00093EFC  static,code  Get_System_Ship_Info_Box_Dimensions      Get_System_Ship_Info_Box_Dimensions_      regions/07-object-1/00128E54-00129653.txt
+m063f023  23   -      0x000A3F21  1:0x00093F21  static,code  Hide_System_Display                      Hide_System_Display_                      regions/07-object-1/00128E54-00129653.txt
+m063f024  24   -      0x000A3FE6  1:0x00093FE6  code         Init_System_Display                      Init_System_Display_                      regions/07-object-1/00128E54-00129653.txt
+m063f025  25   -      0x000A404E  1:0x0009404E  static,code  Load_New_System_Display                  Load_New_System_Display_                  regions/07-object-1/00129654-00129E53.txt
+m063f026  26   -      0x000A432F  1:0x0009432F  code         N_Ships_By_Type_At_Location              N_Ships_By_Type_At_Location_              regions/07-object-1/00129654-00129E53.txt
+m063f027  27   -      0x000A4426  1:0x00094426  static,code  Need_To_Reload_System_Display            Need_To_Reload_System_Display_            regions/07-object-1/00129654-00129E53.txt
+m063f028  28   -      0x000A449A  1:0x0009449A  static,code  Global_Data_Seg_Ok                       Global_Data_Seg_Ok_                       regions/07-object-1/00129654-00129E53.txt
+m063f029  29   -      0x000A44FC  1:0x000944FC  code         Ok_To_View_System                        Ok_To_View_System_                        regions/07-object-1/00129654-00129E53.txt
+m063f030  30   -      0x000A453F  1:0x0009453F  code         Potential_Colony_Info_Popup              Potential_Colony_Info_Popup_              regions/07-object-1/00129654-00129E53.txt
+m063f031  31   -      0x000A4989  1:0x00094989  static,code  Print_Gate_Info                          Print_Gate_Info_                          regions/07-object-1/00129E54-0012A653.txt
+m063f032  32   -      0x000A4C0F  1:0x00094C0F  static,code  Print_Planet_Info                        Print_Planet_Info_                        regions/07-object-1/00129E54-0012A653.txt
+m063f033  33   -      0x000A4C41  1:0x00094C41  static,code  Print_System_Display_Box_Title           Print_System_Display_Box_Title_           regions/07-object-1/00129E54-0012A653.txt
+m063f034  34   -      0x000A4DB1  1:0x00094DB1  code         Print_System_Ship_Data                   Print_System_Ship_Data_                   regions/07-object-1/00129E54-0012A653.txt
+m063f035  35   -      0x000A4DD9  1:0x00094DD9  code         Restore_Planet_Palette_Colors            Restore_Planet_Palette_Colors_            regions/07-object-1/00129E54-0012A653.txt
+m063f036  36   -      0x000A4E1B  1:0x00094E1B  static,code  Set_System_Display_Loaded_Flag           Set_System_Display_Loaded_Flag_           regions/07-object-1/00129E54-0012A653.txt
+m063f037  37   -      0x000A4E93  1:0x00094E93  code         Ships_At_Location_String                 Ships_At_Location_String_                 regions/07-object-1/00129E54-0012A653.txt
+m063f038  38   -      0x000A4F09  1:0x00094F09  code         Space_Monster_Here                       Space_Monster_Here_                       regions/07-object-1/00129E54-0012A653.txt
+m063f039  39   -      0x000A4F1F  1:0x00094F1F  code         Wrapper_For_Informational_System_Fields  Wrapper_For_Informational_System_Fields_  regions/07-object-1/00129E54-0012A653.txt
+m063f040  40   -      0x000A4F58  1:0x00094F58  code         Wrapper_For_Normal_System_Fields         Wrapper_For_Normal_System_Fields_         regions/07-object-1/00129E54-0012A653.txt
+m063f041  41   -      0x000A4FBE  1:0x00094FBE  code         Wrapper_For_Normal_System_Popup          Wrapper_For_Normal_System_Popup_          regions/07-object-1/00129E54-0012A653.txt
+m063f042  42   -      0x000A5045  1:0x00095045  static,code  qsort_sys_disp                           qsort_sys_disp_                           regions/07-object-1/0012A654-0012AE53.txt
+m063f043  43   -      0x000A5050  1:0x00095050  static,code  Calculate_Remap_Gray_Palettes            Calculate_Remap_Gray_Palettes_            regions/07-object-1/0012A654-0012AE53.txt
+m063f044  44   -      0x000A512E  1:0x0009512E  static,code  Remap_Draw_With_Mask                     Remap_Draw_With_Mask_                     regions/07-object-1/0012A654-0012AE53.txt
+m063f045  45   -      0x000A53DC  1:0x000953DC  static,code  Remap_Draw_Animated_Sprite_Mask          Remap_Draw_Animated_Sprite_Mask_          regions/07-object-1/0012A654-0012AE53.txt
+m063f046  46   -      0x000A54F2  1:0x000954F2  static,code  Remap_Clipped_Draw_Animated_Sprite_Mask  Remap_Clipped_Draw_Animated_Sprite_Mask_  regions/07-object-1/0012A654-0012AE53.txt
+m063f047  47   -      0x000A573B  1:0x0009573B  static,code  Print_Empty_System_Data                  Print_Empty_System_Data_                  regions/07-object-1/0012A654-0012AE53.txt
+m063f048  48   -      0x000A5844  1:0x00095844  static,code  Buffer_Reload_System_Ships               Buffer_Reload_System_Ships_               regions/07-object-1/0012AE54-0012B653.txt
+m063f049  49   -      0x000A58CE  1:0x000958CE  static,code  Print_Special_Building_Data              Print_Special_Building_Data_              regions/07-object-1/0012AE54-0012B653.txt
+-         -    -      0x0017A3E0  2:0x0000A3E0  data         _remap_gray_percentages                  _remap_gray_percentages                   regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A3EA  2:0x0000A3EA  static,data  _system_specials                         _system_specials                          regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x00194814  2:0x00024814  data         _remap_gray_mask_palette                 _remap_gray_mask_palette                  -
+-         -    -      0x00195214  2:0x00025214  data         _sys_data_buffer                         _sys_data_buffer                          -
+-         -    -      0x00195218  2:0x00025218  static,data  _system_display_sun_seg                  _system_display_sun_seg                   -
+-         -    -      0x0019521C  2:0x0002521C  static,data  _sys_disp_bitmap                         _sys_disp_bitmap                          -
+-         -    -      0x00195220  2:0x00025220  static,data  _planet_palette                          _planet_palette                           -
+-         -    -      0x00195224  2:0x00025224  data         _mask_header                             _mask_header                              -
+-         -    -      0x00195228  2:0x00025228  static,data  _star_description_string                 _star_description_string                  -
+-         -    -      0x00195327  2:0x00025327  static,data  _planet_anim_ctr                         _planet_anim_ctr                          -
+-         -    -      0x0019532C  2:0x0002532C  data         _skip_draw_system_planets                _skip_draw_system_planets                 -
+-         -    -      0x0019532D  2:0x0002532D  static,data  _draw_sun_before_planet                  _draw_sun_before_planet                   -
+-         -    -      0x0019532E  2:0x0002532E  static,data  _evan_show_prime_flag                    _evan_show_prime_flag                     -
+-         -    -      0x0019532F  2:0x0002532F  data         _skip_draw_system_display                _skip_draw_system_display                 -

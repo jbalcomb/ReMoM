@@ -122,12 +122,12 @@ deferred — it feeds `runtime=1` geometry and the RECORD.log screen stamp, whic
 3. **DONE — staleness tripwire:** `audit()` reports each alias row `ok` / `drift` (symbol moved lines)
    / `missing` (symbol gone), instead of silently mis-mapping. `python -m tools.field_catalog.resolver`
    runs the audit + a resolution dump.
-4. **DEFERRED — re-enable the runtime instrumentation** (was the old Phase 0), scoped to its real job —
+4. **PARTLY DONE — re-enable the runtime instrumentation** (was the old Phase 0), scoped to its real job —
    geometry for `runtime=1` rows and cross-checking the static parse:
-   - Un-comment [Fields.c:899](../../MoX/src/Fields.c#L899) (`FIELDADD`) and
-     [:905-911](../../MoX/src/Fields.c#L905-L911) (`FIELDSNAPSHOT`); both are already `#ifdef STU_DEBUG`
-     with a `g_dbg_fields_trace == 0` early-return, so Release and flag-off Debug are unaffected.
-   - Add a `ReMoM.ini` toggle for `g_dbg_fields_trace`.
+   - **DONE** — `FIELDADD` / `FIELDSNAPSHOT` write to `remom_clog_fields.tsv` through STU_CLOG
+     (`Clog_Field_Added` / `Dump_Fields_CSV` in [Fields.c](../../MoX/src/Fields.c)), gated at run time by the
+     `REMOM_CLOG_FIELDS` environment variable; `fields_merge.py` reads the file.
+   - Add a `ReMoM.ini` toggle for `g_clog_fields_trace` (the environment variable does the job for now).
    - Make `fields_merge.py` **accumulate** (keep existing `rt_seen=1` rows; only fill blanks) instead
      of single-run overwrite ([fields_merge.py:152](../../tools/fields_merge.py#L152)), so a traversal
      of many screens composes instead of clobbering.
@@ -137,7 +137,7 @@ runtime log is merged; a stale-line fixture fails loudly; a Release build still 
 
 **Verify:** `python` smoke over a fixture static-catalog + alias pair; `cmake --build --preset
 MSVC-debug` and `--preset MSVC-release` both link (catches `trc_prn` leakage into Release); re-run
-`ctest -R "HeMoM_"`.
+`ctest -R "DeMoM_"`.
 
 ---
 
@@ -145,19 +145,19 @@ MSVC-debug` and `--preset MSVC-release` both link (catches `trc_prn` leakage int
 
 One-line-per-hit change to the replay field-hit callback, in both targets.
 
-1. **DONE** — debug-only per-field-index origin shadow `g_dbg_field_origin_file/_line[]`
-   ([Fields.c](../../MoX/src/Fields.c), populated in `Dbg_Trace_Field_Added` at the single Add_* choke
-   point, cleared in `Clear_Fields`, read via `Dbg_Field_Origin_File/_Line`). Captured **independent of
-   `g_dbg_fields_trace`** so recording gets origins without the FIELDADD trace on. **`s_Field`
+1. **DONE** — per-field-index origin shadow, now the STU_CLOG field-origin table ([STU_CLOG.c](../../STU/src/STU_CLOG.c))
+   ([Fields.c](../../MoX/src/Fields.c), populated in `Clog_Field_Added` at the single Add_* choke
+   point, cleared in `Clear_Fields`, read via `STU_CLOG_Field_Origin_File/_Line`). Captured **independent of
+   `g_clog_fields_trace`** so recording gets origins without the FIELDADD trace on. **`s_Field`
    untouched** (byte-offset-faithful, [Fields.h:90-154](../../MoX/src/Fields.h#L90-L154)) — the origin
    lives in a parallel array, all under `#ifdef STU_DEBUG`.
-2. **DONE** — `HeMoM_Replay_Log_Field_Hit` ([HeMoM.c:795](../../src/HeMoM.c#L795)) and the ReMoM
+2. **DONE** — `DeMoM_Replay_Log_Field_Hit` ([DeMoM.c:795](../../src/DeMoM.c#L795)) and the ReMoM
    equivalent ([ReMoM.c:191](../../src/ReMoM.c#L191)) append `@<basename>:<line>` to the hit line under
    `#ifdef STU_DEBUG`, else the current rect-only form. **Screen name deliberately omitted** — the
    resolver derives the screen from the alias table, so `file:line` alone is the sufficient join key;
    `current_screen`→name mapping is an optional readability add, not required.
 
-**Green (verified live):** a fresh RECORD.log from `HeMoM --newgame --scenario test_ai_5turns.hms
+**Green (verified live):** a fresh RECORD.log from `DeMoM --newgame --scenario test_ai_5turns.hms
 --record` shows `field[3]=(0,20)-(239,199)@MainScr.c:2019` and `field[5]=...@ItemScrn.c:1145`. Both
 join to the catalog: `MainScr.c:2019` = `_main_map_grid_field` with **identical geometry**
 (0,20,239,199, static `runtime=0`); `ItemScrn.c:1145` = a `runtime=1` sprite whose pixel rect the log
@@ -188,7 +188,7 @@ click on an unaliased origin and a `.RMR` with **no** sidecar log both fall back
 (no regression). `rmr2hms` builds clean; `--help` documents `--lookup`.
 
 **Gap → Phase 4:** the emitted `click Screen.Alias` is not yet executable — the HMS parser
-([Artificial_Human_Player.c](../../src/Artificial_Human_Player.c)) only accepts numeric `click X Y`.
+([Automation_Driver.c](../../src/Automation_Driver.c)) only accepts numeric `click X Y`.
 The output header warns of this. Phase 4 teaches the parser to resolve `Screen.Alias` at parse time
 (reading the same `alias_lookup.fwv`), closing the loop record → name → run.
 
@@ -198,7 +198,7 @@ The output header warns of this. Phase 4 teaches the parser to resolve `Screen.A
 
 Engine change, smallest that closes the loop.
 
-1. **DONE** — `Parse_Click_Target` in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c):
+1. **DONE** — `Parse_Click_Target` in [Automation_Driver.c](../../src/Automation_Driver.c):
    a `click`/`rclick` arg is tried as numeric `X Y` first; if that fails it is taken as a `Screen.Alias`
    name and resolved to `(cx, cy)` at **parse time** against the baked points table. The runtime path is
    unchanged — it still stores `act->x/act->y`. Numeric clicks behave exactly as before.
@@ -206,15 +206,15 @@ Engine change, smallest that closes the loop.
    skipped (same pattern as the old bad-coord handling), never a `(0,0)` click.
 3. **Points table** — `python -m tools.field_catalog.resolver export` also writes
    [tools/fields/alias_points.fwv](../../tools/fields/alias_points.fwv) (`name  cx  cy`). Loaded once in
-   `HeMoM_Player_Load_Scenario` from a default path, overridable via
-   `HeMoM_Player_Set_Alias_Points_Path` / HeMoM's `--alias-points` flag. Only statically-resolvable
+   `Automation_Driver_Load_Scenario` from a default path, overridable via
+   `Automation_Driver_Set_Alias_Points_Path` / DeMoM's `--alias-points` flag. Only statically-resolvable
    aliases are in it; **`runtime=1` fields (sprite buttons like `Patrol_Button`) are absent** until
    runtime geometry is merged, so they log-and-skip today.
 
-**Green (verified live):** a HeMoM `--scenario` run of `click Main_Menu_Screen.New_Game_Button` /
+**Green (verified live):** a DeMoM `--scenario` run of `click Main_Menu_Screen.New_Game_Button` /
 `click Main_Screen.Next_Turn_Button` logs `Loaded 2 alias points` then executes `click (159, 167)` /
 `click (280, 187)`; `Patrol_Button` (runtime) and a bogus name both log `bad click target` and skip.
-Full `ctest -R HeMoM_` stays 14/14 (numeric clicks unbroken); Debug **and** Release build.
+Full `ctest -R DeMoM_` stays 14/14 (numeric clicks unbroken); Debug **and** Release build.
 
 **Motivating example (`Patrol_Button`) — DONE via the runtime-geometry merge (below).**
 
@@ -236,7 +236,7 @@ Closes the gap for fields with no static geometry, delivering the original Patro
   **center of its runtime rect** (`"runtime-log"`) when static geometry is absent; static still wins.
   `export` then bakes those into `alias_points.fwv`.
 - **Green (verified live):** recording a patrol click captured `field[13]=(280,176)-(312,184)
-  @MainScr.c:2039`; merged, `Main_Screen.Patrol_Button` resolves to **(296, 180)**; a HeMoM
+  @MainScr.c:2039`; merged, `Main_Screen.Patrol_Button` resolves to **(296, 180)**; a DeMoM
   `--scenario` of `click Main_Screen.Patrol_Button` logs `Loaded 3 alias points` then executes
   `click (296, 180)`. Hermetic test in
   [tests/test_runtime.py](../../tools/field_catalog/tests/test_runtime.py).
@@ -249,7 +249,7 @@ Closes the gap for fields with no static geometry, delivering the original Patro
 ## Phase 5 — State-aware waits — **DONE**
 
 Matches the filed proposal at [__TODO-Test.md:695](../__TODO-Test.md#L695) (`act_WAIT_SCREEN`,
-`act_WAIT_TURN`, `act_WAIT_FIELD`). All in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c).
+`act_WAIT_TURN`, `act_WAIT_FIELD`). All in [Automation_Driver.c](../../src/Automation_Driver.c).
 
 1. **DONE** — three verbs, each polled once per frame (the action stays current until its condition
    holds or the deadline passes; no busy state added to the wall-clock `wait` path):
@@ -262,13 +262,13 @@ Matches the filed proposal at [__TODO-Test.md:695](../__TODO-Test.md#L695) (`act
 2. **DONE** — `NAME` → `scr_*` via a table mirroring [e_SCREENS](../../MoM/src/MOM_SCR.h), keyed by the
    same names as the `screen` column of `aliases.fwv`.
 3. **DONE — mandatory timeout** reusing the `wait` `N{f|ms|s|m}` grammar; default cap
-   `HEMOM_STATE_WAIT_DEFAULT_MS = 30000`. On expiry the wait **advances** (continue-and-fail) and logs
+   `DRIVER_STATE_WAIT_DEFAULT_MS = 30000`. On expiry the wait **advances** (continue-and-fail) and logs
    `LOG_WARN` with the current screen/turn — CI never hangs.
 
-**Green (verified live):** a HeMoM `--scenario` run — `wait_screen Main_Screen` satisfied at t=0,
+**Green (verified live):** a DeMoM `--scenario` run — `wait_screen Main_Screen` satisfied at t=0,
 `wait_field Main_Screen.Patrol_Button` satisfied at t=62ms, `wait_turn 1` and a `wait_screen
 Magic_Screen` (never navigated) each hit their timeout and advanced (`WARN … TIMEOUT … turn=0`). Full
-`ctest -R HeMoM_` stays 14/14 (existing numeric-click scenarios unbroken); Debug **and** Release build.
+`ctest -R DeMoM_` stays 14/14 (existing numeric-click scenarios unbroken); Debug **and** Release build.
 
 **Note:** `_turn` is 0 at the start of a new game, so `wait_turn 1` waits for the first Next Turn to
 complete — as expected. Converting a real scenario (e.g. `08b_som_complete.hms`) from blind `wait Nms`
@@ -278,7 +278,7 @@ to state-aware waits is left as authoring follow-up, not a code gap.
 
 ## Phase 6 — `move` (cursor position without a click) — **DONE**
 
-Small, independent parser addition, in [Artificial_Human_Player.c](../../src/Artificial_Human_Player.c).
+Small, independent parser addition, in [Automation_Driver.c](../../src/Automation_Driver.c).
 Useful for demo-reel polish (cursor motion reads better on video than a teleporting click) and any UI
 that responds to hover.
 
@@ -289,9 +289,9 @@ that responds to hover.
 3. **DONE** — named targets resolve via the same `alias_points.fwv` lookup as `click Screen.Alias`.
 4. Smoothing (`glide … over 500ms`) remains out of scope — a single-frame warp is enough for hover.
 
-**Green (verified live):** a HeMoM `--scenario` — `move 100 100` → `move (100, 100)`;
+**Green (verified live):** a DeMoM `--scenario` — `move 100 100` → `move (100, 100)`;
 `move Main_Menu_Screen.New_Game_Button` → `move (159, 167)`; a bogus name → `bad move target` (skipped);
-**no `click` line emitted** by any `move`. Full `ctest -R HeMoM_` stays 14/14; Debug **and** Release build.
+**no `click` line emitted** by any `move`. Full `ctest -R DeMoM_` stays 14/14; Debug **and** Release build.
 
 ---
 

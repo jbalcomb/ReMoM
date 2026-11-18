@@ -1,0 +1,76 @@
+module_num=104
+module=D:\MOX\OTHERS\COMBFIND.C
+source=0104-combfind.c.md
+range[0]=1:0x000D6828 linear=0x000E6828 size=18794
+range[1]=2:0x00002034 linear=0x00172034 size=4
+range[2]=2:0x0000B578 linear=0x0017B578 size=4
+range[3]=2:0x00032378 linear=0x001A2378 size=116
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                           SYMBOL                                          CHUNK
+m104f001  1    -      0x000E6828  1:0x000D6828  code         Load_Combfind_Strings                          Load_Combfind_Strings_                          regions/07-object-1/0016BE54-0016C653.txt
+m104f002  2    -      0x000E6903  1:0x000D6903  code         Copy_Target_Info                               Copy_Target_Info_                               regions/07-object-1/0016BE54-0016C653.txt
+m104f003  3    -      0x000E691A  1:0x000D691A  code         Send_Star_Player_Presence                      Send_Star_Player_Presence_                      regions/07-object-1/0016BE54-0016C653.txt
+m104f004  4    -      0x000E6979  1:0x000D6979  code         Decode_Star_Player_Presence                    Decode_Star_Player_Presence_                    regions/07-object-1/0016BE54-0016C653.txt
+m104f005  5    -      0x000E69DE  1:0x000D69DE  code         Target_Colony_To_Planet                        Target_Colony_To_Planet_                        regions/07-object-1/0016BE54-0016C653.txt
+m104f006  6    -      0x000E69F7  1:0x000D69F7  code         Target_Planet_To_Colony                        Target_Planet_To_Colony_                        regions/07-object-1/0016BE54-0016C653.txt
+m104f007  7    -      0x000E6A0C  1:0x000D6A0C  static,code  Get_Combat_Ships                               Get_Combat_Ships_                               regions/07-object-1/0016BE54-0016C653.txt
+m104f008  8    -      0x000E6AA2  1:0x000D6AA2  static,code  Update_Player_Needs_To_Attack                  Update_Player_Needs_To_Attack_                  regions/07-object-1/0016BE54-0016C653.txt
+m104f009  9    -      0x000E6B44  1:0x000D6B44  static,code  Kill_Noncombat_Ships                           Kill_Noncombat_Ships_                           regions/07-object-1/0016BE54-0016C653.txt
+m104f010  10   -      0x000E6BCD  1:0x000D6BCD  code         Closest_Other_Colony_Star                      Closest_Other_Colony_Star_                      regions/07-object-1/0016BE54-0016C653.txt
+m104f011  11   -      0x000E6CAA  1:0x000D6CAA  static,code  Determine_Retreat_Ships                        Determine_Retreat_Ships_                        regions/07-object-1/0016BE54-0016C653.txt
+m104f012  12   -      0x000E6E52  1:0x000D6E52  code         Process_Retreating_Ships                       Process_Retreating_Ships_                       regions/07-object-1/0016BE54-0016C653.txt
+m104f013  13   -      0x000E7303  1:0x000D7303  static,code  AI_Can_Retreat                                 AI_Can_Retreat_                                 regions/07-object-1/0016C654-0016CE53.txt
+m104f014  14   -      0x000E7343  1:0x000D7343  static,code  Russ_Combat                                    Russ_Combat_                                    regions/07-object-1/0016C654-0016CE53.txt
+m104f015  15   -      0x000E7678  1:0x000D7678  static,code  Expected_Bomb_Hits                             Expected_Bomb_Hits_                             regions/07-object-1/0016C654-0016CE53.txt
+m104f016  16   -      0x000E76B2  1:0x000D76B2  static,code  Get_Ship_Strength_Info                         Get_Ship_Strength_Info_                         regions/07-object-1/0016C654-0016CE53.txt
+m104f017  17   -      0x000E78A7  1:0x000D78A7  static,code  Get_Best_Colony_Target                         Get_Best_Colony_Target_                         regions/07-object-1/0016CE54-0016D653.txt
+m104f018  18   -      0x000E7B79  1:0x000D7B79  static,code  Human_Confirms_Attack                          Human_Confirms_Attack_                          regions/07-object-1/0016CE54-0016D653.txt
+m104f019  19   -      0x000E7CDB  1:0x000D7CDB  static,code  Get_Local_Human_Target                         Get_Local_Human_Target_                         regions/07-object-1/0016CE54-0016D653.txt
+m104f020  20   -      0x000E7DCA  1:0x000D7DCA  static,code  Get_AI_Target                                  Get_AI_Target_                                  regions/07-object-1/0016CE54-0016D653.txt
+m104f021  21   -      0x000E8029  1:0x000D8029  static,code  Get_NPC_Target                                 Get_NPC_Target_                                 regions/07-object-1/0016D654-0016DE53.txt
+m104f022  22   -      0x000E8194  1:0x000D8194  static,code  Pick_Attacker_At_Star                          Pick_Attacker_At_Star_                          regions/07-object-1/0016D654-0016DE53.txt
+m104f023  23   -      0x000E8231  1:0x000D8231  static,code  Player_May_Attack_Player                       Player_May_Attack_Player_                       regions/07-object-1/0016D654-0016DE53.txt
+m104f024  24   -      0x000E82B4  1:0x000D82B4  static,code  Collect_Targets_For_Combat                     Collect_Targets_For_Combat_                     regions/07-object-1/0016D654-0016DE53.txt
+m104f025  25   -      0x000E841A  1:0x000D841A  static,code  Some_Star_Player_Is_Busy                       Some_Star_Player_Is_Busy_                       regions/07-object-1/0016D654-0016DE53.txt
+m104f026  26   -      0x000E84A5  1:0x000D84A5  code         Pick_Star_And_Attacker                         Pick_Star_And_Attacker_                         regions/07-object-1/0016D654-0016DE53.txt
+m104f027  27   -      0x000E859D  1:0x000D859D  static,code  Strategic_Results_Popup                        Strategic_Results_Popup_                        regions/07-object-1/0016D654-0016DE53.txt
+m104f028  28   -      0x000E85F7  1:0x000D85F7  static,code  Bomb_Results_Popups                            Bomb_Results_Popups_                            regions/07-object-1/0016D654-0016DE53.txt
+m104f029  29   -      0x000E86A0  1:0x000D86A0  static,code  Has_Stellar_Converter                          Has_Stellar_Converter_                          regions/07-object-1/0016D654-0016DE53.txt
+m104f030  30   -      0x000E86E7  1:0x000D86E7  code         N_Enemy_Stars_In_Range                         N_Enemy_Stars_In_Range_                         regions/07-object-1/0016D654-0016DE53.txt
+m104f031  31   -      0x000E8739  1:0x000D8739  static,code  N_Enemy_Stars                                  N_Enemy_Stars_                                  regions/07-object-1/0016D654-0016DE53.txt
+m104f032  32   -      0x000E8776  1:0x000D8776  static,code  Player_Owns_Transports                         Player_Owns_Transports_                         regions/07-object-1/0016D654-0016DE53.txt
+m104f033  33   -      0x000E87D2  1:0x000D87D2  static,code  Do_Attacker_Beat_Colony_Stuff                  Do_Attacker_Beat_Colony_Stuff_                  regions/07-object-1/0016D654-0016DE53.txt
+m104f034  34   -      0x000E9358  1:0x000D9358  static,code  Reset_Combat_Ships_At_Current_Star_Has_Player  Reset_Combat_Ships_At_Current_Star_Has_Player_  regions/07-object-1/0016E654-0016EE53.txt
+m104f035  35   -      0x000E938C  1:0x000D938C  static,code  Do_1_Combat                                    Do_1_Combat_                                    regions/07-object-1/0016E654-0016EE53.txt
+m104f036  36   -      0x000E9869  1:0x000D9869  static,code  Planet_Has_Splinter_Colony                     Planet_Has_Splinter_Colony_                     regions/07-object-1/0016EE54-0016F653.txt
+m104f037  37   -      0x000E9871  1:0x000D9871  code         Find_Planet_At_Star_Satisfying                 Find_Planet_At_Star_Satisfying_                 regions/07-object-1/0016EE54-0016F653.txt
+m104f038  38   -      0x000E98BB  1:0x000D98BB  code         Free_Colony_Slot                               Free_Colony_Slot_                               regions/07-object-1/0016EE54-0016F653.txt
+m104f039  39   -      0x000E98F2  1:0x000D98F2  code         Reset_One_Shot_System_Special                  Reset_One_Shot_System_Special_                  regions/07-object-1/0016EE54-0016F653.txt
+m104f040  40   -      0x000E9927  1:0x000D9927  static,code  Do_System_Discoveries_At_Star                  Do_System_Discoveries_At_Star_                  regions/07-object-1/0016EE54-0016F653.txt
+m104f041  41   -      0x000E9CD3  1:0x000D9CD3  static,code  Do_Dragon_Bribe                                Do_Dragon_Bribe_                                regions/07-object-1/0016EE54-0016F653.txt
+m104f042  42   -      0x000E9D62  1:0x000D9D62  code         Search_For_Battles                             Search_For_Battles_                             regions/07-object-1/0016EE54-0016F653.txt
+m104f043  43   -      0x000EA2F1  1:0x000DA2F1  code         Client_Combat_Loop                             Client_Combat_Loop_                             regions/07-object-1/0016F654-0016FE53.txt
+m104f044  44   -      0x000EA8CA  1:0x000DA8CA  static,code  GNN_Reports_Combat                             GNN_Reports_Combat_                             regions/07-object-1/0016FE54-00170653.txt
+m104f045  45   -      0x000EA91B  1:0x000DA91B  static,code  Do_Nonhuman_Attack_Against_Human               Do_Nonhuman_Attack_Against_Human_               regions/07-object-1/0016FE54-00170653.txt
+m104f046  46   -      0x000EAAA1  1:0x000DAAA1  code         Do_Net_Combat_Update                           Do_Net_Combat_Update_                           regions/07-object-1/0016FE54-00170653.txt
+-         -    -      0x0017B578  2:0x0000B578  static,data  _messed_up_fleet_palette                       _messed_up_fleet_palette                        regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x001A2378  2:0x00032378  static,data  _attack_confirmed                              _attack_confirmed                               -
+-         -    -      0x001A237C  2:0x0003237C  static,data  _battle_stars                                  _battle_stars                                   -
+-         -    -      0x001A2380  2:0x00032380  static,data  _target                                        _target                                         -
+-         -    -      0x001A23AC  2:0x000323AC  static,data  _player_needs_to_attack                        _player_needs_to_attack                         -
+-         -    -      0x001A23B0  2:0x000323B0  static,data  _star_has_player                               _star_has_player                                -
+-         -    -      0x001A23B4  2:0x000323B4  static,data  _star_has_nonplayer                            _star_has_nonplayer                             -
+-         -    -      0x001A23B8  2:0x000323B8  static,data  _colony_seized_by_mind_control_msg             _colony_seized_by_mind_control_msg              -
+-         -    -      0x001A23BC  2:0x000323BC  static,data  _s_attacks_you_at_s_msg                        _s_attacks_you_at_s_msg                         -
+-         -    -      0x001A23C0  2:0x000323C0  static,data  _research_treaty_msg                           _research_treaty_msg                            -
+-         -    -      0x001A23C4  2:0x000323C4  static,data  _noncombat_ships_destroyed_msg                 _noncombat_ships_destroyed_msg                  -
+-         -    -      0x001A23C8  2:0x000323C8  static,data  _trade_treaty_msg                              _trade_treaty_msg                               -
+-         -    -      0x001A23CC  2:0x000323CC  static,data  _you_have_following_treaties_msg               _you_have_following_treaties_msg                -
+-         -    -      0x001A23D0  2:0x000323D0  static,data  _really_risk_war_msg                           _really_risk_war_msg                            -
+-         -    -      0x001A23D4  2:0x000323D4  static,data  _receiving_tribute_msg                         _receiving_tribute_msg                          -
+-         -    -      0x001A23D8  2:0x000323D8  static,data  _outpost_destroyed_msg                         _outpost_destroyed_msg                          -
+-         -    -      0x001A23DC  2:0x000323DC  static,data  _combat_is_reported_between_s_and_s_msg        _combat_is_reported_between_s_and_s_msg         -
+-         -    -      0x001A23E0  2:0x000323E0  data         _current_star_has_player                       _current_star_has_player                        -
+-         -    -      0x001A23E4  2:0x000323E4  data         _current_star_has_nonplayer                    _current_star_has_nonplayer                     -
+-         -    -      0x001A23E8  2:0x000323E8  static,data  _n_battle_stars                                _n_battle_stars                                 -

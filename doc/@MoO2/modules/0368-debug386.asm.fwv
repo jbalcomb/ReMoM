@@ -1,0 +1,12 @@
+module_num=368
+module=..\ASM_386\DEBUG386.ASM
+source=0368-debug386.asm.md
+range[0]=1:0x00158693 linear=0x00168693 size=1
+range[1]=2:0x00013074 linear=0x00183074 size=28
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                  SYMBOL                CHUNK
+m368f001  1    -      0x00168693  1:0x00158693  code  __foo                 __foo                 regions/07-object-1/001ED654-001EDE53.txt
+-         -    -      0x00183074  2:0x00013074  data  __DgroupSelectorPD32  __DgroupSelectorPD32  -
+-         -    -      0x00183076  2:0x00013076  data  __VideoBasePD32       __VideoBasePD32       -
+-         -    -      0x0018307C  2:0x0001307C  data  __VideoCursorPD32     __VideoCursorPD32     -

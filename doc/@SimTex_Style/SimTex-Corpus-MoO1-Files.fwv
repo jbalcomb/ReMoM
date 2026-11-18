@@ -1,0 +1,52 @@
+file                  stem           ext       bytes    date        class        lbx_type  lbx_entries  has_name_table  text_fields
+BACKGRND.LBX          BACKGRND       LBX        326083  1993-09-06  simtex_lbx          0           53               1
+COLONIES.LBX          COLONIES       LBX        175728  1993-09-06  simtex_lbx          0           28               1
+CONFIG.MOO            CONFIG         MOO           154  2026-11-13  runtime
+COUNCIL.LBX           COUNCIL        LBX        278398  1993-09-06  simtex_lbx          0           24               1
+DESIGN.LBX            DESIGN         LBX         48830  1993-09-06  simtex_lbx          0           13               1
+DIPLOMAT.LBX          DIPLOMAT       LBX        243746  1993-11-09  simtex_lbx          5            2               0          417
+EMBASSY.LBX           EMBASSY        LBX        440746  1993-09-06  simtex_lbx          0           18               1
+ERROR.LOG             ERROR          LOG             0  2026-11-13  runtime
+EVENTMSG.LBX          EVENTMSG       LBX         31348  1993-09-07  simtex_lbx          5            1               0           75
+FAT.AD                FAT            AD           3622  1993-09-06  third_party
+FAT.CAT               FAT            CAT         34843  1993-09-06  third_party
+FAT.MT                FAT            MT          65026  1993-09-06  third_party
+FAT.OPL               FAT            OPL          3622  1993-09-06  third_party
+FIRING.LBX            FIRING         LBX          4664  1993-09-06  simtex_lbx          5            1               1            0
+FONTS.LBX             FONTS          LBX         73636  1993-09-06  simtex_lbx          2           13               1
+HELP.LBX              HELP           LBX         61668  1993-12-07  simtex_lbx          3            1               1          523
+INSTALL.EXE           INSTALL        EXE        117731  2026-11-13  publisher
+INTRO.LBX             INTRO          LBX       1859531  1993-09-06  simtex_lbx          0            4               1
+INTRO2.LBX            INTRO2         LBX       1162795  1993-12-08  simtex_lbx          0            3               1
+INTROSND.LBX          INTROSND       LBX        115133  1993-09-06  simtex_lbx          1            6               0
+LANDING.LBX           LANDING        LBX       1273514  1993-09-06  simtex_lbx          0           50               1
+MISSILE.LBX           MISSILE        LBX         12894  1993-09-06  simtex_lbx          0           40               1
+MPSCOPY.EXE           MPSCOPY        EXE         36643  2026-11-13  publisher
+MUSIC.LBX             MUSIC          LBX        104646  1993-09-07  simtex_lbx          1           40               0
+NAMES.LBX             NAMES          LBX          1748  1993-09-06  simtex_lbx          5            1               0           59
+NEBULA.LBX            NEBULA         LBX         17668  1993-09-06  simtex_lbx          0           30               1
+NEWSCAST.LBX          NEWSCAST       LBX        136230  1993-09-06  simtex_lbx          0           26               1
+ORION.EXE             ORION          EXE        211008  1993-12-31  simtex_exe
+PKUNZIP.EXE           PKUNZIP        EXE         29378  2026-11-13  publisher
+PLANETS.LBX           PLANETS        LBX         37532  1993-09-06  simtex_lbx          0           50               1
+README-MOOV12.TXT     README-MOOV12  TXT         15409  1993-11-12  publisher
+README-MOOV13.1ST     README-MOOV13  1ST          1920  1994-01-05  third_party
+README-MOOV13.TXT     README-MOOV13  TXT         15544  1993-12-27  publisher
+README.TXT            README         TXT          2425  2026-11-13  publisher
+REQD.LBX              REQD           LBX          1172  1993-09-06  simtex_lbx          5            1               0            0
+RESEARCH.LBX          RESEARCH       LBX         64820  1993-12-29  simtex_lbx          5            3               0          374
+SCREENS.LBX           SCREENS        LBX         15923  1993-09-06  simtex_lbx          0           16               1
+SHIPS.LBX             SHIPS          LBX         48014  1993-09-06  simtex_lbx          0           72               1
+SHIPS2.LBX            SHIPS2         LBX         48483  1993-09-06  simtex_lbx          0           75               1
+SNDDRV.LBX            SNDDRV         LBX        183011  1993-09-09  simtex_lbx          1           22               0
+SOUNDFX.LBX           SOUNDFX        LBX        355385  1993-09-06  simtex_lbx          1           41               0
+SPACE.LBX             SPACE          LBX         77134  1993-11-02  simtex_lbx          0           58               1
+SPIES.LBX             SPIES          LBX        834214  1993-09-06  simtex_lbx          0           30               1
+STARMAP.EXE           STARMAP        EXE        563328  2026-11-13  simtex_exe
+STARMAP.EXE.quiz_bak  STARMAP.EXE    quiz_bak   563328  1994-01-04  user_added
+STARMAP.LBX           STARMAP        LBX        220383  1993-11-01  simtex_lbx          0          122               1
+STARVIEW.LBX          STARVIEW       LBX        870055  1993-09-06  simtex_lbx          0           46               1
+TECHNO.LBX            TECHNO         LBX        266857  1993-09-06  simtex_lbx          0           48               1
+V11.LBX               V11            LBX          8887  1993-12-08  simtex_lbx          0            6               1
+VORTEX.LBX            VORTEX         LBX        490093  1993-09-06  simtex_lbx          0           35               1
+WINLOSE.LBX           WINLOSE        LBX       1045576  1993-10-21  simtex_lbx          0           36               1

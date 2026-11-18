@@ -1,0 +1,11 @@
+module_num=385
+module=save8087
+source=0385-save8087.md
+range[0]=1:0x0015412E linear=0x0016412E size=2
+range[1]=2:0x00012FDC linear=0x00182FDC size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m385f001  1    -      0x0016412E  1:0x0015412E  static,code  _do_nothing  _do_nothing_  regions/07-object-1/001E9654-001E9E53.txt
+-         -    -      0x00182FDC  2:0x00012FDC  data         ___Save8087  ___Save8087   regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182FE0  2:0x00012FE0  data         ___Rest8087  ___Rest8087   regions/08-object-2/00200E54-00201653.txt

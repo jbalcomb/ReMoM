@@ -857,5 +857,17 @@ enum OVL_Tiles_Extended
 
 };
 
+enum Rough_Terrain_Type
+{
+    rtt_NONE        = 0,
+    rtt_Ocean       = 1,
+    rtt_Lush        = 2,
+    rtt_Desert      = 3,
+    rtt_Hill        = 4,
+    rtt_Mountain    = 5,
+    rtt_Tundra      = 6
+};
+
+
 
 #endif  /* TERRTYPE_H */

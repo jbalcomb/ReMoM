@@ -1,0 +1,438 @@
+module_num=136
+module=F:\WLIBS\allocate\allocate.c
+source=0136-allocate.c.md
+range[0]=1:0x00100B89 linear=0x00110B89 size=2382
+range[1]=2:0x00002418 linear=0x00172418 size=248
+range[2]=2:0x0000C378 linear=0x0017C378 size=8
+range[3]=2:0x000356C4 linear=0x001A56C4 size=320
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m136f001  1    -      0x00110B89  1:0x00100B89  code  Allocate_Space                  Allocate_Space_                  regions/07-object-1/00195E54-00196653.txt
+m136f002  2    -      0x00110C29  1:0x00100C29  code  Get_Max_Block_Space             Get_Max_Block_Space_             regions/07-object-1/00195E54-00196653.txt
+m136f003  3    -      0x00110C62  1:0x00100C62  code  Allocate_Dos_Space              Allocate_Dos_Space_              regions/07-object-1/00195E54-00196653.txt
+m136f004  4    -      0x00110CEE  1:0x00100CEE  code  Allocate_First_Block            Allocate_First_Block_            regions/07-object-1/00195E54-00196653.txt
+m136f005  5    -      0x00110D3C  1:0x00100D3C  code  Allocate_Next_Block             Allocate_Next_Block_             regions/07-object-1/00195E54-00196653.txt
+m136f006  6    -      0x00110DFE  1:0x00100DFE  code  Allocate_Far_Space              Allocate_Far_Space_              regions/07-object-1/00195E54-00196653.txt
+m136f007  7    -      0x00110E36  1:0x00100E36  code  Allocate_Dos_Data_Space         Allocate_Dos_Data_Space_         regions/07-object-1/00195E54-00196653.txt
+m136f008  8    -      0x00110EC3  1:0x00100EC3  code  Allocation_Error                Allocation_Error_                regions/07-object-1/00195E54-00196653.txt
+m136f009  9    -      0x00110F3A  1:0x00100F3A  code  Reallocation_Error              Reallocation_Error_              regions/07-object-1/00195E54-00196653.txt
+m136f010  10   -      0x00110F89  1:0x00100F89  code  Linear_Free                     Linear_Free_                     regions/07-object-1/00195E54-00196653.txt
+m136f011  11   -      0x00110FE7  1:0x00100FE7  code  Check_Free                      Check_Free_                      regions/07-object-1/00195E54-00196653.txt
+m136f012  12   -      0x00111090  1:0x00101090  code  Dos_Free                        Dos_Free_                        regions/07-object-1/00196654-00196E53.txt
+m136f013  13   -      0x00111131  1:0x00101131  code  Allocate_Space_No_Header        Allocate_Space_No_Header_        regions/07-object-1/00196654-00196E53.txt
+m136f014  14   -      0x00111188  1:0x00101188  code  Allocate_First_Block_No_Header  Allocate_First_Block_No_Header_  regions/07-object-1/00196654-00196E53.txt
+m136f015  15   -      0x001111D6  1:0x001011D6  code  Allocate_Next_Block_No_Header   Allocate_Next_Block_No_Header_   regions/07-object-1/00196654-00196E53.txt
+m136f016  16   -      0x0011127C  1:0x0010127C  code  Mark_Block                      Mark_Block_                      regions/07-object-1/00196654-00196E53.txt
+m136f017  17   -      0x001112B4  1:0x001012B4  code  Release_Block                   Release_Block_                   regions/07-object-1/00196654-00196E53.txt
+m136f018  18   -      0x001112EC  1:0x001012EC  code  Push_Block                      Push_Block_                      regions/07-object-1/00196654-00196E53.txt
+m136f019  19   -      0x00111358  1:0x00101358  code  Save_Pushed_Blocks              Save_Pushed_Blocks_              regions/07-object-1/00196654-00196E53.txt
+m136f020  20   -      0x00111392  1:0x00101392  code  Restore_Pushed_Blocks           Restore_Pushed_Blocks_           regions/07-object-1/00196654-00196E53.txt
+m136f021  21   -      0x001113CC  1:0x001013CC  code  Pop_Block                       Pop_Block_                       regions/07-object-1/00196654-00196E53.txt
+m136f022  22   -      0x00111430  1:0x00101430  code  Check_For_Pushed_Block          Check_For_Pushed_Block_          regions/07-object-1/00196654-00196E53.txt
+m136f023  23   -      0x00111499  1:0x00101499  code  Get_Remaining_Block_Space       Get_Remaining_Block_Space_       regions/07-object-1/00196654-00196E53.txt
+-         -    -      0x0017C378  2:0x0000C378  data  _mark_stack_pos                 _mark_stack_pos                  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C37C  2:0x0000C37C  data  _called                         _called                          regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001A56C4  2:0x000356C4  data  _mark_stack                     _mark_stack                      -
+
+[Module variables]
+LINEAR      SEGOFF        NAME            TYPE
+0x001A56C4  2:0x000356C4  mark_stack      struct s_mark_stack[40]
+0x0017C378  2:0x0000C378  mark_stack_pos  int
+0x0017C37C  2:0x0000C37C  called          int
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS   NAME                            TYPE                                  CHUNK
+m136f001  0x00110B89  1:0x00100B89  160   24        9         0x18     -    EAX          Allocate_Space                  char * (int); returns in EAX          regions/07-object-1/00195E54-00196653.txt
+m136f002  0x00110C29  1:0x00100C29  57    24        9         0x18     -    EAX          Get_Max_Block_Space             int (long *); returns in EAX          regions/07-object-1/00195E54-00196653.txt
+m136f003  0x00110C62  1:0x00100C62  140   24        9         0x18     -    EAX          Allocate_Dos_Space              char * (int); returns in EAX          regions/07-object-1/00195E54-00196653.txt
+m136f004  0x00110CEE  1:0x00100CEE  78    23        8         0x14     -    EAX,EDX      Allocate_First_Block            char * (long *, int); returns in EAX  regions/07-object-1/00195E54-00196653.txt
+m136f005  0x00110D3C  1:0x00100D3C  194   23        8         0x14     -    EAX,EDX      Allocate_Next_Block             char * (long *, int); returns in EAX  regions/07-object-1/00195E54-00196653.txt
+m136f006  0x00110DFE  1:0x00100DFE  56    24        9         0x18     -    EAX          Allocate_Far_Space              char * (int); returns in EAX          regions/07-object-1/00195E54-00196653.txt
+m136f007  0x00110E36  1:0x00100E36  141   24        9         0x18     -    EAX          Allocate_Dos_Data_Space         char * (int); returns in EAX          regions/07-object-1/00195E54-00196653.txt
+m136f008  0x00110EC3  1:0x00100EC3  119   24        9         0x18     -    EAX          Allocation_Error                void (int)                            regions/07-object-1/00195E54-00196653.txt
+m136f009  0x00110F3A  1:0x00100F3A  79    22        7         0x10     -    EAX,EDX,EBX  Reallocation_Error              void (int, int, int)                  regions/07-object-1/00195E54-00196653.txt
+m136f010  0x00110F89  1:0x00100F89  94    24        9         0x18     -    -            Linear_Free                     int (void); returns in EAX            regions/07-object-1/00195E54-00196653.txt
+m136f011  0x00110FE7  1:0x00100FE7  169   24        9         0x18     -    -            Check_Free                      int (void); returns in EAX            regions/07-object-1/00195E54-00196653.txt
+m136f012  0x00111090  1:0x00101090  161   24        9         0x18     -    -            Dos_Free                        int (void); returns in EAX            regions/07-object-1/00196654-00196E53.txt
+m136f013  0x00111131  1:0x00101131  87    24        9         0x18     -    EAX          Allocate_Space_No_Header        char * (int); returns in EAX          regions/07-object-1/00196654-00196E53.txt
+m136f014  0x00111188  1:0x00101188  78    23        8         0x14     -    EAX,EDX      Allocate_First_Block_No_Header  char * (long *, int); returns in EAX  regions/07-object-1/00196654-00196E53.txt
+m136f015  0x001111D6  1:0x001011D6  166   23        8         0x14     -    EAX,EDX      Allocate_Next_Block_No_Header   char * (long *, int); returns in EAX  regions/07-object-1/00196654-00196E53.txt
+m136f016  0x0011127C  1:0x0010127C  56    24        9         0x18     -    EAX          Mark_Block                      void (long *)                         regions/07-object-1/00196654-00196E53.txt
+m136f017  0x001112B4  1:0x001012B4  56    24        9         0x18     -    EAX          Release_Block                   void (long *)                         regions/07-object-1/00196654-00196E53.txt
+m136f018  0x001112EC  1:0x001012EC  108   24        9         0x18     -    EAX          Push_Block                      void (long *)                         regions/07-object-1/00196654-00196E53.txt
+m136f019  0x00111358  1:0x00101358  58    24        9         0x18     -    EAX          Save_Pushed_Blocks              void (void *)                         regions/07-object-1/00196654-00196E53.txt
+m136f020  0x00111392  1:0x00101392  58    24        9         0x18     -    EAX          Restore_Pushed_Blocks           void (void *)                         regions/07-object-1/00196654-00196E53.txt
+m136f021  0x001113CC  1:0x001013CC  100   24        9         0x18     -    EAX          Pop_Block                       void (long *)                         regions/07-object-1/00196654-00196E53.txt
+m136f022  0x00111430  1:0x00101430  105   24        9         0x18     -    EAX          Check_For_Pushed_Block          short (long *); returns in AX         regions/07-object-1/00196654-00196E53.txt
+m136f023  0x00111499  1:0x00101499  62    24        9         0x18     -    EAX          Get_Remaining_Block_Space       int (long *); returns in EAX          regions/07-object-1/00196654-00196E53.txt
+
+[Locals]
+KEY       ROUTINE                         BLOCK  LOCAL         LOCATION    TYPE
+m136f001  Allocate_Space                  -      size          [EBP-0x14]  int
+m136f001  Allocate_Space                  -      name          [EBP-0x10]  char *
+m136f001  Allocate_Space                  -      header        [EBP-0xC]   long *
+m136f001  Allocate_Space                  -      lsize         [EBP-0x8]   int
+m136f002  Get_Max_Block_Space             -      block         [EBP-0xC]   long *
+m136f002  Get_Max_Block_Space             -      header        [EBP-0x8]   long *
+m136f003  Allocate_Dos_Space              -      size          [EBP-0x14]  int
+m136f003  Allocate_Dos_Space              -      name          [EBP-0x10]  char *
+m136f003  Allocate_Dos_Space              -      header        [EBP-0xC]   long *
+m136f003  Allocate_Dos_Space              -      lsize         [EBP-0x8]   int
+m136f004  Allocate_First_Block            -      block         [EBP-0x14]  long *
+m136f004  Allocate_First_Block            -      size          [EBP-0x10]  int
+m136f004  Allocate_First_Block            -      name          [EBP-0xC]   char *
+m136f004  Allocate_First_Block            -      header        [EBP-0x8]   long *
+m136f005  Allocate_Next_Block             -      block         [EBP-0x1C]  long *
+m136f005  Allocate_Next_Block             -      size          [EBP-0x18]  int
+m136f005  Allocate_Next_Block             -      name          [EBP-0x14]  char *
+m136f005  Allocate_Next_Block             -      header        [EBP-0x10]  long *
+m136f005  Allocate_Next_Block             -      block_header  [EBP-0xC]   long *
+m136f005  Allocate_Next_Block             -      lsize         [EBP-0x8]   int
+m136f006  Allocate_Far_Space              -      size          [EBP-0xC]   int
+m136f006  Allocate_Far_Space              -      name          [EBP-0x8]   char *
+m136f007  Allocate_Dos_Data_Space         -      size          [EBP-0xC]   int
+m136f007  Allocate_Dos_Data_Space         -      name          [EBP-0x8]   char *
+m136f007  Allocate_Dos_Data_Space         -      i             [EBP-0x10]  int
+m136f007  Allocate_Dos_Data_Space         -      inregs        [EBP-0x48]  union REGS
+m136f007  Allocate_Dos_Data_Space         -      outregs       [EBP-0x2C]  union REGS
+m136f008  Allocation_Error                -      size          [EBP-0x10]  int
+m136f008  Allocation_Error                -      i             [EBP-0xC]   int
+m136f008  Allocation_Error                -      max_far_size  [EBP-0x8]   int
+m136f008  Allocation_Error                -      temp          [EBP-0x4]   char *
+m136f009  Reallocation_Error              -      size          [EBP-0x18]  int
+m136f009  Reallocation_Error              -      short_by      [EBP-0x14]  int
+m136f009  Reallocation_Error              -      max           [EBP-0x10]  int
+m136f009  Reallocation_Error              -      i             [EBP-0xC]   int
+m136f009  Reallocation_Error              -      max_far_size  [EBP-0x8]   int
+m136f009  Reallocation_Error              -      temp          [EBP-0x4]   char *
+m136f010  Linear_Free                     -      i             [EBP-0x8]   int
+m136f010  Linear_Free                     -      inregs        [EBP-0x24]  union REGS
+m136f010  Linear_Free                     -      outregs       [EBP-0x40]  union REGS
+m136f010  Linear_Free                     -      buffer        [EBP-0x7C]  int[15]
+m136f011  Check_Free                      -      i             [EBP-0x10]  int
+m136f011  Check_Free                      -      max_far_size  [EBP-0xC]   int
+m136f011  Check_Free                      -      temp          [EBP-0x8]   char *
+m136f012  Dos_Free                        -      select        [EBP-0xC]   int
+m136f012  Dos_Free                        -      i             [EBP-0x8]   int
+m136f012  Dos_Free                        -      inregs        [EBP-0x44]  union REGS
+m136f012  Dos_Free                        -      outregs       [EBP-0x28]  union REGS
+m136f013  Allocate_Space_No_Header        -      size          [EBP-0xC]   int
+m136f013  Allocate_Space_No_Header        -      name          [EBP-0x8]   char *
+m136f014  Allocate_First_Block_No_Header  -      block         [EBP-0x14]  long *
+m136f014  Allocate_First_Block_No_Header  -      size          [EBP-0x10]  int
+m136f014  Allocate_First_Block_No_Header  -      name          [EBP-0xC]   char *
+m136f014  Allocate_First_Block_No_Header  -      header        [EBP-0x8]   long *
+m136f015  Allocate_Next_Block_No_Header   -      block         [EBP-0x1C]  long *
+m136f015  Allocate_Next_Block_No_Header   -      size          [EBP-0x18]  int
+m136f015  Allocate_Next_Block_No_Header   -      name          [EBP-0x14]  char *
+m136f015  Allocate_Next_Block_No_Header   -      header        [EBP-0x10]  long *
+m136f015  Allocate_Next_Block_No_Header   -      block_header  [EBP-0xC]   long *
+m136f015  Allocate_Next_Block_No_Header   -      lsize         [EBP-0x8]   int
+m136f016  Mark_Block                      -      block         [EBP-0x8]   long *
+m136f016  Mark_Block                      -      header        [EBP-0x4]   long *
+m136f017  Release_Block                   -      block         [EBP-0x8]   long *
+m136f017  Release_Block                   -      header        [EBP-0x4]   long *
+m136f018  Push_Block                      -      block         [EBP-0x8]   long *
+m136f018  Push_Block                      -      header        [EBP-0x4]   long *
+m136f019  Save_Pushed_Blocks              -      saved_blocks  [EBP-0x4]   void *
+m136f020  Restore_Pushed_Blocks           -      saved_blocks  [EBP-0x4]   void *
+m136f021  Pop_Block                       -      block         [EBP-0x8]   long *
+m136f021  Pop_Block                       -      header        [EBP-0x4]   long *
+m136f022  Check_For_Pushed_Block          -      block         [EBP-0xC]   long *
+m136f022  Check_For_Pushed_Block          -      i             [EBP-0x8]   short
+m136f023  Get_Remaining_Block_Space       -      block         [EBP-0xC]   long *
+m136f023  Get_Remaining_Block_Space       -      header        [EBP-0x8]   long *
+
+[Types]
+NUM  KIND       NAME                 DETAILS
+-    cue table  -                    source file table (C++)
+1    scope      struct               -
+2    scope      union                -
+3    scope      enum                 -
+4    scalar     signed char          int 1 bytes
+5    scalar     unsigned char        unsigned 1 bytes
+6    scalar     short                int 2 bytes
+7    scalar     unsigned short       unsigned 2 bytes
+8    scalar     int                  int 4 bytes
+9    scalar     unsigned int         unsigned 4 bytes
+10   typedef    char                 name for unsigned char (#5)
+11   typedef    char                 name for unsigned char (#5)
+12   typedef    size_t               name for unsigned int (#9)
+13   pointer    -                    near386; of char (#10)
+14   array      __va_list            0..0; of char * (#13)
+15   typedef    __va_list            name for char *[1] (#14)
+16   scalar     long                 int 4 bytes
+17   typedef    fpos_t               name for long (#16)
+18   typedef    fpos_t               name for long (#16)
+19   typedef    wchar_t              name for unsigned short (#7)
+20   typedef    wchar_t              name for unsigned short (#7)
+21   scalar     void                 void 1 bytes
+22   procedure  -                    near386; returns void ()
+23   pointer    onexit_t             near386; of void (void) (#22)
+24   typedef    onexit_t             name for void (void) * (#23)
+25   scalar     unsigned long        unsigned 4 bytes
+26   typedef    time_t               name for unsigned long (#25)
+27   typedef    ino_t                name for unsigned int (#9)
+28   typedef    dev_t                name for int (#8)
+29   typedef    off_t                name for long (#16)
+30   typedef    clock_t              name for unsigned long (#25)
+31   typedef    time_t               name for unsigned long (#25)
+32   typedef    BYTE                 name for unsigned char (#5)
+33   typedef    SBYTE                name for signed char (#4)
+34   typedef    UBYTE                name for unsigned char (#5)
+35   typedef    WORD                 name for unsigned short (#7)
+36   typedef    SWORD                name for short (#6)
+37   typedef    UWORD                name for unsigned short (#7)
+38   typedef    DWORD                name for unsigned int (#9)
+39   typedef    SDWORD               name for int (#8)
+40   typedef    UDWORD               name for unsigned int (#9)
+41   typedef    BOOL                 name for unsigned char (#5)
+42   typedef    SampleHandle         name for int (#8)
+43   pointer    -                    near386; of void (#21)
+44   struct     struct s_mark_stack  2 fields, 8 bytes
+45   typedef    s_mark_stack         struct name for struct #44 (#44)
+46   array      -                    0..39; of struct s_mark_stack (#45)
+47   procedure  -                    near386; returns char * (int)
+48   pointer    -                    near386; of long (#16)
+49   procedure  -                    near386; returns int (long *)
+50   procedure  -                    near386; returns char * (long *, int)
+51   struct     struct DWORDREGS     7 fields, 28 bytes
+52   typedef    DWORDREGS            struct name for struct #51 (#51)
+53   struct     struct WORDREGS      13 fields, 28 bytes
+54   typedef    WORDREGS             struct name for struct #53 (#53)
+55   struct     struct BYTEREGS      12 fields, 16 bytes
+56   typedef    BYTEREGS             struct name for struct #55 (#55)
+57   struct     union REGS           3 fields, 28 bytes
+58   typedef    REGS                 union name for struct #57 (#57)
+59   procedure  -                    near386; returns void (int)
+60   procedure  -                    near386; returns void (int, int, int)
+61   procedure  -                    near386; returns int ()
+62   array      -                    0..14; of int (#8)
+63   procedure  -                    near386; returns void (long *)
+64   procedure  -                    near386; returns void (void *)
+65   procedure  -                    near386; returns short (long *)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER  OFFSET_VALUE  TYPE              TYPE_NAME
+44        field        block   0             void *            struct s_mark_stack
+44        field        mark    4             int               struct s_mark_stack
+51        field        eax     0             unsigned int      struct DWORDREGS
+51        field        ebx     4             unsigned int      struct DWORDREGS
+51        field        ecx     8             unsigned int      struct DWORDREGS
+51        field        edx     12            unsigned int      struct DWORDREGS
+51        field        esi     16            unsigned int      struct DWORDREGS
+51        field        edi     20            unsigned int      struct DWORDREGS
+51        field        cflag   24            unsigned int      struct DWORDREGS
+53        field        ax      0             unsigned short    struct WORDREGS
+53        field        _1      2             unsigned short    struct WORDREGS
+53        field        bx      4             unsigned short    struct WORDREGS
+53        field        _2      6             unsigned short    struct WORDREGS
+53        field        cx      8             unsigned short    struct WORDREGS
+53        field        _3      10            unsigned short    struct WORDREGS
+53        field        dx      12            unsigned short    struct WORDREGS
+53        field        _4      14            unsigned short    struct WORDREGS
+53        field        si      16            unsigned short    struct WORDREGS
+53        field        _5      18            unsigned short    struct WORDREGS
+53        field        di      20            unsigned short    struct WORDREGS
+53        field        _6      22            unsigned short    struct WORDREGS
+53        field        cflag   24            unsigned int      struct WORDREGS
+55        field        al      0             unsigned char     struct BYTEREGS
+55        field        ah      1             unsigned char     struct BYTEREGS
+55        field        _1      2             unsigned short    struct BYTEREGS
+55        field        bl      4             unsigned char     struct BYTEREGS
+55        field        bh      5             unsigned char     struct BYTEREGS
+55        field        _2      6             unsigned short    struct BYTEREGS
+55        field        cl      8             unsigned char     struct BYTEREGS
+55        field        ch      9             unsigned char     struct BYTEREGS
+55        field        _3      10            unsigned short    struct BYTEREGS
+55        field        dl      12            unsigned char     struct BYTEREGS
+55        field        dh      13            unsigned char     struct BYTEREGS
+55        field        _4      14            unsigned short    struct BYTEREGS
+57        field        h       0             struct BYTEREGS   union REGS
+57        field        w       0             struct WORDREGS   union REGS
+57        field        x       0             struct DWORDREGS  union REGS
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m136f001  39    0x00110B89  1:0x00100B89  0x001961DD
+m136f001  45    0x00110BA4  1:0x00100BA4  0x001961F8
+m136f001  46    0x00110BAA  1:0x00100BAA  0x001961FE
+m136f001  48    0x00110BC2  1:0x00100BC2  0x00196216
+m136f001  49    0x00110BD0  1:0x00100BD0  0x00196224
+m136f001  50    0x00110BE4  1:0x00100BE4  0x00196238
+m136f001  52    0x00110BF2  1:0x00100BF2  0x00196246
+m136f001  54    0x00110BF8  1:0x00100BF8  0x0019624C
+m136f001  55    0x00110C01  1:0x00100C01  0x00196255
+m136f001  56    0x00110C0A  1:0x00100C0A  0x0019625E
+m136f001  58    0x00110C14  1:0x00100C14  0x00196268
+m136f001  59    0x00110C1D  1:0x00100C1D  0x00196271
+m136f002  66    0x00110C29  1:0x00100C29  0x0019627D
+m136f002  69    0x00110C44  1:0x00100C44  0x00196298
+m136f002  71    0x00110C4D  1:0x00100C4D  0x001962A1
+m136f002  72    0x00110C56  1:0x00100C56  0x001962AA
+m136f003  76    0x00110C62  1:0x00100C62  0x001962B6
+m136f003  82    0x00110C7D  1:0x00100C7D  0x001962D1
+m136f003  84    0x00110C83  1:0x00100C83  0x001962D7
+m136f003  87    0x00110C9B  1:0x00100C9B  0x001962EF
+m136f003  89    0x00110CA9  1:0x00100CA9  0x001962FD
+m136f003  91    0x00110CB7  1:0x00100CB7  0x0019630B
+m136f003  93    0x00110CBD  1:0x00100CBD  0x00196311
+m136f003  94    0x00110CC6  1:0x00100CC6  0x0019631A
+m136f003  95    0x00110CCF  1:0x00100CCF  0x00196323
+m136f003  97    0x00110CD9  1:0x00100CD9  0x0019632D
+m136f003  98    0x00110CE2  1:0x00100CE2  0x00196336
+m136f004  104   0x00110CEE  1:0x00100CEE  0x00196342
+m136f004  109   0x00110D0B  1:0x00100D0B  0x0019635F
+m136f004  111   0x00110D14  1:0x00100D14  0x00196368
+m136f004  113   0x00110D1D  1:0x00100D1D  0x00196371
+m136f004  114   0x00110D2B  1:0x00100D2B  0x0019637F
+m136f004  115   0x00110D31  1:0x00100D31  0x00196385
+m136f005  124   0x00110D3C  1:0x00100D3C  0x00196390
+m136f005  130   0x00110D59  1:0x00100D59  0x001963AD
+m136f005  131   0x00110D5F  1:0x00100D5F  0x001963B3
+m136f005  133   0x00110D77  1:0x00100D77  0x001963CB
+m136f005  135   0x00110D80  1:0x00100D80  0x001963D4
+m136f005  137   0x00110DAF  1:0x00100DAF  0x00196403
+m136f005  138   0x00110DB5  1:0x00100DB5  0x00196409
+m136f005  140   0x00110DBD  1:0x00100DBD  0x00196411
+m136f005  142   0x00110DC8  1:0x00100DC8  0x0019641C
+m136f005  144   0x00110DCE  1:0x00100DCE  0x00196422
+m136f005  145   0x00110DD7  1:0x00100DD7  0x0019642B
+m136f005  146   0x00110DE0  1:0x00100DE0  0x00196434
+m136f005  148   0x00110DEA  1:0x00100DEA  0x0019643E
+m136f005  149   0x00110DF3  1:0x00100DF3  0x00196447
+m136f006  152   0x00110DFE  1:0x00100DFE  0x00196452
+m136f006  157   0x00110E19  1:0x00100E19  0x0019646D
+m136f006  160   0x00110E24  1:0x00100E24  0x00196478
+m136f006  161   0x00110E2A  1:0x00100E2A  0x0019647E
+m136f007  163   0x00110E36  1:0x00100E36  0x0019648A
+m136f007  172   0x00110E51  1:0x00100E51  0x001964A5
+m136f007  173   0x00110E5E  1:0x00100E5E  0x001964B2
+m136f007  175   0x00110E6A  1:0x00100E6A  0x001964BE
+m136f007  177   0x00110E7C  1:0x00100E7C  0x001964D0
+m136f007  178   0x00110E83  1:0x00100E83  0x001964D7
+m136f007  181   0x00110E89  1:0x00100E89  0x001964DD
+m136f007  183   0x00110E99  1:0x00100E99  0x001964ED
+m136f007  184   0x00110E9F  1:0x00100E9F  0x001964F3
+m136f007  185   0x00110EA6  1:0x00100EA6  0x001964FA
+m136f007  186   0x00110EA8  1:0x00100EA8  0x001964FC
+m136f007  188   0x00110EB1  1:0x00100EB1  0x00196505
+m136f007  189   0x00110EB7  1:0x00100EB7  0x0019650B
+m136f008  191   0x00110EC3  1:0x00100EC3  0x00196517
+m136f008  196   0x00110EDE  1:0x00100EDE  0x00196532
+m136f008  198   0x00110EE3  1:0x00100EE3  0x00196537
+m136f008  199   0x00110EF1  1:0x00100EF1  0x00196545
+m136f008  200   0x00110EFF  1:0x00100EFF  0x00196553
+m136f008  201   0x00110F13  1:0x00100F13  0x00196567
+m136f008  202   0x00110F27  1:0x00100F27  0x0019657B
+m136f008  203   0x00110F31  1:0x00100F31  0x00196585
+m136f009  205   0x00110F3A  1:0x00100F3A  0x0019658E
+m136f009  210   0x00110F59  1:0x00100F59  0x001965AD
+m136f009  212   0x00110F5E  1:0x00100F5E  0x001965B2
+m136f009  213   0x00110F78  1:0x00100F78  0x001965CC
+m136f009  214   0x00110F82  1:0x00100F82  0x001965D6
+m136f010  216   0x00110F89  1:0x00100F89  0x001965DD
+m136f010  224   0x00110FA1  1:0x00100FA1  0x001965F5
+m136f010  226   0x00110FB0  1:0x00100FB0  0x00196604
+m136f010  227   0x00110FB7  1:0x00100FB7  0x0019660B
+m136f010  229   0x00110FBD  1:0x00100FBD  0x00196611
+m136f010  231   0x00110FCD  1:0x00100FCD  0x00196621
+m136f010  232   0x00110FDB  1:0x00100FDB  0x0019662F
+m136f011  257   0x00110FE7  1:0x00100FE7  0x0019663B
+m136f011  262   0x00110FFF  1:0x00100FFF  0x00196653
+m136f011  263   0x00111006  1:0x00101006  0x0019665A
+m136f011  264   0x00111011  1:0x00101011  0x00196665
+m136f011  266   0x00111019  1:0x00101019  0x0019666D
+m136f011  268   0x0011101F  1:0x0010101F  0x00196673
+m136f011  269   0x00111026  1:0x00101026  0x0019667A
+m136f011  270   0x00111031  1:0x00101031  0x00196685
+m136f011  271   0x00111039  1:0x00101039  0x0019668D
+m136f011  272   0x0011103B  1:0x0010103B  0x0019668F
+m136f011  273   0x00111042  1:0x00101042  0x00196696
+m136f011  274   0x0011104D  1:0x0010104D  0x001966A1
+m136f011  276   0x00111055  1:0x00101055  0x001966A9
+m136f011  278   0x0011105B  1:0x0010105B  0x001966AF
+m136f011  279   0x00111062  1:0x00101062  0x001966B6
+m136f011  280   0x0011106D  1:0x0010106D  0x001966C1
+m136f011  281   0x00111075  1:0x00101075  0x001966C9
+m136f011  283   0x00111077  1:0x00101077  0x001966CB
+m136f011  284   0x00111084  1:0x00101084  0x001966D8
+m136f012  288   0x00111090  1:0x00101090  0x001966E4
+m136f012  295   0x001110A8  1:0x001010A8  0x001966FC
+m136f012  297   0x001110C0  1:0x001010C0  0x00196714
+m136f012  298   0x001110C7  1:0x001010C7  0x0019671B
+m136f012  300   0x001110CD  1:0x001010CD  0x00196721
+m136f012  301   0x001110DD  1:0x001010DD  0x00196731
+m136f012  302   0x001110E3  1:0x001010E3  0x00196737
+m136f012  304   0x001110E9  1:0x001010E9  0x0019673D
+m136f012  308   0x001110FF  1:0x001010FF  0x00196753
+m136f012  309   0x00111106  1:0x00101106  0x0019675A
+m136f012  310   0x0011110C  1:0x0010110C  0x00196760
+m136f012  313   0x0011111C  1:0x0010111C  0x00196770
+m136f012  314   0x0011111E  1:0x0010111E  0x00196772
+m136f012  315   0x00111125  1:0x00101125  0x00196779
+m136f013  319   0x00111131  1:0x00101131  0x00196785
+m136f013  323   0x0011114C  1:0x0010114C  0x001967A0
+m136f013  324   0x00111157  1:0x00101157  0x001967AB
+m136f013  325   0x00111168  1:0x00101168  0x001967BC
+m136f013  327   0x00111176  1:0x00101176  0x001967CA
+m136f013  328   0x0011117C  1:0x0010117C  0x001967D0
+m136f014  333   0x00111188  1:0x00101188  0x001967DC
+m136f014  338   0x001111A5  1:0x001011A5  0x001967F9
+m136f014  340   0x001111AE  1:0x001011AE  0x00196802
+m136f014  342   0x001111B7  1:0x001011B7  0x0019680B
+m136f014  343   0x001111C5  1:0x001011C5  0x00196819
+m136f014  344   0x001111CB  1:0x001011CB  0x0019681F
+m136f015  346   0x001111D6  1:0x001011D6  0x0019682A
+m136f015  352   0x001111F3  1:0x001011F3  0x00196847
+m136f015  353   0x001111F9  1:0x001011F9  0x0019684D
+m136f015  355   0x00111211  1:0x00101211  0x00196865
+m136f015  357   0x0011121A  1:0x0010121A  0x0019686E
+m136f015  359   0x00111233  1:0x00101233  0x00196887
+m136f015  360   0x00111239  1:0x00101239  0x0019688D
+m136f015  362   0x00111241  1:0x00101241  0x00196895
+m136f015  364   0x00111249  1:0x00101249  0x0019689D
+m136f015  366   0x0011124F  1:0x0010124F  0x001968A3
+m136f015  367   0x00111258  1:0x00101258  0x001968AC
+m136f015  368   0x00111261  1:0x00101261  0x001968B5
+m136f015  370   0x0011126B  1:0x0010126B  0x001968BF
+m136f015  371   0x00111271  1:0x00101271  0x001968C5
+m136f016  379   0x0011127C  1:0x0010127C  0x001968D0
+m136f016  383   0x00111297  1:0x00101297  0x001968EB
+m136f016  384   0x001112A0  1:0x001012A0  0x001968F4
+m136f016  385   0x001112AB  1:0x001012AB  0x001968FF
+m136f017  391   0x001112B4  1:0x001012B4  0x00196908
+m136f017  395   0x001112CF  1:0x001012CF  0x00196923
+m136f017  396   0x001112D8  1:0x001012D8  0x0019692C
+m136f017  397   0x001112E3  1:0x001012E3  0x00196937
+m136f018  404   0x001112EC  1:0x001012EC  0x00196940
+m136f018  408   0x00111307  1:0x00101307  0x0019695B
+m136f018  409   0x00111310  1:0x00101310  0x00196964
+m136f018  411   0x0011131A  1:0x0010131A  0x0019696E
+m136f018  412   0x00111323  1:0x00101323  0x00196977
+m136f018  413   0x00111335  1:0x00101335  0x00196989
+m136f018  415   0x00111349  1:0x00101349  0x0019699D
+m136f018  416   0x0011134F  1:0x0010134F  0x001969A3
+m136f019  417   0x00111358  1:0x00101358  0x001969AC
+m136f019  419   0x00111373  1:0x00101373  0x001969C7
+m136f019  420   0x00111389  1:0x00101389  0x001969DD
+m136f020  421   0x00111392  1:0x00101392  0x001969E6
+m136f020  423   0x001113AD  1:0x001013AD  0x00196A01
+m136f020  424   0x001113C3  1:0x001013C3  0x00196A17
+m136f021  431   0x001113CC  1:0x001013CC  0x00196A20
+m136f021  435   0x001113E7  1:0x001013E7  0x00196A3B
+m136f021  436   0x001113F0  1:0x001013F0  0x00196A44
+m136f021  438   0x001113FA  1:0x001013FA  0x00196A4E
+m136f021  440   0x00111400  1:0x00101400  0x00196A54
+m136f021  441   0x00111414  1:0x00101414  0x00196A68
+m136f021  442   0x00111427  1:0x00101427  0x00196A7B
+m136f022  444   0x00111430  1:0x00101430  0x00196A84
+m136f022  448   0x0011144B  1:0x0010144B  0x00196A9F
+m136f022  449   0x00111468  1:0x00101468  0x00196ABC
+m136f022  451   0x00111486  1:0x00101486  0x00196ADA
+m136f022  452   0x0011148D  1:0x0010148D  0x00196AE1
+m136f023  459   0x00111499  1:0x00101499  0x00196AED
+m136f023  462   0x001114B4  1:0x001014B4  0x00196B08
+m136f023  469   0x001114BD  1:0x001014BD  0x00196B11
+m136f023  470   0x001114CB  1:0x001014CB  0x00196B1F

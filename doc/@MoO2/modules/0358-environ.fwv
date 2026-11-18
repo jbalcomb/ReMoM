@@ -1,0 +1,10 @@
+module_num=358
+module=environ
+source=0358-environ.md
+range[0]=2:0x00012D20 linear=0x00182D20 size=8
+range[1]=2:0x00013004 linear=0x00183004 size=6
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL       CHUNK
+-    -    -      0x00182D20  2:0x00012D20  data  _environ     _environ     regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182D24  2:0x00012D24  data  ___env_mask  ___env_mask  regions/08-object-2/00200E54-00201653.txt

@@ -466,8 +466,8 @@ void Units_In_Tower(int16_t troop_count, int16_t troops[], int16_t map_p)
         _TOWERS[tower_idx].owner_idx = _UNITS[unit_idx].owner_idx;
         if(_UNITS[unit_idx].owner_idx == _current_player_idx)
         {
-            Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
-            Set_Map_Square_Explored_Flags_XYP(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
+            Set_Square_Explored_Flags(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 0);
+            Set_Square_Explored_Flags(_TOWERS[tower_idx].wx, _TOWERS[tower_idx].wy, 1);
         }
     }
     else
@@ -571,7 +571,7 @@ void Cheat_Reveal(void)
 
 
 // WZD o59p18
-void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
+void Set_Square_Explored_Flags_Range(int16_t wx, int16_t wy, int16_t wp, int16_t scout_range)
 {
     int16_t y_start = 0;
     int16_t x_start = 0;
@@ -586,7 +586,7 @@ void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp,
 
     if(scout_range == 1)
     {
-        Set_Map_Square_Explored_Flags_XYP(wx, wy, wp);
+        Set_Square_Explored_Flags(wx, wy, wp);
         return;
     }
 
@@ -626,7 +626,7 @@ void Set_Map_Square_Explored_Flags_XYP_Range(int16_t wx, int16_t wy, int16_t wp,
                 curr_wx = itr_wx - WORLD_WIDTH;
             }
 
-            Set_Map_Square_Explored_Flags_XYP(curr_wx, itr_wy, wp);
+            Set_Square_Explored_Flags(curr_wx, itr_wy, wp);
 
         }
 
@@ -648,9 +648,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     int16_t orig_map_plane = 0;
     // int16_t curr_map_plane;  // _DI_
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
-#endif
 
     // curr_map_plane = *map_plane;
     _active_stack_has_path = 0;
@@ -660,10 +658,8 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     *map_plane = ((*map_plane + 1) % NUM_PLANES);
     stack_planar_travel = ST_FALSE;
 
-#ifdef STU_DEBUG
     // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: *map_plane: %d", __FILE__, __LINE__, *map_plane);
-#endif
 
     /*
         Active Stack && Can Travel && Sealed
@@ -708,10 +704,8 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
          1: Stack_Has_PlanarTravel() == ST_TRUE && Check_Planar_Seal() == ST_FALSE && _unit_stack_count > 0 && all_units_moved == ST_FALSE
         99: Stack_Has_PlanarTravel() == ST_TRUE && Check_Planar_Seal() == ST_TRUE && _unit_stack_count > 0 && all_units_moved == ST_FALSE
     */
-#ifdef STU_DEBUG
     // dbg_prn("DEBUG: [%s, %d]: curr_map_plane: %d\n", __FILE__, __LINE__, curr_map_plane);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: *map_plane: %d", __FILE__, __LINE__, *map_plane);
-#endif
 
     /*
         BEGIN: Yay PlanarTravel, Nay PlanarSeal
@@ -806,9 +800,7 @@ void Do_Plane_Button__WIP(int16_t player_idx, int16_t * map_x, int16_t * map_y, 
     Set_Entities_On_Map_Window(*map_x, *map_y, *map_plane);
 
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Do_Plane_Button__WIP(player_idx = %d, *map_x = %d, *map_y = %d, *map_plane = %d)", __FILE__, __LINE__, player_idx, *map_x, *map_y, *map_plane);
-#endif
 
 }
 
@@ -834,9 +826,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
     int16_t return_value = 0;
 
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
-#endif
 
     unit_idx = unit_stack_unit_idx;
 
@@ -847,6 +837,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
     if(Square_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane) == ST_TRUE)
     {
         return_value = -2;  // ¿ -2 ~== Non-Walking Terrain ?
+/* CLAUDE  original reconstruction, from here to the end of the function; replaced below to match the asm (ovr059/Check_Stack_Plane_Shift.asm)
         if(movement_mode_flags[MM_SWIMMING] == ST_TRUE || movement_mode_flags[MM_SAILING] == ST_TRUE || movement_mode_flags[MM_FLYING] == ST_TRUE)
         {
             return_value = -1;  // ¿ ST_SUCCESS ?
@@ -884,7 +875,7 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
             }
             else
             {
-                city_has_spellward = RP_CTY_CheckSpellWard__STUB(city_idx, &stack_size, &stack_array[0]);
+                city_has_spellward = Stack_Blocked_By_Spell_Ward(city_idx, &stack_size, &stack_array[0]);
                 if(city_has_spellward == ST_TRUE)
                 {
                     return_value = -2;
@@ -911,9 +902,77 @@ int16_t Check_Stack_Plane_Shift(int16_t unit_stack_unit_idx, int16_t map_plane)
         }
     }
 
-#ifdef STU_DEBUG
+*/
+        /* CLAUDE */  /* asm: cmp [bp+movement_types@+6], e_ST_FALSE / jg ... */
+        if(
+            (movement_mode_flags[MM_SWIMMING] > ST_FALSE)
+            ||
+            (movement_mode_flags[MM_SAILING] > ST_FALSE)
+            ||
+            (movement_mode_flags[MM_FLYING] > ST_FALSE)
+        )
+        {
+            return_value = -1;  // ¿ ST_SUCCESS ?
+        }
+    }
+
+    if(return_value == -1)
+    {
+        unit_world_x = _UNITS[unit_idx].wx;
+        unit_world_y = _UNITS[unit_idx].wy;
+        lair_idx = Square_Has_Lair(unit_world_x, unit_world_y, map_plane);
+        if(lair_idx != -1)
+        {
+            return_value = -2;
+        }
+        else
+        {
+            city_idx = Square_Has_City(unit_world_x, unit_world_y, map_plane);
+            if(city_idx != -1)
+            {
+                /* OGBUG  stack_size and stack_array are never set on this path (only the non-city branch below fills them): the Spell Ward test gets stack leftovers, not the travelling units (_unit_stack[]) */
+                city_has_spellward = Stack_Blocked_By_Spell_Ward(city_idx, &stack_size, &stack_array[0]);
+                if(city_has_spellward == ST_TRUE)
+                {
+                    return_value = -2;
+                }
+                else if(_CITIES[city_idx].owner_idx != _UNITS[unit_idx].owner_idx)
+                {
+                    return_value = -2;
+                }
+                else
+                {
+                    Player_Army_At_Square(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                    /* OGBUG  _unit_stack_count counts every unit of the selected stack, inactive (deselected / finished) ones too, though only the active ones shift: a partial stack onto a partly filled square can be refused although it would fit */
+                    if((_unit_stack_count + stack_size) > MAX_STACK)
+                    {
+                        return_value = -2;
+                    }
+                }
+            }
+            else
+            {
+                stack_size = 0;
+                Enemy_Army_At_Square(unit_world_x, unit_world_y, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                if(stack_size > 0)
+                {
+                    return_value = -2;
+                }
+                else
+                {
+                    stack_size = 0;
+                    Player_Army_At_Square(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, map_plane, _UNITS[unit_idx].owner_idx, &stack_size, &stack_array[0]);
+                    /* OGBUG  _unit_stack_count counts every unit of the selected stack, inactive (deselected / finished) ones too, though only the active ones shift: a partial stack onto a partly filled square can be refused although it would fit */
+                    if((_unit_stack_count + stack_size) > MAX_STACK)
+                    {
+                        return_value = -2;
+                    }
+                }
+            }
+        }
+    }
+
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Check_Stack_Plane_Shift(unit_stack_unit_idx = %d, map_plane = %d)", __FILE__, __LINE__, unit_stack_unit_idx, map_plane);
-#endif
 
     return return_value;
 }

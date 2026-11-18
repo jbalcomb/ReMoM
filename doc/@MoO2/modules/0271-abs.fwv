@@ -1,0 +1,8 @@
+module_num=271
+module=abs
+source=0271-abs.md
+range[0]=1:0x0013D139 linear=0x0014D139 size=7
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m271f001  1    -      0x0014D139  1:0x0013D139  code  abs   abs_    regions/07-object-1/001D2654-001D2E53.txt

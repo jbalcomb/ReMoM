@@ -50,7 +50,7 @@ SAMB_ptr item_view_popup_bitm;
     WIZARDS.EXE  ovr082
 */
 
-// WZD s82p0
+// WZD o082p01
 void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
 {
     int16_t hotkey_ESC;
@@ -79,7 +79,7 @@ void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
         Mark_Time();
         Clear_Fields();
 
-        hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, ST_NULL, ST_UNDEFINED);
+        hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -102,7 +102,7 @@ void Item_View_Popup(int16_t item_idx, int16_t start_x, int16_t start_y)
 }
 
 
-// WZD s82p0
+// WZD o082p02
 /*
 
 Item_Screen()
@@ -128,13 +128,13 @@ void Item_View_Popup_Draw(void)
 
     Cycle_Item_Enchantment_Animation();
 
-    ITEM_GetViewDrawPos(item_view_start_x, item_view_start_y, item_view_popup_bitm, 5, &IView_Draw_Left, &IView_Draw_Top);
+    Expanding_Picture_Position(item_view_start_x, item_view_start_y, item_view_popup_bitm, 5, &IView_Draw_Left, &IView_Draw_Top);
 
     Draw_Picture(IView_Draw_Left, IView_Draw_Top, item_view_popup_bitm);
 }
 
 
-// WZD s82p0
+// WZD o082p03
 /*
 
 XREF:
@@ -196,7 +196,7 @@ void Item_View_Prepare(int16_t item_idx, SAMB_ptr item_bitmap_seg, SAMB_ptr item
 }
 
 
-// WZD s82p0
+// WZD o082p04
 /*
 ; shows the description of the item being awarded as a
 ; dialogue window, kept on screen until clicked away
@@ -218,7 +218,7 @@ void Item_Pool_View(void)
     {
         Mark_Time();
         Clear_Fields();
-        hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, '\x1B', ST_UNDEFINED);
+        hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, "\x1B", ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == hotkey_ESC)
         {
@@ -235,7 +235,7 @@ void Item_Pool_View(void)
 }
 
 
-// WZD s82p0
+// WZD o082p05
 /*
 ; prepares and draws the description window of the item
 ; being awarded into the current draw segment onto a
@@ -250,7 +250,7 @@ void Item_Pool_View_Draw(void)
     Cycle_Item_Enchantment_Animation();
 }
 
-// WZD s82p0
+// WZD o082p06
 /*
     ...Draw Item, with Enchantment Outline
     ~ Draw_Unit_Picture()
@@ -302,15 +302,15 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
 
     item_ptr = &_ITEMS[item_idx];
 
-    item_powers = _ITEMS[item_idx].Powers;
+    item_powers = _ITEMS[item_idx].powers;
 
     magic_realm = ST_UNDEFINED;
 
-// #define ITEM_POWER(_item_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0) )
+// #define ITEM_POWER(_item_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].powers & (1 << (_item_power_))) != 0) )
 // ip_Invulnerability = 32 ... warning C4293: '<<': shift count negative or too big, undefined behavior
 // 1000 0000 0000 0000 0000 0000 0000 0000
-//                                       ^ bit 1  ((_ITEMS[(_item_idx_)].Powers & (1 << (0))) != 0)
-// ^ bit 32 ((_ITEMS[(_item_idx_)].Powers & (1 << (31))) != 0)
+//                                       ^ bit 1  ((_ITEMS[(_item_idx_)].powers & (1 << (0))) != 0)
+// ^ bit 32 ((_ITEMS[(_item_idx_)].powers & (1 << (31))) != 0)
 // else if((item_powers & IP_PHANTASMAL)          != 0) { magic_realm = 4; }
 // else if((item_powers & (1 << (ip_Phantasmal))) != 0) { magic_realm = 4; }
 
@@ -361,7 +361,7 @@ void Draw_Item_Icon_With_Enchantment_Outline(int16_t item_idx, SAMB_ptr item_ico
 }
 
 
-// WZD s82p0
+// WZD o082p07
 // drake178: GAME_Animate_Items()
 void Cycle_Item_Enchantment_Animation(void)
 {

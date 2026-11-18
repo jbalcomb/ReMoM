@@ -11,7 +11,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>   /* CLAUDE: debug */
-#include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() for frame logging */
+#include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
 #include <stdlib.h>
 #include <inttypes.h>
@@ -73,7 +73,7 @@ uint64_t sdl3_performance_counter;
    click actually happened.  Used by Replay_Capture_Frame() for recording. */
 int16_t platform_frame_mouse_buttons = 0;
 
-/* Optional per-frame callback for synthetic input injection (HeMoM). */
+/* Optional per-frame callback for synthetic input injection (DeMoM). */
 static void (*platform_frame_callback)(void) = NULL;
 
 void Platform_Register_Frame_Callback(void (*callback)(void))

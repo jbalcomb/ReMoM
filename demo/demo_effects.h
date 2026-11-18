@@ -31,5 +31,7 @@ extern const Demo_Effect effect_vanish;
 extern const Demo_Effect effect_somlose;
 extern const Demo_Effect effect_somwin;
 extern const Demo_Effect effect_conquest;
+extern const Demo_Effect effect_expand;
+extern const Demo_Effect effect_scast;
 
 #endif /* DEMO_EFFECTS_H */

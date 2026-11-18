@@ -318,7 +318,7 @@ The long multiply/divide was traced through the stack. `empire_population` is pu
 
 ## `Rampage_Combat_City` — the new lair record
 
-asm:274-341. Seventeen field writes in the asm's order, all correct: both guard types, both counts scaled by 17 (`0x11` — one guard in each nibble), `wx`/`wy`/`wp` from the combat coordinates, `intact = ST_TRUE`, `type = lt_Ruins`, `Loot_Gold = combat_results_gold`, and the six zeroed fields ending with all three `Item_Values`. The field mapping was checked against `WIZARDS.inc:349-367` — `gold` is at 0x0A and `mana` at 0x0C, matching `Loot_Gold` / `Loot_Mana` in [gd_lair_fields.h:16](../../MoM/src/gd_lair_fields.h#L16).
+asm:274-341. Seventeen field writes in the asm's order, all correct: both guard types, both counts scaled by 17 (`0x11` — one guard in each nibble), `wx`/`wy`/`wp` from the combat coordinates, `intact = ST_TRUE`, `type = lt_Ruins`, `Loot_Gold = combat_results_gold`, and the six zeroed fields ending with all three `Item_Values`. The field mapping was checked against `WIZARDS.inc:349-367` — `gold` is at 0x0A and `mana` at 0x0C, matching `Loot_Gold` / `Loot_Mana` in [gd_lair_fields.h:16](../../STU/src/gd_lair_fields.h#L16).
 
 `Change_City_Ownership(_combat_environ_idx, NEUTRAL_PLAYER_IDX)` and `Destroy_City(_combat_environ_idx)` also verified against the push order.
 

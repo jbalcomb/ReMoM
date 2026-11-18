@@ -1,0 +1,336 @@
+module_num=278
+module=F:\WLIBS\lbx\makelbx.c
+source=0278-makelbx.c.md
+range[0]=1:0x0014001F linear=0x0015001F size=2316
+range[1]=2:0x00004174 linear=0x00174174 size=156
+range[2]=2:0x0004C0F0 linear=0x001BC0F0 size=17104
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m278f001  1    -      0x0015001F  1:0x0014001F  code         LBX_Open_File              LBX_Open_File_              regions/07-object-1/001D5654-001D5E53.txt
+m278f002  2    -      0x0015016F  1:0x0014016F  code         LBX_Add_File               LBX_Add_File_               regions/07-object-1/001D5654-001D5E53.txt
+m278f003  3    -      0x00150394  1:0x00140394  code         LBX_Add_Data_File          LBX_Add_Data_File_          regions/07-object-1/001D5654-001D5E53.txt
+m278f004  4    -      0x001505B5  1:0x001405B5  code         LBX_Extract_File           LBX_Extract_File_           regions/07-object-1/001D5654-001D5E53.txt
+m278f005  5    -      0x00150794  1:0x00140794  code         Read_LBX_File_Type         Read_LBX_File_Type_         regions/07-object-1/001D5654-001D5E53.txt
+m278f006  6    -      0x001507FD  1:0x001407FD  code         Read_LBX_File_Entry_Count  Read_LBX_File_Entry_Count_  regions/07-object-1/001D5654-001D5E53.txt
+m278f007  7    -      0x00150863  1:0x00140863  code         Repeat_LBX_File            Repeat_LBX_File_            regions/07-object-1/001D5E54-001D6653.txt
+-         -    -      0x001BC0F0  2:0x0004C0F0  static,data  _lbx_buffer                _lbx_buffer                 -
+-         -    -      0x001C0358  2:0x00050358  static,data  _current_lbx_file_name     _current_lbx_file_name      -
+-         -    -      0x001C03BC  2:0x000503BC  static,data  _max_lbx_file_count        _max_lbx_file_count         -
+-         -    -      0x001C03BE  2:0x000503BE  static,data  _current_lbx_entry         _current_lbx_entry          -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                   TYPE
+0x001BC0F0  2:0x0004C0F0  lbx_buffer             unsigned char[17000]
+0x001C0358  2:0x00050358  current_lbx_file_name  char[100]
+0x001C03BC  2:0x000503BC  max_lbx_file_count     short
+0x001C03BE  2:0x000503BE  current_lbx_entry      short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                       TYPE                           CHUNK
+m278f001  0x0015001F  1:0x0014001F  336   24        9         0x18     -    EAX              LBX_Open_File              void (char *)                  regions/07-object-1/001D5654-001D5E53.txt
+m278f002  0x0015016F  1:0x0014016F  549   24        9         0x18     -    EAX              LBX_Add_File               void (char *)                  regions/07-object-1/001D5654-001D5E53.txt
+m278f003  0x00150394  1:0x00140394  545   21        6         0xC      -    EAX,EDX,EBX,ECX  LBX_Add_Data_File          void (char *, long, int, int)  regions/07-object-1/001D5654-001D5E53.txt
+m278f004  0x001505B5  1:0x001405B5  479   23        8         0x14     -    EAX,EDX          LBX_Extract_File           void (char *, int)             regions/07-object-1/001D5654-001D5E53.txt
+m278f005  0x00150794  1:0x00140794  105   24        9         0x18     -    EAX              Read_LBX_File_Type         int (char *); returns in EAX   regions/07-object-1/001D5654-001D5E53.txt
+m278f006  0x001507FD  1:0x001407FD  102   24        9         0x18     -    EAX              Read_LBX_File_Entry_Count  int (char *); returns in EAX   regions/07-object-1/001D5654-001D5E53.txt
+m278f007  0x00150863  1:0x00140863  200   24        9         0x18     -    -                Repeat_LBX_File            void (void)                    regions/07-object-1/001D5E54-001D6653.txt
+
+[Locals]
+KEY       ROUTINE                    BLOCK  LOCAL              LOCATION     TYPE
+m278f001  LBX_Open_File              -      lbx_name           [EBP-0x14]   char *
+m278f001  LBX_Open_File              -      LBX_fptr           [EBP-0x1C]   FILE *
+m278f001  LBX_Open_File              -      i                  [EBP-0x18]   int
+m278f001  LBX_Open_File              -      magic_number       [EBP-0x4]    int
+m278f001  LBX_Open_File              -      lbx_file_count     [EBP-0x10]   int
+m278f001  LBX_Open_File              -      file_count         [EBP-0xC]    int
+m278f001  LBX_Open_File              -      temp               [EBP-0x8]    long
+m278f001  LBX_Open_File              -      buffer             [EBP-0x11C]  char[256]
+m278f002  LBX_Add_File               -      entry_file_name    [EBP-0x30]   char *
+m278f002  LBX_Add_File               -      LBX_fptr           [EBP-0x34]   FILE *
+m278f002  LBX_Add_File               -      entry_fptr         [EBP-0x14]   FILE *
+m278f002  LBX_Add_File               -      LBX_len            [EBP-0x2C]   unsigned long
+m278f002  LBX_Add_File               -      entry_len          [EBP-0x28]   unsigned long
+m278f002  LBX_Add_File               -      foffset            [EBP-0x24]   unsigned long
+m278f002  LBX_Add_File               -      next_offset        [EBP-0x20]   unsigned long
+m278f002  LBX_Add_File               -      temp               [EBP-0x1C]   unsigned long
+m278f002  LBX_Add_File               -      file_pos           [EBP-0x18]   unsigned long
+m278f002  LBX_Add_File               -      temp_buffer        [EBP-0x98]   char[100]
+m278f002  LBX_Add_File               -      i                  [EBP-0x10]   int
+m278f002  LBX_Add_File               -      file_size          [EBP-0xC]    unsigned int
+m278f002  LBX_Add_File               -      current_pos        [EBP-0x8]    unsigned int
+m278f002  LBX_Add_File               -      buffer_lbx         [EBP-0x4]    unsigned char *
+m278f003  LBX_Add_Data_File          -      entry_file_name    [EBP-0x2C]   char *
+m278f003  LBX_Add_Data_File          -      starting_offset    [EBP-0x3C]   long
+m278f003  LBX_Add_Data_File          -      record_count       [EBP-0x38]   int
+m278f003  LBX_Add_Data_File          -      record_size        [EBP-0x34]   int
+m278f003  LBX_Add_Data_File          -      LBX_fptr           [EBP-0x30]   FILE *
+m278f003  LBX_Add_Data_File          -      entry_fptr         [EBP-0xC]    FILE *
+m278f003  LBX_Add_Data_File          -      LBX_len            [EBP-0x28]   long
+m278f003  LBX_Add_Data_File          -      entry_len          [EBP-0x24]   long
+m278f003  LBX_Add_Data_File          -      foffset            [EBP-0x20]   long
+m278f003  LBX_Add_Data_File          -      next_offset        [EBP-0x1C]   long
+m278f003  LBX_Add_Data_File          -      temp               [EBP-0x18]   long
+m278f003  LBX_Add_Data_File          -      file_pos           [EBP-0x14]   long
+m278f003  LBX_Add_Data_File          -      entry_length       [EBP-0x10]   long
+m278f003  LBX_Add_Data_File          -      temp_buffer        [EBP-0xA0]   char[100]
+m278f003  LBX_Add_Data_File          -      i                  [EBP-0x8]    int
+m278f003  LBX_Add_Data_File          -      sizer              [EBP-0x4]    int
+m278f004  LBX_Extract_File           -      source_file_name   [EBP-0x2C]   char *
+m278f004  LBX_Extract_File           -      entry_num          [EBP-0x28]   int
+m278f004  LBX_Extract_File           -      LBX_fptr           [EBP-0x30]   FILE *
+m278f004  LBX_Extract_File           -      source_fptr        [EBP-0x34]   FILE *
+m278f004  LBX_Extract_File           -      LBX_len            [EBP-0x10]   long
+m278f004  LBX_Extract_File           -      entry_len          [EBP-0xC]    long
+m278f004  LBX_Extract_File           -      foffset            [EBP-0x8]    long
+m278f004  LBX_Extract_File           -      next_offset        [EBP-0x24]   long
+m278f004  LBX_Extract_File           -      temp               [EBP-0x20]   long
+m278f004  LBX_Extract_File           -      file_pos           [EBP-0x1C]   long
+m278f004  LBX_Extract_File           -      start_pos          [EBP-0x18]   long
+m278f004  LBX_Extract_File           -      end_pos            [EBP-0x14]   long
+m278f004  LBX_Extract_File           -      temp_buffer        [EBP-0xD8]   char[100]
+m278f004  LBX_Extract_File           -      entry_name         [EBP-0x54]   char[30]
+m278f004  LBX_Extract_File           -      entry_description  [EBP-0x74]   char[30]
+m278f004  LBX_Extract_File           -      i                  [EBP-0x4]    int
+m278f005  Read_LBX_File_Type         -      lbx_name           [EBP-0x10]   char *
+m278f005  Read_LBX_File_Type         -      LBX_fptr           [EBP-0xC]    FILE *
+m278f005  Read_LBX_File_Type         -      file_type          [EBP-0x8]    int
+m278f006  Read_LBX_File_Entry_Count  -      lbx_name           [EBP-0x10]   char *
+m278f006  Read_LBX_File_Entry_Count  -      LBX_fptr           [EBP-0xC]    FILE *
+m278f006  Read_LBX_File_Entry_Count  -      file_count         [EBP-0x8]    int
+m278f007  Repeat_LBX_File            -      LBX_fptr           [EBP-0x28]   FILE *
+m278f007  Repeat_LBX_File            -      entry_fptr         [EBP-0x1C]   FILE *
+m278f007  Repeat_LBX_File            -      LBX_len            [EBP-0x24]   long
+m278f007  Repeat_LBX_File            -      entry_len          [EBP-0x20]   long
+m278f007  Repeat_LBX_File            -      foffset            [EBP-0x8]    long
+m278f007  Repeat_LBX_File            -      next_offset        [EBP-0x18]   long
+m278f007  Repeat_LBX_File            -      temp               [EBP-0x14]   long
+m278f007  Repeat_LBX_File            -      file_pos           [EBP-0x10]   long
+m278f007  Repeat_LBX_File            -      coffset            [EBP-0xC]    long
+m278f007  Repeat_LBX_File            -      temp_buffer        [EBP-0x8C]   char[100]
+m278f007  Repeat_LBX_File            -      i                  [EBP-0x4]    int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   array      -               0..16999; of unsigned char (#5)
+31   array      -               0..99; of char (#10)
+32   scalar     void            void 1 bytes
+33   procedure  -               near386; returns void (char *)
+34   pointer    -               near386; of unsigned char (#5)
+35   struct     struct __iobuf  8 fields, 26 bytes
+36   typedef    __iobuf         struct name for struct #35 (#35)
+37   typedef    FILE            name for struct __iobuf (#36)
+38   pointer    -               near386; of FILE (#37)
+39   array      -               0..255; of char (#10)
+40   scalar     unsigned long   unsigned 4 bytes
+41   array      -               0..99; of char (#10)
+42   procedure  -               near386; returns void (char *, long, int, int)
+43   array      -               0..99; of char (#10)
+44   procedure  -               near386; returns void (char *, int)
+45   array      -               0..99; of char (#10)
+46   array      -               0..29; of char (#10)
+47   array      -               0..29; of char (#10)
+48   procedure  -               near386; returns int (char *)
+49   procedure  -               near386; returns void ()
+50   array      -               0..99; of char (#10)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER     OFFSET_VALUE  TYPE             TYPE_NAME
+35        field        _ptr       0             unsigned char *  struct __iobuf
+35        field        _cnt       4             int              struct __iobuf
+35        field        _base      8             unsigned char *  struct __iobuf
+35        field        _flag      12            unsigned int     struct __iobuf
+35        field        _handle    16            int              struct __iobuf
+35        field        _bufsize   20            unsigned int     struct __iobuf
+35        field        _ungotten  24            unsigned char    struct __iobuf
+35        field        _tmpfchar  25            unsigned char    struct __iobuf
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m278f001  9     0x0015001F  1:0x0014001F  0x001D5673
+m278f001  16    0x0015003A  1:0x0014003A  0x001D568E
+m278f001  18    0x00150047  1:0x00140047  0x001D569B
+m278f001  19    0x0015006A  1:0x0014006A  0x001D56BE
+m278f001  20    0x0015007D  1:0x0014007D  0x001D56D1
+m278f001  21    0x00150089  1:0x00140089  0x001D56DD
+m278f001  23    0x00150098  1:0x00140098  0x001D56EC
+m278f001  25    0x001500BF  1:0x001400BF  0x001D5713
+m278f001  27    0x001500CF  1:0x001400CF  0x001D5723
+m278f001  28    0x001500D6  1:0x001400D6  0x001D572A
+m278f001  30    0x001500EB  1:0x001400EB  0x001D573F
+m278f001  31    0x001500F2  1:0x001400F2  0x001D5746
+m278f001  33    0x00150107  1:0x00140107  0x001D575B
+m278f001  35    0x0015011E  1:0x0014011E  0x001D5772
+m278f001  37    0x00150135  1:0x00140135  0x001D5789
+m278f001  39    0x0015013E  1:0x0014013E  0x001D5792
+m278f001  41    0x00150155  1:0x00140155  0x001D57A9
+m278f001  43    0x0015015E  1:0x0014015E  0x001D57B2
+m278f001  44    0x00150166  1:0x00140166  0x001D57BA
+m278f002  47    0x0015016F  1:0x0014016F  0x001D57C3
+m278f002  56    0x0015018A  1:0x0014018A  0x001D57DE
+m278f002  58    0x001501A3  1:0x001401A3  0x001D57F7
+m278f002  60    0x001501AA  1:0x001401AA  0x001D57FE
+m278f002  61    0x001501B7  1:0x001401B7  0x001D580B
+m278f002  62    0x001501C9  1:0x001401C9  0x001D581D
+m278f002  63    0x001501D4  1:0x001401D4  0x001D5828
+m278f002  65    0x001501E6  1:0x001401E6  0x001D583A
+m278f002  66    0x001501F8  1:0x001401F8  0x001D584C
+m278f002  70    0x00150208  1:0x00140208  0x001D585C
+m278f002  71    0x00150219  1:0x00140219  0x001D586D
+m278f002  72    0x00150226  1:0x00140226  0x001D587A
+m278f002  74    0x0015023B  1:0x0014023B  0x001D588F
+m278f002  75    0x00150244  1:0x00140244  0x001D5898
+m278f002  79    0x00150259  1:0x00140259  0x001D58AD
+m278f002  80    0x00150260  1:0x00140260  0x001D58B4
+m278f002  82    0x00150270  1:0x00140270  0x001D58C4
+m278f002  83    0x0015027D  1:0x0014027D  0x001D58D1
+m278f002  85    0x00150286  1:0x00140286  0x001D58DA
+m278f002  86    0x0015029B  1:0x0014029B  0x001D58EF
+m278f002  87    0x001502B0  1:0x001402B0  0x001D5904
+m278f002  88    0x001502BB  1:0x001402BB  0x001D590F
+m278f002  90    0x001502C2  1:0x001402C2  0x001D5916
+m278f002  91    0x001502D8  1:0x001402D8  0x001D592C
+m278f002  93    0x001502DA  1:0x001402DA  0x001D592E
+m278f002  95    0x001502E0  1:0x001402E0  0x001D5934
+m278f002  96    0x001502F3  1:0x001402F3  0x001D5947
+m278f002  97    0x00150306  1:0x00140306  0x001D595A
+m278f002  100   0x0015030C  1:0x0014030C  0x001D5960
+m278f002  101   0x00150314  1:0x00140314  0x001D5968
+m278f002  103   0x00150326  1:0x00140326  0x001D597A
+m278f002  104   0x0015032D  1:0x0014032D  0x001D5981
+m278f002  105   0x00150339  1:0x00140339  0x001D598D
+m278f002  107   0x00150350  1:0x00140350  0x001D59A4
+m278f002  108   0x00150357  1:0x00140357  0x001D59AB
+m278f002  109   0x00150366  1:0x00140366  0x001D59BA
+m278f002  111   0x0015037B  1:0x0014037B  0x001D59CF
+m278f002  112   0x00150383  1:0x00140383  0x001D59D7
+m278f002  113   0x0015038B  1:0x0014038B  0x001D59DF
+m278f003  116   0x00150394  1:0x00140394  0x001D59E8
+m278f003  124   0x001503B5  1:0x001403B5  0x001D5A09
+m278f003  126   0x001503CE  1:0x001403CE  0x001D5A22
+m278f003  128   0x001503D5  1:0x001403D5  0x001D5A29
+m278f003  129   0x001503E2  1:0x001403E2  0x001D5A36
+m278f003  131   0x001503ED  1:0x001403ED  0x001D5A41
+m278f003  132   0x001503FC  1:0x001403FC  0x001D5A50
+m278f003  134   0x00150406  1:0x00140406  0x001D5A5A
+m278f003  136   0x00150410  1:0x00140410  0x001D5A64
+m278f003  137   0x00150422  1:0x00140422  0x001D5A76
+m278f003  141   0x00150432  1:0x00140432  0x001D5A86
+m278f003  142   0x00150443  1:0x00140443  0x001D5A97
+m278f003  143   0x00150450  1:0x00140450  0x001D5AA4
+m278f003  145   0x00150465  1:0x00140465  0x001D5AB9
+m278f003  146   0x00150471  1:0x00140471  0x001D5AC5
+m278f003  152   0x00150486  1:0x00140486  0x001D5ADA
+m278f003  153   0x0015048D  1:0x0014048D  0x001D5AE1
+m278f003  154   0x0015049D  1:0x0014049D  0x001D5AF1
+m278f003  156   0x001504AA  1:0x001404AA  0x001D5AFE
+m278f003  157   0x001504BF  1:0x001404BF  0x001D5B13
+m278f003  159   0x001504D4  1:0x001404D4  0x001D5B28
+m278f003  161   0x001504DD  1:0x001404DD  0x001D5B31
+m278f003  162   0x001504F4  1:0x001404F4  0x001D5B48
+m278f003  163   0x0015050B  1:0x0014050B  0x001D5B5F
+m278f003  164   0x00150512  1:0x00140512  0x001D5B66
+m278f003  166   0x00150514  1:0x00140514  0x001D5B68
+m278f003  168   0x0015051A  1:0x0014051A  0x001D5B6E
+m278f003  169   0x00150520  1:0x00140520  0x001D5B74
+m278f003  170   0x00150535  1:0x00140535  0x001D5B89
+m278f003  173   0x0015054A  1:0x0014054A  0x001D5B9E
+m278f003  174   0x00150551  1:0x00140551  0x001D5BA5
+m278f003  175   0x0015055D  1:0x0014055D  0x001D5BB1
+m278f003  177   0x00150574  1:0x00140574  0x001D5BC8
+m278f003  178   0x0015057B  1:0x0014057B  0x001D5BCF
+m278f003  179   0x0015058A  1:0x0014058A  0x001D5BDE
+m278f003  181   0x0015059F  1:0x0014059F  0x001D5BF3
+m278f003  182   0x001505A7  1:0x001405A7  0x001D5BFB
+m278f003  183   0x001505AF  1:0x001405AF  0x001D5C03
+m278f004  194   0x001505B5  1:0x001405B5  0x001D5C09
+m278f004  202   0x001505D2  1:0x001405D2  0x001D5C26
+m278f004  204   0x001505EB  1:0x001405EB  0x001D5C3F
+m278f004  206   0x001505F2  1:0x001405F2  0x001D5C46
+m278f004  207   0x001505FF  1:0x001405FF  0x001D5C53
+m278f004  209   0x00150611  1:0x00140611  0x001D5C65
+m278f004  210   0x00150621  1:0x00140621  0x001D5C75
+m278f004  211   0x0015062D  1:0x0014062D  0x001D5C81
+m278f004  212   0x0015063A  1:0x0014063A  0x001D5C8E
+m278f004  213   0x0015064F  1:0x0014064F  0x001D5CA3
+m278f004  215   0x00150664  1:0x00140664  0x001D5CB8
+m278f004  216   0x0015066D  1:0x0014066D  0x001D5CC1
+m278f004  220   0x0015067A  1:0x0014067A  0x001D5CCE
+m278f004  221   0x0015068B  1:0x0014068B  0x001D5CDF
+m278f004  222   0x00150698  1:0x00140698  0x001D5CEC
+m278f004  224   0x001506AD  1:0x001406AD  0x001D5D01
+m278f004  225   0x001506B6  1:0x001406B6  0x001D5D0A
+m278f004  229   0x001506CB  1:0x001406CB  0x001D5D1F
+m278f004  230   0x001506D2  1:0x001406D2  0x001D5D26
+m278f004  232   0x001506E2  1:0x001406E2  0x001D5D36
+m278f004  234   0x001506EB  1:0x001406EB  0x001D5D3F
+m278f004  235   0x00150702  1:0x00140702  0x001D5D56
+m278f004  236   0x00150719  1:0x00140719  0x001D5D6D
+m278f004  237   0x00150720  1:0x00140720  0x001D5D74
+m278f004  239   0x00150722  1:0x00140722  0x001D5D76
+m278f004  241   0x00150728  1:0x00140728  0x001D5D7C
+m278f004  242   0x0015073D  1:0x0014073D  0x001D5D91
+m278f004  245   0x00150752  1:0x00140752  0x001D5DA6
+m278f004  246   0x00150759  1:0x00140759  0x001D5DAD
+m278f004  247   0x00150765  1:0x00140765  0x001D5DB9
+m278f004  249   0x0015077C  1:0x0014077C  0x001D5DD0
+m278f004  250   0x00150784  1:0x00140784  0x001D5DD8
+m278f004  251   0x0015078C  1:0x0014078C  0x001D5DE0
+m278f005  260   0x00150794  1:0x00140794  0x001D5DE8
+m278f005  265   0x001507AF  1:0x001407AF  0x001D5E03
+m278f005  266   0x001507BF  1:0x001407BF  0x001D5E13
+m278f005  267   0x001507CE  1:0x001407CE  0x001D5E22
+m278f005  268   0x001507E3  1:0x001407E3  0x001D5E37
+m278f005  270   0x001507EB  1:0x001407EB  0x001D5E3F
+m278f005  271   0x001507F1  1:0x001407F1  0x001D5E45
+m278f006  274   0x001507FD  1:0x001407FD  0x001D5E51
+m278f006  279   0x00150818  1:0x00140818  0x001D5E6C
+m278f006  280   0x00150828  1:0x00140828  0x001D5E7C
+m278f006  281   0x00150834  1:0x00140834  0x001D5E88
+m278f006  282   0x00150849  1:0x00140849  0x001D5E9D
+m278f006  284   0x00150851  1:0x00140851  0x001D5EA5
+m278f006  285   0x00150857  1:0x00140857  0x001D5EAB
+m278f007  291   0x00150863  1:0x00140863  0x001D5EB7
+m278f007  298   0x0015087B  1:0x0014087B  0x001D5ECF
+m278f007  299   0x00150888  1:0x00140888  0x001D5EDC
+m278f007  303   0x0015089A  1:0x0014089A  0x001D5EEE
+m278f007  304   0x001508AB  1:0x001408AB  0x001D5EFF
+m278f007  306   0x001508B8  1:0x001408B8  0x001D5F0C
+m278f007  308   0x001508CD  1:0x001408CD  0x001D5F21
+m278f007  309   0x001508D3  1:0x001408D3  0x001D5F27
+m278f007  312   0x001508E8  1:0x001408E8  0x001D5F3C
+m278f007  313   0x001508EF  1:0x001408EF  0x001D5F43
+m278f007  314   0x001508F6  1:0x001408F6  0x001D5F4A
+m278f007  315   0x00150903  1:0x00140903  0x001D5F57
+m278f007  319   0x0015091A  1:0x0014091A  0x001D5F6E
+m278f007  320   0x00150922  1:0x00140922  0x001D5F76

@@ -81,12 +81,10 @@ Then fixed fields: `size=1`/Hamlet ([1173](../../MoM/src/MAPGEN.c#L1173)), `popu
 
 ## Debug scaffolding (transitory)
 
-Instrumented for the new-game RNG-divergence hunt — none OG, all RNG-neutral:
-- `DBG_Invalid_Reason*` counters + `DBG_Loop_Location[]` + `DBG_pop_min/max` ([893-903](../../MoM/src/MAPGEN.c#L893-L903), reset at [923-928](../../MoM/src/MAPGEN.c#L923-L928)).
-- `[LOC_PICK]` per-attempt trace ([1036](../../MoM/src/MAPGEN.c#L1036)); `[LOC_GIVEUP_POP]` / `[LOC_GIVEUP_DIST]` give-up dumps ([1061](../../MoM/src/MAPGEN.c#L1061) / [1090](../../MoM/src/MAPGEN.c#L1090)); `Done_Done:` marker ([1239](../../MoM/src/MAPGEN.c#L1239)).
-- `STU_DEBUG_BREAK()` on the `max_pop_failures > 500` path ([1062](../../MoM/src/MAPGEN.c#L1062)).
+Left from the new-game RNG-divergence hunt — not OG, RNG-neutral:
+- the `Done_Done:` marker, a `LOG_INFO` line after the `Done_Done` label ([MAPGEN.c:1193](../../MoM/src/MAPGEN.c#L1193)).
 
-Strip or guard once the new-game path is confirmed RNG-aligned.
+Strip it once the new-game path is confirmed RNG-aligned.
 
 ## Notes vs `__GEMINI`
 

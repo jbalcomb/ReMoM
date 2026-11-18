@@ -1,0 +1,10 @@
+module_num=333
+module=heapen
+source=0333-heapen.md
+range[0]=1:0x0014DF43 linear=0x0015DF43 size=16
+range[1]=2:0x00012CC4 linear=0x00182CC4 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME             SYMBOL           CHUNK
+m333f001  1    -      0x0015DF43  1:0x0014DF43  code  _heapenable      _heapenable_     regions/07-object-1/001E2E54-001E3653.txt
+-         -    -      0x00182CC4  2:0x00012CC4  data  ___heap_enabled  ___heap_enabled  regions/08-object-2/00200E54-00201653.txt

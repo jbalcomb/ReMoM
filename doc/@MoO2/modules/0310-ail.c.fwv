@@ -1,0 +1,28 @@
+module_num=310
+module=R:\NET\LIBS\AIL\DEV3\FLAT\ail.c
+source=0310-ail.c.md
+range[0]=1:0x001457D8 linear=0x001557D8 size=2392
+range[1]=2:0x00004278 linear=0x00174278 size=240
+range[2]=2:0x0001241C linear=0x0018241C size=8
+range[3]=2:0x00051400 linear=0x001C1400 size=444
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                        SYMBOL                       CHUNK
+m310f001  1    -      0x001557D8  1:0x001457D8  code         AIL_start                   AIL_start_                   regions/07-object-1/001DA654-001DAE53.txt
+m310f002  2    -      0x00155861  1:0x00145861  static,code  AIL_driver_server           _AIL_driver_server           regions/07-object-1/001DAE54-001DB653.txt
+m310f003  3    -      0x001558B0  1:0x001458B0  static,code  ASC_val                     _ASC_val                     regions/07-object-1/001DAE54-001DB653.txt
+m310f004  4    -      0x00155951  1:0x00145951  code         AIL_API_read_INI            _AIL_API_read_INI            regions/07-object-1/001DAE54-001DB653.txt
+m310f005  5    -      0x00155C19  1:0x00145C19  code         AIL_API_set_preference      _AIL_API_set_preference      regions/07-object-1/001DAE54-001DB653.txt
+m310f006  6    -      0x00155C32  1:0x00145C32  code         AIL_API_install_driver      _AIL_API_install_driver      regions/07-object-1/001DAE54-001DB653.txt
+m310f007  7    -      0x00155E62  1:0x00145E62  code         AIL_API_uninstall_driver    _AIL_API_uninstall_driver    regions/07-object-1/001DAE54-001DB653.txt
+m310f008  8    -      0x00155F05  1:0x00145F05  code         AIL_API_get_IO_environment  _AIL_API_get_IO_environment  regions/07-object-1/001DAE54-001DB653.txt
+m310f009  9    -      0x00155F76  1:0x00145F76  code         AIL_API_startup             _AIL_API_startup             regions/07-object-1/001DAE54-001DB653.txt
+m310f010  10   -      0x0015607C  1:0x0014607C  code         AIL_API_shutdown            _AIL_API_shutdown            regions/07-object-1/001DB654-001DBE53.txt
+m310f011  11   -      0x001560A9  1:0x001460A9  code         AIL_end                     AIL_end_                     regions/07-object-1/001DB654-001DBE53.txt
+-         -    -      0x0018241C  2:0x0001241C  static,data  _entry                      _entry                       regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x00182420  2:0x00012420  static,data  _locked                     _locked                      regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001C1400  2:0x00051400  data         _AIL_driver                 _AIL_driver                  -
+-         -    -      0x001C1440  2:0x00051440  data         _AIL_error                  _AIL_error                   -
+-         -    -      0x001C1540  2:0x00051540  data         _AIL_preference             _AIL_preference              -
+-         -    -      0x001C1588  2:0x00051588  data         _AIL_last_IO_attempt        _AIL_last_IO_attempt         -
+-         -    -      0x001C15A0  2:0x000515A0  static,data  _flags                      _flags                       -

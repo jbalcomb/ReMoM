@@ -13,8 +13,8 @@
 //     /* 0A */  p_fields[itr].help = 0;
 //     /* 0C */  p_fields[itr].font_style_num = 0;
 //     /* 0E */  p_fields[itr].font_normal_color = 0;
-//     /* 10 */  p_fields[itr].Rect_FX = 0;
-//     /* 12 */  p_fields[itr].Selectable = 0;
+//     /* 10 */  p_fields[itr].fill_type = 0;
+//     /* 12 */  p_fields[itr].active_flag = 0;
 //     /* 14 */  p_fields[itr].font_highlight_color = 0;
 //     /* 16 */  p_fields[itr].Param0 = 0;
 //     /* 18 */  p_fields[itr].Param1 = 0;

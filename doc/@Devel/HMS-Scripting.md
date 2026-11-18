@@ -4,7 +4,7 @@
 key presses, and waits, one action per frame, through the same input path a real player's mouse and
 keyboard go through. They are used for:
 
-- **Regression tests** — HeMoM headless runs that click through a flow and diff logs / saves.
+- **Regression tests** — DeMoM windowless runs that click through a flow and diff logs / saves.
 - **Demo-reel scenes** — footage captured from the Release binary (see
   [BRA-Demo-Reel.md](../%23AI_Plans/BRA-Demo-Reel.md)).
 - **Manual repro** — replaying a recorded bug without hand-playing to the state.
@@ -16,10 +16,10 @@ tightened by hand.
 
 | Piece | File | Notes |
 |---|---|---|
-| Parser + per-frame executor | [src/Artificial_Human_Player.c](../../src/Artificial_Human_Player.c) | the only `.hms` interpreter |
-| Header / public API | [src/Artificial_Human_Player.h](../../src/Artificial_Human_Player.h) | |
+| Parser + per-frame executor | [src/Automation_Driver.c](../../src/Automation_Driver.c) | the only `.hms` interpreter |
+| Header / public API | [src/Automation_Driver.h](../../src/Automation_Driver.h) | |
 | Registration (ReMoM) | [src/ReMoM.c](../../src/ReMoM.c) (`--scenario`) | |
-| Registration (HeMoM) | [src/HeMoM.c](../../src/HeMoM.c) (`--scenario`) | |
+| Registration (DeMoM) | [src/DeMoM.c](../../src/DeMoM.c) (`--scenario`) | |
 | `.RMR` → `.hms` converter | [tools/rmr2hms.c](../../tools/rmr2hms.c) | standalone CLI |
 | Record/replay format | [platform/replay/Replay.c](../../platform/replay/Replay.c), [platform/include/Platform_Replay.h](../../platform/include/Platform_Replay.h) | text CSV, `# ReMoM Replay v2` |
 | Field catalog (coord → name) | [tools/fields/](../../tools/fields/) | 80 per-screen CSVs + `_static.csv` |
@@ -28,14 +28,14 @@ Run a scenario:
 
 ```sh
 ReMoM.exe --scenario demo/scenes/08b_som_complete.hms
-HeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
+DeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
 ```
 
 ## Execution model
 
-- The parser reads the whole file into a fixed action array (`HEMOM_MAX_ACTIONS = 4096`) at load time. Parse errors
+- The parser reads the whole file into a fixed action array (`DRIVER_MAX_ACTIONS = 4096`) at load time. Parse errors
   log a line and **skip** that action — a bad line never aborts the run.
-- `HeMoM_Player_Frame()` runs once per platform
+- `Automation_Driver_Frame()` runs once per platform
   frame, executing at most one action per frame. It is registered as a platform frame callback.
 - Input is injected by writing the engine's input globals
   (`Platform_Keyboard_Buffer_Add_Key_Press`, `platform_frame_mouse_buttons` + `User_Mouse_Handler`),
@@ -47,7 +47,7 @@ HeMoM.exe    --scenario assets/test_worldgen.hms --seed1 12345
 ### Coordinate space
 
 **All `click`/`rclick` coordinates are in the original 320×200 logical framebuffer.** Do not
-pre-scale for the window: `HeMoM_Player_Frame` multiplies by `Platform_Get_Scale()` itself and warps the OS cursor via
+pre-scale for the window: `Automation_Driver_Frame` multiplies by `Platform_Get_Scale()` itself and warps the OS cursor via
 `Set_Pointer_Position` so a second consecutive click is not reverted to the real mouse position by the
 next `SDL_GetMouseState` poll.
 
@@ -59,8 +59,8 @@ frame-counted: it idles until `Platform_Get_Millies()` reaches the target.
 ## Command reference (implemented today)
 
 Verbs are case-insensitive. `#` starts a comment (whole-line or trailing). Blank lines are ignored.
-All verbs are parsed in `Parse_Scenario_File` and executed in `HeMoM_Player_Frame`
-([Artificial_Human_Player.c](../../src/Artificial_Human_Player.c)) — grep the verb string to jump to its
+All verbs are parsed in `Parse_Scenario_File` and executed in `Automation_Driver_Frame`
+([Automation_Driver.c](../../src/Automation_Driver.c)) — grep the verb string to jump to its
 branch (line numbers are intentionally omitted; they drift with every edit).
 
 | Verb | Syntax | Meaning |
@@ -85,7 +85,7 @@ branch (line numbers are intentionally omitted; they drift with every edit).
 | `end` | `end` | stop the player, leave the game running |
 
 Any other verb logs `unknown action` and is skipped. The state-aware waits (`wait_screen` /
-`wait_turn` / `wait_field`) share a mandatory timeout (`HEMOM_STATE_WAIT_DEFAULT_MS`, 30s) so a
+`wait_turn` / `wait_field`) share a mandatory timeout (`DRIVER_STATE_WAIT_DEFAULT_MS`, 30s) so a
 never-satisfied condition advances instead of hanging a CI run; `NAME` maps to `e_SCREENS` in
 [MOM_SCR.h](../../MoM/src/MOM_SCR.h).
 
@@ -154,7 +154,7 @@ alone cannot tell which screen was active.
 The engine can, because at click time it knows `current_screen`
 ([MOX_T4.h:61](../../MoX/src/MOX_T4.h#L61)) and which field the cursor is inside. The record log
 already resolves each click to a field — today only to an **index**
-([HeMoM.c:795-807](../../src/HeMoM.c#L795-L807)):
+([DeMoM.c:795-807](../../src/DeMoM.c#L795-L807)):
 
 ```
 idx=10  mouse=(291,104) btn=1  ...  field[1]=(0,0)-(319,199)
@@ -176,15 +176,15 @@ click Main_Menu_Screen.New_Game_Button    # resolved to the field center (159,16
 
 Falling back to raw `click X Y` (with a comment) when no field matched or no alias is defined.
 
-### Runtime side must be re-enabled first
+### Runtime side
 
-The field-catalog instrumentation exists but is **commented out** in
-[Fields.c:899](../../MoX/src/Fields.c#L899) and [:905-911](../../MoX/src/Fields.c#L905-L911) (all
-`// trc_prn(...)`). The interception macros that capture each call site's `__FILE__:__LINE__` are live
-under `STU_DEBUG` ([Fields.h:853-862](../../MoX/src/Fields.h#L853-L862)), and `s_Field` is
+The field-catalog instrumentation is live in an `STU_CLOG` build (Debug, or `-DREMOM_CLOG=ON`): run with
+`REMOM_CLOG_FIELDS=1` and `Clog_Field_Added` / `Dump_Fields_CSV` in [Fields.c](../../MoX/src/Fields.c) write
+`FIELDADD` / `FIELDSNAPSHOT` rows to `remom_clog_fields.tsv`. The interception macros that capture each call site's
+`__FILE__:__LINE__` are in [Fields.h](../../MoX/src/Fields.h), and `s_Field` is
 byte-offset-faithful to the disassembly ([Fields.h:90-154](../../MoX/src/Fields.h#L90-L154)) — so the
 name association must live in a **debug-only shadow array keyed by field index**, never a new field in
-`s_Field`. Re-enabling those lines also unblocks regenerating the catalog for screens not yet captured.
+`s_Field`. The rows also let the catalog be regenerated for screens not yet captured.
 
 ## State-aware waits (design; not yet implemented)
 
@@ -218,7 +218,7 @@ wait_field Main_Screen.Patrol_Button
 click Main_Screen.Patrol_Button
 ```
 
-This need is already filed in `doc/__TODO-Test.md` ("Artificial_Human_Player needs state-aware waits").
+This need is already filed in `doc/__TODO-Test.md` ("Automation_Driver needs state-aware waits").
 
 ## Known gaps / open issues
 
@@ -230,7 +230,7 @@ This need is already filed in `doc/__TODO-Test.md` ("Artificial_Human_Player nee
   of including `Platform_Keys.h` — keep them in sync by hand until that's fixed.
 - `Platform_Replay.h`'s header comment still describes an obsolete binary `"RMOM"` format; the real
   format is the text CSV documented at [Replay.c:7-13](../../platform/replay/Replay.c#L7-L13).
-- No `ReMoM.ini` toggle for `g_dbg_fields_trace` yet.
+- No `ReMoM.ini` toggle; the run-time switch is the `REMOM_CLOG_FIELDS` environment variable.
 
 ## Related docs
 

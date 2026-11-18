@@ -53,21 +53,6 @@ void Alchemy_Popup_Add_Fields(void);
 
 
 
-/*
-    WIZARDS.EXE  ovr074
-*/
-
-// WZD o74p01
-// Mirror_Screen()
-
-// WZD o74p02
-// Mirror_Screen_Draw()
-
-// WZD o74p03
-// Mirror_Screen_Load()
-
-
-
 #ifdef __cplusplus
 }
 #endif

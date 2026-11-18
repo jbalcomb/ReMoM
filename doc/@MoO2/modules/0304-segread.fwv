@@ -1,0 +1,8 @@
+module_num=304
+module=segread
+source=0304-segread.md
+range[0]=1:0x00143EAF linear=0x00153EAF size=40
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m304f001  1    -      0x00153EAF  1:0x00143EAF  code  segread  segread_  regions/07-object-1/001D8E54-001D9653.txt

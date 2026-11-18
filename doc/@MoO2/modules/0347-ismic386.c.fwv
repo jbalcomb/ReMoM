@@ -1,0 +1,9 @@
+module_num=347
+module=C:\GCL520\C_386\ISMIC386.C
+source=0347-ismic386.c.md
+range[0]=1:0x0014F090 linear=0x0015F090 size=336
+range[1]=2:0x00012CF0 linear=0x00182CF0 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL           CHUNK
+m347f001  1    -      0x0015F090  1:0x0014F090  code  IsMicroChannel  IsMicroChannel_  regions/07-object-1/001E4654-001E4E53.txt

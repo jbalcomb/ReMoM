@@ -1,0 +1,10 @@
+module_num=353
+module=enterdb
+source=0353-enterdb.md
+range[0]=1:0x0014FEEB linear=0x0015FEEB size=38
+range[1]=2:0x00012D1C linear=0x00182D1C size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m353f001  1    -      0x0015FEEB  1:0x0014FEEB  code  __EnterWVIDEO  __EnterWVIDEO_  regions/07-object-1/001E4E54-001E5653.txt
+-         -    -      0x00182D1C  2:0x00012D1C  data  ___WD_Present  ___WD_Present   regions/08-object-2/00200E54-00201653.txt

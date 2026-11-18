@@ -62,17 +62,17 @@ void Summon_Animation_Draw(void);
 void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx);
 
 // WZD o137p04
-void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  player_idx);
+void Load_City_Enchantment_Anim(int16_t spell_idx,int16_t  player_idx);
 
 // WZD o137p05
 // IDK_City_sBEE75()
-void Cast_Spell_City_Enchantment_Animation_Draw(void);
+void Draw_City_Enchantment_Anim(void);
 
 // WZD o137p06
-void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
+void City_Enchantment_Anim_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o137p07
-void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
+void City_Enchantment_Anim_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx);
 
 // WZD o137p08
 void OVL_LoadGlobalAnim(int16_t spell_idx, int16_t player_idx);

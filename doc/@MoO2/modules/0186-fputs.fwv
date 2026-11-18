@@ -1,0 +1,8 @@
+module_num=186
+module=fputs
+source=0186-fputs.md
+range[0]=1:0x00128EB6 linear=0x00138EB6 size=123
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m186f001  1    -      0x00138EB6  1:0x00128EB6  code  fputs  fputs_  regions/07-object-1/001BDE54-001BE653.txt

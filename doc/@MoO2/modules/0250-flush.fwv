@@ -1,0 +1,8 @@
+module_num=250
+module=flush
+source=0250-flush.md
+range[0]=1:0x00137370 linear=0x00147370 size=217
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m250f001  1    -      0x00147370  1:0x00137370  code  __flush  __flush_  regions/07-object-1/001CC654-001CCE53.txt

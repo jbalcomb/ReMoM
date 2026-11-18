@@ -97,7 +97,7 @@ void Init_Video_Drivers(int mode_num)
     // current_palette_address = &current_palette;
     video_mode = mode_num;
 
-    switch (mode_num)
+    switch(mode_num)
     {
         case vm_Lo_Res:
         {
@@ -291,7 +291,7 @@ void Create_Screen_Buffers(int size)
 void Assign_Video_Function_Pointers(int mode_num)
 {
 
-    switch (mode_num)
+    switch(mode_num)
     {
         case vm_Lo_Res:
         {

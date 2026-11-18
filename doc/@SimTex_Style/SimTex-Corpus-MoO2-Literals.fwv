@@ -1,0 +1,390 @@
+exe      order  literal       stem      ext  case_stem  case_ext  primary_module  owner
+ORION2       7  MULTIGM.LBX   MULTIGM   LBX  UPPER      UPPER
+ORION2      36  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION2      37  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION2      38  MOX.SET       MOX       SET  UPPER      UPPER
+ORION2      44  save10.gam    save10    gam  lower      lower
+ORION2      66  orioncd.ini   orioncd   ini  lower      lower     mox2.c          Russ
+ORION2      70  diplomat.lbx  diplomat  lbx  lower      lower     mox2.c          Russ
+ORION2      93  MOX.SET       MOX       SET  UPPER      UPPER     filedef.c       Harold
+ORION2     110  mox.set       mox       set  lower      lower     initgame.c      Russ
+ORION2     112  RACESTUF.LBX  RACESTUF  LBX  UPPER      UPPER     initgame.c      Russ
+ORION2     113  RACENAME.LBX  RACENAME  LBX  UPPER      UPPER     initgame.c      Russ
+ORION2     115  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER
+ORION2     116  gstar.lbx     gstar     lbx  lower      lower
+ORION2     117  RACESTUF.lbx  RACESTUF  lbx  UPPER      lower     loader.c        Russ
+ORION2     121  antaroom.LBX  antaroom  LBX  lower      UPPER     antaroom.c      Jim
+ORION2     122  antarmsg.LBX  antarmsg  LBX  lower      UPPER     antaroom.c      Jim
+ORION2     124  council.LBX   council   LBX  lower      UPPER     council.c       Jim
+ORION2     125  council.lbx   council   lbx  lower      lower     council.c       Jim
+ORION2     126  jimtext.lbx   jimtext   lbx  lower      lower     council.c       Jim
+ORION2     128  councmsg.lbx  councmsg  lbx  lower      lower     dip-scrn.c      Jim
+ORION2     130  jimtext2.lbx  jimtext2  lbx  lower      lower     dip-scrn.c      Jim
+ORION2     131  DIPLOMAT.LBX  DIPLOMAT  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     133  jimtext.lbx   jimtext   lbx  lower      lower     dip-scrn.c      Jim
+ORION2     134  dipstars.lbx  dipstars  lbx  lower      lower     dip-scrn.c      Jim
+ORION2     137  DIPLOMSE.LBX  DIPLOMSE  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     138  DIPLOMSG.LBX  DIPLOMSG  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     139  DIPLOMSF.LBX  DIPLOMSF  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     140  DIPLOMSS.LBX  DIPLOMSS  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     141  DIPLOMSI.LBX  DIPLOMSI  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     142  DIPLOMSP.LBX  DIPLOMSP  LBX  UPPER      UPPER     dip-scrn.c      Jim
+ORION2     151  EVENTS.LBX    EVENTS    LBX  UPPER      UPPER     events.c        Jim
+ORION2     152  jimtext.lbx   jimtext   lbx  lower      lower     events.c        Jim
+ORION2     153  EVENTMSE.LBX  EVENTMSE  LBX  UPPER      UPPER     events.c        Jim
+ORION2     154  EVENTMSG.LBX  EVENTMSG  LBX  UPPER      UPPER     events.c        Jim
+ORION2     155  EVENTMSF.LBX  EVENTMSF  LBX  UPPER      UPPER     events.c        Jim
+ORION2     156  EVENTMSS.LBX  EVENTMSS  LBX  UPPER      UPPER     events.c        Jim
+ORION2     157  EVENTMSI.LBX  EVENTMSI  LBX  UPPER      UPPER     events.c        Jim
+ORION2     158  EVENTMSP.LBX  EVENTMSP  LBX  UPPER      UPPER     events.c        Jim
+ORION2     160  jimtext2.lbx  jimtext2  lbx  lower      lower     events.c        Jim
+ORION2     161  STREAMHD.LBX  STREAMHD  LBX  UPPER      UPPER     jim.c           Jim
+ORION2     162  STREAM.LBX    STREAM    LBX  UPPER      UPPER     jim.c           Jim
+ORION2     167  logo.LBX      logo      LBX  lower      UPPER     jim.c           Jim
+ORION2     168  simtex.lbx    simtex    lbx  lower      lower     jim.c           Jim
+ORION2     169  intro.lbx     intro     lbx  lower      lower     jim.c           Jim
+ORION2     171  combat.lbx    combat    lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     178  cmbtshp.lbx   cmbtshp   lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     179  monster.lbx   monster   lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     180  Combat.lbx    Combat    lbx  Title      lower     cmbtdrw1.c      Ken
+ORION2     181  flticons.lbx  flticons  lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     182  cmbtsfx.lbx   cmbtsfx   lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     183  cmbtmisl.lbx  cmbtmisl  lbx  lower      lower     cmbtdrw1.c      Ken
+ORION2     184  combat.LBX    combat    LBX  lower      UPPER     cmbtdrw1.c      Ken
+ORION2     185  cmbtsfx.lbx   cmbtsfx   lbx  lower      lower     cmbtfire.c      Ken
+ORION2     186  combat.lbx    combat    lbx  lower      lower     cmbtmis.c       Ken
+ORION2     198  combat.lbx    combat    lbx  lower      lower     combinit.c      Ken
+ORION2     199  cmbtmisl.lbx  cmbtmisl  lbx  lower      lower     combinit.c      Ken
+ORION2     200  cmbtsfx.lbx   cmbtsfx   lbx  lower      lower     combinit.c      Ken
+ORION2     201  sphersfx.lbx  sphersfx  lbx  lower      lower     combinit.c      Ken
+ORION2     202  cmbtshp.lbx   cmbtshp   lbx  lower      lower
+ORION2     203  monster.lbx   monster   lbx  lower      lower
+ORION2     204  cmbtfgtr.lbx  cmbtfgtr  lbx  lower      lower
+ORION2     206  cmbtplnt.lbx  cmbtplnt  lbx  lower      lower     combinit.c      Ken
+ORION2     213  ships.lbx     ships     lbx  lower      lower     ken.c           Ken
+ORION2     214  KENTEXT1.LBX  KENTEXT1  LBX  UPPER      UPPER     ken.c           Ken
+ORION2     215  KENTEXT.LBX   KENTEXT   LBX  UPPER      UPPER     ken.c           Ken
+ORION2     216  racestuf.lbx  racestuf  lbx  lower      lower
+ORION2     217  RACEOPT.LBX   RACEOPT   LBX  UPPER      UPPER     raceopt.c       Ken
+ORION2     218  patch13.lbx   patch13   lbx  lower      lower     raceopt.c       Ken
+ORION2     225  RACESTUF.LBX  RACESTUF  LBX  UPPER      UPPER     racesel.c       Ken
+ORION2     228  RACESEL.LBX   RACESEL   LBX  UPPER      UPPER     racesel.c       Ken
+ORION2     229  patch13.lbx   patch13   lbx  lower      lower     racesel.c       Ken
+ORION2     234  RACEOPT.LBX   RACEOPT   LBX  UPPER      UPPER     racesel.c       Ken
+ORION2     235  racesel.lbx   racesel   lbx  lower      lower     racesel.c       Ken
+ORION2     236  RACENAME.LBX  RACENAME  LBX  UPPER      UPPER     racesel.c       Ken
+ORION2     238  techname.lbx  techname  lbx  lower      lower     techinit.c      Russ
+ORION2     270  DESIGN.LBX    DESIGN    LBX  UPPER      UPPER
+ORION2     277  shipname.lbx  shipname  lbx  lower      lower     design.c        Harold
+ORION2     288  TECHDESC.LBX  TECHDESC  LBX  UPPER      UPPER
+ORION2     289  GERTECD.LBX   GERTECD   LBX  UPPER      UPPER
+ORION2     290  FRETECD.LBX   FRETECD   LBX  UPPER      UPPER
+ORION2     291  SPATECD.LBX   SPATECD   LBX  UPPER      UPPER
+ORION2     292  ITATECD.LBX   ITATECD   LBX  UPPER      UPPER
+ORION2     295  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER     fleetpop.c      Harold
+ORION2     297  FLEET.LBX     FLEET     LBX  UPPER      UPPER
+ORION2     314  warning.lbx   warning   lbx  lower      lower
+ORION2     315  confirm.lbx   confirm   lbx  lower      lower
+ORION2     325  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER     harold.c        Harold
+ORION2     330  HESTRNGS.LBX  HESTRNGS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     331  HGSTRNGS.LBX  HGSTRNGS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     332  HFSTRNGS.LBX  HFSTRNGS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     333  HSSTRNGS.LBX  HSSTRNGS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     334  HISTRNGS.LBX  HISTRNGS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     336  fonts.lbx     fonts     lbx  lower      lower     harold.c        Harold
+ORION2     337  fontsg.lbx    fontsg    lbx  lower      lower     harold.c        Harold
+ORION2     338  fontsf.lbx    fontsf    lbx  lower      lower     harold.c        Harold
+ORION2     339  fontsi.lbx    fontsi    lbx  lower      lower     harold.c        Harold
+ORION2     340  fontss.lbx    fontss    lbx  lower      lower     harold.c        Harold
+ORION2     342  HERODATA.LBX  HERODATA  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     343  HERODATG.LBX  HERODATG  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     344  HERODATF.LBX  HERODATF  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     345  HERODATS.LBX  HERODATS  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     346  HERODATI.LBX  HERODATI  LBX  UPPER      UPPER     harold.c        Harold
+ORION2     349  starname.lbx  starname  lbx  lower      lower     homegen.c       Harold
+ORION2     353  raceopt.lbx   raceopt   lbx  lower      lower
+ORION2     354  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION2     384  MAINMENU.LBX  MAINMENU  LBX  UPPER      UPPER     loadsave.c      Harold
+ORION2     385  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION2     394  MAINMENU.LBX  MAINMENU  LBX  UPPER      UPPER     mainmenu.c      Harold
+ORION2     398  CREDITS.LBX   CREDITS   LBX  UPPER      UPPER
+ORION2     399  GERCRDTS.LBX  GERCRDTS  LBX  UPPER      UPPER
+ORION2     400  FRECRDTS.LBX  FRECRDTS  LBX  UPPER      UPPER
+ORION2     401  SPACRDTS.LBX  SPACRDTS  LBX  UPPER      UPPER
+ORION2     402  ITACRDTS.LBX  ITACRDTS  LBX  UPPER      UPPER
+ORION2     403  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER     mainscr.c       Harold
+ORION2     418  STARBG.LBX    STARBG    LBX  UPPER      UPPER
+ORION2     441  starbg.lbx    starbg    lbx  lower      lower     mapgen.c        Harold
+ORION2     446  NDATA.LBX     NDATA     LBX  UPPER      UPPER
+ORION2     447  starname.lbx  starname  lbx  lower      lower     mapgen.c        Harold
+ORION2     448  raceopt.lbx   raceopt   lbx  lower      lower     mapgen.c        Harold
+ORION2     462  display.lbx   display   lbx  lower      lower     misc.c          Eric
+ORION2     467  inbox.lbx     inbox     lbx  lower      lower
+ORION2     469  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER     namestar.c      Harold
+ORION2     470  OFFICER.LBX   OFFICER   LBX  UPPER      UPPER
+ORION2     489  SKILDESC.LBX  SKILDESC  LBX  UPPER      UPPER
+ORION2     490  GERSKLLS.LBX  GERSKLLS  LBX  UPPER      UPPER
+ORION2     491  FRESKLLS.LBX  FRESKLLS  LBX  UPPER      UPPER
+ORION2     492  SPASKLLS.LBX  SPASKLLS  LBX  UPPER      UPPER
+ORION2     493  ITASKLLS.LBX  ITASKLLS  LBX  UPPER      UPPER
+ORION2     494  PLNTSUM.LBX   PLNTSUM   LBX  UPPER      UPPER
+ORION2     495  SCORE.LBX     SCORE     LBX  UPPER      UPPER
+ORION2     498  HOF.M2        HOF       M2   UPPER      UPPER
+ORION2     500  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER     ships.c         Harold
+ORION2     502  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER
+ORION2     515  textbox.lbx   textbox   lbx  lower      lower     textbox.c       Harold
+ORION2     516  HELP.LBX      HELP      LBX  UPPER      UPPER     textbox.c       Harold
+ORION2     517  GER_HELP.LBX  GER_HELP  LBX  UPPER      UPPER     textbox.c       Harold
+ORION2     518  FRE_HELP.LBX  FRE_HELP  LBX  UPPER      UPPER     textbox.c       Harold
+ORION2     519  ITA_HELP.LBX  ITA_HELP  LBX  UPPER      UPPER     textbox.c       Harold
+ORION2     520  SPA_HELP.LBX  SPA_HELP  LBX  UPPER      UPPER     textbox.c       Harold
+ORION2     525  gstar.lbx     gstar     lbx  lower      lower     colony.c        Eric
+ORION2     526  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER
+ORION2     528  refitpup.LBX  refitpup  LBX  lower      UPPER     colrefit.c      Eric
+ORION2     530  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER
+ORION2     536  estrings.lbx  estrings  lbx  lower      lower     estrings.c      Eric
+ORION2     537  estrGERM.lbx  estrGERM  lbx  Mixed      lower     estrings.c      Eric
+ORION2     538  estrFREN.lbx  estrFREN  lbx  Mixed      lower     estrings.c      Eric
+ORION2     539  estrSPAN.lbx  estrSPAN  lbx  Mixed      lower     estrings.c      Eric
+ORION2     540  estrITAL.lbx  estrITAL  lbx  Mixed      lower     estrings.c      Eric
+ORION2     541  estrPOLI.lbx  estrPOLI  lbx  Mixed      lower     estrings.c      Eric
+ORION2     543  maingerm.lbx  maingerm  lbx  lower      lower     estrings.c      Eric
+ORION2     544  maintext.lbx  maintext  lbx  lower      lower     estrings.c      Eric
+ORION2     545  mainfren.lbx  mainfren  lbx  lower      lower     estrings.c      Eric
+ORION2     546  mainspan.lbx  mainspan  lbx  lower      lower     estrings.c      Eric
+ORION2     547  mainital.lbx  mainital  lbx  lower      lower     estrings.c      Eric
+ORION2     548  mainpoli.lbx  mainpoli  lbx  lower      lower     estrings.c      Eric
+ORION2     561  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION2     562  MULTIGM.LBX   MULTIGM   LBX  UPPER      UPPER     multplay.c      Harold
+ORION2     624  INFO.LBX      INFO      LBX  UPPER      UPPER     info.c          Bill
+ORION2     627  billtext.lbx  billtext  lbx  lower      lower     info.c          Bill
+ORION2     630  app_pics.lbx  app_pics  lbx  lower      lower     info.c          Bill
+ORION2     631  APP_PICS.LBX  APP_PICS  LBX  UPPER      UPPER     info.c          Bill
+ORION2     632  billtex2.lbx  billtex2  lbx  lower      lower
+ORION2     644  races.lbx     races     lbx  lower      lower     racerprt.c      Bill
+ORION2     645  racerprt.lbx  racerprt  lbx  lower      lower     racerprt.c      Bill
+ORION2     646  billtext.lbx  billtext  lbx  lower      lower     racerprt.c      Bill
+ORION2     647  billtext.lbx  billtext  lbx  lower      lower     racescrn.c      Bill
+ORION2     648  billtex2.lbx  billtex2  lbx  lower      lower     racescrn.c      Bill
+ORION2     649  races.lbx     races     lbx  lower      lower     racescrn.c      Bill
+ORION2     660  billtext.lbx  billtext  lbx  lower      lower     science.c       Bill
+ORION2     662  SCIENCE.LBX   SCIENCE   LBX  UPPER      UPPER     tech.c          Bill
+ORION2     663  billtext.lbx  billtext  lbx  lower      lower     tech.c          Bill
+ORION2     672  turnsum.lbx   turnsum   lbx  lower      lower     turnsum.c       Bill
+ORION2     686  fonts.lbx     fonts     lbx  lower      lower
+ORION2     925  SB16.DIG      SB16      DIG  UPPER      UPPER
+ORION2     926  SBPRO.DIG     SBPRO     DIG  UPPER      UPPER
+ORION2     927  SBLASTER.DIG  SBLASTER  DIG  UPPER      UPPER
+ORION2     934  rkernel.com   rkernel   com  lower      lower
+ORION2     983  wDIG.INI      wDIG      INI  Mixed      UPPER     ailss.c
+ORION2    1005  rMDI.INI      rMDI      INI  Mixed      UPPER
+ORION2    1055  COLONY.LBX    COLONY    LBX  UPPER      UPPER     colony.c        Eric
+ORION2    1056  COLONY2.LBX   COLONY2   LBX  UPPER      UPPER     colony.c        Eric
+ORION2    1057  COLROAD.LBX   COLROAD   LBX  UPPER      UPPER
+ORION2    1058  COLVEGGI.LBX  COLVEGGI  LBX  UPPER      UPPER     coldraw.c       Eric
+ORION2    1059  RACEICON.LBX  RACEICON  LBX  UPPER      UPPER     colony.c        Eric
+ORION2    1060  COLPUPS.LBX   COLPUPS   LBX  UPPER      UPPER     ocpolpup.c      Eric
+ORION2    1061  PLANETS.LBX   PLANETS   LBX  UPPER      UPPER     colony.c        Eric
+ORION2    1062  AMEBAFIN.LBX  AMEBAFIN  LBX  UPPER      UPPER     eric.c          Eric
+ORION2    1063  BEAMS.LBX     BEAMS     LBX  UPPER      UPPER     beams.c         Eric
+ORION2    1064  CMBTSFX.LBX   CMBTSFX   LBX  UPPER      UPPER     cmbtspec.c      Eric
+ORION2    1065  COLBLDG.LBX   COLBLDG   LBX  UPPER      UPPER     colbldg.c       Eric
+ORION2    1066  COLGCBT.LBX   COLGCBT   LBX  UPPER      UPPER
+ORION2    1067  COLROADS.LBX  COLROADS  LBX  UPPER      UPPER     coldraw.c       Eric
+ORION2    1068  COLSUM.LBX    COLSUM    LBX  UPPER      UPPER     colbldg.c       Eric
+ORION2    1069  COLSYSDI.LBX  COLSYSDI  LBX  UPPER      UPPER     colsysdi.c      Eric
+ORION2    1070  DIMTVFIN.LBX  DIMTVFIN  LBX  UPPER      UPPER     eric.c          Eric
+ORION2    1071  FIREPTS.LBX   FIREPTS   LBX  UPPER      UPPER
+ORION2    1072  FONTS.LBX     FONTS     LBX  UPPER      UPPER
+ORION2    1073  FP.LBX        FP        LBX  UPPER      UPPER
+ORION2    1074  HELP.LBX      HELP      LBX  UPPER      UPPER
+ORION2    1075  MAINPUPS.LBX  MAINPUPS  LBX  UPPER      UPPER     mainpups.c      Eric
+ORION2    1076  NEWGAME.LBX   NEWGAME   LBX  UPPER      UPPER     newgame.c       Eric
+ORION2    1077  PLNTDFIN.LBX  PLNTDFIN  LBX  UPPER      UPPER     eric.c          Eric
+ORION2    1078  RACEOPT.LBX   RACEOPT   LBX  UPPER      UPPER     newgame.c       Eric
+ORION2    1079  REFITPUP.LBX  REFITPUP  LBX  UPPER      UPPER
+ORION2    1080  SPHERSFX.LBX  SPHERSFX  LBX  UPPER      UPPER     cmbtspec.c      Eric
+ORION2    1081  XPORT.LBX     XPORT     LBX  UPPER      UPPER
+ORION2    1089  sound.lbx     sound     lbx  lower      lower
+ORION2    1090  music.lbx     music     lbx  lower      lower
+ORION2    1091  stream.lbx    stream    lbx  lower      lower
+ORION95   2116  BUFFER0.LBX   BUFFER0   LBX  UPPER      UPPER
+ORION95   2120  sphersfx.lbx  sphersfx  lbx  lower      lower
+ORION95   2121  cmbtsfx.lbx   cmbtsfx   lbx  lower      lower
+ORION95   2122  cmbtmisl.lbx  cmbtmisl  lbx  lower      lower
+ORION95   2123  combat.lbx    combat    lbx  lower      lower
+ORION95   2124  monster.lbx   monster   lbx  lower      lower
+ORION95   2125  cmbtshp.lbx   cmbtshp   lbx  lower      lower
+ORION95   2126  cmbtfgtr.lbx  cmbtfgtr  lbx  lower      lower
+ORION95   2127  cmbtplnt.lbx  cmbtplnt  lbx  lower      lower
+ORION95   2129  SCIENCE.LBX   SCIENCE   LBX  UPPER      UPPER
+ORION95   2130  03hi.LBX      03hi      LBX  lower      UPPER
+ORION95   2131  x_SC.LBX      x_SC      LBX  Mixed      UPPER
+ORION95   2132  x_SP.LBX      x_SP      LBX  Mixed      UPPER
+ORION95   2133  x_TR.LBX      x_TR      LBX  Mixed      UPPER
+ORION95   2134  _SC.LBX       _SC       LBX  UPPER      UPPER
+ORION95   2135  _SP.LBX       _SP       LBX  UPPER      UPPER
+ORION95   2136  _TR.LBX       _TR       LBX  UPPER      UPPER
+ORION95   2137  billtext.lbx  billtext  lbx  lower      lower
+ORION95   2138  inbox.lbx     inbox     lbx  lower      lower
+ORION95   2141  jimtext2.lbx  jimtext2  lbx  lower      lower
+ORION95   2142  DIPLOMAT.LBX  DIPLOMAT  LBX  UPPER      UPPER
+ORION95   2143  jimtext.lbx   jimtext   lbx  lower      lower
+ORION95   2145  dipstars.lbx  dipstars  lbx  lower      lower
+ORION95   2152  DIPLOMSP.LBX  DIPLOMSP  LBX  UPPER      UPPER
+ORION95   2153  DIPLOMSI.LBX  DIPLOMSI  LBX  UPPER      UPPER
+ORION95   2154  DIPLOMSS.LBX  DIPLOMSS  LBX  UPPER      UPPER
+ORION95   2155  DIPLOMSF.LBX  DIPLOMSF  LBX  UPPER      UPPER
+ORION95   2156  DIPLOMSG.LBX  DIPLOMSG  LBX  UPPER      UPPER
+ORION95   2157  DIPLOMSE.LBX  DIPLOMSE  LBX  UPPER      UPPER
+ORION95   2160  STREAM.LBX    STREAM    LBX  UPPER      UPPER
+ORION95   2161  STREAMHD.LBX  STREAMHD  LBX  UPPER      UPPER
+ORION95   2163  intro.lbx     intro     lbx  lower      lower
+ORION95   2164  simtex.lbx    simtex    lbx  lower      lower
+ORION95   2165  logo.LBX      logo      LBX  lower      UPPER
+ORION95   2166  ssimtex.lbx   ssimtex   lbx  lower      lower
+ORION95   2169  INFO.LBX      INFO      LBX  UPPER      UPPER
+ORION95   2171  APP_PICS.LBX  APP_PICS  LBX  UPPER      UPPER
+ORION95   2172  app_pics.lbx  app_pics  lbx  lower      lower
+ORION95   2173  billtex2.lbx  billtex2  lbx  lower      lower
+ORION95   2179  antaroom.LBX  antaroom  LBX  lower      UPPER
+ORION95   2180  antarmsg.LBX  antarmsg  LBX  lower      UPPER
+ORION95   2181  DESIGN.LBX    DESIGN    LBX  UPPER      UPPER
+ORION95   2185  shipname.lbx  shipname  lbx  lower      lower
+ORION95   2191  ITATECD.LBX   ITATECD   LBX  UPPER      UPPER
+ORION95   2192  SPATECD.LBX   SPATECD   LBX  UPPER      UPPER
+ORION95   2193  FRETECD.LBX   FRETECD   LBX  UPPER      UPPER
+ORION95   2194  GERTECD.LBX   GERTECD   LBX  UPPER      UPPER
+ORION95   2195  TECHDESC.LBX  TECHDESC  LBX  UPPER      UPPER
+ORION95   2210  racestuf.lbx  racestuf  lbx  lower      lower
+ORION95   2211  RACEOPT.LBX   RACEOPT   LBX  UPPER      UPPER
+ORION95   2212  patch13.lbx   patch13   lbx  lower      lower
+ORION95   2289  MOX.SET       MOX       SET  UPPER      UPPER
+ORION95   2292  d.GAM         d         GAM  lower      UPPER
+ORION95   2294  OFFICER.LBX   OFFICER   LBX  UPPER      UPPER
+ORION95   2298  ITASKLLS.LBX  ITASKLLS  LBX  UPPER      UPPER
+ORION95   2299  SPASKLLS.LBX  SPASKLLS  LBX  UPPER      UPPER
+ORION95   2300  FRESKLLS.LBX  FRESKLLS  LBX  UPPER      UPPER
+ORION95   2301  GERSKLLS.LBX  GERSKLLS  LBX  UPPER      UPPER
+ORION95   2302  SKILDESC.LBX  SKILDESC  LBX  UPPER      UPPER
+ORION95   2304  PLNTSUM.LBX   PLNTSUM   LBX  UPPER      UPPER
+ORION95   2311  textbox.lbx   textbox   lbx  lower      lower
+ORION95   2312  SPA_HELP.LBX  SPA_HELP  LBX  UPPER      UPPER
+ORION95   2313  ITA_HELP.LBX  ITA_HELP  LBX  UPPER      UPPER
+ORION95   2314  FRE_HELP.LBX  FRE_HELP  LBX  UPPER      UPPER
+ORION95   2315  GER_HELP.LBX  GER_HELP  LBX  UPPER      UPPER
+ORION95   2316  HELP.LBX      HELP      LBX  UPPER      UPPER
+ORION95   2317  racerprt.lbx  racerprt  lbx  lower      lower
+ORION95   2318  races.lbx     races     lbx  lower      lower
+ORION95   2320  EVENTS.LBX    EVENTS    LBX  UPPER      UPPER
+ORION95   2322  EVENTMSP.LBX  EVENTMSP  LBX  UPPER      UPPER
+ORION95   2323  EVENTMSI.LBX  EVENTMSI  LBX  UPPER      UPPER
+ORION95   2324  EVENTMSS.LBX  EVENTMSS  LBX  UPPER      UPPER
+ORION95   2325  EVENTMSF.LBX  EVENTMSF  LBX  UPPER      UPPER
+ORION95   2326  EVENTMSG.LBX  EVENTMSG  LBX  UPPER      UPPER
+ORION95   2327  EVENTMSE.LBX  EVENTMSE  LBX  UPPER      UPPER
+ORION95   2333  mox.set       mox       set  lower      lower
+ORION95   2334  mox.set       mox       set  lower      lower
+ORION95   2335  RACENAME.LBX  RACENAME  LBX  UPPER      UPPER
+ORION95   2336  RACESTUF.LBX  RACESTUF  LBX  UPPER      UPPER
+ORION95   2337  warning.lbx   warning   lbx  lower      lower
+ORION95   2338  confirm.lbx   confirm   lbx  lower      lower
+ORION95   2347  language.ini  language  ini  lower      lower
+ORION95   2348  GAME.LBX      GAME      LBX  UPPER      UPPER
+ORION95   2370  diplomat.lbx  diplomat  lbx  lower      lower
+ORION95   2371  diplomat.lbx  diplomat  lbx  lower      lower
+ORION95   2372  orioncd.ini   orioncd   ini  lower      lower
+ORION95   2373  TECHSEL.LBX   TECHSEL   LBX  UPPER      UPPER
+ORION95   2374  s.LBX         s         LBX  lower      UPPER
+ORION95   2375  03hi.LBX      03hi      LBX  lower      UPPER
+ORION95   2376  SCIENCE.LBX   SCIENCE   LBX  UPPER      UPPER
+ORION95   2377  x_SC.LBX      x_SC      LBX  Mixed      UPPER
+ORION95   2413  RACESEL.LBX   RACESEL   LBX  UPPER      UPPER
+ORION95   2414  racesel.lbx   racesel   lbx  lower      lower
+ORION95   2423  mainpoli.lbx  mainpoli  lbx  lower      lower
+ORION95   2424  mainital.lbx  mainital  lbx  lower      lower
+ORION95   2425  mainspan.lbx  mainspan  lbx  lower      lower
+ORION95   2426  mainfren.lbx  mainfren  lbx  lower      lower
+ORION95   2427  maintext.lbx  maintext  lbx  lower      lower
+ORION95   2428  maingerm.lbx  maingerm  lbx  lower      lower
+ORION95   2430  estrPOLI.lbx  estrPOLI  lbx  Mixed      lower
+ORION95   2431  estrITAL.lbx  estrITAL  lbx  Mixed      lower
+ORION95   2432  estrSPAN.lbx  estrSPAN  lbx  Mixed      lower
+ORION95   2433  estrFREN.lbx  estrFREN  lbx  Mixed      lower
+ORION95   2434  estrGERM.lbx  estrGERM  lbx  Mixed      lower
+ORION95   2435  estrings.lbx  estrings  lbx  lower      lower
+ORION95   2436  refitpup.LBX  refitpup  LBX  lower      UPPER
+ORION95   2441  FLEET.LBX     FLEET     LBX  UPPER      UPPER
+ORION95   2442  gstar.lbx     gstar     lbx  lower      lower
+ORION95   2443  RACESTUF.lbx  RACESTUF  lbx  UPPER      lower
+ORION95   2460  starbg.lbx    starbg    lbx  lower      lower
+ORION95   2466  raceopt.lbx   raceopt   lbx  lower      lower
+ORION95   2467  starname.lbx  starname  lbx  lower      lower
+ORION95   2469  turnsum.lbx   turnsum   lbx  lower      lower
+ORION95   2480  MULTIGM.LBX   MULTIGM   LBX  UPPER      UPPER
+ORION95   2505  ships.lbx     ships     lbx  lower      lower
+ORION95   2506  KENTEXT.LBX   KENTEXT   LBX  UPPER      UPPER
+ORION95   2507  KENTEXT1.LBX  KENTEXT1  LBX  UPPER      UPPER
+ORION95   2515  STARBG.LBX    STARBG    LBX  UPPER      UPPER
+ORION95   2526  flticons.lbx  flticons  lbx  lower      lower
+ORION95   2527  Combat.lbx    Combat    lbx  Title      lower
+ORION95   2528  combat.LBX    combat    LBX  lower      UPPER
+ORION95   2532  d.lbx         d         lbx  lower      lower
+ORION95   2533  council.lbx   council   lbx  lower      lower
+ORION95   2534  council.LBX   council   LBX  lower      UPPER
+ORION95   2535  councmsg.lbx  councmsg  lbx  lower      lower
+ORION95   2536  COLONY.LBX    COLONY    LBX  UPPER      UPPER
+ORION95   2537  COLONY2.LBX   COLONY2   LBX  UPPER      UPPER
+ORION95   2538  COLROAD.LBX   COLROAD   LBX  UPPER      UPPER
+ORION95   2539  COLVEGGI.LBX  COLVEGGI  LBX  UPPER      UPPER
+ORION95   2540  RACEICON.LBX  RACEICON  LBX  UPPER      UPPER
+ORION95   2541  COLPUPS.LBX   COLPUPS   LBX  UPPER      UPPER
+ORION95   2542  PLANETS.LBX   PLANETS   LBX  UPPER      UPPER
+ORION95   2543  AMEBAFIN.LBX  AMEBAFIN  LBX  UPPER      UPPER
+ORION95   2544  BEAMS.LBX     BEAMS     LBX  UPPER      UPPER
+ORION95   2545  CMBTSFX.LBX   CMBTSFX   LBX  UPPER      UPPER
+ORION95   2546  COLBLDG.LBX   COLBLDG   LBX  UPPER      UPPER
+ORION95   2547  COLGCBT.LBX   COLGCBT   LBX  UPPER      UPPER
+ORION95   2548  COLROADS.LBX  COLROADS  LBX  UPPER      UPPER
+ORION95   2549  COLSUM.LBX    COLSUM    LBX  UPPER      UPPER
+ORION95   2550  COLSYSDI.LBX  COLSYSDI  LBX  UPPER      UPPER
+ORION95   2551  DIMTVFIN.LBX  DIMTVFIN  LBX  UPPER      UPPER
+ORION95   2552  FIREPTS.LBX   FIREPTS   LBX  UPPER      UPPER
+ORION95   2553  FONTS.LBX     FONTS     LBX  UPPER      UPPER
+ORION95   2554  FP.LBX        FP        LBX  UPPER      UPPER
+ORION95   2555  HELP.LBX      HELP      LBX  UPPER      UPPER
+ORION95   2556  MAINPUPS.LBX  MAINPUPS  LBX  UPPER      UPPER
+ORION95   2557  NEWGAME.LBX   NEWGAME   LBX  UPPER      UPPER
+ORION95   2558  PLNTDFIN.LBX  PLNTDFIN  LBX  UPPER      UPPER
+ORION95   2559  RACEOPT.LBX   RACEOPT   LBX  UPPER      UPPER
+ORION95   2560  REFITPUP.LBX  REFITPUP  LBX  UPPER      UPPER
+ORION95   2561  SPHERSFX.LBX  SPHERSFX  LBX  UPPER      UPPER
+ORION95   2562  XPORT.LBX     XPORT     LBX  UPPER      UPPER
+ORION95   2563  SCORE.LBX     SCORE     LBX  UPPER      UPPER
+ORION95   2576  HOF.M2        HOF       M2   UPPER      UPPER
+ORION95   2582  MAINMENU.LBX  MAINMENU  LBX  UPPER      UPPER
+ORION95   2584  d.gam         d         gam  lower      lower
+ORION95   2586  ITACRDTS.LBX  ITACRDTS  LBX  UPPER      UPPER
+ORION95   2587  SPACRDTS.LBX  SPACRDTS  LBX  UPPER      UPPER
+ORION95   2588  FRECRDTS.LBX  FRECRDTS  LBX  UPPER      UPPER
+ORION95   2589  GERCRDTS.LBX  GERCRDTS  LBX  UPPER      UPPER
+ORION95   2590  CREDITS.LBX   CREDITS   LBX  UPPER      UPPER
+ORION95   2595  HISTRNGS.LBX  HISTRNGS  LBX  UPPER      UPPER
+ORION95   2596  HSSTRNGS.LBX  HSSTRNGS  LBX  UPPER      UPPER
+ORION95   2597  HFSTRNGS.LBX  HFSTRNGS  LBX  UPPER      UPPER
+ORION95   2598  HGSTRNGS.LBX  HGSTRNGS  LBX  UPPER      UPPER
+ORION95   2599  HESTRNGS.LBX  HESTRNGS  LBX  UPPER      UPPER
+ORION95   2600  fontss.lbx    fontss    lbx  lower      lower
+ORION95   2601  fontsi.lbx    fontsi    lbx  lower      lower
+ORION95   2602  fontsf.lbx    fontsf    lbx  lower      lower
+ORION95   2603  fontsg.lbx    fontsg    lbx  lower      lower
+ORION95   2604  fonts.lbx     fonts     lbx  lower      lower
+ORION95   2605  HERODATI.LBX  HERODATI  LBX  UPPER      UPPER
+ORION95   2606  HERODATS.LBX  HERODATS  LBX  UPPER      UPPER
+ORION95   2607  HERODATF.LBX  HERODATF  LBX  UPPER      UPPER
+ORION95   2608  HERODATG.LBX  HERODATG  LBX  UPPER      UPPER
+ORION95   2609  HERODATA.LBX  HERODATA  LBX  UPPER      UPPER
+ORION95   2611  techname.lbx  techname  lbx  lower      lower
+ORION95   2693  sound.lbx     sound     lbx  lower      lower
+ORION95   2694  music.lbx     music     lbx  lower      lower
+ORION95   2695  stream.lbx    stream    lbx  lower      lower

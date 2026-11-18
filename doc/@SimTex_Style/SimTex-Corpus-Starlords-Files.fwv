@@ -1,0 +1,42 @@
+file          stem      ext  bytes    date        class        layout   entries  text_fields
+CHKLIST.MS    CHKLIST   MS       162  1995-07-26  third_party
+CODES.LBX     CODES     LBX    19243  1993-05-07  simtex_lbx   archive       20
+CRISES.LBX    CRISES    LBX   186253  1993-05-07  simtex_lbx   archive       22
+DEMO.LBX      DEMO      LBX     4294  1993-05-07  simtex_lbx   archive       30           30
+DESIGNS.LBX   DESIGNS   LBX    29373  1993-05-07  simtex_lbx   archive       35
+DIPLOMAC.LBX  DIPLOMAC  LBX    15563  1993-05-07  simtex_lbx   raw                       124
+FILES.EXE     FILES     EXE   121597  1993-05-07  simtex_exe
+FONTS.LBX     FONTS     LBX    18392  1993-05-07  simtex_lbx   archive        6
+IFONTS.LBX    IFONTS    LBX     6968  1993-05-07  simtex_lbx   archive        6
+IMUSIC.LBX    IMUSIC    LBX    27069  1993-05-07  simtex_lbx   archive        2
+INTRO.LBX     INTRO     LBX   392156  1993-05-07  simtex_lbx   archive       19
+ISOUND.LBX    ISOUND    LBX      734  1993-05-07  simtex_lbx   raw
+LOSE.LBX      LOSE      LBX   552160  1993-05-07  simtex_lbx   picture       95
+MISSILE.LBX   MISSILE   LBX     1564  1993-05-07  simtex_lbx   archive       16
+MUSIC.LBX     MUSIC     LBX    10080  1993-05-07  simtex_lbx   archive       19
+NEBULAS.LBX   NEBULAS   LBX   187947  1993-05-07  simtex_lbx   archive       46
+ORBIT.LBX     ORBIT     LBX  1241600  1993-05-07  simtex_lbx   picture      250
+PALETTE.LBX   PALETTE   LBX     5552  1993-05-07  simtex_lbx   archive       21
+PICTLIB.LBX   PICTLIB   LBX    25381  1993-05-07  simtex_lbx   raw
+PLANETS.LBX   PLANETS   LBX    31067  1993-05-07  simtex_lbx   archive       35
+RACES.LBX     RACES     LBX     9714  1993-05-07  simtex_lbx   archive       11
+RESEARCH.LBX  RESEARCH  LBX    26335  1993-05-07  simtex_lbx   raw                       306
+SAVE7.GAM     SAVE7     GAM    20888  2000-05-30  runtime
+SETUP.EXE     SETUP     EXE    34011  1993-05-07  simtex_exe
+SHIPPOS.LBX   SHIPPOS   LBX     1080  1993-05-07  simtex_lbx   archive        1
+SHIPS.LBX     SHIPS     LBX    26915  1993-05-07  simtex_lbx   archive       38
+SOUND.LBX     SOUND     LBX    96216  1993-05-07  simtex_lbx   archive       80
+SPACE.LBX     SPACE     LBX    24006  1993-05-07  simtex_lbx   archive       43
+SPIES.LBX     SPIES     LBX   368965  1993-05-07  simtex_lbx   archive       33
+STARLORD.CFG  STARLORD  CFG      142  2000-05-30  runtime
+STARLORD.EXE  STARLORD  EXE   377930  1993-05-07  simtex_exe
+STARMAP.LBX   STARMAP   LBX   322134  1993-05-07  simtex_lbx   archive      174
+START.EXE     START     EXE    96211  1993-05-07  simtex_exe
+STARVIEW.LBX  STARVIEW  LBX   827131  1993-05-07  simtex_lbx   archive       42
+TECHNO.LBX    TECHNO    LBX   248441  1993-05-07  simtex_lbx   archive       40
+TEST.EXE      TEST      EXE    41725  1993-05-07  simtex_exe
+VFONTS.LBX    VFONTS    LBX    12152  1993-05-07  simtex_lbx   archive        6
+VORTEX.EXE    VORTEX    EXE    99941  1993-05-07  simtex_exe
+VORTEX.LBX    VORTEX    LBX   367462  1993-05-07  simtex_lbx   archive       51
+WARP.LBX      WARP      LBX  1535360  1993-05-07  simtex_lbx   picture      245
+WIN.LBX       WIN       LBX   476976  1993-05-07  simtex_lbx   picture      300

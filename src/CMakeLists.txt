@@ -3,7 +3,7 @@
 #  ReMoM — windowed Master of Magic.
 # =========================================================================
 
-add_executable(ReMoM ReMoM.c ReMoM_Init.c Artificial_Human_Player.c)
+add_executable(ReMoM ReMoM.c ReMoM_Init.c Automation_Driver.c)
 
 add_custom_target(run_pre_build_task
     COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."
@@ -55,32 +55,32 @@ set_target_properties(ReMoM PROPERTIES
 
 
 # =========================================================================
-#  HeMoM — Headless Master of Magic.
+#  DeMoM — Driven Master of Magic (windowless).
 #  Always built, always headless.  Links Platform_Headless directly so it
 #  is not affected by which windowed backend the preset chose for ReMoM.
 # =========================================================================
 
-add_executable(HeMoM HeMoM.c ReMoM_Init.c Artificial_Human_Player.c Game_Save_Dump.c)
+add_executable(DeMoM DeMoM.c ReMoM_Init.c Automation_Driver.c Game_Save_Dump.c)
 
-set_target_properties(HeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(DeMoM PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
 # instead of raw hex.  See ReMoM above and doc/@Devel/Devel-Crash-Reports.md.
-set_target_properties(HeMoM PROPERTIES ENABLE_EXPORTS ON)
+set_target_properties(DeMoM PROPERTIES ENABLE_EXPORTS ON)
 
-target_link_libraries(HeMoM PUBLIC
+target_link_libraries(DeMoM PUBLIC
     momlib
     MOX
     STU
     Platform_Headless
 )
 
-target_include_directories(HeMoM PUBLIC
+target_include_directories(DeMoM PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/src
 )
 
-set_target_properties(HeMoM PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:HeMoM>"
+set_target_properties(DeMoM PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:DeMoM>"
 )
 # Asset staging is handled once at the project level (see top-level CMakeLists.txt).

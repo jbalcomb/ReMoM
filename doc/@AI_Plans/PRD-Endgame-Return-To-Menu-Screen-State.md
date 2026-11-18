@@ -96,7 +96,7 @@ All sites wired (`/* EOG_HACK */` markers) and `momlib` compiles/links clean:
 - **State** — `magic_master_idx` defined at NEXTTURN.c:87, declared `extern` in NEXTTURN.h:24; the four OG `Respawn(…)` calls commented `// DONT`.
 
 **Open (behavioral verification, not wiring):**
-- Play-test the five endgames (AI-turn win, interactive win, conquest loss, SoM win, SoM loss) end-to-end to the menu, and N consecutive games for flat stack usage. Consider a HeMoM scenario.
+- Play-test the five endgames (AI-turn win, interactive win, conquest loss, SoM win, SoM loss) end-to-end to the menu, and N consecutive games for flat stack usage. Consider a DeMoM scenario.
 - Sanity-check the `spl_Spell_Of_Return` liveness nuance (helpers count `_FORTRESSES.active` only; a returning wizard counts as dead — moot for the human's terminal fortress-loss, but confirm).
 
 ## Two sub-variants (where the presentation lives)

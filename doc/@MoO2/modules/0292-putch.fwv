@@ -1,0 +1,8 @@
+module_num=292
+module=putch
+source=0292-putch.md
+range[0]=1:0x00141D22 linear=0x00151D22 size=30
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m292f001  1    -      0x00151D22  1:0x00141D22  code  putch  putch_  regions/07-object-1/001D6E54-001D7653.txt

@@ -1,0 +1,9 @@
+module_num=226
+module=attr386
+source=0226-attr386.md
+range[0]=1:0x0012F39E linear=0x0013F39E size=46
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL             CHUNK
+m226f001  1    -      0x0013F39E  1:0x0012F39E  code  _dos_getfileattr  _dos_getfileattr_  regions/07-object-1/001C4654-001C4E53.txt
+m226f002  2    -      0x0013F3B9  1:0x0012F3B9  code  _dos_setfileattr  _dos_setfileattr_  regions/07-object-1/001C4654-001C4E53.txt

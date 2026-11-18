@@ -68,7 +68,7 @@ int16_t City_Sell_Building(int16_t bldg_idx, int16_t city_idx, int16_t gold_amou
 int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_t * reqd_bldg_idx);
 
 // WZD o55p15
-int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx);
+int16_t City_Building_Not_Needed_For_Product(int16_t city_idx, int16_t bldg_idx);
 
 // WZD o55p16
 void City_Check_Production(int16_t city_idx);
@@ -77,10 +77,10 @@ void City_Check_Production(int16_t city_idx);
 void City_Cancel_Production(int16_t city_idx);
 
 // WZD o55p18
-int16_t City_Sell_Building_Value(int16_t bldg_idx);
+int16_t City_Sell_Building_Value(int16_t bldg_idx, int16_t city_idx);
 
 // WZD o55p19
-// sub_4BEF0()
+int16_t Player_Gold_Covers_Production_Cost__NIU(int16_t player_idx, int16_t city_idx);
 
 // WZD o55p20
 void Player_City_Buy_Production(int16_t player_idx, int16_t city_idx);
@@ -136,14 +136,17 @@ int16_t City_Enchantment_HelpIdx(int16_t city_enchantment_idx);
 // WZD o55p37
 void Possessive(char * string);
 
+/* the Resource Window shows at most this many lines; Building Maintenance pages by this many (hotkey M, More) */
+#define RESOURCE_WINDOW_MAX_LINES  17
+
 // WZD o55p38
-void Resource_Breakdown__STUB(int16_t IDK);
+void Resource_Breakdown(int16_t resource_id);
 
 // WZD o55p39
-void Resource_Breakdown_Draw__STUB(void);
+void Resource_Breakdown_Draw(void);
 
 // WZD o55p40
-// sub_4E507()
+int16_t Draw_Stat_Icons_10_And_1(int16_t x, int16_t y, int16_t value, SAMB_ptr ones_icon_seg, SAMB_ptr tens_icon_seg);
 
 
 

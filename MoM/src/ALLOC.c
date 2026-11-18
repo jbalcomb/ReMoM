@@ -44,7 +44,7 @@ char EmmHndlNm_CONTXXX[] = "CONTXXX";
 // Allocate_Data_Space()
 void Allocate_Data_Space(int16_t gfx_buff_nparas)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     // TODO  EmmHndl_FIGUREX = EMM_GetHandle(28, EmmHndlNm_FIGUREX, 1);
     // TODO  EmmHndl_TILEXXX = EMM_GetHandle( 3, EmmHndlNm_TILEXXX, 1);
@@ -58,6 +58,9 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     // 4600 * 16 = 73600 bytes
     //  515 * 16 = 8240 bytes
     // 73600 + 8240 = 81840 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [tmp_World_Data_Paras], 3519 comes first, right after the two EMM_Get_Handle() calls (ReMoM had it after the g_graphics_cache_seg allocation) */
+    tmp_World_Data_Paras = 3519;
+
     _screen_seg = Allocate_Space(gfx_buff_nparas + 515);
 
     // lair_confirm_pict: 41 x 43 = 1763
@@ -81,7 +84,8 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
     /// lots of XREFs from City, Cmb, SplBk, ...
 
     // tmp_World_Data_Paras = 3519;
-    tmp_World_Data_Paras = 3519;
+    // tmp_World_Data_Paras = 3519;
+    /* CLAUDE */  /* REBUG */  /* asm: no store here - mov [tmp_World_Data_Paras], 3519 is above, before the _screen_seg allocation */
 
     // 3519 paragraphs = 16 * 3519 = 56,304 bytes
     World_Data = Allocate_Space(tmp_World_Data_Paras);
@@ -91,7 +95,9 @@ void Allocate_Data_Space(int16_t gfx_buff_nparas)
 
     // should be 100 * 114 = 11400 but, it aint.
     // _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
-    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  // 714 PR, 11424 B
+    // _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, (((NUM_CITIES * sizeof(struct s_CITY)) / 16) + 1));  // 714 PR, 11424 B
+    /* CLAUDE */  /* REBUG */  /* asm: mov ax, 714 / push ax / push _SI_World_Data / call Allocate_First_Block  (the expression above is ((100 * 114) / 16) + 1 = 713) */
+    _CITIES = (struct s_CITY*)Allocate_First_Block(World_Data, 714);  // 714 PR, 11424 B
 
     /*
         ...make a better note somewhere...
@@ -297,23 +303,37 @@ so, 300 PRs, + 1 for the SAMB header
     // MoO2  Module: MOX  data (0 bytes) _global_music_handle  Address: 02:0018B17C
     SND_Music_Segment = Allocate_Space(350);  // 350 PR, 5600 B
 
-    _ai_landmass_war_targets[0]               = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) ) );  // 12 bytes  (+0x00 bytes; uint8* base so the int16* cast doesn't double the offset)
+    /* OGBUG  (quirk) the 14 AI per-plane tables below are pointed into the neutral player's spells_list (_players[NEUTRAL_PLAYER_IDX] + 0x264, 240 bytes): they are written to and read from SAVEn.GAM with the 6 wizard records (Save_SAVE_GAM writes 6 x 1224 bytes of _players), and anything that reads _players[NEUTRAL_PLAYER_IDX].spells_list reads AI table bytes */
+    _ai_landmass_war_targets[0]               = (
+ (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17E8 - 0x17E8) ) );  // 12 bytes  (+0x00 bytes; uint8* base so the int16* cast doesn't double the offset)
     _ai_landmass_war_targets[1]               = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x17F4 - 0x17E8) ) );  // 12 bytes  (+0x0C bytes)
     _ai_reevaluate_continents_countdown       = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x1800 - 0x17E8) ) );  // 16 bytes  (+0x18 bytes)
     Wiz5_Spell_28h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1810 - 0x17E8)   );  // 20 bytes
     Wiz5_Spell_3Ch                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1824 - 0x17E8)   );  // 20 bytes
     Wiz5_Spell_50h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1838 - 0x17E8)   );  // 20 bytes
     Wiz5_Spell_64h                            = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x184C - 0x17E8)   );  // 20 bytes
-    _ai_landmass_settler_targets[0]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1860 - 0x17E8)   );  // 20 bytes
-    _ai_landmass_settler_targets[1]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1874 - 0x17E8)   );  // 20 bytes
-    _ai_landmass_settler_targets_wx_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1888 - 0x17E8)   );  // 20 bytes
-    _ai_landmass_settler_targets_wx_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x189C - 0x17E8)   );  // 20 bytes
-    _ai_landmass_settler_targets_wy_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18B0 - 0x17E8)   );  // 12 bytes
-    _ai_landmass_settler_targets_wy_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18BC - 0x17E8)   );  // 12 bytes
+    // _ai_landmass_settler_targets[0]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1860 - 0x17E8)   );  // 20 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets], (offset _players.spells_list+1860h); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets[0]           = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x1860 - 0x17E8) ) );  // 20 bytes  (uint8* base so the int16* cast doesn't double the offset)
+    // _ai_landmass_settler_targets[1]           = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1874 - 0x17E8)   );  // 20 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets+2], (offset _players.spells_list+1874h); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets[1]           = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x1874 - 0x17E8) ) );  // 20 bytes  (uint8* base so the int16* cast doesn't double the offset)
+    // _ai_landmass_settler_targets_wx_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x1888 - 0x17E8)   );  // 20 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets_wx_array], (offset _players.spells_list+1888h); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets_wx_array[0]  = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x1888 - 0x17E8) ) );  // 20 bytes  (uint8* base so the int16* cast doesn't double the offset)
+    // _ai_landmass_settler_targets_wx_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x189C - 0x17E8)   );  // 20 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets_wx_array+2], (offset _players.spells_list+189Ch); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets_wx_array[1]  = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x189C - 0x17E8) ) );  // 20 bytes  (uint8* base so the int16* cast doesn't double the offset)
+    // _ai_landmass_settler_targets_wy_array[0]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18B0 - 0x17E8)   );  // 12 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets_wy_array], (offset _players.spells_list+18B0h); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets_wy_array[0]  = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x18B0 - 0x17E8) ) );  // 12 bytes  (uint8* base so the int16* cast doesn't double the offset)
+    // _ai_landmass_settler_targets_wy_array[1]  = ( (uint8_t *) (               (void *) (&_players[5].spells_list[0]) ) + (0x18BC - 0x17E8)   );  // 12 bytes
+    /* CLAUDE */  /* REBUG */  /* asm: mov [_ai_landmass_settler_targets_wy_array+2], (offset _players.spells_list+18BCh); read/written as words, [player_idx*2] */
+    _ai_landmass_settler_targets_wy_array[1]  = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x18BC - 0x17E8) ) );  // 12 bytes  (uint8* base so the int16* cast doesn't double the offset)
     _ai_reevaluate_summoning_circle_countdown = ( (int16_t *) ( (uint8_t *) ( (void *) (&_players[5].spells_list[0]) ) + (0x18C8 - 0x17E8) ) );  // 16 bytes  (+0xE0 = &spells_list[224] = _players[5]+0x344 OG)
 
     // TODO  EMM_ContXXX_H = EMM_GetHandle(4, cnst_EMM_ContH_Name, 1)
     EmmHndl_CONTXXX = Allocate_Space(4096);   //  4 * 16384 EMM Page Size = 65536 B / 16 = 4096 PR
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }

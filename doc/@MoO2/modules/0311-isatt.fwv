@@ -1,0 +1,8 @@
+module_num=311
+module=isatt
+source=0311-isatt.md
+range[0]=1:0x00146130 linear=0x00156130 size=39
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m311f001  1    -      0x00156130  1:0x00146130  code  isatty  isatty_  regions/07-object-1/001DB654-001DBE53.txt

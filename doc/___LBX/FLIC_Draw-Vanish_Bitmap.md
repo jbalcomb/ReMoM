@@ -94,7 +94,7 @@ XREF:
     BU_TunnelTo+13D
     BU_TunnelTo+1F4
     Battle_Unit_Summon_Animation+1BA
-    Spell_Target_Global_Enchantment_Disjunct__WIP+1A5
+    Global_Enchantment_Disjunct__WIP+1A5
     Spell_Of_Mastery_Lose_Draw+43F
     Cityscape_Draw_Buildings+25F
     Cityscape_Draw_Buildings+2D3

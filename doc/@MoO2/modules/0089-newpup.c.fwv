@@ -1,0 +1,22 @@
+module_num=89
+module=D:\MOX\OTHERS\NEWPUP.C
+source=0089-newpup.c.md
+range[0]=1:0x000BEC99 linear=0x000CEC99 size=1493
+range[1]=2:0x00001F40 linear=0x00171F40 size=8
+range[2]=2:0x0000B550 linear=0x0017B550 size=4
+range[3]=2:0x0002F22C linear=0x0019F22C size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                 SYMBOL               CHUNK
+m089f001  1    -      0x000CEC99  1:0x000BEC99  static,code  Print_Data           Print_Data_          regions/07-object-1/00153E54-00154653.txt
+m089f002  2    -      0x000CED16  1:0x000BED16  static,code  Print_Best_Summary   Print_Best_Summary_  regions/07-object-1/00153E54-00154653.txt
+m089f003  3    -      0x000CED9B  1:0x000BED9B  static,code  Print_Race_Summary   Print_Race_Summary_  regions/07-object-1/00153E54-00154653.txt
+m089f004  4    -      0x000CEE50  1:0x000BEE50  static,code  Print_Troop_Totals   Print_Troop_Totals_  regions/07-object-1/00153E54-00154653.txt
+m089f005  5    -      0x000CF0A6  1:0x000BF0A6  code         Load_Troop_Anims     Load_Troop_Anims_    regions/07-object-1/00154654-00154E53.txt
+m089f006  6    -      0x000CF0A7  1:0x000BF0A7  static,code  Update_Fields        Update_Fields_       regions/07-object-1/00154654-00154E53.txt
+m089f007  7    -      0x000CF0AC  1:0x000BF0AC  static,code  Add_Fields           Add_Fields_          regions/07-object-1/00154654-00154E53.txt
+m089f008  8    -      0x000CF0D9  1:0x000BF0D9  static,code  Draw_Troop_Popup     Draw_Troop_Popup_    regions/07-object-1/00154654-00154E53.txt
+m089f009  9    -      0x000CF1E0  1:0x000BF1E0  code         Troop_Popup          Troop_Popup_         regions/07-object-1/00154654-00154E53.txt
+-         -    -      0x0017B550  2:0x0000B550  static,data  _anims               _anims               regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0019F22C  2:0x0002F22C  static,data  _saved_autofunction  _saved_autofunction  -
+-         -    -      0x0019F230  2:0x0002F230  static,data  _x_fields            _x_fields            -

@@ -54,14 +54,10 @@ void Startup_Platform(void)
 #endif
 
     sdl3_ticks_startup = SDL_GetTicks();  // the number of milliseconds since SDL library initialization
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_PFL, "sdl3_ticks_startup: %llu", sdl3_ticks_startup);
-#endif
 
     sdl3_performance_counter = SDL_GetPerformanceCounter();
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_PFL, "sdl3_performance_counter: %llu", sdl3_performance_counter);
-#endif
 
     w = sdl3_window_width;
     h = sdl3_window_height;

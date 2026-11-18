@@ -1,0 +1,9 @@
+module_num=288
+module=memalloc
+source=0288-memalloc.md
+range[0]=1:0x001415B2 linear=0x001515B2 size=435
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL          CHUNK
+m288f001  1    -      0x001515B2  1:0x001415B2  code  __MemAllocator  __MemAllocator  regions/07-object-1/001D6654-001D6E53.txt
+m288f002  2    -      0x0015165A  1:0x0014165A  code  __MemFree       __MemFree       regions/07-object-1/001D6654-001D6E53.txt

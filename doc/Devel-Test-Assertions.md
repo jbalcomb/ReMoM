@@ -12,10 +12,10 @@ specific test scenario:
 
 | File | Used by | What it asserts |
 |---|---|---|
-| `assert_worldgen.txt`             | `HeMoM_WorldGen_Fields`         | Post-newgame state for seed=12345 |
-| `assert_continue_save.txt`        | `HeMoM_Continue_Assertions`     | Post-`test_continue_save.hms` state |
-| `assert_continue_next_turn.txt`   | `HeMoM_NextTurn_Assertions`     | Post-NextTurn state |
-| `assert_ai_5turns.txt`            | `HeMoM_AIBehavior_Evaluate`     | AI metrics CSV (separate format) |
+| `assert_worldgen.txt`             | `DeMoM_WorldGen_Fields`         | Post-newgame state for seed=12345 |
+| `assert_continue_save.txt`        | `DeMoM_Continue_Assertions`     | Post-`test_continue_save.hms` state |
+| `assert_continue_next_turn.txt`   | `DeMoM_NextTurn_Assertions`     | Post-NextTurn state |
+| `assert_ai_5turns.txt`            | `DeMoM_AIBehavior_Evaluate`     | AI metrics CSV (separate format) |
 
 The assertion file is *the test's contract* — only fields listed there are
 checked.  Anything not listed is intentionally unconstrained.
@@ -37,7 +37,7 @@ Refresh after intentional changes to:
 - world-gen logic
 - AI decision-making
 - per-turn computation
-- a scenario file (changing what the artificial human player does)
+- a scenario file (changing what the Automation Driver does)
 - the save format itself (rare, but it has happened)
 
 Do **not** refresh just to make a failing test pass.  A test failure is
@@ -96,7 +96,7 @@ chain for a specific test.  Currently:
 
 | Wrapper | What it does |
 |---|---|
-| `refresh_next_turn.sh [N=5]` | Builds HeMoM, runs the NextTurn scenario N times, refreshes `assert_continue_next_turn.txt` keeping only the stable fields |
+| `refresh_next_turn.sh [N=5]` | Builds DeMoM, runs the NextTurn scenario N times, refreshes `assert_continue_next_turn.txt` keeping only the stable fields |
 
 Add more wrappers as new tests need them, following the same pattern.
 
@@ -133,6 +133,6 @@ point the commented-out assertions can be reactivated.
 
 See also:
 - `tools/regenerate_goldens.sh` — regenerates the binary `.GAM` golden plus
-  its text dump, used by `HeMoM_WorldGen_Golden` (currently DISABLED — the
+  its text dump, used by `DeMoM_WorldGen_Golden` (currently DISABLED — the
   binary comparison was found to be non-determinism-sensitive even after
   filtering).  Kept for diagnostic dump generation.

@@ -1,0 +1,13 @@
+module_num=81
+module=D:\MOX\OTHERS\FIREPTS.C
+source=0081-firepts.c.md
+range[0]=1:0x000B6AF9 linear=0x000C6AF9 size=427
+range[1]=2:0x00028C40 linear=0x00198C40 size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                   SYMBOL                  CHUNK
+m081f001  1    -      0x000C6AF9  1:0x000B6AF9  code         Load_FP_Data_From_LBX  Load_FP_Data_From_LBX_  regions/07-object-1/0014BE54-0014C653.txt
+m081f002  2    -      0x000C6B6B  1:0x000B6B6B  code         N_Fire_Points          N_Fire_Points_          regions/07-object-1/0014BE54-0014C653.txt
+m081f003  3    -      0x000C6BD0  1:0x000B6BD0  code         Calc_FP_Offsets        Calc_FP_Offsets_        regions/07-object-1/0014BE54-0014C653.txt
+-         -    -      0x00198C40  2:0x00028C40  static,data  _fp_data_ptr           _fp_data_ptr            -
+-         -    -      0x00198C60  2:0x00028C60  static,data  _fp_seg                _fp_seg                 -

@@ -5,7 +5,7 @@
 # the executables link the appropriate platform implementation themselves.
 #
 # Two distinct libraries are always produced:
-#   Platform_Headless — no display, no audio, no external deps.  HeMoM and
+#   Platform_Headless — no display, no audio, no external deps.  DeMoM and
 #                       the test executables link this.
 #   Platform          — the windowed backend (SDL2 default, or USE_SDL3 /
 #                       USE_WIN32).  ReMoM links this.
@@ -117,7 +117,7 @@ list(APPEND PLATFORM_SOURCES capture/PFL_Capture.c)
 list(APPEND PLATFORM_SOURCES metrics/PFL_Input_Metrics.c)
 
 # Performance layer: the PERF_ZONE/PERF_CALL zone recorder and percentile reporter.  Also built
-# into Platform_Headless above, because the headless HeMoM runner is where logic timing (Mode A)
+# into Platform_Headless above, because the headless DeMoM runner is where logic timing (Mode A)
 # is measured.  The zone macros are compiled out unless the PERF_INSTRUMENT build option is ON;
 # this file is always compiled so the runtime gate and reporter link either way.
 list(APPEND PLATFORM_SOURCES metrics/PFL_Perf.c)

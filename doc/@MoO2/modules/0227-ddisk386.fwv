@@ -1,0 +1,8 @@
+module_num=227
+module=ddisk386
+source=0227-ddisk386.md
+range[0]=1:0x0012F3CC linear=0x0013F3CC size=45
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL             CHUNK
+m227f001  1    -      0x0013F3CC  1:0x0012F3CC  code  _dos_getdiskfree  _dos_getdiskfree_  regions/07-object-1/001C4654-001C4E53.txt

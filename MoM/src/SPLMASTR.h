@@ -46,7 +46,7 @@ XREF:
     SBK_SpellSlider()
     Combat_Spellbook_Mana_Adder_Draw()
     Combat_Spellbook_Mana_Adder_Screen()
-    Spell_Target_Global_Enchantment_Screen_Draw()
+    Draw_Global_Enchantment_Screen()
     OVL_DrawGlobalAnim()
     WIZ_GlobalSpellAnim()
     Spell_Target_Wizard_Screen_Draw()
@@ -58,7 +58,7 @@ extern int16_t g_active_spell_idx;
 // WZD dseg:CA18
 extern int16_t _xtra_mana_pos;
 
-// WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308w ...
+// WZD dseg:CA1A 00 00 00 00 00 00 00 00 00 00                   word_434BA dw 5 dup(0)                  ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+308vw ...
 
 // WZD dseg:CA24
 extern SAMB_ptr som_twinkle_seg;
@@ -73,7 +73,7 @@ extern SAMB_ptr g_spell_screen_backdrop_seg;
 extern SAMB_ptr GAME_MP_SpellVar_2;
 extern int16_t _mana_adder_caster_idx;  // DNE in Dasm
 
-// WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50w ...
+// WZD dseg:CA2A 00 00                                           IMG_OVL_TrgtWizCncl@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+50vw ...
 
 // WZD dseg:CA2C
 /*
@@ -83,12 +83,12 @@ extern int16_t _temp_sint_4;
 #define _osc_scanned_field _temp_sint_4
 #define _osc_summon_unit_type _temp_sint_4
 
-// WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dw ...
+// WZD dseg:CA2E 00 00                                           IDK_SUMMONBK_pict_seg dw 0              ; DATA XREF: IDK_Spell_DisjunctOrBind_Load+17Dvw ...
 
 // WZD dseg:CA30
 extern SAMB_ptr xtramana_ok_button_seg;
 
-// WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39w ...
+// WZD dseg:CA32 00 00                                           IMG_OVL_TargetWizBG@ dw 0               ; DATA XREF: IDK_SplScr_sBFAA5+39vw ...
 
 // WZD dseg:CA34
 extern SAMB_ptr spl_anim_compose_seg;
@@ -111,8 +111,8 @@ extern SAMB_ptr g_gui_scratch_bitmap;
 */
 extern int16_t m_magic_winner_idx;
 
-// WZD dseg:CA58 00 00                                           spellose_wizard_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+B1w ...
-// WZD dseg:CA5A 00 00                                           spellose_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+9Dw ...
+// WZD dseg:CA58 00 00                                           spellose_wizard_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+B1vw ...
+// WZD dseg:CA5A 00 00                                           spellose_sphere_seg dw 0                         ; DATA XREF: IDK_SomScr_Lose_Load+9Dvw ...
 
 // WZD dseg:CA5A                                                 END: ovr138 - Uninitialized Data
 
@@ -145,19 +145,19 @@ void Combat_Spellbook_Mana_Adder_Draw(void);
 int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx, int16_t caster_idx);
 
 // WZD o136p08
-void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx);
+void Load_Global_Enchantment_Screen(int16_t spell_idx);
 
 // WZD o136p09
-void Spell_Target_Global_Enchantment_Screen_Draw(void);
+void Draw_Global_Enchantment_Screen(void);
 
 // WZD o136p10
-int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx);
+int16_t Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx);
 
 // WZD o136p11
-void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
+void Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
 
 // WZD o136p12
-void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
+void Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx);
 
 
 

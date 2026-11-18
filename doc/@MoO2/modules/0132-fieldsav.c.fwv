@@ -1,0 +1,9 @@
+module_num=132
+module=D:\MOX\FIELDSAV.C
+source=0132-fieldsav.c.md
+range[0]=1:0x000FFE41 linear=0x0010FE41 size=215
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                 SYMBOL                CHUNK
+m132f001  1    -      0x0010FE41  1:0x000FFE41  code  Save_Field_Stats     Save_Field_Stats_     regions/07-object-1/00194E54-00195653.txt
+m132f002  2    -      0x0010FEC1  1:0x000FFEC1  code  Restore_Field_Stats  Restore_Field_Stats_  regions/07-object-1/00194E54-00195653.txt

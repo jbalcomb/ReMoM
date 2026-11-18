@@ -87,7 +87,7 @@ All index ranges, thresholds, and factors match the asm.
 
 ## Build status
 
-`cmake --build --preset MSVC-debug` builds clean (0 errors, 0 warnings in this function; `momlib.lib` and `HeMoM.exe` link). The `Globals[...]` accesses use the production array form (`Globals[PLANAR_SEAL]` / `[DOOM_MASTERY]` / `[ZOMBIE_MASTERY]`) matching the sibling pickers and the `uint8_t Globals[NUM_OVERLAND_ENCHANTMENTS]` type ([MOM_DAT.h:1515](../../MoX/src/MOM_DAT.h#L1515)).
+`cmake --build --preset MSVC-debug` builds clean (0 errors, 0 warnings in this function; `momlib.lib` and `DeMoM.exe` link). The `Globals[...]` accesses use the production array form (`Globals[PLANAR_SEAL]` / `[DOOM_MASTERY]` / `[ZOMBIE_MASTERY]`) matching the sibling pickers and the `uint8_t Globals[NUM_OVERLAND_ENCHANTMENTS]` type ([MOM_DAT.h:1515](../../MoX/src/MOM_DAT.h#L1515)).
 
 ## OG quirks (preserve when reconstructing)
 

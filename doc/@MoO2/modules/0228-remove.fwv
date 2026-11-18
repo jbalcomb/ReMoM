@@ -1,0 +1,8 @@
+module_num=228
+module=remove
+source=0228-remove.md
+range[0]=1:0x0012F3F9 linear=0x0013F3F9 size=5
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m228f001  1    -      0x0013F3F9  1:0x0012F3F9  code  remove  remove_  regions/07-object-1/001C4654-001C4E53.txt

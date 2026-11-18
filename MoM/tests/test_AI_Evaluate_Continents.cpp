@@ -32,9 +32,9 @@ protected:
     SAMB_ptr saved_datah = nullptr;
     SAMB_ptr saved_ems_pfba = nullptr;
     SAMB_ptr saved_contxxx = nullptr;
-    uint8_t * saved_settler_targets[NUM_PLANES] = { nullptr, nullptr };
-    uint8_t * saved_settler_targets_wx[NUM_PLANES] = { nullptr, nullptr };
-    uint8_t * saved_settler_targets_wy[NUM_PLANES] = { nullptr, nullptr };
+    int16_t * saved_settler_targets[NUM_PLANES] = { nullptr, nullptr };
+    int16_t * saved_settler_targets_wx[NUM_PLANES] = { nullptr, nullptr };
+    int16_t * saved_settler_targets_wy[NUM_PLANES] = { nullptr, nullptr };
     int16_t * saved_war_targets[NUM_PLANES] = { nullptr, nullptr };
     int16_t saved_city_count = 0;
     int16_t saved_unit_count = 0;
@@ -82,9 +82,9 @@ protected:
 
         for(wp = 0; wp < NUM_PLANES; wp++)
         {
-            _ai_landmass_settler_targets[wp] = static_cast<uint8_t *>(calloc(NUM_PLAYERS, sizeof(uint8_t)));
-            _ai_landmass_settler_targets_wx_array[wp] = static_cast<uint8_t *>(calloc(NUM_PLAYERS, sizeof(uint8_t)));
-            _ai_landmass_settler_targets_wy_array[wp] = static_cast<uint8_t *>(calloc(NUM_PLAYERS, sizeof(uint8_t)));
+            _ai_landmass_settler_targets[wp] = static_cast<int16_t *>(calloc(NUM_PLAYERS, sizeof(int16_t)));
+            _ai_landmass_settler_targets_wx_array[wp] = static_cast<int16_t *>(calloc(NUM_PLAYERS, sizeof(int16_t)));
+            _ai_landmass_settler_targets_wy_array[wp] = static_cast<int16_t *>(calloc(NUM_PLAYERS, sizeof(int16_t)));
             _ai_landmass_war_targets[wp] = static_cast<int16_t *>(calloc(NUM_PLAYERS, sizeof(int16_t)));
             ASSERT_NE(_ai_landmass_settler_targets[wp], nullptr);
             ASSERT_NE(_ai_landmass_settler_targets_wx_array[wp], nullptr);

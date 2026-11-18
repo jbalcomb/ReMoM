@@ -1,0 +1,22 @@
+module_num=32
+module=D:\MOX\OTHERS\SHIPSTAK.C
+source=0032-shipstak.c.md
+range[0]=1:0x0004D393 linear=0x0005D393 size=2935
+range[1]=2:0x00000FA4 linear=0x00170FA4 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m032f001  1    -      0x0005D393  1:0x0004D393  code         Ship_Has_Special           Ship_Has_Special_           regions/07-object-1/000E2654-000E2E53.txt
+m032f002  2    -      0x0005D3DB  1:0x0004D3DB  code         Ship_Has_Stealth_Device    Ship_Has_Stealth_Device_    regions/07-object-1/000E2654-000E2E53.txt
+m032f003  3    -      0x0005D41E  1:0x0004D41E  code         Find_Ship_Stacks           Find_Ship_Stacks_           regions/07-object-1/000E2654-000E2E53.txt
+m032f004  4    -      0x0005D618  1:0x0004D618  code         Ken_Test                   Ken_Test_                   regions/07-object-1/000E2654-000E2E53.txt
+m032f005  5    -      0x0005D689  1:0x0004D689  code         Split_Stack                Split_Stack_                regions/07-object-1/000E2654-000E2E53.txt
+m032f006  6    -      0x0005D87C  1:0x0004D87C  code         Set_Stack_Location         Set_Stack_Location_         regions/07-object-1/000E2E54-000E3653.txt
+m032f007  7    -      0x0005D8B7  1:0x0004D8B7  code         Set_Stack_XY               Set_Stack_XY_               regions/07-object-1/000E2E54-000E3653.txt
+m032f008  8    -      0x0005D902  1:0x0004D902  code         Update_Ship_Stack          Update_Ship_Stack_          regions/07-object-1/000E2E54-000E3653.txt
+m032f009  9    -      0x0005D953  1:0x0004D953  code         Remove_Non_Detected_Ships  Remove_Non_Detected_Ships_  regions/07-object-1/000E2E54-000E3653.txt
+m032f010  10   -      0x0005DD84  1:0x0004DD84  code         Delete_Ship_Stack          Delete_Ship_Stack_          regions/07-object-1/000E2E54-000E3653.txt
+m032f011  11   -      0x0005DDA9  1:0x0004DDA9  code         Delete_Ship_Node           Delete_Ship_Node_           regions/07-object-1/000E2E54-000E3653.txt
+m032f012  12   -      0x0005DDE0  1:0x0004DDE0  static,code  Sort_Ships_In_Stack        Sort_Ships_In_Stack_        regions/07-object-1/000E2E54-000E3653.txt
+m032f013  13   -      0x0005DE49  1:0x0004DE49  static,code  Build_Ship_Type_Array      Build_Ship_Type_Array_      regions/07-object-1/000E2E54-000E3653.txt
+m032f014  14   -      0x0005DEFD  1:0x0004DEFD  static,code  qsort_ships_by_type        qsort_ships_by_type_        regions/07-object-1/000E2E54-000E3653.txt

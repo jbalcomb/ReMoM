@@ -29,7 +29,7 @@ probably, really should just use code-gen
 
 e.g.,
 MGC
-dseg:6900 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_players s_WIZARD 6 dup(<0>)            ; DATA XREF: Save_SAVE_GAM+1BFo ...
+dseg:6900 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_players s_WIZARD 6 dup(<0>)            ; DATA XREF: Save_SAVE_GAM+1BFvo ...
 Load_...(), Save_...(), MoM_Init_Tables()
 
 dseg:2AD0 4D 65 72 6C 69 6E 00 00 00 00 05 00 00 00 05 00+TBL_Default_Wizards  = WIZARD_Preset ptr $

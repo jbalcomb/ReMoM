@@ -7,13 +7,13 @@ data segment
         dseg:00AA                                                 BEGIN: Data Segment - Initialized Data
         ...
         dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
-        dseg:2080 00 10                                           __ovrbuffer dw 4096                     ; DATA XREF: __OvrPrepare+19r ...  ; declared in overlay.lib\OVRBUFF
+        dseg:2080 00 10                                           __ovrbuffer dw 4096                     ; DATA XREF: __OvrPrepare+19^r ...  ; declared in overlay.lib\OVRBUFF
         dseg:2080                                                 ¿  BEGIN: meaningful boundary ?
         ...
-        dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_nameso
-        dseg:2089 00                                              empty_string__MAIN db 0                 ; DATA XREF: _main+226o ...
+        dseg:2082 41 6C 63 68 65 6D 79                            cnst_Alchemy db 'Alchemy'               ; DATA XREF: dseg:wizard_abilities_names^o
+        dseg:2089 00                                              empty_string__MAIN db 0                 ; DATA XREF: _main+226^o ...
         ...so many strings...
-        dseg:2874 45 78 70 61 6E 73 69 6F 6E 69 73 74 00          aExpansionist db 'Expansionist',0       ; DATA XREF: dseg:1FDCo
+        dseg:2874 45 78 70 61 6E 73 69 6F 6E 69 73 74 00          aExpansionist db 'Expansionist',0       ; DATA XREF: dseg:1FDC^o
 
     main()
     ovr050 

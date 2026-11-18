@@ -62,7 +62,7 @@ The requirement is: from any of the four sites, **unwind cleanly to the `Screen_
 - [ ] Winning by eliminating the last AI returns to the Main Menu; a subsequent New Game plays normally.
 - [ ] Losing (human's last city/fortress conquered) returns to the Main Menu.
 - [ ] Winning and losing via Spell of Mastery both return to the Main Menu.
-- [ ] Playing and ending N consecutive games (win or lose) shows no unbounded stack growth (verify stack pointer / high-water mark is flat across games, e.g. under HeMoM or a debugger watch).
+- [ ] Playing and ending N consecutive games (win or lose) shows no unbounded stack growth (verify stack pointer / high-water mark is flat across games, e.g. under DeMoM or a debugger watch).
 - [ ] No audio continues playing into the menu after an end-game; the mouse cursor is responsive; no file-handle leak (`fcloseall` ran).
 - [ ] The original `Respawn(…)` call is present as a comment at all four sites; new lines are marked `/* CLAUDE HACK */`.
 - [ ] Debug and Release both build clean (`cmake --build --preset MSVC-debug`, then the Release leg of the safe-to-push gate).
@@ -73,7 +73,7 @@ The requirement is: from any of the four sites, **unwind cleanly to the `Screen_
 - **`setjmp` placement / local-variable caveat.** Per C89, non-`volatile` automatic locals in `Screen_Control` modified between `setjmp` and `longjmp` have indeterminate values after the return. `Screen_Control`'s locals are all re-initialized at the top of each loop iteration (and `quit_flag` right after `setjmp`), so this is a non-issue; document it so no future edit relies on a local surviving the jump.
 - **Per-game memory.** Blocks allocated during the abandoned turn (block allocator, input fields) are not individually freed by the jump. This mirrors `execl`, which discarded them wholesale. The block-allocator arena is reset by the next New Game / Continue load, so there is no *persistent* leak across games; the transient high-water within a single game is unchanged. If a specific per-game global is found to carry stale state into the menu, reset it in `End_Game_Teardown()` rather than auditing the descent.
 - **Header hygiene.** `MOM_SCR.h` gains `#include <setjmp.h>` and `extern jmp_buf g_end_game_return;`. `CONQUEST.c` and `SPLMASTR.c` already include the screen header path; confirm `setjmp.h` visibility at those sites.
-- **HeMoM.** The headless harness enters `Screen_Control()` too ([HeMoM.c:1352](../../src/HeMoM.c#L1352)); the same arming works there. For headless combat-only runs that skip `Screen_Control`, the end-game sites are not reached, so no special handling is needed — but verify a headless full-game-to-victory run unwinds correctly.
+- **DeMoM.** The windowless harness enters `Screen_Control()` too ([DeMoM.c:1352](../../src/DeMoM.c#L1352)); the same arming works there. For windowless combat-only runs that skip `Screen_Control`, the end-game sites are not reached, so no special handling is needed — but verify a windowless full-game-to-victory run unwinds correctly.
 
 ## Risks / Open Questions
 

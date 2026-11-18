@@ -1,0 +1,9 @@
+module_num=339
+module=C:\GCL520\C_386\TIMER386.C
+source=0339-timer386.c.md
+range[0]=1:0x0014E270 linear=0x0015E270 size=128
+range[1]=2:0x00012CCC linear=0x00182CCC size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL        CHUNK
+m339f001  1    -      0x0015E270  1:0x0014E270  code  ElapsedTime  ElapsedTime_  regions/07-object-1/001E3654-001E3E53.txt

@@ -41,15 +41,15 @@ It is the **specialized, second** autotiling pass. The general one is `Simtex_Au
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:596-597](../../MoM/src/MAPGEN.c#L596-L597) | Per plane, immediately after the `Generate_River` retry loops ([591-592](../../MoM/src/MAPGEN.c#L591-L592)) and before `Shuffle_Terrains` ([606](../../MoM/src/MAPGEN.c#L606)). Followed by `gd_dump_world_map("22_River_Autotile_W")` ([598](../../MoM/src/MAPGEN.c#L598)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:445-446](../../MoM/src/MAPGEN.c#L445-L446) | Per plane, immediately after the `Generate_River` retry loops ([440-441](../../MoM/src/MAPGEN.c#L440-L441)) and before `Desert_Autotile` ([449](../../MoM/src/MAPGEN.c#L449)). Followed by `STU_GD_Dump_World_Map("123_River_Autotile_W")` ([447](../../MoM/src/MAPGEN.c#L447)). |
 
 ## RNG footprint (the alignment-relevant part)
 
 **Exactly one `Random(4)` per river-placeholder tile** — [MAPGEN.c:5018](../../MoM/src/MAPGEN.c#L5018):
 
 ```
-DBG_river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
-p_world_map[wp][wy][wx] = DBG_river_type;
+river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
+p_world_map[wp][wy][wx] = river_type;
 ```
 
 `River_Autotile`'s total `Random()` consumption equals the number of river tiles `Generate_River` placed (summed over the two per-plane calls). **1:1 with the asm** (`River_Terrain.asm` `loc_49221` → `call Random`):
@@ -65,7 +65,7 @@ mov ax, TILE_River_Types[bx-2]   ; == TILE_River_Types[river_mask*4 + (rand-1)]
 
 `TILE_River_Types` is `[16][4]` ([MAPGEN.c:129](../../MoM/src/MAPGEN.c#L129)) — 16 connectivity masks × 4 interchangeable variants. The asm's `river_mask<<3 + rand*2 - 2` is exactly `[river_mask][rand-1]`. **This is the only RNG in the function**; everything else is deterministic table-driven remapping.
 
-> Production splits the OG one-liner into a `DBG_river_type` temp ([5017](../../MoM/src/MAPGEN.c#L5017) keeps the original inline form commented out) — a debug aid only; RNG- and value-identical.
+> Production splits the OG one-liner into a `river_type` temp ([MAPGEN.c:4455](../../MoM/src/MAPGEN.c#L4455)) — RNG- and value-identical.
 
 ## Per-tile flow
 

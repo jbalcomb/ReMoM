@@ -1,0 +1,8 @@
+module_num=262
+module=tell
+source=0262-tell.md
+range[0]=1:0x00138457 linear=0x00148457 size=17
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m262f001  1    -      0x00148457  1:0x00138457  code  tell  tell_   regions/07-object-1/001CD654-001CDE53.txt

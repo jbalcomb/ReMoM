@@ -1,0 +1,20 @@
+module_num=325
+module=D:\DEVEL\PROJECTS\SMACK\sndnone.c
+source=0325-sndnone.c.md
+range[0]=1:0x0014C730 linear=0x0015C730 size=288
+range[1]=2:0x000125AC linear=0x001825AC size=84
+range[2]=2:0x00051830 linear=0x001C1830 size=16
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                  SYMBOL                CHUNK
+m325f001  1    -      0x0015C730  1:0x0014C730  static,code  DEFSMACKTIMERSETUP    DEFSMACKTIMERSETUP    regions/07-object-1/001E1654-001E1E53.txt
+m325f002  2    -      0x0015C7E0  1:0x0014C7E0  static,code  DEFSMACKTIMERDONE     DEFSMACKTIMERDONE     regions/07-object-1/001E1654-001E1E53.txt
+m325f003  3    -      0x0015C7F0  1:0x0014C7F0  static,code  DEFWINSMACKTIMERREAD  DEFWINSMACKTIMERREAD  regions/07-object-1/001E1654-001E1E53.txt
+m325f004  4    -      0x0015C810  1:0x0014C810  static,code  DEFSMACKTIMERREAD     DEFSMACKTIMERREAD     regions/07-object-1/001E1E54-001E2653.txt
+-         -    -      0x001825AC  2:0x000125AC  data         _SmackTimerReadAddr   _SmackTimerReadAddr   regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001825B0  2:0x000125B0  static,data  _timeradjust          _timeradjust          regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001825B4  2:0x000125B4  static,data  _lasttimerread        _lasttimerread        regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001825B8  2:0x000125B8  data         _SmackTimerSetupAddr  _SmackTimerSetupAddr  regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001C1830  2:0x00051830  data         _SmackTimerDoneAddr   _SmackTimerDoneAddr   -
+-         -    -      0x001C1836  2:0x00051836  static,data  _snaddr               _snaddr               -
+-         -    -      0x001C183C  2:0x0005183C  data         _junksnaddr           _junksnaddr           -

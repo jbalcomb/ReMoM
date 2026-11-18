@@ -28,7 +28,7 @@ from `terrain_stats_table` by terrain type; road squares are then overridden
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:609-610](../../MoM/src/MAPGEN.c#L609-L610) | Called once per plane; followed by `gd_dump_movement_mode_cost_maps("26_…")` ([611](../../MoM/src/MAPGEN.c#L611)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:458-459](../../MoM/src/MAPGEN.c#L458-L459) | Called once per plane; followed by `STU_GD_Dump_Movement_Mode_Cost_Maps("127_…")` ([460](../../MoM/src/MAPGEN.c#L460)). |
 
 ## How it works
 

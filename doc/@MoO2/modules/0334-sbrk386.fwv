@@ -1,0 +1,9 @@
+module_num=334
+module=sbrk386
+source=0334-sbrk386.md
+range[0]=1:0x0014DF53 linear=0x0015DF53 size=413
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m334f001  1    -      0x0015DF53  1:0x0014DF53  code  sbrk   sbrk_   regions/07-object-1/001E2E54-001E3653.txt
+m334f002  2    -      0x0015E01B  1:0x0014E01B  code  __brk  __brk_  regions/07-object-1/001E3654-001E3E53.txt

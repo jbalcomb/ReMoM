@@ -11,47 +11,47 @@ gtest_discover_tests(hello_test
 
 
 # =========================================================================
-#  HeMoM Integration Tests
+#  DeMoM Integration Tests
 #
-#  These tests use the HeMoM headless executable to run game scenarios
+#  These tests use the DeMoM headless executable to run game scenarios
 #  and validate results. Each test is a pair:
-#    1. Run HeMoM with a config + scenario (must exit 0)
+#    1. Run DeMoM with a config + scenario (must exit 0)
 #    2. Validate the output (save file exists, correct size)
 #
 #  The tests use CTest fixtures so the validation step only runs if
-#  HeMoM completed successfully.
+#  DeMoM completed successfully.
 # =========================================================================
 
-set(HEMOM_TEST_ASSETS "${PROJECT_SOURCE_DIR}/assets")
-set(HEMOM_TEST_WORKDIR "$<TARGET_FILE_DIR:HeMoM>")
+set(DEMOM_TEST_ASSETS "${PROJECT_SOURCE_DIR}/assets")
+set(DEMOM_TEST_WORKDIR "$<TARGET_FILE_DIR:DeMoM>")
 
 # --- Smoke Test: World Generation ---
 # Verifies: engine init, config parsing, wizard profile, world gen,
 #           event init, finalize tables, save file creation, clean exit.
 
 add_test(
-    NAME HeMoM_WorldGen_Run
-    COMMAND $<TARGET_FILE:HeMoM>
-        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
-        --scenario "${HEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    NAME DeMoM_WorldGen_Run
+    COMMAND $<TARGET_FILE:DeMoM>
+        --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
+        --scenario "${DEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_WorldGen_Run PROPERTIES
+set_tests_properties(DeMoM_WorldGen_Run PROPERTIES
     TIMEOUT 30
-    FIXTURES_SETUP HeMoM_WorldGen
-    LABELS "hemom;integration;worldgen"
+    FIXTURES_SETUP DeMoM_WorldGen
+    LABELS "demom;integration;worldgen"
 )
 
 add_test(
-    NAME HeMoM_WorldGen_Validate
+    NAME DeMoM_WorldGen_Validate
     COMMAND ${CMAKE_COMMAND}
-        -DSAVE_FILE=${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+        -DSAVE_FILE=${DEMOM_TEST_WORKDIR}/SAVE9.GAM
         -DEXPECTED_SIZE=123300
         -P "${CMAKE_CURRENT_SOURCE_DIR}/validate_save.cmake"
 )
-set_tests_properties(HeMoM_WorldGen_Validate PROPERTIES
-    FIXTURES_REQUIRED HeMoM_WorldGen
-    LABELS "hemom;integration;worldgen"
+set_tests_properties(DeMoM_WorldGen_Validate PROPERTIES
+    FIXTURES_REQUIRED DeMoM_WorldGen
+    LABELS "demom;integration;worldgen"
 )
 
 # --- Golden Comparison: Byte-level regression ---
@@ -63,21 +63,21 @@ set_tests_properties(HeMoM_WorldGen_Validate PROPERTIES
 # fills uninitialized memory with a deterministic 0xCD; that fill is absent
 # under Release and the latent non-determinism surfaces.
 #
-# Replaced by HeMoM_WorldGen_Fields below, which uses check_save_fields with
+# Replaced by DeMoM_WorldGen_Fields below, which uses check_save_fields with
 # an explicit list of meaningful fields (assert_worldgen.txt).  The dump
 # tooling and tools/regenerate_goldens.sh are kept for diagnostic use even
 # though no test compares against the .GAM directly anymore.
 
 add_test(
-    NAME HeMoM_WorldGen_Golden
+    NAME DeMoM_WorldGen_Golden
     COMMAND ${CMAKE_COMMAND}
-        -DACTUAL=${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+        -DACTUAL=${DEMOM_TEST_WORKDIR}/SAVE9.GAM
         -DEXPECTED=${CMAKE_CURRENT_SOURCE_DIR}/golden_worldgen_seed12345.GAM
         -P "${CMAKE_CURRENT_SOURCE_DIR}/compare_save.cmake"
 )
-set_tests_properties(HeMoM_WorldGen_Golden PROPERTIES
-    FIXTURES_REQUIRED HeMoM_WorldGen
-    LABELS "hemom;integration;worldgen;golden"
+set_tests_properties(DeMoM_WorldGen_Golden PROPERTIES
+    FIXTURES_REQUIRED DeMoM_WorldGen
+    LABELS "demom;integration;worldgen;golden"
     DISABLED TRUE
 )
 
@@ -91,14 +91,14 @@ add_executable(compare_save_text compare_save_text.c)
 add_executable(check_save_fields check_save_fields.c)
 
 add_test(
-    NAME HeMoM_WorldGen_Fields
+    NAME DeMoM_WorldGen_Fields
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE9.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE9.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_worldgen.txt
 )
-set_tests_properties(HeMoM_WorldGen_Fields PROPERTIES
-    FIXTURES_REQUIRED HeMoM_WorldGen
-    LABELS "hemom;integration;worldgen"
+set_tests_properties(DeMoM_WorldGen_Fields PROPERTIES
+    FIXTURES_REQUIRED DeMoM_WorldGen
+    LABELS "demom;integration;worldgen"
 )
 
 # --- OOB Autotiling harness (PLAN-Static-Pool-Allocator Phase 3) ---
@@ -110,16 +110,16 @@ set_tests_properties(HeMoM_WorldGen_Fields PROPERTIES
 # gd_ci_inject_world_overrun stamps OG's captured bytes there, so the read no
 # longer faults and the generated world is reproducible.  A pool/inject
 # regression (crash, garbage slack, wrong layout) would perturb these seed-pinned
-# last-row values.  Reuses the HeMoM_WorldGen fixture's SAVE9.txt (no extra run).
+# last-row values.  Reuses the DeMoM_WorldGen fixture's SAVE9.txt (no extra run).
 add_test(
-    NAME HeMoM_OOB_Autotiling
+    NAME DeMoM_OOB_Autotiling
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE9.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE9.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_oob_autotiling.txt
 )
-set_tests_properties(HeMoM_OOB_Autotiling PROPERTIES
-    FIXTURES_REQUIRED HeMoM_WorldGen
-    LABELS "hemom;integration;worldgen;oob"
+set_tests_properties(DeMoM_OOB_Autotiling PROPERTIES
+    FIXTURES_REQUIRED DeMoM_WorldGen
+    LABELS "demom;integration;worldgen;oob"
 )
 
 
@@ -127,7 +127,7 @@ set_tests_properties(HeMoM_OOB_Autotiling PROPERTIES
 # =========================================================================
 #  Continue + Save Test
 #
-#  This test creates its own game-save (does not depend on HeMoM_WorldGen
+#  This test creates its own game-save (does not depend on DeMoM_WorldGen
 #  because that fixture's SAVE9.GAM gets overwritten by the Quit path in
 #  the scenario).  It then runs a scripted scenario that:
 #    - Names the home city "Claudesville" via the popup
@@ -141,43 +141,43 @@ set_tests_properties(HeMoM_OOB_Autotiling PROPERTIES
 # =========================================================================
 
 add_test(
-    NAME HeMoM_Continue_Setup
-    COMMAND $<TARGET_FILE:HeMoM>
-        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
-        --scenario "${HEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    NAME DeMoM_Continue_Setup
+    COMMAND $<TARGET_FILE:DeMoM>
+        --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
+        --scenario "${DEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_Continue_Setup PROPERTIES
+set_tests_properties(DeMoM_Continue_Setup PROPERTIES
     TIMEOUT 30
-    FIXTURES_SETUP HeMoM_Continue
-    LABELS "hemom;integration;continue"
+    FIXTURES_SETUP DeMoM_Continue
+    LABELS "demom;integration;continue"
 )
 
 add_test(
-    NAME HeMoM_Continue_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_Continue_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --continue
-        --scenario "${HEMOM_TEST_ASSETS}/test_continue_save.hms"
+        --scenario "${DEMOM_TEST_ASSETS}/test_continue_save.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_Continue_Run PROPERTIES
+set_tests_properties(DeMoM_Continue_Run PROPERTIES
     TIMEOUT 30
     TIMEOUT 60
-    FIXTURES_REQUIRED HeMoM_Continue
-    FIXTURES_SETUP HeMoM_Continue_Saved
-    LABELS "hemom;integration;continue"
+    FIXTURES_REQUIRED DeMoM_Continue
+    FIXTURES_SETUP DeMoM_Continue_Saved
+    LABELS "demom;integration;continue"
 )
 
 add_test(
-    NAME HeMoM_Continue_Assertions
+    NAME DeMoM_Continue_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_continue_save.txt
 )
-set_tests_properties(HeMoM_Continue_Assertions PROPERTIES
-    FIXTURES_REQUIRED HeMoM_Continue_Saved
-    LABELS "hemom;integration;continue"
+set_tests_properties(DeMoM_Continue_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_Continue_Saved
+    LABELS "demom;integration;continue"
 )
 
 
@@ -186,7 +186,7 @@ set_tests_properties(HeMoM_Continue_Assertions PROPERTIES
 #  Continue + Next Turn Test
 #
 #  Extends the Continue + Save test with one Next Turn advancement.  Creates
-#  its own game-save via --newgame (independent of HeMoM_Continue), runs a
+#  its own game-save via --newgame (independent of DeMoM_Continue), runs a
 #  scenario that names the home city, patrols the starting stack, clicks
 #  Next Turn, waits for the AI to finish, then saves to slot 1 and quits.
 #
@@ -196,41 +196,41 @@ set_tests_properties(HeMoM_Continue_Assertions PROPERTIES
 # =========================================================================
 
 add_test(
-    NAME HeMoM_NextTurn_Setup
-    COMMAND $<TARGET_FILE:HeMoM>
-        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    NAME DeMoM_NextTurn_Setup
+    COMMAND $<TARGET_FILE:DeMoM>
+        --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_NextTurn_Setup PROPERTIES
+set_tests_properties(DeMoM_NextTurn_Setup PROPERTIES
     TIMEOUT 30
-    FIXTURES_SETUP HeMoM_NextTurn
-    LABELS "hemom;integration;nextturn"
+    FIXTURES_SETUP DeMoM_NextTurn
+    LABELS "demom;integration;nextturn"
 )
 
 add_test(
-    NAME HeMoM_NextTurn_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_NextTurn_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --continue
-        --scenario "${HEMOM_TEST_ASSETS}/test_continue_next_turn.hms"
+        --scenario "${DEMOM_TEST_ASSETS}/test_continue_next_turn.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_NextTurn_Run PROPERTIES
+set_tests_properties(DeMoM_NextTurn_Run PROPERTIES
     TIMEOUT 90
-    FIXTURES_REQUIRED HeMoM_NextTurn
-    FIXTURES_SETUP HeMoM_NextTurn_Saved
-    LABELS "hemom;integration;nextturn"
+    FIXTURES_REQUIRED DeMoM_NextTurn
+    FIXTURES_SETUP DeMoM_NextTurn_Saved
+    LABELS "demom;integration;nextturn"
 )
 
 add_test(
-    NAME HeMoM_NextTurn_Assertions
+    NAME DeMoM_NextTurn_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_continue_next_turn.txt
 )
-set_tests_properties(HeMoM_NextTurn_Assertions PROPERTIES
-    FIXTURES_REQUIRED HeMoM_NextTurn_Saved
-    LABELS "hemom;integration;nextturn"
+set_tests_properties(DeMoM_NextTurn_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_NextTurn_Saved
+    LABELS "demom;integration;nextturn"
 )
 
 
@@ -249,14 +249,14 @@ set_tests_properties(HeMoM_NextTurn_Assertions PROPERTIES
 add_executable(check_ai_metrics check_ai_metrics.c)
 
 add_test(
-    NAME HeMoM_AIBehavior_Setup
+    NAME DeMoM_AIBehavior_Setup
     # Debug-only: this fixture only feeds the Debug-config Run/Evaluate below, so
     # gate it too -- otherwise it runs a dangling ~1.5s newgame in every other
     # config for a fixture nothing there requires.
     CONFIGURATIONS Debug
-    COMMAND $<TARGET_FILE:HeMoM>
-        --newgame "${HEMOM_TEST_ASSETS}/test_worldgen.ini"
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    COMMAND $<TARGET_FILE:DeMoM>
+        --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
 # TIMEOUT was 10s when --newgame world-gen took ~0.26s.  A fixed ~1.5s cost was
 # since added to every new game (measured ~1.4-1.75s solo, flat across land sizes
@@ -264,16 +264,16 @@ add_test(
 # parallel contention.  10s became flaky under load.  20s = a few x the realistic
 # sequential worst-case (the suite runs serially; it shares SAVE*.GAM), enough to
 # absorb slow-CI variance while still catching a real hang promptly.
-set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
+set_tests_properties(DeMoM_AIBehavior_Setup PROPERTIES
     TIMEOUT 60
-    FIXTURES_SETUP HeMoM_AIBehavior
-    LABELS "hemom;integration;ai"
+    FIXTURES_SETUP DeMoM_AIBehavior
+    LABELS "demom;integration;ai"
 )
 
-# HeMoM_AIBehavior_Run + HeMoM_AIBehavior_Evaluate are Debug-config-only.
+# DeMoM_AIBehavior_Run + DeMoM_AIBehavior_Evaluate are Debug-config-only.
 #
 # Two reasons:
-#   1. --ai-metrics is gated by #ifdef STU_DEBUG (HeMoM logs "ai-metrics
+#   1. --ai-metrics is gated by #ifdef STU_DEBUG (DeMoM logs "ai-metrics
 #      ignored (not a debug build)" under Release), so the Evaluate step
 #      has nothing to assert against in Release builds.
 #   2. The scenario_tail_save_and_quit.hms tail's click (62,177) on the
@@ -297,33 +297,33 @@ set_tests_properties(HeMoM_AIBehavior_Setup PROPERTIES
 # set_tests_properties(... CONFIGURATIONS Debug) is silently ignored, and the
 # three tests ran (and Evaluate failed) under MSVC-release.
 add_test(
-    NAME HeMoM_AIBehavior_Run
+    NAME DeMoM_AIBehavior_Run
     CONFIGURATIONS Debug
-    COMMAND $<TARGET_FILE:HeMoM>
+    COMMAND $<TARGET_FILE:DeMoM>
         --continue
-        --scenario "${HEMOM_TEST_ASSETS}/test_ai_5turns.hms"
+        --scenario "${DEMOM_TEST_ASSETS}/test_ai_5turns.hms"
         --ai-metrics
         --dump-save SAVE1.GAM
         --seed1 12345
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_AIBehavior_Run PROPERTIES
+set_tests_properties(DeMoM_AIBehavior_Run PROPERTIES
     TIMEOUT 120
-    FIXTURES_REQUIRED HeMoM_AIBehavior
-    FIXTURES_SETUP HeMoM_AIBehavior_Done
-    LABELS "hemom;integration;ai"
+    FIXTURES_REQUIRED DeMoM_AIBehavior
+    FIXTURES_SETUP DeMoM_AIBehavior_Done
+    LABELS "demom;integration;ai"
 )
 
 add_test(
-    NAME HeMoM_AIBehavior_Evaluate
+    NAME DeMoM_AIBehavior_Evaluate
     CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:check_ai_metrics>
-        "${HEMOM_TEST_WORKDIR}"
+        "${DEMOM_TEST_WORKDIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
 )
-set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
-    FIXTURES_REQUIRED HeMoM_AIBehavior_Done
-    LABELS "hemom;integration;ai"
+set_tests_properties(DeMoM_AIBehavior_Evaluate PROPERTIES
+    FIXTURES_REQUIRED DeMoM_AIBehavior_Done
+    LABELS "demom;integration;ai"
 )
 
 
@@ -335,33 +335,33 @@ set_tests_properties(HeMoM_AIBehavior_Evaluate PROPERTIES
 #  copy_assets), patches diplomacy to war, pins the RNG, and resolves a
 #  stack-vs-stack strategic combat by invoking the combat dispatcher
 #  directly: attacker player 2 (units 12,15,17) vs defender player 3
-#  (stack of unit 500).  HeMoM writes HEMOM_COMBAT.txt; the assertion step
+#  (stack of unit 500).  DeMoM writes DEMOM_COMBAT.txt; the assertion step
 #  pins the outcome field-by-field against assert_combat_strategic.txt.
 #  Characterization test: values reflect current behavior for seed 12345.
 # =========================================================================
 
 add_test(
-    NAME HeMoM_Combat_Strategic_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_Combat_Strategic_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --combat 500 12,15,17
         --seed1 12345
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_Combat_Strategic_Run PROPERTIES
+set_tests_properties(DeMoM_Combat_Strategic_Run PROPERTIES
     TIMEOUT 60
-    FIXTURES_SETUP HeMoM_Combat_Strategic
-    LABELS "hemom;integration;combat"
+    FIXTURES_SETUP DeMoM_Combat_Strategic
+    LABELS "demom;integration;combat"
 )
 
 add_test(
-    NAME HeMoM_Combat_Strategic_Assertions
+    NAME DeMoM_Combat_Strategic_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/HEMOM_COMBAT.txt
+        ${DEMOM_TEST_WORKDIR}/DEMOM_COMBAT.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_strategic.txt
 )
-set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
-    FIXTURES_REQUIRED HeMoM_Combat_Strategic
-    LABELS "hemom;integration;combat"
+set_tests_properties(DeMoM_Combat_Strategic_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_Combat_Strategic
+    LABELS "demom;integration;combat"
 )
 
 
@@ -374,31 +374,71 @@ set_tests_properties(HeMoM_Combat_Strategic_Assertions PROPERTIES
 #  end of _UNITS[], casts Magic Spirit (201) for the human player through the
 #  real Cast_Spell_Overland(), then draws the main screen.  The bug read the
 #  record past the new unit and set _map_plane = -1; the draw then crashed.
-#  HeMoM writes HEMOM_SUMMON.txt; see assert_cast_summon.txt.
+#  DeMoM writes DEMOM_SUMMON.txt; see assert_cast_summon.txt.
 # =========================================================================
 
 add_test(
-    NAME HeMoM_Cast_Summon_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_Cast_Summon_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --cast-summon 201
         --seed1 12345
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_Cast_Summon_Run PROPERTIES
+set_tests_properties(DeMoM_Cast_Summon_Run PROPERTIES
     TIMEOUT 60
-    FIXTURES_SETUP HeMoM_Cast_Summon
-    LABELS "hemom;integration;spells"
+    FIXTURES_SETUP DeMoM_Cast_Summon
+    LABELS "demom;integration;spells"
 )
 
 add_test(
-    NAME HeMoM_Cast_Summon_Assertions
+    NAME DeMoM_Cast_Summon_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/HEMOM_SUMMON.txt
+        ${DEMOM_TEST_WORKDIR}/DEMOM_SUMMON.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_cast_summon.txt
 )
-set_tests_properties(HeMoM_Cast_Summon_Assertions PROPERTIES
-    FIXTURES_REQUIRED HeMoM_Cast_Summon
-    LABELS "hemom;integration;spells"
+set_tests_properties(DeMoM_Cast_Summon_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_Cast_Summon
+    LABELS "demom;integration;spells"
+)
+
+
+
+# =========================================================================
+#  AI turn with dead units in _UNITS[]  (BUGS_AND_QUIRKS #137)
+#
+#  Loads SAVECMBT.GAM, kills units 21 (hero), 75 (human hero), 300 and 776
+#  (normal; 776 on Myrror) with the real Kill_Unit() without compacting, so
+#  the dead records sit in the middle of _UNITS[].  Probes the real
+#  AI_Player_Calculate_Target_Values() on the Kill_Unit() state (owner -1,
+#  wp -1), runs the real AI_Next_Turn() (which turns them into owner -1,
+#  wp 0), and probes again.  Dead units -- heroes included -- go through
+#  Effective_Unit_Strength() and its bounded _players[-1] / _HEROES2[-1]
+#  reads.  DeMoM writes DEMOM_AI_DEAD_UNITS.txt; see assert_ai_dead_units.txt.
+# =========================================================================
+
+add_test(
+    NAME DeMoM_AI_Dead_Units_Run
+    COMMAND $<TARGET_FILE:DeMoM>
+        --ai-dead-units 21,75,300,776
+        --seed1 12345
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+)
+# TIMEOUT: 60 like the other fixture runs (measured 0.67-0.89s).
+set_tests_properties(DeMoM_AI_Dead_Units_Run PROPERTIES
+    TIMEOUT 60
+    FIXTURES_SETUP DeMoM_AI_Dead_Units
+    LABELS "demom;integration;ai"
+)
+
+add_test(
+    NAME DeMoM_AI_Dead_Units_Assertions
+    COMMAND $<TARGET_FILE:check_save_fields>
+        ${DEMOM_TEST_WORKDIR}/DEMOM_AI_DEAD_UNITS.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_dead_units.txt
+)
+set_tests_properties(DeMoM_AI_Dead_Units_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_AI_Dead_Units
+    LABELS "demom;integration;ai"
 )
 
 
@@ -421,68 +461,68 @@ set_tests_properties(HeMoM_Cast_Summon_Assertions PROPERTIES
 # =========================================================================
 
 add_test(
-    NAME HeMoM_L61_Fresh_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_L61_Fresh_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --menu --seed1 12345
-        --scenario "${HEMOM_TEST_ASSETS}/test_l61_fresh.hms"
+        --scenario "${DEMOM_TEST_ASSETS}/test_l61_fresh.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_L61_Fresh_Run PROPERTIES
+set_tests_properties(DeMoM_L61_Fresh_Run PROPERTIES
     TIMEOUT 60
-    FIXTURES_SETUP HeMoM_L61_Fresh_Ran
-    LABELS "hemom;integration;l61"
+    FIXTURES_SETUP DeMoM_L61_Fresh_Ran
+    LABELS "demom;integration;l61"
 )
 
 # The scripted New Game really happened (a dropped click otherwise saves an empty game and exits 0).
 add_test(
-    NAME HeMoM_L61_Fresh_Assertions
+    NAME DeMoM_L61_Fresh_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_l61_fresh.txt
 )
-set_tests_properties(HeMoM_L61_Fresh_Assertions PROPERTIES
-    FIXTURES_REQUIRED HeMoM_L61_Fresh_Ran
-    FIXTURES_SETUP HeMoM_L61_Fresh_Checked
-    LABELS "hemom;integration;l61"
+set_tests_properties(DeMoM_L61_Fresh_Assertions PROPERTIES
+    FIXTURES_REQUIRED DeMoM_L61_Fresh_Ran
+    FIXTURES_SETUP DeMoM_L61_Fresh_Checked
+    LABELS "demom;integration;l61"
 )
 
 add_test(
-    NAME HeMoM_L61_Fresh_Keep
+    NAME DeMoM_L61_Fresh_Keep
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
-        ${HEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
 )
-set_tests_properties(HeMoM_L61_Fresh_Keep PROPERTIES
-    FIXTURES_REQUIRED "HeMoM_L61_Fresh_Ran;HeMoM_L61_Fresh_Checked"
-    FIXTURES_SETUP HeMoM_L61_Fresh
-    LABELS "hemom;integration;l61"
+set_tests_properties(DeMoM_L61_Fresh_Keep PROPERTIES
+    FIXTURES_REQUIRED "DeMoM_L61_Fresh_Ran;DeMoM_L61_Fresh_Checked"
+    FIXTURES_SETUP DeMoM_L61_Fresh
+    LABELS "demom;integration;l61"
 )
 
 add_test(
-    NAME HeMoM_L61_Second_Game_Run
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_L61_Second_Game_Run
+    COMMAND $<TARGET_FILE:DeMoM>
         --menu --seed1 12345
-        --scenario "${HEMOM_TEST_ASSETS}/test_l61_second_game.hms"
+        --scenario "${DEMOM_TEST_ASSETS}/test_l61_second_game.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
 )
-set_tests_properties(HeMoM_L61_Second_Game_Run PROPERTIES
+set_tests_properties(DeMoM_L61_Second_Game_Run PROPERTIES
     TIMEOUT 90
-    FIXTURES_REQUIRED HeMoM_L61_Fresh
-    FIXTURES_SETUP HeMoM_L61_Second_Game
-    LABELS "hemom;integration;l61"
+    FIXTURES_REQUIRED DeMoM_L61_Fresh
+    FIXTURES_SETUP DeMoM_L61_Second_Game
+    LABELS "demom;integration;l61"
 )
 
 add_test(
-    NAME HeMoM_L61_Compare
+    NAME DeMoM_L61_Compare
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${HEMOM_TEST_WORKDIR}/SAVE1.txt
-        ${HEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
 )
-set_tests_properties(HeMoM_L61_Compare PROPERTIES
-    FIXTURES_REQUIRED HeMoM_L61_Second_Game
-    LABELS "hemom;integration;l61"
+set_tests_properties(DeMoM_L61_Compare PROPERTIES
+    FIXTURES_REQUIRED DeMoM_L61_Second_Game
+    LABELS "demom;integration;l61"
 )
 
 
@@ -512,8 +552,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S1_Replay_Stage
         COMMAND ${CMAKE_COMMAND} -E copy
-            ${HEMOM_TEST_ASSETS}/SAVECMBT.GAM
-            ${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+            ${DEMOM_TEST_ASSETS}/SAVECMBT.GAM
+            ${DEMOM_TEST_WORKDIR}/SAVE9.GAM
     )
     set_tests_properties(Combat_S1_Replay_Stage PROPERTIES
         FIXTURES_SETUP Combat_S1_Replay_Staged
@@ -524,8 +564,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
         NAME Combat_S1_Replay
         COMMAND $<TARGET_FILE:ReMoM>
             --continue --seed1 12345
-            --scenario ${HEMOM_TEST_ASSETS}/combat_s1.hms
-        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+            --scenario ${DEMOM_TEST_ASSETS}/combat_s1.hms
+        WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
     )
     set_tests_properties(Combat_S1_Replay PROPERTIES
         TIMEOUT 180
@@ -537,8 +577,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S1_Replay_Dump
         COMMAND $<TARGET_FILE:savedump>
-            ${HEMOM_TEST_WORKDIR}/SAVE1.GAM
-            ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+            ${DEMOM_TEST_WORKDIR}/SAVE1.GAM
+            ${DEMOM_TEST_WORKDIR}/SAVE1.txt
     )
     set_tests_properties(Combat_S1_Replay_Dump PROPERTIES
         FIXTURES_REQUIRED Combat_S1_Replayed
@@ -549,7 +589,7 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S1_Replay_Check
         COMMAND $<TARGET_FILE:check_save_fields>
-            ${HEMOM_TEST_WORKDIR}/SAVE1.txt
+            ${DEMOM_TEST_WORKDIR}/SAVE1.txt
             ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s1.txt
     )
     set_tests_properties(Combat_S1_Replay_Check PROPERTIES
@@ -583,8 +623,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S2_Replay_Stage
         COMMAND ${CMAKE_COMMAND} -E copy
-            ${HEMOM_TEST_ASSETS}/SAVECMBT.GAM
-            ${HEMOM_TEST_WORKDIR}/SAVE9.GAM
+            ${DEMOM_TEST_ASSETS}/SAVECMBT.GAM
+            ${DEMOM_TEST_WORKDIR}/SAVE9.GAM
     )
     set_tests_properties(Combat_S2_Replay_Stage PROPERTIES
         FIXTURES_SETUP Combat_S2_Replay_Staged
@@ -596,8 +636,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
         NAME Combat_S2_Replay
         COMMAND $<TARGET_FILE:ReMoM>
             --continue --seed1 12345
-            --scenario ${HEMOM_TEST_ASSETS}/combat_s2.hms
-        WORKING_DIRECTORY "${HEMOM_TEST_WORKDIR}"
+            --scenario ${DEMOM_TEST_ASSETS}/combat_s2.hms
+        WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
     )
     set_tests_properties(Combat_S2_Replay PROPERTIES
         TIMEOUT 360
@@ -610,8 +650,8 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S2_Replay_Dump
         COMMAND $<TARGET_FILE:savedump>
-            ${HEMOM_TEST_WORKDIR}/SAVE1.GAM
-            ${HEMOM_TEST_WORKDIR}/SAVE1_s2.txt
+            ${DEMOM_TEST_WORKDIR}/SAVE1.GAM
+            ${DEMOM_TEST_WORKDIR}/SAVE1_s2.txt
     )
     set_tests_properties(Combat_S2_Replay_Dump PROPERTIES
         FIXTURES_REQUIRED Combat_S2_Replayed
@@ -623,7 +663,7 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
     add_test(
         NAME Combat_S2_Replay_Check
         COMMAND $<TARGET_FILE:check_save_fields>
-            ${HEMOM_TEST_WORKDIR}/SAVE1_s2.txt
+            ${DEMOM_TEST_WORKDIR}/SAVE1_s2.txt
             ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_s2.txt
     )
     set_tests_properties(Combat_S2_Replay_Check PROPERTIES
@@ -633,95 +673,21 @@ if(ENABLE_WINDOWED_COMBAT_TESTS)
 
 endif()
 
-# =========================================================================
-#  Main Screen: wild-game overlay draw
-#
-#  Regression guard for commit 1a558b31 (2024-08-29), where the wild-game
-#  FLIC_Draw in Draw_Map_Biota was commented out and UU_hunters_lodge_seg was
-#  blitted in its place -- every wild-game square rendered a hunters-lodge
-#  sprite instead.  Drive-by damage in an unrelated commit; shipped for ~2 years.
-#
-#  Runs headless: the overland map draw is plain sprite blitting into the
-#  in-memory video page (FLIC_Draw is game code in MoX/src/FLIC_Draw.c), so
-#  unlike the tactical combat screen it needs no display.
-#
-#  Fixture is SAVE6.GAM -- the only committed save with an EXPLORED wild-game
-#  square.  Draw_Map_Biota is gated on GET_SQUARE_EXPLORED, so turn-1 saves
-#  (SAVE1/2/3/9, and the stage-2 matchup canonical) draw nothing at all: their
-#  wild-game squares exist but are unexplored.  Of SAVE6's two explored
-#  wild-game squares only (0,25,7) falls inside the start-up viewport.
-#
-#  Runs in its own working dir with a TRACE-severity ReMoM.ini, because
-#  STU_Log_Startup("ReMoM.ini") resolves relative to the CWD and the staged
-#  asset ini is DEBUG (TRACE is filtered during normal play).
-# =========================================================================
-
-set(WILDGAME_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/wildgame")
-file(MAKE_DIRECTORY "${WILDGAME_TEST_DIR}")
-file(WRITE "${WILDGAME_TEST_DIR}/ReMoM.ini"
-     "# Generated by tests/CMakeLists.txt -- TRACE so BIOTA_DRAW lines are emitted.\n"
-     "[Paths]\n"
-     "log_dir = .\n"
-     "save_dir = .\n"
-     "\n"
-     "[Logging]\n"
-     "severity_threshold = TRACE\n")
-
-add_test(
-    NAME MainScr_WildGame_Stage
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${HEMOM_TEST_ASSETS}/SAVE6.GAM
-        ${WILDGAME_TEST_DIR}/SAVE9.GAM
-)
-set_tests_properties(MainScr_WildGame_Stage PROPERTIES
-    FIXTURES_SETUP MainScr_WildGame_Staged
-    LABELS "hemom;integration;mainscr;draw"
-)
-
-add_test(
-    NAME MainScr_WildGame_Run
-    COMMAND $<TARGET_FILE:HeMoM>
-        --continue
-        --scenario "${HEMOM_TEST_ASSETS}/wildgame_draw.hms"
-    WORKING_DIRECTORY "${WILDGAME_TEST_DIR}"
-)
-set_tests_properties(MainScr_WildGame_Run PROPERTIES
-    TIMEOUT 60
-    ENVIRONMENT "REMOM_DATA_DIR=$<TARGET_FILE_DIR:HeMoM>"
-    FIXTURES_REQUIRED MainScr_WildGame_Staged
-    FIXTURES_SETUP MainScr_WildGame_Ran
-    LABELS "hemom;integration;mainscr;draw"
-)
-
-add_test(
-    NAME MainScr_WildGame_Check
-    COMMAND ${CMAKE_COMMAND}
-        -DLOG=${WILDGAME_TEST_DIR}/remom_log_new.txt
-        -DEXPECT_WILDGAME=0/25/7
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/check_biota_draws.cmake"
-)
-set_tests_properties(MainScr_WildGame_Check PROPERTIES
-    FIXTURES_REQUIRED MainScr_WildGame_Ran
-    LABELS "hemom;integration;mainscr;draw"
-)
-
-
-
 # --- Fail-soft: missing game data ---
-# HeMoM with nothing on its search path must print the actionable message and
+# DeMoM with nothing on its search path must print the actionable message and
 # exit cleanly (headless Platform_Show_Error -> stderr), not crash.  Runs in an
 # empty working dir with REMOM_DATA_DIR cleared so nothing resolves.
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/no_data")
 add_test(
-    NAME HeMoM_Preflight_Missing_Data
-    COMMAND $<TARGET_FILE:HeMoM>
+    NAME DeMoM_Preflight_Missing_Data
+    COMMAND $<TARGET_FILE:DeMoM>
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/no_data"
 )
-set_tests_properties(HeMoM_Preflight_Missing_Data PROPERTIES
+set_tests_properties(DeMoM_Preflight_Missing_Data PROPERTIES
     PASS_REGULAR_EXPRESSION "Missing Game Data"
     ENVIRONMENT "REMOM_DATA_DIR="
     TIMEOUT 20
-    LABELS "hemom;integration;preflight"
+    LABELS "demom;integration;preflight"
 )
 
 

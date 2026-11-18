@@ -1,0 +1,340 @@
+module_num=177
+module=F:\WLIBS\palette\remap.c
+source=0177-remap.c.md
+range[0]=1:0x00123237 linear=0x00133237 size=3135
+range[1]=2:0x00002ECC linear=0x00172ECC size=124
+range[2]=2:0x0004479C linear=0x001B479C size=256
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m177f001  1    -      0x00133237  1:0x00123237  code  Update_Glass_Remap_Colors       Update_Glass_Remap_Colors_       regions/07-object-1/001B8654-001B8E53.txt
+m177f002  2    -      0x001334BB  1:0x001234BB  code  Update_Glass_Remap_Color_Range  Update_Glass_Remap_Color_Range_  regions/07-object-1/001B8654-001B8E53.txt
+m177f003  3    -      0x0013372A  1:0x0012372A  code  Sort_Palette_List               Sort_Palette_List_               regions/07-object-1/001B8654-001B8E53.txt
+m177f004  4    -      0x001338C9  1:0x001238C9  code  Find_Closest_Color              Find_Closest_Color_              regions/07-object-1/001B8E54-001B9653.txt
+m177f005  5    -      0x00133BAE  1:0x00123BAE  code  Get_Palette_Animation_Color     Get_Palette_Animation_Color_     regions/07-object-1/001B8E54-001B9653.txt
+m177f006  6    -      0x00133C9C  1:0x00123C9C  code  Calculate_Picture_Remap_Colors  Calculate_Picture_Remap_Colors_  regions/07-object-1/001B8E54-001B9653.txt
+m177f007  7    -      0x00133D16  1:0x00123D16  code  Create_Picture_Remap_Palette    Create_Picture_Remap_Palette_    regions/07-object-1/001B8E54-001B9653.txt
+m177f008  8    -      0x00133DE1  1:0x00123DE1  code  Get_Remap_Palette_Color         Get_Remap_Palette_Color_         regions/07-object-1/001B8E54-001B9653.txt
+m177f009  9    -      0x00133E16  1:0x00123E16  code  Get_Palette_RGB                 Get_Palette_RGB_                 regions/07-object-1/001B8E54-001B9653.txt
+-         -    -      0x001B479C  2:0x0004479C  data  _picture_remap_color_list       _picture_remap_color_list        -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                      TYPE
+0x001B479C  2:0x0004479C  picture_remap_color_list  unsigned char[256]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                            TYPE                                        CHUNK
+m177f001  0x00133237  1:0x00123237  644   24        9         0x18     -    -                Update_Glass_Remap_Colors       void (void)                                 regions/07-object-1/001B8654-001B8E53.txt
+m177f002  0x001334BB  1:0x001234BB  623   23        8         0x14     -    EAX,EDX          Update_Glass_Remap_Color_Range  void (short, short)                         regions/07-object-1/001B8654-001B8E53.txt
+m177f003  0x0013372A  1:0x0012372A  415   24        9         0x18     -    -                Sort_Palette_List               void (void)                                 regions/07-object-1/001B8654-001B8E53.txt
+m177f004  0x001338C9  1:0x001238C9  741   22        7         0x10     -    EAX,EDX,EBX      Find_Closest_Color              short (char, char, char); returns in AX     regions/07-object-1/001B8E54-001B9653.txt
+m177f005  0x00133BAE  1:0x00123BAE  238   21        8         0xC      -    EAX,EDX,EBX,ECX  Get_Palette_Animation_Color     void (char *, int, char *, char *, char *)  regions/07-object-1/001B8E54-001B9653.txt
+m177f006  0x00133C9C  1:0x00123C9C  122   24        9         0x18     -    EAX              Calculate_Picture_Remap_Colors  void (char *)                               regions/07-object-1/001B8E54-001B9653.txt
+m177f007  0x00133D16  1:0x00123D16  203   23        8         0x14     -    EAX,EDX          Create_Picture_Remap_Palette    void (char *, char *)                       regions/07-object-1/001B8E54-001B9653.txt
+m177f008  0x00133DE1  1:0x00123DE1  53    24        9         0x18     -    EAX              Get_Remap_Palette_Color         char (char); returns in AL                  regions/07-object-1/001B8E54-001B9653.txt
+m177f009  0x00133E16  1:0x00123E16  96    21        6         0xC      -    EAX,EDX,EBX,ECX  Get_Palette_RGB                 void (char, char *, char *, char *)         regions/07-object-1/001B8E54-001B9653.txt
+
+[Locals]
+KEY       ROUTINE                         BLOCK  LOCAL                   LOCATION     TYPE
+m177f001  Update_Glass_Remap_Colors       -      i                       [EBP-0x20]   int
+m177f001  Update_Glass_Remap_Colors       -      j                       [EBP-0x1C]   int
+m177f001  Update_Glass_Remap_Colors       -      tint_red                [EBP-0x18]   int
+m177f001  Update_Glass_Remap_Colors       -      tint_green              [EBP-0x14]   int
+m177f001  Update_Glass_Remap_Colors       -      tint_blue               [EBP-0x10]   int
+m177f001  Update_Glass_Remap_Colors       -      red                     [EBP-0xC]    int
+m177f001  Update_Glass_Remap_Colors       -      green                   [EBP-0x8]    int
+m177f001  Update_Glass_Remap_Colors       -      blue                    [EBP-0x4]    int
+m177f002  Update_Glass_Remap_Color_Range  -      start_color             [EBP-0x8]    short
+m177f002  Update_Glass_Remap_Color_Range  -      end_color               [EBP-0x4]    short
+m177f002  Update_Glass_Remap_Color_Range  -      i                       [EBP-0x20]   int
+m177f002  Update_Glass_Remap_Color_Range  -      j                       [EBP-0x1C]   int
+m177f002  Update_Glass_Remap_Color_Range  -      tint_red                [EBP-0x18]   int
+m177f002  Update_Glass_Remap_Color_Range  -      tint_green              [EBP-0x28]   int
+m177f002  Update_Glass_Remap_Color_Range  -      tint_blue               [EBP-0x24]   int
+m177f002  Update_Glass_Remap_Color_Range  -      red                     [EBP-0xC]    int
+m177f002  Update_Glass_Remap_Color_Range  -      green                   [EBP-0x14]   int
+m177f002  Update_Glass_Remap_Color_Range  -      blue                    [EBP-0x10]   int
+m177f003  Sort_Palette_List               -      i                       [EBP-0x14]   int
+m177f003  Sort_Palette_List               -      j                       [EBP-0x10]   int
+m177f003  Sort_Palette_List               -      count                   [EBP-0xC]    int
+m177f003  Sort_Palette_List               -      index                   [EBP-0x8]    int
+m177f003  Sort_Palette_List               -      found                   [EBP-0x4]    char
+m177f004  Find_Closest_Color              -      red                     [EBP-0x4]    char
+m177f004  Find_Closest_Color              -      green                   [EBP-0xC]    char
+m177f004  Find_Closest_Color              -      blue                    [EBP-0x10]   char
+m177f004  Find_Closest_Color              -      i                       [EBP-0x58]   int
+m177f004  Find_Closest_Color              -      pos                     [EBP-0x54]   int
+m177f004  Find_Closest_Color              -      closest_value           [EBP-0x50]   int
+m177f004  Find_Closest_Color              -      dd_red                  [EBP-0x4C]   int
+m177f004  Find_Closest_Color              -      dd_green                [EBP-0x34]   int
+m177f004  Find_Closest_Color              -      dd_blue                 [EBP-0x44]   int
+m177f004  Find_Closest_Color              -      value                   [EBP-0x40]   int
+m177f004  Find_Closest_Color              -      count                   [EBP-0x3C]   int
+m177f004  Find_Closest_Color              -      min_red                 [EBP-0x38]   int
+m177f004  Find_Closest_Color              -      max_red                 [EBP-0x48]   int
+m177f004  Find_Closest_Color              -      min_green               [EBP-0x60]   int
+m177f004  Find_Closest_Color              -      max_green               [EBP-0x5C]   int
+m177f004  Find_Closest_Color              -      min_blue                [EBP-0x28]   int
+m177f004  Find_Closest_Color              -      max_blue                [EBP-0x30]   int
+m177f004  Find_Closest_Color              -      closest_distance        [EBP-0x2C]   int
+m177f004  Find_Closest_Color              -      distance                [EBP-0x20]   int
+m177f004  Find_Closest_Color              -      hits                    [EBP-0x260]  unsigned short[255]
+m177f004  Find_Closest_Color              -      hit_count               [EBP-0x18]   short
+m177f004  Find_Closest_Color              -      total_hits              [EBP-0x1C]   short
+m177f004  Find_Closest_Color              -      closest_color           [EBP-0x24]   int
+m177f004  Find_Closest_Color              -      found_color             [EBP-0x8]    char
+m177f005  Get_Palette_Animation_Color     -      picture                 [EBP-0x1C]   char *
+m177f005  Get_Palette_Animation_Color     -      color_index             [EBP-0x18]   int
+m177f005  Get_Palette_Animation_Color     -      red                     [EBP-0x14]   char *
+m177f005  Get_Palette_Animation_Color     -      green                   [EBP-0x10]   char *
+m177f005  Get_Palette_Animation_Color     -      blue                    [EBP+0x10]   char *
+m177f005  Get_Palette_Animation_Color     -      start_color             [EBP-0xC]    int
+m177f005  Get_Palette_Animation_Color     -      index                   [EBP-0x8]    int
+m177f005  Get_Palette_Animation_Color     -      new_palette             [EBP-0x4]    char *
+m177f006  Calculate_Picture_Remap_Colors  -      picture                 [EBP-0x4]    char *
+m177f007  Create_Picture_Remap_Palette    -      new_palette             [EBP-0x20]   char *
+m177f007  Create_Picture_Remap_Palette    -      remaped_palette_colors  [EBP-0x1C]   char *
+m177f007  Create_Picture_Remap_Palette    -      green                   [EBP-0x8]    char
+m177f007  Create_Picture_Remap_Palette    -      blue                    [EBP-0x4]    char
+m177f007  Create_Picture_Remap_Palette    -      red                     [EBP-0xC]    char
+m177f007  Create_Picture_Remap_Palette    -      i                       [EBP-0x10]   int
+m177f007  Create_Picture_Remap_Palette    -      color                   [EBP-0x18]   int
+m177f007  Create_Picture_Remap_Palette    -      index                   [EBP-0x14]   int
+m177f008  Get_Remap_Palette_Color         -      color_num               [EBP-0x8]    char
+m177f009  Get_Palette_RGB                 -      palette_num             [EBP-0x4]    char
+m177f009  Get_Palette_RGB                 -      red                     [EBP-0xC]    char *
+m177f009  Get_Palette_RGB                 -      green                   [EBP-0x10]   char *
+m177f009  Get_Palette_RGB                 -      blue                    [EBP-0x8]    char *
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   array      -               0..255; of unsigned char (#5)
+31   scalar     void            void 1 bytes
+32   procedure  -               near386; returns void (void)
+33   procedure  -               near386; returns void (short, short)
+34   procedure  -               near386; returns void ()
+35   procedure  -               near386; returns short (char, char, char)
+36   array      -               0..254; of unsigned short (#7)
+37   procedure  -               near386; returns void (char *, int, char *, char *, char *)
+38   procedure  -               near386; returns void (char *)
+39   procedure  -               near386; returns void (char *, char *)
+40   procedure  -               near386; returns char (char)
+41   procedure  -               near386; returns void (char, char *, char *, char *)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m177f001  24    0x00133237  1:0x00123237  0x001B888B
+m177f001  28    0x0013324F  1:0x0012324F  0x001B88A3
+m177f001  29    0x00133256  1:0x00123256  0x001B88AA
+m177f001  30    0x0013325D  1:0x0012325D  0x001B88B1
+m177f001  31    0x00133264  1:0x00123264  0x001B88B8
+m177f001  33    0x0013326B  1:0x0012326B  0x001B88BF
+m177f001  35    0x00133270  1:0x00123270  0x001B88C4
+m177f001  39    0x0013328D  1:0x0012328D  0x001B88E1
+m177f001  41    0x001332A7  1:0x001232A7  0x001B88FB
+m177f001  44    0x001332D1  1:0x001232D1  0x001B8925
+m177f001  45    0x001332F6  1:0x001232F6  0x001B894A
+m177f001  46    0x00133318  1:0x00123318  0x001B896C
+m177f001  47    0x00133341  1:0x00123341  0x001B8995
+m177f001  48    0x00133373  1:0x00123373  0x001B89C7
+m177f001  49    0x0013339E  1:0x0012339E  0x001B89F2
+m177f001  51    0x001333C9  1:0x001233C9  0x001B8A1D
+m177f001  52    0x001333DE  1:0x001233DE  0x001B8A32
+m177f001  53    0x001333F3  1:0x001233F3  0x001B8A47
+m177f001  55    0x00133408  1:0x00123408  0x001B8A5C
+m177f001  57    0x0013342B  1:0x0012342B  0x001B8A7F
+m177f001  59    0x00133430  1:0x00123430  0x001B8A84
+m177f001  61    0x0013343F  1:0x0012343F  0x001B8A93
+m177f001  63    0x00133451  1:0x00123451  0x001B8AA5
+m177f001  65    0x00133467  1:0x00123467  0x001B8ABB
+m177f001  68    0x001334A8  1:0x001234A8  0x001B8AFC
+m177f001  70    0x001334AD  1:0x001234AD  0x001B8B01
+m177f001  71    0x001334B2  1:0x001234B2  0x001B8B06
+m177f002  79    0x001334BB  1:0x001234BB  0x001B8B0F
+m177f002  83    0x001334D8  1:0x001234D8  0x001B8B2C
+m177f002  85    0x001334DD  1:0x001234DD  0x001B8B31
+m177f002  87    0x001334ED  1:0x001234ED  0x001B8B41
+m177f002  89    0x0013350A  1:0x0012350A  0x001B8B5E
+m177f002  91    0x0013351D  1:0x0012351D  0x001B8B71
+m177f002  93    0x0013353A  1:0x0012353A  0x001B8B8E
+m177f002  95    0x0013354D  1:0x0012354D  0x001B8BA1
+m177f002  97    0x00133567  1:0x00123567  0x001B8BBB
+m177f002  98    0x0013358C  1:0x0012358C  0x001B8BE0
+m177f002  99    0x001335AE  1:0x001235AE  0x001B8C02
+m177f002  100   0x001335D7  1:0x001235D7  0x001B8C2B
+m177f002  101   0x00133609  1:0x00123609  0x001B8C5D
+m177f002  102   0x00133634  1:0x00123634  0x001B8C88
+m177f002  104   0x0013365F  1:0x0012365F  0x001B8CB3
+m177f002  105   0x00133674  1:0x00123674  0x001B8CC8
+m177f002  106   0x00133689  1:0x00123689  0x001B8CDD
+m177f002  108   0x0013369E  1:0x0012369E  0x001B8CF2
+m177f002  110   0x001336C1  1:0x001236C1  0x001B8D15
+m177f002  112   0x001336C3  1:0x001236C3  0x001B8D17
+m177f002  115   0x00133704  1:0x00123704  0x001B8D58
+m177f002  117   0x00133706  1:0x00123706  0x001B8D5A
+m177f002  120   0x00133718  1:0x00123718  0x001B8D6C
+m177f002  122   0x0013371D  1:0x0012371D  0x001B8D71
+m177f002  123   0x00133722  1:0x00123722  0x001B8D76
+m177f003  132   0x0013372A  1:0x0012372A  0x001B8D7E
+m177f003  137   0x00133742  1:0x00123742  0x001B8D96
+m177f003  138   0x00133749  1:0x00123749  0x001B8D9D
+m177f003  140   0x00133756  1:0x00123756  0x001B8DAA
+m177f003  141   0x0013375A  1:0x0012375A  0x001B8DAE
+m177f003  142   0x00133760  1:0x00123760  0x001B8DB4
+m177f003  144   0x00133783  1:0x00123783  0x001B8DD7
+m177f003  146   0x001337A5  1:0x001237A5  0x001B8DF9
+m177f003  147   0x001337AB  1:0x001237AB  0x001B8DFF
+m177f003  149   0x001337AF  1:0x001237AF  0x001B8E03
+m177f003  150   0x001337B1  1:0x001237B1  0x001B8E05
+m177f003  152   0x001337B9  1:0x001237B9  0x001B8E0D
+m177f003  154   0x001337D1  1:0x001237D1  0x001B8E25
+m177f003  155   0x001337E3  1:0x001237E3  0x001B8E37
+m177f003  156   0x001337E5  1:0x001237E5  0x001B8E39
+m177f003  157   0x001337F1  1:0x001237F1  0x001B8E45
+m177f003  159   0x001337F4  1:0x001237F4  0x001B8E48
+m177f003  161   0x001337F6  1:0x001237F6  0x001B8E4A
+m177f003  162   0x00133802  1:0x00123802  0x001B8E56
+m177f003  164   0x00133805  1:0x00123805  0x001B8E59
+m177f003  166   0x0013380A  1:0x0012380A  0x001B8E5E
+m177f003  168   0x00133814  1:0x00123814  0x001B8E68
+m177f003  170   0x0013382E  1:0x0012382E  0x001B8E82
+m177f003  171   0x00133832  1:0x00123832  0x001B8E86
+m177f003  173   0x00133856  1:0x00123856  0x001B8EAA
+m177f003  175   0x00133877  1:0x00123877  0x001B8ECB
+m177f003  176   0x0013387B  1:0x0012387B  0x001B8ECF
+m177f003  178   0x00133891  1:0x00123891  0x001B8EE5
+m177f003  179   0x00133893  1:0x00123893  0x001B8EE7
+m177f003  181   0x00133899  1:0x00123899  0x001B8EED
+m177f003  184   0x001338B1  1:0x001238B1  0x001B8F05
+m177f003  186   0x001338B6  1:0x001238B6  0x001B8F0A
+m177f003  187   0x001338C0  1:0x001238C0  0x001B8F14
+m177f004  191   0x001338C9  1:0x001238C9  0x001B8F1D
+m177f004  204   0x001338E8  1:0x001238E8  0x001B8F3C
+m177f004  205   0x001338F0  1:0x001238F0  0x001B8F44
+m177f004  206   0x001338F8  1:0x001238F8  0x001B8F4C
+m177f004  207   0x00133900  1:0x00123900  0x001B8F54
+m177f004  208   0x00133908  1:0x00123908  0x001B8F5C
+m177f004  209   0x00133910  1:0x00123910  0x001B8F64
+m177f004  210   0x00133918  1:0x00123918  0x001B8F6C
+m177f004  212   0x0013391F  1:0x0012391F  0x001B8F73
+m177f004  214   0x00133923  1:0x00123923  0x001B8F77
+m177f004  216   0x0013392D  1:0x0012392D  0x001B8F81
+m177f004  217   0x00133933  1:0x00123933  0x001B8F87
+m177f004  218   0x00133937  1:0x00123937  0x001B8F8B
+m177f004  219   0x00133939  1:0x00123939  0x001B8F8D
+m177f004  220   0x00133940  1:0x00123940  0x001B8F94
+m177f004  221   0x00133946  1:0x00123946  0x001B8F9A
+m177f004  222   0x0013394A  1:0x0012394A  0x001B8F9E
+m177f004  223   0x0013394C  1:0x0012394C  0x001B8FA0
+m177f004  225   0x00133953  1:0x00123953  0x001B8FA7
+m177f004  226   0x00133959  1:0x00123959  0x001B8FAD
+m177f004  227   0x0013395D  1:0x0012395D  0x001B8FB1
+m177f004  228   0x0013395F  1:0x0012395F  0x001B8FB3
+m177f004  229   0x00133966  1:0x00123966  0x001B8FBA
+m177f004  230   0x0013396C  1:0x0012396C  0x001B8FC0
+m177f004  231   0x00133970  1:0x00123970  0x001B8FC4
+m177f004  232   0x00133972  1:0x00123972  0x001B8FC6
+m177f004  233   0x00133979  1:0x00123979  0x001B8FCD
+m177f004  234   0x0013397F  1:0x0012397F  0x001B8FD3
+m177f004  235   0x00133983  1:0x00123983  0x001B8FD7
+m177f004  236   0x00133985  1:0x00123985  0x001B8FD9
+m177f004  237   0x0013398C  1:0x0012398C  0x001B8FE0
+m177f004  238   0x00133992  1:0x00123992  0x001B8FE6
+m177f004  239   0x00133996  1:0x00123996  0x001B8FEA
+m177f004  240   0x00133998  1:0x00123998  0x001B8FEC
+m177f004  242   0x0013399F  1:0x0012399F  0x001B8FF3
+m177f004  243   0x001339A6  1:0x001239A6  0x001B8FFA
+m177f004  244   0x001339AD  1:0x001239AD  0x001B9001
+m177f004  246   0x001339B4  1:0x001239B4  0x001B9008
+m177f004  259   0x001339D1  1:0x001239D1  0x001B9025
+m177f004  261   0x001339EE  1:0x001239EE  0x001B9042
+m177f004  262   0x00133A45  1:0x00123A45  0x001B9099
+m177f004  264   0x00133A9C  1:0x00123A9C  0x001B90F0
+m177f004  265   0x00133AC7  1:0x00123AC7  0x001B911B
+m177f004  266   0x00133AF2  1:0x00123AF2  0x001B9146
+m177f004  268   0x00133B1D  1:0x00123B1D  0x001B9171
+m177f004  270   0x00133B39  1:0x00123B39  0x001B918D
+m177f004  272   0x00133B57  1:0x00123B57  0x001B91AB
+m177f004  273   0x00133B5D  1:0x00123B5D  0x001B91B1
+m177f004  276   0x00133B73  1:0x00123B73  0x001B91C7
+m177f004  277   0x00133B78  1:0x00123B78  0x001B91CC
+m177f004  278   0x00133B7B  1:0x00123B7B  0x001B91CF
+m177f004  280   0x00133B81  1:0x00123B81  0x001B91D5
+m177f004  282   0x00133B89  1:0x00123B89  0x001B91DD
+m177f004  284   0x00133B8F  1:0x00123B8F  0x001B91E3
+m177f004  286   0x00133B98  1:0x00123B98  0x001B91EC
+m177f004  287   0x00133B9D  1:0x00123B9D  0x001B91F1
+m177f004  288   0x00133BA4  1:0x00123BA4  0x001B91F8
+m177f005  289   0x00133BAE  1:0x00123BAE  0x001B9202
+m177f005  294   0x00133BCF  1:0x00123BCF  0x001B9223
+m177f005  296   0x00133BD7  1:0x00123BD7  0x001B922B
+m177f005  297   0x00133BEA  1:0x00123BEA  0x001B923E
+m177f005  299   0x00133BF4  1:0x00123BF4  0x001B9248
+m177f005  302   0x00133C13  1:0x00123C13  0x001B9267
+m177f005  303   0x00133C1E  1:0x00123C1E  0x001B9272
+m177f005  305   0x00133C29  1:0x00123C29  0x001B927D
+m177f005  307   0x00133C51  1:0x00123C51  0x001B92A5
+m177f005  308   0x00133C5A  1:0x00123C5A  0x001B92AE
+m177f005  310   0x00133C5E  1:0x00123C5E  0x001B92B2
+m177f005  311   0x00133C6C  1:0x00123C6C  0x001B92C0
+m177f005  312   0x00133C7A  1:0x00123C7A  0x001B92CE
+m177f005  314   0x00133C88  1:0x00123C88  0x001B92DC
+m177f005  316   0x00133C8A  1:0x00123C8A  0x001B92DE
+m177f005  318   0x00133C94  1:0x00123C94  0x001B92E8
+m177f006  320   0x00133C9C  1:0x00123C9C  0x001B92F0
+m177f006  322   0x00133CB7  1:0x00123CB7  0x001B930B
+m177f006  324   0x00133CBF  1:0x00123CBF  0x001B9313
+m177f006  325   0x00133CD2  1:0x00123CD2  0x001B9326
+m177f006  327   0x00133CDC  1:0x00123CDC  0x001B9330
+m177f006  330   0x00133CFB  1:0x00123CFB  0x001B934F
+m177f006  331   0x00133D0D  1:0x00123D0D  0x001B9361
+m177f007  333   0x00133D16  1:0x00123D16  0x001B936A
+m177f007  338   0x00133D33  1:0x00123D33  0x001B9387
+m177f007  340   0x00133D38  1:0x00123D38  0x001B938C
+m177f007  342   0x00133D5F  1:0x00123D5F  0x001B93B3
+m177f007  344   0x00133D7F  1:0x00123D7F  0x001B93D3
+m177f007  345   0x00133D88  1:0x00123D88  0x001B93DC
+m177f007  346   0x00133D94  1:0x00123D94  0x001B93E8
+m177f007  347   0x00133DA0  1:0x00123DA0  0x001B93F4
+m177f007  349   0x00133DAC  1:0x00123DAC  0x001B9400
+m177f007  350   0x00133DC4  1:0x00123DC4  0x001B9418
+m177f007  351   0x00133DD7  1:0x00123DD7  0x001B942B
+m177f007  352   0x00133DD9  1:0x00123DD9  0x001B942D
+m177f008  354   0x00133DE1  1:0x00123DE1  0x001B9435
+m177f008  356   0x00133DFC  1:0x00123DFC  0x001B9450
+m177f008  357   0x00133E0A  1:0x00123E0A  0x001B945E
+m177f009  358   0x00133E16  1:0x00123E16  0x001B946A
+m177f009  360   0x00133E37  1:0x00123E37  0x001B948B
+m177f009  361   0x00133E4A  1:0x00123E4A  0x001B949E
+m177f009  362   0x00133E5D  1:0x00123E5D  0x001B94B1
+m177f009  363   0x00133E70  1:0x00123E70  0x001B94C4

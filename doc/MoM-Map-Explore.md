@@ -16,24 +16,24 @@ RP_TILE_ExploreMatch__WIP()  ==>  Set_Square_Explored_Flags_Fix()
 
 
 
-Set_Map_Square_Explored_Flags_XYP_Range()
-    |-> Set_Map_Square_Explored_Flags_XYP()
+Set_Square_Explored_Flags_Range()
+    |-> Set_Square_Explored_Flags()
         |-> Set_Square_Explored_Flags_Bottom_Right_Corner()
         |-> Set_Square_Explored_Flags_Fix()
 
-Set_Map_Square_Explored_Flags_XYP()
+Set_Square_Explored_Flags()
     Units_In_Tower()
-    Set_Map_Square_Explored_Flags_XYP_Range()
+    Set_Square_Explored_Flags_Range()
     sAFA06_Anim_EarthLore()
     Cast_PlaneShift()
 
 Set_Square_Explored_Flags_Bottom_Right_Corner()
     NX_j_Set_Square_Explored_Flags_Bottom_Right_Corner()
-    Set_Map_Square_Explored_Flags_XYP()
+    Set_Square_Explored_Flags()
 
 Set_Square_Explored_Flags_Fix()
     NX_j_Set_Square_Explored_Flags_Fix()
-    Set_Map_Square_Explored_Flags_XYP()
+    Set_Square_Explored_Flags()
 
 
 
@@ -135,7 +135,7 @@ XREF:
     Cartograph_Screen_Draw_Map_Terrain__NOWORKIE()
     Allocate_Data_Space()
     Square_Is_Forest()
-    Set_Map_Square_Explored_Flags_XYP()
+    Set_Square_Explored_Flags()
     Set_Square_Explored_Flags_Bottom_Right_Corner()
     Set_Square_Explored_Flags_Fix()
 
@@ -166,7 +166,7 @@ So, 14, in-between...
 
 
 
-## ¿ starts from Set_Map_Square_Explored_Flags_XYP_Range() ?
+## ¿ starts from Set_Square_Explored_Flags_Range() ?
 XREF:
     Do_Plane_Button__WIP()
     j_Set_Map_Square_Explored_Flags_XYP_Range()
@@ -183,16 +183,16 @@ XREF:
 
 IDK.IDGI.
 But, ...
-Set_Map_Square_Explored_Flags_XYP_Range()
-Set_Map_Square_Explored_Flags_XYP()
+Set_Square_Explored_Flags_Range()
+Set_Square_Explored_Flags()
 
 
 
 
 ...uses masks
 
-## Set_Map_Square_Explored_Flags_XYP_Range()
-calls Set_Map_Square_Explored_Flags_XYP()
+## Set_Square_Explored_Flags_Range()
+calls Set_Square_Explored_Flags()
 just once, if scout_range is 1
 else
 ((scout_range - 1) * 2) + 1
@@ -206,7 +206,7 @@ where
     y_start = wy - (scout_range - 1)
     x_start = wx - (scout_range - 1)
 
-## Set_Map_Square_Explored_Flags_XYP()
+## Set_Square_Explored_Flags()
 
 if(wy == 0)
     SET_SQUARE_EXPLORED(wx, wy, wp, (0x01 | 0x02 | 0x04 | 0x08));
@@ -225,12 +225,12 @@ if(wy == 0)
 
 XREF:
     NX_j_TILE_ExploreCorners__WIP
-    Set_Map_Square_Explored_Flags_XYP+256
-    Set_Map_Square_Explored_Flags_XYP+272
-    Set_Map_Square_Explored_Flags_XYP+281
-    Set_Map_Square_Explored_Flags_XYP+29A
-    Set_Map_Square_Explored_Flags_XYP+2B6
-    Set_Map_Square_Explored_Flags_XYP+2C5
+    Set_Square_Explored_Flags+256
+    Set_Square_Explored_Flags+272
+    Set_Square_Explored_Flags+281
+    Set_Square_Explored_Flags+29A
+    Set_Square_Explored_Flags+2B6
+    Set_Square_Explored_Flags+2C5
 
 loops over six patterns
 if the existing _square_explored[] value matches a pattern, increments a counter

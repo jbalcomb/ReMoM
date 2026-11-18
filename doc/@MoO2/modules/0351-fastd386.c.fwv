@@ -1,0 +1,17 @@
+module_num=351
+module=C:\GCL520\C_386\FASTD386.C
+source=0351-fastd386.c.md
+range[0]=1:0x0014F360 linear=0x0015F360 size=1478
+range[1]=2:0x000048D0 linear=0x001748D0 size=832
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                          SYMBOL                         CHUNK
+m351f001  1    -      0x0015F360  1:0x0014F360  static,code  _DumpChipData                 _DumpChipData_                 regions/07-object-1/001E4654-001E4E53.txt
+m351f002  2    -      0x0015F448  1:0x0014F448  static,code  _DumpAddresses                _DumpAddresses_                regions/07-object-1/001E4654-001E4E53.txt
+m351f003  3    -      0x0015F4D4  1:0x0014F4D4  static,code  _DumpBuffer                   _DumpBuffer_                   regions/07-object-1/001E4654-001E4E53.txt
+m351f004  4    -      0x0015F568  1:0x0014F568  static,code  _DumpStatusBits               _DumpStatusBits_               regions/07-object-1/001E4654-001E4E53.txt
+m351f005  5    -      0x0015F614  1:0x0014F614  static,code  _DumpHandshaking              _DumpHandshaking_              regions/07-object-1/001E4654-001E4E53.txt
+m351f006  6    -      0x0015F6A0  1:0x0014F6A0  static,code  _DumpLinks                    _DumpLinks_                    regions/07-object-1/001E4654-001E4E53.txt
+m351f007  7    -      0x0015F6F4  1:0x0014F6F4  static,code  _DumpBufferSpace              _DumpBufferSpace_              regions/07-object-1/001E4654-001E4E53.txt
+m351f008  8    -      0x0015F738  1:0x0014F738  static,code  _DumpIRQData                  _DumpIRQData_                  regions/07-object-1/001E4654-001E4E53.txt
+m351f009  9    -      0x0015F884  1:0x0014F884  code         _DumpPortStatusGreenleafFast  _DumpPortStatusGreenleafFast_  regions/07-object-1/001E4E54-001E5653.txt

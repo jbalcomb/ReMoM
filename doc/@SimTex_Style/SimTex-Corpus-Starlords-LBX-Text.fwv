@@ -1,0 +1,461 @@
+lbx           offset  chars  case   text
+DEMO.LBX      00110      66  UPPER  PRESS TO VIEW A COMPLETE REPORT ON ALL PLANETS UNDER YOUR CONTROL.
+DEMO.LBX      0016B      63  UPPER  PRESS TO GET AN EXPLODED VIEW OF THE PLANET AND ORBITING SHIPS.
+DEMO.LBX      001C3     132  UPPER  PRESS TO CHANGE THE SHIP CURRENTLY BEING PRODUCED IN THE STAR SYSTEM'S STAR DOCK ONCE YOU HAVE DESIGNED MORE THAN ONE CLASS OF SHIP.
+DEMO.LBX      00260      19  UPPER  SHIP BUILDING RATIO
+DEMO.LBX      0028C      13  UPPER  DEFENSE RATIO
+DEMO.LBX      002B2      14  UPPER  INDUSTRY RATIO
+DEMO.LBX      002D9      13  UPPER  ECOLOGY RATIO
+DEMO.LBX      002FF      16  UPPER  TECHNOLOGY RATIO
+DEMO.LBX      00328     197  UPPER  EACH STAR SYSTEM DIVIDES THEIR TOTAL PRODUCTION INTO FIVE AREAS: SHIPS, DEFENSE, INDUSTRY, ECOLOGY, AND TECH. PRESSING THE ON THE RATIO BAR ADJUSTS THE DIVISION. PRESS ON THE TITLE LOCKS THE RATIO.
+DEMO.LBX      00406     190  UPPER  WHEN THE GAME FIRST BEGINS, YOU SHOULD CONCENTRATE ON BUILDING FACTORIES. TECHNOLOGY AND DEFENSE ARE TOO EXPENSIVE TO DEVELOP AND SHIPS ARE NOT NEEDED UNTIL YOU ARE READY TO BEGIN EXPANDING.
+DEMO.LBX      004DD      43  UPPER  DESIGN SHIPS TO TAKE ADVANTAGE OF NEW TECH.
+DEMO.LBX      00521     145  UPPER  OVERVIEW SCREEN. CHANGE TECHNOLOGY, TRADING, TRIBUTE, SABOTAGE, AND ESPIONAGE RATIOS, AS WELL AS VIEW DIPLOMATIC RELATIONS AND MAINTENANCE COSTS.
+DEMO.LBX      005CB     102  UPPER  AFTER ADJUSTING THE RATIOS FOR ALL STAR SYSTEMS UNDER YOUR CONTROL, PRESS TO ADVANCE TO THE NEXT YEAR.
+DEMO.LBX      0064A      89  UPPER  RELOCATE SHIP PRODUCTION, SENDING NEWLY BUILT STAR SHIPS TO ANOTHER SYSTEM AUTOMATICALLY.
+DEMO.LBX      006BC      85  UPPER  VIEW ALL SHIPS UNDER YOUR CONTROL, INCLUDING THE TOTAL NUMBER OF SHIPS IN YOUR FLEET.
+DEMO.LBX      0072A      72  UPPER  TRANSPORT COLONISTS FROM THE CURRENT STAR SYSTEM TO ANOTHER STAR SYSTEM.
+DEMO.LBX      0078B     125  UPPER  ACTUAL PRODUCTION- TAKEN FROM THE TOTAL PRODUCTION AFTER REDUCTIONS FOR TRADE, TRIBUTE, SABOTAGE, ESPIONAGE, AND MAINTENANCE.
+DEMO.LBX      00821      84  UPPER  TOTAL PRODUCTION- INCLUDES PRODUCTION FROM COLONISTS, FACTORIES, AND TRADE REVENUES.
+DEMO.LBX      0088E      23  UPPER  STAR SYSTEM ENVIRONMENT
+DEMO.LBX      008BE      16  UPPER  TOTAL POPULATION
+DEMO.LBX      008E7     105  UPPER  MAXIMUM POPULATION THAT CAN FIT ON THE PLANET: PLANET'S BASE SIZE MINUS ANY ACCUMULATED INDUSTRIAL WASTE.
+DEMO.LBX      00989     148  UPPER  NOW THAT YOUR POPULATION HAS GROWN LARGE ENOUGH, YOU SHOULD BUILD AT LEAST ONE SHIP TO SCOUT THE NEARBY STAR SYSTEMS FOR POTENTIAL NEW COLONY SITES.
+DEMO.LBX      00A56     150  UPPER  NOW THAT YOUR HOME PLANET HAS A SUBSTANTIAL POPULATION AND INDUSTRY, YOU SHOULD BEGIN INVESTING RESOURCES INTO BUILDING MISSILE BASES (DEFENSE RATIO).
+DEMO.LBX      00B25     146  UPPER  NOW THAT YOU HAVE MADE CONTACT WITH ANOTHER RACE, YOU CAN SHOULD BEGIN TO DEVOTE RESOURCES TO TRADE TO IMPROVE RELATIONS AND INCREASE YOUR INCOME.
+DEMO.LBX      00BF0     155  UPPER  AS TECHNOLOGY ADVANCES YOU SHOULD BE SURE TO DISMISS OBSOLETE SHIPS. SHIPS THAT ARE 10 OR MORE LEVELS BEHIND EXISTING ENEMY TECHNOLOGY ARE NEXT TO USELESS.
+DEMO.LBX      00CC4     126  UPPER  TO STAY COMPETITIVE WITH YOUR ENEMIES, YOU MUST NOT FALL BEHIND IN THE TECHNOLOGY RACE, ESPECIALLY WITH WEAPONS AND COMPUTERS.
+DEMO.LBX      00D7B     157  UPPER  NOW THAT YOU HAVE DEVELOPED A WEAPON BETTER THAN A LASER, YOU SHOULD DESIGN A NEW SHIP THAT WILL REPLACE THE STARTING SCOUT AND USES THE BETTER WEAPONS TECH.
+DEMO.LBX      00E51     162  UPPER  NOW THAT YOU HAVE FOUND A STAR SYSTEM SUITABLE FOR COLONIZATION BEGIN TRANSPORTING COLONISTS BECAUSE ALL PLANETS HAVE A MAXIMUM POPULATION WHICH CAN BE SUPPORTED.
+DEMO.LBX      00F2C     160  UPPER  ALTHOUGH YOU HAVE DISCOVERED A STAR SYSTEM THAT YOU CAN NOT YET LAND ON, YOU CAN STILL REACH OTHER STAR SYSTEMS BY PLACING A SHIP IN ORBIT WITH REFUELING TANKS.
+DEMO.LBX      01005     192  UPPER  WITH THE INCREASED GROWTH OF YOUR INDUSTRY, WASTE REDUCTION WILL BEGIN COSTING AN INCREASED PERCENTAGE OF YOU PRODUCTION. REDUCE THE AMOUNT OF WASTE WITH CONSTRUCTION AND PLANETOLOGY RESEARCH.
+DIPLOMAC.LBX  004D7      98  Mixed  <  Hail emperor ~. The ^ empire genuinely thanks you for your generous tribute in difficult times.
+DIPLOMAC.LBX  0053A     123  Title    Many in the ^s have looked to the % empire with great distrust, but your tribute has now won over the conviction of many.
+DIPLOMAC.LBX  005B6      85  Title    Your tribute has been accepted as reparations for your crimes against the ^ empire.
+DIPLOMAC.LBX  0060C     124  Title    Our request for assistance was handsomely met by your empire and will go a long way toward improving our mutual relations.
+DIPLOMAC.LBX  00689     147  Title    Diplomatic channels between the % and ^ empires have been tenuous at best, but your tribute now offers a way to significantly reduce the tension.
+DIPLOMAC.LBX  0071D      89  Title    Emperor ~, the ^ empire applauds your generous tribute and welcomes future cooperation.
+DIPLOMAC.LBX  00777      80  Title    You have made a wise choice in offering tribute to an obviously superior race.
+DIPLOMAC.LBX  007C8      85  Title    The ^ empire greatly appreciates your support with such a magnanimous contribution.
+DIPLOMAC.LBX  0081E      87  Title    Emperor ~, your generous tribute has laid many ^ grievances with your empire to rest.
+DIPLOMAC.LBX  00876     133  Title    Emperor ~, your magnificent contribution will go far toward establishing a lasting peace and a hopeful future for both our peoples.
+DIPLOMAC.LBX  008FC     101  Title    With tribute such as this, both our empires will soon be able to exist together in perfect harmony.
+DIPLOMAC.LBX  00962     106  Title    Your contributions to establish mutual trade between our two empires has greatly enhanced our relations.
+DIPLOMAC.LBX  009CD      83  Title    The trade between the % and ^ empires has greatly relaxed current tension levels.
+DIPLOMAC.LBX  00A21     148  Title    Emperor ~, the trade between our two empires has not only increased our production but has also formed a basis for mutual respect and cooperation.
+DIPLOMAC.LBX  00AB6     132  Title    The prosperous trade between our two empires has formed a solid financial foundation from which both our empires can benefit from.
+DIPLOMAC.LBX  00B3B     119  Title    Although our empires have had disagreements in the past, mutual trade has certainly some of the relieved the tension.
+DIPLOMAC.LBX  00BB3     126  Title    Continued trade between the % and ^ empires is of extreme importance if both our empires are to resist the threat of others.
+DIPLOMAC.LBX  00C32      92  Title    The trade you offered has given our two empires an opportunity to strengthen our alliance.
+DIPLOMAC.LBX  00C8F     137  Title    The prosperous trade between the % and ^ empires has provided excellent incentives to maintain a lasting peace between our two empires.
+DIPLOMAC.LBX  00D19      78  Title    The % trade has marked a new era of cooperation between the % and ^ empires.
+DIPLOMAC.LBX  00D68      93  Mixed    Watch yourself emperor ~. We will no longer tolerate espionage attempts against our empire.
+DIPLOMAC.LBX  00DC6      94  Title    We have known of your espionage operations for quite some time, and our patience wears thin.
+DIPLOMAC.LBX  00E25     133  Title    We have had great restraint thus far tolerating your bungling espionage attempts, but soon you will feel the wrath of the ^ empire.
+DIPLOMAC.LBX  00EAB      76  Title    The ^ empire is compelled to protest your persistent * espionage attempts.
+DIPLOMAC.LBX  00EF8     142  Mixed    Obviously you have underestimated our patience in dealing with * espionage. If you continue it will most certainly lead to open hostilities.
+DIPLOMAC.LBX  00F87     102  Title    Your * espionage attempts are creating an unwarranted amount of tension between the % and ^ empires.
+DIPLOMAC.LBX  012B6     154  Title    In the past the ^ empire has been kind to inferior species, but if you persist in the sabotage of our & we will eliminate the % threat once and for all.
+DIPLOMAC.LBX  01351     108  Title    Surely emperor ~, you must realize that sabotage at any level will surely jeopardize any future relations.
+DIPLOMAC.LBX  013BE     131  Title    Your cunningly contrived plan to sabotage ^ & in the @ star system has placed our empires precariously close to the brink of war.
+DIPLOMAC.LBX  01442      82  Title    Continue to sabotage our & and you will plunge us into a foolish and costly war.
+DIPLOMAC.LBX  01495     131  Mixed    Emperor ~, hear this. Discontinue any further attempts of sabotage against the ^ empire or face the consequences of your actions.
+DIPLOMAC.LBX  01519      89  Title    Your bungling attempts to sabotage our & is shattering what little peace we still have.
+DIPLOMAC.LBX  01573     113  Mixed    The ^ empire will not stand for acts of terrorism such as the sabotage attempt at @. Wars have begun over less.
+DIPLOMAC.LBX  015E5     137  Title    Emperor ~, if you wish to avert a senseless war you will immediately discontinue all sabotage operations launched against the ^ empire.
+DIPLOMAC.LBX  01AC6     102  Mixed    Too many of % ships have been amassing along our border. Remove the ships or face the perils of war.
+DIPLOMAC.LBX  01B2D     124  Mixed    Do you take me for a complete moron. The buildup up of ships along our border can only be interpreted as a prelude to war.
+DIPLOMAC.LBX  01BAA     116  Mixed    Doubtless you disbelieve our conviction. Continue to amass star ships along our border and soon we will be at war.
+DIPLOMAC.LBX  01C1F     116  Mixed    Despite our warnings, % star ships have been seen moving through ^ territory. Continue and they will be destroyed.
+DIPLOMAC.LBX  01C94     105  Title    Unless you reduce the number % of ships along our border, we will be forced to take preemptive actions.
+DIPLOMAC.LBX  01CFE     107  Mixed    The % empire has grown far too large. Continue to expand and we will be forced to take militant measures.
+DIPLOMAC.LBX  01D6A     108  Mixed    Your reckless expansion is beginning to intrude upon ^ territory. Withdraw from our space or be destroyed.
+DIPLOMAC.LBX  01DD7     133  Mixed    Your ambitious expansion cannot remain unchecked. Unless you begin to withdraw we will be forced to reclaim our territory by force.
+DIPLOMAC.LBX  01E5D      76  Title    Cease your expansion into ^ territory or we will crush your pathetic race.
+DIPLOMAC.LBX  01EAA      69  Title    Together our empires can challenge the threat of the evil = empire.
+DIPLOMAC.LBX  01EF0      74  Title    Your attacking the insidious = proves the honor in your words of peace .
+DIPLOMAC.LBX  01F3B      97  Title    Emperor ~, you to must now realize the incredible threat the = empire poses to both our worlds.
+DIPLOMAC.LBX  01F9D      77  Title    It would seem that both our empires share a common enemy, the loathsome =s.
+DIPLOMAC.LBX  01FEB     127  Title    Yes emperor ~, the time has come for both our empires to strike out against the =s and eliminate the danger once and for all.
+DIPLOMAC.LBX  0206B      96  Mixed    Obviously the = menace has even reached the % empire. Together we will smite the infidel dogs.
+DIPLOMAC.LBX  020CC     137  Mixed    You are the source of perpetual humor. If you believe we would willingly condone the destruction of our ships you are greatly mistaken.
+DIPLOMAC.LBX  02156     130  Mixed    Many within the ^ empire are restless and crave action. Another attack like the one at @ and you will give us an excuse for war.
+DIPLOMAC.LBX  021D9      87  Title    In the future make it a point to stay out of ^ space, or you will be crushed utterly.
+DIPLOMAC.LBX  02231     101  Title    The ^s order you to cease all hostilities in the @ system or face the consequences of your actions.
+DIPLOMAC.LBX  02297     137  Mixed    % star ships have engaged in unlawful penetration of ^ territory. You will discontinue such operations or suffer immediate retaliation.
+DIPLOMAC.LBX  02321     102  Title    The ^s order you to immediately remove all vessels from the @ star system or they will be destroyed.
+DIPLOMAC.LBX  02388     132  Mixed    We are not fools. Surely you do not expect us to believe that the attack on the @ star system was initiated by renegade activists.
+DIPLOMAC.LBX  0240D      94  Title    Conflicts such as the battle at @ can only be interpreted as a prelude to expansion and war.
+DIPLOMAC.LBX  0246C     127  Mixed    Emperor ~ you can not simply attack ^ starships with impunity. Even as I speak, the ^ empire is preparing for full scale war.
+DIPLOMAC.LBX  024EC     120  Title    Emperor ~, if you wish to avoid a pointless war between our two peoples, you must stop randomly attacking ^ starships.
+DIPLOMAC.LBX  02565     128  Title    Consider yourself fortunate emperor ~ that the ^ empire is not yet ready to enter into a senseless war over the incident at @.
+DIPLOMAC.LBX  025E6      88  Title    Peace talks will soon break down if the % empire does not cease attacking ^ starships.
+DIPLOMAC.LBX  0263F     136  Mixed    The relations between our two empires is becoming quite dire. The attack on the @ star system was unprovoked and may soon lead to war.
+DIPLOMAC.LBX  026C8     120  Mixed    Attacking our colony at @ was quite unwise. The ^ empire will no longer sit idle while our people are slain by % dogs.
+DIPLOMAC.LBX  02741     113  Mixed    Emperor ~, % star ships have invaded and violated ^ space. Such actions can only be construed as an act or war.
+DIPLOMAC.LBX  027B3     126  Title    Whereas the destruction of our ships can be endured, the wholesale slaughtering of ^ colonists will certainly guarantee war.
+DIPLOMAC.LBX  02832      99  Title    The ruthless storming of the @ colony has destroyed whatever future our two empires may have had.
+DIPLOMAC.LBX  02896      95  Title    Venture near the @ star system again and we will be forced to annihilate the entire % empire.
+DIPLOMAC.LBX  028F6      68  Title    How can you not expect retaliation for the unprovoked attack at @.
+DIPLOMAC.LBX  0293B     101  Title    Your senseless attack on the @ star system has endangered the lives of billions on both our worlds.
+DIPLOMAC.LBX  029A1      85  Title    The ^ empire considers the attack on the @ star system as an unprovoked act of war.
+DIPLOMAC.LBX  029F7     143  Mixed    Emperor ~, you will pay dearly for blatantly disregarding ^ space and attacking the outpost at @. Soon you will pay dearly for your misdeeds.
+DIPLOMAC.LBX  02A87     115  Mixed    Blast you emperor ~. You are jeopardizing the future of both our peoples by your senseless attacks on ^ colonies.
+DIPLOMAC.LBX  02AFB     104  Mixed    How dare you enter ^ space and attack one of our colonies. Such audacity can only be answered in kind.
+DIPLOMAC.LBX  02B64     100  Title    Emperor ~, simple rhetoric will not excuse you from using biological weapons in the @ star system.
+DIPLOMAC.LBX  02BC9      76  Title    Use of biological weapons has placed both our empires on the brink of war.
+DIPLOMAC.LBX  02C16      86  Title    There can be no truth or honor in the words of one who would use biological weapons.
+DIPLOMAC.LBX  02C6D      81  Mixed    % scum. You will pay dearly for using biological weapons on innocent colonists.
+DIPLOMAC.LBX  02CBF      99  Title    No pathetic excuse you can offer will forgive the use of biological weapons on the @ star system.
+DIPLOMAC.LBX  02D23      86  Title    There can be no justification whatsoever for the biological attacks on the @ colony.
+DIPLOMAC.LBX  02D7A     134  Mixed    Obviously the % is ran by a madman willing to use biological weapons at any whim. Soon the ^ empire will put an end to your madness.
+DIPLOMAC.LBX  02E01      77  Mixed    Your interference has been tolerated long enough. This of course means war!
+DIPLOMAC.LBX  02E4F      69  Mixed    You cannot escape the wrath of the ^ empire. Prepare to die % scum.
+DIPLOMAC.LBX  02E95      58  Title    The ^ empire will soon cure the galaxy of the % madness.
+DIPLOMAC.LBX  02ED0      98  Title    We will follow you to the ends of space and rid the universe the % infestation wherever it lies.
+DIPLOMAC.LBX  02F33      69  Title    The ^ empire is determined to free the universe from the % tyranny!
+DIPLOMAC.LBX  02F79     110  Title    Your actions have irrevocably changed the fate of our two empires and plunged us into a war neither can win.
+DIPLOMAC.LBX  02FE8      82  Title    You have left the ^s with only one choice: to reduce your empire to cosmic dust.
+DIPLOMAC.LBX  0303B     137  Title    Although the ^ empire has been reluctant to enter an intergalactic war, your insufferable acts of terrorism can no longer be permitted.
+DIPLOMAC.LBX  030C5      63  Title    Soon the ^ empire will put an end to your pathetic existence.
+DIPLOMAC.LBX  03105     107  Mixed    Time after time we have attempted to reason with you. Now you have left us with no other option than war.
+DIPLOMAC.LBX  03171     104  Title    We shall make an example of you as a sign to other worlds that might resist the might of the ^ empire.
+DIPLOMAC.LBX  031DA     120  Title    Diplomatic channels have completely broken down between our two empires and now we are left with only one option, war.
+DIPLOMAC.LBX  03253     150  Mixed    So emperor ~, you have answered our requests for peace with unprovoked acts of war. So be it. We will crush the % madness that plagues the universe.
+DIPLOMAC.LBX  032EA      81  Mixed    % slime. Warnings were not enough. Now you will feel the might of the ^ empire.
+DIPLOMAC.LBX  0333C      69  Title    The time has come for our two empires to forge an undying alliance.
+DIPLOMAC.LBX  03382      94  Title    The % and ^ empires are now at a point where both our people can coexist in perfect harmony.
+DIPLOMAC.LBX  033E1      66  Title    The ^s offers the % empire their undying loyalty and allegiance.
+DIPLOMAC.LBX  03424      60  Title    The ^ empire pledges their eternal friendship and loyalty.
+DIPLOMAC.LBX  03461      82  Title    Beware emperor ~, the ^ empire has arrived to free the galaxy from the % terror.
+DIPLOMAC.LBX  034B4      88  Mixed    Shudder emperor ~. Soon the entire galaxy shall fall to the iron fist of the ^ empire.
+DIPLOMAC.LBX  0350D     101  Title    Surrender now emperor ~ and save your people from the inevitable fall to the might of the ^ empire.
+DIPLOMAC.LBX  03573      75  Title    Your race is pathetic and worthless in the light of the glorius ^ empire.
+DIPLOMAC.LBX  035BF      77  Title    Harken emperor ~, the magnificent, illustrious and godlike ^s have arrived.
+DIPLOMAC.LBX  0360D      78  Title    The ^ and % empires will do fine so long as you acknowledge our superiority.
+DIPLOMAC.LBX  0365C      97  Mixed    Beware emperor ~. Any aggression will be answered with immediate retaliation from the ^ empire.
+DIPLOMAC.LBX  036BE      91  Title    Now that we are aware of the % presence we will watch closely and tolerate no aggression.
+DIPLOMAC.LBX  0371A     100  Mixed    Make no mistake emperor ~. The ^ empire will absolutely not tolerate any interference from the %s.
+DIPLOMAC.LBX  0377F     124  Mixed    The ^ empire realizes the difficulties of first contact with another race. Hopefully we will overcome our mutual distrust.
+DIPLOMAC.LBX  037FC      98  Title    Now that we share common territory, the survival of both our race depends on mutual cooperation.
+DIPLOMAC.LBX  0385F      73  Title    Oh illustrious ~, surely our two empires can live in peace and harmony.
+DIPLOMAC.LBX  038A9      69  Mixed    Hail emperor ~. The ^ empire greatly welcomes our future relations.
+DIPLOMAC.LBX  038EF      39  Title    Long live emperor ~ and the % empire.
+DIPLOMAC.LBX  03917      90  Mixed    Hail wise and just emperor ~. The ^s welcome a new age of honor between out two empires.
+DIPLOMAC.LBX  03972      52  Title    The ^ empire wishes no contact with the filthy %s.
+DIPLOMAC.LBX  039A7      62  Mixed    Stay clear of ^ territory. Your mere existence makes us ill.
+DIPLOMAC.LBX  039E6      62  Title    Emperor ~, enter ^ space and you will be destroyed on sight.
+DIPLOMAC.LBX  03A25      71  Title    The ^ empire can no longer tolerate the existence of the pathetic %s.
+DIPLOMAC.LBX  03A6D      51  Title    The % empire is weak and will soon be eliminated.
+DIPLOMAC.LBX  03AA1      79  Mixed    The ^ empire is tired of playing games with the %s. Prepare to die emporer ~.
+DIPLOMAC.LBX  03AF1      99  Mixed    The ^ empire is on the verge of taking over the galaxy. Soon the % empire will fall to our might.
+DIPLOMAC.LBX  03B55      88  Title    It is time that we put you out of our misery and save the universe from the % madness.
+DIPLOMAC.LBX  03BAE      97  Mixed    Our patience is exhausted. Surrender to the ^ empire and save yourself anymore grief emporer ~.
+DIPLOMAC.LBX  03C10     104  Title    The ^ empire has decided to eliminate the universe of all other races, starting with the miserable %s.
+DIPLOMAC.LBX  03C79      81  Title    The time has come for the ^ empire to conquer the galaxy, starting with the %s.
+RESEARCH.LBX  01C20      14  UPPER  BATTLE SCANNER
+RESEARCH.LBX  01C2F      76  Title  Reveals all technical specifications of currently engaged enemy spacecrafts.
+RESEARCH.LBX  01C7C      17  UPPER  ECM JAMMER MARK I
+RESEARCH.LBX  01C8E     100  Title  Adds +1 level to defense versus enemy missile attacks, decreasing a missile's chance to hit by -10%.
+RESEARCH.LBX  01CF3      23  UPPER  BATTLE COMPUTER MARK II
+RESEARCH.LBX  01D0B      98  Title  Directs levels 2 attacks against designated enemy targets, raising the base chance to hit by +20%.
+RESEARCH.LBX  01D6E      18  UPPER  ECM JAMMER MARK II
+RESEARCH.LBX  01D81     101  Title  Adds +2 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -20%.
+RESEARCH.LBX  01DE7      29  UPPER  IMPROVED ROBOTIC CONTROLS III
+RESEARCH.LBX  01E05     116  Mixed  Allows up to three factories to be operated per population. Factory controls beyond the base population cost double.
+RESEARCH.LBX  01E7A      24  UPPER  BATTLE COMPUTER MARK III
+RESEARCH.LBX  01E93      97  Title  Directs level 3 attacks against designated enemy targets, raising the base chance to hit by +30%.
+RESEARCH.LBX  01EF5      19  UPPER  ECM JAMMER MARK III
+RESEARCH.LBX  01F09     101  Title  Adds +3 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -30%.
+RESEARCH.LBX  01F6F      18  UPPER  DEEP SPACE SCANNER
+RESEARCH.LBX  01F82      53  Title  Enemy ships can now be detected up to 5 parsecs away.
+RESEARCH.LBX  01FB8      23  UPPER  BATTLE COMPUTER MARK IV
+RESEARCH.LBX  01FD0      97  Title  Directs level 4 attacks against designated enemy targets, raising the base chance to hit by +40%.
+RESEARCH.LBX  02032      18  UPPER  ECM JAMMER MARK IV
+RESEARCH.LBX  02045     101  Title  Adds +4 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -40%.
+RESEARCH.LBX  020AB      28  UPPER  IMPROVED ROBOTIC CONTROLS IV
+RESEARCH.LBX  020C8     118  Mixed  Allows up to four factories to be operated per population. Factory controls beyond the base population cost 150% more.
+RESEARCH.LBX  0213F      22  UPPER  BATTLE COMPUTER MARK V
+RESEARCH.LBX  02156      97  Title  Directs level 5 attacks against designated enemy targets, raising the base chance to hit by +50%.
+RESEARCH.LBX  021B8      17  UPPER  ECM JAMMER MARK V
+RESEARCH.LBX  021CA     101  Title  Adds +5 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -50%.
+RESEARCH.LBX  02230      23  UPPER  BATTLE COMPUTER MARK VI
+RESEARCH.LBX  02248      97  Title  Directs level 6 attacks against designated enemy targets, raising the base chance to hit by +60%.
+RESEARCH.LBX  022AA      18  UPPER  ECM JAMMER MARK VI
+RESEARCH.LBX  022BD     101  Title  Adds +6 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -60%.
+RESEARCH.LBX  02323      27  UPPER  IMPROVED ROBOTIC CONTROLS V
+RESEARCH.LBX  0233F     115  Mixed  Allows up to five factories to be operated per population. Factory controls beyond the base population cost triple.
+RESEARCH.LBX  023B3      22  UPPER  IMPROVED SPACE SCANNER
+RESEARCH.LBX  023CA      53  Title  Enemy ships can now be detected up to 7 parsecs away.
+RESEARCH.LBX  02400      24  UPPER  BATTLE COMPUTER MARK VII
+RESEARCH.LBX  02419      97  Title  Directs level 7 attacks against designated enemy targets, raising the base chance to hit by +70%.
+RESEARCH.LBX  0247B      19  UPPER  ECM JAMMER MARK VII
+RESEARCH.LBX  0248F     101  Title  Adds +7 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -70%.
+RESEARCH.LBX  024F5      25  UPPER  HYPERSPACE COMMUNICATIONS
+RESEARCH.LBX  0250F     120  Mixed  Allows you to communicate with ships and transports in hyperspace. You can now change their destinations while in route.
+RESEARCH.LBX  02588      25  UPPER  BATTLE COMPUTER MARK VIII
+RESEARCH.LBX  025A2      97  Title  Directs level 8 attacks against designated enemy targets, raising the base chance to hit by +80%.
+RESEARCH.LBX  02604      20  UPPER  ECM JAMMER MARK VIII
+RESEARCH.LBX  02619     101  Title  Adds +8 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -80%.
+RESEARCH.LBX  0267F      28  UPPER  IMPROVED ROBOTIC CONTROLS VI
+RESEARCH.LBX  0269C     117  Mixed  Allows up to six factories to be operated per population. Factory controls beyond the base population cost 250% more.
+RESEARCH.LBX  02712      23  UPPER  BATTLE COMPUTER MARK IX
+RESEARCH.LBX  0272A      97  Title  Directs level 9 attacks against designated enemy targets, raising the base chance to hit by +90%.
+RESEARCH.LBX  0278C      18  UPPER  ECM JAMMER MARK IX
+RESEARCH.LBX  0279F     101  Title  Adds +9 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -90%.
+RESEARCH.LBX  02805      22  UPPER  ADVANCED SPACE SCANNER
+RESEARCH.LBX  0281C     115  Mixed  Enemy ships can now be detected up to 9 parsecs away. Enemy destinations and ETA can also be accurately determined.
+RESEARCH.LBX  02890      22  UPPER  BATTLE COMPUTER MARK X
+RESEARCH.LBX  028A7      99  Title  Directs level 10 attacks against designated enemy targets, raising the base chance to hit by +100%.
+RESEARCH.LBX  0290B      17  UPPER  ECM JAMMER MARK X
+RESEARCH.LBX  0291D     103  Title  Adds +10 levels to defense versus enemy missile attacks, decreasing a missile's chance to hit by -100%.
+RESEARCH.LBX  02985      29  UPPER  IMPROVED ROBOTIC CONTROLS VII
+RESEARCH.LBX  029A3     119  Mixed  Allows up to seven factories to be operated per population. Factory controls beyond the base population cost 300% more.
+RESEARCH.LBX  02A1B      20  UPPER  TECHNOLOGY NULLIFIER
+RESEARCH.LBX  02A30     140  Mixed  Scrambles enemy battle computers, reducing the level of the computers by 0-2 each time the nullifier is fired. The weapon has a 1 hex range.
+RESEARCH.LBX  02ABD      23  UPPER  BATTLE COMPUTER MARK XI
+RESEARCH.LBX  02AD5      99  Title  Directs level 11 attacks against designated enemy targets, raising the base chance to hit by +110%.
+RESEARCH.LBX  02B39      15  UPPER  REFUELING TANKS
+RESEARCH.LBX  02B49     202  Title  Once stationed in a star system within range of a colony, ships equipped with these tanks allow other ships and transports to treat that system as if a colony were there for purposes of ship range only.
+RESEARCH.LBX  02C14      28  UPPER  REDUCED INDUSTRIAL WASTE 80%
+RESEARCH.LBX  02C31      65  Title  Factories now produce only 80% of the normal amount of pollution.
+RESEARCH.LBX  02C73      26  UPPER  IMPROVED INDUSTRIAL TECH 6
+RESEARCH.LBX  02C8E      51  Mixed  Factories can now be built for a cost of 6 BC each.
+RESEARCH.LBX  02CC2      14  UPPER  DURALLOY ARMOR
+RESEARCH.LBX  02CD1      44  Title  Increases the hits points of a ship by +50%.
+RESEARCH.LBX  02CFE      23  UPPER  AUTOMATED REPAIR SYSTEM
+RESEARCH.LBX  02D16      97  Title  Undestroyed ships can repair up to one-quarter of their total hit points at the end of each turn.
+RESEARCH.LBX  02D78      28  UPPER  REDUCED INDUSTRIAL WASTE 60%
+RESEARCH.LBX  02D95      65  Title  Factories now produce only 60% of the normal amount of pollution.
+RESEARCH.LBX  02DD7      26  UPPER  IMPROVED INDUSTRIAL TECH 5
+RESEARCH.LBX  02DF2      51  Mixed  Factories can now be built for a cost of 5 BC each.
+RESEARCH.LBX  02E26      13  UPPER  ZORTIUM ARMOR
+RESEARCH.LBX  02E34      45  Title  Increases the hits points of a ship by +100%.
+RESEARCH.LBX  02E62      28  UPPER  REDUCED INDUSTRIAL WASTE 40%
+RESEARCH.LBX  02E7F      65  Title  Factories now produce only 40% of the normal amount of pollution.
+RESEARCH.LBX  02EC1      13  UPPER  ANDRIUM ARMOR
+RESEARCH.LBX  02ECF      45  Title  Increases the hits points of a ship by +150%.
+RESEARCH.LBX  02EFD      26  UPPER  IMPROVED INDUSTRIAL TECH 4
+RESEARCH.LBX  02F18      51  Mixed  Factories can now be built for a cost of 4 BC each.
+RESEARCH.LBX  02F4C      23  UPPER  ADVANCED DAMAGE CONTROL
+RESEARCH.LBX  02F64      94  Title  Undestroyed ships can repair up to one-half of their total hit points at the end of each turn.
+RESEARCH.LBX  02FC3      15  UPPER  TRITANIUM ARMOR
+RESEARCH.LBX  02FD3      45  Title  Increases the hits points of a ship by +200%.
+RESEARCH.LBX  03001      28  UPPER  REDUCED INDUSTRIAL WASTE 20%
+RESEARCH.LBX  0301E      65  Title  Factories now produce only 20% of the normal amount of pollution.
+RESEARCH.LBX  03060      26  UPPER  IMPROVED INDUSTRIAL TECH 3
+RESEARCH.LBX  0307B      51  Mixed  Factories can now be built for a cost of 3 BC each.
+RESEARCH.LBX  030AF      16  UPPER  ADAMANTIUM ARMOR
+RESEARCH.LBX  030C0      45  Title  Increases the hits points of a ship by +250%.
+RESEARCH.LBX  030EE      28  UPPER  INDUSTRIAL WASTE ELIMINATION
+RESEARCH.LBX  0310B      28  Title  Factories no longer pollute.
+RESEARCH.LBX  03128      26  UPPER  IMPROVED INDUSTRIAL TECH 2
+RESEARCH.LBX  03143      51  Mixed  Factories can now be built for a cost of 2 BC each.
+RESEARCH.LBX  03177      16  UPPER  NEUTRONIUM ARMOR
+RESEARCH.LBX  03188     100  Title  Provides the best internal protection of any armor and increases the hits points of a ship by +300%.
+RESEARCH.LBX  031ED      25  UPPER  CLASS I DEFLECTOR SHIELDS
+RESEARCH.LBX  03207     117  Mixed  Absorbs 1 hit point of damage from all weapon attacks directed against ships equipped with Class I deflector shields.
+RESEARCH.LBX  0327D      26  UPPER  CLASS II DEFLECTOR SHIELDS
+RESEARCH.LBX  03298     118  Mixed  Absorbs 2 hit point of damage from all weapon attacks directed against ships equipped with Class II deflector shields.
+RESEARCH.LBX  0330F      13  UPPER  REPULSOR BEAM
+RESEARCH.LBX  0331D      98  Mixed  Hurls enemy ships back one hex away from the attacking ship. The special weapon has a 1 hex range.
+RESEARCH.LBX  03380      25  UPPER  CLASS V DEFLECTOR SHIELDS
+RESEARCH.LBX  0339A     117  Mixed  Absorbs 5 hit point of damage from all weapon attacks directed against ships equipped with Class V deflector shields.
+RESEARCH.LBX  03410      24  UPPER  CLASS V PLANETARY SHIELD
+RESEARCH.LBX  03429     142  Title  Absorbs 5 hit points of damage from all weapon attacks directed against planet surfaces and is cumulative with missile base deflector shields.
+RESEARCH.LBX  034B8      27  UPPER  CLASS VII DEFLECTOR SHIELDS
+RESEARCH.LBX  034D4     119  Mixed  Absorbs 7 hit point of damage from all weapon attacks directed against ships equipped with Class VII deflector shields.
+RESEARCH.LBX  0354C      25  UPPER  CLASS X DEFLECTOR SHIELDS
+RESEARCH.LBX  03566     118  Mixed  Absorbs 10 hit point of damage from all weapon attacks directed against ships equipped with Class X deflector shields.
+RESEARCH.LBX  035DD      24  UPPER  CLASS X PLANETARY SHIELD
+RESEARCH.LBX  035F6     143  Title  Absorbs 10 hit points of damage from all weapon attacks directed against planet surfaces and is cumulative with missile base deflector shields.
+RESEARCH.LBX  03686      27  UPPER  CLASS XII DEFLECTOR SHIELDS
+RESEARCH.LBX  036A2     120  Mixed  Absorbs 12 hit point of damage from all weapon attacks directed against ships equipped with Class XII deflector shields.
+RESEARCH.LBX  0371B      15  UPPER  CLOAKING DEVICE
+RESEARCH.LBX  0372B      82  Mixed  Renders ships invisible. Cloaked ships cannot be attacked until they first attack.
+RESEARCH.LBX  0377E      26  UPPER  CLASS XV DEFLECTOR SHIELDS
+RESEARCH.LBX  03799     119  Mixed  Absorbs 15 hit point of damage from all weapon attacks directed against ships equipped with Class XV deflector shields.
+RESEARCH.LBX  03811      11  UPPER  ZYRO SHIELD
+RESEARCH.LBX  0381D     149  Title  Surrounds the ship with an energy field that destroys incoming enemy missiles and torpedoes 75% of the time, -1% per technology level of the missile.
+RESEARCH.LBX  038B3      25  UPPER  CLASS XV PLANETARY SHIELD
+RESEARCH.LBX  038CD     143  Title  Absorbs 15 hit points of damage from all weapon attacks directed against planet surfaces and is cumulative with missile base deflector shields.
+RESEARCH.LBX  0395D      28  UPPER  CLASS XVII DEFLECTOR SHIELDS
+RESEARCH.LBX  0397A     121  Mixed  Absorbs 17 hit point of damage from all weapon attacks directed against ships equipped with Class XVII deflector shields.
+RESEARCH.LBX  039F4      12  UPPER  STASIS FIELD
+RESEARCH.LBX  03A01     127  Mixed  Freezes one group of enemy ships up to one hex away. Frozen ships cannot attack or be attacked. The effects last only one turn.
+RESEARCH.LBX  03A81      26  UPPER  CLASS XX DEFLECTOR SHIELDS
+RESEARCH.LBX  03A9C     119  Mixed  Absorbs 20 hit point of damage from all weapon attacks directed against ships equipped with Class XX deflector shields.
+RESEARCH.LBX  03B14      25  UPPER  CLASS XX PLANETARY SHIELD
+RESEARCH.LBX  03B2E     143  Title  Absorbs 20 hit points of damage from all weapon attacks directed against planet surfaces and is cumulative with missile base deflector shields.
+RESEARCH.LBX  03BBE      24  UPPER  ENVIRONMENTAL TERMINATOR
+RESEARCH.LBX  03BD7     152  Title  Creates a sub-space field that destroys all life, killing enemy crews 25%-75% of the time minus 2% times the level of enemies defensive shield strength.
+RESEARCH.LBX  03C70      28  UPPER  CLASS XXII DEFLECTOR SHIELDS
+RESEARCH.LBX  03C8D     121  Mixed  Absorbs 22 hit point of damage from all weapon attacks directed against ships equipped with Class XXII deflector shields.
+RESEARCH.LBX  03D07      16  UPPER  LIGHTNING SHIELD
+RESEARCH.LBX  03D18     150  Title  Surrounds the ship with an energy field that destroys incoming enemy missiles and torpedoes 100% of the time, -1% per technology level of the missile.
+RESEARCH.LBX  03DAF      27  UPPER  CLASS XXV DEFLECTOR SHIELDS
+RESEARCH.LBX  03DCB     120  Mixed  Absorbs 25 hit point of damage from all weapon attacks directed against ships equipped with Class XXV deflector shields.
+RESEARCH.LBX  03E44      22  UPPER  ECOLOGICAL RESTORATION
+RESEARCH.LBX  03E5B      58  Mixed  Eliminates 2 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX  03E96      25  UPPER  IMPROVED TERRAFORMING +10
+RESEARCH.LBX  03EB0      83  Mixed  Increases the population capacity of planets by +10 for a cost of 5 BC per million.
+RESEARCH.LBX  03F04      29  UPPER  CONTROLLED BARREN ENVIRONMENT
+RESEARCH.LBX  03F22      43  Title  Permits the colonization of barren planets.
+RESEARCH.LBX  03F4E      29  UPPER  CONTROLLED TUNDRA ENVIRONMENT
+RESEARCH.LBX  03F6C      43  Title  Permits the colonization of tundra planets.
+RESEARCH.LBX  03F98      25  UPPER  IMPROVED TERRAFORMING +20
+RESEARCH.LBX  03FB2      83  Mixed  Increases the population capacity of planets by +20 for a cost of 5 BC per million.
+RESEARCH.LBX  04006      27  UPPER  CONTROLLED DEAD ENVIRONMENT
+RESEARCH.LBX  04022      41  Title  Permits the colonization of dead planets.
+RESEARCH.LBX  0404C      24  UPPER  IMPROVED ECO RESTORATION
+RESEARCH.LBX  04065      58  Mixed  Eliminates 5 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX  040A0      30  UPPER  CONTROLLED INFERNO ENVIRONMENT
+RESEARCH.LBX  040BF      44  Title  Permits the colonization of inferno planets.
+RESEARCH.LBX  040EC      25  UPPER  IMPROVED TERRAFORMING +30
+RESEARCH.LBX  04106      83  Mixed  Increases the population capacity of planets by +30 for a cost of 4 BC per million.
+RESEARCH.LBX  0415A      28  UPPER  CONTROLLED TOXIC ENVIRONMENT
+RESEARCH.LBX  04177      42  Title  Permits the colonization of toxic planets.
+RESEARCH.LBX  041A2      31  UPPER  CONTROLLED RADIATED ENVIRONMENT
+RESEARCH.LBX  041C2      45  Title  Permits the colonization of radiated planets.
+RESEARCH.LBX  041F0      25  UPPER  IMPROVED TERRAFORMING +40
+RESEARCH.LBX  0420A      83  Mixed  Increases the population capacity of planets by +40 for a cost of 4 BC per million.
+RESEARCH.LBX  0425E      24  UPPER  ATMOSPHERIC TERRAFORMING
+RESEARCH.LBX  04277     111  Mixed  Converts hostile planets to standard environments, normalizing population growth for a one time cost of 200 BC.
+RESEARCH.LBX  042E7      24  UPPER  ADVANCED ECO RESTORATION
+RESEARCH.LBX  04300      59  Mixed  Eliminates 10 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX  0433C      25  UPPER  IMPROVED TERRAFORMING +50
+RESEARCH.LBX  04356      83  Mixed  Increases the population capacity of planets by +50 for a cost of 3 BC per million.
+RESEARCH.LBX  043AA      24  UPPER  ADVANCED SOIL ENRICHMENT
+RESEARCH.LBX  043C3      97  Mixed  Converts standard planets to gaias, doubling the population growth for a one time cost of 300 BC.
+RESEARCH.LBX  04425      25  UPPER  IMPROVED TERRAFORMING +60
+RESEARCH.LBX  0443F      83  Mixed  Increases the population capacity of planets by +60 for a cost of 3 BC per million.
+RESEARCH.LBX  04493      24  UPPER  COMPLETE ECO RESTORATION
+RESEARCH.LBX  044AC      59  Mixed  Eliminates 20 units of industrial waste for a cost of 1 BC.
+RESEARCH.LBX  044E8      25  UPPER  IMPROVED TERRAFORMING +70
+RESEARCH.LBX  04502      83  Mixed  Increases the population capacity of planets by +70 for a cost of 2 BC per million.
+RESEARCH.LBX  04556      25  UPPER  IMPROVED TERRAFORMING +80
+RESEARCH.LBX  04570      83  Mixed  Increases the population capacity of planets by +80 for a cost of 2 BC per million.
+RESEARCH.LBX  045C4      21  UPPER  COMPLETE TERRAFORMING
+RESEARCH.LBX  045DA      83  Mixed  Increases the population capacity of planets by +90 for a cost of 2 BC per million.
+RESEARCH.LBX  0462E      13  UPPER  RETRO ENGINES
+RESEARCH.LBX  0463C     125  Title  Ships may move at warp 1, one parsec per turn, and have a defense of 1 in combat, decreasing the chance of being hit by -10%.
+RESEARCH.LBX  046BA      22  UPPER  INCREASED SHIP RANGE 4
+RESEARCH.LBX  046D1      84  Title  Extended fuel reserves allow ships to move up to 4 parsecs away from colony planets.
+RESEARCH.LBX  04726      22  UPPER  INCREASED SHIP RANGE 5
+RESEARCH.LBX  0473D      84  Title  Extended fuel reserves allow ships to move up to 5 parsecs away from colony planets.
+RESEARCH.LBX  04792      15  UPPER  NUCLEAR ENGINES
+RESEARCH.LBX  047A2     126  Title  Ships may move at warp 2, two parsecs per turn, and have a defense of 2 in combat, decreasing the chance of being hit by -20%.
+RESEARCH.LBX  04821      19  UPPER  INERTIAL STABILIZER
+RESEARCH.LBX  04835     137  Title  Generates a field that reduces the inertia of ships and adds +2 levels to defense in combat, cumulative with any other defensive bonuses.
+RESEARCH.LBX  048BF      16  UPPER  SUB-LIGHT DRIVES
+RESEARCH.LBX  048D0     128  Title  Ships may move at warp 3, three parsecs per turn, and have a defense of 3 in combat, decreasing the chance of being hit by -30%.
+RESEARCH.LBX  04951      22  UPPER  INCREASED SHIP RANGE 7
+RESEARCH.LBX  04968      84  Title  Extended fuel reserves allow ships to move up to 7 parsecs away from colony planets.
+RESEARCH.LBX  049BD      13  UPPER  FUSION DRIVES
+RESEARCH.LBX  049CB     127  Title  Ships may move at warp 4, four parsecs per turn, and have a defense of 4 in combat, decreasing the chance of being hit by -40%.
+RESEARCH.LBX  04A4B      15  UPPER  WARP DISSIPATOR
+RESEARCH.LBX  04A5B     145  Title  Specialized weapon that disrupts the warp fields surrounding enemy ships, cumulatively reducing their speed by 0-1 each turn the weapon is fired.
+RESEARCH.LBX  04AED      22  UPPER  INCREASED SHIP RANGE 9
+RESEARCH.LBX  04B04      84  Title  Extended fuel reserves allow ships to move up to 9 parsecs away from colony planets.
+RESEARCH.LBX  04B59      14  UPPER  IMPULSE DRIVES
+RESEARCH.LBX  04B68     127  Title  Ships may move at warp 5, five parsecs per turn, and have a defense of 5 in combat, decreasing the chance of being hit by -50%.
+RESEARCH.LBX  04BE8      24  UPPER  INTERGALACTIC STAR GATES
+RESEARCH.LBX  04C01     146  Mixed  Allows your ships to move between planets equipped with star gates in only one turn, regardless of distance and warp speed. Costs 350 BC to build.
+RESEARCH.LBX  04C94      10  UPPER  ION DRIVES
+RESEARCH.LBX  04C9F     126  Title  Ships may move at warp 6, six parsecs per turn, and have a defense of 6 in combat, decreasing the chance of being hit by -60%.
+RESEARCH.LBX  04D1E      23  UPPER  INCREASED SHIP RANGE 11
+RESEARCH.LBX  04D36      85  Title  Extended fuel reserves allow ships to move up to 11 parsecs away from colony planets.
+RESEARCH.LBX  04D8C      17  UPPER  HIGH ENERGY FOCUS
+RESEARCH.LBX  04D9E      60  Title  Increases the firing range of all energy weapons by one hex.
+RESEARCH.LBX  04DDB      18  UPPER  ANTI-MATTER DRIVES
+RESEARCH.LBX  04DEE     128  Title  Ships may move at warp 7, seven parsecs per turn, and have a defense of 7 in combat, decreasing the chance of being hit by -70%.
+RESEARCH.LBX  04E6F      19  UPPER  DISPLACEMENT DEVICE
+RESEARCH.LBX  04E83     112  Title  Teleports ships to any place on the combat map and automatically gives first initiative to the teleporting ship.
+RESEARCH.LBX  04EF4      20  UPPER  UNLIMITED SHIP RANGE
+RESEARCH.LBX  04F09      88  Title  Self-replenishing fuel reserves allow ships to move up any distance from colony planets.
+RESEARCH.LBX  04F62      19  UPPER  INTER-PHASED DRIVES
+RESEARCH.LBX  04F76     128  Title  Ships may move at warp 8, eight parsecs per turn, and have a defense of 8 in combat, decreasing the chance of being hit by -80%.
+RESEARCH.LBX  04FF7      19  UPPER  HYPER-THRUST DRIVES
+RESEARCH.LBX  0500B     127  Title  Ships may move at warp 9, nine parsecs per turn, and have a defense of 9 in combat, decreasing the chance of being hit by -90%.
+RESEARCH.LBX  0508B      18  UPPER  INERTIAL NULLIFIER
+RESEARCH.LBX  0509E     137  Title  Generates a field that negates the inertia of ships and adds +4 levels to defense in combat, cumulative with any other defensive bonuses.
+RESEARCH.LBX  05128       6  UPPER  LASERS
+RESEARCH.LBX  0512F     130  Mixed  Direct-fire beam weapon that inflicts 1-3 points of damage. Heavy lasers have a two hex range and strike for 1-6 points of damage.
+RESEARCH.LBX  051B2      18  UPPER  NEUTRON PELLET GUN
+RESEARCH.LBX  051C5      64  Title  Heavy particle stream weapon that inflicts 2-5 points of damage.
+RESEARCH.LBX  05206      15  UPPER  HYPER-V ROCKETS
+RESEARCH.LBX  05216      77  Title  Swift missiles that explode for 7 points of damage and move at a speed of 2.5
+RESEARCH.LBX  05264      13  UPPER  GATLING LASER
+RESEARCH.LBX  05272      94  Title  An advanced laser that fires up to four times per turn for 2-4 points of damage with each hit.
+RESEARCH.LBX  052D1      11  UPPER  MASS DRIVER
+RESEARCH.LBX  052DD      56  Title  A linear accelerator that inflicts 4-7 points of damage.
+RESEARCH.LBX  05316      15  UPPER  HYPER-X ROCKETS
+RESEARCH.LBX  05326     156  Title  Missiles equipped with high energy warheads that explode for 10 points of damage, move at a speed of 2, and are controlled by a +1 level targeting computer.
+RESEARCH.LBX  053C3      11  UPPER  FUSION BOMB
+RESEARCH.LBX  053CF      69  Title  Bombs that explode for 10-30 points of damage on ground targets only.
+RESEARCH.LBX  05415      20  UPPER  ANTI-MISSILE ROCKETS
+RESEARCH.LBX  0542A     123  Title  Trans-light rockets capable of destroying incoming enemy missiles 35% of the time, -1% per technology level of the missile.
+RESEARCH.LBX  054A6      10  UPPER  ION CANNON
+RESEARCH.LBX  054B1     130  Mixed  High intensity beam weapons capable of inflicting 3-12 points of damage. Heavy ion cannons strike for 5-25 and have a 2 hex range.
+RESEARCH.LBX  05534      12  UPPER  DEATH SPORES
+RESEARCH.LBX  05541     126  Title  Horrible biological weapons dropped on planets capable of killing and reducing the maximum planetary populations by 1 million.
+RESEARCH.LBX  055C0      15  UPPER  NEUTRON BLASTER
+RESEARCH.LBX  055D0     133  Mixed  High powered beam weapons capable of inflicting 5-15 points of damage. Heavy neutron blasters strike for 8-30 and have a 2 hex range.
+RESEARCH.LBX  05656      18  UPPER  MERCULITE MISSILES
+RESEARCH.LBX  05669     141  Title  Hard-hitting, swift missiles that explode for 15 points of damage, move at a speed of 3, and are controlled by a +2 level targeting computer.
+RESEARCH.LBX  056F7      13  UPPER  PARTICLE BEAM
+RESEARCH.LBX  05705     114  Title  High intensity particle accelerators capable of striking enemy ships up to 2 hexes away for 5-20 points of damage.
+RESEARCH.LBX  05778      16  UPPER  ANTI-MATTER BOMB
+RESEARCH.LBX  05789      69  Title  Bombs that explode for 20-50 points of damage on ground targets only.
+RESEARCH.LBX  057CF      16  UPPER  STINGER MISSILES
+RESEARCH.LBX  057E0     158  Title  Slow, hyper-accurate missiles that explode for 20 points of damage, move at a speed of 2.5, and are controlled by a sophisticated +3 level targeting computer.
+RESEARCH.LBX  0587F      16  UPPER  GAUSS AUTOCANNON
+RESEARCH.LBX  05890     120  Title  An advanced linear accelerator capable of firing four explosive rounds per turn that inflict 5-15 points of damage each.
+RESEARCH.LBX  05909       9  UPPER  HARD BEAM
+RESEARCH.LBX  05913     124  Title  An energy-to-matter beam weapon that halves the effectiveness of enemy deflector shields and inflicts 8-15 points of damage.
+RESEARCH.LBX  05990      11  UPPER  FUSION BEAM
+RESEARCH.LBX  0599C     132  Mixed  High intensity beam weapon capable of inflicting 10-25 points of damage. Heavy fusion beams strike for 15-50 and have a 2 hex range.
+RESEARCH.LBX  05A21      12  UPPER  OMEGA-V BOMB
+RESEARCH.LBX  05A2E      80  Title  High yield bombs that explode for 40-70 points of damage on ground targets only.
+RESEARCH.LBX  05A7F      21  UPPER  ANTI-MATTER TORPEDOES
+RESEARCH.LBX  05A95     164  Mixed  High energy tracking torpedoes that deliver 50 points of damage but may only be fired every other turn. Each torpedo is equipped with a +4 level targeting computer.
+RESEARCH.LBX  05B3A      15  UPPER  MEGABOLT CANNON
+RESEARCH.LBX  05B4A     130  Title  Releases multiple bolts of pure energy in a wide field that has a +30% bonus chance to hit and strikes for 10-30 points of damage.
+RESEARCH.LBX  05BCD       6  UPPER  PHASOR
+RESEARCH.LBX  05BD4     135  Mixed  Phased energy beams capable of inflicting 5-40 points of damage. Heavy phasors strike for 5-75 points of damage and have a 2 hex range.
+RESEARCH.LBX  05C5C      10  UPPER  DOOM VIRUS
+RESEARCH.LBX  05C67     137  Title  Dreadful biological weapons dropped on planets capable of killing and reducing the maximum planetary populations by 2 million per attack.
+RESEARCH.LBX  05CF1      15  UPPER  PULSON MISSILES
+RESEARCH.LBX  05D01     160  Title  Powerful missiles equipped with anti-matter warheads that explode for 30 points of damage, move at speed 4, and are controlled by a +4 level targeting computer.
+RESEARCH.LBX  05DA2      12  UPPER  AUTO BLASTER
+RESEARCH.LBX  05DAF     106  Title  An advanced neutron blaster that fires up to three times per turn for 8-25 points of damage with each hit.
+RESEARCH.LBX  05E1A      13  UPPER  GRAVITON BEAM
+RESEARCH.LBX  05E28     149  Title  A tractor-repulsor beam that rends enemy ships to pieces, halving the effectiveness of their deflector shields and inflicting 15-25 points of damage.
+RESEARCH.LBX  05EBE      17  UPPER  HERCULAR MISSILES
+RESEARCH.LBX  05ED0     150  Mixed  Highly advanced missile exploding for 40 points of damage. The hercular missiles move at speed 2.5 and is controlled by a +5 level targeting computer.
+RESEARCH.LBX  05F67      13  UPPER  PLASMA CANNON
+RESEARCH.LBX  05F75      66  Title  Fires intense bolts of energy that inflict 15-45 points of damage.
+RESEARCH.LBX  05FB8      14  UPPER  BIO TERMINATOR
+RESEARCH.LBX  05FC7     139  Title  Abominable biological weapons dropped on planets capable of killing and reducing the maximum planetary populations by 3 million per attack.
+RESEARCH.LBX  06053       9  UPPER  DISRUPTOR
+RESEARCH.LBX  0605D     119  Title  Unleashes tremendous bolts of pure energy that can strike enemy targets out to 2 hexes away for 20-50 points of damage.
+RESEARCH.LBX  060D5      15  UPPER  NEUTRONIUM BOMB
+RESEARCH.LBX  060E5      82  Title  Devastating bombs that explode for 75-150 points of damage on ground targets only.
+RESEARCH.LBX  06138      18  UPPER  HELLFIRE TORPEDOES
+RESEARCH.LBX  0614B     176  Title  Enveloping energy torpedoes that deliver 40 points of damage to all four enemy shields as if struck with four simultaneous attacks, but may only be fired once every other turn.
+RESEARCH.LBX  061FC      13  UPPER  ZEON MISSILES
+RESEARCH.LBX  0620A     161  Mixed  Burst missiles that explode to cover an entire hex and automatically strike all ships inside for 30 points of damage (area effect). The missiles move at speed 3.
+RESEARCH.LBX  062AC      16  UPPER  PROTON TORPEDOES
+RESEARCH.LBX  062BD     162  Mixed  High yield energy torpedoes that deliver 100 points of damage but may only be fired every other turn. Each torpedo is equipped with a +6 level targeting computer.
+RESEARCH.LBX  06360      12  UPPER  PULSE PHASOR
+RESEARCH.LBX  0636D     100  Title  An advanced phasor capable of firing three bursts per turn for 10-40 points of damage with each hit.
+RESEARCH.LBX  063D2      23  UPPER  TRI-FOCUS PLASMA CANNON
+RESEARCH.LBX  063EA     113  Title  Fires a triad of high intensity plasma beams capable of inflicting 20-100 points of damage at a range of 2 hexes.
+RESEARCH.LBX  0645C      17  UPPER  STELLAR CONVERTER
+RESEARCH.LBX  0646E     174  Title  Surrounds the target with an extremely powerful energy field that converts matter to energy and inflicts 15-75 points of damage to all four shields out to a range of 3 hexes.
+RESEARCH.LBX  0651D      12  UPPER  IONIC PULSAR
+RESEARCH.LBX  0652A     138  Title  Unleashes a cloud of highly charged plasma particles that automatically strikes all ships in the hex 30-40 points of damage (area effect).
+RESEARCH.LBX  065B5      13  UPPER  MAULER DEVICE
+RESEARCH.LBX  065C3      97  Title  Unleashes enormous amounts of focused energy at enemy targets inflicting 50-200 points of damage.
+RESEARCH.LBX  06625      16  UPPER  PLASMA TORPEDOES
+RESEARCH.LBX  06636     168  Mixed  Pure energy torpedoes that deliver 250 points of damage but lose 30 strength per hex traveled. The launcher fires every other turn and has a +7 level guidance computer.

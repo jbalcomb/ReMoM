@@ -1,0 +1,17 @@
+module_num=175
+module=palette\palstore.asm
+source=0175-palstore.asm.md
+range[0]=1:0x00122AA4 linear=0x00132AA4 size=1208
+range[1]=2:0x0000C5F8 linear=0x0017C5F8 size=84
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                        SYMBOL                       CHUNK
+m175f001  1    -      0x00132AA4  1:0x00122AA4  code  Vsync_Speed_Test            Vsync_Speed_Test_            regions/07-object-1/001B7E54-001B8653.txt
+m175f002  2    -      0x00132AF8  1:0x00122AF8  code  Store_Palette_Block         Store_Palette_Block_         regions/07-object-1/001B7E54-001B8653.txt
+m175f003  3    -      0x00132B27  1:0x00122B27  code  Wait_For_Vsync              Wait_For_Vsync_              regions/07-object-1/001B7E54-001B8653.txt
+m175f004  4    -      0x00132B41  1:0x00122B41  code  Forced_Wait_For_Vsync       Forced_Wait_For_Vsync_       regions/07-object-1/001B7E54-001B8653.txt
+m175f005  5    -      0x00132B52  1:0x00122B52  code  Tint_Palette                Tint_Palette_                regions/07-object-1/001B7E54-001B8653.txt
+m175f006  6    -      0x00132C80  1:0x00122C80  code  Darken_Palette              Darken_Palette_              regions/07-object-1/001B7E54-001B8653.txt
+m175f007  7    -      0x00132D36  1:0x00122D36  code  Cycle_Palette               Cycle_Palette_               regions/07-object-1/001B7E54-001B8653.txt
+m175f008  8    -      0x00132E69  1:0x00122E69  code  Dual_Cycle_Palette          Dual_Cycle_Palette_          regions/07-object-1/001B7E54-001B8653.txt
+m175f009  9    -      0x00132F27  1:0x00122F27  code  Store_Single_Palette_Color  Store_Single_Palette_Color_  regions/07-object-1/001B7E54-001B8653.txt

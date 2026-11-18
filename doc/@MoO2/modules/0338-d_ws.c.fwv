@@ -1,0 +1,8 @@
+module_num=338
+module=C:\GCL520\C_ALL\D_WS.C
+source=0338-d_ws.c.md
+range[0]=1:0x0014E200 linear=0x0015E200 size=112
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL        CHUNK
+m338f001  1    -      0x0015E200  1:0x0014E200  code  WriteString  WriteString_  regions/07-object-1/001E3654-001E3E53.txt

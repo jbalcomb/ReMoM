@@ -1,0 +1,53 @@
+module_num=270
+module=D:\DEVEL\PROJECTS\SMACK\smackinp.c
+source=0270-smackinp.c.md
+range[0]=1:0x0013A010 linear=0x0014A010 size=12585
+range[1]=2:0x00011154 linear=0x00181154 size=32
+range[2]=2:0x0004BC30 linear=0x001BBC30 size=16
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                 SYMBOL               CHUNK
+m270f001  1    -      0x0014A010  1:0x0013A010  code         SMACKWRAPCOPY        SMACKWRAPCOPY        regions/07-object-1/001CF654-001CFE53.txt
+m270f002  2    -      0x0014A090  1:0x0013A090  code         SMACKWAIT            SMACKWAIT            regions/07-object-1/001CF654-001CFE53.txt
+m270f003  3    -      0x0014A1B0  1:0x0013A1B0  code         SMACKSOUNDCHECK      SMACKSOUNDCHECK      regions/07-object-1/001CF654-001CFE53.txt
+m270f004  4    -      0x0014A1C0  1:0x0013A1C0  code         SMACKVOLUMEPAN       SMACKVOLUMEPAN       regions/07-object-1/001CF654-001CFE53.txt
+m270f005  5    -      0x0014A260  1:0x0013A260  code         SMACKSOUNDINTRACK    SMACKSOUNDINTRACK    regions/07-object-1/001CF654-001CFE53.txt
+m270f006  6    -      0x0014A2D0  1:0x0013A2D0  code         SMACKTOBUFFERRECT    SMACKTOBUFFERRECT    regions/07-object-1/001CF654-001CFE53.txt
+m270f007  7    -      0x0014A550  1:0x0013A550  code         SMACKGOTO            SMACKGOTO            regions/07-object-1/001CF654-001CFE53.txt
+m270f008  8    -      0x0014A580  1:0x0013A580  code         SMACKGETTRACKDATA    SMACKGETTRACKDATA    regions/07-object-1/001CF654-001CFE53.txt
+m270f009  9    -      0x0014A6BC  1:0x0013A6BC  code         SMACKCOLORREMAP      SMACKCOLORREMAP      regions/07-object-1/001CF654-001CFE53.txt
+m270f010  10   -      0x0014AA20  1:0x0013AA20  code         SMACKCOLORTRANS      SMACKCOLORTRANS      regions/07-object-1/001CFE54-001D0653.txt
+m270f011  11   -      0x0014AA40  1:0x0013AA40  code         SMACKTOBUFFER        SMACKTOBUFFER        regions/07-object-1/001CFE54-001D0653.txt
+m270f012  12   -      0x0014AC60  1:0x0013AC60  code         SMACKTOSCREEN        SMACKTOSCREEN        regions/07-object-1/001CFE54-001D0653.txt
+m270f013  13   -      0x0014B1C0  1:0x0013B1C0  static,code  PutWidths            PutWidths_           regions/07-object-1/001D0654-001D0E53.txt
+m270f014  14   -      0x0014B200  1:0x0013B200  code         SMACKNEXTFRAME       SMACKNEXTFRAME       regions/07-object-1/001D0654-001D0E53.txt
+m270f015  15   -      0x0014B2B0  1:0x0013B2B0  code         SMACKSUMMARY         SMACKSUMMARY         regions/07-object-1/001D0654-001D0E53.txt
+m270f016  16   -      0x0014B3B0  1:0x0013B3B0  static,code  timeframe            timeframe_           regions/07-object-1/001D0654-001D0E53.txt
+m270f017  17   -      0x0014B4D0  1:0x0013B4D0  code         SMACKDOFRAME         SMACKDOFRAME         regions/07-object-1/001D0654-001D0E53.txt
+m270f018  18   -      0x0014B5B0  1:0x0013B5B0  static,code  doskip               doskip_              regions/07-object-1/001D0654-001D0E53.txt
+m270f019  19   -      0x0014B620  1:0x0013B620  static,code  soundnext            soundnext_           regions/07-object-1/001D0654-001D0E53.txt
+m270f020  20   -      0x0014B8B0  1:0x0013B8B0  code         SMACKCLOSE           SMACKCLOSE           regions/07-object-1/001D0E54-001D1653.txt
+m270f021  21   -      0x0014BA00  1:0x0013BA00  code         SMACKSOUNDONOFF      SMACKSOUNDONOFF      regions/07-object-1/001D0E54-001D1653.txt
+m270f022  22   -      0x0014BC10  1:0x0013BC10  code         SMACKFRAMERATE       SMACKFRAMERATE       regions/07-object-1/001D0E54-001D1653.txt
+m270f023  23   -      0x0014BC30  1:0x0013BC30  code         SMACKSIMULATE        SMACKSIMULATE        regions/07-object-1/001D0E54-001D1653.txt
+m270f024  24   -      0x0014BC40  1:0x0013BC40  code         SMACKOPEN            SMACKOPEN            regions/07-object-1/001D0E54-001D1653.txt
+m270f025  25   -      0x0014C490  1:0x0013C490  static,code  GetFirstTrack        GetFirstTrack_       regions/07-object-1/001D1654-001D1E53.txt
+m270f026  26   -      0x0014C4C0  1:0x0013C4C0  static,code  soundopen            soundopen_           regions/07-object-1/001D1654-001D1E53.txt
+m270f027  27   -      0x0014C740  1:0x0013C740  static,code  setuptheframe        setuptheframe_       regions/07-object-1/001D1654-001D1E53.txt
+m270f028  28   -      0x0014CAA0  1:0x0013CAA0  static,code  gotoframe            gotoframe_           regions/07-object-1/001D1E54-001D2653.txt
+m270f029  29   -      0x0014CD10  1:0x0013CD10  static,code  readframe            readframe_           regions/07-object-1/001D1E54-001D2653.txt
+m270f030  30   -      0x0014CD50  1:0x0013CD50  static,code  blockread            blockread_           regions/07-object-1/001D1E54-001D2653.txt
+m270f031  31   -      0x0014D000  1:0x0013D000  static,code  backgroundload       backgroundload_      regions/07-object-1/001D2654-001D2E53.txt
+m270f032  32   -      0x0014D110  1:0x0013D110  static,code  smkmalloc            smkmalloc_           regions/07-object-1/001D2654-001D2E53.txt
+-         -    -      0x00181154  2:0x00011154  static,data  _sounds              _sounds              regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181158  2:0x00011158  static,data  _trackbuf            _trackbuf            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018115C  2:0x0001115C  static,data  _simspeed            _simspeed            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181160  2:0x00011160  static,data  _forcerate           _forcerate           regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181164  2:0x00011164  data         _LowSoundOpenAddr    _LowSoundOpenAddr    regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181168  2:0x00011168  data         _LowSoundOffAddr     _LowSoundOffAddr     regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018116C  2:0x0001116C  data         _LowSoundOnAddr      _LowSoundOnAddr      regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181170  2:0x00011170  data         _LowSoundVolPanAddr  _LowSoundVolPanAddr  regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001BBC30  2:0x0004BC30  data         _LowSoundPurgeAddr   _LowSoundPurgeAddr   -
+-         -    -      0x001BBC34  2:0x0004BC34  data         _LowSoundCheckAddr   _LowSoundCheckAddr   -
+-         -    -      0x001BBC38  2:0x0004BC38  data         _LowSoundPlayedAddr  _LowSoundPlayedAddr  -
+-         -    -      0x001BBC3C  2:0x0004BC3C  data         _LowSoundCloseAddr   _LowSoundCloseAddr   -

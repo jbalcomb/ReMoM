@@ -1,0 +1,17 @@
+module_num=239
+module=mouse\mouse2.asm
+source=0239-mouse2.asm.md
+range[0]=1:0x00134A64 linear=0x00144A64 size=4214
+range[1]=2:0x00010D74 linear=0x00180D74 size=48
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                        SYMBOL                       CHUNK
+m239f001  1    -      0x00144A64  1:0x00134A64  code  Count_It                    Count_It_                    regions/07-object-1/001C9E54-001CA653.txt
+m239f002  2    -      0x00144A85  1:0x00134A85  code  Get_ES                      Get_ES_                      regions/07-object-1/001C9E54-001CA653.txt
+m239f003  3    -      0x00144A8B  1:0x00134A8B  code  Get_DS                      Get_DS_                      regions/07-object-1/001C9E54-001CA653.txt
+m239f004  4    -      0x00144A91  1:0x00134A91  code  Save_Mouse_Hi_Res           Save_Mouse_Hi_Res_           regions/07-object-1/001C9E54-001CA653.txt
+m239f005  5    -      0x00144EAC  1:0x00134EAC  code  Restore_Mouse_Hi_Res        Restore_Mouse_Hi_Res_        regions/07-object-1/001C9E54-001CA653.txt
+m239f006  6    -      0x0014529D  1:0x0013529D  code  Draw_Mouse_Buffer           Draw_Mouse_Buffer_           regions/07-object-1/001CA654-001CAE53.txt
+m239f007  7    -      0x00145719  1:0x00135719  code  Save_Mouse_Off_Page         Save_Mouse_Off_Page_         regions/07-object-1/001CA654-001CAE53.txt
+m239f008  8    -      0x00145850  1:0x00135850  code  Restore_Mouse_Off_Page      Restore_Mouse_Off_Page_      regions/07-object-1/001CAE54-001CB653.txt
+m239f009  9    -      0x0014595F  1:0x0013595F  code  Draw_Mouse_Off_Page_Buffer  Draw_Mouse_Off_Page_Buffer_  regions/07-object-1/001CAE54-001CB653.txt

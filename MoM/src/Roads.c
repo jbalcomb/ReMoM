@@ -250,7 +250,7 @@ void Road_Build_Screen(void)
         {
             _prev_world_x = (int16_t)(_main_map_grid_x - (MAP_WIDTH / 2));
             _prev_world_y = (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
-            IDK_CheckSet_MapDisplay_XY();
+            Clamp_Map_Window_Position();
         }
         if(leave_screen == ST_FALSE)
         {
@@ -275,10 +275,10 @@ void Road_Build_Screen_Add_Fields(void)
 
     roadbuild_ok_button_field = INVALID_FIELD;
 
-    // DONT  CRP_OVL_UU_Control_4 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_3 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_2 = INVALID_FIELD;
-    // DONT  CRP_OVL_UU_Control_1 = INVALID_FIELD;
+    niu_map_screen_field_4 = INVALID_FIELD;
+    niu_map_screen_field_3 = INVALID_FIELD;
+    niu_map_screen_field_2 = INVALID_FIELD;
+    niu_map_screen_field_1 = INVALID_FIELD;
 
     if(
         (_map_x == _prev_world_x)
@@ -298,9 +298,9 @@ void Road_Build_Screen_Add_Fields(void)
         _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
-    main_cancel_button_field = Add_Button_Field(280, 181, str_empty_string__ovr069, cast_cancel_button, str_hotkey_C__ovr069[0], ST_UNDEFINED);
+    main_cancel_button_field = Add_Button_Field(280, 181, str_empty_string__ovr069, cast_cancel_button, str_hotkey_C__ovr069, ST_UNDEFINED);
 
-    roadbuild_ok_button_field = Add_Button_Field(246, 181, str_empty_string__ovr069, road_ok_button, str_hotkey_O__ovr069[0], ST_UNDEFINED);
+    roadbuild_ok_button_field = Add_Button_Field(246, 181, str_empty_string__ovr069, road_ok_button, str_hotkey_O__ovr069, ST_UNDEFINED);
 
 }
 
@@ -512,28 +512,21 @@ void Draw_Road_Build_Path_Line(void)
     sets m_road_dst_x,y
     sets m_road_path_length
     sets or clears m_turns_to_build_road
-
 In OG-MoM, this gets you a blue or red line, the turn count, and a message for turns to complete or blocked.
-
 */
-void Road_Build_Path(int16_t x2, int16_t y2)
+int16_t Road_Build_Path(int16_t x2, int16_t y2)
 {
-    int16_t zz_road_build_moves2_max__2;
-    int16_t zz_road_build_moves2_max__1;
-    int16_t zz_l_turns_to_build_road;
-    int16_t turns_to_build_road;  // _SI_
-    int16_t itr;  // _DI_
-
-    // DELETEME  if(_square_explored[((_map_plane * WORLD_SIZE) + (y2 * WORLD_WIDTH) + x2)] == ST_FALSE)
+    int16_t zz_road_build_moves2_max__2 = 0;
+    int16_t zz_road_build_moves2_max__1 = 0;
+    int16_t zz_l_turns_to_build_road = 0;
+    int16_t turns_to_build_road = 0;
+    int16_t itr = 0;
     if(GET_SQUARE_EXPLORED(x2, y2, _map_plane) == ST_FALSE)
     {
-        return;
+        return 0;  /* DEDU  was path length? */
     }
-
     m_road_path_length = Path_Wrap(unit_wx, unit_wy, x2, y2, &movepath_x_array[2], &movepath_y_array[2], WORLD_WIDTH);
-
     SETMAX(m_road_path_length, 10);
-
     if(m_road_path_length > 0)
     {
         m_road_dst_x = movepath_x_array[(1 + m_road_path_length)];
@@ -544,29 +537,21 @@ void Road_Build_Path(int16_t x2, int16_t y2)
         m_road_dst_x = unit_wx;  // dst = src = cur
         m_road_dst_y = unit_wy;
     }
-
     zz_road_build_moves2_max__1 = Road_Build_Moves2_Max();
-
     zz_road_build_moves2_max__2 = zz_road_build_moves2_max__1;
-
     zz_l_turns_to_build_road = 0;
-
     m_turns_to_build_road = 0;
-
     turns_to_build_road = Turns_To_Build_Road(unit_wx, unit_wy, _map_plane);
-
     if(m_construction_points > 0)
     {
         turns_to_build_road /= m_construction_points;
         SETMIN(turns_to_build_road, 1);
     }
-
     m_turns_to_build_road = turns_to_build_road;
-
     for(itr = 0; itr < m_road_path_length; itr++)
     {
         turns_to_build_road = Turns_To_Build_Road(movepath_x_array[(2 + itr)], movepath_y_array[(2 + itr)], _map_plane);
-
+        /* OGBUG  both cuts below shorten m_road_path_length but leave m_road_dst_x/y at the 10-square end set above; Road_Build_Screen() still orders the stack to m_road_dst */
         if(turns_to_build_road < 0)
         {
             m_road_path_length = (itr + 1);
@@ -581,8 +566,7 @@ void Road_Build_Path(int16_t x2, int16_t y2)
                 turns_to_build_road /= m_construction_points;
                 SETMIN(turns_to_build_road, 1);
             }
-
-            if((m_turns_to_build_road + turns_to_build_road) > 120)  /* � MAX_MOVE_PATH_LENGTH = (2 * WORLD_WIDTH) ? */
+            if((m_turns_to_build_road + turns_to_build_road) > 120)  /* ¿ MAX_MOVE_PATH_LENGTH = (2 * WORLD_WIDTH) ? */
             {
                 m_road_path_length = itr;
                 break;
@@ -593,7 +577,7 @@ void Road_Build_Path(int16_t x2, int16_t y2)
             }
         }
     }
-
+    /* HACK */  return 0;  /* OGBUG: missing return (BCPP: Warning Roads.c 580: Function should return a value in function Road_Build_Path) */
 }
 
 

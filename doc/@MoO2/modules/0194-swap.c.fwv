@@ -1,0 +1,126 @@
+module_num=194
+module=F:\WLIBS\allocate\swap.c
+source=0194-swap.c.md
+range[0]=1:0x0012B9BD linear=0x0013B9BD size=318
+range[1]=2:0x00003068 linear=0x00173068 size=104
+range[2]=2:0x00047358 linear=0x001B7358 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                     CHUNK
+m194f001  1    -      0x0013B9BD  1:0x0012B9BD  code  Save_Block_To_Drive       Save_Block_To_Drive_       regions/07-object-1/001C0E54-001C1653.txt
+m194f002  2    -      0x0013BA86  1:0x0012BA86  code  Restore_Block_From_Drive  Restore_Block_From_Drive_  regions/07-object-1/001C0E54-001C1653.txt
+-         -    -      0x001B7358  2:0x00047358  data  _swap_block_address       _swap_block_address        -
+-         -    -      0x001B735C  2:0x0004735C  data  _swap_saved_block_size    _swap_saved_block_size     -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                   TYPE
+0x001B7358  2:0x00047358  swap_block_address     char *
+0x001B735C  2:0x0004735C  swap_saved_block_size  int
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME                      TYPE                CHUNK
+m194f001  0x0013B9BD  1:0x0012B9BD  201   23        8         0x14     -    EAX,EDX     Save_Block_To_Drive       void (char *, int)  regions/07-object-1/001C0E54-001C1653.txt
+m194f002  0x0013BA86  1:0x0012BA86  117   24        9         0x18     -    -           Restore_Block_From_Drive  void (void)         regions/07-object-1/001C0E54-001C1653.txt
+
+[Locals]
+KEY       ROUTINE                   BLOCK  LOCAL        LOCATION    TYPE
+m194f001  Save_Block_To_Drive       -      block        [EBP-0x14]  char *
+m194f001  Save_Block_To_Drive       -      reqd_memory  [EBP-0x10]  int
+m194f001  Save_Block_To_Drive       -      name         [EBP-0xC]   char *
+m194f001  Save_Block_To_Drive       -      header       [EBP-0x8]   long *
+m194f001  Save_Block_To_Drive       -      fptr         [EBP-0x4]   FILE *
+m194f002  Restore_Block_From_Drive  -      name         [EBP-0x10]  char *
+m194f002  Restore_Block_From_Drive  -      block        [EBP-0xC]   char *
+m194f002  Restore_Block_From_Drive  -      header       [EBP-0x8]   long *
+m194f002  Restore_Block_From_Drive  -      fptr         [EBP-0x4]   FILE *
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    wchar_t         name for unsigned short (#7)
+20   typedef    wchar_t         name for unsigned short (#7)
+21   scalar     void            void 1 bytes
+22   procedure  -               near386; returns void ()
+23   pointer    onexit_t        near386; of void (void) (#22)
+24   typedef    onexit_t        name for void (void) * (#23)
+25   scalar     unsigned long   unsigned 4 bytes
+26   typedef    time_t          name for unsigned long (#25)
+27   typedef    ino_t           name for unsigned int (#9)
+28   typedef    dev_t           name for int (#8)
+29   typedef    off_t           name for long (#16)
+30   typedef    clock_t         name for unsigned long (#25)
+31   typedef    time_t          name for unsigned long (#25)
+32   typedef    BYTE            name for unsigned char (#5)
+33   typedef    SBYTE           name for signed char (#4)
+34   typedef    UBYTE           name for unsigned char (#5)
+35   typedef    WORD            name for unsigned short (#7)
+36   typedef    SWORD           name for short (#6)
+37   typedef    UWORD           name for unsigned short (#7)
+38   typedef    DWORD           name for unsigned int (#9)
+39   typedef    SDWORD          name for int (#8)
+40   typedef    UDWORD          name for unsigned int (#9)
+41   typedef    BOOL            name for unsigned char (#5)
+42   typedef    SampleHandle    name for int (#8)
+43   procedure  -               near386; returns void (char *, int)
+44   pointer    -               near386; of long (#16)
+45   pointer    -               near386; of unsigned char (#5)
+46   struct     struct __iobuf  8 fields, 26 bytes
+47   typedef    __iobuf         struct name for struct #46 (#46)
+48   typedef    FILE            name for struct __iobuf (#47)
+49   pointer    -               near386; of FILE (#48)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER     OFFSET_VALUE  TYPE             TYPE_NAME
+46        field        _ptr       0             unsigned char *  struct __iobuf
+46        field        _cnt       4             int              struct __iobuf
+46        field        _base      8             unsigned char *  struct __iobuf
+46        field        _flag      12            unsigned int     struct __iobuf
+46        field        _handle    16            int              struct __iobuf
+46        field        _bufsize   20            unsigned int     struct __iobuf
+46        field        _ungotten  24            unsigned char    struct __iobuf
+46        field        _tmpfchar  25            unsigned char    struct __iobuf
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m194f001  24    0x0013B9BD  1:0x0012B9BD  0x001C1011
+m194f001  30    0x0013B9DA  1:0x0012B9DA  0x001C102E
+m194f001  32    0x0013B9E3  1:0x0012B9E3  0x001C1037
+m194f001  34    0x0013B9E7  1:0x0012B9E7  0x001C103B
+m194f001  35    0x0013B9F2  1:0x0012B9F2  0x001C1046
+m194f001  37    0x0013B9FA  1:0x0012B9FA  0x001C104E
+m194f001  38    0x0013BA08  1:0x0012BA08  0x001C105C
+m194f001  40    0x0013BA12  1:0x0012BA12  0x001C1066
+m194f001  41    0x0013BA1F  1:0x0012BA1F  0x001C1073
+m194f001  43    0x0013BA29  1:0x0012BA29  0x001C107D
+m194f001  44    0x0013BA3B  1:0x0012BA3B  0x001C108F
+m194f001  46    0x0013BA4B  1:0x0012BA4B  0x001C109F
+m194f001  47    0x0013BA64  1:0x0012BA64  0x001C10B8
+m194f001  49    0x0013BA6C  1:0x0012BA6C  0x001C10C0
+m194f001  50    0x0013BA75  1:0x0012BA75  0x001C10C9
+m194f001  52    0x0013BA7E  1:0x0012BA7E  0x001C10D2
+m194f002  54    0x0013BA86  1:0x0012BA86  0x001C10DA
+m194f002  60    0x0013BA9E  1:0x0012BA9E  0x001C10F2
+m194f002  62    0x0013BAA6  1:0x0012BAA6  0x001C10FA
+m194f002  64    0x0013BAAF  1:0x0012BAAF  0x001C1103
+m194f002  65    0x0013BAC1  1:0x0012BAC1  0x001C1115
+m194f002  66    0x0013BAD1  1:0x0012BAD1  0x001C1125
+m194f002  67    0x0013BAEA  1:0x0012BAEA  0x001C113E
+m194f002  69    0x0013BAF2  1:0x0012BAF2  0x001C1146

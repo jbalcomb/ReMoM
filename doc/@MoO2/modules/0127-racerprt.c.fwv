@@ -1,0 +1,15 @@
+module_num=127
+module=D:\MOX\RACERPRT.C
+source=0127-racerprt.c.md
+range[0]=1:0x000FA6C0 linear=0x0010A6C0 size=1510
+range[1]=2:0x00002304 linear=0x00172304 size=44
+range[2]=2:0x0000BF28 linear=0x0017BF28 size=44
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                   SYMBOL                 CHUNK
+m127f001  1    -      0x0010A6C0  1:0x000FA6C0  code         Race_Report_Screen     Race_Report_Screen_    regions/07-object-1/0018F654-0018FE53.txt
+-         -    -      0x0017BF28  2:0x0000BF28  data         _TREATIES_FMT          _TREATIES_FMT          regions/08-object-2/001F9E54-001FA653.txt
+-         -    -      0x0017BF34  2:0x0000BF34  data         _PERSONALITY_FMT       _PERSONALITY_FMT       regions/08-object-2/001F9E54-001FA653.txt
+-         -    -      0x0017BF3A  2:0x0000BF3A  data         _report_normal_color   _report_normal_color   regions/08-object-2/001F9E54-001FA653.txt
+-         -    -      0x0017BF42  2:0x0000BF42  data         _race_report_jim_hack  _race_report_jim_hack  regions/08-object-2/001F9E54-001FA653.txt
+-         -    -      0x0017BF43  2:0x0000BF43  static,data  _spy_group_data        _spy_group_data        regions/08-object-2/001F9E54-001FA653.txt

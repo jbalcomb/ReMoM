@@ -88,7 +88,7 @@ char str_DESTIN[] = "DESTIN";
 char cnst_HOTKEY_X_5 = 'X';
 
 // WZD dseg:3491
-char cnst_HOTKEY_Esc7 = '\x1B';
+char cnst_HOTKEY_Esc7[] = "\x1B";
 
 // WZD dseg:3493
 char str_WriteItUpGiveMeASaveGame[] = "Write it up, give me a save game.";
@@ -138,11 +138,11 @@ char aNone[] = "None";
 // WZD dseg:357E
 char aMore___[] = "More...";
 
-// WZD dseg:3586 4D 00                                           cnst_HOTKEY_M_3 db 'M',0                ; DATA XREF: Magic_Screen_Add_Fields+Co
-// WZD dseg:3588 53 00                                           cnst_HOTKEY_S_2 db 'S',0                ; DATA XREF: Magic_Screen_Add_Fields+70o
+// WZD dseg:3586 4D 00                                           cnst_HOTKEY_M_3 db 'M',0                ; DATA XREF: Magic_Screen_Add_Fields+Cvo
+// WZD dseg:3588 53 00                                           cnst_HOTKEY_S_2 db 'S',0                ; DATA XREF: Magic_Screen_Add_Fields+70vo
 
 // WZD dseg:358A
-char cnst_HOTKEY_O_7 = 'O';
+char cnst_HOTKEY_O_7[] = "O";
 
 // WZD dseg:358C
 char cnst_HOTKEY_A_2[] = "A";
@@ -151,7 +151,7 @@ char cnst_HOTKEY_A_2[] = "A";
 char magic_lbx_file[] = "MAGIC";
 
 // WZD dseg:3592
-char cnst_HOTKEY_C_5 = 'C';
+char cnst_HOTKEY_C_5[] = "C";
 
 // WZD dseg:3594
 char lilwiz_lbx_file[] = "LILWIZ";
@@ -224,21 +224,21 @@ char aFinalWar[] = "Final War";
 // WZD dseg:363A                                                 END:  _treaty_type_names
 
 // WZD dseg:3644 1B 00                                           cnst_HOTKEY_Esc8 db 1Bh,0               ; should use dseg:2c56
-// WZD dseg:3646 20 00                                           cnst_HOTKEY_SPACE_2 db ' ',0            ; DATA XREF: Mirror_Screen_Draw+8o
-// WZD dseg:3648 52 65 6C 61 74 69 6F 6E 73 3A 00                aRelations db 'Relations:',0            ; DATA XREF: Mirror_Screen_Draw+17Fo
-// WZD dseg:3653 54 72 65 61 74 69 65 73 3A 00                   aTreaties db 'Treaties:',0              ; DATA XREF: Mirror_Screen_Draw+1F5o
-// WZD dseg:365D 50 65 72 73 6F 6E 61 6C 69 74 79 3A 00          aPersonality db 'Personality:',0        ; DATA XREF: Mirror_Screen_Draw+2B3o
-// WZD dseg:366A 4F 62 6A 65 63 74 69 76 65 3A 00                aObjective db 'Objective:',0            ; DATA XREF: Mirror_Screen_Draw+342o
-// WZD dseg:3675 47 50 00                                        cnst_GP_4 db 'GP',0                     ; DATA XREF: Mirror_Screen_Draw+444o
-// WZD dseg:3678 4D 50 00                                        cnst_MP_3 db 'MP',0                     ; DATA XREF: Mirror_Screen_Draw+45Eo
-// WZD dseg:367B 46 61 6D 65 00                                  cnst_Fame db 'Fame',0                   ; DATA XREF: Mirror_Screen_Draw+520o
+// WZD dseg:3646 20 00                                           cnst_HOTKEY_SPACE_2 db ' ',0            ; DATA XREF: Mirror_Screen_Draw+8vo
+// WZD dseg:3648 52 65 6C 61 74 69 6F 6E 73 3A 00                aRelations db 'Relations:',0            ; DATA XREF: Mirror_Screen_Draw+17Fvo
+// WZD dseg:3653 54 72 65 61 74 69 65 73 3A 00                   aTreaties db 'Treaties:',0              ; DATA XREF: Mirror_Screen_Draw+1F5vo
+// WZD dseg:365D 50 65 72 73 6F 6E 61 6C 69 74 79 3A 00          aPersonality db 'Personality:',0        ; DATA XREF: Mirror_Screen_Draw+2B3vo
+// WZD dseg:366A 4F 62 6A 65 63 74 69 76 65 3A 00                aObjective db 'Objective:',0            ; DATA XREF: Mirror_Screen_Draw+342vo
+// WZD dseg:3675 47 50 00                                        cnst_GP_4 db 'GP',0                     ; DATA XREF: Mirror_Screen_Draw+444vo
+// WZD dseg:3678 4D 50 00                                        cnst_MP_3 db 'MP',0                     ; DATA XREF: Mirror_Screen_Draw+45Evo
+// WZD dseg:367B 46 61 6D 65 00                                  cnst_Fame db 'Fame',0                   ; DATA XREF: Mirror_Screen_Draw+520vo
 // WZD dseg:3680 61 6E 64 00                                     mirror_screen_abilities_list_and db 'and',0
 // WZD dseg:3684 2C 00                                           mirror_screen_abilities_list_comma db ',',0
 // WZD dseg:3686 2E 00                                           mirror_screen_abilities_list_period db '.',0
-// WZD dseg:3688 48 65 72 6F 65 73 00                            aHeroes db 'Heroes',0                   ; DATA XREF: Mirror_Screen_Draw+759o
-// WZD dseg:368F 54 68 65 00                                     cnst_The_2 db 'The',0                   ; DATA XREF: Mirror_Screen_Draw+801o
-// WZD dseg:3693 4C 49 4C 57 49 5A 00                            mirror_lilwiz_lbx_file db 'LILWIZ',0    ; DATA XREF: Mirror_Screen_Load+5Bo
-// WZD dseg:369A 4D 41 47 49 43 00                               mirror_magic_lbx_file db 'MAGIC',0      ; DATA XREF: Mirror_Screen_Load+78o ...
+// WZD dseg:3688 48 65 72 6F 65 73 00                            aHeroes db 'Heroes',0                   ; DATA XREF: Mirror_Screen_Draw+759vo
+// WZD dseg:368F 54 68 65 00                                     cnst_The_2 db 'The',0                   ; DATA XREF: Mirror_Screen_Draw+801vo
+// WZD dseg:3693 4C 49 4C 57 49 5A 00                            mirror_lilwiz_lbx_file db 'LILWIZ',0    ; DATA XREF: Mirror_Screen_Load+5Bvo
+// WZD dseg:369A 4D 41 47 49 43 00                               mirror_magic_lbx_file db 'MAGIC',0      ; DATA XREF: Mirror_Screen_Load+78vo ...
 
 // WZD dseg:369A                                                 END: ovr074 - Strings
 
@@ -471,9 +471,8 @@ void Magic_Screen(void)
 
     for(itr_help = 0; itr_help < NUM_GEMS; itr_help++)
     {
-        // SEE: MoX-Help.md  ¿ * 10 because record_size is 10 ?
-        // TODO  *(_help_entries + (itr_help * 10)) = HLP_GRAY_GEM;  // HLP_GRAY_GEM = 262
-        // TODO  *(_help_entries + 0x64 + (itr_help * 10)) = ST_UNDEFINED;
+        _help_entries[itr_help].help_idx = HLP_GRAY_GEM;
+        _help_entries[(10 + itr_help)].help_idx = ST_UNDEFINED;
     }
 
     gem_count = 0;
@@ -481,13 +480,13 @@ void Magic_Screen(void)
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
         gem_player_nums[gem_count] = -2;
-        // TODO  _help_entries[(IDK_CnctWzdsCnt_w42CB4 * 10)] = HLP_SHATTERED_GEM;  // HLP_SHATTERED_GEM = 263
-        // TODO  _help_entries[(100 + (IDK_CnctWzdsCnt_w42CB4 * 10))] = ST_UNDEFINED;
+        _help_entries[gem_count].help_idx = HLP_SHATTERED_GEM;
+        _help_entries[(10 + gem_count)].help_idx = ST_UNDEFINED;
 
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
             gem_player_nums[gem_count] = -1;
-            // TODO  _help_entries[(gem_count * 10)] = HLP_GRAY_GEM;  // HLP_GRAY_GEM = 262
+            _help_entries[gem_count].help_idx = HLP_GRAY_GEM;
         }
 
         if(_FORTRESSES[itr_players].active == ST_TRUE)
@@ -495,8 +494,8 @@ void Magic_Screen(void)
             if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
             {
                 gem_player_nums[gem_count] = itr_players;
-                // *(_help_entries + (itr_help * 10)) = ST_UNDEFINED;
-                // TODO  _help_entries[(100 + (IDK_CnctWzdsCnt_w42CB4 * 10))] = HLP_RELATIONS;  // HLP_RELATIONS = 271
+                _help_entries[gem_count].help_idx = ST_UNDEFINED;
+                _help_entries[(10 + gem_count)].help_idx = HLP_RELATIONS;
 
             }
         }
@@ -551,9 +550,9 @@ void Magic_Screen(void)
 
         Magic_Screen_Add_Fields();
 
-        hotkey_X = Add_Hot_Key('X');  // cnst_HOTKEY_X_5
+        hotkey_X = Add_Hot_Key("X");  // cnst_HOTKEY_X_5
 
-        hotkey_ESC = Add_Hot_Key('\x1B');  // cnst_HOTKEY_Esc7
+        hotkey_ESC = Add_Hot_Key("\x1B");  // cnst_HOTKEY_Esc7
 
         input_field_idx = Get_Input();
 
@@ -645,9 +644,10 @@ void Magic_Screen(void)
                 multihotkey_RVL = Add_Multi_Hot_Key_Field(str_RVL);
                 multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
                 multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
+                break;
             }
         }
-        
+
         /*
             BEGIN:  Alchemy Button
         */
@@ -660,11 +660,12 @@ void Magic_Screen(void)
             Magic_Screen_Load();
             Build_Overland_Enchantment_List();
             screen_changed = ST_TRUE;
+            /* OGBUG  the cap is recomputed from Nominal_Skill alone; Spellbook_Screen() adds the Fortress hero casting-skill bonus (hero_casting_skill), so after an Alchemy conversion g_spellbook_cast_mana_limit is capped without the Fortress hero bonus */
             if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > _players[HUMAN_PLAYER_IDX].Nominal_Skill)
             {
                 g_spellbook_cast_mana_limit = _players[HUMAN_PLAYER_IDX].Nominal_Skill;
             }
-            else if(WIZ_ManaPerTurn > _players[HUMAN_PLAYER_IDX].mana_reserve)
+            else if((WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve) > 0)
             {
                 g_spellbook_cast_mana_limit = (WIZ_ManaPerTurn + _players[HUMAN_PLAYER_IDX].mana_reserve);
             }
@@ -709,6 +710,7 @@ void Magic_Screen(void)
                 multihotkey_PWR = Add_Multi_Hot_Key_Field(str_PWR);
                 multihotkey_DESTIN = Add_Multi_Hot_Key_Field(str_DESTIN);
                 screen_changed = ST_TRUE;
+                break;
             }
         }
         /*
@@ -734,6 +736,7 @@ void Magic_Screen(void)
                     current_screen = scr_Diplomacy_Screen;
                     leave_screen_flag = 2;
                 }
+                break;
             }
         }
         /*
@@ -863,25 +866,25 @@ void Magic_Screen_Draw(void)
     colors1[3] = BANNER_COLOR_RED;
     colors1[4] = BANNER_COLOR_YELLOW;
 
-    for(itr_help_entries = 0; itr_help_entries < 4; itr_help_entries++)
+    for(itr_help_entries = 0; itr_help_entries < NUM_GEMS; itr_help_entries++)
     {
-        // TODO  *(_help_entries +   0 + (itr_help_entries * 10)) = HLP_GRAY_GEM;
-        // TODO  *(_help_entries + 100 + (itr_help_entries * 10)) = ST_UNDEFINED;
-        // TODO  *(_help_entries + 430 + (itr_help_entries * 10)) = ST_UNDEFINED;
+        _help_entries[itr_help_entries].help_idx = HLP_GRAY_GEM;
+        _help_entries[(10 + itr_help_entries)].help_idx = ST_UNDEFINED;
+        _help_entries[(43 + itr_help_entries)].help_idx = ST_UNDEFINED;
     }
 
     for(itr_players_help = 0, itr_players = 1; itr_players < _num_players; itr_players_help++, itr_players++)
     {
-        // TODO  *(_help_entries +   0 + (itr_players_help * 10)) = HLP_SHATTERED_GEM;
-        // TODO  *(_help_entries + 100 + (itr_players_help * 10)) = ST_UNDEFINED;
+        _help_entries[itr_players_help].help_idx = HLP_SHATTERED_GEM;
+        _help_entries[(10 + itr_players_help)].help_idx = ST_UNDEFINED;
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
-            // TODO  *(_help_entries +   0 + (itr_players_help * 10)) = HLP_GRAY_GEM;
+            _help_entries[itr_players_help].help_idx = HLP_GRAY_GEM;
         }
         if((_FORTRESSES[itr_players].active == ST_TRUE) && (_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE))
         {
-            // TODO  *(_help_entries +   0 + (itr_players_help * 10)) = ST_UNDEFINED;
-            // TODO  *(_help_entries + 100 + (itr_players_help * 10)) = HLP_RELATIONS;
+            _help_entries[itr_players_help].help_idx = ST_UNDEFINED;
+            _help_entries[(10 + itr_players_help)].help_idx = HLP_RELATIONS;
         }
     }
 
@@ -1219,7 +1222,10 @@ void Magic_Screen_Draw(void)
     */
     Print(100, 185, aResearching);
     // TODO  Print_Far()
-    Print(156, 185, spell_data_table[_players[HUMAN_PLAYER_IDX].researching_spell_idx].name);
+    /* OGBUG  after Player_Gets_Spell() learns the spell being researched without the 'choose new research' prompt (e.g. Conquest_Spells passes New_Research 0), researching_spell_idx is left at -spell_idx: */
+    /* OGBUG  the OG prints spell_data_table[negative].name, a string from before the table (the offset wraps inside its 64K segment) */
+    // Print(156, 185, spell_data_table[_players[HUMAN_PLAYER_IDX].researching_spell_idx].name);
+    /* HACK */  Print(156, 185, ((_players[HUMAN_PLAYER_IDX].researching_spell_idx < 0) ? "" : spell_data_table[_players[HUMAN_PLAYER_IDX].researching_spell_idx].name));  /* bounded: no read before spell_data_table */
 
     /*
         "Summon To:"
@@ -1235,7 +1241,6 @@ void Magic_Screen_Draw(void)
         Print(156, 193, _CITIES[human_player_summoning_circle_city_idx].name);
     }
 
-
     /*
         BEGIN:
             Gem Portrait Pictures  (LILWIZ)
@@ -1248,10 +1253,10 @@ void Magic_Screen_Draw(void)
     {
         FLIC_Draw((24 + (77 * itr_gems)), 4, grey_gem_seg);
     }
-    x_start = 68;  // ¿ only used for treaty icons ?
+    x_start = 68;  // DEDU  ¿ only used for treaty icons ?
     for(itr_gems = 0; itr_gems < gem_count; itr_gems++)
     {
-        y_start = 2;  // ¿ only used for treaty icons ?
+        y_start = 2;  // DEDU  ¿ only used for treaty icons ?
 
         Set_Font_Style(0, 3, 0, 0);
         Set_Alias_Color(228);
@@ -1268,7 +1273,7 @@ void Magic_Screen_Draw(void)
         {
             FLIC_Draw((24 + (77 * itr_gems)), 4, lilwiz_gem_segs[itr_gems]);
 
-            // C6385  Reading invalid data from '_players':  the readable size is '7344' bytes, but 'gem_player_nums[itr_gems]' bytes may be read.
+            // BUGBUG  C6385  Reading invalid data from '_players':  the readable size is '7344' bytes, but 'gem_player_nums[itr_gems]' bytes may be read.
             diplomatic_relations_idx = ((_players[gem_player_nums[itr_gems]].Dipl.Visible_Rel[_current_player_idx] + 100) / 20);
             Print_Centered(45 + (77 * itr_gems), 53, diplo_state[diplomatic_relations_idx]);
 
@@ -1279,7 +1284,7 @@ void Magic_Screen_Draw(void)
                 if(diplomatic_treaties > 2) { diplomatic_treaties = 3; }
                 diplomatic_treaties--;
                 FLIC_Draw(x_start, y_start, magic_dipl_icon_segs[diplomatic_treaties + (_players[_current_player_idx].banner_id * 3)]);  // status + color to index icons
-                // TODO  _help_entries[43 + itr_gems] = HLP_TREATIES;
+                _help_entries[(43 + itr_gems)].help_idx = HLP_TREATIES;
                 y_start += 12;
             }
 
@@ -1293,7 +1298,7 @@ void Magic_Screen_Draw(void)
                         if(diplomatic_treaties > 2) { diplomatic_treaties = 3; }
                         diplomatic_treaties--;
                         FLIC_Draw(x_start, y_start, magic_dipl_icon_segs[diplomatic_treaties + (_players[gem_player_nums[itr_treaties]].banner_id * 3)]);  // status + color to index icons
-                        // TODO  *(_help_entries + 430 + (itr_gems * 10)) = HLP_TREATIES;
+                        _help_entries[(43 + itr_gems)].help_idx = HLP_TREATIES;
                         y_start += 12;
                     }
                 }
@@ -1328,18 +1333,18 @@ void Magic_Screen_Draw(void)
         BEGIN: Overland Enchantments
     */
 
-    // TODO  _help_entries.help_09.entry_idx = HLP_ENCHANTMENTS_Global
+    _help_entries[9].help_idx = HLP_ENCHANTMENTS_Global;
 
-    if(ovl_ench_cnt == 0)
+    if(ovl_ench_cnt > 0)
     {
-        // TODO  _help_entries.help_09.entry_idx = ST_UNDEFINED
+        _help_entries[9].help_idx = ST_UNDEFINED;
     }
 
     if(ovl_ench_cnt < 10)
     {
         for(itr_ovl_enchs = 0; itr_ovl_enchs < ovl_ench_cnt; itr_ovl_enchs++)
         {
-            // TODO  _help_entries[(16 + itr_ovl_enchs)].entry_idx = ST_UNDEFINED;
+            _help_entries[(16 + itr_ovl_enchs)].help_idx = ST_UNDEFINED;
             colors2[0] = colors1[_players[ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].banner_id];
             colors2[1] = colors1[_players[ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].banner_id];
             colors2[2] = colors1[_players[ovl_ench_list_players[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].banner_id];
@@ -1351,14 +1356,14 @@ void Magic_Screen_Draw(void)
             Set_Outline_Color(19);
             Set_Alias_Color(185);
             Print(171, (80 + (10 * itr_ovl_enchs)), spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].name);
-            // TODO  _help_entries[(16 + itr_ovl_enchs)].entry_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
+            _help_entries[(16 + itr_ovl_enchs)].help_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
         }
     }
     else
     {
         for(itr = 0; itr < 18; itr++)
         {
-            // TODO  _help_entries[(25 + itr)].entry_idx = ST_UNDEFINED;
+            _help_entries[(25 + itr)].help_idx = ST_UNDEFINED;
         }
         for(itr_ovl_enchs = 0; itr_ovl_enchs < ovl_ench_list_cnt1; itr_ovl_enchs++)
         {
@@ -1375,7 +1380,7 @@ void Magic_Screen_Draw(void)
                 Set_Outline_Color(19);
                 Set_Alias_Color(185);
                 Print((171 + (69 * (itr_ovl_enchs % 2))), (81 + (9 * (itr_ovl_enchs / 2))), spell_data_table[ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)]].name);
-                // TODO  _help_entries[(25 + itr_ovl_enchs)].entry_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
+                _help_entries[(25 + itr_ovl_enchs)].help_idx = ovl_ench_list_spells[(magic_ovl_ench_list_first_item + itr_ovl_enchs)];
             }
         }
     }
@@ -1403,22 +1408,22 @@ void Magic_Screen_Add_Fields(void)
     int16_t itr_ovl_ench_list_cnt;
 
     //                         min_value, max_value, min_valid, max_valid, width, height
-    Add_Scroll_Field( 32, 102, 0, 50, 0, 50, 5, 50, &mana_stave_pct_pos,     'M', ST_UNDEFINED);  // cnst_HOTKEY_M_3
-    Add_Scroll_Field( 79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, 'R', ST_UNDEFINED);  // (offset str_PWR+2)
-    Add_Scroll_Field(126, 102, 0, 50, 0, 50, 5, 50, &skill_stave_pct_pos,    'S', ST_UNDEFINED);  // cnst_HOTKEY_S_2
+    Add_Scroll_Field( 32, 102, 0, 50, 0, 50, 5, 50, &mana_stave_pct_pos,     "M", ST_UNDEFINED);  // cnst_HOTKEY_M_3
+    Add_Scroll_Field( 79, 102, 0, 50, 0, 50, 5, 50, &research_stave_pct_pos, "R", ST_UNDEFINED);  // (offset str_PWR+2)
+    Add_Scroll_Field(126, 102, 0, 50, 0, 50, 5, 50, &skill_stave_pct_pos,    "S", ST_UNDEFINED);  // cnst_HOTKEY_S_2
 
-    button_magic_ok       = Add_Button_Field(291, 181, str_empty_string__ovr073, magic_ok_button_seg,      'O', ST_UNDEFINED);  // cnst_HOTKEY_O_7
-    button_magic_alchemy  = Add_Button_Field(232, 181, str_empty_string__ovr073, magic_alchemy_button_seg, 'A', ST_UNDEFINED);  // cnst_HOTKEY_A_2
+    button_magic_ok       = Add_Button_Field(291, 181, str_empty_string__ovr073, magic_ok_button_seg,      "O", ST_UNDEFINED);  // cnst_HOTKEY_O_7
+    button_magic_alchemy  = Add_Button_Field(232, 181, str_empty_string__ovr073, magic_alchemy_button_seg, "A", ST_UNDEFINED);  // cnst_HOTKEY_A_2
 
-    magic_mana_staff_locked      = Add_Hidden_Field( 28, 82,  41, 101, 0, ST_UNDEFINED);
-    magic_research_staff_locked  = Add_Hidden_Field( 75, 82,  88, 101, 0, ST_UNDEFINED);
-    magic_skill_staff_locked     = Add_Hidden_Field(122, 82, 135, 101, 0, ST_UNDEFINED);
+    magic_mana_staff_locked      = Add_Hidden_Field( 28, 82,  41, 101, "", ST_UNDEFINED);
+    magic_research_staff_locked  = Add_Hidden_Field( 75, 82,  88, 101, "", ST_UNDEFINED);
+    magic_skill_staff_locked     = Add_Hidden_Field(122, 82, 135, 101, "", ST_UNDEFINED);
 
     for(itr_gem_count = 0; itr_gem_count < gem_count; itr_gem_count++)
     {
         x1 = (29 + (77 * itr_gem_count));
         y1 = 10;
-        magic_gem_fields[itr_gem_count] = Add_Hidden_Field(x1, y1, (x1 + 30), (y1 + 32), str_empty_string__ovr073[0], ST_UNDEFINED);
+        magic_gem_fields[itr_gem_count] = Add_Hidden_Field(x1, y1, (x1 + 30), (y1 + 32), str_empty_string__ovr073, ST_UNDEFINED);
     }
 
     ovl_ench_list_cnt1 = 0;
@@ -1429,7 +1434,7 @@ void Magic_Screen_Add_Fields(void)
         ovl_ench_list_cnt1 = ovl_ench_cnt;
         for(itr_ovl_ench_cnt = 0; itr_ovl_ench_cnt < ovl_ench_cnt; itr_ovl_ench_cnt++)
         {
-            magic_ovl_ench_flds[itr_ovl_ench_cnt] = Add_Hidden_Field(x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), str_empty_string__ovr073[0], ST_UNDEFINED);
+            magic_ovl_ench_flds[itr_ovl_ench_cnt] = Add_Hidden_Field(x1, (y1 + (10 * itr_ovl_ench_cnt)), (x1 + 120), (y1 + 9 + (10 * itr_ovl_ench_cnt)), str_empty_string__ovr073, ST_UNDEFINED);
         }
     }
     else
@@ -1438,14 +1443,14 @@ void Magic_Screen_Add_Fields(void)
         SETMAX(ovl_ench_list_cnt1, 18);
         for(itr_ovl_ench_list_cnt = 0; itr_ovl_ench_list_cnt < ovl_ench_list_cnt1; itr_ovl_ench_list_cnt++)
         {
-            magic_ovl_ench_flds[itr_ovl_ench_list_cnt] = Add_Hidden_Field((x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), str_empty_string__ovr073[0], ST_UNDEFINED);
+            magic_ovl_ench_flds[itr_ovl_ench_list_cnt] = Add_Hidden_Field((x1 + (70 * (itr_ovl_ench_list_cnt % 2))), (y1 + (9 * (itr_ovl_ench_list_cnt / 2))), (63 + (x1 + (70 * (itr_ovl_ench_list_cnt % 2)))), (6 + (y1 + (9 * (itr_ovl_ench_list_cnt / 2)))), str_empty_string__ovr073, ST_UNDEFINED);
         }
     }
 
     magic_ovl_ench_list_down = INVALID_FIELD;
     if(magic_ovl_ench_list_scroll_flag == ST_TRUE)
     {
-        magic_ovl_ench_list_down = Add_Hidden_Field(286, 163, 307, 169, str_empty_string__ovr073[0], ST_UNDEFINED);
+        magic_ovl_ench_list_down = Add_Hidden_Field(286, 163, 307, 169, str_empty_string__ovr073, ST_UNDEFINED);
     }
 
 }
@@ -1837,7 +1842,7 @@ void Alchemy_Popup_Draw(void)
 void Alchemy_Popup_Add_Fields(void)
 {
 
-    Add_Scroll_Field((m_alchemy_popup_start_x + 50), (m_alchemy_popup_start_y + 25), 0, 55, 3, 53, 55, 7, &m_alchemy_arrowbar_pos, cnst_HOTKEY_A_2[0], ST_UNDEFINED);
+    Add_Scroll_Field((m_alchemy_popup_start_x + 50), (m_alchemy_popup_start_y + 25), 0, 55, 3, 53, 55, 7, &m_alchemy_arrowbar_pos, cnst_HOTKEY_A_2, ST_UNDEFINED);
 
     m_alchemy_cancel_button_field = Add_Button_Field((m_alchemy_popup_start_x + 13), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_cancel_button_seg, cnst_HOTKEY_C_5, ST_UNDEFINED);
 
@@ -1845,33 +1850,17 @@ void Alchemy_Popup_Add_Fields(void)
 
     if(m_alchemy_conversion_direction == e_GoldToPower)
     {
-        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_left_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
+        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_left_arrow_button_seg, cnst_HOTKEY_SPACE, ST_UNDEFINED);
     }
     else
     {
-        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_right_arrow_button_seg, cnst_HOTKEY_SPACE[0], ST_UNDEFINED);
+        m_alchemy_arrow_button_field = Add_Button_Field((m_alchemy_popup_start_x + 66), (m_alchemy_popup_start_y + 39), str_empty_string__ovr073, m_alchemy_right_arrow_button_seg, cnst_HOTKEY_SPACE, ST_UNDEFINED);
     }
 
     // ¿ BUG: never checked for input match ?
-    m_alchemy_popup_window_field = Add_Hidden_Field(m_alchemy_popup_start_x, m_alchemy_popup_start_y, (m_alchemy_popup_start_x + 157), (m_alchemy_popup_start_y + 65), str_empty_string__ovr073[0], ST_UNDEFINED);
+    m_alchemy_popup_window_field = Add_Hidden_Field(m_alchemy_popup_start_x, m_alchemy_popup_start_y, (m_alchemy_popup_start_x + 157), (m_alchemy_popup_start_y + 65), str_empty_string__ovr073, ST_UNDEFINED);
 
     // ¿ ~== _global_exit_field ?
-    m_alchemy_popup_exit_field = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr073[0], ST_UNDEFINED);
+    m_alchemy_popup_exit_field = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr073, ST_UNDEFINED);
 
 }
-
-
-
-
-/*
-    WIZARDS.EXE  ovr074
-*/
-
-// WZD o74p01
-// Mirror_Screen()
-
-// WZD o74p02
-// Mirror_Screen_Draw()
-
-// WZD o74p03
-// Mirror_Screen_Load()

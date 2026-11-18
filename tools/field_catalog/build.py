@@ -24,6 +24,21 @@ _KEY_NAMES = {
 _NO_HOTKEY = {"", "0", "-1", "ST_UNDEFINED"}
 _CHAR_LIT_RE = re.compile(r"^'(\\?.)'$")
 _STR_INDEX_RE = re.compile(r"\[\s*\d+\s*\]\s*$")  # NAME[0] — first char of a string, not static
+_STR_LIT_RE = re.compile(r'^"((?:[^"\\]|\\.)*)"$')  # "Q" — the Add_*_Field() hotkeys take a string; its first char is the key
+_IDENT_RE = re.compile(r"^[A-Za-z_]\w*$")
+
+
+def _first_char_of_literal(body):
+    """First character code of a C string literal body; None for "" (no hotkey)."""
+    if body == "":
+        return None
+    if body[0] != "\\":
+        return ord(body[0])
+    m = re.match(r"\\x([0-9A-Fa-f]{1,2})", body)
+    if m:
+        return int(m.group(1), 16)
+    esc = {"n": 10, "r": 13, "t": 9, "0": 0, "\\": 92, '"': 34, "'": 39}
+    return esc.get(body[1:2], ord(body[1:2]) if len(body) > 1 else None)
 
 
 def _key_name(v):
@@ -52,10 +67,18 @@ def decode_hotkey(raw, folder):
         else:
             v = ord(ch)
         return v, _key_name(v), False
+    m = _STR_LIT_RE.match(raw)
+    if m:
+        v = _first_char_of_literal(m.group(1))
+        if v in (None, 0):
+            return None, "", False
+        return v, _key_name(v), False
     if _STR_INDEX_RE.search(raw):
         return None, "(str)", True   # e.g. hotkey_GameButton[0] — first char of a string table
     v = folder.fold(raw)
     if v is None:
+        if _IDENT_RE.match(raw):
+            return None, "(str)", True   # a hotkey string by name, e.g. str_hotkey_ESC__ovr149 — its first char is not static
         return None, "(?)", True
     if v in (0, -1):
         return None, "", False

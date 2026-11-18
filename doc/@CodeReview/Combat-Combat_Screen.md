@@ -175,7 +175,7 @@ Draw_Combat_Unit_Display()
 
 **Status: DONE-DONE (2026-08-25).** No findings open. Three passes: the setup chain (2026-08-08, thirty functions against 8,297 asm lines), the input loop (2026-08-15, seventeen functions against 2,486 asm lines), and the mouse-image pair (2026-08-25, `Assign_Mouse_Images` and `Ranged_Mouse_Image`, 486 asm lines) - R23 raised and fixed in that last pass. `Combat_Info_Effects_Count` moved out to [Combat-Combat_Information_Window.md](Combat-Combat_Information_Window.md) and D2 was resolved in the code.
 
-The first pass scoped itself to `Combat_Screen` "plus everything it reaches during setup" and left the input-loop handlers alone; seventeen functions this doc's header block names were never given a verdict. The second pass walked every one of them. Nine reconstruction errors were raised and all nine are fixed. `cmake --build --preset MSVC-debug` is clean — `STU.lib`, `MOX.lib`, `momlib.lib`, `Platform_Headless.lib`, `ReMoM.exe` and `HeMoM.exe` all build and link.
+The first pass scoped itself to `Combat_Screen` "plus everything it reaches during setup" and left the input-loop handlers alone; seventeen functions this doc's header block names were never given a verdict. The second pass walked every one of them. Nine reconstruction errors were raised and all nine are fixed. `cmake --build --preset MSVC-debug` is clean — `STU.lib`, `MOX.lib`, `momlib.lib`, `Platform_Headless.lib`, `ReMoM.exe` and `DeMoM.exe` all build and link.
 
 Two functions the header block names are owned by nobody and were moved to [Combat-Miscellaneous.md](Combat-Miscellaneous.md) by the `MISC_DOC_SPREAD` rule in [tools/review_coverage.py](../../tools/review_coverage.py): `Combat_Grid_Screen_Coordinates` (walked, faithful) and `Calc_Battlefield_Bonuses` (not yet walked).
 
@@ -949,7 +949,7 @@ Currently unreferenced, hence the `NIU_` prefix; the only mention is the note at
 
 ## Build state
 
-`cmake --build --preset MSVC-debug` (2026-08-08). **Every game target links**: `momlib.lib`, `MOX.lib`, `STU.lib`, `Platform.lib`, `Platform_Headless.lib`, `ReMoM.exe`, `HeMoM.exe`, `MOX_tests.exe` and all tools. Zero `C4057`s — the `s_CITY.enchantments` signedness sweep is finished. Every rename in the ledger above compiles.
+`cmake --build --preset MSVC-debug` (2026-08-08). **Every game target links**: `momlib.lib`, `MOX.lib`, `STU.lib`, `Platform.lib`, `Platform_Headless.lib`, `ReMoM.exe`, `DeMoM.exe`, `MOX_tests.exe` and all tools. Zero `C4057`s — the `s_CITY.enchantments` signedness sweep is finished. Every rename in the ledger above compiles.
 
 `MOM_tests` is the only failing project, with 38 errors across four files. Pre-existing, unrelated to this review, and previously masked: `MOM_tests` never compiled while `momlib` was failing, because MSBuild skips dependents.
 

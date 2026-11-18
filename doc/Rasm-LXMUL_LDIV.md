@@ -225,7 +225,7 @@ so, ...
 attacker_mana_multiplied = ((10 * _players[_combat_attacker_player].mana_reserve) / Combat_Casting_Cost_Multiplier(_combat_attacker_player));
 
 
-ovr110:0767                                                 loc_89017:                              ; CODE XREF: Strategic_Combat__STUB+699j
+ovr110:0767                                                 loc_89017:                              ; CODE XREF: Strategic_Combat__STUB+699^j
 ovr110:0767 FF 36 86 C5                                     push    [_combat_attacker_player]       ; Player_Index
 ovr110:076B 9A 25 00 3A 35                                  call    j_Combat_Casting_Cost_Multiplier
 ovr110:0770 59                                              pop     cx

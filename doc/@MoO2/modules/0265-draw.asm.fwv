@@ -1,0 +1,10 @@
+module_num=265
+module=animate\draw.asm
+source=0265-draw.asm.md
+range[0]=1:0x0013852C linear=0x0014852C size=241
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                  SYMBOL                 CHUNK
+m265f001  1    -      0x0014852C  1:0x0013852C  code  Draw_Animated_Sprite  Draw_Animated_Sprite_  regions/07-object-1/001CD654-001CDE53.txt
+m265f002  2    -      0x001485B3  1:0x001385B3  code  Draw_Bitmap_Sprite    Draw_Bitmap_Sprite_    regions/07-object-1/001CD654-001CDE53.txt
+m265f003  3    -      0x00148605  1:0x00138605  code  Color_Stream_Copy     Color_Stream_Copy_     regions/07-object-1/001CD654-001CDE53.txt

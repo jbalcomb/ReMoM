@@ -1,0 +1,8 @@
+module_num=386
+module=8087cw
+source=0386-8087cw.md
+range[0]=2:0x00012FE4 linear=0x00182FE4 size=2
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL    CHUNK
+-    -    -      0x00182FE4  2:0x00012FE4  data  __8087cw  __8087cw  regions/08-object-2/00200E54-00201653.txt

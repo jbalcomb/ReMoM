@@ -66,7 +66,7 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
     sdl2_scan_code_name = SDL_GetScancodeName(sdl2_scan_code);
     sdl2_key_code_name = SDL_GetKeyName(sdl2_key_code);
 
-    switch (sdl2_event->type)
+    switch(sdl2_event->type)
     {
         case SDL_KEYDOWN:
         {
@@ -280,6 +280,7 @@ void Build_Key_Xlat(void)
     key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_UP)] = MOX_KEY_UP;
 
     /* Keypad — directional mapping for MoM */
+    key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_KP_ENTER)] = MOX_KEY_ENTER;  /* CLAUDE: the OG Read_Key() maps EKey_NumEnter (E00Dh) to ST_KEY_ENTER, as EKey_Enter (1C0Dh) */
     key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_KP_1)] = MOX_KEY_LEFTDOWN;
     key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_KP_2)] = MOX_KEY_DOWN;
     key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(SDLK_KP_3)] = MOX_KEY_RIGHTDOWN;

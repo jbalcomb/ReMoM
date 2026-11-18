@@ -151,7 +151,7 @@ void Combat_Screen_Map_Draw_Entities(
 
 Combat_Grid_Entities()
     ...changes to battle units
-        Combat_Unit_Enchantment_Outline_Set(itr);  // sets battle_units[].outline_magic_realm
+        Set_Combat_Enchantment_Outline(itr);  // sets battle_units[].outline_magic_realm
         BU_SetBaseAnims__WIP(itr);  // sets Always_Animate and Move_Bob
         BU_SetVisibility__WIP()
             battle_units[battle_unit_idx].Image_Effect = 4;
@@ -219,7 +219,7 @@ Combat_Grid_Entities()
     CMB_UpdateTrueSight();
     for(itr = 0; itr < _combat_total_unit_count; itr++)
         battle_units[itr].Image_Effect = 0;
-        Combat_Unit_Enchantment_Outline_Set(itr);
+        Set_Combat_Enchantment_Outline(itr);
         BU_SetBaseAnims__WIP(itr);
         Curse_Anim = Battle_Unit_Curse_Effects(itr);
         BU_SetVisibility__WIP(itr);
@@ -251,7 +251,7 @@ Combat_Figure_Effect()
 
 
 
-Combat_Unit_Enchantment_Outline_Set() + Combat_Unit_Enchantment_Outline_Draw() is the same as Draw_Unit_Enchantment_Outline() from 'Main Screen'
+Set_Combat_Enchantment_Outline() + Draw_Combat_Enchantment_Outline() is the same as Draw_Unit_Enchantment_Outline() from 'Main Screen'
 
 here    GfxBuf_2400B
 there   UnitDraw_WorkArea

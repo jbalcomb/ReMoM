@@ -18,7 +18,7 @@
 
 
 // WZD dseg:784A 01 00 02 00 04 00 08 00 10 00 20 00 40 00 80 00 bit_field_test_bits dw 1, 10b, 100b, 1000b, 10000b, 100000b, 1000000b, 10000000b
-// WZD dseg:784A                                                                                         ; DATA XREF: Test_Bit_Field_+1Cr ...
+// WZD dseg:784A                                                                                         ; DATA XREF: Test_Bit_Field_+1C^r ...
 extern uint16_t bit_field_test_bits[];
 
 

@@ -1,0 +1,14 @@
+module_num=87
+module=D:\MOX\OTHERS\ESCROLL.C
+source=0087-escroll.c.md
+range[0]=1:0x000BDC57 linear=0x000CDC57 size=773
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                              SYMBOL                                             CHUNK
+m087f001  1    -      0x000CDC57  1:0x000BDC57  code  Get_First                                         Get_First_                                         regions/07-object-1/00152E54-00153653.txt
+m087f002  2    -      0x000CDC74  1:0x000BDC74  code  Update_First_Based_On_Grid                        Update_First_Based_On_Grid_                        regions/07-object-1/00152E54-00153653.txt
+m087f003  3    -      0x000CDCAF  1:0x000BDCAF  code  Draw_Scroll_Bar_Indicator_In_Base_Colony_Palette  Draw_Scroll_Bar_Indicator_In_Base_Colony_Palette_  regions/07-object-1/00152E54-00153653.txt
+m087f004  4    -      0x000CDDF7  1:0x000BDDF7  code  Inc_Grid_Var_For_Scroll_Field                     Inc_Grid_Var_For_Scroll_Field_                     regions/07-object-1/00152E54-00153653.txt
+m087f005  5    -      0x000CDE2B  1:0x000BDE2B  code  Dec_Grid_Var_For_Scroll_Field                     Dec_Grid_Var_For_Scroll_Field_                     regions/07-object-1/00152E54-00153653.txt
+m087f006  6    -      0x000CDE51  1:0x000BDE51  code  Add_E_Scroll_Bar_Field                            Add_E_Scroll_Bar_Field_                            regions/07-object-1/00152E54-00153653.txt
+m087f007  7    -      0x000CDED3  1:0x000BDED3  code  Do_Scroll_Bar_Fields_Check                        Do_Scroll_Bar_Fields_Check_                        regions/07-object-1/00152E54-00153653.txt

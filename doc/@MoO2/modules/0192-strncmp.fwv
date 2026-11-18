@@ -1,0 +1,8 @@
+module_num=192
+module=strncmp
+source=0192-strncmp.md
+range[0]=1:0x0012ACDE linear=0x0013ACDE size=41
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m192f001  1    -      0x0013ACDE  1:0x0012ACDE  code  strncmp  strncmp_  regions/07-object-1/001BFE54-001C0653.txt

@@ -1,0 +1,9 @@
+module_num=337
+module=C:\GCL520\C_ALL\TIMER.C
+source=0337-timer.c.md
+range[0]=1:0x0014E1A0 linear=0x0015E1A0 size=96
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL         CHUNK
+m337f001  1    -      0x0015E1A0  1:0x0014E1A0  code  timer         timer_         regions/07-object-1/001E3654-001E3E53.txt
+m337f002  2    -      0x0015E1D4  1:0x0014E1D4  code  PortKillTime  PortKillTime_  regions/07-object-1/001E3654-001E3E53.txt

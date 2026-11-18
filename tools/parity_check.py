@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-parity_check.py — Cross-check that ReMoM and HeMoM produce identical
+parity_check.py — Cross-check that ReMoM and DeMoM produce identical
 behavior and data for a given (config, seed, .RMR) tuple.
 
 The goal is to *prove* they match — not merely claim it. Every comparison
@@ -10,16 +10,16 @@ that diverges.
 
 Usage:
     tools/parity_check.py \\
-        [--config assets/matchup_hemom.ini] \\
+        [--config assets/matchup_demom.ini] \\
         [--seed 12345] \\
-        [--hms   assets/matchup_hemom.hms] \\
+        [--hms   assets/matchup_demom.hms] \\
         [--preset clang-debug]
 
-Scratch lives under out/build/<preset>/analysis/{hemom,remom}/ and is
+Scratch lives under out/build/<preset>/analysis/{demom,remom}/ and is
 overwritten on each run.  Nothing is committed.
 
 Phases:
-    1. Collect : build both binaries; run HeMoM --newgame; run
+    1. Collect : build both binaries; run DeMoM --newgame; run
                  ReMoM --replay (headless); gather artifacts.
     2. Compare : a battery of comparators (RNG stream, save files,
                  MAGIC.SET, save-dump text, state-summary anchors).
@@ -64,10 +64,10 @@ class BuildLayout:
     preset: str
     build_dir: Path
     bin_dir: Path
-    hemom_exe: Path
+    demom_exe: Path
     remom_exe: Path
     analysis_dir: Path
-    hemom_out: Path
+    demom_out: Path
     remom_out: Path
 
 
@@ -75,20 +75,20 @@ def make_layout(preset: str) -> BuildLayout:
     build_dir = BUILD_ROOT / preset
     bin_dir = build_dir / "bin" / "Debug"
     # Linux clang preset has bare names; MSVC has .exe.
-    hemom_candidates = [bin_dir / "HeMoM", bin_dir / "HeMoM.exe"]
+    demom_candidates = [bin_dir / "DeMoM", bin_dir / "DeMoM.exe"]
     remom_candidates = [bin_dir / "ReMoM", bin_dir / "ReMoM.exe"]
     # Choose the one that exists, or the first as a build target stub.
-    hemom_exe = next((p for p in hemom_candidates if p.exists()), hemom_candidates[0])
+    demom_exe = next((p for p in demom_candidates if p.exists()), demom_candidates[0])
     remom_exe = next((p for p in remom_candidates if p.exists()), remom_candidates[0])
     analysis_dir = bin_dir / "analysis"
     return BuildLayout(
         preset=preset,
         build_dir=build_dir,
         bin_dir=bin_dir,
-        hemom_exe=hemom_exe,
+        demom_exe=demom_exe,
         remom_exe=remom_exe,
         analysis_dir=analysis_dir,
-        hemom_out=analysis_dir / "hemom",
+        demom_out=analysis_dir / "demom",
         remom_out=analysis_dir / "remom",
     )
 
@@ -232,9 +232,9 @@ def print_overall(results: list[ComparatorResult]) -> int:
 
 # Artifacts each binary produces in its CWD that we want to keep for analysis.
 # (SAVE2.GAM is conditional on save_slot=1 in the .ini; missing is OK.)
-HEMOM_PRODUCED = ["SAVE2.GAM", "SAVE9.txt", "MAGIC.SET"]
+DEMOM_PRODUCED = ["SAVE2.GAM", "SAVE9.txt", "MAGIC.SET"]
 REMOM_PRODUCED = ["SAVE2.GAM", "MAGIC.SET"]
-# SAVE9.GAM is intentionally NOT compared: HeMoM writes it mid-flow (end of
+# SAVE9.GAM is intentionally NOT compared: DeMoM writes it mid-flow (end of
 # MAGIC.EXE equivalent), ReMoM's auto-save overwrites it post-PreInit_Overland.
 # OG has no way to snapshot at the same moment on both sides, so the file is
 # structurally incomparable. SAVE2.GAM (the named slot save written by both
@@ -271,7 +271,7 @@ def cmake_build(target: str, layout: BuildLayout) -> None:
     if rc != 0:
         raise Phase1Error(f"cmake build of {target} failed (exit {rc})")
     # Verify the binary now exists.
-    exe = layout.hemom_exe if target == "HeMoM" else layout.remom_exe
+    exe = layout.demom_exe if target == "DeMoM" else layout.remom_exe
     if not exe.exists():
         raise Phase1Error(f"build of {target} reported success but {relpath(exe)} is missing")
     print(f"    → {relpath(exe)} ({byte_size(exe):,} B)")
@@ -326,17 +326,17 @@ def filter_rng_log(stderr_log: Path, rng_log: Path) -> tuple[int, int]:
 import lib_run  # local sibling module; see tools/lib_run.py
 
 
-def run_hemom(layout: BuildLayout, config: Path, seed: int,
+def run_demom(layout: BuildLayout, config: Path, seed: int,
               hms: Optional[Path] = None, rmr: Optional[Path] = None) -> dict[str, Path]:
-    """Launch HeMoM --newgame via lib_run, then snapshot artifacts into analysis/hemom/."""
+    """Launch DeMoM --newgame via lib_run, then snapshot artifacts into analysis/demom/."""
     print()
-    print("  Run HeMoM --newgame")
+    print("  Run DeMoM --newgame")
     if not config.exists():
         raise Phase1Error(f"config not found: {config}")
     clean_workspace(layout.bin_dir)
-    layout.hemom_out.mkdir(parents=True, exist_ok=True)
+    layout.demom_out.mkdir(parents=True, exist_ok=True)
 
-    result = lib_run.run_hemom(
+    result = lib_run.run_demom(
         ini=config,
         seed=seed,
         hms=hms,
@@ -346,24 +346,24 @@ def run_hemom(layout: BuildLayout, config: Path, seed: int,
         save_slot=1,            # matchup writes to SAVE2.GAM
     )
     if result.exit_status != 0:
-        print(f"    HeMoM exited {result.exit_status}. Last 20 lines of stderr:")
+        print(f"    DeMoM exited {result.exit_status}. Last 20 lines of stderr:")
         if result.stderr_path.exists():
             for line in result.stderr_path.read_text(errors="replace").splitlines()[-20:]:
                 print(f"      {line}")
-        raise Phase1Error(f"HeMoM run failed (exit {result.exit_status})")
+        raise Phase1Error(f"DeMoM run failed (exit {result.exit_status})")
 
     if not result.stderr_path.exists():
-        raise Phase1Error(f"HeMoM produced no stderr.log at {result.stderr_path}")
-    shutil.copy2(str(result.stderr_path), str(layout.hemom_out / "stderr.log"))
-    moved = collect_artifacts(layout.bin_dir, layout.hemom_out, HEMOM_PRODUCED,
+        raise Phase1Error(f"DeMoM produced no stderr.log at {result.stderr_path}")
+    shutil.copy2(str(result.stderr_path), str(layout.demom_out / "stderr.log"))
+    moved = collect_artifacts(layout.bin_dir, layout.demom_out, DEMOM_PRODUCED,
                               since_ts=result.t_start)
-    rng_log = layout.hemom_out / "rng.log"
-    total, rng = filter_rng_log(layout.hemom_out / "stderr.log", rng_log)
-    print(f"    artifacts in {relpath(layout.hemom_out)}/: "
+    rng_log = layout.demom_out / "rng.log"
+    total, rng = filter_rng_log(layout.demom_out / "stderr.log", rng_log)
+    print(f"    artifacts in {relpath(layout.demom_out)}/: "
           f"{', '.join(p.name for p in moved) or '(none)'}")
     print(f"    stderr.log: {total:,} lines, rng.log: {rng:,} lines")
     return {p.name: p for p in moved} | {
-        "stderr.log": layout.hemom_out / "stderr.log",
+        "stderr.log": layout.demom_out / "stderr.log",
         "rng.log":    rng_log,
     }
 
@@ -418,24 +418,24 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
     print_section_header("Phase 1: Build · Run · Collect")
     layout.analysis_dir.mkdir(parents=True, exist_ok=True)
     if not args.skip_build:
-        cmake_build("HeMoM", layout)
+        cmake_build("DeMoM", layout)
         cmake_build("ReMoM", layout)
     else:
         print("  (--skip-build)")
 
-    # BEFORE HeMoM runs and overwrites bin/Debug, snapshot any ReMoM-side
+    # BEFORE DeMoM runs and overwrites bin/Debug, snapshot any ReMoM-side
     # artifacts left there by a manual ReMoM run into analysis/remom/.
     # This is for the workflow: user runs ReMoM manually, then runs this
-    # tool — without this step, HeMoM would clobber the user's ReMoM output.
+    # tool — without this step, DeMoM would clobber the user's ReMoM output.
     _snapshot_remom_if_newer(layout)
 
-    if args.skip_hemom:
-        print("\n  (--skip-hemom — reusing existing analysis/hemom/)")
-        hemom_artifacts = {p.name: p for p in layout.hemom_out.iterdir() if p.is_file()} if layout.hemom_out.is_dir() else {}
-        if "SAVE2.GAM" not in hemom_artifacts:
-            raise Phase1Error(f"--skip-hemom but no SAVE2.GAM under {relpath(layout.hemom_out)}")
+    if args.skip_demom:
+        print("\n  (--skip-demom — reusing existing analysis/demom/)")
+        demom_artifacts = {p.name: p for p in layout.demom_out.iterdir() if p.is_file()} if layout.demom_out.is_dir() else {}
+        if "SAVE2.GAM" not in demom_artifacts:
+            raise Phase1Error(f"--skip-demom but no SAVE2.GAM under {relpath(layout.demom_out)}")
     else:
-        hemom_artifacts = run_hemom(layout, Path(args.config), args.seed)
+        demom_artifacts = run_demom(layout, Path(args.config), args.seed)
 
     if args.run_remom:
         # --rmr overrides --hms when both are set.
@@ -474,7 +474,7 @@ def phase1_collect(args: argparse.Namespace, layout: BuildLayout) -> tuple[dict[
         filter_rng_log(remom_artifacts["stderr.log"], rng_log)
         remom_artifacts["rng.log"] = rng_log
 
-    return hemom_artifacts, remom_artifacts
+    return demom_artifacts, remom_artifacts
 
 
 def _scan_existing(dir_path: Path) -> dict[str, Path]:
@@ -485,7 +485,7 @@ def _scan_existing(dir_path: Path) -> dict[str, Path]:
 
 def _snapshot_remom_if_newer(layout: BuildLayout) -> None:
     """If bin/Debug holds SAVE/MAGIC/stderr files newer than what's in analysis/remom/,
-    copy them in before HeMoM runs (HeMoM overwrites bin/Debug otherwise).
+    copy them in before DeMoM runs (DeMoM overwrites bin/Debug otherwise).
     This is the seam that catches "user ran ReMoM manually, then ran this tool"."""
     bin_files = ["SAVE2.GAM", "MAGIC.SET", "stderr.log",
                  "remom_log_current.txt", "remom_log_new.txt"]
@@ -519,58 +519,58 @@ def _input_tuple(label: str, path: Path) -> tuple[str, Path, int, int, str]:
     return (label, path, byte_size(path), line_count(path), md5_of(path))
 
 
-def compare_rng(hemom_rng: Path, remom_rng: Path) -> ComparatorResult:
+def compare_rng(demom_rng: Path, remom_rng: Path) -> ComparatorResult:
     """Line-by-line equality on the filtered [RNG-CALL] stream.
 
-    HeMoM exits at Save_SAVE_GAM(8); ReMoM continues past that into the Main
-    Screen and runs more Random() calls.  So a pass is: HeMoM is a strict
-    line-for-line PREFIX of ReMoM.  Anything else fails — including HeMoM
-    being LONGER than ReMoM (which would mean HeMoM is drawing Random() in
+    DeMoM exits at Save_SAVE_GAM(8); ReMoM continues past that into the Main
+    Screen and runs more Random() calls.  So a pass is: DeMoM is a strict
+    line-for-line PREFIX of ReMoM.  Anything else fails — including DeMoM
+    being LONGER than ReMoM (which would mean DeMoM is drawing Random() in
     a code path ReMoM doesn't reach).
     """
     name = "RNG call stream"
-    hemom_lines = hemom_rng.read_text(errors="replace").splitlines()
+    demom_lines = demom_rng.read_text(errors="replace").splitlines()
     remom_lines = remom_rng.read_text(errors="replace").splitlines()
-    h_count, r_count = len(hemom_lines), len(remom_lines)
+    h_count, r_count = len(demom_lines), len(remom_lines)
     inputs = [
-        _input_tuple("HeMoM rng", hemom_rng),
+        _input_tuple("DeMoM rng", demom_rng),
         _input_tuple("ReMoM rng", remom_rng),
     ]
 
     if h_count == 0 or r_count == 0:
         return ComparatorResult(
             name, "FAIL",
-            f"empty input (HeMoM={h_count}, ReMoM={r_count})",
+            f"empty input (DeMoM={h_count}, ReMoM={r_count})",
             Evidence(inputs=inputs,
-                     method="line-by-line strict equality (HeMoM ⊆ ReMoM as prefix)",
+                     method="line-by-line strict equality (DeMoM ⊆ ReMoM as prefix)",
                      findings=["one or both rng.log files contain no [RNG-CALL] lines"],
-                     reproduce=[f"wc -l {hemom_rng} {remom_rng}"]),
+                     reproduce=[f"wc -l {demom_rng} {remom_rng}"]),
         )
 
     if h_count > r_count:
         # First divergent line is the one past where ReMoM stops.
         i = r_count + 1
-        sample = hemom_lines[r_count] if r_count < h_count else "(end of HeMoM)"
+        sample = demom_lines[r_count] if r_count < h_count else "(end of DeMoM)"
         return ComparatorResult(
             name, "FAIL",
-            f"HeMoM ran {h_count - r_count} extra Random() call(s) past ReMoM's end",
+            f"DeMoM ran {h_count - r_count} extra Random() call(s) past ReMoM's end",
             Evidence(inputs=inputs,
-                     method="line-by-line strict equality (HeMoM ⊆ ReMoM as prefix)",
+                     method="line-by-line strict equality (DeMoM ⊆ ReMoM as prefix)",
                      findings=[
-                         f"line {i} of HeMoM rng exists; ReMoM rng has only {r_count} lines",
-                         f"  HeMoM : {sample}",
+                         f"line {i} of DeMoM rng exists; ReMoM rng has only {r_count} lines",
+                         f"  DeMoM : {sample}",
                          "investigate the call site(s) past ReMoM's range",
                      ],
                      reproduce=[
-                         f"sed -n '{i},+5p' {hemom_rng}",
+                         f"sed -n '{i},+5p' {demom_rng}",
                          f"tail -n 3 {remom_rng}",
                      ]),
         )
 
-    # Walk both line-by-line up to HeMoM's length.
+    # Walk both line-by-line up to DeMoM's length.
     first_diff = None
     for i in range(h_count):
-        if hemom_lines[i] != remom_lines[i]:
+        if demom_lines[i] != remom_lines[i]:
             first_diff = i + 1  # 1-indexed
             break
 
@@ -583,48 +583,48 @@ def compare_rng(hemom_rng: Path, remom_rng: Path) -> ComparatorResult:
         ]
         for j in range(ctx_from, ctx_to + 1):
             mark = "✗" if j == first_diff else " "
-            findings.append(f"  {mark} HeMoM  L{j}: {hemom_lines[j - 1]}")
+            findings.append(f"  {mark} DeMoM  L{j}: {demom_lines[j - 1]}")
             findings.append(f"  {mark} ReMoM  L{j}: {remom_lines[j - 1]}")
         return ComparatorResult(
             name, "FAIL",
             f"first diverges at line {first_diff} of {h_count}",
             Evidence(inputs=inputs,
-                     method="line-by-line strict equality (HeMoM ⊆ ReMoM as prefix)",
+                     method="line-by-line strict equality (DeMoM ⊆ ReMoM as prefix)",
                      findings=findings,
                      reproduce=[
-                         f"sed -n '{first_diff}p' {hemom_rng}",
+                         f"sed -n '{first_diff}p' {demom_rng}",
                          f"sed -n '{first_diff}p' {remom_rng}",
-                         f"diff {hemom_rng} <(head -n {h_count} {remom_rng})",
+                         f"diff {demom_rng} <(head -n {h_count} {remom_rng})",
                      ]),
         )
 
-    # PASS — sample lines for visible eyeball check, plus md5 of HeMoM and the
+    # PASS — sample lines for visible eyeball check, plus md5 of DeMoM and the
     # baseline-prefix slice we just verified.
     mid = h_count // 2 if h_count > 1 else 1
     tail_count = r_count - h_count
     findings = [
-        f"all {h_count} lines match HeMoM⇄ReMoM",
-        f"first L1     : {hemom_lines[0]}",
-        f"mid   L{mid:<5d} : {hemom_lines[mid - 1]}",
-        f"last  L{h_count:<5d} : {hemom_lines[-1]}",
+        f"all {h_count} lines match DeMoM⇄ReMoM",
+        f"first L1     : {demom_lines[0]}",
+        f"mid   L{mid:<5d} : {demom_lines[mid - 1]}",
+        f"last  L{h_count:<5d} : {demom_lines[-1]}",
     ]
     if tail_count > 0:
         findings.append(
-            f"ReMoM continues past HeMoM by {tail_count} call(s) "
+            f"ReMoM continues past DeMoM by {tail_count} call(s) "
             f"(expected — ReMoM keeps running through Main Screen after Save_SAVE_GAM)"
         )
         findings.append(f"  ReMoM L{h_count + 1}: {remom_lines[h_count]}")
-    summary = f"all {h_count} HeMoM calls match ReMoM line-for-line"
+    summary = f"all {h_count} DeMoM calls match ReMoM line-for-line"
     if tail_count > 0:
         summary += f" (ReMoM has +{tail_count} extra post-save)"
     return ComparatorResult(
         name, "PASS", summary,
         Evidence(inputs=inputs,
-                 method="line-by-line strict equality (HeMoM ⊆ ReMoM as prefix)",
+                 method="line-by-line strict equality (DeMoM ⊆ ReMoM as prefix)",
                  findings=findings,
                  reproduce=[
-                     f"diff {hemom_rng} <(head -n {h_count} {remom_rng})",
-                     f"md5sum {hemom_rng}",
+                     f"diff {demom_rng} <(head -n {h_count} {remom_rng})",
+                     f"md5sum {demom_rng}",
                      f"head -n {h_count} {remom_rng} | md5sum",
                  ]),
     )
@@ -673,7 +673,7 @@ SAVE_GAM_TOTAL = 123300  # LEN_SAVE_GAM_FILE
 # _HEROES2[] is allocated with malloc() (MoX/src/Allocate.c:341), not calloc(), so
 # the skipped slots contain whatever was on the heap. Those bytes are uninitialized
 # in BOTH binaries — Init_Heroes itself is deterministic (LOG_TRACE output is
-# byte-for-byte identical between ReMoM and HeMoM at seed=12345), so byte-equality
+# byte-for-byte identical between ReMoM and DeMoM at seed=12345), so byte-equality
 # on SAVE9/SAVE2 cannot be reached without changing the game's allocator.
 #
 # We mask (zero) the heap-garbage slots before md5/diff so the comparison reflects
@@ -766,36 +766,36 @@ def _first_diff_offset(a: bytes, b: bytes) -> Optional[int]:
     return None if len(a) == len(b) else n
 
 
-def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> ComparatorResult:
+def compare_save_gam(name: str, demom_path: Path, remom_path: Path) -> ComparatorResult:
     """Byte-equality on a SAVE*.GAM file with region+element mapping for diff
     drill-down.  Struct-aware field decode lands in Phase 2c on top of this."""
-    if not hemom_path.exists() and not remom_path.exists():
+    if not demom_path.exists() and not remom_path.exists():
         return ComparatorResult(
             name, "SKIP",
             "both sides missing (no .GAM file to compare)",
             Evidence(inputs=[], method="bytewise + region map",
                      findings=["no artifact to compare on either side"], reproduce=[]),
         )
-    if not hemom_path.exists():
+    if not demom_path.exists():
         return ComparatorResult(
             name, "SKIP",
-            f"HeMoM side missing: {relpath(hemom_path)}",
+            f"DeMoM side missing: {relpath(demom_path)}",
             Evidence(inputs=[("ReMoM", remom_path, byte_size(remom_path), -1, md5_of(remom_path))],
                      method="bytewise + region map",
-                     findings=[f"file not found: {relpath(hemom_path)}"], reproduce=[]),
+                     findings=[f"file not found: {relpath(demom_path)}"], reproduce=[]),
         )
     if not remom_path.exists():
         return ComparatorResult(
             name, "SKIP",
             f"ReMoM side missing: {relpath(remom_path)}",
-            Evidence(inputs=[("HeMoM", hemom_path, byte_size(hemom_path), -1, md5_of(hemom_path))],
+            Evidence(inputs=[("DeMoM", demom_path, byte_size(demom_path), -1, md5_of(demom_path))],
                      method="bytewise + region map",
                      findings=[f"file not found: {relpath(remom_path)}",
                                "re-run ./tools/capture_remom_rng_baseline.sh to populate ReMoM side"],
                      reproduce=[]),
         )
 
-    h_raw = hemom_path.read_bytes()
+    h_raw = demom_path.read_bytes()
     r_raw = remom_path.read_bytes()
     # Mask Init_Heroes heap garbage in the _HEROES2 block on both .GAM files
     # before comparing. See INIT_HEROES_SKIPPED_SLOTS for the why.
@@ -808,24 +808,24 @@ def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> Comparato
     else:
         h_bytes = h_raw
         r_bytes = r_raw
-        h_md5 = md5_of(hemom_path)
+        h_md5 = md5_of(demom_path)
         r_md5 = md5_of(remom_path)
     inputs = [
-        ("HeMoM", hemom_path, len(h_bytes), -1, h_md5),
+        ("DeMoM", demom_path, len(h_bytes), -1, h_md5),
         ("ReMoM", remom_path, len(r_bytes), -1, r_md5),
     ]
 
     if len(h_bytes) != len(r_bytes):
         return ComparatorResult(
             name, "FAIL",
-            f"file sizes differ (HeMoM={len(h_bytes)}, ReMoM={len(r_bytes)})",
+            f"file sizes differ (DeMoM={len(h_bytes)}, ReMoM={len(r_bytes)})",
             Evidence(inputs=inputs, method="bytewise + region map",
-                     findings=[f"HeMoM size: {len(h_bytes):,} B",
+                     findings=[f"DeMoM size: {len(h_bytes):,} B",
                                f"ReMoM size: {len(r_bytes):,} B",
                                f"expected:   {SAVE_GAM_TOTAL:,} B"],
                      reproduce=[
-                         f"cmp -l {hemom_path} {remom_path} | head",
-                         f"stat -c %s {hemom_path} {remom_path}",
+                         f"cmp -l {demom_path} {remom_path} | head",
+                         f"stat -c %s {demom_path} {remom_path}",
                      ]),
         )
 
@@ -845,8 +845,8 @@ def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> Comparato
             Evidence(inputs=inputs,
                      method="md5 + bytewise" + (" (with _HEROES2 garbage mask)" if masked_save else ""),
                      findings=pass_findings,
-                     reproduce=[f"md5sum {hemom_path} {remom_path}",
-                                f"cmp {hemom_path} {remom_path}"]),
+                     reproduce=[f"md5sum {demom_path} {remom_path}",
+                                f"cmp {demom_path} {remom_path}"]),
         )
 
     # md5 differ — locate first differing byte and map it to a region.
@@ -866,7 +866,7 @@ def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> Comparato
                         "this diff is in DATA, not in uninitialized hero slots")
     if elem_idx >= 0:
         findings.append(f"element: index {elem_idx} (byte offset {byte_within} within element)")
-    findings.append(f"  HeMoM {_hex_context(h_bytes, first)}")
+    findings.append(f"  DeMoM {_hex_context(h_bytes, first)}")
     findings.append(f"  ReMoM {_hex_context(r_bytes, first)}")
     findings.append(f"total differing bytes: {total_diff:,} of {len(h_bytes):,} "
                     f"({100.0 * total_diff / len(h_bytes):.2f}%)")
@@ -909,32 +909,32 @@ def compare_save_gam(name: str, hemom_path: Path, remom_path: Path) -> Comparato
         Evidence(inputs=inputs, method="bytewise + region map + struct-field decode",
                  findings=findings,
                  reproduce=[
-                     f"cmp -l {hemom_path} {remom_path} | head -20",
-                     f"xxd -s {first - 16} -l 64 {hemom_path}",
+                     f"cmp -l {demom_path} {remom_path} | head -20",
+                     f"xxd -s {first - 16} -l 64 {demom_path}",
                      f"xxd -s {first - 16} -l 64 {remom_path}",
                  ]),
     )
 
 
-def compare_magic_set(hemom_path: Path, remom_path: Path) -> ComparatorResult:
+def compare_magic_set(demom_path: Path, remom_path: Path) -> ComparatorResult:
     """Same comparator but with the MAGIC.SET file's single-struct layout
     (struct-field decode lands in Phase 2c)."""
     name = "MAGIC.SET"
     # Same SKIP/equality logic — but no region map for now.
-    if not hemom_path.exists() or not remom_path.exists():
-        which = "HeMoM" if not hemom_path.exists() else "ReMoM"
+    if not demom_path.exists() or not remom_path.exists():
+        which = "DeMoM" if not demom_path.exists() else "ReMoM"
         return ComparatorResult(
             name, "SKIP",
             f"{which} side missing",
             Evidence(inputs=[], method="bytewise (struct decode in Phase 2c)",
-                     findings=[f"{which}'s {relpath(hemom_path if which == 'HeMoM' else remom_path)} not found"],
+                     findings=[f"{which}'s {relpath(demom_path if which == 'DeMoM' else remom_path)} not found"],
                      reproduce=[]),
         )
-    h = hemom_path.read_bytes()
+    h = demom_path.read_bytes()
     r = remom_path.read_bytes()
-    h_md5, r_md5 = md5_of(hemom_path), md5_of(remom_path)
+    h_md5, r_md5 = md5_of(demom_path), md5_of(remom_path)
     inputs = [
-        ("HeMoM", hemom_path, len(h), -1, h_md5),
+        ("DeMoM", demom_path, len(h), -1, h_md5),
         ("ReMoM", remom_path, len(r), -1, r_md5),
     ]
     if h == r:
@@ -942,13 +942,13 @@ def compare_magic_set(hemom_path: Path, remom_path: Path) -> ComparatorResult:
             name, "PASS", f"all {len(h)} bytes equal (md5 {h_md5[:12]}…)",
             Evidence(inputs=inputs, method="md5 + bytewise",
                      findings=[f"md5: {h_md5}"],
-                     reproduce=[f"md5sum {hemom_path} {remom_path}"]),
+                     reproduce=[f"md5sum {demom_path} {remom_path}"]),
         )
     first = _first_diff_offset(h, r)
     total_diff = sum(1 for i in range(min(len(h), len(r))) if h[i] != r[i])
     findings = [
         f"first differing byte at offset 0x{first:04X} ({first})",
-        f"  HeMoM {_hex_context(h, first, span=8)}",
+        f"  DeMoM {_hex_context(h, first, span=8)}",
         f"  ReMoM {_hex_context(r, first, span=8)}",
         f"total differing bytes: {total_diff} of {min(len(h), len(r))}",
     ]
@@ -977,8 +977,8 @@ def compare_magic_set(hemom_path: Path, remom_path: Path) -> ComparatorResult:
         Evidence(inputs=inputs, method="bytewise (full struct decode in Phase 2c)",
                  findings=findings,
                  reproduce=[
-                     f"cmp -l {hemom_path} {remom_path} | head -20",
-                     f"xxd {hemom_path} > /tmp/hemom.magic; xxd {remom_path} > /tmp/remom.magic; diff /tmp/{{hemom,remom}}.magic | head -20",
+                     f"cmp -l {demom_path} {remom_path} | head -20",
+                     f"xxd {demom_path} > /tmp/demom.magic; xxd {remom_path} > /tmp/remom.magic; diff /tmp/{{demom,remom}}.magic | head -20",
                  ]),
     )
 
@@ -1160,15 +1160,15 @@ def _format_diff(field: str, a_val: object, b_val: object) -> str:
         if isinstance(v, int):
             return f"{v}"
         return repr(v)
-    return f"{field:<24} HeMoM={fmt(a_val):<20}  ReMoM={fmt(b_val)}"
+    return f"{field:<24} DeMoM={fmt(a_val):<20}  ReMoM={fmt(b_val)}"
 
 
 def struct_field_diff(layout: list[tuple[int, str, str]],
-                      hemom_bytes: bytes, remom_bytes: bytes, base: int = 0
+                      demom_bytes: bytes, remom_bytes: bytes, base: int = 0
                       ) -> list[str]:
     """Decode both sides via `layout` (relative to `base`), diff field-by-field,
     return one display line per differing field."""
-    a = decode_struct(layout, hemom_bytes, base)
+    a = decode_struct(layout, demom_bytes, base)
     b = decode_struct(layout, remom_bytes, base)
     return [_format_diff(field, av, bv) for field, av, bv in diff_decoded(a, b)]
 
@@ -1197,7 +1197,7 @@ def _decode_field_at(layout: list[tuple[int, str, str]],
     return None
 
 
-def state_summary(hemom_save: Path, hemom_magic: Path,
+def state_summary(demom_save: Path, demom_magic: Path,
                   remom_save: Path, remom_magic: Path) -> ComparatorResult:
     """Decode known anchor fields from both sides and show them side-by-side.
 
@@ -1208,20 +1208,20 @@ def state_summary(hemom_save: Path, hemom_magic: Path,
     Reads from SAVE2.GAM (the named slot save) — same struct layout as
     SAVE9.GAM, but captured at a moment both binaries agree on."""
 
-    h_save = _read_or_none(hemom_save)
+    h_save = _read_or_none(demom_save)
     r_save = _read_or_none(remom_save)
-    h_mset = _read_or_none(hemom_magic)
+    h_mset = _read_or_none(demom_magic)
     r_mset = _read_or_none(remom_magic)
 
     inputs = [
-        _input_tuple("HeMoM SAVE2.GAM", hemom_save),
-        _input_tuple("HeMoM MAGIC.SET", hemom_magic),
+        _input_tuple("DeMoM SAVE2.GAM", demom_save),
+        _input_tuple("DeMoM MAGIC.SET", demom_magic),
         _input_tuple("ReMoM SAVE2.GAM", remom_save),
         _input_tuple("ReMoM MAGIC.SET", remom_magic),
     ]
 
     # Anchors: (label, source_buf_pair, layout, base, field_name)
-    # Each tuple resolves to (hemom_value, remom_value) for one anchor row.
+    # Each tuple resolves to (demom_value, remom_value) for one anchor row.
     PLAYER0_BASE = 2536  # _players[0]
     CITY0_BASE = 35500   # _CITIES[0]
     anchors: list[tuple[str, object, object]] = []
@@ -1300,13 +1300,13 @@ def state_summary(hemom_save: Path, hemom_magic: Path,
         return str(v)
 
     mismatches = sum(1 for _, h, r in anchors if h != r)
-    findings = ["per-anchor side-by-side (HeMoM vs ReMoM):"]
+    findings = ["per-anchor side-by-side (DeMoM vs ReMoM):"]
     for label, h_val, r_val in anchors:
         marker = "✓" if h_val == r_val else "✗"
         # Highlight mismatches in color (when terminal supports it).
         color_open = RED if h_val != r_val else GREEN
         findings.append(f"  {color_open}{marker}{RESET} {label:<28} "
-                        f"HeMoM={show(h_val):<24}  ReMoM={show(r_val)}")
+                        f"DeMoM={show(h_val):<24}  ReMoM={show(r_val)}")
     if mismatches == 0:
         summary = f"all {len(anchors)} anchors match"
     else:
@@ -1318,8 +1318,8 @@ def state_summary(hemom_save: Path, hemom_magic: Path,
                  method="decode known fields from SAVE2.GAM + MAGIC.SET on both sides",
                  findings=findings,
                  reproduce=[
-                     f"xxd -s {CITY0_BASE} -l 14 {hemom_save}   # HeMoM city[0].name",
-                     f"xxd -s 0x40 -l 160 {hemom_magic}        # HeMoM magic_set.Save_Names",
+                     f"xxd -s {CITY0_BASE} -l 14 {demom_save}   # DeMoM city[0].name",
+                     f"xxd -s 0x40 -l 160 {demom_magic}        # DeMoM magic_set.Save_Names",
                  ]),
     )
 
@@ -1330,16 +1330,16 @@ def state_summary(hemom_save: Path, hemom_magic: Path,
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Prove ReMoM and HeMoM produce identical behavior and data.",
+        description="Prove ReMoM and DeMoM produce identical behavior and data.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    p.add_argument("--config", default=str(ASSETS_DIR / "matchup_hemom.ini"),
-                   help="HeMoM newgame .ini (default: assets/matchup_hemom.ini)")
+    p.add_argument("--config", default=str(ASSETS_DIR / "matchup_demom.ini"),
+                   help="DeMoM newgame .ini (default: assets/matchup_demom.ini)")
     p.add_argument("--seed", type=int, default=12345,
                    help="Deterministic seed (default: 12345)")
-    p.add_argument("--hms", default=str(ASSETS_DIR / "matchup_hemom.hms"),
-                   help="HMS scenario for ReMoM --scenario (default: assets/matchup_hemom.hms)")
+    p.add_argument("--hms", default=str(ASSETS_DIR / "matchup_demom.hms"),
+                   help="HMS scenario for ReMoM --scenario (default: assets/matchup_demom.hms)")
     p.add_argument("--rmr", default=None,
                    help="RMR recorded-input for ReMoM --replay "
                         "(if set, overrides --hms)")
@@ -1350,8 +1350,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--run-remom", action="store_true",
                    help="Launch ReMoM headlessly via --scenario --hms (or --replay --rmr); "
                         "default is to use the most recent ReMoM output already in bin/Debug/.")
-    p.add_argument("--skip-hemom", action="store_true",
-                   help="Skip running HeMoM; reuse existing analysis/hemom/ artifacts")
+    p.add_argument("--skip-demom", action="store_true",
+                   help="Skip running DeMoM; reuse existing analysis/demom/ artifacts")
     return p.parse_args()
 
 
@@ -1360,7 +1360,7 @@ def main() -> int:
     preset = pick_preset(args.preset)
     layout = make_layout(preset)
 
-    print_section_header("Parity Check: HeMoM vs ReMoM")
+    print_section_header("Parity Check: DeMoM vs ReMoM")
     print(f"  preset = {preset}")
     print(f"  config = {relpath(Path(args.config))}")
     print(f"  seed   = {args.seed}")
@@ -1368,41 +1368,41 @@ def main() -> int:
         print(f"  rmr    = {relpath(Path(args.rmr))}  (overrides --hms)")
     else:
         print(f"  hms    = {relpath(Path(args.hms))}")
-    print(f"  out    = {relpath(layout.analysis_dir)}/{{hemom,remom}}/")
+    print(f"  out    = {relpath(layout.analysis_dir)}/{{demom,remom}}/")
 
     try:
-        hemom_artifacts, remom_artifacts = phase1_collect(args, layout)
+        demom_artifacts, remom_artifacts = phase1_collect(args, layout)
     except Phase1Error as e:
         print(f"\n  {RED}Phase 1 failure:{RESET} {e}", file=sys.stderr)
         return 1
 
     print_section_header("Phase 2: Compare")
-    print(f"  HeMoM artifacts ({len(hemom_artifacts)}): {', '.join(sorted(hemom_artifacts))}")
+    print(f"  DeMoM artifacts ({len(demom_artifacts)}): {', '.join(sorted(demom_artifacts))}")
     print(f"  ReMoM artifacts ({len(remom_artifacts)}): {', '.join(sorted(remom_artifacts))}")
 
     results: list[ComparatorResult] = []
     # 2a — RNG call stream (foundational).
-    results.append(compare_rng(hemom_artifacts["rng.log"], remom_artifacts["rng.log"]))
+    results.append(compare_rng(demom_artifacts["rng.log"], remom_artifacts["rng.log"]))
 
     # 2b — SAVE2.GAM (named slot), MAGIC.SET (bytewise + region map).
-    # SAVE9.GAM is intentionally not compared — see HEMOM_PRODUCED comment.
+    # SAVE9.GAM is intentionally not compared — see DEMOM_PRODUCED comment.
     results.append(compare_save_gam(
         "SAVE2.GAM (named slot)",
-        layout.hemom_out / "SAVE2.GAM",
+        layout.demom_out / "SAVE2.GAM",
         layout.remom_out / "SAVE2.GAM",
     ))
     results.append(compare_magic_set(
-        layout.hemom_out / "MAGIC.SET",
+        layout.demom_out / "MAGIC.SET",
         layout.remom_out / "MAGIC.SET",
     ))
 
     # 2d — State anchors (always INFO; surfaces the checkpoints by hand).
     # Reads from SAVE2.GAM — captured at the same moment on both binaries
     # (after Loaded_Game_Update on the ReMoM side, after New_Game_Continue
-    # on the HeMoM side).
+    # on the DeMoM side).
     results.append(state_summary(
-        layout.hemom_out / "SAVE2.GAM",
-        layout.hemom_out / "MAGIC.SET",
+        layout.demom_out / "SAVE2.GAM",
+        layout.demom_out / "MAGIC.SET",
         layout.remom_out / "SAVE2.GAM",
         layout.remom_out / "MAGIC.SET",
     ))

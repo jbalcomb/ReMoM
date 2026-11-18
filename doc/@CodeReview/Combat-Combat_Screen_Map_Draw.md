@@ -75,7 +75,7 @@ Combat_Screen()
             |-> Spawn_Tree_Entities()
             |-> Spawn_Rock_Entities()
             |-> Update_Sees_Illusions()
-            |-> Combat_Unit_Enchantment_Outline_Set()
+            |-> Set_Combat_Enchantment_Outline()
             |-> Battle_Unit_Set_Animation_Flags()
             |-> Battle_Unit_Curse_Effects()
             |-> Battle_Unit_Set_Invisibility_Effect()
@@ -134,7 +134,7 @@ The Production column carries the current name and line; the ASM column keeps th
 | `Spawn_Fire_Wall_Entities` | [Combat.c:18951](../../MoM/src/Combat.c#L18951) | `ovr153/CMB_SpawnFireWall.asm` | 617 |
 | `Combat_Screen_Map_Draw_Entities` | [Combat.c:18503](../../MoM/src/Combat.c#L18503) | `ovr153/Combat_Screen_Map_Draw_Entities__WIP.asm` | 467 |
 | `Spawn_Figure_Entity` | [Combat.c:19132](../../MoM/src/Combat.c#L19132) | `ovr153/CMB_SpawnFigure__WIP.asm` | 423 |
-| `Combat_Unit_Enchantment_Outline_Set` | [Combat.c:7027](../../MoM/src/Combat.c#L7027) | `ovr105/Combat_Unit_Enchantment_Outline_Set.asm` | 366 |
+| `Set_Combat_Enchantment_Outline` | [Combat.c:7027](../../MoM/src/Combat.c#L7027) | `ovr105/Set_Combat_Enchantment_Outline.asm` | 366 |
 | `Combat_Screen_Map_Compose_Figures` | [Combat.c:19616](../../MoM/src/Combat.c#L19616) | `ovr153/Combat_Figure_Compose_USEFULL.asm` | 284 |
 | `Spawn_Structure_Entities` | [Combat.c:18633](../../MoM/src/Combat.c#L18633) | `ovr153/CMB_SpawnStructures.asm` | 282 |
 | `Unit_Figure_Position` | [UnitView.c:2717](../../MoM/src/UnitView.c#L2717) | `ovr089/Unit_Figure_Position.asm` | 242 |
@@ -156,7 +156,7 @@ The Production column carries the current name and line; the ASM column keeps th
 | `Spawn_Rock_Entities` | [Combat.c:18608](../../MoM/src/Combat.c#L18608) | `ovr153/CMB_SpawnRocks.asm` | 58 |
 | `Combat_Figure_Banner_Color` | [Combat.c:6962](../../MoM/src/Combat.c#L6962) | `ovr105/Combat_Figure_Banner_Color.asm` | 45 |
 | `Battle_Unit_Is_Airborne` | [Combat.c:4964](../../MoM/src/Combat.c#L4964) | `ovr098/BU_CheckFlight__WIP.asm` | 43 |
-| `Combat_Unit_Enchantment_Outline_Draw` | [Combat.c:7187](../../MoM/src/Combat.c#L7187) | `ovr105/Combat_Unit_Enchantment_Outline_Draw.asm` | 36 |
+| `Draw_Combat_Enchantment_Outline` | [Combat.c:7187](../../MoM/src/Combat.c#L7187) | `ovr105/Draw_Combat_Enchantment_Outline.asm` | 36 |
 | `NIU_Gibs_Frames` | [Combat.c:18574](../../MoM/src/Combat.c#L18574) | `ovr153/NX_IDK_CMB_BloodFrames.asm` | 25 |
 | `Combat_Figure_Active_Red_Outline` | [Combat.c:6979](../../MoM/src/Combat.c#L6979) | `ovr105/Combat_Figure_Active_Red_Outline.asm` | 23 |
 | `Cycle_Unit_Enchantment_Animation` | [MainScr.c:3744](../../MoM/src/MainScr.c#L3744) | `ovr063/Cycle_Unit_Enchantment_Animation.asm` | 23 |
@@ -294,7 +294,7 @@ Only block 1 uses `FLIC_Get_Width`; every other block uses literals.
 
 ## Build state
 
-`cmake --build --preset MSVC-debug` — **clean, exit code 0**. All 27 targets link, including `momlib`, `ReMoM.exe`, `HeMoM.exe` and `MOM_tests`.
+`cmake --build --preset MSVC-debug` — **clean, exit code 0**. All 27 targets link, including `momlib`, `ReMoM.exe`, `DeMoM.exe` and `MOM_tests`.
 
 ---
 

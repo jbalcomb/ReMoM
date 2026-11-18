@@ -1,0 +1,22 @@
+module_num=4
+module=L:\MOX\INITGAME.C
+source=0004-initgame.c.md
+range[0]=1:0x00002268 linear=0x00012268 size=3852
+range[1]=2:0x00000920 linear=0x00170920 size=124
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                             SYMBOL                            CHUNK
+m004f001  1    -      0x00012268  1:0x00002268  static,code  Init_Ships_Array                 Init_Ships_Array_                 regions/07-object-1/00097654-00097E53.txt
+m004f002  2    -      0x000122CC  1:0x000022CC  static,code  Make_System_Monsters_Into_Ships  Make_System_Monsters_Into_Ships_  regions/07-object-1/00097654-00097E53.txt
+m004f003  3    -      0x000123CE  1:0x000023CE  static,code  Set_Initial_Colony_Auto_Selects  Set_Initial_Colony_Auto_Selects_  regions/07-object-1/00097654-00097E53.txt
+m004f004  4    -      0x0001241A  1:0x0000241A  static,code  Init_Colonies_Array              Init_Colonies_Array_              regions/07-object-1/00097654-00097E53.txt
+m004f005  5    -      0x00012479  1:0x00002479  code         Init_New_Game                    Init_New_Game_                    regions/07-object-1/00097654-00097E53.txt
+m004f006  6    -      0x0001279A  1:0x0000279A  code         Init_New_Session                 Init_New_Session_                 regions/07-object-1/00097654-00097E53.txt
+m004f007  7    -      0x0001279F  1:0x0000279F  code         Set_Defaults                     Set_Defaults_                     regions/07-object-1/00097654-00097E53.txt
+m004f008  8    -      0x000127E1  1:0x000027E1  code         Set_Default_Game_Settings        Set_Default_Game_Settings_        regions/07-object-1/00097654-00097E53.txt
+m004f009  9    -      0x00012937  1:0x00002937  code         Write_Game_Settings              Write_Game_Settings_              regions/07-object-1/00097E54-00098653.txt
+m004f010  10   -      0x00012983  1:0x00002983  code         Init_Players                     Init_Players_                     regions/07-object-1/00097E54-00098653.txt
+m004f011  11   -      0x00012D75  1:0x00002D75  code         Init_Colony                      Init_Colony_                      regions/07-object-1/00097E54-00098653.txt
+m004f012  12   -      0x00012E08  1:0x00002E08  code         Test_Create_Ship                 Test_Create_Ship_                 regions/07-object-1/00097E54-00098653.txt
+m004f013  13   -      0x0001307E  1:0x0000307E  code         Init_Officers                    Init_Officers_                    regions/07-object-1/00098654-00098E53.txt
+m004f014  14   -      0x0001307F  1:0x0000307F  code         Init_Leaders                     Init_Leaders_                     regions/07-object-1/00098654-00098E53.txt

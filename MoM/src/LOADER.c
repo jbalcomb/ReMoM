@@ -53,9 +53,11 @@ char rsc0C_MAPBACK_LBX[] = "MAPBACK.LBX";
 char terrain_lbx_file[] = "TERRAIN.LBX";
 
 // WZD dseg:29DE
-// MGC dseg:28D2 54 45 52 52 53 54 41 54 00                      g_LbxNm_TERRSTAT db 'TERRSTAT',0        ; DATA XREF: Load_TERRSTAT+11o
+// MGC dseg:28D2 54 45 52 52 53 54 41 54 00                      g_LbxNm_TERRSTAT db 'TERRSTAT',0        ; DATA XREF: Load_TERRSTAT+11^o
 //  Load_TERRSTAT+11 mov     ax, offset g_LbxNm_TERRSTAT     ; "TERRSTAT"
 char terrstat_lbx_file[] = "TERRSTAT";
+// 31D1:28D2 54 45 52 52 53 54 41 54 00                      terrstat_lbx_file db 'TERRSTAT',0       ; DATA XREF: Load_TERRSTAT+11o
+// 31D1:28DB 68 6C 70 65 6E 74 72 79 00                      cnst_HLPENTRY_File db 'hlpentry',0      ; DATA XREF: UU_HLP_Load_MainMenu+16o
 
 // WZD dseg:29E7
 char mapback_lbx_file[] = "MAPBACK";
@@ -72,7 +74,7 @@ char backgrnd_lbx_file[] = "BACKGRND";
 char soundfx_lbx_file__ovr052[] = "SOUNDFX";
 
 // WZD dseg:2A05
-// MGC dseg:28BF 53 50 45 4C 4C 44 41 54 00                      g_LbxNm_SPELLDAT db 'SPELLDAT',0        ; DATA XREF: Load_MGC_Resources+B3o ...
+// MGC dseg:28BF 53 50 45 4C 4C 44 41 54 00                      g_LbxNm_SPELLDAT db 'SPELLDAT',0        ; DATA XREF: Load_MGC_Resources+B3^o ...
 //  Load_MGC_Resources+B3 mov     ax, offset g_LbxNm_SPELLDAT     ; "SPELLDAT"
 //  Load_SPELLDAT+11      mov     ax, offset g_LbxNm_SPELLDAT     ; "SPELLDAT"
 char spelldat_lbx_file[] = "SPELLDAT.LBX";
@@ -135,9 +137,7 @@ void Load_MGC_Resources(void)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_MGC_Resources()", __FILE__, __LINE__);
-#endif
 
     // TODO  EMM_Load_LBX_File_1("MAINSCR")
     mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
@@ -158,9 +158,7 @@ void Load_MGC_Resources(void)
 
     // TODO  EMM_Load_LBX_File_1("SPELLDAT")
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_MGC_Resources()", __FILE__, __LINE__);
-#endif
 }
 
 
@@ -176,9 +174,7 @@ void Load_MGC_Resources(void)
 void Load_WZD_Resources(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_WZD_Resources()", __FILE__, __LINE__);
-#endif
 
     Load_MAGIC_SET();
 
@@ -225,9 +221,7 @@ void Load_WZD_Resources(void)
 
     Units_Upkeeps();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_WZD_Resources()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -258,9 +252,7 @@ void Units_Upkeeps(void)
 {
     int16_t itr = 0;  // _CX_
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Units_Upkeeps()", __FILE__, __LINE__);
-#endif
 
     // TODO(JimBalcomb,20231127): figure out where/what this value is that it is using to iterate over
     
@@ -288,9 +280,7 @@ void Units_Upkeeps(void)
         }
     }
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Units_Upkeeps()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -464,11 +454,9 @@ void Main_Screen_Load_Pictures(void)
 {
     int16_t itr = 0;
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADER, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_LOADER, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
-#endif
 
     main_background_seg = LBX_Load(main_lbx_file,  0);
 
@@ -572,11 +560,9 @@ void Main_Screen_Load_Pictures(void)
         main_lilevent_icons[itr] = LBX_Load(main_lbx_file, (59 + itr));
     }
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADER, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_LOADER, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Main_Screen_Load_Pictures()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -782,11 +768,27 @@ void Load_Button_Sounds(void)
 
 }
 
-// WZD o52p14
-// fxn_o52p14()
 
+// WZD o52p14
+// AKA Empty_Load_Fn7()
+// AKA fxn_o52p14()
+void o52p14_empty_function(void)
+{
+/*
+proc fxn_o52p14 far
+push bp
+mov bp, sp
+pop bp
+retf
+endp fxn_o52p14
+*/
+}
+
+
+// MGC s001p07
 // WZD o52p15
-// fxn_o52p15()
+// AKA Empty_Load_Fn8
+// AKA fxn_o52p15()
 /*
     MAYBE, ...
     this is actually this?
@@ -795,20 +797,30 @@ void Load_Button_Sounds(void)
     compiler artifact?
 
 */
+/*
+...
+proc Load_TERRSTAT far
+push bp
+mov bp, sp
+pop bp
+retf
+endp Load_TERRSTAT
+*/
 void Load_TERRSTAT(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     terrain_stats_table = LBX_Load_Data(terrstat_lbx_file, 0, 0, 770, 6);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
+// MGC s001p08
 // WZD o52p16
 void Load_SPELLDAT(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     spell_data_table = (struct s_SPELL_DATA *)LBX_Load_Data(spelldat_lbx_file, 0, 0, 215, 36);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -838,15 +850,11 @@ void Load_Combat_Background_Bottom(void)
 void Graphics_Cache_Reset(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Graphics_Cache_Reset()", __FILE__, __LINE__);
-#endif
 
     Allocate_First_Block(g_graphics_cache_seg, 1);
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Graphics_Cache_Reset()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -861,9 +869,7 @@ void Load_Unit_StatFigs(void)
 {
     uint16_t itr;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Unit_StatFigs()", __FILE__, __LINE__);
-#endif
 
     // UNITS1.LBX ... STATFIG1
     for(itr = 0; itr < 120; itr++)
@@ -877,9 +883,7 @@ void Load_Unit_StatFigs(void)
         _unit_type_table[itr].pict_seg = LBX_Reload_Next(units2_lbx_file, (itr - 120), g_graphics_cache_seg);
     }
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Unit_StatFigs()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1149,9 +1153,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     int16_t itr1;  // _SI_
     int16_t itr2;  // _DI_
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Reload_Cityscape_Graphics_Cache()", __FILE__, __LINE__);
-#endif
 
     // CITYSCAP.LBX,   0  BACKS      ground background
     cityscape_background_arcanus_ground_seg = LBX_Reload_Next(cityscap_lbx_file, 0, g_graphics_cache_seg);
@@ -1399,9 +1401,7 @@ void Reload_Cityscape_Graphics_Cache(void)
     // BACKGRND.LBX,  73  CITYICON    black gold
     black_gold1_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 73, g_graphics_cache_seg);
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Reload_Cityscape_Graphics_Cache()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1422,9 +1422,7 @@ void GFX_Swap_AppendUView(void)
 {
     int16_t itr;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: GFX_Swap_AppendUView()", __FILE__, __LINE__);
-#endif
 
     // load [111of111] from SPECIAL.LBX
     // { UNICON1, UNICON2, UNICON3, NEWICON, UNICON3, UNICON4, UNICON5 }
@@ -1437,6 +1435,7 @@ void GFX_Swap_AppendUView(void)
 
     // load [(0to33)of44] from SPECIAL2.LBX
     // { UNICON6, UNICON7 }
+    /* OGBUG  (harmless) 34 SPECIAL2.LBX entries go to special_seg[111..144], but the OG's special_seg holds 144 handles (dseg:97F8..9917): the 34th lands on diplomacy_mirror_seg (dseg:9918); every screen that draws the mirror reloads it first, and nothing reads special_seg[144]. ReMoM's special_seg is widened to 145, so the write stays in the array */
     for(itr = 0; itr < 34; itr++)
     {
         // IMG_USW_Abilities.Confusion@
@@ -1585,9 +1584,7 @@ void GFX_Swap_AppendUView(void)
     */
     city_grey_big_bread_icon_seg = LBX_Reload_Next(backgrnd_lbx_file, 95, g_graphics_cache_seg);
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: GFX_Swap_AppendUView()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1695,9 +1692,7 @@ void Spellbook_Load_Small_Pictures(void)
 {
     int16_t itr = 0;
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Spellbook_Load_Small_Pictures()", __FILE__, __LINE__);
-#endif
 
 
     // SPECIAL2.LBX, 034  SMLBOOK
@@ -1726,9 +1721,7 @@ void Spellbook_Load_Small_Pictures(void)
 
     _spellbook_small_text = LBX_Reload_Next(special2_lbx_file, 43, g_graphics_cache_seg);
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Spellbook_Load_Small_Pictures()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1737,9 +1730,7 @@ void Spellbook_Load_Small_Pictures(void)
 void Cache_Graphics_Overland(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Overland()", __FILE__, __LINE__);
-#endif
 
     Graphics_Cache_Reset();
 
@@ -1753,9 +1744,7 @@ void Cache_Graphics_Overland(void)
 
     Spellbook_Load_Small_Pictures();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Overland()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1763,9 +1752,7 @@ void Cache_Graphics_Overland(void)
 void Cache_Graphics_Things(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Things()", __FILE__, __LINE__);
-#endif
 
     Graphics_Cache_Reset();
 
@@ -1775,9 +1762,7 @@ void Cache_Graphics_Things(void)
 
     Reload_Cityscape_Graphics_Cache();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Things()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1793,9 +1778,7 @@ XREF:
 void Cache_Graphics_Unit_List_Window(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Unit_List_Window()", __FILE__, __LINE__);
-#endif
 
     Graphics_Cache_Reset();
 
@@ -1803,9 +1786,7 @@ void Cache_Graphics_Unit_List_Window(void)
 
     GFX_Swap_AppendUView();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Unit_List_Window()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -1826,17 +1807,13 @@ XREF:
 void Cache_Graphics_Diplomacy(void)
 {
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Cache_Graphics_Diplomacy()", __FILE__, __LINE__);
-#endif
 
     Graphics_Cache_Reset();
 
     o52p26_empty_function();
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Cache_Graphics_Diplomacy()", __FILE__, __LINE__);
-#endif
 
 }
 

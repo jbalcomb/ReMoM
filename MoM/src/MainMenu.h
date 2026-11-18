@@ -38,9 +38,9 @@ extern "C" {
 // MGC s01p03
 void Main_Menu_Screen_Control(void);
 
-// MGC s01p04
+// ~== MGC s01p04  Load_MGC_Resources()
 // MoO2: Reload_Main_Menu_Screen()
-void Main_Menu_Load_Pictures(void);
+/* HACK */  void Main_Menu_Load_Pictures(void);
 
 // MGC s01p05
 int16_t Main_Menu_Screen(void);
@@ -52,10 +52,10 @@ void Main_Menu_Screen_Draw(void);
 
 void Main_Menu_Screen_Draw_Debug();
 
-// MGC s01p07
+// /* CLAUDE */  MGC s01p07  (not an id tag: Load_TERRSTAT() is defined in LOADER.c, declared in LOADER.h)
 // Load_TERRSTAT
 
-// MGC s01p08
+// /* CLAUDE */  MGC s01p08  (not an id tag: Load_SPELLDAT() is defined in LOADER.c, declared in LOADER.h)
 // Load_SPELLDAT
 
 

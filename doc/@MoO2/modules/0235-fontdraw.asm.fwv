@@ -1,0 +1,10 @@
+module_num=235
+module=fonts\fontdraw.asm
+source=0235-fontdraw.asm.md
+range[0]=1:0x001349CC linear=0x001449CC size=122
+range[1]=2:0x00010D70 linear=0x00180D70 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                          SYMBOL                         CHUNK
+m235f001  1    -      0x001449CC  1:0x001349CC  code  Print_Character_ASM           Print_Character_ASM_           regions/07-object-1/001C9E54-001CA653.txt
+m235f002  2    -      0x00144A06  1:0x00134A06  code  Print_Character_No_Alias_ASM  Print_Character_No_Alias_ASM_  regions/07-object-1/001C9E54-001CA653.txt

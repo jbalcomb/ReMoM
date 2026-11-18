@@ -112,7 +112,7 @@ move_boot_icon = LBX_Load("MAIN", 38)
 
 
 dseg:33B8 01 00 20 00 40 00 04 00 02 00 08 00             MoveFlag_Array dw M_Cavalry, M_Forester, M_Mntnr, M_Swimming, M_Sailing, M_Flying
-dseg:33B8                                                                                         ; DATA XREF: STK_GetMoveTypes+10o
+dseg:33B8                                                                                         ; DATA XREF: STK_GetMoveTypes+10vo
 dseg:33B8                                                                                         ; drake178: MoveFlag_Array
 
 

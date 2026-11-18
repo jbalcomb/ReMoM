@@ -1,0 +1,8 @@
+module_num=236
+module=disable
+source=0236-disable.md
+range[0]=1:0x00134A46 linear=0x00144A46 size=2
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m236f001  1    -      0x00144A46  1:0x00134A46  code  _disable  _disable_  regions/07-object-1/001C9E54-001CA653.txt

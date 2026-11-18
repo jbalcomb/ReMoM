@@ -28,10 +28,10 @@ extern "C" {
 void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int16_t print_type);
 
 // WZD s19p02
-// UU_VGA_WndDrawText()
+void Print_Paragraph_Aligned__NIU(int16_t x, int16_t y, int16_t width, char * string, int16_t align);
 
 // WZD s19p03
-// UU_GUI_CreateHelpLinks()
+void Add_Paragraph_Link_Fields__NIU(int16_t x, int16_t y, int16_t width, char * string, int16_t align, int16_t * variable, char * hotkey, int16_t help);
 
 // WZD s19p04
 // drake178: VGA_TextSetup()

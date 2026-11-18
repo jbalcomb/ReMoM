@@ -1,0 +1,14 @@
+module_num=61
+module=D:\MOX\OTHERS\SCROLL.C
+source=0061-scroll.c.md
+range[0]=1:0x0008FFF5 linear=0x0009FFF5 size=784
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                SYMBOL                               CHUNK
+m061f001  1    -      0x0009FFF5  1:0x0008FFF5  code  Handle_Vertical_Scroll_Field        Handle_Vertical_Scroll_Field_        regions/07-object-1/00124E54-00125653.txt
+m061f002  2    -      0x000A0040  1:0x00090040  code  Get_Vertical_Scroll_Bar_First_Item  Get_Vertical_Scroll_Bar_First_Item_  regions/07-object-1/00125654-00125E53.txt
+m061f003  3    -      0x000A00F1  1:0x000900F1  code  Get_Vertical_Scroll_Bar_Height      Get_Vertical_Scroll_Bar_Height_      regions/07-object-1/00125654-00125E53.txt
+m061f004  4    -      0x000A0125  1:0x00090125  code  Set_Vertical_Scroll_Bar_Maxima      Set_Vertical_Scroll_Bar_Maxima_      regions/07-object-1/00125654-00125E53.txt
+m061f005  5    -      0x000A015D  1:0x0009015D  code  Scroll_Down_One_Item                Scroll_Down_One_Item_                regions/07-object-1/00125654-00125E53.txt
+m061f006  6    -      0x000A01C6  1:0x000901C6  code  Scroll_Up_One_Item                  Scroll_Up_One_Item_                  regions/07-object-1/00125654-00125E53.txt
+m061f007  7    -      0x000A0226  1:0x00090226  code  Draw_Generic_Vertical_Scroll_Bar    Draw_Generic_Vertical_Scroll_Bar_    regions/07-object-1/00125654-00125E53.txt

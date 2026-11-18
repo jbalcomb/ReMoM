@@ -1,0 +1,9 @@
+module_num=206
+module=toupper
+source=0206-toupper.md
+range[0]=1:0x0012E22A linear=0x0013E22A size=14
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m206f001    1    1/2    0x0013E22A  1:0x0012E22A  code  toupper   toupper_   regions/07-object-1/001C3654-001C3E53.txt
+m206f001_2  1    2/2    0x0013E22A  1:0x0012E22A  code  _toupper  _toupper_  regions/07-object-1/001C3654-001C3E53.txt

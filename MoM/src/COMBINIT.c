@@ -18,6 +18,7 @@
 #include "../../MoX/src/MOX_DEF.h"   /* SETMIN(), ITEM_POWER(), UNITOWNER(), HERO_* */
 #include "../../MoX/src/MOX_TYPE.h"
 #include "../../MoX/src/random.h"    /* Random() */
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage(), Stack_Garbage_Range() */  /* CLAUDE */
 
 #include "CITYCALC.h"                /* Unit_Gold_Upkeep() */
 #include "NEXTTURN.h"                /* Unit_Moves2() */
@@ -52,9 +53,13 @@ uint32_t Battle_Unit_Item_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battle_
     battle_unit_item_enchantments = 0;
     for(itr_items = 0; itr_items < NUM_HERO_ITEMS; itr_items++)
     {
-        if(_players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items] != ST_UNDEFINED)
+        /* OGBUG  dead hero (owner_idx -1): the OG reads _players[-1].Heroes[hero_slot_idx].Items[itr_items], a word sizeof(s_WIZARD) below _players[0]'s, and uses it as an */
+        /* OGBUG  _ITEMS[] index */
+        // if(_players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items] != ST_UNDEFINED)
+        /* HACK */  if(((unit_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items]) != ST_UNDEFINED)
         {
-            item_idx = _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items];
+            // item_idx = _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items];
+            /* HACK */  item_idx = ((unit_owner_idx == ST_UNDEFINED) ? Stack_Garbage_Range(0, (NUM_ITEMS - 1)) : _players[unit_owner_idx].Heroes[hero_slot_idx].Items[itr_items]);
             Item_Powers_To_Unit_Enchantments(item_idx, battle_unit);
             if(_ITEMS[item_idx].type == it_Shield)
             {
@@ -282,6 +287,7 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
     {
         hit_points += 1;
     }
+    /* OGBUG  Lion Heart is tested only in _UNITS[].enchantments, never in the hero's item powers, so a Lion Heart item adds no +3 hits to this maximum (Battle_Unit_Hit_Points() does see it, through battle_unit->item_enchantments) */
     if((_UNITS[unit_idx].enchantments & UE_LION_HEART) != 0)
     {
         hit_points += 3;
@@ -295,11 +301,15 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
         {
             hit_points += 1;
         }
-        if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        /* OGBUG  dead hero (owner_idx -1): _HEROES2[-1] is the far pointer combat_enchantments (the dd below _HEROES2 in dseg), so the OG tests a bit of whatever lies at */
+        /* OGBUG  combat_enchantments + type * sizeof(s_HERO) */
+        // if(HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        /* HACK */  if((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_CONSTITUTION(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
         {
             hit_points += (unit_level + 1);
         }
-        if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        // if(HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
+        /* HACK */  if((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_CONSTITUTION2(_UNITS[unit_idx].owner_idx, _UNITS[unit_idx].type))
         {
             hit_points += (((unit_level + 1) * 3) / 2);
         }
@@ -335,7 +345,9 @@ int16_t Unit_Hit_Points(int16_t unit_idx)
     {
         hit_points += 1;
     }
-    if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
+    /* OGBUG  dead unit (owner_idx -1): the OG reads _players[-1].Globals[CHARM_OF_LIFE], the byte sizeof(s_WIZARD) below _players[0].Globals[CHARM_OF_LIFE] */
+    // if(_players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE] > 0)
+    /* HACK */  if(((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[_UNITS[unit_idx].owner_idx].Globals[CHARM_OF_LIFE]) > 0)
     {
         charm_of_life_bonus = hit_points / 4;
         if(charm_of_life_bonus < 1)
@@ -366,6 +378,7 @@ int16_t Battle_Unit_Hit_Points(struct s_BATTLE_UNIT * battle_unit)
     {
         unit_level = 3;
     }
+    /* OGBUG  Crusade's +1 level is added a second time: _UNITS[].Level already holds Calc_Unit_Level() (stored each turn), which includes Crusade for normal living units, so those units get +2 levels of hit points here (a unit at the level cap only gets this one) */
     if(
         (_players[battle_unit->controller_idx].Globals[CRUSADE] > 0)
         &&
@@ -494,6 +507,7 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     battle_unit->mana = battle_unit->mana_max;
     battle_unit->damage[0] = _UNITS[unit_idx].Damage;
     battle_unit->front_figure_damage = (_UNITS[unit_idx].Damage % battle_unit->hits);
+    /* OGBUG  no lower bound: when the stored _UNITS[].Damage is at or above the unit's current total hits (figure_max * hits), figure_cnt comes out 0 or negative while status stays bus_Active */
     battle_unit->figure_cnt = (battle_unit->figure_max - (_UNITS[unit_idx].Damage / battle_unit->hits));
     battle_unit->Atk_FigLoss = 0;
     battle_unit->confusion_state = 0;
@@ -511,9 +525,12 @@ void Load_Battle_Unit(int16_t unit_idx, struct s_BATTLE_UNIT * battle_unit)
     /* OGBUG: only Items[0]'s embedded spell is ever usable */
     if(_UNITS[unit_idx].Hero_Slot > ST_UNDEFINED)
     {
-        if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
+        /* OGBUG  dead hero (owner_idx -1): the OG reads _players[-1].Heroes[Hero_Slot].Items[0], a word sizeof(s_WIZARD) below _players[0]'s, and uses it as an _ITEMS[] index */
+        // if(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0] > ST_UNDEFINED)
+        /* HACK */  if(((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]) > ST_UNDEFINED)
         {
-            item_charges = (int8_t)_ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
+            // item_charges = (int8_t)_ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
+            /* HACK */  item_charges = (int8_t)_ITEMS[((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? Stack_Garbage_Range(0, (NUM_ITEMS - 1)) : _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0])].embed_spell_cnt;
         }
         else
         {
@@ -544,6 +561,9 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
     unit_idx = battle_unit->unit_idx;
     unit_mutations = _UNITS[unit_idx].mutations;
     /* OGBUG: this reset block is missing battle_unit->Weapon_Plus1 = 0; */
+    /* OGBUG  the reset block never clears Abilities, Attribs_1, Attribs_2, Move_Flags or the melee / ranged attack attributes, and Apply_Enchantment_And_Mutation_Effects() only ORs bits into them, so when this */
+    /* OGBUG  is re-run after a combat Dispel Magic / Disenchant the unit keeps what the dispelled enchantment gave (True Sight, Invulnerability, Wraith Form, Guardian Wind, Magic Immunity, Immolation, */
+    /* OGBUG  Eldritch Weapon, Flight, Water Walking) for the rest of the battle; only the stat bonuses go away */
     battle_unit->tohit = _unit_type_table[_UNITS[battle_unit->unit_idx].type].To_Hit;
     battle_unit->melee_tohit = 0;
     battle_unit->ranged_tohit = 0;
@@ -619,6 +639,7 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
     chaos_surge = ST_FALSE;
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
+        /* OGBUG  tests _players[0] (the human) on every pass instead of _players[itr_players], so a Chaos Surge cast by an AI wizard never gives Chaos units +2 melee / ranged, and the human's gives it to every Chaos unit in the battle */
         if(_players[HUMAN_PLAYER_IDX].Globals[CHAOS_SURGE] > 0)
         {
             chaos_surge = ST_TRUE;
@@ -640,9 +661,13 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
             }
         }
     }
+    /* OGBUG  Holy Weapon is tested only in battle_unit_enchantments (item | overland enchantments), not in battle_unit->enchantments, where a combat-cast Holy Weapon goes, and */
+    /* OGBUG  Apply_Enchantment_And_Mutation_Effects() has no Holy Weapon case, so a Holy Weapon cast during the battle gives no +1 melee / ranged to-hit */
+    /* OGBUG  dead unit (owner_idx -1): the OG reads _players[-1].Globals[HOLY_ARMS], the byte sizeof(s_WIZARD) below _players[0].Globals[HOLY_ARMS] */
     if(
         (
-            (_players[_UNITS[unit_idx].owner_idx].Globals[HOLY_ARMS] > 0)
+            // (_players[_UNITS[unit_idx].owner_idx].Globals[HOLY_ARMS] > 0)
+            /* HACK */  (((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[_UNITS[unit_idx].owner_idx].Globals[HOLY_ARMS]) > 0)
             &&
             !(battle_unit->Abilities & UA_FANTASTIC)
             &&
@@ -704,6 +729,7 @@ void Battle_Unit_Regular_Stats(struct s_BATTLE_UNIT * battle_unit)
 // WZD o116p08
 void Apply_Enchantment_And_Mutation_Effects(struct s_BATTLE_UNIT * battle_unit, uint32_t battle_unit_enchantments, uint8_t unit_mutations)
 {
+    /* OGBUG  only ORs ability / immunity / movement / attack bits in and nothing clears them on a re-run, so a dispelled enchantment's abilities stay (see Battle_Unit_Regular_Stats()) */
     if((battle_unit_enchantments & UE_WATER_WALKING) != 0)
     {
         battle_unit->Move_Flags |= MV_SWIMMING;
@@ -1070,40 +1096,52 @@ void Battle_Unit_Hero_Skill_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battl
     int16_t hero_type = 0;
     hero_owner_idx = _UNITS[unit_idx].owner_idx;
     hero_type = _UNITS[unit_idx].type;
+    /* OGBUG  dead hero (owner_idx -1): every _HEROES2[hero_owner_idx] read below goes through _HEROES2[-1], the far pointer combat_enchantments (the dd below _HEROES2 in dseg), */
+    /* OGBUG  so the OG reads whatever lies at combat_enchantments + hero_type * sizeof(s_HERO); _players[-1].famous is the byte sizeof(s_WIZARD) below _players[0].famous */
     if(
-        (HERO_NOBLE(hero_owner_idx, hero_type))
+        // (HERO_NOBLE(hero_owner_idx, hero_type))
+        /* HACK */  ((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_NOBLE(hero_owner_idx, hero_type))
         ||
-        (_players[hero_owner_idx].famous > ST_FALSE)
+        // (_players[hero_owner_idx].famous > ST_FALSE)
+        /* HACK */  (((hero_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[hero_owner_idx].famous) > ST_FALSE)
     )
     {
         battle_unit->upkeep = 0;
     }
-    if(HERO_AGILITY(hero_owner_idx, hero_type))
+    /* OGBUG  Agility, Blademaster, Might and Arcane Power below scale with _UNITS[].Level; a Heroism cast during the battle is only in battle_unit->enchantments, which this never reads, so it does not raise them */
+    // if(HERO_AGILITY(hero_owner_idx, hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_AGILITY(hero_owner_idx, hero_type))
     {
         battle_unit->defense = (battle_unit->defense + (_UNITS[unit_idx].Level + 1));
     }
-    if(HERO_AGILITY2(hero_owner_idx,hero_type))
+    // if(HERO_AGILITY2(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_AGILITY2(hero_owner_idx,hero_type))
     {
         battle_unit->defense = (battle_unit->defense + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
     }
-    if(HERO_BLADEMASTER(hero_owner_idx,hero_type))
+    // if(HERO_BLADEMASTER(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_BLADEMASTER(hero_owner_idx,hero_type))
     {
         battle_unit->tohit = (battle_unit->tohit + ((_UNITS[unit_idx].Level + 1) / 2));
     }
-    if(HERO_BLADEMASTER2(hero_owner_idx,hero_type))
+    // if(HERO_BLADEMASTER2(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_BLADEMASTER2(hero_owner_idx,hero_type))
     {
         battle_unit->tohit = (battle_unit->tohit + (((_UNITS[unit_idx].Level + 1) * 3) / 4));
     }
-    if(HERO_MIGHT(hero_owner_idx,hero_type))
+    // if(HERO_MIGHT(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_MIGHT(hero_owner_idx,hero_type))
     {
         battle_unit->melee = (battle_unit->melee + (_UNITS[unit_idx].Level + 1));
     }
-    if(HERO_MIGHT2(hero_owner_idx,hero_type))
+    // if(HERO_MIGHT2(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_MIGHT2(hero_owner_idx,hero_type))
     {
         battle_unit->melee = (battle_unit->melee + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
     }
     if(
-        (HERO_ARCANE_POWER(hero_owner_idx,hero_type))
+        // (HERO_ARCANE_POWER(hero_owner_idx,hero_type))
+        /* HACK */  ((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_ARCANE_POWER(hero_owner_idx,hero_type))
         &&
         ((battle_unit->ranged_type / 10) == rag_Magic)
     )
@@ -1111,22 +1149,26 @@ void Battle_Unit_Hero_Skill_Stats(int16_t unit_idx, struct s_BATTLE_UNIT * battl
         battle_unit->ranged = (battle_unit->ranged + (_UNITS[unit_idx].Level + 1));
     }
     if(
-        (HERO_ARCANE_POWER2(hero_owner_idx,hero_type))
+        // (HERO_ARCANE_POWER2(hero_owner_idx,hero_type))
+        /* HACK */  ((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_ARCANE_POWER2(hero_owner_idx,hero_type))
         &&
         ((battle_unit->ranged_type / 10) == rag_Magic)
     )
     {
         battle_unit->ranged = (battle_unit->ranged + (((_UNITS[unit_idx].Level + 1) * 3) / 2));
     }
-    if(_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill > 0)
+    // if(_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill > 0)
+    /* HACK */  if(((hero_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill) > 0)
     {
-        battle_unit->mana_max = ((((_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill + 1) * (_UNITS[unit_idx].Level + 1)) * 5) / 2);
+        // battle_unit->mana_max = ((((_HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill + 1) * (_UNITS[unit_idx].Level + 1)) * 5) / 2);
+        /* HACK */  battle_unit->mana_max = ((((((hero_owner_idx == ST_UNDEFINED) ? Stack_Garbage_Range(1, INT8_MAX) : _HEROES2[hero_owner_idx]->heroes[hero_type].Casting_Skill) + 1) * (_UNITS[unit_idx].Level + 1)) * 5) / 2);
     }
     else
     {
         battle_unit->mana_max = 0;
     }
-    if(HERO_LUCKY(hero_owner_idx,hero_type))
+    // if(HERO_LUCKY(hero_owner_idx,hero_type))
+    /* HACK */  if((hero_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_LUCKY(hero_owner_idx,hero_type))
     {
         battle_unit->tohit += 1;
         battle_unit->toblock += 1;
@@ -1161,24 +1203,49 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     int16_t itr_hero_items = 0;
     unit_idx = battle_unit->unit_idx;
     magic_node_structure = ST_FALSE;
+    // if(
+    //     (
+    //         (_combat_node_type == cnt_Sorcery)
+    //         &&
+    //         (battle_unit->race == rt_Sorcery)
+    //     )
+    //     ||
+    //     (
+    //         (_combat_node_type == cnt_Chaos)
+    //         &&
+    //         (battle_unit->race == rt_Chaos)
+    //     )
+    //     ||
+    //     (
+    //         (_combat_node_type == cnt_Nature)
+    //         &&
+    //         (battle_unit->race == rt_Nature)
+    //     )
+    // )
+    // {
+    //     magic_node_structure = ST_TRUE;
+    // }
+    /* CLAUDE */  /* REBUG */  /* the asm is an if / else-if chain, each with its own ST_TRUE store */
     if(
-        (
-            (_combat_node_type == cnt_Sorcery)
-            &&
-            (battle_unit->race == rt_Sorcery)
-        )
-        ||
-        (
-            (_combat_node_type == cnt_Chaos)
-            &&
-            (battle_unit->race == rt_Chaos)
-        )
-        ||
-        (
-            (_combat_node_type == cnt_Nature)
-            &&
-            (battle_unit->race == rt_Nature)
-        )
+        (_combat_node_type == cnt_Sorcery)
+        &&
+        (battle_unit->race == rt_Sorcery)
+    )
+    {
+        magic_node_structure = ST_TRUE;
+    }
+    else if(
+        (_combat_node_type == cnt_Chaos)
+        &&
+        (battle_unit->race == rt_Chaos)
+    )
+    {
+        magic_node_structure = ST_TRUE;
+    }
+    else if(
+        (_combat_node_type == cnt_Nature)
+        &&
+        (battle_unit->race == rt_Nature)
     )
     {
         magic_node_structure = ST_TRUE;
@@ -1220,10 +1287,13 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     {
         for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
         {
-            item_idx = _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr_hero_items];
+            /* OGBUG  no -1 bound on owner_idx (asm: mov al, [s_UNIT.owner_idx] / cbw / imul size s_WIZARD): a dead hero (owner_idx -1, only through a stale battle-unit record) reads _players[-1] */
+            // item_idx = _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr_hero_items];
+            /* HACK */  /* CLAUDE */  /* as at the item-charges read above: in-range stand-in for the dead hero's item index, so ReMoM does not read before _players */
+            item_idx = ((_UNITS[unit_idx].owner_idx == ST_UNDEFINED) ? Stack_Garbage_Range(ST_UNDEFINED, (NUM_ITEMS - 1)) : _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr_hero_items]);
             if(item_idx > ST_UNDEFINED)
             {
-                if(_ITEMS[item_idx].Powers & IP_HASTE)
+                if(_ITEMS[item_idx].powers & IP_HASTE)
                 {
                     battle_unit->combat_effects |= bue_Haste;
                 }
@@ -1375,6 +1445,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     {
         battle_unit->tohit--;
         battle_unit->resist--;
+        /* OGBUG  the resist penalty is added to Gold_Resist (the bonus box), not Grey_Resist, so Mind Twist's -1 resist is drawn as a gold +1 */
         battle_unit->Gold_Resist++;
     }
     if(battle_unit->combat_effects & bue_Vertigo)
@@ -1387,6 +1458,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     {
         battle_unit->melee -= 2;
         battle_unit->Grey_Melee += 2;
+        /* OGBUG  (ranged_type / 10) == srat_Thrown (100) is never true, so a thrown attack (ranged_type == srat_Thrown) is not weakened; only missile (rag_Missile) ranged attacks are */
         if((battle_unit->ranged_type / 10 == rag_Missile) || (battle_unit->ranged_type / 10 == srat_Thrown))
         {
             battle_unit->ranged -= 2;
@@ -1405,6 +1477,8 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
         battle_unit->Grey_Resist += 5;
     }
     enchantments = (_UNITS[battle_unit->unit_idx].enchantments ^ battle_unit->enchantments) & battle_unit->enchantments;
+    /* OGBUG  the enchantments are masked to the combat-only ones, but mutation_flags is passed whole, so the Chaos Channels mutations that Battle_Unit_Regular_Stats() already applied are applied again: */
+    /* OGBUG  Demon Skin (CC_ARMOR) adds +3 defense a second time (+6 in all), and Fiery Breath (CC_BREATH) sets ranged back to 2, dropping the ranged bonuses and penalties applied above */
     Apply_Enchantment_And_Mutation_Effects(battle_unit, enchantments, mutation_flags);
     if(battle_unit->combat_effects & bue_Warped_Attack)
     {
@@ -1423,6 +1497,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
     }
     if(battle_unit->combat_effects & bue_Shatter)
     {
+        /* OGBUG  Grey_Melee / Grey_Ranged are computed from melee / ranged after they are set to 1, so they are always 0 and the attack Shatter took is never drawn */
         if(battle_unit->melee > 1)
         {
             battle_unit->melee = 1;
@@ -1434,6 +1509,7 @@ void Battle_Unit_Special_Stats(struct s_BATTLE_UNIT * battle_unit)
             battle_unit->Grey_Ranged = battle_unit->ranged - 1;
         }
     }
+    /* OGBUG  melee, ranged and defense are clamped at 0 but resist is not, so Mind Storm (-5), Black Prayer (-2), Darkness / True Light (-1) and Mind Twist (-1) can leave resist negative */
     if(battle_unit->melee < 0)
     {
         battle_unit->melee = 0;

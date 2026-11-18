@@ -1,0 +1,29 @@
+module_num=117
+module=D:\MOX\OTHERS\RUSS.C
+source=0117-russ.c.md
+range[0]=1:0x000EE8BD linear=0x000FE8BD size=1154
+range[1]=2:0x00002198 linear=0x00172198 size=72
+range[2]=2:0x00033510 linear=0x001A3510 size=6504
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m117f001  1    -      0x000FE8BD  1:0x000EE8BD  code         Assert_Settings            Assert_Settings_            regions/07-object-1/00183E54-00184653.txt
+m117f002  2    -      0x000FE8BE  1:0x000EE8BE  code         Mox_Update                 Mox_Update_                 regions/07-object-1/00183E54-00184653.txt
+m117f003  3    -      0x000FE8C8  1:0x000EE8C8  code         Release_All_Blocks         Release_All_Blocks_         regions/07-object-1/00183E54-00184653.txt
+m117f004  4    -      0x000FE8D4  1:0x000EE8D4  code         Null_Autofunction          Null_Autofunction_          regions/07-object-1/00183E54-00184653.txt
+m117f005  5    -      0x000FE8D5  1:0x000EE8D5  code         PFMT                       PFMT_                       regions/07-object-1/00183E54-00184653.txt
+m117f006  6    -      0x000FE8DA  1:0x000EE8DA  code         Get_Weighted_Choice_Char   Get_Weighted_Choice_Char_   regions/07-object-1/00183E54-00184653.txt
+m117f007  7    -      0x000FE92D  1:0x000EE92D  code         Get_Weighted_Choice_Short  Get_Weighted_Choice_Short_  regions/07-object-1/00183E54-00184653.txt
+m117f008  8    -      0x000FE96F  1:0x000EE96F  code         Get_Weighted_Choice_Int    Get_Weighted_Choice_Int_    regions/07-object-1/00183E54-00184653.txt
+m117f009  9    -      0x000FE9B5  1:0x000EE9B5  code         Shuffle_Char               Shuffle_Char_               regions/07-object-1/00183E54-00184653.txt
+m117f010  10   -      0x000FE9F5  1:0x000EE9F5  code         Shuffle_Sint               Shuffle_Sint_               regions/07-object-1/00183E54-00184653.txt
+m117f011  11   -      0x000FEA3C  1:0x000EEA3C  code         Shuffle_Int                Shuffle_Int_                regions/07-object-1/00183E54-00184653.txt
+m117f012  12   -      0x000FEA82  1:0x000EEA82  code         Shuffle                    Shuffle_                    regions/07-object-1/00183E54-00184653.txt
+m117f013  13   -      0x000FEB40  1:0x000EEB40  code         Star_To_Monster            Star_To_Monster_            regions/07-object-1/00183E54-00184653.txt
+m117f014  14   -      0x000FEB51  1:0x000EEB51  code         Star_Name                  Star_Name_                  regions/07-object-1/00183E54-00184653.txt
+m117f015  15   -      0x000FEB70  1:0x000EEB70  code         Compare_Ratios             Compare_Ratios_             regions/07-object-1/00183E54-00184653.txt
+m117f016  16   -      0x000FEC20  1:0x000EEC20  code         Make_Player_Into_AI        Make_Player_Into_AI_        regions/07-object-1/00183E54-00184653.txt
+m117f017  17   -      0x000FEC99  1:0x000EEC99  code         Make_All_AI_Game           Make_All_AI_Game_           regions/07-object-1/00183E54-00184653.txt
+m117f018  18   -      0x000FECDA  1:0x000EECDA  code         Load_Russ_Strings          Load_Russ_Strings_          regions/07-object-1/00183E54-00184653.txt
+-         -    -      0x001A3510  2:0x00033510  static,data  _russ_strings              _russ_strings               -
+-         -    -      0x001A4E74  2:0x00034E74  data         _all_ai_game               _all_ai_game                -

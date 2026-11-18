@@ -1,0 +1,234 @@
+module_num=182
+module=F:\WLIBS\special\angle.c
+source=0182-angle.c.md
+range[0]=1:0x00128385 linear=0x00138385 size=2059
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                SYMBOL               CHUNK
+m182f001  1    -      0x00138405  1:0x00128405  static,code  angle_to_sin        _angle_to_sin        regions/07-object-1/001BD654-001BDE53.txt
+m182f002  2    -      0x001384B9  1:0x001284B9  code         Get_Angle           Get_Angle_           regions/07-object-1/001BD654-001BDE53.txt
+m182f003  3    -      0x00138615  1:0x00128615  code         Sin                 Sin_                 regions/07-object-1/001BD654-001BDE53.txt
+m182f004  4    -      0x00138776  1:0x00128776  code         Cos                 Cos_                 regions/07-object-1/001BD654-001BDE53.txt
+m182f005  5    -      0x001387B2  1:0x001287B2  code         Rotate_Coordinates  Rotate_Coordinates_  regions/07-object-1/001BD654-001BDE53.txt
+
+[Module variables]
+LINEAR      SEGOFF        NAME          TYPE
+0x00138405  1:0x00128405  angle_to_sin  unsigned short[90]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS   NAME                TYPE                              CHUNK
+m182f002  0x001384B9  1:0x001284B9  348   23        8         0x14     -    EAX,EDX      Get_Angle           short (int, int); returns in AX   regions/07-object-1/001BD654-001BDE53.txt
+m182f003  0x00138615  1:0x00128615  353   23        8         0x14     -    EAX,EDX      Sin                 int (short, int); returns in EAX  regions/07-object-1/001BD654-001BDE53.txt
+m182f004  0x00138776  1:0x00128776  60    23        8         0x14     -    EAX,EDX      Cos                 int (short, int); returns in EAX  regions/07-object-1/001BD654-001BDE53.txt
+m182f005  0x001387B2  1:0x001287B2  978   22        7         0x10     -    EAX,EDX,EBX  Rotate_Coordinates  void (short, int *, int *)        regions/07-object-1/001BD654-001BDE53.txt
+
+[Locals]
+KEY       ROUTINE             BLOCK           LOCAL              LOCATION              TYPE
+m182f002  Get_Angle           0x00138549+28   old_x              [EBP-0x18]            int
+m182f002  Get_Angle           0x0013856D+28   old_x              [EBP-0x1C]            int
+m182f002  Get_Angle           0x001385AB+35   quotient           [EBP-0x20]            unsigned long
+m182f002  Get_Angle           0x001385D0+28   quotient           [EBP-0x24]            unsigned long
+m182f002  Get_Angle           0x001385A3+73   quotient_to_angle  address 1:0x00128385  unsigned char[128]
+m182f002  Get_Angle           0x0013852E+214  correction         [EBP-0x14]            int
+m182f002  Get_Angle           -               x                  [EBP-0x10]            int
+m182f002  Get_Angle           -               y                  [EBP-0xC]             int
+m182f002  Get_Angle           -               result             [EBP-0x8]             short
+m182f003  Sin                 -               angle              [EBP-0x4]             short
+m182f003  Sin                 -               length             [EBP-0xC]             int
+m182f003  Sin                 -               result             [EBP-0x10]            int
+m182f004  Cos                 -               angle              [EBP-0x4]             short
+m182f004  Cos                 -               length             [EBP-0xC]             int
+m182f005  Rotate_Coordinates  0x001388C0+36   new_x              [EBP-0x24]            int
+m182f005  Rotate_Coordinates  0x00138A53+35   new_x              [EBP-0x28]            int
+m182f005  Rotate_Coordinates  0x00138B0D+112  new_x              [EBP-0x2C]            int
+m182f005  Rotate_Coordinates  0x00138B0D+112  new_y              [EBP-0x30]            int
+m182f005  Rotate_Coordinates  -               angle              [EBP-0x4]             short
+m182f005  Rotate_Coordinates  -               x                  [EBP-0x1C]            int *
+m182f005  Rotate_Coordinates  -               y                  [EBP-0x18]            int *
+m182f005  Rotate_Coordinates  -               sin_angle_x        [EBP-0x14]            int
+m182f005  Rotate_Coordinates  -               sin_angle_y        [EBP-0x20]            int
+m182f005  Rotate_Coordinates  -               cos_angle_x        [EBP-0xC]             int
+m182f005  Rotate_Coordinates  -               cos_angle_y        [EBP-0x8]             int
+m182f005  Rotate_Coordinates  -               trivial            [EBP-0x10]            int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   array      -               0..89; of unsigned short (#7)
+31   scalar     unsigned long   unsigned 4 bytes
+32   array      -               0..127; of unsigned char (#5)
+33   procedure  -               near386; returns short (int, int)
+34   procedure  -               near386; returns int (short, int)
+35   scalar     void            void 1 bytes
+36   pointer    -               near386; of int (#8)
+37   procedure  -               near386; returns void (short, int *, int *)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m182f002  43    0x001384B9  1:0x001284B9  0x001BDB0D
+m182f002  45    0x001384D6  1:0x001284D6  0x001BDB2A
+m182f002  47    0x001384DD  1:0x001284DD  0x001BDB31
+m182f002  48    0x001384E3  1:0x001284E3  0x001BDB37
+m182f002  49    0x001384E9  1:0x001284E9  0x001BDB3D
+m182f002  50    0x001384F0  1:0x001284F0  0x001BDB44
+m182f002  51    0x001384F8  1:0x001284F8  0x001BDB4C
+m182f002  52    0x001384FF  1:0x001284FF  0x001BDB53
+m182f002  53    0x00138501  1:0x00128501  0x001BDB55
+m182f002  56    0x00138508  1:0x00128508  0x001BDB5C
+m182f002  57    0x00138513  1:0x00128513  0x001BDB67
+m182f002  58    0x00138519  1:0x00128519  0x001BDB6D
+m182f002  59    0x00138520  1:0x00128520  0x001BDB74
+m182f002  60    0x00138522  1:0x00128522  0x001BDB76
+m182f002  62    0x00138529  1:0x00128529  0x001BDB7D
+m182f002  65    0x0013852E  1:0x0012852E  0x001BDB82
+m182f002  66    0x00138534  1:0x00128534  0x001BDB88
+m182f002  67    0x0013853A  1:0x0012853A  0x001BDB8E
+m182f002  68    0x0013853D  1:0x0012853D  0x001BDB91
+m182f002  69    0x00138540  1:0x00128540  0x001BDB94
+m182f002  70    0x00138547  1:0x00128547  0x001BDB9B
+m182f002  71    0x00138549  1:0x00128549  0x001BDB9D
+m182f002  72    0x0013854F  1:0x0012854F  0x001BDBA3
+m182f002  73    0x00138555  1:0x00128555  0x001BDBA9
+m182f002  74    0x0013855E  1:0x0012855E  0x001BDBB2
+m182f002  75    0x00138565  1:0x00128565  0x001BDBB9
+m182f002  77    0x00138567  1:0x00128567  0x001BDBBB
+m182f002  78    0x0013856D  1:0x0012856D  0x001BDBC1
+m182f002  79    0x00138573  1:0x00128573  0x001BDBC7
+m182f002  80    0x0013857C  1:0x0012857C  0x001BDBD0
+m182f002  81    0x00138582  1:0x00128582  0x001BDBD6
+m182f002  82    0x00138589  1:0x00128589  0x001BDBDD
+m182f002  83    0x0013858B  1:0x0012858B  0x001BDBDF
+m182f002  89    0x00138592  1:0x00128592  0x001BDBE6
+m182f002  90    0x0013859A  1:0x0012859A  0x001BDBEE
+m182f002  91    0x001385A1  1:0x001285A1  0x001BDBF5
+m182f002  108   0x001385A3  1:0x001285A3  0x001BDBF7
+m182f002  109   0x001385AB  1:0x001285AB  0x001BDBFF
+m182f002  110   0x001385B9  1:0x001285B9  0x001BDC0D
+m182f002  111   0x001385CE  1:0x001285CE  0x001BDC22
+m182f002  112   0x001385D0  1:0x001285D0  0x001BDC24
+m182f002  113   0x001385DE  1:0x001285DE  0x001BDC32
+m182f002  114   0x001385EC  1:0x001285EC  0x001BDC40
+m182f002  117   0x001385F2  1:0x001285F2  0x001BDC46
+m182f002  118   0x001385FD  1:0x001285FD  0x001BDC51
+m182f002  120   0x00138604  1:0x00128604  0x001BDC58
+m182f002  122   0x0013860A  1:0x0012860A  0x001BDC5E
+m182f003  147   0x00138615  1:0x00128615  0x001BDC69
+m182f003  152   0x00138632  1:0x00128632  0x001BDC86
+m182f003  153   0x00138638  1:0x00128638  0x001BDC8C
+m182f003  154   0x0013863F  1:0x0012863F  0x001BDC93
+m182f003  156   0x00138646  1:0x00128646  0x001BDC9A
+m182f003  158   0x00138651  1:0x00128651  0x001BDCA5
+m182f003  159   0x00138658  1:0x00128658  0x001BDCAC
+m182f003  161   0x00138663  1:0x00128663  0x001BDCB7
+m182f003  163   0x0013866C  1:0x0012866C  0x001BDCC0
+m182f003  164   0x00138673  1:0x00128673  0x001BDCC7
+m182f003  168   0x0013867A  1:0x0012867A  0x001BDCCE
+m182f003  169   0x00138685  1:0x00128685  0x001BDCD9
+m182f003  170   0x0013868E  1:0x0012868E  0x001BDCE2
+m182f003  171   0x001386AF  1:0x001286AF  0x001BDD03
+m182f003  172   0x001386BA  1:0x001286BA  0x001BDD0E
+m182f003  173   0x001386C0  1:0x001286C0  0x001BDD14
+m182f003  174   0x001386C2  1:0x001286C2  0x001BDD16
+m182f003  176   0x001386EC  1:0x001286EC  0x001BDD40
+m182f003  177   0x001386F1  1:0x001286F1  0x001BDD45
+m182f003  178   0x001386FC  1:0x001286FC  0x001BDD50
+m182f003  179   0x00138720  1:0x00128720  0x001BDD74
+m182f003  180   0x0013872D  1:0x0012872D  0x001BDD81
+m182f003  181   0x00138736  1:0x00128736  0x001BDD8A
+m182f003  182   0x00138738  1:0x00128738  0x001BDD8C
+m182f003  185   0x00138765  1:0x00128765  0x001BDDB9
+m182f003  186   0x0013876B  1:0x0012876B  0x001BDDBF
+m182f004  188   0x00138776  1:0x00128776  0x001BDDCA
+m182f004  190   0x00138793  1:0x00128793  0x001BDDE7
+m182f004  191   0x001387A7  1:0x001287A7  0x001BDDFB
+m182f005  206   0x001387B2  1:0x001287B2  0x001BDE06
+m182f005  212   0x001387D1  1:0x001287D1  0x001BDE25
+m182f005  215   0x001387D8  1:0x001287D8  0x001BDE2C
+m182f005  217   0x001387E3  1:0x001287E3  0x001BDE37
+m182f005  218   0x001387EA  1:0x001287EA  0x001BDE3E
+m182f005  219   0x001387F5  1:0x001287F5  0x001BDE49
+m182f005  221   0x001387FE  1:0x001287FE  0x001BDE52
+m182f005  222   0x00138805  1:0x00128805  0x001BDE59
+m182f005  225   0x0013880C  1:0x0012880C  0x001BDE60
+m182f005  226   0x0013881B  1:0x0012881B  0x001BDE6F
+m182f005  227   0x00138828  1:0x00128828  0x001BDE7C
+m182f005  228   0x0013882F  1:0x0012882F  0x001BDE83
+m182f005  229   0x00138836  1:0x00128836  0x001BDE8A
+m182f005  230   0x00138838  1:0x00128838  0x001BDE8C
+m182f005  231   0x00138852  1:0x00128852  0x001BDEA6
+m182f005  232   0x0013886C  1:0x0012886C  0x001BDEC0
+m182f005  233   0x0013888F  1:0x0012888F  0x001BDEE3
+m182f005  235   0x001388B2  1:0x001288B2  0x001BDF06
+m182f005  236   0x001388B7  1:0x001288B7  0x001BDF0B
+m182f005  237   0x001388C0  1:0x001288C0  0x001BDF14
+m182f005  238   0x001388CB  1:0x001288CB  0x001BDF1F
+m182f005  239   0x001388D5  1:0x001288D5  0x001BDF29
+m182f005  240   0x001388DD  1:0x001288DD  0x001BDF31
+m182f005  241   0x001388E4  1:0x001288E4  0x001BDF38
+m182f005  242   0x001388E9  1:0x001288E9  0x001BDF3D
+m182f005  243   0x0013890C  1:0x0012890C  0x001BDF60
+m182f005  244   0x0013892F  1:0x0012892F  0x001BDF83
+m182f005  245   0x00138950  1:0x00128950  0x001BDFA4
+m182f005  248   0x00138971  1:0x00128971  0x001BDFC5
+m182f005  249   0x00138976  1:0x00128976  0x001BDFCA
+m182f005  250   0x00138985  1:0x00128985  0x001BDFD9
+m182f005  251   0x00138990  1:0x00128990  0x001BDFE4
+m182f005  252   0x0013899B  1:0x0012899B  0x001BDFEF
+m182f005  253   0x001389A6  1:0x001289A6  0x001BDFFA
+m182f005  254   0x001389AD  1:0x001289AD  0x001BE001
+m182f005  255   0x001389B2  1:0x001289B2  0x001BE006
+m182f005  256   0x001389CE  1:0x001289CE  0x001BE022
+m182f005  257   0x001389EF  1:0x001289EF  0x001BE043
+m182f005  258   0x00138A19  1:0x00128A19  0x001BE06D
+m182f005  260   0x00138A43  1:0x00128A43  0x001BE097
+m182f005  261   0x00138A48  1:0x00128A48  0x001BE09C
+m182f005  262   0x00138A53  1:0x00128A53  0x001BE0A7
+m182f005  263   0x00138A5B  1:0x00128A5B  0x001BE0AF
+m182f005  264   0x00138A67  1:0x00128A67  0x001BE0BB
+m182f005  265   0x00138A6F  1:0x00128A6F  0x001BE0C3
+m182f005  266   0x00138A76  1:0x00128A76  0x001BE0CA
+m182f005  267   0x00138A7B  1:0x00128A7B  0x001BE0CF
+m182f005  268   0x00138AA5  1:0x00128AA5  0x001BE0F9
+m182f005  269   0x00138ACF  1:0x00128ACF  0x001BE123
+m182f005  270   0x00138AE9  1:0x00128AE9  0x001BE13D
+m182f005  274   0x00138B03  1:0x00128B03  0x001BE157
+m182f005  275   0x00138B0D  1:0x00128B0D  0x001BE161
+m182f005  276   0x00138B16  1:0x00128B16  0x001BE16A
+m182f005  277   0x00138B1F  1:0x00128B1F  0x001BE173
+m182f005  278   0x00138B25  1:0x00128B25  0x001BE179
+m182f005  279   0x00138B3B  1:0x00128B3B  0x001BE18F
+m182f005  280   0x00138B3D  1:0x00128B3D  0x001BE191
+m182f005  282   0x00138B4E  1:0x00128B4E  0x001BE1A2
+m182f005  283   0x00138B54  1:0x00128B54  0x001BE1A8
+m182f005  284   0x00138B6A  1:0x00128B6A  0x001BE1BE
+m182f005  285   0x00138B6C  1:0x00128B6C  0x001BE1C0
+m182f005  287   0x00138B7D  1:0x00128B7D  0x001BE1D1

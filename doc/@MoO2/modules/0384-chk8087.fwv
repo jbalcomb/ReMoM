@@ -1,0 +1,12 @@
+module_num=384
+module=chk8087
+source=0384-chk8087.md
+range[0]=1:0x001540A0 linear=0x001640A0 size=142
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m384f001  1    -      0x001640A0  1:0x001540A0  static,code  __save_8087  __save_8087_  regions/07-object-1/001E9654-001E9E53.txt
+m384f002  2    -      0x001640A5  1:0x001540A5  static,code  __rest_8087  __rest_8087_  regions/07-object-1/001E9654-001E9E53.txt
+m384f003  3    -      0x001640A9  1:0x001540A9  code         __init_8087  __init_8087_  regions/07-object-1/001E9654-001E9E53.txt
+m384f004  4    -      0x001640DA  1:0x001540DA  code         _fpreset     _fpreset_     regions/07-object-1/001E9654-001E9E53.txt
+m384f005  5    -      0x001640E4  1:0x001540E4  code         __chk8087    __chk8087_    regions/07-object-1/001E9654-001E9E53.txt

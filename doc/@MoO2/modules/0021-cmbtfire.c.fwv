@@ -1,0 +1,37 @@
+module_num=21
+module=D:\MOX\OTHERS\CMBTFIRE.C
+source=0021-cmbtfire.c.md
+range[0]=1:0x0002891E linear=0x0003891E size=12063
+range[1]=2:0x00000D74 linear=0x00170D74 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                              SYMBOL                             CHUNK
+m021f001  1    -      0x0003891E  1:0x0002891E  code  Retarget_Missiles_Aimed_At        Retarget_Missiles_Aimed_At_        regions/07-object-1/000BDE54-000BE653.txt
+m021f002  2    -      0x0003897A  1:0x0002897A  code  Is_Combat_Ship_Dead               Is_Combat_Ship_Dead_               regions/07-object-1/000BDE54-000BE653.txt
+m021f003  3    -      0x000389E8  1:0x000289E8  code  Target_Is_Legal_For_Weapon        Target_Is_Legal_For_Weapon_        regions/07-object-1/000BDE54-000BE653.txt
+m021f004  4    -      0x00038B5E  1:0x00028B5E  code  Fire_Ship                         Fire_Ship_                         regions/07-object-1/000BDE54-000BE653.txt
+m021f005  5    -      0x00039406  1:0x00029406  code  Get_Beam_Range_To_Hit_Bonus       Get_Beam_Range_To_Hit_Bonus_       regions/07-object-1/000BE654-000BEE53.txt
+m021f006  6    -      0x00039434  1:0x00029434  code  Get_Beam_Weapon_Modifiers         Get_Beam_Weapon_Modifiers_         regions/07-object-1/000BE654-000BEE53.txt
+m021f007  7    -      0x000394F7  1:0x000294F7  code  Fire_Beam_Weapon                  Fire_Beam_Weapon_                  regions/07-object-1/000BE654-000BEE53.txt
+m021f008  8    -      0x00039985  1:0x00029985  code  Apply_Ship_Damage                 Apply_Ship_Damage_                 regions/07-object-1/000BEE54-000BF653.txt
+m021f009  9    -      0x00039DE0  1:0x00029DE0  code  Facing_Shield                     Facing_Shield_                     regions/07-object-1/000BEE54-000BF653.txt
+m021f010  10   -      0x00039E15  1:0x00029E15  code  Destroy_Ship                      Destroy_Ship_                      regions/07-object-1/000BEE54-000BF653.txt
+m021f011  11   -      0x00039F1D  1:0x00029F1D  code  Weapon_In_Range                   Weapon_In_Range_                   regions/07-object-1/000BEE54-000BF653.txt
+m021f012  12   -      0x0003A0B9  1:0x0002A0B9  code  Apply_Damage_To_Missile           Apply_Damage_To_Missile_           regions/07-object-1/000BF654-000BFE53.txt
+m021f013  13   -      0x0003A142  1:0x0002A142  code  Does_Combat_Planet_Have_Defenses  Does_Combat_Planet_Have_Defenses_  regions/07-object-1/000BF654-000BFE53.txt
+m021f014  14   -      0x0003A19E  1:0x0002A19E  code  Destroy_Colony_Defense            Destroy_Colony_Defense_            regions/07-object-1/000BF654-000BFE53.txt
+m021f015  15   -      0x0003A3C3  1:0x0002A3C3  code  Apply_Damage_To_Planet            Apply_Damage_To_Planet_            regions/07-object-1/000BF654-000BFE53.txt
+m021f016  16   -      0x0003A6CA  1:0x0002A6CA  code  Fire_Bomb                         Fire_Bomb_                         regions/07-object-1/000BF654-000BFE53.txt
+m021f017  17   -      0x0003A7AA  1:0x0002A7AA  code  Weapon_Can_Fire_At_Missiles       Weapon_Can_Fire_At_Missiles_       regions/07-object-1/000BF654-000BFE53.txt
+m021f018  18   -      0x0003A812  1:0x0002A812  code  Place_Ship_In_Stasis              Place_Ship_In_Stasis_              regions/07-object-1/000BFE54-000C0653.txt
+m021f019  19   -      0x0003A82F  1:0x0002A82F  code  Fire_Special_Weapon               Fire_Special_Weapon_               regions/07-object-1/000BFE54-000C0653.txt
+m021f020  20   -      0x0003AC20  1:0x0002AC20  code  Fire_Fighter_Bomb                 Fire_Fighter_Bomb_                 regions/07-object-1/000BFE54-000C0653.txt
+m021f021  21   -      0x0003AD57  1:0x0002AD57  code  Fire_Fighter_Beam                 Fire_Fighter_Beam_                 regions/07-object-1/000BFE54-000C0653.txt
+m021f022  22   -      0x0003AFB3  1:0x0002AFB3  code  Remove_Stasis_Beam                Remove_Stasis_Beam_                regions/07-object-1/000BFE54-000C0653.txt
+m021f023  23   -      0x0003AFE5  1:0x0002AFE5  code  Special_Is_On                     Special_Is_On_                     regions/07-object-1/000BFE54-000C0653.txt
+m021f024  24   -      0x0003B004  1:0x0002B004  code  Special_Is_Turned_On              Special_Is_Turned_On_              regions/07-object-1/000C0654-000C0E53.txt
+m021f025  25   -      0x0003B077  1:0x0002B077  code  Energy_Absorber_Attack            Energy_Absorber_Attack_            regions/07-object-1/000C0654-000C0E53.txt
+m021f026  26   -      0x0003B332  1:0x0002B332  code  Pre_Weapon_Specials               Pre_Weapon_Specials_               regions/07-object-1/000C0654-000C0E53.txt
+m021f027  27   -      0x0003B3ED  1:0x0002B3ED  code  Draw_Energy_Absorber              Draw_Energy_Absorber_              regions/07-object-1/000C0654-000C0E53.txt
+m021f028  28   -      0x0003B4C0  1:0x0002B4C0  code  Draw_BHG                          Draw_BHG_                          regions/07-object-1/000C0654-000C0E53.txt
+m021f029  29   -      0x0003B627  1:0x0002B627  code  BHG                               BHG_                               regions/07-object-1/000C0654-000C0E53.txt

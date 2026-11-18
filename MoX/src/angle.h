@@ -62,11 +62,11 @@ typedef struct {
 
 // WZD s34p01
 // int16_t Get_Angle(int16_t dx, int16_t dy);
-int16_t Get_Angle(int x_dist, int y_dist);
+int16_t Get_Angle(int16_t x_dist, int16_t y_dist);
 
 // WZD s34p02
 // int16_t calc_angle_do(int16_t dx, int16_t dy);
-int16_t Get_Base_Angle(unsigned int y, unsigned int x);
+int16_t Get_Base_Angle(uint16_t y_dist, uint16_t x_dist);
 
 // WZD s34p03
 int16_t Cos(int16_t angle, int16_t radius);
@@ -75,10 +75,10 @@ int16_t Cos(int16_t angle, int16_t radius);
 int16_t Sin(int16_t angle, int16_t radius);
 
 // WZD s34p05
-void VGA_DrawTexture(TextureRenderParams * params);
+void Texture_Map_Block(TextureRenderParams * params);
 
 // WZD s34p06
-void VGA_DrawTexture_R(TextureRenderParams * params);
+void Remap_Texture_Map_Block(TextureRenderParams * params);
 
 
 

@@ -1,0 +1,65 @@
+module_num=210
+module=F:\WLIBS\graphics\fade.c
+source=0210-fade.c.md
+range[0]=1:0x0012EE7E linear=0x0013EE7E size=158
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL        CHUNK
+m210f001  1    -      0x0013EE7E  1:0x0012EE7E  code  Blinds_Fade  Blinds_Fade_  regions/07-object-1/001C3E54-001C4653.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME         TYPE                                      CHUNK
+m210f001  0x0013EE7E  1:0x0012EE7E  158   21        8         0xC      -    EAX,EDX,EBX,ECX  Blinds_Fade  void (short, short, short, short, short)  regions/07-object-1/001C3E54-001C4653.txt
+
+[Locals]
+KEY       ROUTINE      BLOCK  LOCAL       LOCATION    TYPE
+m210f001  Blinds_Fade  -      x1          [EBP-0x18]  short
+m210f001  Blinds_Fade  -      y1          [EBP-0xC]   short
+m210f001  Blinds_Fade  -      x2          [EBP-0x14]  short
+m210f001  Blinds_Fade  -      y2          [EBP-0x10]  short
+m210f001  Blinds_Fade  -      blind_size  [EBP+0x10]  short
+m210f001  Blinds_Fade  -      pass        [EBP-0x8]   short
+m210f001  Blinds_Fade  -      y           [EBP-0x4]   short
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    BYTE            name for unsigned char (#5)
+13   typedef    SBYTE           name for signed char (#4)
+14   typedef    UBYTE           name for unsigned char (#5)
+15   typedef    WORD            name for unsigned short (#7)
+16   typedef    SWORD           name for short (#6)
+17   typedef    UWORD           name for unsigned short (#7)
+18   typedef    DWORD           name for unsigned int (#9)
+19   typedef    SDWORD          name for int (#8)
+20   typedef    UDWORD          name for unsigned int (#9)
+21   typedef    BOOL            name for unsigned char (#5)
+22   typedef    SampleHandle    name for int (#8)
+23   scalar     void            void 1 bytes
+24   procedure  -               near386; returns void (short, short, short, short, short)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m210f001  4     0x0013EE7E  1:0x0012EE7E  0x001C44D2
+m210f001  8     0x0013EE9F  1:0x0012EE9F  0x001C44F3
+m210f001  10    0x0013EEAC  1:0x0012EEAC  0x001C4500
+m210f001  12    0x0013EEB1  1:0x0012EEB1  0x001C4505
+m210f001  14    0x0013EEB6  1:0x0012EEB6  0x001C450A
+m210f001  16    0x0013EED0  1:0x0012EED0  0x001C4524
+m210f001  18    0x0013EED5  1:0x0012EED5  0x001C4529
+m210f001  19    0x0013EEF1  1:0x0012EEF1  0x001C4545
+m210f001  21    0x0013EF08  1:0x0012EF08  0x001C455C
+m210f001  22    0x0013EF0D  1:0x0012EF0D  0x001C4561
+m210f001  23    0x0013EF0F  1:0x0012EF0F  0x001C4563
+m210f001  24    0x0013EF14  1:0x0012EF14  0x001C4568

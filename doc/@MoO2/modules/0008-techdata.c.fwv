@@ -1,0 +1,25 @@
+module_num=8
+module=L:\MOX\TECHDATA.C
+source=0008-techdata.c.md
+range[0]=1:0x00004A88 linear=0x00014A88 size=36
+range[1]=2:0x00000A04 linear=0x00170A04 size=4
+range[2]=2:0x00005904 linear=0x00175904 size=10336
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                    CHUNK
+m008f001  1    -      0x00014A88  1:0x00004A88  code  rifles                    _rifles                   regions/07-object-1/00099E54-0009A653.txt
+m008f002  2    -      0x00014A9A  1:0x00004A9A  code  personal_shields          _personal_shields         regions/07-object-1/00099E54-0009A653.txt
+m008f003  3    -      0x00014AA0  1:0x00004AA0  code  planetary_shields         _planetary_shields        regions/07-object-1/00099E54-0009A653.txt
+-         -    -      0x00175904  2:0x00005904  data  _technology_fields        _technology_fields        regions/08-object-2/001F3E54-001F4653.txt
+-         -    -      0x00176079  2:0x00006079  data  _technology_applications  _technology_applications  regions/08-object-2/001F4654-001F4E53.txt
+-         -    -      0x00176B3D  2:0x00006B3D  data  _buildings                _buildings                regions/08-object-2/001F4E54-001F5653.txt
+-         -    -      0x00176EE0  2:0x00006EE0  data  _specials                 _specials                 regions/08-object-2/001F4E54-001F5653.txt
+-         -    -      0x00177638  2:0x00007638  data  _armor                    _armor                    regions/08-object-2/001F5654-001F5E53.txt
+-         -    -      0x001776A1  2:0x000076A1  data  _shields                  _shields                  regions/08-object-2/001F5654-001F5E53.txt
+-         -    -      0x00177803  2:0x00007803  data  _weapons                  _weapons                  regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x00177D0B  2:0x00007D0B  data  _weapon_modifications     _weapon_modifications     regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x00177DEC  2:0x00007DEC  data  _computers                _computers                regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x00177E70  2:0x00007E70  data  _drives                   _drives                   regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x00177FB2  2:0x00007FB2  data  _units                    _units                    regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x00177FE2  2:0x00007FE2  data  _fuel                     _fuel                     regions/08-object-2/001F5E54-001F6653.txt
+-         -    -      0x0017801E  2:0x0000801E  data  _hull_data                _hull_data                regions/08-object-2/001F6654-001F6E53.txt

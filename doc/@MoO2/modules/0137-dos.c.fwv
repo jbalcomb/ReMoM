@@ -1,0 +1,234 @@
+module_num=137
+module=F:\WLIBS\dos\dos.c
+source=0137-dos.c.md
+range[0]=1:0x001014D7 linear=0x001114D7 size=1076
+range[1]=2:0x00002510 linear=0x00172510 size=12
+range[2]=2:0x00035804 linear=0x001A5804 size=80
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                 SYMBOL                CHUNK
+m137f001  1    -      0x001114D7  1:0x001014D7  code  DIR                  DIR_                  regions/07-object-1/00196654-00196E53.txt
+m137f002  2    -      0x00111551  1:0x00101551  code  DIR_DIR              DIR_DIR_              regions/07-object-1/00196654-00196E53.txt
+m137f003  3    -      0x00111610  1:0x00101610  code  LOF                  LOF_                  regions/07-object-1/00196654-00196E53.txt
+m137f004  4    -      0x00111660  1:0x00101660  code  Time_Stamp           Time_Stamp_           regions/07-object-1/00196654-00196E53.txt
+m137f005  5    -      0x00111763  1:0x00101763  code  Disk_Free            Disk_Free_            regions/07-object-1/00196654-00196E53.txt
+m137f006  6    -      0x001117BF  1:0x001017BF  code  Delete_File          Delete_File_          regions/07-object-1/00196654-00196E53.txt
+m137f007  7    -      0x001117EB  1:0x001017EB  code  Current_Dir          Current_Dir_          regions/07-object-1/00196654-00196E53.txt
+m137f008  8    -      0x0011181C  1:0x0010181C  code  File_Exists          File_Exists_          regions/07-object-1/00196E54-00197653.txt
+m137f009  9    -      0x0011186A  1:0x0010186A  code  Get_Open_File_Count  Get_Open_File_Count_  regions/07-object-1/00196E54-00197653.txt
+-         -    -      0x001A5804  2:0x00035804  data  _tmbuf               _tmbuf                -
+-         -    -      0x001A5828  2:0x00035828  data  _fileinfo            _fileinfo             -
+
+[Module variables]
+LINEAR      SEGOFF        NAME      TYPE
+0x001A5804  2:0x00035804  tmbuf     struct tm
+0x001A5828  2:0x00035828  fileinfo  struct find_t
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME                 TYPE                                       CHUNK
+m137f001  0x001114D7  1:0x001014D7  122   23        8         0x14     -    EAX,EDX     DIR                  SDWORD (UBYTE *, UBYTE *); returns in EAX  regions/07-object-1/00196654-00196E53.txt
+m137f002  0x00111551  1:0x00101551  191   23        8         0x14     -    EAX,EDX     DIR_DIR              SDWORD (UBYTE *, UBYTE *); returns in EAX  regions/07-object-1/00196654-00196E53.txt
+m137f003  0x00111610  1:0x00101610  80    24        9         0x18     -    EAX         LOF                  SDWORD (UBYTE *); returns in EAX           regions/07-object-1/00196654-00196E53.txt
+m137f004  0x00111660  1:0x00101660  259   24        9         0x18     -    EAX         Time_Stamp           struct tm * (UBYTE *); returns in EAX      regions/07-object-1/00196654-00196E53.txt
+m137f005  0x00111763  1:0x00101763  92    24        9         0x18     -    -           Disk_Free            SDWORD (void); returns in EAX              regions/07-object-1/00196654-00196E53.txt
+m137f006  0x001117BF  1:0x001017BF  44    24        9         0x18     -    EAX         Delete_File          void (UBYTE *)                             regions/07-object-1/00196654-00196E53.txt
+m137f007  0x001117EB  1:0x001017EB  49    24        9         0x18     -    EAX         Current_Dir          void (UBYTE *)                             regions/07-object-1/00196654-00196E53.txt
+m137f008  0x0011181C  1:0x0010181C  78    24        9         0x18     -    EAX         File_Exists          SDWORD (UBYTE *); returns in EAX           regions/07-object-1/00196E54-00197653.txt
+m137f009  0x0011186A  1:0x0010186A  161   24        9         0x18     -    -           Get_Open_File_Count  SDWORD (void); returns in EAX              regions/07-object-1/00196E54-00197653.txt
+
+[Locals]
+KEY       ROUTINE              BLOCK  LOCAL           LOCATION    TYPE
+m137f001  DIR                  -      match_string    [EBP-0x10]  UBYTE *
+m137f001  DIR                  -      found_file      [EBP-0xC]   UBYTE *
+m137f001  DIR                  -      rc              [EBP-0x8]   UDWORD
+m137f002  DIR_DIR              -      match_string    [EBP-0x14]  UBYTE *
+m137f002  DIR_DIR              -      found_file      [EBP-0x10]  UBYTE *
+m137f002  DIR_DIR              -      rc              [EBP-0xC]   UDWORD
+m137f002  DIR_DIR              -      attr            [EBP-0x8]   UDWORD
+m137f003  LOF                  -      file_name       [EBP-0xC]   UBYTE *
+m137f003  LOF                  -      rc              [EBP-0x8]   UDWORD
+m137f004  Time_Stamp           -      file_name       [EBP-0x10]  UBYTE *
+m137f004  Time_Stamp           -      rc              [EBP-0xC]   UDWORD
+m137f004  Time_Stamp           -      time            [EBP-0x8]   long
+m137f005  Disk_Free            -      disk_info       [EBP-0x10]  struct _diskfree_t
+m137f005  Disk_Free            -      size            [EBP-0x8]   UDWORD
+m137f006  Delete_File          -      filename        [EBP-0x4]   UBYTE *
+m137f007  Current_Dir          -      filename        [EBP-0x4]   UBYTE *
+m137f008  File_Exists          -      filename        [EBP-0x8]   UBYTE *
+m137f008  File_Exists          -      ffblk           [EBP-0x34]  struct find_t
+m137f009  Get_Open_File_Count  -      fptr            [EBP-0xC]   FILE *
+m137f009  Get_Open_File_Count  -      full_file_path  [EBP-0x48]  char[60]
+m137f009  Get_Open_File_Count  -      file_count      [EBP-0x8]   int
+
+[Types]
+NUM  KIND       NAME                DETAILS
+-    cue table  -                   source file table (C++)
+1    scope      struct              -
+2    scope      union               -
+3    scope      enum                -
+4    scalar     signed char         int 1 bytes
+5    scalar     unsigned char       unsigned 1 bytes
+6    scalar     short               int 2 bytes
+7    scalar     unsigned short      unsigned 2 bytes
+8    scalar     int                 int 4 bytes
+9    scalar     unsigned int        unsigned 4 bytes
+10   typedef    char                name for unsigned char (#5)
+11   typedef    char                name for unsigned char (#5)
+12   typedef    size_t              name for unsigned int (#9)
+13   pointer    -                   near386; of char (#10)
+14   array      __va_list           0..0; of char * (#13)
+15   typedef    __va_list           name for char *[1] (#14)
+16   scalar     long                int 4 bytes
+17   typedef    fpos_t              name for long (#16)
+18   typedef    fpos_t              name for long (#16)
+19   scalar     unsigned long       unsigned 4 bytes
+20   typedef    time_t              name for unsigned long (#19)
+21   typedef    clock_t             name for unsigned long (#19)
+22   typedef    time_t              name for unsigned long (#19)
+23   typedef    BYTE                name for unsigned char (#5)
+24   typedef    SBYTE               name for signed char (#4)
+25   typedef    UBYTE               name for unsigned char (#5)
+26   typedef    WORD                name for unsigned short (#7)
+27   typedef    SWORD               name for short (#6)
+28   typedef    UWORD               name for unsigned short (#7)
+29   typedef    DWORD               name for unsigned int (#9)
+30   typedef    SDWORD              name for int (#8)
+31   typedef    UDWORD              name for unsigned int (#9)
+32   typedef    BOOL                name for unsigned char (#5)
+33   typedef    SampleHandle        name for int (#8)
+34   struct     struct tm           9 fields, 36 bytes
+35   typedef    tm                  struct name for struct #34 (#34)
+36   array      -                   0..20; of char (#10)
+37   array      -                   0..12; of char (#10)
+38   struct     struct find_t       6 fields, 43 bytes
+39   typedef    find_t              struct name for struct #38 (#38)
+40   pointer    -                   near386; of UBYTE (#25)
+41   procedure  -                   near386; returns SDWORD (UBYTE *, UBYTE *)
+42   procedure  -                   near386; returns SDWORD (UBYTE *)
+43   pointer    -                   near386; of struct tm (#35)
+44   procedure  -                   near386; returns struct tm * (UBYTE *)
+45   procedure  -                   near386; returns SDWORD ()
+46   struct     struct _diskfree_t  4 fields, 8 bytes
+47   typedef    _diskfree_t         struct name for struct #46 (#46)
+48   scalar     void                void 1 bytes
+49   procedure  -                   near386; returns void (UBYTE *)
+50   procedure  -                   near386; returns SDWORD (void)
+51   pointer    -                   near386; of unsigned char (#5)
+52   struct     struct __iobuf      8 fields, 26 bytes
+53   typedef    __iobuf             struct name for struct #52 (#52)
+54   typedef    FILE                name for struct __iobuf (#53)
+55   pointer    -                   near386; of FILE (#54)
+56   array      -                   0..59; of char (#10)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER               OFFSET_VALUE  TYPE             TYPE_NAME
+34        field        tm_sec               0             int              struct tm
+34        field        tm_min               4             int              struct tm
+34        field        tm_hour              8             int              struct tm
+34        field        tm_mday              12            int              struct tm
+34        field        tm_mon               16            int              struct tm
+34        field        tm_year              20            int              struct tm
+34        field        tm_wday              24            int              struct tm
+34        field        tm_yday              28            int              struct tm
+34        field        tm_isdst             32            int              struct tm
+38        field        reserved             0             char[21]         struct find_t
+38        field        attrib               21            char             struct find_t
+38        field        wr_time              22            unsigned short   struct find_t
+38        field        wr_date              24            unsigned short   struct find_t
+38        field        size                 26            unsigned long    struct find_t
+38        field        name                 30            char[13]         struct find_t
+46        field        total_clusters       0             unsigned short   struct _diskfree_t
+46        field        avail_clusters       2             unsigned short   struct _diskfree_t
+46        field        sectors_per_cluster  4             unsigned short   struct _diskfree_t
+46        field        bytes_per_sector     6             unsigned short   struct _diskfree_t
+52        field        _ptr                 0             unsigned char *  struct __iobuf
+52        field        _cnt                 4             int              struct __iobuf
+52        field        _base                8             unsigned char *  struct __iobuf
+52        field        _flag                12            unsigned int     struct __iobuf
+52        field        _handle              16            int              struct __iobuf
+52        field        _bufsize             20            unsigned int     struct __iobuf
+52        field        _ungotten            24            unsigned char    struct __iobuf
+52        field        _tmpfchar            25            unsigned char    struct __iobuf
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m137f001  16    0x001114D7  1:0x001014D7  0x00196B2B
+m137f001  20    0x001114F4  1:0x001014F4  0x00196B48
+m137f001  21    0x001114FC  1:0x001014FC  0x00196B50
+m137f001  22    0x0011150E  1:0x0010150E  0x00196B62
+m137f001  23    0x00111510  1:0x00101510  0x00196B64
+m137f001  25    0x0011151D  1:0x0010151D  0x00196B71
+m137f001  27    0x00111523  1:0x00101523  0x00196B77
+m137f001  28    0x00111530  1:0x00101530  0x00196B84
+m137f001  31    0x00111539  1:0x00101539  0x00196B8D
+m137f001  33    0x0011153F  1:0x0010153F  0x00196B93
+m137f001  34    0x00111546  1:0x00101546  0x00196B9A
+m137f002  40    0x00111551  1:0x00101551  0x00196BA5
+m137f002  45    0x0011156E  1:0x0010156E  0x00196BC2
+m137f002  47    0x00111574  1:0x00101574  0x00196BC8
+m137f002  49    0x0011157C  1:0x0010157C  0x00196BD0
+m137f002  50    0x00111591  1:0x00101591  0x00196BE5
+m137f002  52    0x00111598  1:0x00101598  0x00196BEC
+m137f002  54    0x001115A5  1:0x001015A5  0x00196BF9
+m137f002  55    0x001115AB  1:0x001015AB  0x00196BFF
+m137f002  57    0x001115B2  1:0x001015B2  0x00196C06
+m137f002  59    0x001115B4  1:0x001015B4  0x00196C08
+m137f002  60    0x001115C1  1:0x001015C1  0x00196C15
+m137f002  61    0x001115C8  1:0x001015C8  0x00196C1C
+m137f002  62    0x001115D5  1:0x001015D5  0x00196C29
+m137f002  63    0x001115DB  1:0x001015DB  0x00196C2F
+m137f002  66    0x001115E2  1:0x001015E2  0x00196C36
+m137f002  68    0x001115E8  1:0x001015E8  0x00196C3C
+m137f002  69    0x001115F5  1:0x001015F5  0x00196C49
+m137f002  72    0x001115FE  1:0x001015FE  0x00196C52
+m137f002  73    0x00111605  1:0x00101605  0x00196C59
+m137f003  81    0x00111610  1:0x00101610  0x00196C64
+m137f003  85    0x0011162B  1:0x0010162B  0x00196C7F
+m137f003  87    0x0011163D  1:0x0010163D  0x00196C91
+m137f003  88    0x00111643  1:0x00101643  0x00196C97
+m137f003  90    0x0011164D  1:0x0010164D  0x00196CA1
+m137f003  91    0x00111654  1:0x00101654  0x00196CA8
+m137f004  98    0x00111660  1:0x00101660  0x00196CB4
+m137f004  103   0x0011167B  1:0x0010167B  0x00196CCF
+m137f004  105   0x0011168D  1:0x0010168D  0x00196CE1
+m137f004  108   0x00111697  1:0x00101697  0x00196CEB
+m137f004  109   0x001116B4  1:0x001016B4  0x00196D08
+m137f004  110   0x001116CD  1:0x001016CD  0x00196D21
+m137f004  112   0x001116E2  1:0x001016E2  0x00196D36
+m137f004  113   0x001116FA  1:0x001016FA  0x00196D4E
+m137f004  114   0x00111712  1:0x00101712  0x00196D66
+m137f004  116   0x00111729  1:0x00101729  0x00196D7D
+m137f004  117   0x00111733  1:0x00101733  0x00196D87
+m137f004  118   0x0011173D  1:0x0010173D  0x00196D91
+m137f004  120   0x00111747  1:0x00101747  0x00196D9B
+m137f004  122   0x00111750  1:0x00101750  0x00196DA4
+m137f004  123   0x00111757  1:0x00101757  0x00196DAB
+m137f005  130   0x00111763  1:0x00101763  0x00196DB7
+m137f005  135   0x0011177B  1:0x0010177B  0x00196DCF
+m137f005  136   0x00111789  1:0x00101789  0x00196DDD
+m137f005  138   0x00111792  1:0x00101792  0x00196DE6
+m137f005  141   0x001117AD  1:0x001017AD  0x00196E01
+m137f005  142   0x001117B3  1:0x001017B3  0x00196E07
+m137f006  150   0x001117BF  1:0x001017BF  0x00196E13
+m137f006  152   0x001117DA  1:0x001017DA  0x00196E2E
+m137f006  153   0x001117E2  1:0x001017E2  0x00196E36
+m137f007  160   0x001117EB  1:0x001017EB  0x00196E3F
+m137f007  162   0x00111806  1:0x00101806  0x00196E5A
+m137f007  163   0x00111813  1:0x00101813  0x00196E67
+m137f008  167   0x0011181C  1:0x0010181C  0x00196E70
+m137f008  171   0x00111837  1:0x00101837  0x00196E8B
+m137f008  172   0x0011185E  1:0x0010185E  0x00196EB2
+m137f009  175   0x0011186A  1:0x0010186A  0x00196EBE
+m137f009  181   0x00111882  1:0x00101882  0x00196ED6
+m137f009  182   0x00111894  1:0x00101894  0x00196EE8
+m137f009  184   0x0011189A  1:0x0010189A  0x00196EEE
+m137f009  186   0x001118A3  1:0x001018A3  0x00196EF7
+m137f009  190   0x001118AC  1:0x001018AC  0x00196F00
+m137f009  191   0x001118B9  1:0x001018B9  0x00196F0D
+m137f009  192   0x001118C6  1:0x001018C6  0x00196F1A
+m137f009  195   0x001118D6  1:0x001018D6  0x00196F2A
+m137f009  197   0x001118DC  1:0x001018DC  0x00196F30
+m137f009  200   0x001118E5  1:0x001018E5  0x00196F39
+m137f009  201   0x001118F1  1:0x001018F1  0x00196F45
+m137f009  202   0x001118F9  1:0x001018F9  0x00196F4D
+m137f009  203   0x001118FF  1:0x001018FF  0x00196F53

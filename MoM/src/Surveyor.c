@@ -296,7 +296,7 @@ void Surveyor_Screen(void)
 
         Surveyor_Screen_Add_Fields();
 
-        hotkey_ESC_field = Add_Hot_Key(str_hotkey_ESC__ovr094[0]);
+        hotkey_ESC_field = Add_Hot_Key(str_hotkey_ESC__ovr094);
 
         input_field_idx = Get_Input();
 
@@ -341,7 +341,7 @@ void Surveyor_Screen(void)
         {
             _prev_world_x += (int16_t)(_main_map_grid_x - (MAP_WIDTH  / 2));
             _prev_world_y += (int16_t)(_main_map_grid_y - (MAP_HEIGHT / 2));
-            IDK_CheckSet_MapDisplay_XY();
+            Clamp_Map_Window_Position();
         }
 
         if(leave_screen == ST_FALSE)
@@ -390,7 +390,7 @@ void Surveyor_Screen_Add_Fields(void)
         _minimap_grid_field = Add_Grid_Field(REDUCED_MAP_SCREEN_X, REDUCED_MAP_SCREEN_Y, REDUCED_MAP_SQUARE_WIDTH, REDUCED_MAP_SQUARE_HEIGHT, REDUCED_MAP_WIDTH, REDUCED_MAP_HEIGHT, &_minimap_grid_x, &_minimap_grid_y, ST_UNDEFINED);
     }
 
-    main_cancel_button_field = Add_Button_Field(263, 181, str_empty_string__094, cast_cancel_button, str_hotkey_C__ovr094[0], ST_UNDEFINED);
+    main_cancel_button_field = Add_Button_Field(263, 181, str_empty_string__094, cast_cancel_button, str_hotkey_C__ovr094, ST_UNDEFINED);
 
 }
 
@@ -465,9 +465,13 @@ void Surveyor_Window_Display(void)
         return;
     }
 
-    l_mx = (_map_x + ((l_mx / SQUARE_WIDTH) % WORLD_WIDTH));
+    // l_mx = (_map_x + ((l_mx / SQUARE_WIDTH) % WORLD_WIDTH));
+    l_mx = (((l_mx / SQUARE_WIDTH) + _map_x) % WORLD_WIDTH);  /* CLAUDE */  /* REBUG */  /* asm: idiv e_SQUARE_WIDTH / add [_map_x] / idiv WORLD_WIDTH */
 
-    l_my = ((_map_y + (l_my / SQUARE_HEIGHT)) - 1);
+    /* OGBUG  (l_my / SQUARE_HEIGHT) - 1 stands in for (l_my - MOVEMENT_MAP_SCREEN_YMIN) / SQUARE_HEIGHT, but the bar is 20 pixels, not 18: the bottom 2 pixel rows of each map square read the square below */
+    // l_my = ((_map_y + (l_my / SQUARE_HEIGHT)) - 1);
+    /* CLAUDE */  /* REBUG */  /* asm: idiv e_SQUARE_HEIGHT / add ax, [_map_y] / dec ax (the quotient first; _map_y + quotient loads _map_y first) */
+    l_my = (((l_my / SQUARE_HEIGHT) + _map_y) - 1);
 
     val = 0;
 
@@ -566,7 +570,9 @@ void Surveyor_Window_Display(void)
 
     }
 
-    if(SQUARE_EXPLORED(l_mx, l_my, _map_plane) == ST_TRUE)
+    // if(SQUARE_EXPLORED(l_mx, l_my, _map_plane) == ST_TRUE)
+    /* CLAUDE */  /* REBUG */  /* asm: cmp [byte ptr es:bx], 0 / jnz short loc_7AA39 (the same test as the first one, no compare with e_ST_TRUE) */
+    if(SQUARE_EXPLORED(l_mx, l_my, _map_plane))
     {
 
         IDK = Surveyor_Cities(l_mx, l_my, _map_plane);
@@ -586,7 +592,9 @@ void Surveyor_Window_Display(void)
 
             if((GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION) != 0)
             {
-                IDK += (1000 + (GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION));
+                // IDK += (1000 + (GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION));
+                /* CLAUDE */  /* REBUG */  /* asm: and ax, MSF_CORRUPTION / mov dx, _SI_IDK / add dx, ax / add dx, 1000 / mov _SI_IDK, dx */
+                IDK = (IDK + (GET_MAP_SQUARE_FLAG(l_mx, l_my, _map_plane) & MSF_CORRUPTION) + 1000);
             }
 
         }
@@ -958,7 +966,7 @@ void Surveyor_IDK_Print_Terrain_And_Effect(int16_t IDK_type, int16_t IDK_IDK)
 
         Print_Centered(280, 114, GUI_String_1);
 
-        _fstrcpy(GUI_String_1, _CITIES[IDK_IDK].name);
+        String_Copy_Far(GUI_String_1, _CITIES[IDK_IDK].name);
 
         Print_Centered(280, 121, GUI_String_1);
 
@@ -1293,6 +1301,7 @@ int16_t Surveyor_IDK_RiverMouth(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t wx_alt;  // _DI_
 
+/* CLAUDE  original reconstruction (tested (wx, wy) for north / south, had no east test, and wrapped west to WORLD_WIDTH); replaced below to match the asm (ovr094/Surveyor_IDK_RiverMouth.asm)
     if(
         (
             ((wy - 1) > 0)
@@ -1318,6 +1327,47 @@ int16_t Surveyor_IDK_RiverMouth(int16_t wx, int16_t wy, int16_t wp)
     if(wx_alt < 0)
     {
         wx_alt = WORLD_WIDTH;
+    }
+
+    if(Square_Is_OceanLike(wx_alt, wy, wp) == ST_TRUE)
+    {
+        return ST_TRUE;
+    }
+
+    return ST_FALSE;
+*/
+
+    /* OGBUG  the north test needs (wy - 1) > 0, so a river square on row 1 next to sea on row 0 is not a river mouth; the south test allows up to row WORLD_HEIGHT - 1 */
+    if(
+        ((wy - 1) > 0)
+        &&
+        (Square_Is_OceanLike(wx, (wy - 1), wp) == ST_TRUE)
+    )
+    {
+        return ST_TRUE;
+    }
+
+    if(
+        ((wy + 1) < WORLD_HEIGHT)
+        &&
+        (Square_Is_OceanLike(wx, (wy + 1), wp) == ST_TRUE)
+    )
+    {
+        return ST_TRUE;
+    }
+
+    wx_alt = ((wx + 1) % WORLD_WIDTH);
+
+    if(Square_Is_OceanLike(wx_alt, wy, wp) == ST_TRUE)
+    {
+        return ST_TRUE;
+    }
+
+    wx_alt = (wx - 1);
+
+    if(wx_alt < 0)
+    {
+        wx_alt = WORLD_XMAX;
     }
 
     if(Square_Is_OceanLike(wx_alt, wy, wp) == ST_TRUE)

@@ -28,7 +28,7 @@ edge-variant tile.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:584](../../MoM/src/MAPGEN.c#L584) | Followed by `gd_dump_world_map("20_Simtex_Autotiling_W")` ([585](../../MoM/src/MAPGEN.c#L585)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:433](../../MoM/src/MAPGEN.c#L433) | Followed by `STU_GD_Dump_World_Map("121_Simtex_Autotiling_W")` ([434](../../MoM/src/MAPGEN.c#L434)). |
 
 ## The shared shape
 

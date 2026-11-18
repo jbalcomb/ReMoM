@@ -1,0 +1,46 @@
+module_num=30
+module=D:\MOX\OTHERS\RACEOPT.C
+source=0030-raceopt.c.md
+range[0]=1:0x00048F4A linear=0x00058F4A size=11482
+range[1]=2:0x00000EFC linear=0x00170EFC size=64
+range[2]=2:0x00023588 linear=0x00193588 size=508
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                          SYMBOL                         CHUNK
+m030f001  1    -      0x00058F4A  1:0x00048F4A  code  Player_Score_Modifier         Player_Score_Modifier_         regions/07-object-1/000DDE54-000DE653.txt
+m030f002  2    -      0x00058FC3  1:0x00048FC3  code  Reload_Racial_Option_Screen   Reload_Racial_Option_Screen_   regions/07-object-1/000DDE54-000DE653.txt
+m030f003  3    -      0x00059053  1:0x00049053  code  Calculate_Picks               Calculate_Picks_               regions/07-object-1/000DE654-000DEE53.txt
+m030f004  4    -      0x00059105  1:0x00049105  code  Draw_Race_Option_Background   Draw_Race_Option_Background_   regions/07-object-1/000DE654-000DEE53.txt
+m030f005  5    -      0x000596A5  1:0x000496A5  code  Draw_Racial_Option_Screen     Draw_Racial_Option_Screen_     regions/07-object-1/000DE654-000DEE53.txt
+m030f006  6    -      0x00059FA1  1:0x00049FA1  code  Set_Race_Option_Help_List     Set_Race_Option_Help_List_     regions/07-object-1/000DEE54-000DF653.txt
+m030f007  7    -      0x0005A3BC  1:0x0004A3BC  code  Racial_Option_Screen          Racial_Option_Screen_          regions/07-object-1/000DF654-000DFE53.txt
+m030f008  8    -      0x0005AAD4  1:0x0004AAD4  code  Add_Race_Options_Fields       Add_Race_Options_Fields_       regions/07-object-1/000DFE54-000E0653.txt
+m030f009  9    -      0x0005AD97  1:0x0004AD97  code  Convert_Player_To_Flags       Convert_Player_To_Flags_       regions/07-object-1/000DFE54-000E0653.txt
+m030f010  10   -      0x0005AE38  1:0x0004AE38  code  Convert_Flags_To_Player       Convert_Flags_To_Player_       regions/07-object-1/000DFE54-000E0653.txt
+m030f011  11   -      0x0005AEF4  1:0x0004AEF4  code  Reload_Option_Strings         Reload_Option_Strings_         regions/07-object-1/000DFE54-000E0653.txt
+m030f012  12   -      0x0005AF69  1:0x0004AF69  code  Real_Ability_Cost             Real_Ability_Cost_             regions/07-object-1/000DFE54-000E0653.txt
+m030f013  13   -      0x0005B0AA  1:0x0004B0AA  code  Setup_Evolutionary_Upgrade    Setup_Evolutionary_Upgrade_    regions/07-object-1/000E0654-000E0E53.txt
+m030f014  14   -      0x0005B14A  1:0x0004B14A  code  Add_Race_Options_Fields_EM    Add_Race_Options_Fields_EM_    regions/07-object-1/000E0654-000E0E53.txt
+m030f015  15   -      0x0005B4BF  1:0x0004B4BF  code  Calculate_EM_Picks            Calculate_EM_Picks_            regions/07-object-1/000E0654-000E0E53.txt
+m030f016  16   -      0x0005B4CD  1:0x0004B4CD  code  Convert_Player_To_Flags_EM    Convert_Player_To_Flags_EM_    regions/07-object-1/000E0654-000E0E53.txt
+m030f017  17   -      0x0005B5A5  1:0x0004B5A5  code  Convert_Flags_To_Player_EM    Convert_Flags_To_Player_EM_    regions/07-object-1/000E0654-000E0E53.txt
+m030f018  18   -      0x0005B649  1:0x0004B649  code  Evolutionary_Mutation_Screen  Evolutionary_Mutation_Screen_  regions/07-object-1/000E0654-000E0E53.txt
+-         -    -      0x00193588  2:0x00023588  data  _opt_string                   _opt_string                    -
+-         -    -      0x00193688  2:0x00023688  data  _color_opt                    _color_opt                     -
+-         -    -      0x00193690  2:0x00023690  data  _default_button_seg           _default_button_seg            -
+-         -    -      0x00193694  2:0x00023694  data  _button_variable              _button_variable               -
+-         -    -      0x001936A8  2:0x000236A8  data  _option_button                _option_button                 -
+-         -    -      0x001936D4  2:0x000236D4  data  _accept_button_seg            _accept_button_seg             -
+-         -    -      0x001936D8  2:0x000236D8  data  _off_button_seg               _off_button_seg                -
+-         -    -      0x001936DC  2:0x000236DC  data  _option_toggle                _option_toggle                 -
+-         -    -      0x00193708  2:0x00023708  data  _pick_seg                     _pick_seg                      -
+-         -    -      0x0019370C  2:0x0002370C  data  _special_button_seg           _special_button_seg            -
+-         -    -      0x00193710  2:0x00023710  data  _ability_costs                _ability_costs                 -
+-         -    -      0x00193714  2:0x00023714  data  _group_button                 _group_button                  -
+-         -    -      0x00193766  2:0x00023766  data  _picks                        _picks                         -
+-         -    -      0x00193768  2:0x00023768  data  _defalt                       _defalt                        -
+-         -    -      0x0019376A  2:0x0002376A  data  _exit_ken                     _exit_ken                      -
+-         -    -      0x0019376C  2:0x0002376C  data  _negative_picks               _negative_picks                -
+-         -    -      0x0019376E  2:0x0002376E  data  _accept                       _accept                        -
+-         -    -      0x00193770  2:0x00023770  data  _name_button                  _name_button                   -
+-         -    -      0x00193772  2:0x00023772  data  _cur_race_name                _cur_race_name                 -

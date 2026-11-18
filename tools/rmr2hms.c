@@ -134,7 +134,7 @@ static void Emit_Key(FILE *out, uint64_t now_ms, uint32_t packed)
     int key_char = KEY_CHAR(packed);
 
     /* Special keys → keyword actions. */
-    switch (key_code)
+    switch(key_code)
     {
         case MOX_KEY_BACKSPACE:
             Flush_Pending_Type(out);

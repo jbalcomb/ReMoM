@@ -1,0 +1,9 @@
+module_num=164
+module=accss
+source=0164-accss.md
+range[0]=1:0x00119E6B linear=0x00129E6B size=59
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m164f001    1    1/2    0x00129E6B  1:0x00119E6B  code  access   access_   regions/07-object-1/001AEE54-001AF653.txt
+m164f001_2  1    2/2    0x00129E6B  1:0x00119E6B  code  _access  _access_  regions/07-object-1/001AEE54-001AF653.txt

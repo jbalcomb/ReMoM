@@ -22,7 +22,7 @@
 
 
 
-// WZD s161p01
+// WZD o161p01
 /*
     ~ "Purify"
 */
@@ -32,7 +32,7 @@ void Square_Clear_Corruption(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p02
+// WZD o161p02
 int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t niu_variable = 0;
@@ -59,7 +59,7 @@ int16_t Square_Is_Node(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p03
+// WZD o161p03
 /**
  * @brief Computes terrain food yield in doubled-food units for one map square.
  *
@@ -98,6 +98,7 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
     int16_t food_units;
+    food_units = 0;  /* CLAUDE */  /* REBUG */  /* asm: xor si, si */
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
     if(terrain_type == tt_Ocean)
     {
@@ -171,9 +172,10 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             {
                 food_units = 0;
             } break;
-            case tt_Swamp1:  /* OGBUG: manual says 1/2 food for Swamp */
-            case tt_Swamp2:  /* OGBUG: manual says 1/2 food for Swamp */
-            case tt_Swamp3:  /* OGBUG: manual says 1/2 food for Swamp */
+            /* OGBUG  every Swamp square (tt_Swamp1 / 2 / 3) gives 0 food; the manual says 1/2 food for Swamp */
+            case tt_Swamp1:
+            case tt_Swamp2:
+            case tt_Swamp3:
             {
                 food_units = 0;
             } break;
@@ -205,14 +207,15 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             } break;
             default:
             {
-                food_units = 0;
+                // food_units = 0;  /* CLAUDE */  /* REBUG */  /* asm: 'ja IDK_switch_deault' keeps the 0 from the entry */
             } break;
         }
     }
 
     food_units *= 2;  /* ¿ OGBUG: should be /= 2, not *= 2 ? everywhere else is food2, not foodx2 */
 
-    if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
+    // if(City_Area_Square_Is_Shared(wx, wy, wp) == ST_TRUE)
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: or ax, ax / jz */
     {
         food_units /= 2;
     }
@@ -220,7 +223,7 @@ int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
     return food_units;
 }
 
-// WZD s161p04
+// WZD o161p04
 // drake178: TILE_GetProd()
 /*
     Chaos Node ~== Mountain
@@ -231,10 +234,11 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
     uint16_t terrain_type = 0;
     int16_t production_bonus = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
+/* CLAUDE  original reconstruction (nested if / else), replaced below by the asm's if-chain
     if(terrain_type <= tt_Desert_Lst)
     {
         if(terrain_type <= tt_Mountains_Lst)
@@ -306,12 +310,84 @@ int16_t Square_Production_Bonus(int16_t wx, int16_t wy, int16_t wp, int16_t have
         production_bonus = 0;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+*/
+
+    /* CLAUDE */  /* asm: cmp si, tt_Desert_Lst / jle ... xor ax, ax */
+    if(terrain_type > tt_Desert_Lst)
+    {
+        // HERE:  Above last range that has any production bonus
+        TRACE_EXIT();
+        return 0;
+    }
+
+    if(terrain_type > tt_Mountains_Lst)
+    {
+        // HERE:  'Hills Range' and 'Desert Range'
+        production_bonus = 3;
+    }
+    else if(terrain_type > tt_Rivers_end)
+    {
+        // HERE:  'Mountain Range'
+        production_bonus = 5;
+    }
+    else if(
+        (terrain_type == tt_Mountain1)
+        ||
+        (terrain_type == tt_ChaosNode)
+    )
+    {
+        // HERE:  base/super-type 'Moutain' or 'Chaos Node'
+        production_bonus = 5;
+    }
+    else if(
+        (terrain_type == tt_Forest1)
+        ||
+        (terrain_type == tt_Forest2)
+        ||
+        (terrain_type == tt_Forest3)
+        ||
+        (terrain_type == tt_NatureNode)
+    )
+    {
+        if(have_gaias_blessing == ST_TRUE)
+        {
+            production_bonus = 6;
+        }
+        else
+        {
+            production_bonus = 3;
+        }
+    }
+    /* OGBUG  tt_Desert1 (0xA5, the single plain desert square) is not in this list, so it gives 0% production where tt_Desert2 / 3 / 4 and the desert range (tt_Desert_Fst..tt_Desert_Lst) give 3% */
+    else if(
+        (terrain_type == tt_Hills1)
+        ||
+        (terrain_type == tt_Desert2)
+        ||
+        (terrain_type == tt_Desert3)
+        ||
+        (terrain_type == tt_Desert4)
+    )
+    {
+        production_bonus = 3;
+    }
+    else
+    {
+        TRACE_EXIT();
+        return 0;
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+        production_bonus = (production_bonus / 2);
+    }
+
+    TRACE_EXIT();
 
     return production_bonus;
 }
 
-// WZD s161p05
+// WZD o161p05
 // drake178: TILE_GetWaterGold()
 int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -382,7 +458,7 @@ int16_t Square_Gold_Bonus(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p06
+// WZD o161p06
 // drake178: CTY_GetRoadGold()
 int16_t City_Road_Trade_Bonus(int16_t city_idx)
 {
@@ -430,7 +506,7 @@ int16_t City_Road_Trade_Bonus(int16_t city_idx)
 }
 
 
-// WZD s161p07
+// WZD o161p07
 /*
 used to decide on river for cityscape  (not ocean, not *water*)
 */
@@ -494,7 +570,7 @@ int16_t Square_Is_River(int16_t wx, int16_t wy, int16_t wp)
 
 
 
-// WZD s161p08
+// WZD o161p08
 int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
     int16_t terrain_special = 0;
@@ -528,16 +604,152 @@ int16_t Square_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     return gold_units;
 }
 
-// WZD s161p08
-// TILE_GetSilverGold   
 
-// WZD s161p09
-// TILE_GetGoldOreGold  
+// WZD o161p09
+// drake178: TILE_GetSilverGold()
+/*
+    Terrain Special
+    Gold
+*/
+int16_t Square_Silver_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarves)
+{
+    int16_t terrain_special = 0;
+    int16_t gold_units = 0;  // _SI_
 
-// WZD s161p10
-// TILE_GetGemGold      
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
-// WZD s161p11
+    gold_units = 0;
+
+    if(terrain_special == TS_SILVER)
+    {
+
+        gold_units = 2;
+
+    }
+
+    if(are_dwarves != ST_FALSE)
+    {
+
+        gold_units = (gold_units * 2);
+
+    }
+
+    if(have_miners_guild != ST_FALSE)
+    {
+
+        gold_units = ((gold_units * 3) / 2);
+
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+
+        gold_units = (gold_units / 2);
+
+    }
+
+    return gold_units;
+
+}
+
+
+// WZD o161p10
+// drake178: TILE_GetGoldOreGold()
+/*
+    Terrain Special
+    Gold
+*/
+int16_t Square_Gold_Ore_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarves)
+{
+    int16_t terrain_special = 0;
+    int16_t gold_units = 0;  // _SI_
+
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
+
+    gold_units = 0;
+
+    if(terrain_special == TS_GOLD)
+    {
+
+        gold_units = 3;
+
+    }
+
+    if(are_dwarves != ST_FALSE)
+    {
+
+        gold_units = (gold_units * 2);
+
+    }
+
+    if(have_miners_guild != ST_FALSE)
+    {
+
+        gold_units = ((gold_units * 3) / 2);
+
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+
+        gold_units = (gold_units / 2);
+
+    }
+
+    return gold_units;
+
+}
+
+
+// WZD o161p11
+// drake178: TILE_GetGemGold()
+/*
+    Terrain Special
+    Gold
+*/
+int16_t Square_Gems_Gold_Income(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarves)
+{
+    int16_t terrain_special = 0;
+    int16_t gold_units = 0;  // _SI_
+
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
+
+    gold_units = 0;
+
+    if(terrain_special == TS_GEMS)
+    {
+
+        gold_units = 5;
+
+    }
+
+    if(are_dwarves != ST_FALSE)
+    {
+
+        gold_units = (gold_units * 2);
+
+    }
+
+    if(have_miners_guild != ST_FALSE)
+    {
+
+        gold_units = ((gold_units * 3) / 2);
+
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+
+        gold_units = (gold_units / 2);
+
+    }
+
+    return gold_units;
+
+}
+
+
+// WZD o161p12
 // drake178: TILE_GetSpecialPower()
 int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarf)
 {
@@ -586,7 +798,7 @@ int16_t Square_Magic_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mine
     return mana_units;
 }
 
-// WZD s161p12
+// WZD o161p13
 // drake178: TILE_GetMithrilPower()
 /*
     Terrain Special
@@ -619,7 +831,7 @@ int16_t Square_Mithril_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_mi
     return power;
 }
 
-// WZD s161p13
+// WZD o161p14
 // drake178: TILE_GetAdamntmPower()
 /*
     Terrain Special
@@ -652,13 +864,91 @@ int16_t Square_Adamantium_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have
     return power;
 }
 
-// WZD s161p14
-// drake178: TILE_GetQuorkPower   
+// WZD o161p15
+// drake178: TILE_GetQuorkPower()
+/*
+    Terrain Special
+    Magic Power
+    have_miners_guild is not read (as in the asm): no Miners' Guild bonus, like Square_Mithril_Power() / Square_Adamantium_Power()
+*/
+int16_t Square_Quork_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarves)
+{
+    int16_t terrain_special = 0;
+    int16_t power = 0;  // _SI_
 
-// WZD s161p15
-// drake178: TILE_GetCrysxPower   
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
 
-// WZD s161p16
+    power = 0;
+
+    if(terrain_special == TS_QUORK)
+    {
+
+        power = 3;
+
+    }
+
+    if(are_dwarves != ST_FALSE)
+    {
+
+        power = (power * 2);
+
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+
+        power = (power / 2);
+
+    }
+
+    return power;
+
+}
+
+
+// WZD o161p16
+// drake178: TILE_GetCrysxPower()
+/*
+    Terrain Special
+    Magic Power
+    have_miners_guild is not read (as in the asm): no Miners' Guild bonus, like Square_Mithril_Power() / Square_Adamantium_Power()
+*/
+int16_t Square_Crysx_Power(int16_t wx, int16_t wy, int16_t wp, int16_t have_miners_guild, int16_t are_dwarves)
+{
+    int16_t terrain_special = 0;
+    int16_t power = 0;  // _SI_
+
+    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
+
+    power = 0;
+
+    if(terrain_special == TS_CRYSX)
+    {
+
+        power = 5;
+
+    }
+
+    if(are_dwarves != ST_FALSE)
+    {
+
+        power = (power * 2);
+
+    }
+
+    if(City_Area_Square_Is_Shared(wx, wy, wp) != ST_FALSE)
+    {
+
+        power = (power / 2);
+
+    }
+
+    return power;
+
+}
+
+
+// WZD o161p17
 // drake178: TILE_HasMithril()
 /*
 ; returns 1 if the square has Mithril Ore terrain special
@@ -686,7 +976,7 @@ int16_t Square_Has_Mithril(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p17
+// WZD o161p18
 // drake178: TILE_HasAdamantium()
 /*
 
@@ -709,7 +999,7 @@ int16_t Square_Has_Adamantium(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p18
+// WZD o161p19
 // drake178: TILE_GetNUCostReduce()
 /*
     
@@ -728,29 +1018,49 @@ int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t h
 
     cost_reduction = 0;
 
-    terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
+    // terrain_special = GET_TERRAIN_SPECIAL(wx, wy, wp);
+    terrain_special = (GET_TERRAIN_SPECIAL(wx, wy, wp) & 0x0F);  /* CLAUDE */  /* REBUG */  /* asm: mov ah, 0 / and ax, 0Fh (the mineral nibble) */
 
+    /* OGBUG  a Miners' Guild DOUBLES the Iron / Coal cut (10 / 20 instead of 5 / 10, x2 again for Dwarves) where it should add 50% */
     if(terrain_special == TS_IRON)
     {
-        if(have_minersguild != ST_TRUE)
+        // if(have_minersguild != ST_TRUE)
+        // {
+        //     cost_reduction = 5;
+        // }
+        // else
+        // {
+        //     cost_reduction = 10;
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm: cmp have_minersguild, e_ST_TRUE / jnz -> 5, else 10 */
+        if(have_minersguild == ST_TRUE)
         {
-            cost_reduction = 5;
+            cost_reduction = 10;
         }
         else
         {
-            cost_reduction = 10;
+            cost_reduction = 5;
         }
     }
     
     if(terrain_special == TS_COAL)
     {
-        if(have_minersguild != ST_TRUE)
+        // if(have_minersguild != ST_TRUE)
+        // {
+        //     cost_reduction = 10;
+        // }
+        // else
+        // {
+        //     cost_reduction = 20;
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm: cmp have_minersguild, e_ST_TRUE / jnz -> 10, else 20 */
+        if(have_minersguild == ST_TRUE)
         {
-            cost_reduction = 10;
+            cost_reduction = 20;
         }
         else
         {
-            cost_reduction = 20;
+            cost_reduction = 10;
         }
     }
 
@@ -768,7 +1078,7 @@ int16_t Square_Unit_Cost_Reduction(int16_t wx, int16_t wy, int16_t wp, int16_t h
 }
 
 
-// WZD s161p19
+// WZD o161p20
 // drake178: CTY_GetWeaponQuality()
 // MoO2  Module: INITSHIP  Best_..._Weapon_()
 int16_t City_Best_Weapon(int16_t city_idx)
@@ -821,7 +1131,7 @@ int16_t City_Best_Weapon(int16_t city_idx)
 }
 
 
-// WZD s161p20
+// WZD o161p21
 /*
 TABLE F
 ROAD BUILDING
@@ -901,20 +1211,21 @@ int16_t Turns_To_Build_Road(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p21
-// UU_TILE_GetUnsdMPCost
+// WZD o161p22
+void UU_TILE_GetUnsdMPCost(void)
+{
+    // TODO
+}
 
-// WZD s161p22
+
+// WZD o161p23
 /*
 INCONSISTENT: returns 0 for the single square no-river lake, which means it should also return 0 for its river outlet versions (0xC5 - 0xC8)
 */
 /*
-WZD s161p22
-TILE_IsAISailable()
-WZD s161p24
-TILE_IsSailable()
-WZD s161p39
-Square_Is_OceanLike()
+WZD o161p22 TILE_IsAISailable()
+WZD o161p25 TILE_IsSailable()
+WZD o161p39 Square_Is_OceanLike()
 */
 int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -935,7 +1246,7 @@ int16_t Square_Is_Shoreline(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p23
+// WZD o161p24
 // drake178: TILE_IsVisibleForest()
 // AKA Square_Is_Explored_Forest()
 /*
@@ -970,17 +1281,17 @@ int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p24
+// WZD o161p25
 // drake178: TILE_IsSailable()
 /*
     regularly used as 'Square is Ocean-Terrain'
     also used as 'Square is Shore'
 
-WZD s161p22
+WZD o161p22
 TILE_IsAISailable()
-WZD s161p24
+WZD o161p24
 TILE_IsSailable()
-WZD s161p39
+WZD o161p39
 Square_Is_OceanLike()
 BUGBUG  only checks tt_AnimOcean?
 TODO  DEDU  what 'water' squares not sailable?
@@ -1025,7 +1336,7 @@ int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
     return ST_FALSE;
 }
 
-// WZD s161p25
+// WZD o161p26
 /*
     DEDU  Why only tt_OceanAnim?
 */
@@ -1047,7 +1358,7 @@ int16_t Square_Is_Ocean(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p26
+// WZD o161p27
 /*
 vs. Square_Is_Sailable()?
 vs. Square_Is_OceanLike()?
@@ -1075,6 +1386,7 @@ int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
     terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
+    /* OGBUG  only tt_Ocean, 0x02..0x31 (not tt_Lake 0x12), 0x62..0xA1, 0xD9..0xE8 and 0x1D9..0x1F7 are embarkable: tt_Lake, 0x32..0x61, tt_Shore2_1st..tt_Shore2_end, 0x1F8..tt_Shore3_end and tt_OceanAnim (0x259) are not, though Square_Is_OceanLike() accepts tt_OceanAnim and 0x1F8..tt_Shore3_end; AI_Stacks_Reorder_Settle_Elsewhere() finds no boarding square on them */
     if(terrain_type == tt_BugGrass)   { return ST_FALSE; }
     if(terrain_type == tt_Lake)       { return ST_FALSE; }
     if(terrain_type < _Shore11101110) { return ST_TRUE;  }
@@ -1088,7 +1400,7 @@ int16_t Square_Is_Embarkable(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p27
+// WZD o161p28
 /**
  * @brief Maps a world-map terrain square to a building terrain prerequisite ID.
  *
@@ -1164,7 +1476,7 @@ int16_t Building_Terrain_Type_Prerequisite(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p28
+// WZD o161p29
 int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1195,7 +1507,7 @@ int16_t Square_Is_Hills(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p29
+// WZD o161p30
 int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
@@ -1230,7 +1542,7 @@ int16_t Square_Is_Mountain(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p30
+// WZD o161p31
 int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1267,7 +1579,7 @@ int16_t Square_Is_Desert(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p31
+// WZD o161p32
 int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1277,6 +1589,7 @@ int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
+    /* OGBUG  '> tt_Tundra_1st', not '>=': terrain 0x25A (602, _Tundra00001000, the first tundra autotile) is not tundra */
     if(
         (terrain_type == tt_Tundra1)
         ||
@@ -1298,7 +1611,7 @@ int16_t Square_Is_Tundra(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p32
+// WZD o161p33
 int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1327,7 +1640,7 @@ int16_t Square_Is_Swamp(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p33
+// WZD o161p34
 int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1360,7 +1673,7 @@ int16_t Square_Is_Grasslands(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p34
+// WZD o161p35
 int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type;
@@ -1383,7 +1696,7 @@ int16_t Square_Is_Volcano(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p35
+// WZD o161p36
 int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t map_square_flag = 0;  // DNE in Dasm
@@ -1402,7 +1715,7 @@ int16_t Square_Has_Corruption(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p36
+// WZD o161p37
 // drake178: UU_TILE_IsRes_40h()
 /*
 wild game?
@@ -1429,14 +1742,11 @@ int16_t UU_Square_Has_MSF_UNKNOWN_40H(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p37
+// WZD o161p38
 // drake178: CTY_CountNightshades()
 /*
 // ; counts and sets the amount of Nightshades affecting
 // ; every city (returns the last count)
-// ; BUG: only updates the count if a relevant building is
-// ; present, meaning that it can't be cleared either if
-// ; one isn't
 */
 /*
 
@@ -1477,6 +1787,7 @@ void All_City_Nightshade_Count(void)
             continue;
         }
 
+        /* OGBUG  SHRINE is tested twice, the second test is redundant; LIBRARY and UNIVERSITY are not in the list */
         if(
             #pragma warning(suppress : 6287)  // TODO  Redundant code
             (_CITIES[itr_cities].bldg_status[ SHRINE           ] != bs_NotBuilt)
@@ -1496,6 +1807,8 @@ void All_City_Nightshade_Count(void)
             (_CITIES[itr_cities].bldg_status[ ALCHEMISTS_GUILD ] != bs_NotBuilt)
             ||
             (_CITIES[itr_cities].bldg_status[ WIZARDS_GUILD    ] != bs_NotBuilt)
+            ||
+            (_CITIES[itr_cities].bldg_status[ ANIMISTS_GUILD   ] != bs_NotBuilt)  /* CLAUDE */  /* REBUG */  /* asm: cmp [es:bx+(s_CITY.bldg_status+0Ah)], bs_NotBuilt */
         )
         {
 
@@ -1513,6 +1826,7 @@ void All_City_Nightshade_Count(void)
 
             }
 
+            /* OGBUG  the count is stored only for a city with one of the buildings above: a city that loses them (or never had them) keeps its old enchantments[NIGHTSHADE] count */
             _CITIES[itr_cities].enchantments[NIGHTSHADE] = (uint8_t)nightshade_count;
 
         }
@@ -1522,7 +1836,7 @@ void All_City_Nightshade_Count(void)
 }
 
 
-// WZD s161p38
+// WZD o161p39
 int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 {
     int16_t terrain_type = 0;
@@ -1553,7 +1867,7 @@ int16_t Square_Is_Land(int16_t wx, int16_t wy, int16_t wp)
 }
 
 
-// WZD s161p39
+// WZD o161p40
 /*
 used to decide on ocean for cityscape  (not river, not *water*)
 
@@ -1568,11 +1882,11 @@ used to decide on ocean for cityscape  (not river, not *water*)
 used by AI_Move_Out_Boats(), so ~== "Sailable"
 should also be equivalent to Square_Is_Shoreline(), used to build the shoreline linked-list array
 
-WZD s161p22
+WZD o161p22
     TILE_IsAISailable()
-WZD s161p24
+WZD o161p24
     TILE_IsSailable()
-WZD s161p39
+WZD o161p39
     Square_Is_OceanLike() AKA TILE_IsAISailable2()
 
 */
@@ -1669,7 +1983,7 @@ int16_t Square_Is_OceanLike(int16_t wx, int16_t wy, int16_t wp)
 
 
 
-// WZD s161p40
+// WZD o161p41
 // drake178: UU_TILE_BotchedResFn()
 /*
 ; Unused in MoM, no wonder since its totally botched
@@ -1694,6 +2008,7 @@ int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp)
 
     terrain_type = TERRAIN_TYPE(wx, wy, wp);
 
+    /* OGBUG  the tests are not chained (no else): each later match overwrites the earlier amount, so e.g. every terrain above tt_Forest3 ends at 25 and every square tt_Grasslands1..tt_Forest3 is reset to 0 by the switch */
     if(terrain_type >= tt_Tundra_1st)  { amount =  0; }
     if(terrain_type == tt_BugGrass)    { amount =  0; }
     if(terrain_type < tt_Grasslands1)  { amount = 10; }
@@ -1718,6 +2033,19 @@ int16_t UU_Square_Provides_Some_Amount(int16_t wx, int16_t wy, int16_t wp)
         case tt_ChaosNode:    // 0xAA  170  tt_ChaosNode
         case tt_Hills1:       // 0xAB  171  tt_Hills1
         case tt_Volcano:      // 0xB3  179  tt_Volcano__2
+        /* CLAUDE */  /* asm: off_F48BE sends all 23 entries 0xA2..0xB8 to jt_tt_000 */
+        case tt_Grasslands2:
+        case tt_Grasslands3:
+        case tt_Desert2:
+        case tt_Desert3:
+        case tt_Desert4:
+        case tt_Swamp2:
+        case tt_Swamp3:
+        case tt_Grasslands4:
+        case tt_Tundra2:
+        case tt_Tundra3:
+        case tt_Forest2:
+        case tt_Forest3:
         {
             amount = 0;
         }

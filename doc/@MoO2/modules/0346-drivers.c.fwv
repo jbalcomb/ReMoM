@@ -1,0 +1,24 @@
+module_num=346
+module=C:\GCL520\C_ALL\DRIVERS.C
+source=0346-drivers.c.md
+range[0]=1:0x0014EE80 linear=0x0015EE80 size=528
+range[1]=2:0x000048A4 linear=0x001748A4 size=44
+range[2]=2:0x00012CE8 linear=0x00182CE8 size=8
+range[3]=2:0x00051CC0 linear=0x001C1CC0 size=144
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                        SYMBOL                       CHUNK
+m346f001    1    1/4    0x0015EE80  1:0x0014EE80  static,code  _GenericNotSupportedE       _GenericNotSupportedE_       regions/07-object-1/001E3E54-001E4653.txt
+m346f001_2  1    2/4    0x0015EE80  1:0x0014EE80  static,code  _GenericNotSupportedD       _GenericNotSupportedD_       regions/07-object-1/001E3E54-001E4653.txt
+m346f001_3  1    3/4    0x0015EE80  1:0x0014EE80  static,code  _GenericNotSupportedB       _GenericNotSupportedB_       regions/07-object-1/001E3E54-001E4653.txt
+m346f001_4  1    4/4    0x0015EE80  1:0x0014EE80  static,code  _GenericNotSupportedA       _GenericNotSupportedA_       regions/07-object-1/001E3E54-001E4653.txt
+m346f002    2    -      0x0015EE8C  1:0x0014EE8C  static,code  _GenericNotSupportedC       _GenericNotSupportedC_       regions/07-object-1/001E3E54-001E4653.txt
+m346f003    3    -      0x0015EE9C  1:0x0014EE9C  static,code  _GenericNotSupportedG       _GenericNotSupportedG_       regions/07-object-1/001E3E54-001E4653.txt
+m346f004    4    -      0x0015EEC4  1:0x0014EEC4  static,code  _GenericPortClose           _GenericPortClose_           regions/07-object-1/001E3E54-001E4653.txt
+m346f005    5    -      0x0015EEFC  1:0x0014EEFC  static,code  _DefaultClearError          _DefaultClearError_          regions/07-object-1/001E3E54-001E4653.txt
+m346f006    6    -      0x0015EF04  1:0x0014EF04  code         _close_all_ports            _close_all_ports_            regions/07-object-1/001E3E54-001E4653.txt
+m346f007    7    -      0x0015EF24  1:0x0014EF24  code         _InitializeDriverFunctions  _InitializeDriverFunctions_  regions/07-object-1/001E3E54-001E4653.txt
+m346f008    8    -      0x0015F014  1:0x0014F014  code         _FreePort                   _FreePort_                   regions/07-object-1/001E4654-001E4E53.txt
+m346f009    9    -      0x0015F048  1:0x0014F048  code         _OutOfMemoryPort            _OutOfMemoryPort_            regions/07-object-1/001E4654-001E4E53.txt
+-           -    -      0x00182CE8  2:0x00012CE8  static,data  _PortList                   _PortList                    regions/08-object-2/00200E54-00201653.txt
+-           -    -      0x00182CEC  2:0x00012CEC  static,data  _hooked                     _hooked                      regions/08-object-2/00200E54-00201653.txt

@@ -120,7 +120,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
     {
         AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
         AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-        AI_Stacks_Survey_Expedition_Forces();
+        AI_Survey_Expedition_Forces();
         AI_Stacks_Do_Meld(player_idx);
         AI_Stacks_Do_Settle(player_idx, landmass_idx);
         AI_Stacks_Do_Purify(landmass_idx, wp);
@@ -175,7 +175,7 @@ for(wp = 0; wp < NUM_PLANES; wp++)
 |---|---|---|
 | 1 | `AI_Stacks_Init_Build_Target_Order` | Build the per-landmass target list + stack assignments. |
 | 2 | `AI_Stacks_Move_Out_NonMilitary_Garrisoned` | Push garrison builds. |
-| 3 | `AI_Stacks_Survey_Expedition_Forces` | Inventory excess units (for later disband). |
+| 3 | `AI_Survey_Expedition_Forces` | Inventory excess units (for later disband). |
 | 4 | `AI_Stacks_Do_Meld` | Spirit-meld at nodes. |
 | 5 | `AI_Stacks_Do_Settle` | Issue settler-settle orders. |
 | 6 | `AI_Stacks_Do_Purify` | Issue purify orders for corrupted tiles. |
@@ -230,7 +230,7 @@ AI_Set_Unit_Orders(player_idx)
     └── for landmass_idx in [1..NUM_LANDMASSES):
         ├── AI_Stacks_Init_Build_Target_Order
         ├── AI_Stacks_Move_Out_NonMilitary_Garrisoned
-        ├── AI_Stacks_Survey_Expedition_Forces
+        ├── AI_Survey_Expedition_Forces
         ├── AI_Stacks_Do_Meld
         ├── AI_Stacks_Do_Settle
         ├── AI_Stacks_Do_Purify

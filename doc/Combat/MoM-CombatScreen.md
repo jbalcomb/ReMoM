@@ -199,14 +199,14 @@ CRP_OVL_Obstacle_Var1 = ST_FALSE;           // cmp'd in Move_Stack(), if FALSE, 
 CRP_OVL_Obstacle_Var2 = First_Unit_Index;   // OON XREF;  CRP_OVL_Obstacle_Var2 = First_Unit_Index = _DI_unit_idx = troops[0]
 CRP_OVL_Obstacle_Var3 = attackee_idx;       // OON XREF;  CRP_OVL_Obstacle_Var3 = attackee_idx = Obstacle_Value = dst_troops[0] || s_CITY.owner_idx || NEUTRAL_PLAYER;  set in Eval_Move_Path__WIP(); 
 
-dseg:C042 00 00                                           OVL_MapVar3 dw 0                        ; DATA XREF: Main_Screen+6Cw ...
-dseg:C044 00 00                                           CRP_OVL_Obstacle_Var1 dw 0              ; DATA XREF: Main_Screen+66w ...
+dseg:C042 00 00                                           OVL_MapVar3 dw 0                        ; DATA XREF: Main_Screen+6Cvw ...
+dseg:C044 00 00                                           CRP_OVL_Obstacle_Var1 dw 0              ; DATA XREF: Main_Screen+66vw ...
 
 dseg:C5DC                                                 ¿ BEGIN: Move_Stack() || UNITMOVE ?
 dseg:C5DC                                                 BEGIN: ovr095
 
-dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Units+50Dw
-dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Units+507w
+dseg:C5EC 00 00                                           CRP_OVL_Obstacle_Var3 dw 0              ; DATA XREF: Move_Units+50Dvw
+dseg:C5EE 00 00                                           CRP_OVL_Obstacle_Var2 dw 0              ; DATA XREF: Move_Units+507vw
 
 OVL_SWardTriggered
 
@@ -234,13 +234,13 @@ some relationship between CRP_OVL_Obstacle_Var1 and OVL_MapVar3
 ### OVL_Action_Type
 ### _combat_environ_idx
 
-dseg:9284 00 00                                           OVL_Action_Type dw 0                    ; DATA XREF: CMB_TacticalCombat:loc_75EC4r ...
+dseg:9284 00 00                                           OVL_Action_Type dw 0                    ; DATA XREF: CMB_TacticalCombat:loc_75EC4vr ...
 dseg:9284                                                                                         ; sets in Eval_Move_Path__WIP() (AKA STK_EvaluatePath)
 dseg:9284                                                                                         ; set to 0 when pathing onto an enemy stack
 dseg:9284                                                                                         ; set to 1 when pathing onto an enemy city
 dseg:9284                                                                                         ; set to 5 when pathing onto a lair
 dseg:9286                                                 ; int _combat_environ_idx
-dseg:9286 00 00                                           _combat_environ_idx dw 0               ; DATA XREF: EZ_Resolve+92r ...
+dseg:9286 00 00                                           _combat_environ_idx dw 0               ; DATA XREF: EZ_Resolve+92vr ...
 dseg:9286                                                                                         ; index of the City or Lair being pathed into
 
 

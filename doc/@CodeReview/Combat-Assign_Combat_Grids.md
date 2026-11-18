@@ -194,7 +194,7 @@ Two findings, above. The rest is faithful.
 - **`hero_items` pointer** — `_players.Heroes.Items + owner_idx * size s_WIZARD + Hero_Slot * size s_OWNED_HERO`. Production [1547](../../MoM/src/NEXTTURN.c#L1547).
 - **Item loop** — `0 .. NUM_HERO_ITEMS`, skipping empty slots via `cmp [word ptr bx], e_ST_UNDEFINED` / `jle`. Production [1548-1550](../../MoM/src/NEXTTURN.c#L1548-L1550). Production spells the sentinel as the literal `-1` where the listing symbolizes `e_ST_UNDEFINED` ([MOX_BASE.h:75](../../MoX/src/MOX_BASE.h#L75)) — same value.
 - **Body order inside the loop** — endurance test, then `enchantments |=`, then `item_moves2 +=`. Production [1552-1558](../../MoM/src/NEXTTURN.c#L1552-L1558).
-- **The item index is the slot's contents, not the slot number** — the listing loads `hero_items[itr]` and only then scales by `size s_ITEM`. Production [1556-1557](../../MoM/src/NEXTTURN.c#L1556-L1557) keeps the indirection. `s_ITEM.Powers` sits at offset `0x2E` ([MOM_DAT.h:1219](../../MoX/src/MOM_DAT.h#L1219)), which is the field the listing ORs as a dword.
+- **The item index is the slot's contents, not the slot number** — the listing loads `hero_items[itr]` and only then scales by `size s_ITEM`. Production [1556-1557](../../MoM/src/NEXTTURN.c#L1556-L1557) keeps the indirection. `s_ITEM.powers` sits at offset `0x2E` ([MOM_DAT.h:1219](../../MoX/src/MOM_DAT.h#L1219)), which is the field the listing ORs as a dword.
 - **`moves2 = moves2_base` before the unit-enchantment OR** — asm order. Production [1564-1565](../../MoM/src/NEXTTURN.c#L1564-L1565). The listing names the field `Move_Halves` (`WIZARDS.inc:672`); production renamed it `moves2_base` ([UNITTYPE.h:283](../../MoM/src/UNITTYPE.h#L283)) — same field, `s_UNIT_TYPE` offset `0x09`.
 - **Flight floor 6** — `moves2 < 6` outer, `enchantments & UE_FLIGHT` inner. Production [1566](../../MoM/src/NEXTTURN.c#L1566).
 - **Mutation flight floor 4** — mutation test outer, `moves2 < 4` inner (the reverse nesting of the block above, and the listing agrees). Production [1573](../../MoM/src/NEXTTURN.c#L1573).
@@ -247,6 +247,6 @@ No `stub_wip_todo.md` boxes to check for any of the six functions.
 - [test_Combat_Structure_Index.cpp](../../MoM/tests/test_Combat_Structure_Index.cpp) — pins the central-structure square against the `0EDh` displacement in `ovr091/Assign_Combat_Grids.asm` and `ovr124/BU_SetCityMovement.asm`.
 - [CMBTDEF.h](../../MoM/src/CMBTDEF.h) — city-area, gate, lair, city-interior and action-map cell constants.
 - [Combat.c](../../MoM/src/Combat.c) — `Move_Battle_Unit__WIP` repeats the same cost-map seeding sequence; `Battle_Unit_Action` consumes the action map. Neither is reviewed yet.
-- [MOX_DEF.h:399](../../MoX/src/MOX_DEF.h#L399) — `ITEM_POWER` still reads item powers through `GET_4B_OFS(..., 0x2E)`; the commented-out form directly above it uses `.Powers`, which now exists.
+- [MOX_DEF.h:399](../../MoX/src/MOX_DEF.h#L399) — `ITEM_POWER` still reads item powers through `GET_4B_OFS(..., 0x2E)`; the commented-out form directly above it uses `.powers`, which now exists.
 - C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr121\Unit_Moves2.asm
 - C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr124\BU_SetCityMovement.asm

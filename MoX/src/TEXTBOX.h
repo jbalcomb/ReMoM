@@ -104,6 +104,12 @@ Module: TEXTBOX
 extern "C" {
 #endif
 
+// WZD dseg:7118
+extern uint8_t COL_HLP_Titles[];
+
+// WZD dseg:711D
+extern uint8_t COL_HLP_Text[];
+
 
 
 /*

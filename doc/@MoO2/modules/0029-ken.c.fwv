@@ -1,0 +1,22 @@
+module_num=29
+module=D:\MOX\OTHERS\KEN.C
+source=0029-ken.c.md
+range[0]=1:0x000485C4 linear=0x000585C4 size=2438
+range[1]=2:0x00000ED8 linear=0x00170ED8 size=36
+range[2]=2:0x00009090 linear=0x00179090 size=140
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                      SYMBOL                                     CHUNK
+m029f001    1    -      0x000585E0  1:0x000485E0  code  Load_Player_Ship_Palette                  Load_Player_Ship_Palette_                  regions/07-object-1/000DD654-000DDE53.txt
+m029f002    2    -      0x00058678  1:0x00048678  code  Get_Ship_Id_Picture_Seg                   Get_Ship_Id_Picture_Seg_                   regions/07-object-1/000DD654-000DDE53.txt
+m029f003    3    -      0x00058697  1:0x00048697  code  Get_Ship_Picture_Seg                      Get_Ship_Picture_Seg_                      regions/07-object-1/000DD654-000DDE53.txt
+m029f004    4    -      0x0005869B  1:0x0004869B  code  Get_Ship_Picture_Segk                     Get_Ship_Picture_Segk_                     regions/07-object-1/000DD654-000DDE53.txt
+m029f005    5    1/2    0x000586D3  1:0x000486D3  code  Ken_Defaults                              Ken_Defaults_                              regions/07-object-1/000DD654-000DDE53.txt
+m029f005_2  5    2/2    0x000586D3  1:0x000486D3  code  Ken_Init                                  Ken_Init_                                  regions/07-object-1/000DD654-000DDE53.txt
+m029f006    6    -      0x000586D4  1:0x000486D4  code  Get_Weighted_Choice                       Get_Weighted_Choice_                       regions/07-object-1/000DD654-000DDE53.txt
+m029f007    7    -      0x0005874B  1:0x0004874B  code  Get_Weighted_Choice_Long                  Get_Weighted_Choice_Long_                  regions/07-object-1/000DD654-000DDE53.txt
+m029f008    8    -      0x000587B3  1:0x000487B3  code  Get_Weighted_Best_Choice                  Get_Weighted_Best_Choice_                  regions/07-object-1/000DD654-000DDE53.txt
+m029f009    9    -      0x00058807  1:0x00048807  code  Get_Weighted_Choice_Best_Long             Get_Weighted_Choice_Best_Long_             regions/07-object-1/000DDE54-000DE653.txt
+m029f010    10   -      0x00058853  1:0x00048853  code  Get_Derelict_Applications                 Get_Derelict_Applications_                 regions/07-object-1/000DDE54-000DE653.txt
+m029f011    11   -      0x000589D6  1:0x000489D6  code  Init_NPC_Personalities_Objectives_Themes  Init_NPC_Personalities_Objectives_Themes_  regions/07-object-1/000DDE54-000DE653.txt
+m029f012    12   -      0x00058F1E  1:0x00048F1E  code  Ken_Get_Text_Message                      Ken_Get_Text_Message_                      regions/07-object-1/000DDE54-000DE653.txt

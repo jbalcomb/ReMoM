@@ -17,7 +17,7 @@ reason the data can't live directly in the binary.
 Embed all start-up game data into the compiled binary so that ReMoM can initialise and run
 with **zero original game files** present.
 
-This is not a headless-testing concern (that's a separate problem about having no
+This is not a windowless-testing concern (that's a separate problem about having no
 video/input/sound *hardware*).  This is purely about not needing the *files*.
 
 ## What's Not In Scope
@@ -26,7 +26,7 @@ video/input/sound *hardware*).  This is purely about not needing the *files*.
   FONTS.LBX bytes are in scope here because init needs them.
 - Data loaded after the init sequence (save files, combat-time assets, etc.).
 - Changes to the LBX loading infrastructure itself.
-- HeMoM headless concerns (no-video, no-input, no-sound stubs).
+- DeMoM windowless concerns (no-video, no-input, no-sound stubs).
 
 ## Init Sequence Data Inventory
 
@@ -185,7 +185,7 @@ replaces the file read as the source of the bytes.
       calls `Emit_C_Byte_Array()`
 - [ ] **1.3** Add `Extract_All_Init_Data()` — calls `Extract_LBX_Subfile_To_C()` for every
       entry in the init inventory (all files/entries from the table above)
-- [ ] **1.4** Wire `Extract_All_Init_Data()` into a callable path (HeMoM command or
+- [ ] **1.4** Wire `Extract_All_Init_Data()` into a callable path (DeMoM command or
       standalone tool in `tools/`)
 - [ ] **1.5** Run the extraction tool against the original game files
 - [ ] **1.6** Create `MoM/src/Init_Data/` directory

@@ -1,0 +1,8 @@
+module_num=158
+module=fread
+source=0158-fread.md
+range[0]=1:0x001188DB linear=0x001288DB size=475
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m158f001  1    -      0x001288DB  1:0x001188DB  code  fread  fread_  regions/07-object-1/001ADE54-001AE653.txt

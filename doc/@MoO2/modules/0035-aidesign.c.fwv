@@ -1,0 +1,38 @@
+module_num=35
+module=D:\MOX\OTHERS\AIDESIGN.C
+source=0035-aidesign.c.md
+range[0]=1:0x0004F8BF linear=0x0005F8BF size=11531
+range[1]=2:0x00009128 linear=0x00179128 size=1544
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                    SYMBOL                                   CHUNK
+m035f001  1    -      0x0005F8D1  1:0x0004F8D1  code  Get_Competition_Player_Tech_Values      Get_Competition_Player_Tech_Values_      regions/07-object-1/000E4E54-000E5653.txt
+m035f002  2    -      0x0005F927  1:0x0004F927  code  Human_Player_Best_Weapons_Are_Beams     Human_Player_Best_Weapons_Are_Beams_     regions/07-object-1/000E4E54-000E5653.txt
+m035f003  3    -      0x0005F968  1:0x0004F968  code  Fighters_Available                      Fighters_Available_                      regions/07-object-1/000E4E54-000E5653.txt
+m035f004  4    -      0x0005F9A0  1:0x0004F9A0  code  Special_Weapons_Available               Special_Weapons_Available_               regions/07-object-1/000E4E54-000E5653.txt
+m035f005  5    -      0x0005F9EA  1:0x0004F9EA  code  Special_Devices_Available               Special_Devices_Available_               regions/07-object-1/000E4E54-000E5653.txt
+m035f006  6    -      0x0005FA87  1:0x0004FA87  code  Get_Ship_Class                          Get_Ship_Class_                          regions/07-object-1/000E4E54-000E5653.txt
+m035f007  7    -      0x0005FD8C  1:0x0004FD8C  code  Special_Legal_For_Design                Special_Legal_For_Design_                regions/07-object-1/000E4E54-000E5653.txt
+m035f008  8    -      0x0005FE14  1:0x0004FE14  code  Add_Specials_To_Design                  Add_Specials_To_Design_                  regions/07-object-1/000E4E54-000E5653.txt
+m035f009  9    -      0x000600BF  1:0x000500BF  code  Add_Theme_Special_To_Design             Add_Theme_Special_To_Design_             regions/07-object-1/000E5654-000E5E53.txt
+m035f010  10   -      0x000601AC  1:0x000501AC  code  Add_Fighters_To_Design                  Add_Fighters_To_Design_                  regions/07-object-1/000E5654-000E5E53.txt
+m035f011  11   -      0x00060362  1:0x00050362  code  Determine_Missile_Weapon_Modifications  Determine_Missile_Weapon_Modifications_  regions/07-object-1/000E5654-000E5E53.txt
+m035f012  12   -      0x00060779  1:0x00050779  code  Add_Missile_Weapon_To_Design            Add_Missile_Weapon_To_Design_            regions/07-object-1/000E5654-000E5E53.txt
+m035f013  13   -      0x000608AF  1:0x000508AF  code  Determine_Bomb_Weapon                   Determine_Bomb_Weapon_                   regions/07-object-1/000E5E54-000E6653.txt
+m035f014  14   -      0x00060A5D  1:0x00050A5D  code  Add_Bomb_Weapon_To_Design               Add_Bomb_Weapon_To_Design_               regions/07-object-1/000E5E54-000E6653.txt
+m035f015  15   -      0x00060B59  1:0x00050B59  code  Determine_Beam_Weapon_Modifications     Determine_Beam_Weapon_Modifications_     regions/07-object-1/000E5E54-000E6653.txt
+m035f016  16   -      0x0006147F  1:0x0005147F  code  Add_Beam_Weapon_To_Design               Add_Beam_Weapon_To_Design_               regions/07-object-1/000E6654-000E6E53.txt
+m035f017  17   -      0x000616A5  1:0x000516A5  code  Auto_Design_Ship                        Auto_Design_Ship_                        regions/07-object-1/000E6654-000E6E53.txt
+-         -    -      0x00179128  2:0x00009128  data  _bio_weapon_spcl                        _bio_weapon_spcl                         regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017913C  2:0x0000913C  data  _capture_spcl                           _capture_spcl                            regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179150  2:0x00009150  data  _cloaking_spcl                          _cloaking_spcl                           regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017915C  2:0x0000915C  data  _beam_defense_spcl                      _beam_defense_spcl                       regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017916C  2:0x0000916C  data  _missile_defense_spcl                   _missile_defense_spcl                    regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017918C  2:0x0000918C  data  _armor_spcl                             _armor_spcl                              regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179198  2:0x00009198  data  _shield_spcl                            _shield_spcl                             regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x001791A4  2:0x000091A4  data  _beam_offense_spcl                      _beam_offense_spcl                       regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x001791C0  2:0x000091C0  data  _missile_offense_spcl                   _missile_offense_spcl                    regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x001791C8  2:0x000091C8  data  _special_weapons_spcl                   _special_weapons_spcl                    regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x001791DC  2:0x000091DC  data  _special_device_spcl                    _special_device_spcl                     regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017920C  2:0x0000920C  data  _defense_specials_f_spcl                _defense_specials_f_spcl                 regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179258  2:0x00009258  data  _defense_specials_t_spcl                _defense_specials_t_spcl                 regions/08-object-2/001F7654-001F7E53.txt

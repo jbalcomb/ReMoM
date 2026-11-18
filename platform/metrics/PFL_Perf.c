@@ -17,7 +17,7 @@
  * The deliberate consequence: a capture that dies before Perf_Shutdown() (SIGSEGV, kill) is LOST.
  * That is the opposite trade from PFL_Input_Metrics, which flushes every ~0.5 s because its job is
  * diagnosing sessions that crash.  A zone capture's job is profiling a DETERMINISTIC scenario
- * (HeMoM headless with a fixed seed and a committed save) -- if it crashes you rerun it and get the
+ * (DeMoM headless with a fixed seed and a committed save) -- if it crashes you rerun it and get the
  * same run back, so buying crash-safety with a periodic fflush inside somebody's timed region
  * would be paying the observer effect for nothing.  If the record buffer does fill mid-run, the
  * rows are drained to disk at that moment and the file records a #note so the perturbed region is

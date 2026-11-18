@@ -1,0 +1,13 @@
+module_num=184
+module=video\setvesa.asm
+source=0184-setvesa.asm.md
+range[0]=1:0x00128C34 linear=0x00138C34 size=478
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                     SYMBOL                    CHUNK
+m184f001  1    -      0x00138C34  1:0x00128C34  code  Set_Bank_Write_Vesa      Set_Bank_Write_Vesa_      regions/07-object-1/001BDE54-001BE653.txt
+m184f002  2    -      0x00138C58  1:0x00128C58  code  Set_Bank_Read_Vesa       Set_Bank_Read_Vesa_       regions/07-object-1/001BDE54-001BE653.txt
+m184f003  3    -      0x00138C87  1:0x00128C87  code  Switch_Video_Pages_Vesa  Switch_Video_Pages_Vesa_  regions/07-object-1/001BDE54-001BE653.txt
+m184f004  4    -      0x00138CB0  1:0x00128CB0  code  Get_Bank_Write_Vesa      Get_Bank_Write_Vesa_      regions/07-object-1/001BDE54-001BE653.txt
+m184f005  5    -      0x00138CE0  1:0x00128CE0  code  Fast_Screen_Block_Copy   Fast_Screen_Block_Copy_   regions/07-object-1/001BDE54-001BE653.txt
+m184f006  6    -      0x00138CEE  1:0x00128CEE  code  Add_Square_To_Scan_List  Add_Square_To_Scan_List_  regions/07-object-1/001BDE54-001BE653.txt

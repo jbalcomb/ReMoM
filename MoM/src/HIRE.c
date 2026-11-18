@@ -154,7 +154,7 @@ int16_t GAME_AssetCost;
     WIZARDS.EXE  ovr127
 */
 
-// WZD s127p01
+// WZD o127p01
 // drake178: EVNT_LoadMerchantWnd()
 /*
 ; redraws the overland map, saves it to the third VGA
@@ -188,7 +188,7 @@ void Merchant_Popup_Load(void)
 }
 
 
-// WZD s127p02
+// WZD o127p02
 // drake178: EVNT_DrawMerchantWnd()
 void Merchant_Popup_Draw(void)
 {
@@ -234,7 +234,7 @@ void Merchant_Popup_Draw(void)
 }
 
 
-// WZD s127p03
+// WZD o127p03
 // drake178: EVNT_MerchantDialog()
 void Merchant_Popup(void)
 {
@@ -265,9 +265,10 @@ void Merchant_Popup(void)
 
     Set_Font_Style(4, 4, 0, 0);
 
-    merchant_buy_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 121), cnst_Merchant_Msg_4, IMG_MerchantBtns, empty_string__ovr127[0], ST_UNDEFINED);
+    merchant_buy_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 121), cnst_Merchant_Msg_4, IMG_MerchantBtns, empty_string__ovr127, ST_UNDEFINED);
 
-    merchant_reject_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 140), cnst_Merchant_Msg_5, IMG_MerchantBtns, ST_UNDEFINED, ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    merchant_reject_button = Add_Button_Field((merchant_popup_x_start + 252), (merchant_popup_y_start + 140), cnst_Merchant_Msg_5, IMG_MerchantBtns, "", ST_UNDEFINED);
 
     Assign_Auto_Function(Merchant_Popup_Draw, 2);
 
@@ -317,7 +318,7 @@ void Merchant_Popup(void)
 }
 
 
-// WZD s127p04
+// WZD o127p04
 void Hire_Hero_Load(int16_t unit_type)
 {
 
@@ -356,7 +357,7 @@ void Hire_Hero_Load(int16_t unit_type)
 }
 
 
-// WZD s127p05
+// WZD o127p05
 /*
 
 ; redraws the hero hiring screen onto a background
@@ -432,7 +433,7 @@ void Hire_Hero_Popup_Draw(void)
 }
 
 
-// WZD s127p06
+// WZD o127p06
 /*
 
 ; displays and processes the hero hiring screen,
@@ -492,14 +493,14 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     Set_Button_Down_Offsets(1, 1);
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     window_x = 25;
     window_y = 17;
 
     stu_strcpy(_players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, hirehero_unit_type_name);
 
-    Hire_Success = WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
+    Hire_Success = Hire_Hero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE);
 
     // ; conflicting condition - will always jump
     if(Hire_Success == ST_FALSE)
@@ -513,7 +514,10 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
     GAME_AssetCost = (_unit_type_table[unit_type_idx].cost + ((_UNITS[(_units - 1)].Level * _unit_type_table[unit_type_idx].cost) / 4));
 
+    /* OGBUG  the offer is tested against the FULL price (cost + level x cost / 4) and only afterwards halved for Charismatic, so a Charismatic wizard who could pay the halved price is never offered the hero; an unaffordable paid offer raises the hero's level by 1 (below 4) before it is dismissed */
     if(
+        // (_players[HUMAN_PLAYER_IDX].gold_reserve < GAME_AssetCost)
+        /* CLAUDE */  /* REBUG */  /* asm: mov ax, [_players.gold_reserve] / cmp ax, [GAME_AssetCost] / jl (signed) */
         (_players[HUMAN_PLAYER_IDX].gold_reserve < GAME_AssetCost)
         &&
         (hire_type == 0)
@@ -558,18 +562,19 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
     {
 
         // ¿ "[H]ire" ?
-        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127[0], ST_UNDEFINED);
+        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, str_hotkey_H__ovr127, ST_UNDEFINED);
 
     }
     else
     {
 
         // ¿ "[A]ccept" ?
-        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127[0], ST_UNDEFINED);
+        hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_8, red_button_seg, str_hotkey_A__ovr127, ST_UNDEFINED);
 
     }
 
-    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, "", ST_UNDEFINED);
 
     UV_Add_Specials_Fields((window_x + 8), (window_y + 108), uv_specials_list_array, uv_specials_list_count, uv_specials_list_index);
 
@@ -615,7 +620,13 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
             Play_Left_Click__DUPE();
 
-            if(_UNITS[(_units - 1)].Level < 4)
+            // if(_UNITS[(_units - 1)].Level < 4)
+            /* CLAUDE */  /* REBUG */  /* asm: cmp [es:bx+s_UNIT.Level], 4 / jge / cmp [bp+hire_type], 0 / jnz (the level-up is for paid offers only) */
+            if(
+                (_UNITS[(_units - 1)].Level < 4)
+                &&
+                (hire_type == 0)
+            )
             {
 
                 _UNITS[(_units - 1)].Level += 1;
@@ -624,7 +635,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
             }
             
-            Kill_Unit((_units - 1), 1);
+            Kill_Unit((_units - 1), kt_Dismissed);
 
         }
         /*
@@ -651,7 +662,9 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
             }
             
             // DEDU  Is this for real? Who would ever and/or why?
-            if((GAME_HeroHireType % 2) != 0)  // ~== 1 or 3  Summon Hero or Champion
+            // if((GAME_HeroHireType % 2) != 0)  // ~== 1 or 3  Summon Hero or Champion
+            /* CLAUDE */  /* REBUG */  /* asm: mov bx, 2 / cwd / idiv bx / cmp dx, 1 / jnz */
+            if((GAME_HeroHireType % 2) == 1)  // ~== 1 or 3  Summon Hero or Champion
             {
 
                 _UNITS[(_units - 1)].wx = (int8_t)_players[HUMAN_PLAYER_IDX].summon_wx;
@@ -700,7 +713,10 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 
         // // int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t colors[], int16_t help)
         // Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0], ST_UNDEFINED);
-        Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0]);
+        // Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], empty_string__ovr127[0]);
+        /* OGBUG  the asm pushes 11 arguments to the 10-parameter Setup_Input_Box_Popup(): help receives the offset of empty_string__ovr127 (dseg:6508), and the trailing ST_UNDEFINED is never read */
+        /* CLAUDE */  /* REBUG */  /* asm: mov ax, offset empty_string__ovr127 / push ax (the help parameter) - not the string's first byte */
+        Setup_Input_Box_Popup((window_x + 45), (window_y + 75), 120, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, (LEN_HERO_NAME - 1), 0, 0, 0, &Name_Edit_Colors[0], 25864);  /* HACK  25864 = 6508h, the dseg offset of empty_string__ovr127 the OG passes as help */
 
         stu_strcpy(hero_names_table[unit_type_idx].name, _players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name);
 
@@ -723,7 +739,7 @@ int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hi
 }
 
 
-// WZD s127p07
+// WZD o127p07
 // drake178: EVNT_DrawMercHire()
 void Hire_Merc_Popup_Draw(void)
 {
@@ -767,7 +783,7 @@ void Hire_Merc_Popup_Draw(void)
 }
 
 
-// WZD s127p08
+// WZD o127p08
 // drake178: EVNT_MercHireDialog()
 /*
 ; displays and processes the mercenary hire dialog
@@ -835,9 +851,10 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 
     Set_Font_Style(4, 4, 0, 0);
 
-    hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, empty_string__ovr127[0], ST_UNDEFINED);
+    hire_button_field = Add_Button_Field((window_x + 221), (window_y + 143), cnst_Hire_Msg_7, red_button_seg, empty_string__ovr127, ST_UNDEFINED);
 
-    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, ST_UNDEFINED, ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    reject_button_field = Add_Button_Field((window_x + 221), (window_y + 162), cnst_Merchant_Msg_5, red_button_seg, "", ST_UNDEFINED);
 
     Set_Font_Style(0, 0, 2, 0);
 
@@ -906,7 +923,7 @@ int16_t Hire_Merc_Popup(int16_t type, int16_t count, int16_t level, int16_t cost
 }
 
 
-// WZD s127p09
+// WZD o127p09
 // drake178: AI_OfferHero()
 /*
 ; checks whether the player can afford the hero (cost
@@ -924,16 +941,18 @@ void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type
 
     unit_cost = _unit_type_table[unit_type_idx].cost;
 
+    /* OGBUG  the AI pays the base UnitType cost only, with no level surcharge (the human pays cost + level x cost / 4), halved for Charismatic, and hires when that is at most 90% of its gold */
     if(_players[player_idx].charismatic > 0)
     {
         unit_cost /= 2;  // 50%  half price
     }
 
-    allowance = ((_players[player_idx].gold_reserve * 100) / 90);
+    // allowance = ((_players[player_idx].gold_reserve * 100) / 90);
+    /* CLAUDE */  /* REBUG */  allowance = (int16_t)(((int32_t)_players[player_idx].gold_reserve * 90) / 100);  /* asm: cwd (signed), LXMUL@ (gold_reserve, 90) / LDIV@ (product, 100) - 90% of the gold */
 
     if(allowance >= unit_cost)
     {
-        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, ST_FALSE);
+        Hero_Hired = Hire_Hero(player_idx, unit_type_idx, hero_slot_idx, ST_FALSE);
 
         if(Hero_Hired == ST_FALSE)
         {

@@ -1,0 +1,8 @@
+module_num=357
+module=write
+source=0357-write.md
+range[0]=1:0x00150069 linear=0x00160069 size=469
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m357f001  1    -      0x00160069  1:0x00150069  code  write  write_  regions/07-object-1/001E5654-001E5E53.txt

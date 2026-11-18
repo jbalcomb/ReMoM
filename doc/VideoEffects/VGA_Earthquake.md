@@ -8,7 +8,7 @@ OON XREF: VGA_PartCopyFromF3()
 ## VGA_PartCopyFromF3()
 XREF:
     Call_Forth_The_Force_Of_Nature()
-    Cast_Spell_City_Enchantment_Animation_1__WIP() ... (spell_idx == spl_Earthquake)
+    City_Enchantment_Anim_1__WIP() ... (spell_idx == spl_Earthquake)
 
 
 

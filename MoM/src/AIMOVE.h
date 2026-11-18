@@ -81,10 +81,10 @@ void AI_Move_Out_Boats(void);
 void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp);
 
 // WZD o158p20
-void AI_Stacks_Survey_Expedition_Forces(void);
+void AI_Survey_Expedition_Forces(void);
 
 // WZD o158p21
-void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
+void AI_Survey_Expedition_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count);
 
 // WZD o158p22
 void AI_Stacks_Do_Meld(int16_t player_idx);
@@ -254,10 +254,6 @@ void AI_Evaluation_Map(int16_t player_idx);
 // WZD o162p37
 void AI_Choose_War_Landmass(int16_t player_idx);
 
-/* GD capture (defined in AIMOVE.c) -- dump the CONTXXX land/dock square arrays.
- * Called at 605/606 (AICWL) and at 315/316 (Build_*_Linked_List return). */
-void gd_dump_ai_landmass_squares(const char* point);
-void gd_dump_ai_dock_squares(const char* point);
 
 // WZD o162p38
 void Player_Clear_All_Unit_Orders(int16_t player_idx);

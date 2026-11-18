@@ -1,0 +1,12 @@
+module_num=134
+module=argcv386
+source=0134-argcv386.md
+range[0]=2:0x0000C36C linear=0x0017C36C size=8
+range[1]=2:0x00012FE6 linear=0x00182FE6 size=6
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL   CHUNK
+-    -    -      0x0017C36C  2:0x0000C36C  data  __argc   __argc   regions/08-object-2/001FA654-001FAE53.txt
+-    -    -      0x0017C36C  2:0x0000C36C  data  ___argc  ___argc  regions/08-object-2/001FA654-001FAE53.txt
+-    -    -      0x0017C370  2:0x0000C370  data  __argv   __argv   regions/08-object-2/001FA654-001FAE53.txt
+-    -    -      0x0017C370  2:0x0000C370  data  ___argv  ___argv  regions/08-object-2/001FA654-001FAE53.txt

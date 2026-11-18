@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
 refresh_asserts.py — refresh the value side of an assertion file from a current
-HeMoM save dump, preserving comments, blank lines, and the order/curation of
+DeMoM save dump, preserving comments, blank lines, and the order/curation of
 fields in the assertion file.
 
 Why this exists
 ---------------
-The integration tests (HeMoM_WorldGen_Fields, HeMoM_NextTurn_Assertions, etc.)
+The integration tests (DeMoM_WorldGen_Fields, DeMoM_NextTurn_Assertions, etc.)
 compare a curated subset of fields against expected values defined in
 tests/assert_*.txt.  When game-state changes intentionally — world-gen tweak,
 AI tweak, scenario change — the expected values drift out of date.  This tool
@@ -104,7 +104,7 @@ def refresh_lines(asserts_path, dump):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description=('Refresh expected values in an assertion file from a '
-                     'current HeMoM save dump.'))
+                     'current DeMoM save dump.'))
     ap.add_argument('--dump', required=True,
                     help='Path to the .txt dump (savedump output / '
                          '--dump-save .txt result).')

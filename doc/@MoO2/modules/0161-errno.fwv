@@ -1,0 +1,12 @@
+module_num=161
+module=errno
+source=0161-errno.md
+range[0]=1:0x00119C88 linear=0x00129C88 size=12
+range[1]=2:0x0004429C linear=0x001B429C size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                SYMBOL               CHUNK
+m161f001  1    -      0x00129C88  1:0x00119C88  code  __get_errno_ptr     __get_errno_ptr_     regions/07-object-1/001AEE54-001AF653.txt
+m161f002  2    -      0x00129C8E  1:0x00119C8E  code  __get_doserrno_ptr  __get_doserrno_ptr_  regions/07-object-1/001AEE54-001AF653.txt
+-         -    -      0x001B429C  2:0x0004429C  data  _errno              _errno               -
+-         -    -      0x001B42A0  2:0x000442A0  data  __doserrno          __doserrno           -

@@ -27,7 +27,7 @@ blobs seeded on forest squares.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:500-504](../../MoM/src/MAPGEN.c#L500-L504) | Called once per plane; followed by `gd_dump_world_map("05_ClimateTerrain_W")`. |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:349-353](../../MoM/src/MAPGEN.c#L349-L353) | Called once per plane; followed by `STU_GD_Dump_World_Map("106_ClimateTerrain_W")` ([357](../../MoM/src/MAPGEN.c#L357)). |
 
 ## RNG footprint (alignment-critical)
 

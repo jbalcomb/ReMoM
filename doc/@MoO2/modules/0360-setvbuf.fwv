@@ -1,0 +1,8 @@
+module_num=360
+module=setvbuf
+source=0360-setvbuf.md
+range[0]=1:0x00150291 linear=0x00160291 size=103
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m360f001  1    -      0x00160291  1:0x00150291  code  setvbuf  setvbuf_  regions/07-object-1/001E5654-001E5E53.txt

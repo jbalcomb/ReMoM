@@ -133,6 +133,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
     {
         a_cost_was_updated = ST_FALSE;
         max_x = COMBAT_GRID_WIDTH - 2;
+        /* OGBUG  the sweep covers rows 0 .. 19 only: rows 20 and 21 of the 22-row grid are never relaxed, so their cells keep INF (unless one is the source) and no path ends there */
         max_y = COMBAT_GRID_HEIGHT - 2;
         ctr = 0; /* 1D Array Index Counter */
 
@@ -178,6 +179,7 @@ void Combat_Move_Path_Find(int16_t source_cgx, int16_t source_cgy, int16_t desti
 
     /* Temp array to hold the raw index path */
     /* THE HIJACK: Aim the global pointer at the terrain cost map */
+    /* OGBUG  the reversed path list (2 bytes per step) is built in _cmbt_movepath_cost_map[] itself, so after a search the first cells of the cost map hold path indices instead of costs - mostly-impassable (INF) top-row cells become 'passable' with small costs; callers that search again without rebuilding the map (Do_Auto_Unit_Turn()'s city-square search) path over the damaged map */
     m_movement_path_grid_cell_index = (int16_t *)_cmbt_movepath_cost_map;
 
     movement_path_grid_cell_count = 0;
@@ -239,6 +241,7 @@ void Combat_Move_Path_Valid(int16_t source_cgx, int16_t source_cgy, int16_t move
         a_cost_was_updated = ST_FALSE;
         
         max_x = COMBAT_GRID_WIDTH - 2;  /* 19 */
+        /* OGBUG  the sweep covers rows 0 .. 19 only: rows 20 and 21 of the 22-row grid are never relaxed, so their cells keep INF (unless one is the source) and are never marked reachable */
         max_y = COMBAT_GRID_HEIGHT - 2; /* 20 */
         
         ctr = 0; /* Current 1D grid index */

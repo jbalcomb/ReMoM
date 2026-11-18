@@ -1,0 +1,8 @@
+module_num=254
+module=ioalloc
+source=0254-ioalloc.md
+range[0]=1:0x00137503 linear=0x00147503 size=119
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME       SYMBOL      CHUNK
+m254f001  1    -      0x00147503  1:0x00137503  code  __ioalloc  __ioalloc_  regions/07-object-1/001CC654-001CCE53.txt

@@ -204,17 +204,18 @@ extern "C" {
     /* C and Asm Function Prototypes */
 
 
+
 /*
-    WIZARDS.EXE  seg035
-    MAGIC.EXE  seg033
+    MAGIC.EXE   seg033
+    WIZARDS.EXE seg035
 */
 
-// WZD s35p14
-// MGC s33p14
+// MGC s33p16
+// WZD s35p16
 int16_t Keyboard_Status(void);
 
-// WZD s35p15
-// MGC s33p15
+// MGC s33p17
+// WZD s35p17
 uint8_t Read_Key(void);
 
 
@@ -223,9 +224,15 @@ uint8_t Read_Key(void);
     MAGIC.EXE  seg034
 */
 
-// WZD s36p22
+// MGC s34p21
+// WZD s36p21
+// drake178: RP_GUI_KeyInputOnly()
+int16_t Interpret_Keyboard_Only_Input(void);
+
 // MGC s34p22
-uint8_t Interpret_Keyboard_Input(int16_t * field_num);
+// WZD s36p22
+int16_t Interpret_Keyboard_Input(int16_t * field_num);
+
 
 
 #ifdef __cplusplus

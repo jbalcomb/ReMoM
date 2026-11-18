@@ -1,0 +1,8 @@
+module_num=300
+module=cinit
+source=0300-cinit.md
+range[0]=1:0x00143E24 linear=0x00153E24 size=105
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL         CHUNK
+m300f001  1    -      0x00153E24  1:0x00143E24  code  __CommonInit  __CommonInit_  regions/07-object-1/001D8E54-001D9653.txt

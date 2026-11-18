@@ -125,12 +125,12 @@ Navigation reference for `MoM/src/AIMOVE.c` (~7400 lines). One row per function,
 - **End:** ~line 3586
 - **Purpose:** Push non-military units (Settlers, Engineers, Melders not on a node) out of Garrison/FortressGarrison stacks to an adjacent free square. See [AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md).
 
-### `AI_Stacks_Survey_Expedition_Forces` — [line 3610](../../MoM/src/AIMOVE.c#L3610)
+### `AI_Survey_Expedition_Forces` — [line 3610](../../MoM/src/AIMOVE.c#L3610)
 - **drake178:** `AI_Survey_Excess_Units()` (o158p20)
 - **End:** ~line 3664
-- **Purpose:** Dispatch slot 3 — clears the `G_Pushout_*` and `G_Seafaring_*` pools, then iterates `_ai_own_stack_*` and submits qualifying stacks to `AI_Stacks_Survey_Expedition_Forces_Stack`. Per-stack-type submission rules: Unknown/Roamer = all units; Garrison = excess above 5; FortressGarrison = excess above 5 only when `_turn < 100`.
+- **Purpose:** Dispatch slot 3 — clears the `G_Pushout_*` and `G_Seafaring_*` pools, then iterates `_ai_own_stack_*` and submits qualifying stacks to `AI_Survey_Expedition_Stack`. Per-stack-type submission rules: Unknown/Roamer = all units; Garrison = excess above 5; FortressGarrison = excess above 5 only when `_turn < 100`.
 
-### `AI_Stacks_Survey_Expedition_Forces_Stack` — [line 3697](../../MoM/src/AIMOVE.c#L3697)
+### `AI_Survey_Expedition_Stack` — [line 3697](../../MoM/src/AIMOVE.c#L3697)
 - **drake178:** (no drake name) (o158p21)
 - **End:** ~line 3911
 - **Purpose:** Per-stack scorer — filters to military units (no engineers/settlers/melders/transports), assigns values (OGBUG: bogus random instead of real strength), bubble-sorts, truncates to excess_count, and inserts the top candidates into the `G_Pushout_*` pool (and the `G_Seafaring_*` pool for water-capable units). See [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) for the pool structure.

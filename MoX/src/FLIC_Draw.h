@@ -262,7 +262,7 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header);
 void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t Angle, SAMB_ptr IMG_Seg);
 
 // WZD s30p21
-void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width);
+int16_t Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width);
 
 // WZD s30p22
 void UU_VGA_WndDrawTransform(int16_t lm_x, int16_t lm_y, int16_t rm_x, int16_t rm_y, SAMB_ptr pict_seg);
@@ -397,7 +397,6 @@ void Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr p
 void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte_ptr pict_seg, int16_t width, int16_t height, int16_t skip_x);
 
 // WZD s33p07
-// MoO2  Module: draw  Color_Stream_Copy_()
 void Mask_Bitmap_Pixels(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height);
 
 // WZD s33p08

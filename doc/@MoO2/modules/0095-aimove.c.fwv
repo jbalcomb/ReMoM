@@ -1,0 +1,54 @@
+module_num=95
+module=D:\MOX\OTHERS\AIMOVE.C
+source=0095-aimove.c.md
+range[0]=1:0x000C7662 linear=0x000D7662 size=18466
+range[1]=2:0x0003223C linear=0x001A223C size=20
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                      SYMBOL                                     CHUNK
+m095f001  1    -      0x000D7662  1:0x000C7662  static,code  Sort_colonizable                          Sort_colonizable_                          regions/07-object-1/0015C654-0015CE53.txt
+m095f002  2    -      0x000D7669  1:0x000C7669  code         AI_May_Attack_Player                      AI_May_Attack_Player_                      regions/07-object-1/0015C654-0015CE53.txt
+m095f003  3    -      0x000D76B8  1:0x000C76B8  code         Get_Colonizable_Planets                   Get_Colonizable_Planets_                   regions/07-object-1/0015C654-0015CE53.txt
+m095f004  4    -      0x000D7764  1:0x000C7764  static,code  Delete_Already_Assigned_Planets           Delete_Already_Assigned_Planets_           regions/07-object-1/0015C654-0015CE53.txt
+m095f005  5    -      0x000D7923  1:0x000C7923  static,code  Move_Ships_With_Possible_Intermediate     Move_Ships_With_Possible_Intermediate_     regions/07-object-1/0015CE54-0015D653.txt
+m095f006  6    -      0x000D7B48  1:0x000C7B48  static,code  Get_Best_Unescorted_Colony_Ship           Get_Best_Unescorted_Colony_Ship_           regions/07-object-1/0015CE54-0015D653.txt
+m095f007  7    -      0x000D7C04  1:0x000C7C04  static,code  Get_Enemy_Strength_On_Turn                Get_Enemy_Strength_On_Turn_                regions/07-object-1/0015CE54-0015D653.txt
+m095f008  8    -      0x000D7D53  1:0x000C7D53  static,code  Ship_Rough_Strength_At_Star               Ship_Rough_Strength_At_Star_               regions/07-object-1/0015CE54-0015D653.txt
+m095f009  9    -      0x000D7F34  1:0x000C7F34  static,code  Ship_Min_Strength_Versus_Players_At_Star  Ship_Min_Strength_Versus_Players_At_Star_  regions/07-object-1/0015CE54-0015D653.txt
+m095f010  10   -      0x000D7FF7  1:0x000C7FF7  static,code  Get_Best_Escorted_Colony_Ship             Get_Best_Escorted_Colony_Ship_             regions/07-object-1/0015CE54-0015D653.txt
+m095f011  11   -      0x000D87BB  1:0x000C87BB  static,code  I_Soonest_Enemy_Colony_Ship               I_Soonest_Enemy_Colony_Ship_               regions/07-object-1/0015D654-0015DE53.txt
+m095f012  12   -      0x000D8847  1:0x000C8847  static,code  Sort_candidate_stars                      Sort_candidate_stars_                      regions/07-object-1/0015DE54-0015E653.txt
+m095f013  13   -      0x000D892B  1:0x000C892B  static,code  Star_Has_Monster                          Star_Has_Monster_                          regions/07-object-1/0015DE54-0015E653.txt
+m095f014  14   -      0x000D896F  1:0x000C896F  static,code  Assign_New_Colony_Ship_Destinations       Assign_New_Colony_Ship_Destinations_       regions/07-object-1/0015DE54-0015E653.txt
+m095f015  15   -      0x000D8C79  1:0x000C8C79  code         Best_Uncolonized_Undestined_Planet        Best_Uncolonized_Undestined_Planet_        regions/07-object-1/0015DE54-0015E653.txt
+m095f016  16   -      0x000D8D11  1:0x000C8D11  code         Enemy_Colony_Worth_To_Player              Enemy_Colony_Worth_To_Player_              regions/07-object-1/0015DE54-0015E653.txt
+m095f017  17   -      0x000D8DE1  1:0x000C8DE1  code         Player_Is_Hostile_To_Player               Player_Is_Hostile_To_Player_               regions/07-object-1/0015DE54-0015E653.txt
+m095f018  18   -      0x000D8E52  1:0x000C8E52  code         N_Enemy_Stars_Reachable                   N_Enemy_Stars_Reachable_                   regions/07-object-1/0015DE54-0015E653.txt
+m095f019  19   -      0x000D8ED2  1:0x000C8ED2  static,code  Compute_Attack_Worthiness                 Compute_Attack_Worthiness_                 regions/07-object-1/0015DE54-0015E653.txt
+m095f020  20   -      0x000D93F8  1:0x000C93F8  static,code  Gather_Player_Ships_At_Star               Gather_Player_Ships_At_Star_               regions/07-object-1/0015E654-0015EE53.txt
+m095f021  21   -      0x000D94B3  1:0x000C94B3  static,code  Find_Best_Attack_From_Star                Find_Best_Attack_From_Star_                regions/07-object-1/0015E654-0015EE53.txt
+m095f022  22   -      0x000D97EE  1:0x000C97EE  static,code  Launch_Attacks                            Launch_Attacks_                            regions/07-object-1/0015E654-0015EE53.txt
+m095f023  23   -      0x000D983F  1:0x000C983F  static,code  Knock_Out_Impossible_Interceptions        Knock_Out_Impossible_Interceptions_        regions/07-object-1/0015EE54-0015F653.txt
+m095f024  24   -      0x000D99D8  1:0x000C99D8  static,code  Gather_Intercepting_Ships                 Gather_Intercepting_Ships_                 regions/07-object-1/0015EE54-0015F653.txt
+m095f025  25   -      0x000D9A7E  1:0x000C9A7E  static,code  Interceptions                             Interceptions_                             regions/07-object-1/0015EE54-0015F653.txt
+m095f026  26   -      0x000D9F85  1:0x000C9F85  static,code  Intercept_Invaders                        Intercept_Invaders_                        regions/07-object-1/0015EE54-0015F653.txt
+m095f027  27   -      0x000DA485  1:0x000CA485  static,code  Move_To_Stage_Points                      Move_To_Stage_Points_                      regions/07-object-1/0015F654-0015FE53.txt
+m095f028  28   -      0x000DA99C  1:0x000CA99C  static,code  Move_Transports                           Move_Transports_                           regions/07-object-1/0015FE54-00160653.txt
+m095f029  29   -      0x000DAFD4  1:0x000CAFD4  static,code  Move_To_Unexplored_Stars                  Move_To_Unexplored_Stars_                  regions/07-object-1/0015FE54-00160653.txt
+m095f030  30   -      0x000DB257  1:0x000CB257  static,code  Launch_Sneak_Attack                       Launch_Sneak_Attack_                       regions/07-object-1/00160654-00160E53.txt
+m095f031  31   -      0x000DB3E5  1:0x000CB3E5  static,code  Mark_Flee_Stars                           Mark_Flee_Stars_                           regions/07-object-1/00160654-00160E53.txt
+m095f032  32   -      0x000DB47E  1:0x000CB47E  code         Move_AI                                   Move_AI_                                   regions/07-object-1/00160654-00160E53.txt
+m095f033  33   -      0x000DB659  1:0x000CB659  static,code  Sort_npc_dests                            Sort_npc_dests_                            regions/07-object-1/00160654-00160E53.txt
+m095f034  34   -      0x000DB6D2  1:0x000CB6D2  static,code  NPC_Dest                                  NPC_Dest_                                  regions/07-object-1/00160654-00160E53.txt
+m095f035  35   -      0x000DB8D8  1:0x000CB8D8  static,code  Move_NPCs                                 Move_NPCs_                                 regions/07-object-1/00160E54-00161653.txt
+m095f036  36   -      0x000DBB29  1:0x000CBB29  code         Move_All_AI                               Move_All_AI_                               regions/07-object-1/00160E54-00161653.txt
+m095f037  37   -      0x000DBB9F  1:0x000CBB9F  static,code  Find_Opportunity_Attack_Aux               Find_Opportunity_Attack_Aux_               regions/07-object-1/00160E54-00161653.txt
+m095f038  38   -      0x000DBC5C  1:0x000CBC5C  code         Find_Opportunity_Attack                   Find_Opportunity_Attack_                   regions/07-object-1/00160E54-00161653.txt
+m095f039  39   -      0x000DBCC8  1:0x000CBCC8  code         Player_Threatens_Player                   Player_Threatens_Player_                   regions/07-object-1/00160E54-00161653.txt
+m095f040  40   -      0x000DBDB8  1:0x000CBDB8  code         Number_Of_Attacks_Underway                Number_Of_Attacks_Underway_                regions/07-object-1/00160E54-00161653.txt
+-         -    -      0x001A223C  2:0x0003223C  static,data  _nonplayer_here                           _nonplayer_here                            -
+-         -    -      0x001A2240  2:0x00032240  static,data  _flee_stars                               _flee_stars                                -
+-         -    -      0x001A2244  2:0x00032244  static,data  _colonizable                              _colonizable                               -
+-         -    -      0x001A2248  2:0x00032248  static,data  _p_ai                                     _p_ai                                      -
+-         -    -      0x001A224C  2:0x0003224C  static,data  _i_ai                                     _i_ai                                      -
+-         -    -      0x001A224E  2:0x0003224E  static,data  _n_colonizable                            _n_colonizable                             -

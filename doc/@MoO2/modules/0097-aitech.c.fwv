@@ -1,0 +1,21 @@
+module_num=97
+module=D:\MOX\OTHERS\AITECH.C
+source=0097-aitech.c.md
+range[0]=1:0x000CC288 linear=0x000DC288 size=2473
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                          SYMBOL                         CHUNK
+m097f001  1    -      0x000DC288  1:0x000CC288  code  AI_Tech_Select                AI_Tech_Select_                regions/07-object-1/00161654-00161E53.txt
+m097f002  2    -      0x000DC2F3  1:0x000CC2F3  code  Player_Best_Ship_Shield       Player_Best_Ship_Shield_       regions/07-object-1/00161654-00161E53.txt
+m097f003  3    -      0x000DC323  1:0x000CC323  code  Player_Best_Armor             Player_Best_Armor_             regions/07-object-1/00161654-00161E53.txt
+m097f004  4    -      0x000DC34F  1:0x000CC34F  code  Player_Best_Computer          Player_Best_Computer_          regions/07-object-1/00161654-00161E53.txt
+m097f005  5    -      0x000DC37B  1:0x000CC37B  code  Player_Best_Fuel              Player_Best_Fuel_              regions/07-object-1/00161654-00161E53.txt
+m097f006  6    -      0x000DC3AA  1:0x000CC3AA  code  Player_Best_Planetary_Shield  Player_Best_Planetary_Shield_  regions/07-object-1/00161654-00161E53.txt
+m097f007  7    -      0x000DC3E3  1:0x000CC3E3  code  Player_Best_Drive             Player_Best_Drive_             regions/07-object-1/00161654-00161E53.txt
+m097f008  8    -      0x000DC416  1:0x000CC416  code  Player_Best_Rifle             Player_Best_Rifle_             regions/07-object-1/00161654-00161E53.txt
+m097f009  9    -      0x000DC449  1:0x000CC449  code  Player_Best_Personal_Shield   Player_Best_Personal_Shield_   regions/07-object-1/00161654-00161E53.txt
+m097f010  10   -      0x000DC47C  1:0x000CC47C  code  Compute_AI_Tech_Info          Compute_AI_Tech_Info_          regions/07-object-1/00161654-00161E53.txt
+m097f011  11   -      0x000DCA69  1:0x000CCA69  code  All_AI_Tech_Select            All_AI_Tech_Select_            regions/07-object-1/00161E54-00162653.txt
+m097f012  12   -      0x000DCAEE  1:0x000CCAEE  code  Get_Max_Technology_Value      Get_Max_Technology_Value_      regions/07-object-1/00161E54-00162653.txt
+m097f013  13   -      0x000DCB47  1:0x000CCB47  code  System_Proximity_Count        System_Proximity_Count_        regions/07-object-1/00161E54-00162653.txt
+m097f014  14   -      0x000DCBB0  1:0x000CCBB0  code  Apply_Evolutionary_Upgrades   Apply_Evolutionary_Upgrades_   regions/07-object-1/00161E54-00162653.txt

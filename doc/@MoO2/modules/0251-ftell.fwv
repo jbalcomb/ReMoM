@@ -1,0 +1,8 @@
+module_num=251
+module=ftell
+source=0251-ftell.md
+range[0]=1:0x00137449 linear=0x00147449 size=66
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m251f001  1    -      0x00147449  1:0x00137449  code  ftell  ftell_  regions/07-object-1/001CC654-001CCE53.txt

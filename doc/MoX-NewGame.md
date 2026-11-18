@@ -164,7 +164,7 @@ mov     cx, 32                            ; 4 * 8
 call    SCOPY@
 
 auto_input_variable
-MGC dseg:4D3A 00 00                                           auto_input_variable dw 0                ; DATA XREF: Interpret_Mouse_Input+18w ...
+MGC dseg:4D3A 00 00                                           auto_input_variable dw 0                ; DATA XREF: Interpret_Mouse_Input+18^w ...
     auto_input_field_idx = Auto_Input();
     if(auto_input_field_idx != newgame_difficulty_button_field)
     if(auto_input_field_idx != newgame_opponents_button_field)

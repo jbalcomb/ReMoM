@@ -1,0 +1,10 @@
+module_num=246
+module=allocfp
+source=0246-allocfp.md
+range[0]=1:0x0013723B linear=0x0014723B size=253
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME       SYMBOL      CHUNK
+m246f001  1    -      0x0014723B  1:0x0013723B  code  __allocfp  __allocfp_  regions/07-object-1/001CC654-001CCE53.txt
+m246f002  2    -      0x001472E1  1:0x001372E1  code  __freefp   __freefp_   regions/07-object-1/001CC654-001CCE53.txt
+m246f003  3    -      0x0014731A  1:0x0013731A  code  __purgefp  __purgefp_  regions/07-object-1/001CC654-001CCE53.txt

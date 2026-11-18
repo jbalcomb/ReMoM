@@ -1,0 +1,49 @@
+module_num=84
+module=D:\MOX\OTHERS\NEWGAME.C
+source=0084-newgame.c.md
+range[0]=1:0x000BC81C linear=0x000CC81C size=4293
+range[1]=2:0x00001E78 linear=0x00171E78 size=20
+range[2]=2:0x0000B1D4 linear=0x0017B1D4 size=8
+range[3]=2:0x00029244 linear=0x00199244 size=292
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                            SYMBOL                          CHUNK
+m084f001  1    -      0x000CC81C  1:0x000BC81C  code         Load_New_Game_Strings           Load_New_Game_Strings_          regions/07-object-1/00151E54-00152653.txt
+m084f002  2    -      0x000CCA1C  1:0x000BCA1C  code         Reload_Newgame_Screen           Reload_Newgame_Screen_          regions/07-object-1/00151E54-00152653.txt
+m084f003  3    -      0x000CCC3D  1:0x000BCC3D  static,code  Draw_Pictures                   Draw_Pictures_                  regions/07-object-1/00151E54-00152653.txt
+m084f004  4    -      0x000CCD3C  1:0x000BCD3C  code         Draw_Newgame_Screen             Draw_Newgame_Screen_            regions/07-object-1/00151E54-00152653.txt
+m084f005  5    -      0x000CCE24  1:0x000BCE24  static,code  Update_Fields                   Update_Fields_                  regions/07-object-1/00151E54-00152653.txt
+m084f006  6    -      0x000CCE2E  1:0x000BCE2E  static,code  Add_Fields                      Add_Fields_                     regions/07-object-1/00151E54-00152653.txt
+m084f007  7    -      0x000CD361  1:0x000BD361  static,code  Temps_To_Globals                Temps_To_Globals_               regions/07-object-1/00152654-00152E53.txt
+m084f008  8    -      0x000CD3BC  1:0x000BD3BC  static,code  Globals_To_Temps                Globals_To_Temps_               regions/07-object-1/00152654-00152E53.txt
+m084f009  9    -      0x000CD435  1:0x000BD435  code         Newgame_Screen                  Newgame_Screen_                 regions/07-object-1/00152654-00152E53.txt
+-         -    -      0x0017B1D4  2:0x0000B1D4  data         _g_x                            _g_x                            regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B1D6  2:0x0000B1D6  data         _g_y                            _g_y                            regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B1D8  2:0x0000B1D8  static,data  _strings_been_loaded            _strings_been_loaded            regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x00199244  2:0x00029244  static,data  _combat_button_strings          _combat_button_strings          -
+-         -    -      0x0019924C  2:0x0002924C  static,data  _gal_size_button_strings        _gal_size_button_strings        -
+-         -    -      0x0019925C  2:0x0002925C  data         _color_ken                      _color_ken                      -
+-         -    -      0x00199264  2:0x00029264  data         _gal_size_anims                 _gal_size_anims                 -
+-         -    -      0x00199274  2:0x00029274  static,data  _gal_age_button_strings         _gal_age_button_strings         -
+-         -    -      0x00199280  2:0x00029280  static,data  _civ_button_strings             _civ_button_strings             -
+-         -    -      0x0019928C  2:0x0002928C  static,data  _opp_button_strings             _opp_button_strings             -
+-         -    -      0x001992A8  2:0x000292A8  static,data  _hack_msg                       _hack_msg                       -
+-         -    -      0x001992BC  2:0x000292BC  static,data  _anims                          _anims                          -
+-         -    -      0x001992D8  2:0x000292D8  data         _difficulty_anims               _difficulty_anims               -
+-         -    -      0x001992EC  2:0x000292EC  static,data  _diff_button_strings            _diff_button_strings            -
+-         -    -      0x00199300  2:0x00029300  data         _tech_level_anims               _tech_level_anims               -
+-         -    -      0x0019930C  2:0x0002930C  data         _button_seg                     _button_seg                     -
+-         -    -      0x00199310  2:0x00029310  data         _cancel_button_seg              _cancel_button_seg              -
+-         -    -      0x00199314  2:0x00029314  data         _num_players_anims              _num_players_anims              -
+-         -    -      0x00199330  2:0x00029330  data         _gal_age_anims                  _gal_age_anims                  -
+-         -    -      0x0019933C  2:0x0002933C  static,data  _fields                         _fields                         -
+-         -    -      0x00199350  2:0x00029350  data         _newgame_accept_button_seg      _newgame_accept_button_seg      -
+-         -    -      0x00199354  2:0x00029354  data         _background_seg                 _background_seg                 -
+-         -    -      0x00199358  2:0x00029358  static,data  _gal_age_button_variable        _gal_age_button_variable        -
+-         -    -      0x0019935A  2:0x0002935A  static,data  _xenon_attacks_button_variable  _xenon_attacks_button_variable  -
+-         -    -      0x0019935C  2:0x0002935C  static,data  _combat_button_variable         _combat_button_variable         -
+-         -    -      0x0019935E  2:0x0002935E  static,data  _gal_size_button_variable       _gal_size_button_variable       -
+-         -    -      0x00199360  2:0x00029360  static,data  _civ_button_variable            _civ_button_variable            -
+-         -    -      0x00199362  2:0x00029362  static,data  _diff_button_variable           _diff_button_variable           -
+-         -    -      0x00199364  2:0x00029364  static,data  _random_events_button_variable  _random_events_button_variable  -
+-         -    -      0x00199366  2:0x00029366  static,data  _opp_button_variable            _opp_button_variable            -

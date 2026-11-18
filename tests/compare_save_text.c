@@ -1,5 +1,5 @@
 /**
- * compare_save_text.c — Field-by-field comparison of HeMoM save dump text files.
+ * compare_save_text.c — Field-by-field comparison of DeMoM save dump text files.
  *
  * Usage:
  *   compare_save_text <actual.txt> <expected.txt> [max_diffs]

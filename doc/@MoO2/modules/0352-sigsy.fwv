@@ -1,0 +1,22 @@
+module_num=352
+module=sigsy
+source=0352-sigsy.md
+range[0]=1:0x0014F926 linear=0x0015F926 size=1477
+range[1]=2:0x00012D00 linear=0x00182D00 size=28
+range[2]=2:0x00051D50 linear=0x001C1D50 size=1024
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                      SYMBOL                     CHUNK
+m352f001  1    -      0x0015F926  1:0x0014F926  static,code  __int23_handler           __int23_handler_           regions/07-object-1/001E4E54-001E5653.txt
+m352f002  2    -      0x0015F9BB  1:0x0014F9BB  static,code  __int_ctrl_break_handler  __int_ctrl_break_handler_  regions/07-object-1/001E4E54-001E5653.txt
+m352f003  3    -      0x0015FA33  1:0x0014FA33  code         __DPMI_hosted             __DPMI_hosted_             regions/07-object-1/001E4E54-001E5653.txt
+m352f004  4    -      0x0015FAC7  1:0x0014FAC7  code         __restore_int23           __restore_int23_           regions/07-object-1/001E4E54-001E5653.txt
+m352f005  5    -      0x0015FC78  1:0x0014FC78  static,code  __restore_int             __restore_int_             regions/07-object-1/001E4E54-001E5653.txt
+m352f006  6    -      0x0015FC7D  1:0x0014FC7D  code         __restore_int_ctrl_break  __restore_int_ctrl_break_  regions/07-object-1/001E4E54-001E5653.txt
+m352f007  7    -      0x0015FCB5  1:0x0014FCB5  code         __grab_int23              __grab_int23_              regions/07-object-1/001E4E54-001E5653.txt
+m352f008  8    -      0x0015FDD0  1:0x0014FDD0  code         __grab_int_ctrl_break     __grab_int_ctrl_break_     regions/07-object-1/001E4E54-001E5653.txt
+-         -    -      0x00182D00  2:0x00012D00  static,data  ___old_int23              ___old_int23               regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182D06  2:0x00012D06  static,data  ___old_int_ctrl_break     ___old_int_ctrl_break      regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182D0C  2:0x00012D0C  static,data  ___old_pm_int23           ___old_pm_int23            regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182D12  2:0x00012D12  static,data  ___old_pm_int_ctrl_break  ___old_pm_int_ctrl_break   regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x001C1D50  2:0x00051D50  static,data  _my_stack                 _my_stack                  -

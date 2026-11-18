@@ -1,0 +1,24 @@
+module_num=34
+module=D:\MOX\OTHERS\AIPOWER.C
+source=0034-aipower.c.md
+range[0]=1:0x0004EAE1 linear=0x0005EAE1 size=3550
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                               SYMBOL                              CHUNK
+m034f001  1    -      0x0005EAE9  1:0x0004EAE9  code  Base_Generic_Dcv                   Base_Generic_Dcv_                   regions/07-object-1/000E3E54-000E4653.txt
+m034f002  2    -      0x0005EB39  1:0x0004EB39  code  Base_Generic_Ocv                   Base_Generic_Ocv_                   regions/07-object-1/000E3E54-000E4653.txt
+m034f003  3    -      0x0005EB72  1:0x0004EB72  code  Satelite_Strength_Vs_Ships         Satelite_Strength_Vs_Ships_         regions/07-object-1/000E3E54-000E4653.txt
+m034f004  4    -      0x0005EE27  1:0x0004EE27  code  Modified_Weapon_Strength           Modified_Weapon_Strength_           regions/07-object-1/000E3E54-000E4653.txt
+m034f005  5    -      0x0005EED4  1:0x0004EED4  code  Strength_Hits_Modifier             Strength_Hits_Modifier_             regions/07-object-1/000E3E54-000E4653.txt
+m034f006  6    -      0x0005EF09  1:0x0004EF09  code  Ship_Strength_Vs_Ships_In_Nebula   Ship_Strength_Vs_Ships_In_Nebula_   regions/07-object-1/000E3E54-000E4653.txt
+m034f007  7    -      0x0005EF17  1:0x0004EF17  code  Ship_Strength_Vs_Ships             Ship_Strength_Vs_Ships_             regions/07-object-1/000E3E54-000E4653.txt
+m034f008  8    -      0x0005EF4B  1:0x0004EF4B  code  Ship_Strength_Vs_Shield            Ship_Strength_Vs_Shield_            regions/07-object-1/000E3E54-000E4653.txt
+m034f009  9    -      0x0005F2C3  1:0x0004F2C3  code  Current_Ship_Hits                  Current_Ship_Hits_                  regions/07-object-1/000E4654-000E4E53.txt
+m034f010  10   -      0x0005F2F6  1:0x0004F2F6  code  Max_Ship_Hits                      Max_Ship_Hits_                      regions/07-object-1/000E4654-000E4E53.txt
+m034f011  11   -      0x0005F379  1:0x0004F379  code  Ship_Strength_Vs_Planetary_Shield  Ship_Strength_Vs_Planetary_Shield_  regions/07-object-1/000E4654-000E4E53.txt
+m034f012  12   -      0x0005F524  1:0x0004F524  code  Missile_Base_Strength              Missile_Base_Strength_              regions/07-object-1/000E4654-000E4E53.txt
+m034f013  13   -      0x0005F5A3  1:0x0004F5A3  code  Phasor_Base_Strength               Phasor_Base_Strength_               regions/07-object-1/000E4654-000E4E53.txt
+m034f014  14   -      0x0005F64C  1:0x0004F64C  code  Fighter_Garrison_Strength          Fighter_Garrison_Strength_          regions/07-object-1/000E4654-000E4E53.txt
+m034f015  15   -      0x0005F747  1:0x0004F747  code  Colony_Ground_Strength_Vs_Player   Colony_Ground_Strength_Vs_Player_   regions/07-object-1/000E4654-000E4E53.txt
+m034f016  16   -      0x0005F804  1:0x0004F804  code  Colony_Space_Strength_Vs_Player    Colony_Space_Strength_Vs_Player_    regions/07-object-1/000E4E54-000E5653.txt
+m034f017  17   -      0x0005F871  1:0x0004F871  code  Get_Best_Ship_Shield_Value         Get_Best_Ship_Shield_Value_         regions/07-object-1/000E4E54-000E5653.txt

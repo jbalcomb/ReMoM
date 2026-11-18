@@ -1,0 +1,351 @@
+module_num=135
+module=F:\WLIBS\flicplay\capture.c
+source=0135-capture.c.md
+range[0]=1:0x001001F0 linear=0x001101F0 size=2457
+range[1]=2:0x00002400 linear=0x00172400 size=24
+range[2]=2:0x0000C374 linear=0x0017C374 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                   SYMBOL                  CHUNK
+m135f001  1    -      0x001101F0  1:0x001001F0  code         Screen_Flic_Capture    Screen_Flic_Capture_    regions/07-object-1/00195654-00195E53.txt
+m135f002  2    -      0x00110AFC  1:0x00100AFC  static,code  B_Key                  B_Key_                  regions/07-object-1/00195E54-00196653.txt
+m135f003  3    -      0x00110B34  1:0x00100B34  code         Release_Version        Release_Version_        regions/07-object-1/00195E54-00196653.txt
+m135f004  4    -      0x00110B5C  1:0x00100B5C  code         Check_Release_Version  Check_Release_Version_  regions/07-object-1/00195E54-00196653.txt
+-         -    -      0x0017C374  2:0x0000C374  data         _release_flag          _release_flag           regions/08-object-2/001FA654-001FAE53.txt
+
+[Module variables]
+LINEAR      SEGOFF        NAME          TYPE
+0x0017C374  2:0x0000C374  release_flag  short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME                   TYPE                         CHUNK
+m135f001  0x001101F0  1:0x001001F0  2316  24        9         0x18     -    -           Screen_Flic_Capture    void (void)                  regions/07-object-1/00195654-00195E53.txt
+m135f002  0x00110AFC  1:0x00100AFC  56    24        7         0x18     -    -           B_Key                  void (void)                  regions/07-object-1/00195E54-00196653.txt
+m135f003  0x00110B34  1:0x00100B34  40    24        7         0x18     -    -           Release_Version        void (void)                  regions/07-object-1/00195E54-00196653.txt
+m135f004  0x00110B5C  1:0x00100B5C  45    24        9         0x18     -    -           Check_Release_Version  short (void); returns in AX  regions/07-object-1/00195E54-00196653.txt
+
+[Locals]
+KEY       ROUTINE              BLOCK  LOCAL         LOCATION     TYPE
+m135f001  Screen_Flic_Capture  -      ronnie        [EBP-0x34]   FILE *
+m135f001  Screen_Flic_Capture  -      inregs        [EBP-0x60]   union REGS
+m135f001  Screen_Flic_Capture  -      outregs       [EBP-0x7C]   union REGS
+m135f001  Screen_Flic_Capture  -      mode          [EBP-0x2C]   int
+m135f001  Screen_Flic_Capture  -      color         [EBP-0x4]    unsigned char
+m135f001  Screen_Flic_Capture  -      old_bank      [EBP-0x10]   char
+m135f001  Screen_Flic_Capture  -      start_x       [EBP-0x24]   int
+m135f001  Screen_Flic_Capture  -      start_y       [EBP-0x14]   int
+m135f001  Screen_Flic_Capture  -      dumb_number   [EBP-0x1C]   unsigned int
+m135f001  Screen_Flic_Capture  -      offset        [EBP-0x28]   unsigned long
+m135f001  Screen_Flic_Capture  -      i             [EBP-0x30]   long
+m135f001  Screen_Flic_Capture  -      new_bank      [EBP-0x20]   int
+m135f001  Screen_Flic_Capture  -      flag          [EBP-0x8]    char
+m135f001  Screen_Flic_Capture  -      header        [EBP-0x11C]  struct s_pcx_header
+m135f001  Screen_Flic_Capture  -      count         [EBP-0xC]    char
+m135f001  Screen_Flic_Capture  -      palette       [EBP-0x41C]  unsigned char[768]
+m135f001  Screen_Flic_Capture  -      file_name     [EBP-0x9C]   char[30]
+m135f001  Screen_Flic_Capture  -      file_buffer2  [EBP-0x44]   char[15]
+m135f001  Screen_Flic_Capture  -      file_num      [EBP-0x18]   int
+
+[Types]
+NUM  KIND       NAME                 DETAILS
+-    cue table  -                    source file table (C++)
+1    scope      struct               -
+2    scope      union                -
+3    scope      enum                 -
+4    scalar     signed char          int 1 bytes
+5    scalar     unsigned char        unsigned 1 bytes
+6    scalar     short                int 2 bytes
+7    scalar     unsigned short       unsigned 2 bytes
+8    scalar     int                  int 4 bytes
+9    scalar     unsigned int         unsigned 4 bytes
+10   typedef    char                 name for unsigned char (#5)
+11   typedef    char                 name for unsigned char (#5)
+12   typedef    size_t               name for unsigned int (#9)
+13   pointer    -                    near386; of char (#10)
+14   array      __va_list            0..0; of char * (#13)
+15   typedef    __va_list            name for char *[1] (#14)
+16   scalar     long                 int 4 bytes
+17   typedef    fpos_t               name for long (#16)
+18   typedef    fpos_t               name for long (#16)
+19   scalar     unsigned long        unsigned 4 bytes
+20   typedef    time_t               name for unsigned long (#19)
+21   typedef    ino_t                name for unsigned int (#9)
+22   typedef    dev_t                name for int (#8)
+23   typedef    off_t                name for long (#16)
+24   typedef    BYTE                 name for unsigned char (#5)
+25   typedef    SBYTE                name for signed char (#4)
+26   typedef    UBYTE                name for unsigned char (#5)
+27   typedef    WORD                 name for unsigned short (#7)
+28   typedef    SWORD                name for short (#6)
+29   typedef    UWORD                name for unsigned short (#7)
+30   typedef    DWORD                name for unsigned int (#9)
+31   typedef    SDWORD               name for int (#8)
+32   typedef    UDWORD               name for unsigned int (#9)
+33   typedef    BOOL                 name for unsigned char (#5)
+34   typedef    SampleHandle         name for int (#8)
+35   scalar     void                 void 1 bytes
+36   procedure  -                    near386; returns void ()
+37   pointer    -                    near386; of unsigned char (#5)
+38   struct     struct __iobuf       8 fields, 26 bytes
+39   typedef    __iobuf              struct name for struct #38 (#38)
+40   typedef    FILE                 name for struct __iobuf (#39)
+41   pointer    -                    near386; of FILE (#40)
+42   struct     struct DWORDREGS     7 fields, 28 bytes
+43   typedef    DWORDREGS            struct name for struct #42 (#42)
+44   struct     struct WORDREGS      13 fields, 28 bytes
+45   typedef    WORDREGS             struct name for struct #44 (#44)
+46   struct     struct BYTEREGS      12 fields, 16 bytes
+47   typedef    BYTEREGS             struct name for struct #46 (#46)
+48   struct     union REGS           3 fields, 28 bytes
+49   typedef    REGS                 union name for struct #48 (#48)
+50   array      -                    0..47; of char (#10)
+51   array      -                    0..53; of char (#10)
+52   struct     struct s_pcx_header  18 fields, 128 bytes
+53   typedef    s_pcx_header         struct name for struct #52 (#52)
+54   array      -                    0..767; of unsigned char (#5)
+55   array      -                    0..29; of char (#10)
+56   array      -                    0..14; of char (#10)
+57   procedure  -                    near386; returns void (void)
+58   procedure  -                    near386; returns short ()
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER          OFFSET_VALUE  TYPE              TYPE_NAME
+38        field        _ptr            0             unsigned char *   struct __iobuf
+38        field        _cnt            4             int               struct __iobuf
+38        field        _base           8             unsigned char *   struct __iobuf
+38        field        _flag           12            unsigned int      struct __iobuf
+38        field        _handle         16            int               struct __iobuf
+38        field        _bufsize        20            unsigned int      struct __iobuf
+38        field        _ungotten       24            unsigned char     struct __iobuf
+38        field        _tmpfchar       25            unsigned char     struct __iobuf
+42        field        eax             0             unsigned int      struct DWORDREGS
+42        field        ebx             4             unsigned int      struct DWORDREGS
+42        field        ecx             8             unsigned int      struct DWORDREGS
+42        field        edx             12            unsigned int      struct DWORDREGS
+42        field        esi             16            unsigned int      struct DWORDREGS
+42        field        edi             20            unsigned int      struct DWORDREGS
+42        field        cflag           24            unsigned int      struct DWORDREGS
+44        field        ax              0             unsigned short    struct WORDREGS
+44        field        _1              2             unsigned short    struct WORDREGS
+44        field        bx              4             unsigned short    struct WORDREGS
+44        field        _2              6             unsigned short    struct WORDREGS
+44        field        cx              8             unsigned short    struct WORDREGS
+44        field        _3              10            unsigned short    struct WORDREGS
+44        field        dx              12            unsigned short    struct WORDREGS
+44        field        _4              14            unsigned short    struct WORDREGS
+44        field        si              16            unsigned short    struct WORDREGS
+44        field        _5              18            unsigned short    struct WORDREGS
+44        field        di              20            unsigned short    struct WORDREGS
+44        field        _6              22            unsigned short    struct WORDREGS
+44        field        cflag           24            unsigned int      struct WORDREGS
+46        field        al              0             unsigned char     struct BYTEREGS
+46        field        ah              1             unsigned char     struct BYTEREGS
+46        field        _1              2             unsigned short    struct BYTEREGS
+46        field        bl              4             unsigned char     struct BYTEREGS
+46        field        bh              5             unsigned char     struct BYTEREGS
+46        field        _2              6             unsigned short    struct BYTEREGS
+46        field        cl              8             unsigned char     struct BYTEREGS
+46        field        ch              9             unsigned char     struct BYTEREGS
+46        field        _3              10            unsigned short    struct BYTEREGS
+46        field        dl              12            unsigned char     struct BYTEREGS
+46        field        dh              13            unsigned char     struct BYTEREGS
+46        field        _4              14            unsigned short    struct BYTEREGS
+48        field        h               0             struct BYTEREGS   union REGS
+48        field        w               0             struct WORDREGS   union REGS
+48        field        x               0             struct DWORDREGS  union REGS
+52        field        id              0             char              struct s_pcx_header
+52        field        version         1             char              struct s_pcx_header
+52        field        format          2             char              struct s_pcx_header
+52        field        bitspixelplane  3             char              struct s_pcx_header
+52        field        xmin            4             short             struct s_pcx_header
+52        field        ymin            6             short             struct s_pcx_header
+52        field        xmax            8             short             struct s_pcx_header
+52        field        ymax            10            short             struct s_pcx_header
+52        field        hdpi            12            short             struct s_pcx_header
+52        field        vdpi            14            short             struct s_pcx_header
+52        field        egapalette      16            char[48]          struct s_pcx_header
+52        field        reserved        64            char              struct s_pcx_header
+52        field        numberofplanes  65            char              struct s_pcx_header
+52        field        charslineplane  66            short             struct s_pcx_header
+52        field        paletteinfo     68            short             struct s_pcx_header
+52        field        hscreensize     70            short             struct s_pcx_header
+52        field        vscreensize     72            short             struct s_pcx_header
+52        field        filler          74            char[54]          struct s_pcx_header
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m135f001  361   0x001101F0  1:0x001001F0  0x00195844
+m135f001  382   0x00110208  1:0x00100208  0x0019585C
+m135f001  384   0x00110217  1:0x00100217  0x0019586B
+m135f001  385   0x0011021E  1:0x0010021E  0x00195872
+m135f001  386   0x00110224  1:0x00100224  0x00195878
+m135f001  388   0x00110229  1:0x00100229  0x0019587D
+m135f001  389   0x00110230  1:0x00100230  0x00195884
+m135f001  390   0x0011023F  1:0x0010023F  0x00195893
+m135f001  392   0x00110258  1:0x00100258  0x001958AC
+m135f001  394   0x0011025B  1:0x0010025B  0x001958AF
+m135f001  396   0x00110261  1:0x00100261  0x001958B5
+m135f001  397   0x0011026E  1:0x0010026E  0x001958C2
+m135f001  398   0x0011027E  1:0x0010027E  0x001958D2
+m135f001  400   0x0011028C  1:0x0010028C  0x001958E0
+m135f001  401   0x0011028E  1:0x0010028E  0x001958E2
+m135f001  403   0x001102A1  1:0x001002A1  0x001958F5
+m135f001  404   0x001102AC  1:0x001002AC  0x00195900
+m135f001  405   0x001102BD  1:0x001002BD  0x00195911
+m135f001  406   0x001102CD  1:0x001002CD  0x00195921
+m135f001  410   0x001102D2  1:0x001002D2  0x00195926
+m135f001  412   0x001102E5  1:0x001002E5  0x00195939
+m135f001  413   0x001102F4  1:0x001002F4  0x00195948
+m135f001  414   0x00110303  1:0x00100303  0x00195957
+m135f001  415   0x0011030A  1:0x0010030A  0x0019595E
+m135f001  416   0x0011030E  1:0x0010030E  0x00195962
+m135f001  417   0x0011031E  1:0x0010031E  0x00195972
+m135f001  418   0x00110324  1:0x00100324  0x00195978
+m135f001  420   0x00110332  1:0x00100332  0x00195986
+m135f001  423   0x0011033B  1:0x0010033B  0x0019598F
+m135f001  424   0x00110342  1:0x00100342  0x00195996
+m135f001  425   0x00110349  1:0x00100349  0x0019599D
+m135f001  426   0x00110350  1:0x00100350  0x001959A4
+m135f001  427   0x00110357  1:0x00100357  0x001959AB
+m135f001  428   0x00110360  1:0x00100360  0x001959B4
+m135f001  429   0x00110369  1:0x00100369  0x001959BD
+m135f001  430   0x00110372  1:0x00100372  0x001959C6
+m135f001  431   0x0011037B  1:0x0010037B  0x001959CF
+m135f001  432   0x00110384  1:0x00100384  0x001959D8
+m135f001  433   0x0011038D  1:0x0010038D  0x001959E1
+m135f001  434   0x0011039F  1:0x0010039F  0x001959F3
+m135f001  435   0x001103A6  1:0x001003A6  0x001959FA
+m135f001  436   0x001103AD  1:0x001003AD  0x00195A01
+m135f001  437   0x001103B6  1:0x001003B6  0x00195A0A
+m135f001  438   0x001103BF  1:0x001003BF  0x00195A13
+m135f001  439   0x001103C8  1:0x001003C8  0x00195A1C
+m135f001  440   0x001103D1  1:0x001003D1  0x00195A25
+m135f001  441   0x001103E3  1:0x001003E3  0x00195A37
+m135f001  442   0x001103FB  1:0x001003FB  0x00195A4F
+m135f001  443   0x00110402  1:0x00100402  0x00195A56
+m135f001  445   0x0011040F  1:0x0010040F  0x00195A63
+m135f001  449   0x00110475  1:0x00100475  0x00195AC9
+m135f001  451   0x00110477  1:0x00100477  0x00195ACB
+m135f001  453   0x00110481  1:0x00100481  0x00195AD5
+m135f001  454   0x00110485  1:0x00100485  0x00195AD9
+m135f001  455   0x0011049A  1:0x0010049A  0x00195AEE
+m135f001  457   0x001104AF  1:0x001004AF  0x00195B03
+m135f001  460   0x001104B1  1:0x001004B1  0x00195B05
+m135f001  462   0x001104C2  1:0x001004C2  0x00195B16
+m135f001  463   0x001104D7  1:0x001004D7  0x00195B2B
+m135f001  465   0x001104DB  1:0x001004DB  0x00195B2F
+m135f001  467   0x001104DD  1:0x001004DD  0x00195B31
+m135f001  468   0x001104E1  1:0x001004E1  0x00195B35
+m135f001  469   0x001104F6  1:0x001004F6  0x00195B4A
+m135f001  472   0x0011050B  1:0x0010050B  0x00195B5F
+m135f001  473   0x00110518  1:0x00100518  0x00195B6C
+m135f001  474   0x0011051D  1:0x0010051D  0x00195B71
+m135f001  475   0x00110520  1:0x00100520  0x00195B74
+m135f001  476   0x00110529  1:0x00100529  0x00195B7D
+m135f001  477   0x00110530  1:0x00100530  0x00195B84
+m135f001  479   0x0011053D  1:0x0010053D  0x00195B91
+m135f001  483   0x001105AB  1:0x001005AB  0x00195BFF
+m135f001  485   0x001105AD  1:0x001005AD  0x00195C01
+m135f001  487   0x001105B7  1:0x001005B7  0x00195C0B
+m135f001  488   0x001105BB  1:0x001005BB  0x00195C0F
+m135f001  489   0x001105D0  1:0x001005D0  0x00195C24
+m135f001  491   0x001105E5  1:0x001005E5  0x00195C39
+m135f001  494   0x001105E7  1:0x001005E7  0x00195C3B
+m135f001  496   0x001105F8  1:0x001005F8  0x00195C4C
+m135f001  497   0x0011060D  1:0x0010060D  0x00195C61
+m135f001  499   0x00110611  1:0x00100611  0x00195C65
+m135f001  501   0x00110613  1:0x00100613  0x00195C67
+m135f001  502   0x00110617  1:0x00100617  0x00195C6B
+m135f001  503   0x0011062C  1:0x0010062C  0x00195C80
+m135f001  506   0x00110641  1:0x00100641  0x00195C95
+m135f001  507   0x0011064E  1:0x0010064E  0x00195CA2
+m135f001  508   0x00110653  1:0x00100653  0x00195CA7
+m135f001  509   0x00110656  1:0x00100656  0x00195CAA
+m135f001  510   0x0011065F  1:0x0010065F  0x00195CB3
+m135f001  511   0x00110666  1:0x00100666  0x00195CBA
+m135f001  513   0x00110673  1:0x00100673  0x00195CC7
+m135f001  517   0x001106E1  1:0x001006E1  0x00195D35
+m135f001  519   0x001106E3  1:0x001006E3  0x00195D37
+m135f001  521   0x001106ED  1:0x001006ED  0x00195D41
+m135f001  522   0x001106F1  1:0x001006F1  0x00195D45
+m135f001  523   0x00110706  1:0x00100706  0x00195D5A
+m135f001  525   0x0011071B  1:0x0010071B  0x00195D6F
+m135f001  529   0x0011071D  1:0x0010071D  0x00195D71
+m135f001  531   0x0011072E  1:0x0010072E  0x00195D82
+m135f001  532   0x00110743  1:0x00100743  0x00195D97
+m135f001  534   0x00110747  1:0x00100747  0x00195D9B
+m135f001  536   0x00110749  1:0x00100749  0x00195D9D
+m135f001  537   0x0011074D  1:0x0010074D  0x00195DA1
+m135f001  538   0x00110762  1:0x00100762  0x00195DB6
+m135f001  541   0x00110777  1:0x00100777  0x00195DCB
+m135f001  542   0x00110784  1:0x00100784  0x00195DD8
+m135f001  543   0x00110789  1:0x00100789  0x00195DDD
+m135f001  544   0x0011078C  1:0x0010078C  0x00195DE0
+m135f001  546   0x00110795  1:0x00100795  0x00195DE9
+m135f001  547   0x0011079C  1:0x0010079C  0x00195DF0
+m135f001  549   0x001107A9  1:0x001007A9  0x00195DFD
+m135f001  553   0x00110817  1:0x00100817  0x00195E6B
+m135f001  554   0x00110819  1:0x00100819  0x00195E6D
+m135f001  556   0x00110823  1:0x00100823  0x00195E77
+m135f001  557   0x00110827  1:0x00100827  0x00195E7B
+m135f001  558   0x0011083C  1:0x0010083C  0x00195E90
+m135f001  560   0x00110851  1:0x00100851  0x00195EA5
+m135f001  563   0x00110853  1:0x00100853  0x00195EA7
+m135f001  565   0x00110864  1:0x00100864  0x00195EB8
+m135f001  566   0x00110879  1:0x00100879  0x00195ECD
+m135f001  568   0x0011087D  1:0x0010087D  0x00195ED1
+m135f001  570   0x0011087F  1:0x0010087F  0x00195ED3
+m135f001  571   0x00110883  1:0x00100883  0x00195ED7
+m135f001  572   0x00110898  1:0x00100898  0x00195EEC
+m135f001  575   0x001108AD  1:0x001008AD  0x00195F01
+m135f001  576   0x001108BA  1:0x001008BA  0x00195F0E
+m135f001  577   0x001108BF  1:0x001008BF  0x00195F13
+m135f001  578   0x001108C2  1:0x001008C2  0x00195F16
+m135f001  580   0x001108CB  1:0x001008CB  0x00195F1F
+m135f001  581   0x001108D2  1:0x001008D2  0x00195F26
+m135f001  583   0x001108DF  1:0x001008DF  0x00195F33
+m135f001  587   0x0011094D  1:0x0010094D  0x00195FA1
+m135f001  588   0x0011094F  1:0x0010094F  0x00195FA3
+m135f001  590   0x00110959  1:0x00100959  0x00195FAD
+m135f001  591   0x0011095D  1:0x0010095D  0x00195FB1
+m135f001  592   0x00110972  1:0x00100972  0x00195FC6
+m135f001  594   0x00110987  1:0x00100987  0x00195FDB
+m135f001  598   0x00110989  1:0x00100989  0x00195FDD
+m135f001  600   0x0011099A  1:0x0010099A  0x00195FEE
+m135f001  601   0x001109AF  1:0x001009AF  0x00196003
+m135f001  603   0x001109B3  1:0x001009B3  0x00196007
+m135f001  605   0x001109B5  1:0x001009B5  0x00196009
+m135f001  606   0x001109B9  1:0x001009B9  0x0019600D
+m135f001  607   0x001109CE  1:0x001009CE  0x00196022
+m135f001  611   0x001109E3  1:0x001009E3  0x00196037
+m135f001  612   0x001109F0  1:0x001009F0  0x00196044
+m135f001  614   0x001109F5  1:0x001009F5  0x00196049
+m135f001  616   0x00110A0F  1:0x00100A0F  0x00196063
+m135f001  617   0x00110A2B  1:0x00100A2B  0x0019607F
+m135f001  618   0x00110A47  1:0x00100A47  0x0019609B
+m135f001  619   0x00110A63  1:0x00100A63  0x001960B7
+m135f001  620   0x00110A65  1:0x00100A65  0x001960B9
+m135f001  621   0x00110A69  1:0x00100A69  0x001960BD
+m135f001  622   0x00110A7E  1:0x00100A7E  0x001960D2
+m135f001  623   0x00110A96  1:0x00100A96  0x001960EA
+m135f001  624   0x00110A9E  1:0x00100A9E  0x001960F2
+m135f001  625   0x00110AA3  1:0x00100AA3  0x001960F7
+m135f001  626   0x00110AA8  1:0x00100AA8  0x001960FC
+m135f001  627   0x00110AB7  1:0x00100AB7  0x0019610B
+m135f001  628   0x00110AC6  1:0x00100AC6  0x0019611A
+m135f001  629   0x00110ACD  1:0x00100ACD  0x00196121
+m135f001  630   0x00110AD4  1:0x00100AD4  0x00196128
+m135f001  631   0x00110ADC  1:0x00100ADC  0x00196130
+m135f001  632   0x00110AEC  1:0x00100AEC  0x00196140
+m135f001  634   0x00110AF3  1:0x00100AF3  0x00196147
+m135f002  636   0x00110AFC  1:0x00100AFC  0x00196150
+m135f002  638   0x00110B14  1:0x00100B14  0x00196168
+m135f002  639   0x00110B1E  1:0x00100B1E  0x00196172
+m135f002  640   0x00110B28  1:0x00100B28  0x0019617C
+m135f002  641   0x00110B2D  1:0x00100B2D  0x00196181
+m135f003  804   0x00110B34  1:0x00100B34  0x00196188
+m135f003  806   0x00110B4C  1:0x00100B4C  0x001961A0
+m135f003  807   0x00110B55  1:0x00100B55  0x001961A9
+m135f004  809   0x00110B5C  1:0x00100B5C  0x001961B0
+m135f004  811   0x00110B74  1:0x00100B74  0x001961C8
+m135f004  812   0x00110B7D  1:0x00100B7D  0x001961D1

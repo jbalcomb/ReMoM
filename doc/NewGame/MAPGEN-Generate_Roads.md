@@ -29,7 +29,7 @@ paths between them and, if the path avoids water, sets `MSF_ROAD` on each square
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:578-579](../../MoM/src/MAPGEN.c#L578-L579) | Called once per plane; followed by `gd_dump_map_square_flags("19_Generate_Roads_F")`. |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:427-428](../../MoM/src/MAPGEN.c#L427-L428) | Called once per plane; followed by `STU_GD_Dump_Map_Square_Flags("120_Generate_Roads_F")` ([429](../../MoM/src/MAPGEN.c#L429)). |
 
 ## How it works
 

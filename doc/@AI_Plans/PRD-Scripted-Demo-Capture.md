@@ -23,11 +23,11 @@ own `.hms`, cut together in post.
 - `.hms` is a human-readable scenario script: `click X Y`, `rclick X Y`, `type "STRING"`,
   `key K`, `escape` / `enter` / `backspace`, `wait Nms`.  Format documented in
   [tools/rmr2hms.c](../../tools/rmr2hms.c).
-- `ReMoM.exe --scenario FILE.hms` loads it and registers the Artificial Human Player as a
+- `ReMoM.exe --scenario FILE.hms` loads it and registers the Automation Driver as a
   per-frame callback ([ReMoM.c:424](../../src/ReMoM.c#L424) →
-  `HeMoM_Player_Load_Scenario` + `Platform_Register_Frame_Callback(HeMoM_Player_Frame)`).
+  `Automation_Driver_Load_Scenario` + `Platform_Register_Frame_Callback(Automation_Driver_Frame)`).
   Clicks warp the real cursor via `Set_Pointer_Position`
-  ([Artificial_Human_Player.c:742](../../src/Artificial_Human_Player.c#L742)).
+  ([Automation_Driver.c:742](../../src/Automation_Driver.c#L742)).
 - **Authoring loop**: play the scene by hand with `--record scene.RMR` → `rmr2hms scene.RMR scene.hms`
   → hand-edit the waits/coords for pacing → `--scenario scene.hms`.  The recording is a rough draft;
   the script is the artifact we keep.

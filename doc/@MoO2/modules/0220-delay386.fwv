@@ -1,0 +1,9 @@
+module_num=220
+module=delay386
+source=0220-delay386.md
+range[0]=1:0x0012F2CC linear=0x0013F2CC size=5
+range[1]=2:0x00012FF8 linear=0x00182FF8 size=6
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m220f001  1    -      0x0013F2CC  1:0x0012F2CC  code  delay  delay_  regions/07-object-1/001C4654-001C4E53.txt

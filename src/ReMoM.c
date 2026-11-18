@@ -74,7 +74,7 @@
 #include "../platform/include/Platform_Capture.h"
 
 #include "ReMoM_Init.h"
-#include "Artificial_Human_Player.h"  /* HeMoM_Player_Frame() */
+#include "Automation_Driver.h"  /* Automation_Driver_Frame() */
 
 /* COPILOT */ /* SDL_main.h redefines main() on some platforms (macOS, iOS, Android).
                       We handle our own main(), so tell SDL not to intercept it.
@@ -111,7 +111,7 @@ void Shutdown_Platform(void);
 static int remom_continue_flag = 0;
 
 /* CLAUDE: --load <SAVE.GAM> -- same as --continue, but loads a named save instead of SAVE9.GAM.
-   Mirrors HeMoM's --load (HeMoM.c) so scripted scenes can start from a known state without first
+   Mirrors DeMoM's --load (DeMoM.c) so scripted scenes can start from a known state without first
    navigating the Load Game menu.  It reuses the game's REAL load path: scr_Continue calls
    Load_WZD_Resources() + Load_SAVE_GAM(), and g_load_save_gam_name_override redirects the filename
    inside Load_SAVE_GAM.  Nothing about the load sequence is special-cased. */
@@ -198,17 +198,24 @@ static void Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
         if(mouse_x >= p_fields[fi].x1 && mouse_x <= p_fields[fi].x2 && mouse_y >= p_fields[fi].y1 && mouse_y <= p_fields[fi].y2)
         {
             fprintf(fp, "  field[%d]=(%d,%d)-(%d,%d)", fi, p_fields[fi].x1, p_fields[fi].y1, p_fields[fi].x2, p_fields[fi].y2);
-#ifdef STU_DEBUG
+#if STU_CLOG
             /* CLAUDE 2026-07-22: stamp the field's Add_* origin (basename:line) — the join
                key into the field catalog / HMS alias table for rmr2hms naming. */
             {
-                const char *origin_file = Dbg_Field_Origin_File((int16_t)fi);
-                if(origin_file[0] != '\0') { fprintf(fp, "@%s:%ld", origin_file, (long)Dbg_Field_Origin_Line((int16_t)fi)); }
+                const char *origin_file = STU_CLOG_Field_Origin_File((int16_t)fi);
+                if(origin_file[0] != '\0') { fprintf(fp, "@%s:%ld", origin_file, (long)STU_CLOG_Field_Origin_Line((int16_t)fi)); }
             }
 #endif
             break;
         }
     }
+#if STU_CLOG
+    /* CLAUDE: drawing catalog -- the most recently drawn sprite under the click (PLAN-Draw-Catalog.md section 4) */
+    {
+        char draw_hit[64];
+        if(STU_CLOG_Draw_Hit((int16_t)mouse_x, (int16_t)mouse_y, draw_hit, sizeof(draw_hit)) != 0) { fprintf(fp, "  draw=%s", draw_hit); }
+    }
+#endif
 }
 
 
@@ -238,7 +245,7 @@ int main(int argc, char * argv[])
 
     /* Route player logs to the per-user state dir (XDG_STATE_HOME/ReMoM etc.)
        instead of the CWD.  The resolver is standalone (no STU_GRAF_Init needed)
-       and creates the dir; hand it to STU_LOG before startup.  HeMoM / tests /
+       and creates the dir; hand it to STU_LOG before startup.  DeMoM / tests /
        matchup never do this, so they keep logging to the CWD.  REMOM_LOG_DIR
        overrides; an unwritable dir falls back to the CWD. */
     /* CLAUDE: ReMoM.ini [Paths] log_dir wins over the per-user state dir.  The ini is a dev/modder
@@ -266,7 +273,7 @@ int main(int argc, char * argv[])
        before reporting -- the log is buffered, so an abort otherwise discards the whole run's log.
        Catches abort()/failed assertions as well as CPU faults; see STU/src/STU_BRAK.h. */
     STU_BRAK_Install();
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CLAUDE: performance capture.  Must come AFTER STU_Log_Startup() so the .fwv header can record
        the severity/CALL_TRACE state the capture ran under -- numbers taken with tracing on measure
@@ -390,7 +397,7 @@ int main(int argc, char * argv[])
        originals (backing up any existing copies); otherwise it's a first-run
        copy-if-absent of CONFIG.MOM / MAGIC.SET / SAVE1-9.GAM into the user-data
        dir so the engine reads/writes its own copies (the install stays
-       read-only).  PLAYER only -- both are no-ops for HeMoM. */
+       read-only).  PLAYER only -- both are no-ops for DeMoM. */
     {
         int argi;
         int orig_files = 0;
@@ -537,9 +544,9 @@ int main(int argc, char * argv[])
                 LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: --scenario flag detected", __FILE__, __LINE__);
 
                 argi++;
-                if(HeMoM_Player_Load_Scenario(argv[argi]) == 0)
+                if(Automation_Driver_Load_Scenario(argv[argi]) == 0)
                 {
-                    Platform_Register_Frame_Callback(HeMoM_Player_Frame);
+                    Platform_Register_Frame_Callback(Automation_Driver_Frame);
                 }
             }
         }
@@ -573,7 +580,7 @@ int main(int argc, char * argv[])
     {
         Platform_Replay_Stop();
     }
-    HeMoM_Player_Shutdown();
+    Automation_Driver_Shutdown();
 
     Shutdown_Platform();
 
@@ -587,7 +594,7 @@ int main(int argc, char * argv[])
     AI_Metrics_Shutdown();
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     STU_Log_Shutdown();
 
     return 0;
@@ -623,9 +630,9 @@ int MOM_main(int argc, char** argv)
     SAMB_ptr main_menu_music_seg;  // MGC
     uint32_t main_menu_music_seg_size = 0;  // DNE in Dasm
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
-    /* Core engine initialization (shared with HeMoM) */
+    /* Core engine initialization (shared with DeMoM) */
     ReMoM_Init_Engine();
 
     // DOMSDOS  MS-DOS has some area for the program execution that lets you get away with the AVRL here?  ... why argv[1] instead of argv[2]?
@@ -714,7 +721,7 @@ int MOM_main(int argc, char** argv)
 
     Screen_Control();
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return 0;
 

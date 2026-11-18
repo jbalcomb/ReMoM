@@ -1,0 +1,39 @@
+module_num=86
+module=D:\MOX\OTHERS\ERICHELP.C
+source=0086-erichelp.c.md
+range[0]=1:0x000BDAED linear=0x000CDAED size=362
+range[1]=2:0x0000B1F0 linear=0x0017B1F0 size=860
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                         SYMBOL                                        CHUNK
+m086f001  1    -      0x000CDAED  1:0x000BDAED  code         Eric_Set_Help_List                           Eric_Set_Help_List_                           regions/07-object-1/00152E54-00153653.txt
+m086f002  2    -      0x000CDB01  1:0x000BDB01  code         Set_Colony_Screen_Help_List                  Set_Colony_Screen_Help_List_                  regions/07-object-1/00152E54-00153653.txt
+m086f003  3    -      0x000CDB18  1:0x000BDB18  code         Set_Colony_Summary_Screen_Help_List          Set_Colony_Summary_Screen_Help_List_          regions/07-object-1/00152E54-00153653.txt
+m086f004  4    -      0x000CDB2A  1:0x000BDB2A  code         Set_Refit_Ship_Popup_Help_List               Set_Refit_Ship_Popup_Help_List_               regions/07-object-1/00152E54-00153653.txt
+m086f005  5    -      0x000CDB3C  1:0x000BDB3C  code         Set_Building_Queue_Screen_Help_List          Set_Building_Queue_Screen_Help_List_          regions/07-object-1/00152E54-00153653.txt
+m086f006  6    -      0x000CDB4E  1:0x000BDB4E  code         Set_Transport_Popup_Help_List                Set_Transport_Popup_Help_List_                regions/07-object-1/00152E54-00153653.txt
+m086f007  7    -      0x000CDB60  1:0x000BDB60  code         Set_Occupation_Policy_Popup_Help_List        Set_Occupation_Policy_Popup_Help_List_        regions/07-object-1/00152E54-00153653.txt
+m086f008  8    -      0x000CDB72  1:0x000BDB72  code         Set_New_Game_Screen_Help_List                Set_New_Game_Screen_Help_List_                regions/07-object-1/00152E54-00153653.txt
+m086f009  9    -      0x000CDBC3  1:0x000BDBC3  code         Set_New_System_Discovery_Popup_Help_List     Set_New_System_Discovery_Popup_Help_List_     regions/07-object-1/00152E54-00153653.txt
+m086f010  10   -      0x000CDBC4  1:0x000BDBC4  code         Set_Player_Attacked_Popup_Help_List          Set_Player_Attacked_Popup_Help_List_          regions/07-object-1/00152E54-00153653.txt
+m086f011  11   -      0x000CDBD9  1:0x000BDBD9  code         Set_New_Colony_Confirmation_Box_Help_List    Set_New_Colony_Confirmation_Box_Help_List_    regions/07-object-1/00152E54-00153653.txt
+m086f012  12   -      0x000CDBEE  1:0x000BDBEE  code         Set_Tax_Rate_Popup_Help_List                 Set_Tax_Rate_Popup_Help_List_                 regions/07-object-1/00152E54-00153653.txt
+m086f013  13   -      0x000CDC03  1:0x000BDC03  code         Set_Dragon_New_Star_Popup_Help_List          Set_Dragon_New_Star_Popup_Help_List_          regions/07-object-1/00152E54-00153653.txt
+m086f014  14   -      0x000CDC18  1:0x000BDC18  code         Set_Planet_Selection_Popup_Help_List         Set_Planet_Selection_Popup_Help_List_         regions/07-object-1/00152E54-00153653.txt
+m086f015  15   -      0x000CDC2D  1:0x000BDC2D  code         Set_Officer_Information_Popup_Help_List      Set_Officer_Information_Popup_Help_List_      regions/07-object-1/00152E54-00153653.txt
+m086f016  16   -      0x000CDC42  1:0x000BDC42  code         Set_Combat_Colony_Selection_Popup_Help_List  Set_Combat_Colony_Selection_Popup_Help_List_  regions/07-object-1/00152E54-00153653.txt
+-         -    -      0x0017B1F0  2:0x0000B1F0  static,data  _colony_screen_help_list                     _colony_screen_help_list                      regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B29A  2:0x0000B29A  static,data  _colony_summary_screen_help_list             _colony_summary_screen_help_list              regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B376  2:0x0000B376  static,data  _refit_ship_popup_help_list                  _refit_ship_popup_help_list                   regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B3BC  2:0x0000B3BC  static,data  _colony_building_queue_screen_help_list      _colony_building_queue_screen_help_list       regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B43E  2:0x0000B43E  static,data  _colony_xport_pup_help_list                  _colony_xport_pup_help_list                   regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B484  2:0x0000B484  static,data  _occupation_policy_pup_help_list             _occupation_policy_pup_help_list              regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B48E  2:0x0000B48E  static,data  _new_game_screen_help_list                   _new_game_screen_help_list                    regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B4FC  2:0x0000B4FC  static,data  _player_attacked_popup_help_list             _player_attacked_popup_help_list              regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B506  2:0x0000B506  static,data  _new_colony_confirmation_box_help_list       _new_colony_confirmation_box_help_list        regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B510  2:0x0000B510  static,data  _tax_rate_popup_help_list                    _tax_rate_popup_help_list                     regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B51A  2:0x0000B51A  static,data  _dragon_new_star_popup_help_list             _dragon_new_star_popup_help_list              regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B524  2:0x0000B524  static,data  _new_system_discovery_popup_help_list        _new_system_discovery_popup_help_list         regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B52E  2:0x0000B52E  static,data  _planet_selection_popup_help_list            _planet_selection_popup_help_list             regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B538  2:0x0000B538  static,data  _officer_information_popup_help_list         _officer_information_popup_help_list          regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B542  2:0x0000B542  static,data  _combat_colony_selection_popup_help_list     _combat_colony_selection_popup_help_list      regions/08-object-2/001F9654-001F9E53.txt

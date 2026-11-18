@@ -1,0 +1,39 @@
+module_num=22
+module=D:\MOX\OTHERS\CMBTMIS.C
+source=0022-cmbtmis.c.md
+range[0]=1:0x0002B83D linear=0x0003B83D size=11558
+range[1]=2:0x00000D80 linear=0x00170D80 size=16
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                         SYMBOL                        CHUNK
+m022f001  1    -      0x0003B83D  1:0x0002B83D  static,code  missile_group_offset         _missile_group_offset         regions/07-object-1/000C0E54-000C1653.txt
+m022f002  2    -      0x0003BA3D  1:0x0002BA3D  static,code  torpedo_group_offset         _torpedo_group_offset         regions/07-object-1/000C0E54-000C1653.txt
+m022f003  3    -      0x0003BB3D  1:0x0002BB3D  code         Missile_Owner                Missile_Owner_                regions/07-object-1/000C0E54-000C1653.txt
+m022f004  4    -      0x0003BB50  1:0x0002BB50  code         Missile_Type                 Missile_Type_                 regions/07-object-1/000C0E54-000C1653.txt
+m022f005  5    -      0x0003BBF6  1:0x0002BBF6  code         Coord_Movement               Coord_Movement_               regions/07-object-1/000C0E54-000C1653.txt
+m022f006  6    -      0x0003BC80  1:0x0002BC80  code         Kill_Missile                 Kill_Missile_                 regions/07-object-1/000C0E54-000C1653.txt
+m022f007  7    -      0x0003BCCD  1:0x0002BCCD  code         Did_Missile_Hit              Did_Missile_Hit_              regions/07-object-1/000C0E54-000C1653.txt
+m022f008  8    -      0x0003BD2C  1:0x0002BD2C  static,code  Picture_Count                Picture_Count_                regions/07-object-1/000C0E54-000C1653.txt
+m022f009  9    -      0x0003BDDA  1:0x0002BDDA  static,code  Get_Multiple_Torpedo_Coords  Get_Multiple_Torpedo_Coords_  regions/07-object-1/000C0E54-000C1653.txt
+m022f010  10   -      0x0003BF72  1:0x0002BF72  static,code  Get_Multiple_Missile_Coords  Get_Multiple_Missile_Coords_  regions/07-object-1/000C0E54-000C1653.txt
+m022f011  11   -      0x0003C2DC  1:0x0002C2DC  code         Draw_Missile                 Draw_Missile_                 regions/07-object-1/000C1654-000C1E53.txt
+m022f012  12   -      0x0003C539  1:0x0002C539  code         Draw_Missile_Status          Draw_Missile_Status_          regions/07-object-1/000C1654-000C1E53.txt
+m022f013  13   -      0x0003C834  1:0x0002C834  code         Draw_Missiles                Draw_Missiles_                regions/07-object-1/000C1E54-000C2653.txt
+m022f014  14   -      0x0003C892  1:0x0002C892  code         Fire_Missile                 Fire_Missile_                 regions/07-object-1/000C1E54-000C2653.txt
+m022f015  15   -      0x0003CC24  1:0x0002CC24  code         Missile_Coord_Movement       Missile_Coord_Movement_       regions/07-object-1/000C1E54-000C2653.txt
+m022f016  16   -      0x0003CC72  1:0x0002CC72  code         Missile_Facing_To_XY         Missile_Facing_To_XY_         regions/07-object-1/000C1E54-000C2653.txt
+m022f017  17   -      0x0003CC9C  1:0x0002CC9C  code         Missile_Facing               Missile_Facing_               regions/07-object-1/000C1E54-000C2653.txt
+m022f018  18   -      0x0003CD21  1:0x0002CD21  code         Missile_Speed                Missile_Speed_                regions/07-object-1/000C1E54-000C2653.txt
+m022f019  19   -      0x0003CE4F  1:0x0002CE4F  code         Missile_On_Combat_Screen     Missile_On_Combat_Screen_     regions/07-object-1/000C1E54-000C2653.txt
+m022f020  20   -      0x0003CEB7  1:0x0002CEB7  code         Move_Missile                 Move_Missile_                 regions/07-object-1/000C1E54-000C2653.txt
+m022f021  21   -      0x0003D21D  1:0x0002D21D  code         Next_Missile_Id              Next_Missile_Id_              regions/07-object-1/000C2654-000C2E53.txt
+m022f022  22   -      0x0003D259  1:0x0002D259  code         On_Combat_Screen             On_Combat_Screen_             regions/07-object-1/000C2654-000C2E53.txt
+m022f023  23   -      0x0003D299  1:0x0002D299  code         Is_Missile_Target_Alive      Is_Missile_Target_Alive_      regions/07-object-1/000C2654-000C2E53.txt
+m022f024  24   -      0x0003D2DF  1:0x0002D2DF  code         Resolve_Missile              Resolve_Missile_              regions/07-object-1/000C2654-000C2E53.txt
+m022f025  25   -      0x0003DB8F  1:0x0002DB8F  code         Find_Weakest_Shield          Find_Weakest_Shield_          regions/07-object-1/000C2E54-000C3653.txt
+m022f026  26   -      0x0003DBD1  1:0x0002DBD1  code         Draw_Fighter                 Draw_Fighter_                 regions/07-object-1/000C2E54-000C3653.txt
+m022f027  27   -      0x0003DDD8  1:0x0002DDD8  code         Retarget_Missile             Retarget_Missile_             regions/07-object-1/000C2E54-000C3653.txt
+m022f028  28   -      0x0003DF8D  1:0x0002DF8D  code         Fighter_Ocv                  Fighter_Ocv_                  regions/07-object-1/000C2E54-000C3653.txt
+m022f029  29   -      0x0003DFE0  1:0x0002DFE0  code         Missile_Dcv                  Missile_Dcv_                  regions/07-object-1/000C2E54-000C3653.txt
+m022f030  30   -      0x0003E095  1:0x0002E095  code         Get_Missile_Hits             Get_Missile_Hits_             regions/07-object-1/000C3654-000C3E53.txt
+m022f031  31   -      0x0003E1A4  1:0x0002E1A4  code         Fighter_Combat_SFX           Fighter_Combat_SFX_           regions/07-object-1/000C3654-000C3E53.txt

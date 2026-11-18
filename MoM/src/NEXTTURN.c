@@ -18,6 +18,8 @@
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage_Range() */  /* CLAUDE */
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
 #include "../../platform/include/Platform_Perf.h"  /* PERF_CALL() zones -- compiled out unless PERF_INSTRUMENT */
@@ -52,10 +54,9 @@
 #include "OverSpel.h"
 #include "DIPLOMAC.h"
 #include "LVLMAKE.h"
-#include "CityScr.h"  /* City_Screen__WIP(); */
+#include "CityScr.h"  /* City_Screen(); */
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "MOM_DBG.h"
 #include "MOM_SCR.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
@@ -80,6 +81,11 @@
 #include <string.h>
 
 #include "Spells132.h"
+
+
+
+
+
 
 
 /*
@@ -281,32 +287,6 @@ retf
 
 
 // WZD o60p04
-void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
-/* CLAUDE DEBUG: scan for the 3 neutral defenders (cities 9/13/17) by (wx,wy,type=104)
- * and log owner_idx/wp -- to find where they get killed (owner -> -1) between
- * Next_Turn_Calc and the 2nd Delete_Dead_Units.  Match on coords+type only: Kill_Unit
- * zaps owner_idx & wp but leaves wx/wy, so a just-killed defender is still found. */
-static void dbg_scan_defenders(const char* where)
-{
-    int16_t i;
-    int16_t found = 0;
-    for(i = 0; i < _units; i++)
-    {
-        if(_UNITS[i].type == 104 &&
-           ( (_UNITS[i].wx == 29 && _UNITS[i].wy == 32) ||
-             (_UNITS[i].wx == 41 && _UNITS[i].wy == 12) ||
-             (_UNITS[i].wx == 24 && _UNITS[i].wy == 22) ))
-        {
-            LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-KILL] %-28s _UNITS[%d] (%d,%d) type=%d owner=%d wp=%d",
-                where, (int)i, (int)_UNITS[i].wx, (int)_UNITS[i].wy, (int)_UNITS[i].type,
-                (int)_UNITS[i].owner_idx, (int)_UNITS[i].wp);
-            found++;
-        }
-    }
-    LOG_DEBUG(LOG_CAT_GENERAL, "[DBG-KILL] %-28s defenders_found=%d _units=%d", where, (int)found, (int)_units);
-}
-
 void Next_Turn_Proc(void)
 {
     char temp_string[LEN_TEMP_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -315,14 +295,14 @@ void Next_Turn_Proc(void)
     int16_t curr_prod_idx = 0;
     int16_t DBG_itr_cities = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     Delete_Dead_Units();
     /* CLAUDE: GD 600 -- _UNITS after Next_Turn_Proc's 1st Delete_Dead_Units (before
      * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #1.  This is the
      * FIRST Next-Turn capture (before Next_Turn_Calc), hence 600 < 601.  Fire once. */
-    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("600_Delete_Dead_Units_NextTurnProc_1_U"); } }
+    STU_GD_ONCE("600_Delete_Dead_Units_NextTurnProc_1_U", STU_GD_Dump_Units("600_Delete_Dead_Units_NextTurnProc_1_U"));  /* CLAUDE */
     All_Units_In_Towers();
 
 
@@ -332,18 +312,15 @@ void Next_Turn_Proc(void)
 
 
     Next_Turn_Calc();
-    dbg_scan_defenders("B after Next_Turn_Calc");
 
 
     Cache_Graphics_Overland();
-    dbg_scan_defenders("C after Cache_Graphics");
 
 
     Delete_Dead_Units();
-    dbg_scan_defenders("D after Delete_Dead_Units_2");
     /* CLAUDE: GD 634 -- _UNITS after Next_Turn_Proc's 2nd Delete_Dead_Units (before
      * All_Units_In_Towers), matching OG's j_All_Units_In_Towers landmark #2.  Fire once. */
-    { static int gd626_done = 0; if(!gd626_done) { gd626_done = 1; gd_dump_units("634_Delete_Dead_Units_NextTurnProc_2_U"); } }
+    STU_GD_ONCE("634_Delete_Dead_Units_NextTurnProc_2_U", STU_GD_Dump_Units("634_Delete_Dead_Units_NextTurnProc_2_U"));  /* CLAUDE */
     All_Units_In_Towers();
 
 
@@ -423,7 +400,7 @@ void Next_Turn_Proc(void)
                 }
 
                 current_screen = scr_City_Screen;
-                City_Screen__WIP();
+                City_Screen();
                 Set_Draw_Active_Stack_Always();
                 _map_plane = orig_map_plane;
                 MSG_Building_Complete[itr_msg].city_idx = -1;
@@ -473,7 +450,7 @@ void Next_Turn_Proc(void)
     Reset_Draw_Active_Stack();
 
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -610,7 +587,7 @@ and item power
 */
 /*
 
-Cast_NaturesAwareness()
+Cast_Natures_Awareness()
     |-> Cheat_Reveal()
     |-> All_AI_Players_Contacted()
 
@@ -667,17 +644,17 @@ void All_AI_Players_Contacted(void)
 */
 
 // WZD o119p01
-void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void Next_Turn_Calc(void)
 {
     int16_t itr_players = 0;
     int16_t DBG_itr_cities = 0;
+    int16_t itr_cities = 0;  /* CLAUDE */  // _SI_
+    int16_t auto_build_flag = 0;  /* CLAUDE */  // _DI_
 #ifdef STU_DEBUG
     uint64_t ntc_start_ms = Platform_Get_Millies();
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 /* CLAUDE: the hand-toggled two-#define PHASE macro that used to sit here has been replaced by the
  * build-gated PERF_CALL zone (platform/include/Platform_Perf.h, PRD-Performance-Management FR6/FR7).
@@ -703,7 +680,7 @@ void Next_Turn_Calc(void)
      * Next_Turn_Calc).  Tells whether the divergent neutral units (_UNITS[48..50], owner
      * 5 / type 104 in OG, absent in ReMoM) exist by the end of the AI turn or are created
      * in a later Next_Turn_Calc phase.  Fire once. */
-    { static int gd618_done = 0; if(!gd618_done) { gd618_done = 1; gd_dump_units("618_AI_Next_Turn_Return_U"); } }
+    STU_GD_ONCE("618_AI_Next_Turn_Return_U", STU_GD_Dump_Units("618_AI_Next_Turn_Return_U"));  /* CLAUDE */
 
     // Next_Turn_Process_Purify();
 /* CLAUDE */ PERF_CALL(Next_Turn_Process_Purify());
@@ -711,31 +688,36 @@ void Next_Turn_Calc(void)
     // Initialize_Reports();
 /* CLAUDE */ PERF_CALL(Initialize_Reports());
 
-    if(g_timestop_player_num != 0)
-    {
-
-        _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve -= 200;  // manual says 150
-
-        if(_players[PLAYER_IDX(g_timestop_player_num)].mana_reserve < 0)
-        {
-
-            _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve = 0;
-
-            _players[PLAYER_IDX(g_timestop_player_num)].Globals[TIME_STOP] = 0;
-
-            if(PLAYER_IDX(g_timestop_player_num) == HUMAN_PLAYER_IDX)
-            {
-
-                MSG_GEs_Lost = 1;
-
-            }
-
-            g_timestop_player_num = 0;
-
-        }
-
-    }
-    else
+    /* CLAUDE */  /* REBUG */  // branch order 1:1 with ovr119/Next_Turn_Calc.asm 29-31 ('cmp g_timestop_player_num, 0 / jz loc_9EC56 / jmp loc_9ED9A'): the normal turn is the then-block, the Time Stop turn (asm 147-178) the else-block
+//    /* OGBUG  tests g_timestop_player_num, not the caster's Globals[TIME_STOP]: an AI whose mana_reserve was 0 had all its globals, Time Stop included, cleared by AI_Sanity_Check_Overland_Enchantments() inside AI_Next_Turn() above, yet this turn still runs as a Time Stop turn */
+//    if(g_timestop_player_num != 0)
+//    {
+//
+//        _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve -= 200;  // manual says 150
+//
+//        if(_players[PLAYER_IDX(g_timestop_player_num)].mana_reserve < 0)
+//        {
+//
+//            _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve = 0;
+//
+//            _players[PLAYER_IDX(g_timestop_player_num)].Globals[TIME_STOP] = 0;
+//
+//            if(PLAYER_IDX(g_timestop_player_num) == HUMAN_PLAYER_IDX)
+//            {
+//
+//                MSG_GEs_Lost = 1;
+//
+//            }
+//
+//            g_timestop_player_num = 0;
+//
+//        }
+//
+//    }
+//    else
+//    {
+    /* OGBUG  tests g_timestop_player_num, not the caster's Globals[TIME_STOP]: an AI whose mana_reserve was 0 had all its globals, Time Stop included, cleared by AI_Sanity_Check_Overland_Enchantments() inside AI_Next_Turn() above, yet this turn still runs as a Time Stop turn */
+    if(g_timestop_player_num == 0)
     {
 
         // Decrease_Peace_Duration();
@@ -786,7 +768,7 @@ void Next_Turn_Calc(void)
     /* CLAUDE: GD point 621 -- _UNITS after All_Outpost_Population_Growth, before the
      * following Apply_City_Changes(), mirroring OG (which fires at the j_Apply_City_Changes
      * landmark to dodge the ovr119 overlay eviction on return).  Fire once. */
-    { static int gd623_done = 0; if(!gd623_done) { gd623_done = 1; gd_dump_units("621_All_Outpost_Population_Growth_Return_U"); } }
+    STU_GD_ONCE("621_All_Outpost_Population_Growth_Return_U", STU_GD_Dump_Units("621_All_Outpost_Population_Growth_Return_U"));  /* CLAUDE */
 
         // Apply_City_Changes();
 /* CLAUDE */ PERF_CALL(Apply_City_Changes());
@@ -801,6 +783,33 @@ void Next_Turn_Calc(void)
         if(grand_vizier == ST_TRUE)
         {
             // TODO
+            /* CLAUDE */  /* asm: ovr119/Next_Turn_Calc.asm @@Loop_Cities_Enter .. loc_9ED2A - was not reconstructed */
+            for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+            {
+                if(_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    auto_build_flag = ST_FALSE;
+                    if(_CITIES[itr_cities].construction == bt_AUTOBUILD)
+                    {
+                        auto_build_flag = ST_TRUE;
+                    }
+                    if(
+                        (_CITIES[itr_cities].construction == bt_Housing)
+                        ||
+                        (_CITIES[itr_cities].construction == bt_TradeGoods)
+                    )
+                    {
+                        if(Random(4) == 1)
+                        {
+                            auto_build_flag = ST_TRUE;
+                        }
+                    }
+                    if(auto_build_flag == ST_TRUE)
+                    {
+                        Player_Colony_Autobuild_HP(itr_cities);
+                    }
+                }
+            }
         }
         /*
             END: Grand Vizier
@@ -811,7 +820,7 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PERF_CALL(Determine_Offer());
     /* CLAUDE: GD point 627 -- _UNITS after Determine_Offer (before the following
      * Set_Mouse_List), mirroring OG's far-return into Next_Turn_Calc+0x11F.  Fire once. */
-    { static int gd624_done = 0; if(!gd624_done) { gd624_done = 1; gd_dump_units("627_Determine_Offer_Return_U"); } }
+    STU_GD_ONCE("627_Determine_Offer_Return_U", STU_GD_Dump_Units("627_Determine_Offer_Return_U"));  /* CLAUDE */
 
 
         Set_Mouse_List(1, mouse_list_hourglass);
@@ -835,6 +844,7 @@ void Next_Turn_Calc(void)
 
         PERF_CALL(NPC_To_NPC_Treaty_Negotiations());
 
+        /* OGBUG  sets the hourglass cursor right before NPC_To_Human_Diplomacy(), whose conversations with the human are interactive: the mouse shows the hourglass while an AI wizard talks to you */
         Set_Mouse_List(1, mouse_list_hourglass);
 
         // NPC_To_Human_Diplomacy();
@@ -860,6 +870,32 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PERF_CALL(Cool_Off_Volcanoes());
 
     }
+    else
+    {
+
+        _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve -= 200;  // manual says 150
+
+        /* CLAUDE */  // if(_players[PLAYER_IDX(g_timestop_player_num)].mana_reserve < 0)
+        /* CLAUDE */  /* REBUG */  // mana_reserve is uint16_t in ReMoM, so '< 0' was never true; the asm (165 'cmp [word ptr bx], 0 / jge') is a signed compare
+        if(_players[PLAYER_IDX(g_timestop_player_num)].mana_reserve < 0)
+        {
+
+            _players[PLAYER_IDX(g_timestop_player_num)].mana_reserve = 0;
+
+            _players[PLAYER_IDX(g_timestop_player_num)].Globals[TIME_STOP] = 0;
+
+            if(PLAYER_IDX(g_timestop_player_num) == HUMAN_PLAYER_IDX)
+            {
+
+                MSG_GEs_Lost = 1;
+
+            }
+
+            g_timestop_player_num = 0;
+
+        }
+
+    }
 
 
     // All_Players_Apply_Spell_Casting();
@@ -870,7 +906,7 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PERF_CALL(Delete_Dead_Units());  /* j_Delete_Dead_Units() */
     /* CLAUDE: GD 630 -- _UNITS after Next_Turn_Calc's Delete_Dead_Units (before
      * Set_Unit_Draw_Priority), matching OG's far-return into Next_Turn_Calc+0x1ED.  Fire once. */
-    { static int gd625_done = 0; if(!gd625_done) { gd625_done = 1; gd_dump_units("630_Delete_Dead_Units_NextTurnCalc_U"); } }
+    STU_GD_ONCE("630_Delete_Dead_Units_NextTurnCalc_U", STU_GD_Dump_Units("630_Delete_Dead_Units_NextTurnCalc_U"));  /* CLAUDE */
 
 
     // Set_Unit_Draw_Priority();
@@ -888,41 +924,56 @@ void Next_Turn_Calc(void)
 /* CLAUDE */ PERF_CALL(Do_All_Units_XP_Check());
     /* CLAUDE: GD point 631 -- _UNITS after Do_All_Units_XP_Check (before the following
      * Heal_All_Units), mirroring OG's far-return into Next_Turn_Calc+0x210.  Fire once. */
-    { static int gd631x_done = 0; if(!gd631x_done) { gd631x_done = 1; gd_dump_units("631_Do_All_Units_XP_Check_Return_U"); } }
+    STU_GD_ONCE("631_Do_All_Units_XP_Check_Return_U", STU_GD_Dump_Units("631_Do_All_Units_XP_Check_Return_U"));  /* CLAUDE */
 
 
     // Heal_All_Units();
 /* CLAUDE */ PERF_CALL(Heal_All_Units());
     /* CLAUDE: GD point 632 -- _UNITS after Heal_All_Units, before the following
      * Record_History(), mirroring OG's far-return into Next_Turn_Calc.  Fire once. */
-    { static int gd622_done = 0; if(!gd622_done) { gd622_done = 1; gd_dump_units("632_Heal_All_Units_Return_U"); } }
+    STU_GD_ONCE("632_Heal_All_Units_Return_U", STU_GD_Dump_Units("632_Heal_All_Units_Return_U"));  /* CLAUDE */
 
 
+    /* OGBUG  Record_History() runs after the Time Stop branch, so it runs on every turn: during a Time Stop it still recomputes the Astrologer values and writes a new Historian entry for every wizard (at the _turn that also keeps advancing below) */
     // Record_History();
 /* CLAUDE */ PERF_CALL(Record_History());
+
 
 
     // Increment_Background_Music();
 /* CLAUDE */ PERF_CALL(Increment_Background_Music());
 
 
+    /* OGBUG  the turn counter advances every turn, also during Time Stop (whose branch above only skips the other players' processing and charges the caster 200 mana): the date and everything that reads _turn (e.g. Do_Autosave's every-4th-turn test) move on during the frozen turns */
     _turn++;
 
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 
-        SETMAX(_players[itr_players].gold_reserve, MAX_GOLD_RESERVE);
+        /* CLAUDE */  // SETMAX(_players[itr_players].gold_reserve, MAX_GOLD_RESERVE);
+        /* CLAUDE */  // SETMAX(_players[itr_players].mana_reserve, MAX_MANA_RESERVE);
+        /* CLAUDE */  /* REBUG */  // gold_reserve / mana_reserve are uint16_t in ReMoM; the asm (ovr119/Next_Turn_Calc.asm 201-202, 213-214 'cmp ..., 30000 / jle') compares them signed, so a negative reserve is not clamped
+        if(_players[itr_players].gold_reserve > MAX_GOLD_RESERVE)
+        {
+            _players[itr_players].gold_reserve = MAX_GOLD_RESERVE;
+        }
 
-        SETMAX(_players[itr_players].mana_reserve, MAX_MANA_RESERVE);
+        if(_players[itr_players].mana_reserve > MAX_MANA_RESERVE)
+        {
+            _players[itr_players].mana_reserve = MAX_MANA_RESERVE;
+        }
 
     }
+
 
 
     // Main_Screen_Enable_Income_Warning();
 /* CLAUDE */ PERF_CALL(Main_Screen_Enable_Income_Warning());
 
 
+    /* OGBUG  the autosave (every 4th turn, SAVE9.GAM) is written in the middle of the turn change: after _turn++ but before the All_City_Calculations() below, the new RNG_AI_Turn_Seed, and everything Next_Turn_Proc does after this returns (Update_Units_MvsSts resets moves); */
+    /* OGBUG  Loaded_Game_Update re-runs All_AI_Refresh_Units_Movement (not Update_Units_MvsSts), which skips the human's units, so after loading SAVE9 the human's units start the turn with the moves they had left at the end of the previous turn */
     // Do_Autosave();
 /* CLAUDE */ PERF_CALL(Do_Autosave());
 
@@ -932,8 +983,7 @@ void Next_Turn_Calc(void)
     /* CLAUDE: GD point 633 -- _UNITS after the LATE (end-of-turn) All_City_Calculations,
      * before the following Get_Random_Seed(), mirroring the OG capture point (OG fires at
      * Get_Random_Seed to dodge the ovr119 overlay eviction on return).  Fire once. */
-    { static int gd619_done = 0; if(!gd619_done) { gd619_done = 1; gd_dump_units("633_All_City_Calculations_Return_U"); } }
-    dbg_scan_defenders("A at 633 dump (NTC tail)");
+    STU_GD_ONCE("633_All_City_Calculations_Return_U", STU_GD_Dump_Units("633_All_City_Calculations_Return_U"));  /* CLAUDE */
 
 
     RNG_AI_Turn_Seed = Get_Random_Seed();
@@ -951,7 +1001,7 @@ void Next_Turn_Calc(void)
     }
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -998,7 +1048,7 @@ void All_Colony_Calculations(void)
 
     City_Apply_Production()
         UNIT_Create((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx)
-    WIZ_HireHero()
+    Hire_Hero()
         Create_Unit(unit_type_idx, player_idx, FORTX(), FORTY(), FORTP(), -1);
     Lair_Make_Guardians()
         Create_Unit(_LAIRS[lair_idx].guard2_unit_type, NEUTRAL_PLAYER_IDX, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, 2000)
@@ -1178,9 +1228,10 @@ Done:
 }
 
 
+// MGC o056p16
 // WZD o121p02
 // AKA Player_Nominal_Skill()
-// MGC ovr056 o56p16
+// BinAlgo: Wizard_Casting_Skill()
 /*
     Nope. ¿ estimate the square root of a number ?
     Nope. ¿ the Babylonian method AKA the Newton-Raphson method ?
@@ -1213,9 +1264,9 @@ Done:
  */
 int16_t Player_Base_Casting_Skill(int16_t player_idx)
 {
-    int32_t num = 0;
+    int32_t num;
     int16_t casting_skill;
-    int16_t twos = 0;
+    int16_t twos;
     twos = 0;
     casting_skill = 0;
     num = 0;
@@ -1254,6 +1305,7 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
     {
         Evil_Omens_Up = ST_FALSE;
 
+        /* OGBUG  scans every player, the caster included: any wizard's Evil Omens (even the caster's own) makes this caster's Nature / Life spells cost x 3 / 2 */
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
             if(_players[itr_players].Globals[EVIL_OMENS] > 0)
@@ -1284,7 +1336,9 @@ int16_t Casting_Cost(int16_t player_idx, int16_t spell_idx, int16_t combat_flag)
         casting_cost = (casting_cost * 5);
     }
 
-    casting_cost = (casting_cost - ((casting_cost * cast_cost_reduction) / 100));
+    /* OGBUG  cast_cost_reduction from Casting_Cost_Reduction() is never capped (books over 7 x 10 + Masteries + Artificer + Conjurer + Runemaster): at 100 the spell costs 0, above 100 the cost goes negative */
+    // casting_cost = (casting_cost - ((casting_cost * cast_cost_reduction) / 100));
+    /* CLAUDE */  /* REBUG */  casting_cost = (casting_cost - (((int32_t)casting_cost * (int32_t)cast_cost_reduction) / 100));  /* asm: LXMUL@ / LDIV@ */
 
     return casting_cost;
 }
@@ -1455,8 +1509,10 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
 
     Success = ST_FALSE;
 
-    while((_units - 1) < MAX_UNIT_COUNT)
+    // while((_units - 1) < MAX_UNIT_COUNT)
+    while((_units + 1) < MAX_UNIT_COUNT)  /* CLAUDE */  /* REBUG */  /* asm: mov ax, [_units] / inc ax / cmp ax, e_MAX_UNIT_COUNT */
     {
+        /* OGBUG  attempts is never reset: when the champion pool (hero_type_class 2) fails after max_attempts tries, the whole-pool fallback do-while runs exactly once - one random hero that must also pass the dead / book / fame tests - before giving up with ST_UNDEFINED */
         do
         {
             attempts++;
@@ -1489,19 +1545,21 @@ int16_t Pick_Random_Hero(int16_t player_idx, int16_t zero_cost, int16_t hero_typ
                         (_players[player_idx].spellranks[sbr_Death] > 0)
                     )
                     &&
-                    (((_unit_type_table[hero_type_idx].cost - 100) / 10) < player_fame)
+                    // (((_unit_type_table[hero_type_idx].cost - 100) / 10) < player_fame)
+                    (((_unit_type_table[hero_type_idx].cost - 100) / 10) <= player_fame)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax, [bp+player_fame] / jg (fail) */
                 )
                 {
                     Success = ST_TRUE;
                 }
             }
 
-            if(Success == ST_TRUE)
-            {
-                break;
-            }
+            // if(Success == ST_TRUE)
+            // {
+            //     break;
+            // }
 
-        } while(attempts < max_attempts);
+        // } while(attempts < max_attempts);
+        } while((Success == ST_FALSE) && (attempts < max_attempts));  /* CLAUDE */  /* REBUG */  /* asm: cmp Success, e_ST_FALSE / jnz exit; cmp attempts, max_attempts / jge exit */
 
         if((hero_type_class == 2) && (Success == ST_FALSE))
         {
@@ -1545,7 +1603,22 @@ int16_t Unit_Moves2(int16_t unit_idx)
     */
     if(_UNITS[unit_idx].Hero_Slot > -1)
     {
-        hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
+        /* OGBUG  dead hero (owner_idx -1): the OG points hero_items at _players[-1].Heroes[Hero_Slot].Items[], words sizeof(s_WIZARD) below _players[0]'s, and uses them as */
+        /* OGBUG  _ITEMS[] indexes */
+        // hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
+        /* HACK */  if(_UNITS[unit_idx].owner_idx == ST_UNDEFINED)
+        /* HACK */  {
+        /* HACK */      static int16_t garbage_hero_items[NUM_HERO_ITEMS];
+        /* HACK */      for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
+        /* HACK */      {
+        /* HACK */          garbage_hero_items[itr_hero_items] = Stack_Garbage_Range(ST_UNDEFINED, (NUM_ITEMS - 1));
+        /* HACK */      }
+        /* HACK */      hero_items = &garbage_hero_items[0];
+        /* HACK */  }
+        /* HACK */  else
+        /* HACK */  {
+        /* HACK */      hero_items = &(_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]);
+        /* HACK */  }
         for(itr_hero_items = 0; itr_hero_items < NUM_HERO_ITEMS; itr_hero_items++)
         {
             if(hero_items[itr_hero_items] > -1)
@@ -1554,7 +1627,7 @@ int16_t Unit_Moves2(int16_t unit_idx)
                 {
                     endurance = ST_TRUE;
                 }
-                enchantments |= _ITEMS[hero_items[itr_hero_items]].Powers;
+                enchantments |= _ITEMS[hero_items[itr_hero_items]].powers;
                 item_moves2 += _ITEMS[hero_items[itr_hero_items]].moves2;
             }
         }
@@ -1590,6 +1663,8 @@ int16_t Unit_Moves2(int16_t unit_idx)
     /*
         BEGIN: Wind Mastery
     */
+    /* OGBUG  overland the Wind Mastery ship factor (x1.5 own, / 2 enemy) comes LAST, after Flight 6 / Chaos Channels wings 4 / Endurance +2 / item moves; Battle_Unit_Moves2 applies it right after type + item moves, before the minimums and Endurance: */
+    /* OGBUG  e.g. an Endurance ship under its owner's Wind Mastery: overland (base + 2) x 1.5, in combat base x 1.5 + 2; a flying ship under an enemy Wind Mastery: overland 6 / 2 = 3, in combat at least 6 */
     if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
     {
         wind_mastery = 0;
@@ -1639,6 +1714,9 @@ int16_t Unit_Is_Normal(int16_t unit_idx)
 {
     int16_t unit_is_normal = 0;  // _DI_
 
+    unit_is_normal = ST_TRUE;  /* CLAUDE */  /* REBUG */  /* asm: mov di, e_ST_TRUE - was missing, so ReMoM returned ST_FALSE for every unit */
+
+    /* OGBUG  rejects only fantastic types and Undead (UM_UNDEAD), not the Chaos Channel mutations (CC_ARMOR / CC_FLIGHT / CC_BREATH): an already Chaos Channeled unit counts as normal, so Chaos Channels, Black Channels and the normal-units-only enchantments can target it again */
     if(
         ((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
         ||
@@ -1809,9 +1887,7 @@ void Patch_Units_Upkeep_And_Sound(void)
 {
     int16_t itr_unit_types;  // _SI_
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Patch_Units_Upkeep_And_Sound()", __FILE__, __LINE__);
-#endif
 
 /*
 ovr121:1347
@@ -2061,9 +2137,7 @@ _TrlSpearmen
     _unit_type_table[ut_Nagas].Sound = 146;
 
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Patch_Units_Upkeep_And_Sound()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -2097,10 +2171,13 @@ void City_Delete_Building_Complete_Messages(int16_t city_idx)
             {
                 itr2 = itr1;
 
-                // BUG BUGBUG OGBUG: moves the city_idx for the message, but not the bldg_type_idx
+                /* OGBUG  shifts only the city_idx bytes of the following records down, leaving each record's bldg_type_idx in place, and then goes on to the next index without re-testing the record that moved in: */
+                /* OGBUG  every later notice is shown for the city of the record after it, and one city index is not decremented */
+                /* OGBUG  with g_bldg_msg_ctr == 20 the last step reads MSG_Building_Complete[20].city_idx, which in the OG is MSG_BldLost_Count (the next byte in dseg) */
                 while(g_bldg_msg_ctr > itr2)
                 {
-                    MSG_Building_Complete[itr2].city_idx = MSG_Building_Complete[(itr2 + 1)].city_idx;
+                    // MSG_Building_Complete[itr2].city_idx = MSG_Building_Complete[(itr2 + 1)].city_idx;
+                    /* HACK */  MSG_Building_Complete[itr2].city_idx = (((itr2 + 1) < 20) ? MSG_Building_Complete[(itr2 + 1)].city_idx : (int8_t)MSG_BldLost_Count);  /* bounded: [20] is MSG_BldLost_Count in the OG's dseg */
                     // OGBUG: DNE  MSG_Building_Complete[itr2].bldg_type_idx = MSG_Building_Complete[(itr2 + 1)].bldg_type_idx;
                     itr2++;
                 }
@@ -2214,6 +2291,148 @@ void City_Apply_Production(int16_t city_idx)
     int16_t uu_troop_count;
     int16_t product_cost;
 
+    /* CLAUDE */  /* original reconstruction, kept for reference: the asm tests construction < 100 first (cmp / jl building), reads production_units zero-extended and tests grand_vizier == e_ST_FALSE in the unit-cap branch */
+    //
+    // product_cost = City_Current_Product_Cost(city_idx);
+    //
+    // if(_CITIES[city_idx].population <= 0)
+    // {
+    //     return;
+    // }
+    //
+    // if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
+    // {
+    //     _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+    //     if(_CITIES[city_idx].Prod_Accu >= product_cost)
+    //     {
+    //         if((_units + 1) < MAX_UNIT_COUNT)
+    //         {
+    //             Create_Unit((_CITIES[city_idx].construction - 100), _CITIES[city_idx].owner_idx, _CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, city_idx);
+    //             Evict_Weakest_Unit((_units - 1));
+    //             Army_At_City(city_idx, &uu_troop_count, &uu_troops[0]);
+    //             if(
+    //                 (_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+    //                 ||
+    //                 (grand_vizier == ST_TRUE)
+    //             )
+    //             {
+    //                 _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+    //             {
+    //                 _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //             }
+    //             else
+    //             {
+    //                 LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
+    //                 stu_strcpy(city_name, _CITIES[city_idx].name);
+    //                 stu_strcat(GUI_NearMsgString, city_name);
+    //                 stu_strcat(GUI_NearMsgString, cnst_TooManyUnits);  // ". You must disband some units if you wish to build or summon any more."
+    //                 Warn0(GUI_NearMsgString);
+    //                 if(
+    //                     (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    //                     &&
+    //                     (grand_vizier == ST_TRUE)
+    //                 )
+    //                 {
+    //                     _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //                 }
+    //                 else
+    //                 {
+    //                     _CITIES[city_idx].construction = bt_TradeGoods;
+    //                 }
+    //             }
+    //         }
+    //         _CITIES[city_idx].Prod_Accu = 0;  /* "surplus production units will be lost" */
+    //     }
+    // }
+    // else  /* *Product* is 'Building' */
+    // {
+    //     if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
+    //     {
+    //         if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+    //         {
+    //             _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+    //         {
+    //             _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
+    //         }
+    //         else
+    //         {
+    //             _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+    //         }
+    //         /* Did we build a Building? */
+    //         if(_CITIES[city_idx].Prod_Accu >= product_cost)
+    //         {
+    //             // TODO  pragma ignore C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but '_CITIES[city_idx].construction' bytes may be read.
+    //             if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
+    //             {
+    //                 _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+    //             }
+    //             else
+    //             {
+    //                 // TODO  pragma ignore C6386  Buffer overrun while writing to '_CITIES[city_idx].bldg_status':  the writable size is '36' bytes, but '_CITIES[city_idx].construction' bytes might be written.
+    //                 _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+    //                 if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
+    //                 {
+    //                     _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+    //                 }
+    //             }
+    //             if(
+    //                 (_CITIES[city_idx].construction == bt_Oracle)
+    //                 &&
+    //                 (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    //             )
+    //             {
+    //                 Set_Square_Explored_Flags_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+    //             }
+    //             _CITIES[city_idx].bldg_cnt += 1;
+    //             _CITIES[city_idx].Prod_Accu = 0;
+    //             if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+    //             {
+    //                 _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //             }
+    //             else
+    //             {
+    //                 if(g_bldg_msg_ctr < 20)
+    //                 {
+    //                     MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
+    //                     MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
+    //                     g_bldg_msg_ctr++;
+    //                 }
+    //                 if(grand_vizier == ST_TRUE)
+    //                 {
+    //                     _CITIES[city_idx].construction = bt_AUTOBUILD;
+    //                 }
+    //                 else
+    //                 {
+    //                     _CITIES[city_idx].construction = bt_Housing;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // if(
+    //     (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    //     &&
+    //     (grand_vizier == ST_TRUE)
+    //     &&
+    //     (_CITIES[city_idx].construction == bt_AUTOBUILD)
+    // )
+    // {
+    //     Player_Colony_Autobuild_HP(city_idx);
+    // }
+    //
+
+    /* CLAUDE */  /* 1:1 with ovr140/City_Apply_Production.asm */
     product_cost = City_Current_Product_Cost(city_idx);
 
     if(_CITIES[city_idx].population <= 0)
@@ -2221,9 +2440,78 @@ void City_Apply_Production(int16_t city_idx)
         return;
     }
 
-    if(_CITIES[city_idx].construction >= 100)  /* *Product* is 'Unit' */
+    if(_CITIES[city_idx].construction < 100)  /* *Product* is 'Building' */
     {
-        _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
+        if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
+        {
+            if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
+            {
+                _CITIES[city_idx].construction = bt_AUTOBUILD;
+            }
+        }
+        else
+        {
+            if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
+            {
+                _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);  /* asm: mov ah, 0 */
+            }
+            else
+            {
+                _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;  /* asm: mov ah, 0 */
+            }
+            /* Did we build a Building? */
+            if(_CITIES[city_idx].Prod_Accu >= product_cost)
+            {
+                /* OGBUG  a building completes as bs_Built only when it was bs_NotBuilt; any other status is INCREMENTED: one rebuilt while bs_Removed (sold / destroyed this turn, still offered) becomes 3, a ghost building that every effect / upkeep / prerequisite test ignores and that is never offered again */
+                if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= bs_Replaced)
+                {
+                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
+                }
+                else
+                {
+                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
+                    if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
+                    {
+                        _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
+                    }
+                }
+                if(
+                    (_CITIES[city_idx].construction == bt_Oracle)
+                    &&
+                    (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                )
+                {
+                    Set_Square_Explored_Flags_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
+                }
+                _CITIES[city_idx].bldg_cnt += 1;
+                _CITIES[city_idx].Prod_Accu = 0;
+                if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                {
+                    if(g_bldg_msg_ctr < 20)
+                    {
+                        MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
+                        MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
+                        g_bldg_msg_ctr++;
+                    }
+                    if(grand_vizier == ST_TRUE)
+                    {
+                        _CITIES[city_idx].construction = bt_AUTOBUILD;
+                    }
+                    else
+                    {
+                        _CITIES[city_idx].construction = bt_Housing;
+                    }
+                }
+                else
+                {
+                    _CITIES[city_idx].construction = bt_AUTOBUILD;
+                }
+            }
+        }
+    }
+    else  /* *Product* is 'Unit' */
+    {
+        _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;  /* asm: mov ah, 0 */
         if(_CITIES[city_idx].Prod_Accu >= product_cost)
         {
             if((_units + 1) < MAX_UNIT_COUNT)
@@ -2242,11 +2530,7 @@ void City_Apply_Production(int16_t city_idx)
             }
             else
             {
-                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                {
-                    _CITIES[city_idx].construction = bt_AUTOBUILD;
-                }
-                else
+                if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                 {
                     LBX_Load_Data_Static(message_lbx_file, 0, (SAMB_ptr)GUI_NearMsgString, 66, 1, 150);  // "Maximum number of units exceeded"
                     stu_strcpy(city_name, _CITIES[city_idx].name);
@@ -2256,88 +2540,22 @@ void City_Apply_Production(int16_t city_idx)
                     if(
                         (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                         &&
-                        (grand_vizier == ST_TRUE)
+                        (grand_vizier == ST_FALSE)
                     )
-                    {
-                        _CITIES[city_idx].construction = bt_AUTOBUILD;
-                    }
-                    else
                     {
                         _CITIES[city_idx].construction = bt_TradeGoods;
                     }
-                }
-            }
-            _CITIES[city_idx].Prod_Accu = 0;  /* "surplus production units will be lost" */
-        }
-    }
-    else  /* *Product* is 'Building' */
-    {
-        if(_CITIES[city_idx].construction < bt_Barracks)  /* ~== not a *real* building */
-        {
-            if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-            {
-                _CITIES[city_idx].construction = bt_AUTOBUILD;
-            }
-        }
-        else
-        {
-            if(_CITIES[city_idx].owner_idx == NEUTRAL_PLAYER_IDX)
-            {
-                _CITIES[city_idx].Prod_Accu += (_CITIES[city_idx].production_units / 2);
-            }
-            else
-            {
-                _CITIES[city_idx].Prod_Accu += _CITIES[city_idx].production_units;
-            }
-            /* Did we build a Building? */
-            if(_CITIES[city_idx].Prod_Accu >= product_cost)
-            {
-                // TODO  pragma ignore C6385  Reading invalid data from '_CITIES[city_idx].bldg_status':  the readable size is '36' bytes, but '_CITIES[city_idx].construction' bytes may be read.
-                if(_CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] >= 0)  /* bs_Replaced, bs_Built, bs_Removed */
-                {
-                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] += 1;
-                }
-                else
-                {
-                    // TODO  pragma ignore C6386  Buffer overrun while writing to '_CITIES[city_idx].bldg_status':  the writable size is '36' bytes, but '_CITIES[city_idx].construction' bytes might be written.
-                    _CITIES[city_idx].bldg_status[_CITIES[city_idx].construction] = bs_Built;
-                    if(bldg_data_table[_CITIES[city_idx].construction].replace_bldg != ST_UNDEFINED)
-                    {
-                        _CITIES[city_idx].bldg_status[bldg_data_table[_CITIES[city_idx].construction].replace_bldg] = bs_Replaced;
-                    }
-                }
-                if(
-                    (_CITIES[city_idx].construction == bt_Oracle)
-                    &&
-                    (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
-                )
-                {
-                    Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 6);
-                }
-                _CITIES[city_idx].bldg_cnt += 1;
-                _CITIES[city_idx].Prod_Accu = 0;
-                if(_CITIES[city_idx].owner_idx != HUMAN_PLAYER_IDX)
-                {
-                    _CITIES[city_idx].construction = bt_AUTOBUILD;
-                }
-                else
-                {
-                    if(g_bldg_msg_ctr < 20)
-                    {
-                        MSG_Building_Complete[g_bldg_msg_ctr].city_idx = (int8_t)city_idx;
-                        MSG_Building_Complete[g_bldg_msg_ctr].bldg_type_idx = _CITIES[city_idx].construction;
-                        g_bldg_msg_ctr++;
-                    }
-                    if(grand_vizier == ST_TRUE)
+                    else
                     {
                         _CITIES[city_idx].construction = bt_AUTOBUILD;
                     }
-                    else
-                    {
-                        _CITIES[city_idx].construction = bt_Housing;
-                    }
+                }
+                else
+                {
+                    _CITIES[city_idx].construction = bt_AUTOBUILD;
                 }
             }
+            _CITIES[city_idx].Prod_Accu = 0;  /* "surplus production units will be lost" */
         }
     }
 
@@ -2351,7 +2569,6 @@ void City_Apply_Production(int16_t city_idx)
     {
         Player_Colony_Autobuild_HP(city_idx);
     }
-
 }
 
 
@@ -2411,19 +2628,31 @@ void Update_Players_Gold_Reserve(void)
             food_incomes[itr_players] = 0;
         }
 
-        if((gold_incomes[itr_players] + food_incomes[itr_players]) < MAX_SINT2)
-        {
-            _players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);
-        }
-        else
+        /* CLAUDE */  // if((gold_incomes[itr_players] + food_incomes[itr_players]) < MAX_SINT2)
+        /* CLAUDE */  // {
+        /* CLAUDE */  //     _players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);
+        /* CLAUDE */  // }
+        /* CLAUDE */  // else
+        /* CLAUDE */  // {
+        /* CLAUDE */  //     _players[itr_players].gold_reserve = MAX_SINT2;
+        /* CLAUDE */  // }
+        /* CLAUDE */  /* REBUG */  // asm (ovr140/Update_Players_Gold_Reserve.asm 246-288): 'mov dx, 32000 / sub dx, [gold_reserve] / cmp ax, dx / jle' - the income is compared with the room left below 32000, not with 32000
+        if((gold_incomes[itr_players] + food_incomes[itr_players]) > (MAX_SINT2 - _players[itr_players].gold_reserve))
         {
             _players[itr_players].gold_reserve = MAX_SINT2;
         }
+        else
+        {
+            _players[itr_players].gold_reserve += (gold_incomes[itr_players] + food_incomes[itr_players]);
+        }
 
+        /* CLAUDE */  // if(_players[itr_players].gold_reserve < 0)
+        /* CLAUDE */  /* REBUG */  // gold_reserve is uint16_t in ReMoM, so '< 0' was never true; the asm (294-295 'cmp [gold_reserve], 0 / jge') is a signed compare
         if(_players[itr_players].gold_reserve < 0)
         {
             _players[itr_players].gold_reserve = 0;
         }
+
     }
 
 }
@@ -2556,6 +2785,8 @@ void Players_Apply_Upkeeps__WIP(void)
 
         _players[itr].gold_reserve = (_players[itr].gold_reserve - gold_upkeeps[itr]);
 
+        /* CLAUDE */  // if(_players[itr].gold_reserve < 0)
+        /* CLAUDE */  /* REBUG */  // gold_reserve is uint16_t in ReMoM, so '< 0' was never true; the asm (ovr140/Players_Apply_Upkeeps.asm 177-178 'cmp [gold_reserve], 0 / jge') is a signed compare
         if(_players[itr].gold_reserve < 0)
         {
 
@@ -2578,6 +2809,8 @@ void Players_Apply_Upkeeps__WIP(void)
 
         _players[itr].mana_reserve = (_players[itr].mana_reserve - mana_upkeeps[itr]);
 
+        /* CLAUDE */  // if(_players[itr].mana_reserve < 0)
+        /* CLAUDE */  /* REBUG */  // mana_reserve is uint16_t in ReMoM, so '< 0' was never true; the asm (ovr140/Players_Apply_Upkeeps.asm 246-247 'cmp [mana_reserve], 0 / jge') is a signed compare
         if(_players[itr].mana_reserve < 0)
         {
 
@@ -2627,67 +2860,50 @@ void WIZ_MatchFoodUpkeep__WIP(int16_t player_idx, int16_t food_excess, int16_t f
             (_unit_type_table[_UNITS[itr_units].type].Transport == 0)
         )
         {
-
             food_upkeep--;
-
             UNIT_GetDependants__WIP(itr_units, &troop_count, &troops[0]);
-
             if(troop_count > 0)
             {
-
                 for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                 {
-
+                    /* OGBUG  tests the carrier (itr_units), not troops[itr_troops] */
                     if(
                         ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
-                        &&
+                        && 
                         (_UNITS[itr_units].type > ut_Chosen)
                     )
                     {
-
                         food_upkeep--;
-
-                        if(
-                            (msg_unit_lost_ctr < 20)
-                            &&
-                            (player_idx == HUMAN_PLAYER_IDX)
-                        )
-                        {
-
-                            msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
-
-                            msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
-
-                            msg_unit_lost_ctr++;
-
-                        }
-
-                        Kill_Unit(troops[itr_troops], kt_Normal);
-
                     }
-
+                    /* OGBUG  reports the carrier's type, not the dependant's */
+                    if(
+                        (msg_unit_lost_ctr < 20)
+                        &&
+                        (player_idx == HUMAN_PLAYER_IDX)
+                    )
+                    {
+                        msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                        msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
+                        msg_unit_lost_ctr++;
+                    }
+                    Kill_Unit(troops[itr_troops], kt_Normal);
                 }
-
             }
 
+            if(
+                (msg_unit_lost_ctr < 20)
+                &&
+                (player_idx == HUMAN_PLAYER_IDX)
+            )
+            {
+                msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                msg_unit_lost[msg_unit_lost_ctr].Cause = 0;
+                msg_unit_lost_ctr++;
+            }
+
+            Kill_Unit(itr_units, kt_Dismissed);
+            
         }
-
-        if(
-            (msg_unit_lost_ctr < 20)
-            &&
-            (player_idx == HUMAN_PLAYER_IDX)
-        )
-        {
-
-            msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
-
-            msg_unit_lost[msg_unit_lost_ctr].Cause = 0;
-
-            msg_unit_lost_ctr++;
-
-        }
-
-        Kill_Unit(itr_units, kt_Dismissed);
 
     }
 
@@ -2794,17 +3010,17 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep)
         {
             case 0:
             {
-                // TODO  mana_upkeep = WIZ_RemoveUEs(player_idx, mana_upkeep);
+                mana_upkeep = Remove_Unit_Enchantments_For_Upkeep(player_idx, mana_upkeep);  /* CLAUDE */  /* asm loc_C4EE6: push _SI_mana_upkeep / push _DI_player_idx / call WIZ_RemoveUEs / mov _SI_mana_upkeep, ax - was a TODO */
                 mana_expense_type[0] = 1;
             } break;
             case 1:
             {
-                // TODO  mana_upkeep = WIZ_RemoveCEs(player_idx, mana_upkeep);
+                mana_upkeep = Remove_City_Enchantments_For_Upkeep(player_idx, mana_upkeep);  /* CLAUDE */  /* asm loc_C4EF8: push _SI_mana_upkeep / push _DI_player_idx / call WIZ_RemoveCEs / mov _SI_mana_upkeep, ax - was a TODO */
                 mana_expense_type[1] = 1;
             } break;
             case 2:
             {
-                // TODO  mana_upkeep = WIZ_RemoveGEs(player_idx, mana_upkeep);
+                mana_upkeep = Remove_Overland_Enchantments_For_Upkeep(player_idx, mana_upkeep);  /* CLAUDE */  /* asm loc_C4F0A: push _SI_mana_upkeep / push _DI_player_idx / call WIZ_RemoveGEs / mov _SI_mana_upkeep, ax - was a TODO */
                 mana_expense_type[2] = 1;
             } break;
             case 3:
@@ -2838,7 +3054,8 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
         Channeler_Divisor = 1;
     }
 
-    for(itr_units = (_units - 1); ((itr_units > -1) && (_players[player_idx].mana_reserve < mana_upkeep)); itr_units--)
+    /* OGBUG  should be `itr_units = (_units - 1)`, not `itr_units = _units` */
+    for(itr_units = _units; ((itr_units > -1) && (_players[player_idx].mana_reserve < mana_upkeep)); itr_units--)
     {
         if(
             (_UNITS[itr_units].owner_idx == player_idx) &&
@@ -2855,14 +3072,14 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
                 for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
                 {
 
-                    mana_upkeep -= (Unit_Mana_Upkeep(itr_units) / Channeler_Divisor);
+                    mana_upkeep -= (Unit_Mana_Upkeep(troops[itr_troops]) / Channeler_Divisor);
                     
                     if(
                         (msg_unit_lost_ctr < 20) &&
                         (player_idx == HUMAN_PLAYER_IDX)
                     )
                     {
-                        msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[itr_units].type;
+                        msg_unit_lost[msg_unit_lost_ctr].Unit_Type = _UNITS[troops[itr_troops]].type;
                         msg_unit_lost[msg_unit_lost_ctr].Cause = 4;
                         msg_unit_lost_ctr++;
                     }
@@ -2891,23 +3108,299 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
 
 // WZD o140p11
 // drake178: WIZ_RemoveCEs()
-// WIZ_RemoveCEs()
+/*
+mana shortfall: while the player's mana_reserve is below mana_upkeep, goes through the cities and, wherever the player has city enchantments, drops all of them
+mana_upkeep is reduced by what they cost (halved for a Channeler); the human gets a 'city enchantments lost' notice per city (up to 20)
+returns the reduced mana_upkeep
+*/
+int16_t Remove_City_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep)
+{
+    int16_t city_idx = 0;
+    int16_t enchantments_upkeep = 0;
+    int8_t * city_enchantments = NULL;
+    int16_t channeler_divisor = 0;
+    int16_t itr_enchantments = 0;  // _DI_
+
+    if(_players[player_idx].channeler > 0)
+    {
+
+        channeler_divisor = 2;
+
+    }
+    else
+    {
+
+        channeler_divisor = 1;
+
+    }
+
+    for(city_idx = 0; ((city_idx < _cities) && (_players[player_idx].mana_reserve < mana_upkeep)); city_idx++)
+    {
+
+        enchantments_upkeep = (Player_City_Enchantments_Upkeep(city_idx, player_idx) / channeler_divisor);
+
+        if(enchantments_upkeep > 0)
+        {
+
+            mana_upkeep -= enchantments_upkeep;
+
+            city_enchantments = &_CITIES[city_idx].enchantments[0];
+
+            for(itr_enchantments = 0; itr_enchantments < NUM_CITY_ENCHANTMENTS; itr_enchantments++)
+            {
+
+                if(city_enchantments[itr_enchantments] == (player_idx + 1))
+                {
+
+                    city_enchantments[itr_enchantments] = 0;
+
+                }
+
+            }
+
+            if(
+                (player_idx == HUMAN_PLAYER_IDX)
+                &&
+                (MSG_CEsLost_Count < 20)
+            )
+            {
+
+                MSG_CEsLost_Array[MSG_CEsLost_Count] = (uint8_t)city_idx;
+
+                MSG_CEsLost_Count++;
+
+            }
+
+        }
+
+    }
+
+    return mana_upkeep;
+
+}
+
 
 // WZD o140p12
 // drake178: WIZ_RemoveGEs()
-// WIZ_RemoveGEs()
+/*
+mana shortfall: if the player has overland enchantments, drops all of them, and reduces mana_upkeep by what they cost (halved for a Channeler)
+the human gets the 'overland enchantments lost' notice
+returns the reduced mana_upkeep
+*/
+int16_t Remove_Overland_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep)
+{
+    int16_t overland_enchantments_upkeep = 0;
+    uint8_t * overland_enchantments = NULL;
+    int16_t channeler_divisor = 0;
+    int16_t itr_enchantments = 0;  // _SI_
+
+    if(_players[player_idx].channeler > 0)
+    {
+
+        channeler_divisor = 2;
+
+    }
+    else
+    {
+
+        channeler_divisor = 1;
+
+    }
+
+    overland_enchantments_upkeep = (Player_Overland_Enchantments_Upkeep(player_idx) / channeler_divisor);
+
+    if(overland_enchantments_upkeep > 0)
+    {
+
+        mana_upkeep -= overland_enchantments_upkeep;
+
+        overland_enchantments = &_players[player_idx].Globals[0];
+
+        for(itr_enchantments = 0; itr_enchantments < NUM_OVERLAND_ENCHANTMENTS; itr_enchantments++)
+        {
+
+            if(overland_enchantments[itr_enchantments] > 0)
+            {
+
+                overland_enchantments[itr_enchantments] = 0;
+
+            }
+
+        }
+
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
+
+            MSG_GEs_Lost = ST_TRUE;
+
+        }
+
+    }
+
+    return mana_upkeep;
+
+}
+
 
 // WZD o140p13
 // drake178: WIZ_RemoveUEs()
-// WIZ_RemoveUEs()
+/*
+mana shortfall: while the player's mana_reserve is below mana_upkeep, goes through the player's units and drops every enchantment from each unit whose upkeep is more than its own
+    (a fantastic unit's base upkeep is taken off first; both halved for a Channeler)
+mana_upkeep is reduced by the enchantments' upkeep; the human gets a 'unit enchantments lost' notice per unit (up to 20)
+returns the reduced mana_upkeep
+*/
+int16_t Remove_Unit_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep)
+{
+    int16_t unit_idx = 0;
+    int16_t enchantments_upkeep = 0;
+    uint16_t niu_local = 0;
+    int16_t channeler_divisor = 0;
+
+    if(_players[player_idx].channeler > 0)
+    {
+
+        channeler_divisor = 2;
+
+    }
+    else
+    {
+
+        channeler_divisor = 1;
+
+    }
+
+    niu_local = 38352;  /* asm: mov [bp+UU_Local_Offset], 95D0h - stored, never read */
+
+    for(unit_idx = 0; ((unit_idx < _units) && (_players[player_idx].mana_reserve < mana_upkeep)); unit_idx++)
+    {
+
+        if(_UNITS[unit_idx].owner_idx == player_idx)
+        {
+
+            enchantments_upkeep = (Unit_Mana_Upkeep(unit_idx) / channeler_divisor);
+
+            if((_unit_type_table[_UNITS[unit_idx].type].Abilities & UA_FANTASTIC) != 0)
+            {
+
+                enchantments_upkeep -= (_unit_type_table[_UNITS[unit_idx].type].Upkeep / channeler_divisor);
+
+            }
+
+            if(enchantments_upkeep > 0)
+            {
+
+                mana_upkeep -= enchantments_upkeep;
+
+                _UNITS[unit_idx].enchantments = 0;
+
+                /* OGBUG  a no-op: mutations is a signed byte, so after cbw the 0x4000 test is bit 7 (C_STASISLINGER), and the store writes the byte back unchanged - whatever this was meant to clear stays */
+                if((_UNITS[unit_idx].mutations & 0x4000) != 0)
+                {
+
+                    _UNITS[unit_idx].mutations = _UNITS[unit_idx].mutations;
+
+                }
+
+                if(
+                    (player_idx == HUMAN_PLAYER_IDX)
+                    &&
+                    (MSG_UEsLost_Count < 20)
+                )
+                {
+
+                    MSG_UEsLost_Array[MSG_UEsLost_Count] = (uint8_t)unit_idx;
+
+                    MSG_UEsLost_Count++;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    return mana_upkeep;
+
+}
+
 
 // WZD o140p14
-// drake178: N/A
-// sub_C538E()
+// drake178: N/A  sub_C538E()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, sub_35F01, has no callers)
+how much gold the human is short: army gold upkeep - (city gold income + gold_reserve), or 0
+*/
+int16_t Human_Gold_Upkeep_Shortfall__NIU(void)
+{
+    int16_t army_gold_upkeep = 0;
+    int16_t city_idx = 0;  // _SI_
+    int16_t city_gold_income = 0;  // _DI_
+
+    city_gold_income = 0;
+
+    for(city_idx = 0; city_idx < _cities; city_idx++)
+    {
+
+        if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+        {
+
+            city_gold_income += _CITIES[city_idx].gold_units;
+
+        }
+
+    }
+
+    army_gold_upkeep = Player_Armies_Gold_Upkeep(HUMAN_PLAYER_IDX);
+
+    if((city_gold_income + _players[HUMAN_PLAYER_IDX].gold_reserve) < army_gold_upkeep)
+    {
+
+        return (army_gold_upkeep - city_gold_income - _players[HUMAN_PLAYER_IDX].gold_reserve);
+
+    }
+    else
+    {
+
+        return 0;
+
+    }
+
+}
+
 
 // WZD o140p15
-// drake178: N/A
-// sub_C53FA()
+// drake178: N/A  sub_C53FA()
+/*
+NIU  nothing in WIZARDS.EXE calls it (its thunk, sub_35F06, has no callers)
+how much mana the human is short: armies + enchantments mana upkeep - (mana income + mana_reserve), or 0
+*/
+int16_t Human_Mana_Upkeep_Shortfall__NIU(void)
+{
+    int16_t mana_income = 0;  // _SI_
+    int16_t mana_upkeep = 0;  // _DI_
+
+    Players_Update_Magic_Power();
+
+    mana_income = ((_players[HUMAN_PLAYER_IDX].mana_ratio * _players[HUMAN_PLAYER_IDX].Power_Base) / 100);
+
+    mana_upkeep = Player_Armies_And_Enchantments_Mana_Upkeep(HUMAN_PLAYER_IDX);
+
+    if((mana_income + _players[HUMAN_PLAYER_IDX].mana_reserve) < mana_upkeep)
+    {
+
+        return (mana_upkeep - mana_income - _players[HUMAN_PLAYER_IDX].mana_reserve);
+
+    }
+    else
+    {
+
+        return 0;
+
+    }
+
+}
 
 
 // WZD o140p16
@@ -2949,8 +3442,6 @@ int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep)
  *
  * @see City_Growth_Rate(), City_Apply_Production(), Destroy_City(), Volcano_Counts()
  */
-void gd_dump_cities(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void Apply_City_Changes(void)
 {
     int16_t excess_farmer_count = 0;
@@ -2963,8 +3454,7 @@ void Apply_City_Changes(void)
      * All_Outpost_Population_Growth in Next_Turn_Calc).  Pairs with 626 to isolate
      * this pass's effect on the city Pop_/size/construction fields (the 910 city
      * divergence).  Fire once. */
-    { static int gd630_done = 0;
-      if(!gd630_done) { gd630_done = 1; gd_dump_cities("622_Apply_City_Changes_Entry_C"); } }
+    STU_GD_ONCE("622_Apply_City_Changes_Entry_C", STU_GD_Dump_Cities("622_Apply_City_Changes_Entry_C"));  /* CLAUDE */
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -2977,16 +3467,24 @@ void Apply_City_Changes(void)
             if(_CITIES[itr_cities].Pop_10s <= 0)
             {
 
+                /* OGBUG  accepts 20 names at 20 bytes each, but MSG_CityLost_Names is 0x118 bytes (14 rows of 20): from the 15th outpost deserted in one turn the OG's names overwrite the variables after it */
+                /* OGBUG  (MSG_CityGained_Count, MSG_CityGained_Array, g_bldg_msg_ctr and the start of MSG_Building_Complete) */
                 if((_CITIES[itr_cities].owner_idx == HUMAN_PLAYER_IDX) && (MSG_CityLost_Count < 20))
                 {
 
+                    // stu_strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
+                    /* HACK */  if((MSG_CityLost_Count * 20) < (int16_t)sizeof(MSG_CityLost_Names))  /* bounded: no write past MSG_CityLost_Names */
+                    /* HACK */  {
                     stu_strcpy(&MSG_CityLost_Names[(MSG_CityLost_Count * 20)], _CITIES[itr_cities].name);
+                    /* HACK */  }
 
                     MSG_CityLost_Count++;
 
                 }
 
                 Destroy_City(itr_cities);
+
+                /* OGBUG  should `continue` */
 
             }
 
@@ -3036,7 +3534,9 @@ void Apply_City_Changes(void)
 
                 _CITIES[itr_cities].population = (_CITIES[itr_cities].population + 1);
 
-                _CITIES[itr_cities].Pop_10s = 0;  /* OGBUG: discards excess population */
+                /* OGBUG  Pop_10s is reset to 0, not reduced by 100: the growth beyond 100 (Pop_10s 95 + growth 13 = 108 -> 0) is lost, and a city gains at most one population point per turn whatever its growth rate */
+                _CITIES[itr_cities].Pop_10s = 0;
+
 
                 New_Min_Farmers = City_Minimum_Farmers(itr_cities);
 
@@ -3101,6 +3601,7 @@ void Apply_City_Changes(void)
 
                     _CITIES[itr_cities].population = (_CITIES[itr_cities].population - 1);
 
+                    /* OGBUG  no cap at MAX_CITY_SIZE (CTY_Capital) here, unlike the growth branch above and Apply_Damage_To_City: a city of 21+ that loses a citizen gets size 6 or more, past the size-name table */
                     _CITIES[itr_cities].size = ((_CITIES[itr_cities].population + 3) / 4);
 
                     if((
@@ -3159,8 +3660,7 @@ void Apply_City_Changes(void)
             /* CLAUDE: GD 623_City_Apply_Production -- _UNITS after City_Apply_Production
              * (line 3141), which calls Create_Unit() for completed unit builds -- bisects
              * unit creation WITHIN Apply_City_Changes.  Fire once (first city). */
-            // { static int gdcap_done = 0; if(!gdcap_done)                    { gdcap_done = 1; gd_dump_units("623_City_Apply_Production_Return_U"); } }
-            { static int gdcap_done = 0; if(!gdcap_done && itr_cities == 9) { gdcap_done = 1; gd_dump_units("623_City_Apply_Production_Return_U"); } }
+            STU_GD_ONCE("623_City_Apply_Production_Return_U", STU_GD_Dump_Units("623_City_Apply_Production_Return_U"));  /* CLAUDE */
 
         }
 
@@ -3170,27 +3670,27 @@ void Apply_City_Changes(void)
             Apply_Consecration(itr_cities);
             /* CLAUDE: GD 624_Apply_Consecration -- _UNITS after Apply_Consecration (line 3152).
              * Only fires for consecrated cities (none in the current stage-2 turn).  Fire once. */
-            { static int gdcons_done = 0; if(!gdcons_done) { gdcons_done = 1; gd_dump_units("624_Apply_Consecration_Return_U"); } }
+            STU_GD_ONCE("624_Apply_Consecration_Return_U", STU_GD_Dump_Units("624_Apply_Consecration_Return_U"));  /* CLAUDE */
         }
 
         if(_CITIES[itr_cities].enchantments[STREAM_OF_LIFE] > 0)
         {
-            // SPELLY  CTY_StreamOfLife(itr_cities);
+            Apply_Stream_Of_Life(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[CHAOS_RIFT] > 0)
         {
-            // SPELLY  CTY_ChaosRift(itr_cities);
+            Apply_Chaos_Rift(itr_cities);
         }
 
         if(_CITIES[itr_cities].enchantments[GAIAS_BLESSING] > 0)
         {
-            // SPELLY  CTY_GaiasBlessing(itr_cities);
+            Apply_Gaias_Blessing(itr_cities);
         }
         
         if(_CITIES[itr_cities].enchantments[NIGHTSHADE] > 0)
         {
-            // SPELLY  CTY_NightshadeDispel(itr_cities);
+            Apply_Nightshade_Dispel(itr_cities);
         }
     }
 
@@ -3198,15 +3698,12 @@ void Apply_City_Changes(void)
     /* CLAUDE: GD 625_Volcano_Counts -- _UNITS after Volcano_Counts (line 3176), which can
      * Destroy_City via volcano eruptions.  NOTE: same _UNITS state as
      * 626_Apply_City_Changes_Return_U below (nothing runs between them).  Fire once. */
-    { static int gdvolc_done = 0; if(!gdvolc_done) { gdvolc_done = 1; gd_dump_units("625_Volcano_Counts_Return_U"); } }
+    STU_GD_ONCE("625_Volcano_Counts_Return_U", STU_GD_Dump_Units("625_Volcano_Counts_Return_U"));  /* CLAUDE */
 
     /* CLAUDE: GD point 626 -- _CITIES and _UNITS AFTER Apply_City_Changes (post-Volcano_Counts,
      * matching where OG returns to Next_Turn_Calc).  _UNITS too because Apply_City_Changes
      * can Destroy_City (which may delete/relocate units).  Fire once. */
-    { static int gd631_done = 0;
-      if(!gd631_done) { gd631_done = 1;
-        gd_dump_cities("626_Apply_City_Changes_Return_C");
-        gd_dump_units("626_Apply_City_Changes_Return_U"); } }
+    STU_GD_ONCE("626_Apply_City_Changes_Return_C", STU_GD_Dump_Cities("626_Apply_City_Changes_Return_C"); STU_GD_Dump_Units("626_Apply_City_Changes_Return_U"));  /* CLAUDE */
 
 }
 
@@ -3321,7 +3818,13 @@ void All_Players_Apply_Spell_Casting(void)
 
                     _players[itr_players].mana_reserve -= _players[itr_players].Nominal_Skill;
 
-                    SETMIN(_players[itr_players].mana_reserve, 0);
+                    /* CLAUDE */  // SETMIN(_players[itr_players].mana_reserve, 0);
+                    /* CLAUDE */  /* REBUG */  // mana_reserve is uint16_t in ReMoM, so the SETMIN never fired; the asm (ovr140/All_Players_Apply_Spell_Casting.asm 148-154 'cmp [mana_reserve], 0 / jge') is a signed compare
+                    if(_players[itr_players].mana_reserve < 0)
+                    {
+                        _players[itr_players].mana_reserve = 0;
+                    }
+
 
                 }
 
@@ -3470,12 +3973,14 @@ void Determine_Offer(void)
                 offer_chance_pct = (offer_chance_pct * 2);
             }
             SETMAX(offer_chance_pct, 10);
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
             /* HACK: */ if(DBG_trigger_offer_item == ST_TRUE)
             {
                 offer_chance_pct = 100;
                 _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
                 DBG_trigger_offer_item = ST_FALSE;
             }
+#endif
             if(Random(100) <= offer_chance_pct)
             {
                 GUI_InHeroNaming = Make_Item(0, &bookshelf[0], 0);
@@ -3501,6 +4006,7 @@ void Determine_Offer(void)
         {
             continue;
         }
+        /* OGBUG  player_fame is only set in the human branch above; AI players get the human's fame for the mercenary and hero offer chances */
         offer_chance_pct = (1 + (player_fame / 20));
         if(_players[itr_players].famous > 0)
         {
@@ -3511,12 +4017,14 @@ void Determine_Offer(void)
         {
             offer_chance_pct += 10;
         }
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
         /* HACK: */ if(DBG_trigger_offer_merc == ST_TRUE)
         {
             offer_chance_pct = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
             DBG_trigger_offer_merc = ST_FALSE;
         }
+#endif
         if(Random(100) <= offer_chance_pct)
         {
             unit_type = 0;
@@ -3574,12 +4082,14 @@ void Determine_Offer(void)
             offer_chance_pct += 10;
         }
         offer_chance_pct = (offer_chance_pct / (((Player_Hero_Count(itr_players) + 1) / 2) + 1));
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
         /* HACK*/ if(DBG_trigger_offer_hero == ST_TRUE)
         {
             offer_chance_pct = 100;
             _players[HUMAN_PLAYER_IDX].gold_reserve = 9999;
             DBG_trigger_offer_hero = ST_FALSE;
         }
+#endif
         if(
             (Random(100) <= offer_chance_pct)
             &&
@@ -3648,18 +4158,20 @@ void Players_Check_Spell_Research(void)
     int16_t itr_players = 0;
     int16_t did_learn_spell_anim = 0;
     did_learn_spell_anim = ST_FALSE;
+#ifdef STU_DEBUG  /* CLAUDE: debug trigger, compiled out of Release */
     if(DBG_trigger_complete_research_spell == ST_TRUE)
     {
         _players[HUMAN_PLAYER_IDX].research_cost_remaining = 0;
         DBG_trigger_complete_research_spell = ST_FALSE;
     }
+#endif
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
 #ifdef STU_DEBUG
-        if(STU_DBG_trigger_research == ST_TRUE)
+        if(DBG_trigger_research == ST_TRUE)
         {
             _players[itr_players].research_cost_remaining = 0;
-            STU_DBG_trigger_research = ST_FALSE;
+            DBG_trigger_research = ST_FALSE;
         }
 #endif
         if(
@@ -3796,6 +4308,7 @@ void Player_Gets_Spell(int16_t player_idx, int16_t spell_idx, int16_t New_Resear
         }
         else
         {
+            /* OGBUG  -researching_spell_idx is the 'choose new research' marker; only a caller passing New_Research ST_TRUE shows the prompt, so after Conquest_Spells (New_Research 0) the negative value stays and Magic_Screen_Draw prints spell_data_table[negative].name */
             _players[player_idx].researching_spell_idx = -(_players[player_idx].researching_spell_idx);
         }
     }
@@ -3889,7 +4402,40 @@ void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag)
 {
     int16_t hits_total = 0;
     hits_total = _unit_type_table[_UNITS[unit_idx].type].Figures * Unit_Hit_Points(unit_idx);
-    if(flag == ST_FALSE)
+    // if(flag == ST_FALSE)
+    // {
+    //     if(_UNITS[unit_idx].Damage < hits_total)
+    //     {
+    //         if(_UNITS[unit_idx].Damage > 0)
+    //         {
+    //             while(hits_total > fraction)
+    //             {
+    //                 _UNITS[unit_idx].Damage -= 1;
+    //                 hits_total -= fraction;
+    //             }
+    //             if(Random(fraction) <= hits_total)
+    //             {
+    //                 _UNITS[unit_idx].Damage -= 1;
+    //             }
+    //             SETMIN(_UNITS[unit_idx].Damage, 0);
+    //         }
+    //     }
+    // }
+    // else
+    // {
+    //     _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  /* 20% */
+    //     SETMIN(_UNITS[unit_idx].Damage, 0);
+    //     unit_heal_rate_divisors[unit_idx] = NATURAL_HEALER_ALREADY_APPLIED;
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm: cmp flag, e_ST_FALSE / jz natural - the Healer branch comes first */
+    if(flag != ST_FALSE)
+    {
+        _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  /* 20% */
+        SETMIN(_UNITS[unit_idx].Damage, 0);
+        /* OGBUG  marks the healed unit by overwriting its natural-heal divisor byte (20 / 10 / 6) with 66: Heal_All_Units walks units in index order, so a unit with a HIGHER index than the Healer then gets its own natural step with divisor 66 (about one point per 66 hits) */
+        unit_heal_rate_divisors[unit_idx] = NATURAL_HEALER_ALREADY_APPLIED;
+    }
+    else
     {
         if(_UNITS[unit_idx].Damage < hits_total)
         {
@@ -3907,12 +4453,6 @@ void Heal_Unit(int16_t unit_idx, int16_t fraction, int16_t flag)
                 SETMIN(_UNITS[unit_idx].Damage, 0);
             }
         }
-    }
-    else
-    {
-        _UNITS[unit_idx].Damage = (_UNITS[unit_idx].Damage - (hits_total / 5));  /* 20% */
-        SETMIN(_UNITS[unit_idx].Damage, 0);
-        unit_heal_rate_divisors[unit_idx] = NATURAL_HEALER_ALREADY_APPLIED;
     }
 }
 
@@ -4011,6 +4551,7 @@ void Heal_All_Units(void)
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
+            /* OGBUG  the divisor may already be 66 here: a Healer with a lower index has healed this unit and overwritten its byte (see Heal_Unit) */
             Heal_Unit(itr_units, unit_heal_rate_divisors[itr_units], ST_FALSE);
         }
         if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_HEALER) != 0)
@@ -4041,10 +4582,11 @@ void Heal_All_Units(void)
                         }
                     }
                 }
-                else
-                {
-                    Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
-                }
+                // else
+                // {
+                //     Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);
+                // }
+                Army_At_Square_1(_UNITS[itr_units].wx, _UNITS[itr_units].wy, _UNITS[itr_units].wp, &troop_count, &troops[0]);  /* CLAUDE */  /* REBUG */  /* asm: loc_C67FB is reached from both paths - not an else */
             }
             for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
             {
@@ -4079,9 +4621,9 @@ void Heal_All_Units(void)
  *   each active global enchantment flag in @c _players[itr_players].Globals.
  * - Executing side-effect handlers for specific globals before relation
  *   adjustment:
- *   - @c GREAT_WASTING -> @c WIZ_GreatWasting()
- *   - @c METEOR_STORMS -> @c WIZ_MeteorStorm()
- *   - @c ARMAGEDDON -> @c WIZ_Armageddon()
+ *   - @c GREAT_WASTING -> @c Apply_Great_Wasting()
+ *   - @c METEOR_STORMS -> @c Apply_Meteor_Storm()
+ *   - @c ARMAGEDDON -> @c Apply_Armageddon()
  *
  * Relation-change calls use per-enchantment divisors matching legacy behavior
  * (commonly @c 10, with @c spl_Spell_Of_Mastery using @c 2).
@@ -4095,7 +4637,7 @@ void Heal_All_Units(void)
  *       @c Next_Turn_Calc().
  *
  * @see Next_Turn_Calc(), Change_Relations_For_Enchantments(),
- *      WIZ_GreatWasting(), WIZ_MeteorStorm(), WIZ_Armageddon()
+ *      Apply_Great_Wasting(), Apply_Meteor_Storm(), Apply_Armageddon()
  */
 void Diplomacy_Growth_For_Enchantments(void)
 {
@@ -4161,17 +4703,17 @@ void Diplomacy_Growth_For_Enchantments(void)
 
         if(_players[itr_players].Globals[GREAT_WASTING] > 0)
         {
-            WIZ_GreatWasting(itr_players);
+            Apply_Great_Wasting(itr_players);
             Change_Relations_For_Enchantments(itr_players, spl_Great_Wasting, 10);
         }
         if(_players[itr_players].Globals[METEOR_STORMS] > 0)
         {
-            WIZ_MeteorStorm(itr_players);
+            Apply_Meteor_Storm(itr_players);
             Change_Relations_For_Enchantments(itr_players, spl_Meteor_Storms, 10);
         }
         if(_players[itr_players].Globals[ARMAGEDDON] > 0)
         {
-            WIZ_Armageddon(itr_players);
+            Apply_Armageddon(itr_players);
             Change_Relations_For_Enchantments(itr_players, spl_Armageddon, 10);
         }
 

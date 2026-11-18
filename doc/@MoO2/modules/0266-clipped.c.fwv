@@ -1,0 +1,529 @@
+module_num=266
+module=F:\WLIBS\animate\clipped.c
+source=0266-clipped.c.md
+range[0]=1:0x0013861D linear=0x0014861D size=4540
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                     SYMBOL                                    CHUNK
+m266f001  1    -      0x0014861D  1:0x0013861D  code  Clipped_Draw_Bitmap_Sprite               Clipped_Draw_Bitmap_Sprite_               regions/07-object-1/001CD654-001CDE53.txt
+m266f002  2    -      0x001487E0  1:0x001387E0  code  Clipped_Draw_Glassed_Bitmap_Sprite       Clipped_Draw_Glassed_Bitmap_Sprite_       regions/07-object-1/001CD654-001CDE53.txt
+m266f003  3    -      0x001489F4  1:0x001389F4  code  Clipped_Draw_Animated_Sprite             Clipped_Draw_Animated_Sprite_             regions/07-object-1/001CDE54-001CE653.txt
+m266f004  4    -      0x00148C33  1:0x00138C33  code  Clipped_Draw_Glassed_Animated_Sprite     Clipped_Draw_Glassed_Animated_Sprite_     regions/07-object-1/001CDE54-001CE653.txt
+m266f005  5    -      0x00148F57  1:0x00138F57  code  Clipped_Draw_Stenciled_Animated_Sprite   Clipped_Draw_Stenciled_Animated_Sprite_   regions/07-object-1/001CDE54-001CE653.txt
+m266f006  6    -      0x00149378  1:0x00139378  code  AClipped_Draw_Stenciled_Animated_Sprite  AClipped_Draw_Stenciled_Animated_Sprite_  regions/07-object-1/001CE654-001CEE53.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS   NAME                                     TYPE                                  CHUNK
+m266f001  0x0014861D  1:0x0013861D  451   22        7         0x10     -    EAX,EDX,EBX  Clipped_Draw_Bitmap_Sprite               void (SWORD, SWORD, UBYTE *)          regions/07-object-1/001CD654-001CDE53.txt
+m266f002  0x001487E0  1:0x001387E0  532   22        7         0x10     -    EAX,EDX,EBX  Clipped_Draw_Glassed_Bitmap_Sprite       void (SDWORD, SDWORD, UBYTE *)        regions/07-object-1/001CD654-001CDE53.txt
+m266f003  0x001489F4  1:0x001389F4  575   22        7         0x10     -    EAX,EDX,EBX  Clipped_Draw_Animated_Sprite             void (SDWORD, SDWORD, UBYTE *)        regions/07-object-1/001CDE54-001CE653.txt
+m266f004  0x00148C33  1:0x00138C33  804   22        7         0x10     -    EAX,EDX,EBX  Clipped_Draw_Glassed_Animated_Sprite     void (SDWORD, SDWORD, UBYTE *)        regions/07-object-1/001CDE54-001CE653.txt
+m266f005  0x00148F57  1:0x00138F57  1057  22        7         0x10     -    EAX,EDX,EBX  Clipped_Draw_Stenciled_Animated_Sprite   void (short, short, unsigned char *)  regions/07-object-1/001CDE54-001CE653.txt
+m266f006  0x00149378  1:0x00139378  1121  22        7         0x10     -    EAX,EDX,EBX  AClipped_Draw_Stenciled_Animated_Sprite  void (short, short, unsigned char *)  regions/07-object-1/001CE654-001CEE53.txt
+
+[Locals]
+KEY       ROUTINE                                  BLOCK  LOCAL               LOCATION    TYPE
+m266f001  Clipped_Draw_Bitmap_Sprite               -      x1                  [EBP-0x4]   SWORD
+m266f001  Clipped_Draw_Bitmap_Sprite               -      y1                  [EBP-0x8]   SWORD
+m266f001  Clipped_Draw_Bitmap_Sprite               -      src                 [EBP-0x14]  UBYTE *
+m266f001  Clipped_Draw_Bitmap_Sprite               -      i                   [EBP-0x1C]  SDWORD
+m266f001  Clipped_Draw_Bitmap_Sprite               -      dst                 [EBP-0x18]  UBYTE *
+m266f001  Clipped_Draw_Bitmap_Sprite               -      cwidth              [EBP-0xC]   SDWORD
+m266f001  Clipped_Draw_Bitmap_Sprite               -      cheight             [EBP-0x10]  SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      x1                  [EBP-0x28]  SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      y1                  [EBP-0x24]  SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      src                 [EBP-0x20]  UBYTE *
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      i                   [EBP-0x1C]  SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      j                   [EBP-0x18]  SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      ts                  [EBP-0x14]  UBYTE *
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      td                  [EBP-0x10]  UBYTE *
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      dst                 [EBP-0xC]   UBYTE *
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      cwidth              [EBP-0x8]   SDWORD
+m266f002  Clipped_Draw_Glassed_Bitmap_Sprite       -      cheight             [EBP-0x4]   SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      x1                  [EBP-0x3C]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      y1                  [EBP-0x38]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      frame               [EBP-0x34]  UBYTE *
+m266f003  Clipped_Draw_Animated_Sprite             -      x                   [EBP-0x30]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      y                   [EBP-0x2C]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      cx1                 [EBP-0x28]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      cy1                 [EBP-0x24]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      cx2                 [EBP-0x20]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      cy2                 [EBP-0x1C]  SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      dst                 [EBP-0x18]  UBYTE *
+m266f003  Clipped_Draw_Animated_Sprite             -      src                 [EBP-0x14]  UBYTE *
+m266f003  Clipped_Draw_Animated_Sprite             -      line_ptr            [EBP-0x10]  UBYTE *
+m266f003  Clipped_Draw_Animated_Sprite             -      data                [EBP-0xC]   SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      skip                [EBP-0x8]   SDWORD
+m266f003  Clipped_Draw_Animated_Sprite             -      bottom              [EBP-0x4]   SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      x1                  [EBP-0x48]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      y1                  [EBP-0x44]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      frame               [EBP-0x40]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      i                   [EBP-0x3C]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      x                   [EBP-0x38]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      y                   [EBP-0x34]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      cx1                 [EBP-0x30]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      cy1                 [EBP-0x2C]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      cx2                 [EBP-0x28]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      cy2                 [EBP-0x24]  SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      dst                 [EBP-0x20]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      src                 [EBP-0x1C]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      line_ptr            [EBP-0x18]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      ts                  [EBP-0x14]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      td                  [EBP-0x10]  UBYTE *
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      data                [EBP-0xC]   SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      skip                [EBP-0x8]   SDWORD
+m266f004  Clipped_Draw_Glassed_Animated_Sprite     -      bottom              [EBP-0x4]   SDWORD
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      x1                  [EBP-0x50]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      y1                  [EBP-0x54]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      frame_data          [EBP-0x9C]  unsigned char *
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      bitmap_size         [EBP-0x98]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      pos                 [EBP-0x94]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_pos          [EBP-0x90]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      x                   [EBP-0x8C]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      y                   [EBP-0x88]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      i                   [EBP-0x84]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_start        [EBP-0x80]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      buffer_pos          [EBP-0x7C]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      buffer_pos_word     [EBP-0x78]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      packet_end          [EBP-0xA0]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      height              [EBP-0x20]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      data_count          [EBP-0x1C]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      skip_count          [EBP-0x18]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      store_type          [EBP-0x14]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      line_skip           [EBP-0x10]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      width               [EBP-0xC]   short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      x2                  [EBP-0x8]   short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      y2                  [EBP-0x4]   short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      xx1                 [EBP-0x24]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      yy1                 [EBP-0x4C]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      skip_x              [EBP-0x48]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      start_x             [EBP-0x44]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      skip_y              [EBP-0x40]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      start_y             [EBP-0x3C]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      actual_width        [EBP-0x38]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      actual_height       [EBP-0x34]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      skip_add            [EBP-0x30]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      clipped_count       [EBP-0x2C]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      clipped_add         [EBP-0x28]  short
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      data                [EBP-0x58]  unsigned long
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      frame_data_word     [EBP-0x70]  unsigned short *
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      buffer_add          [EBP-0x6C]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_pixel_start  [EBP-0x68]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_pixel_end    [EBP-0x64]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      drawn_flag          [EBP-0x74]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_line_add     [EBP-0x60]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_line_start   [EBP-0x5C]  int
+m266f005  Clipped_Draw_Stenciled_Animated_Sprite   -      screen_line_end     [EBP-0xA4]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x1                  [EBP-0x50]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      y1                  [EBP-0x58]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      frame_data          [EBP-0xA0]  unsigned char *
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      bitmap_size         [EBP-0x9C]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      pos                 [EBP-0x98]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      screen_pos          [EBP-0x94]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x                   [EBP-0x90]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      y                   [EBP-0x8C]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      i                   [EBP-0x88]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      screen_start        [EBP-0x84]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      buffer_pos          [EBP-0x80]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      buffer_pos_word     [EBP-0xA8]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      packet_end          [EBP-0xA4]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      height              [EBP-0x20]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      data_count          [EBP-0x1C]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      skip_count          [EBP-0x18]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      store_type          [EBP-0x14]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      line_skip           [EBP-0x10]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      width               [EBP-0xC]   short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x2                  [EBP-0x8]   short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      y2                  [EBP-0x4]   short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x_flag              [EBP-0x54]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      xx1                 [EBP-0x24]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      yy1                 [EBP-0x4C]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      skip_x              [EBP-0x48]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      start_x             [EBP-0x44]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      skip_y              [EBP-0x40]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      start_y             [EBP-0x3C]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      actual_width        [EBP-0x38]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      actual_height       [EBP-0x34]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      skip_add            [EBP-0x30]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      clipped_count       [EBP-0x2C]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      clipped_add         [EBP-0x28]  short
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      data                [EBP-0x7C]  unsigned long
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      frame_data_word     [EBP-0x74]  unsigned short *
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      buffer_add          [EBP-0x70]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x_pos1              [EBP-0x6C]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      y_pos               [EBP-0x68]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      x_pos2              [EBP-0x78]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      screen_line_add     [EBP-0x60]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      screen_line_start   [EBP-0x5C]  int
+m266f006  AClipped_Draw_Stenciled_Animated_Sprite  -      screen_line_end     [EBP-0x64]  int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    BYTE            name for unsigned char (#5)
+13   typedef    SBYTE           name for signed char (#4)
+14   typedef    UBYTE           name for unsigned char (#5)
+15   typedef    WORD            name for unsigned short (#7)
+16   typedef    SWORD           name for short (#6)
+17   typedef    UWORD           name for unsigned short (#7)
+18   typedef    DWORD           name for unsigned int (#9)
+19   typedef    SDWORD          name for int (#8)
+20   typedef    UDWORD          name for unsigned int (#9)
+21   typedef    BOOL            name for unsigned char (#5)
+22   typedef    SampleHandle    name for int (#8)
+23   scalar     void            void 1 bytes
+24   pointer    -               near386; of UBYTE (#14)
+25   procedure  -               near386; returns void (SWORD, SWORD, UBYTE *)
+26   procedure  -               near386; returns void (SDWORD, SDWORD, UBYTE *)
+27   pointer    -               near386; of unsigned char (#5)
+28   procedure  -               near386; returns void (short, short, unsigned char *)
+29   scalar     unsigned long   unsigned 4 bytes
+30   pointer    -               near386; of unsigned short (#7)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m266f001  11    0x0014861D  1:0x0013861D  0x001CDC71
+m266f001  14    0x0014863C  1:0x0013863C  0x001CDC90
+m266f001  15    0x00148657  1:0x00138657  0x001CDCAB
+m266f001  16    0x001486C0  1:0x001386C0  0x001CDD14
+m266f001  18    0x0014872D  1:0x0013872D  0x001CDD81
+m266f001  20    0x00148739  1:0x00138739  0x001CDD8D
+m266f001  21    0x0014874B  1:0x0013874B  0x001CDD9F
+m266f001  24    0x0014875D  1:0x0013875D  0x001CDDB1
+m266f001  26    0x00148769  1:0x00138769  0x001CDDBD
+m266f001  27    0x00148786  1:0x00138786  0x001CDDDA
+m266f001  30    0x0014879E  1:0x0013879E  0x001CDDF2
+m266f001  32    0x001487B7  1:0x001387B7  0x001CDE0B
+m266f001  33    0x001487C5  1:0x001387C5  0x001CDE19
+m266f001  34    0x001487D0  1:0x001387D0  0x001CDE24
+m266f001  35    0x001487D7  1:0x001387D7  0x001CDE2B
+m266f001  36    0x001487D9  1:0x001387D9  0x001CDE2D
+m266f002  39    0x001487E0  1:0x001387E0  0x001CDE34
+m266f002  45    0x001487FF  1:0x001387FF  0x001CDE53
+m266f002  46    0x00148815  1:0x00138815  0x001CDE69
+m266f002  47    0x00148874  1:0x00138874  0x001CDEC8
+m266f002  49    0x001488D7  1:0x001388D7  0x001CDF2B
+m266f002  51    0x001488E4  1:0x001388E4  0x001CDF38
+m266f002  52    0x001488F2  1:0x001388F2  0x001CDF46
+m266f002  55    0x00148900  1:0x00138900  0x001CDF54
+m266f002  57    0x0014890D  1:0x0013890D  0x001CDF61
+m266f002  58    0x00148928  1:0x00138928  0x001CDF7C
+m266f002  61    0x0014893C  1:0x0013893C  0x001CDF90
+m266f002  63    0x00148958  1:0x00138958  0x001CDFAC
+m266f002  64    0x0014895E  1:0x0013895E  0x001CDFB2
+m266f002  65    0x00148964  1:0x00138964  0x001CDFB8
+m266f002  66    0x00148989  1:0x00138989  0x001CDFDD
+m266f002  68    0x00148991  1:0x00138991  0x001CDFE5
+m266f002  69    0x001489A2  1:0x001389A2  0x001CDFF6
+m266f002  70    0x001489AC  1:0x001389AC  0x001CE000
+m266f002  71    0x001489AE  1:0x001389AE  0x001CE002
+m266f002  72    0x001489D4  1:0x001389D4  0x001CE028
+m266f002  74    0x001489D6  1:0x001389D6  0x001CE02A
+m266f002  75    0x001489E1  1:0x001389E1  0x001CE035
+m266f002  76    0x001489E8  1:0x001389E8  0x001CE03C
+m266f002  77    0x001489ED  1:0x001389ED  0x001CE041
+m266f003  80    0x001489F4  1:0x001389F4  0x001CE048
+m266f003  82    0x00148A13  1:0x00138A13  0x001CE067
+m266f003  83    0x00148A19  1:0x00138A19  0x001CE06D
+m266f003  84    0x00148A1F  1:0x00138A1F  0x001CE073
+m266f003  85    0x00148A25  1:0x00138A25  0x001CE079
+m266f003  86    0x00148A2B  1:0x00138A2B  0x001CE07F
+m266f003  87    0x00148A32  1:0x00138A32  0x001CE086
+m266f003  88    0x00148A39  1:0x00138A39  0x001CE08D
+m266f003  89    0x00148A41  1:0x00138A41  0x001CE095
+m266f003  95    0x00148A4A  1:0x00138A4A  0x001CE09E
+m266f003  96    0x00148A57  1:0x00138A57  0x001CE0AB
+m266f003  98    0x00148A62  1:0x00138A62  0x001CE0B6
+m266f003  99    0x00148A6F  1:0x00138A6F  0x001CE0C3
+m266f003  101   0x00148A7A  1:0x00138A7A  0x001CE0CE
+m266f003  102   0x00148A92  1:0x00138A92  0x001CE0E6
+m266f003  104   0x00148A9D  1:0x00138A9D  0x001CE0F1
+m266f003  105   0x00148AB7  1:0x00138AB7  0x001CE10B
+m266f003  107   0x00148AC2  1:0x00138AC2  0x001CE116
+m266f003  108   0x00148AC8  1:0x00138AC8  0x001CE11C
+m266f003  110   0x00148AD8  1:0x00138AD8  0x001CE12C
+m266f003  112   0x00148AF5  1:0x00138AF5  0x001CE149
+m266f003  114   0x00148B27  1:0x00138B27  0x001CE17B
+m266f003  116   0x00148B33  1:0x00138B33  0x001CE187
+m266f003  117   0x00148B3C  1:0x00138B3C  0x001CE190
+m266f003  118   0x00148B40  1:0x00138B40  0x001CE194
+m266f003  119   0x00148B49  1:0x00138B49  0x001CE19D
+m266f003  121   0x00148B4D  1:0x00138B4D  0x001CE1A1
+m266f003  123   0x00148B53  1:0x00138B53  0x001CE1A7
+m266f003  124   0x00148B5D  1:0x00138B5D  0x001CE1B1
+m266f003  125   0x00148B63  1:0x00138B63  0x001CE1B7
+m266f003  126   0x00148B69  1:0x00138B69  0x001CE1BD
+m266f003  128   0x00148B6F  1:0x00138B6F  0x001CE1C3
+m266f003  130   0x00148B89  1:0x00138B89  0x001CE1DD
+m266f003  131   0x00148B8F  1:0x00138B8F  0x001CE1E3
+m266f003  133   0x00148B95  1:0x00138B95  0x001CE1E9
+m266f003  135   0x00148B9D  1:0x00138B9D  0x001CE1F1
+m266f003  136   0x00148BA6  1:0x00138BA6  0x001CE1FA
+m266f003  137   0x00148BAF  1:0x00138BAF  0x001CE203
+m266f003  138   0x00148BB8  1:0x00138BB8  0x001CE20C
+m266f003  141   0x00148BC1  1:0x00138BC1  0x001CE215
+m266f003  143   0x00148BCC  1:0x00138BCC  0x001CE220
+m266f003  144   0x00148BD6  1:0x00138BD6  0x001CE22A
+m266f003  146   0x00148BE8  1:0x00138BE8  0x001CE23C
+m266f003  147   0x00148BF0  1:0x00138BF0  0x001CE244
+m266f003  149   0x00148BFE  1:0x00138BFE  0x001CE252
+m266f003  150   0x00148C04  1:0x00138C04  0x001CE258
+m266f003  151   0x00148C0A  1:0x00138C0A  0x001CE25E
+m266f003  153   0x00148C10  1:0x00138C10  0x001CE264
+m266f003  154   0x00148C12  1:0x00138C12  0x001CE266
+m266f003  156   0x00148C18  1:0x00138C18  0x001CE26C
+m266f003  157   0x00148C21  1:0x00138C21  0x001CE275
+m266f003  158   0x00148C27  1:0x00138C27  0x001CE27B
+m266f003  159   0x00148C2C  1:0x00138C2C  0x001CE280
+m266f004  162   0x00148C33  1:0x00138C33  0x001CE287
+m266f004  165   0x00148C52  1:0x00138C52  0x001CE2A6
+m266f004  166   0x00148C58  1:0x00138C58  0x001CE2AC
+m266f004  167   0x00148C5E  1:0x00138C5E  0x001CE2B2
+m266f004  168   0x00148C64  1:0x00138C64  0x001CE2B8
+m266f004  169   0x00148C6A  1:0x00138C6A  0x001CE2BE
+m266f004  170   0x00148C71  1:0x00138C71  0x001CE2C5
+m266f004  171   0x00148C78  1:0x00138C78  0x001CE2CC
+m266f004  172   0x00148C80  1:0x00138C80  0x001CE2D4
+m266f004  180   0x00148C89  1:0x00138C89  0x001CE2DD
+m266f004  181   0x00148C96  1:0x00138C96  0x001CE2EA
+m266f004  183   0x00148CA1  1:0x00138CA1  0x001CE2F5
+m266f004  184   0x00148CAE  1:0x00138CAE  0x001CE302
+m266f004  186   0x00148CB9  1:0x00138CB9  0x001CE30D
+m266f004  187   0x00148CD3  1:0x00138CD3  0x001CE327
+m266f004  189   0x00148CDE  1:0x00138CDE  0x001CE332
+m266f004  190   0x00148CF8  1:0x00138CF8  0x001CE34C
+m266f004  192   0x00148D03  1:0x00138D03  0x001CE357
+m266f004  193   0x00148D09  1:0x00138D09  0x001CE35D
+m266f004  195   0x00148D19  1:0x00138D19  0x001CE36D
+m266f004  197   0x00148D36  1:0x00138D36  0x001CE38A
+m266f004  199   0x00148D68  1:0x00138D68  0x001CE3BC
+m266f004  201   0x00148D74  1:0x00138D74  0x001CE3C8
+m266f004  202   0x00148D7D  1:0x00138D7D  0x001CE3D1
+m266f004  203   0x00148D81  1:0x00138D81  0x001CE3D5
+m266f004  204   0x00148D8A  1:0x00138D8A  0x001CE3DE
+m266f004  206   0x00148D8E  1:0x00138D8E  0x001CE3E2
+m266f004  208   0x00148D94  1:0x00138D94  0x001CE3E8
+m266f004  209   0x00148D9E  1:0x00138D9E  0x001CE3F2
+m266f004  210   0x00148DA4  1:0x00138DA4  0x001CE3F8
+m266f004  211   0x00148DAA  1:0x00138DAA  0x001CE3FE
+m266f004  213   0x00148DB0  1:0x00138DB0  0x001CE404
+m266f004  215   0x00148DCA  1:0x00138DCA  0x001CE41E
+m266f004  216   0x00148DD0  1:0x00138DD0  0x001CE424
+m266f004  218   0x00148DD6  1:0x00138DD6  0x001CE42A
+m266f004  220   0x00148DDE  1:0x00138DDE  0x001CE432
+m266f004  221   0x00148DE7  1:0x00138DE7  0x001CE43B
+m266f004  222   0x00148DF0  1:0x00138DF0  0x001CE444
+m266f004  223   0x00148DF9  1:0x00138DF9  0x001CE44D
+m266f004  226   0x00148E02  1:0x00138E02  0x001CE456
+m266f004  227   0x00148E08  1:0x00138E08  0x001CE45C
+m266f004  229   0x00148E0E  1:0x00138E0E  0x001CE462
+m266f004  231   0x00148E1D  1:0x00138E1D  0x001CE471
+m266f004  233   0x00148E2B  1:0x00138E2B  0x001CE47F
+m266f004  234   0x00148E54  1:0x00138E54  0x001CE4A8
+m266f004  236   0x00148E5C  1:0x00138E5C  0x001CE4B0
+m266f004  237   0x00148E6D  1:0x00138E6D  0x001CE4C1
+m266f004  238   0x00148E77  1:0x00138E77  0x001CE4CB
+m266f004  239   0x00148E79  1:0x00138E79  0x001CE4CD
+m266f004  240   0x00148E9F  1:0x00138E9F  0x001CE4F3
+m266f004  243   0x00148EA1  1:0x00138EA1  0x001CE4F5
+m266f004  244   0x00148EB0  1:0x00138EB0  0x001CE504
+m266f004  245   0x00148ED5  1:0x00138ED5  0x001CE529
+m266f004  247   0x00148EDD  1:0x00138EDD  0x001CE531
+m266f004  248   0x00148EEE  1:0x00138EEE  0x001CE542
+m266f004  249   0x00148EF8  1:0x00138EF8  0x001CE54C
+m266f004  250   0x00148EFA  1:0x00138EFA  0x001CE54E
+m266f004  251   0x00148F20  1:0x00138F20  0x001CE574
+m266f004  253   0x00148F22  1:0x00138F22  0x001CE576
+m266f004  254   0x00148F28  1:0x00138F28  0x001CE57C
+m266f004  255   0x00148F2E  1:0x00138F2E  0x001CE582
+m266f004  257   0x00148F34  1:0x00138F34  0x001CE588
+m266f004  258   0x00148F36  1:0x00138F36  0x001CE58A
+m266f004  260   0x00148F3C  1:0x00138F3C  0x001CE590
+m266f004  261   0x00148F45  1:0x00138F45  0x001CE599
+m266f004  262   0x00148F4B  1:0x00138F4B  0x001CE59F
+m266f004  263   0x00148F50  1:0x00138F50  0x001CE5A4
+m266f005  266   0x00148F57  1:0x00138F57  0x001CE5AB
+m266f005  273   0x00148F79  1:0x00138F79  0x001CE5CD
+m266f005  276   0x00148F80  1:0x00138F80  0x001CE5D4
+m266f005  277   0x00148F8B  1:0x00138F8B  0x001CE5DF
+m266f005  279   0x00148F97  1:0x00138F97  0x001CE5EB
+m266f005  281   0x00148FA3  1:0x00138FA3  0x001CE5F7
+m266f005  282   0x00148FAA  1:0x00138FAA  0x001CE5FE
+m266f005  284   0x00148FB0  1:0x00138FB0  0x001CE604
+m266f005  286   0x00148FB2  1:0x00138FB2  0x001CE606
+m266f005  287   0x00148FBE  1:0x00138FBE  0x001CE612
+m266f005  290   0x00148FC7  1:0x00138FC7  0x001CE61B
+m266f005  292   0x00148FD3  1:0x00138FD3  0x001CE627
+m266f005  293   0x00148FDA  1:0x00138FDA  0x001CE62E
+m266f005  295   0x00148FE0  1:0x00138FE0  0x001CE634
+m266f005  297   0x00148FE2  1:0x00138FE2  0x001CE636
+m266f005  298   0x00148FEE  1:0x00138FEE  0x001CE642
+m266f005  301   0x00148FF7  1:0x00138FF7  0x001CE64B
+m266f005  302   0x00149001  1:0x00139001  0x001CE655
+m266f005  304   0x0014900B  1:0x0013900B  0x001CE65F
+m266f005  305   0x00149021  1:0x00139021  0x001CE675
+m266f005  307   0x00149030  1:0x00139030  0x001CE684
+m266f005  308   0x00149046  1:0x00139046  0x001CE69A
+m266f005  311   0x00149055  1:0x00139055  0x001CE6A9
+m266f005  312   0x00149069  1:0x00139069  0x001CE6BD
+m266f005  314   0x00149076  1:0x00139076  0x001CE6CA
+m266f005  318   0x00149085  1:0x00139085  0x001CE6D9
+m266f005  320   0x0014908E  1:0x0013908E  0x001CE6E2
+m266f005  321   0x00149097  1:0x00139097  0x001CE6EB
+m266f005  324   0x001490A6  1:0x001390A6  0x001CE6FA
+m266f005  325   0x001490BC  1:0x001390BC  0x001CE710
+m266f005  327   0x001490C5  1:0x001390C5  0x001CE719
+m266f005  329   0x001490CC  1:0x001390CC  0x001CE720
+m266f005  331   0x001490D8  1:0x001390D8  0x001CE72C
+m266f005  333   0x001490E6  1:0x001390E6  0x001CE73A
+m266f005  334   0x00149104  1:0x00139104  0x001CE758
+m266f005  336   0x00149117  1:0x00139117  0x001CE76B
+m266f005  337   0x0014911B  1:0x0013911B  0x001CE76F
+m266f005  339   0x0014911D  1:0x0013911D  0x001CE771
+m266f005  341   0x00149129  1:0x00139129  0x001CE77D
+m266f005  342   0x00149141  1:0x00139141  0x001CE795
+m266f005  344   0x0014914A  1:0x0013914A  0x001CE79E
+m266f005  346   0x00149154  1:0x00139154  0x001CE7A8
+m266f005  347   0x00149160  1:0x00139160  0x001CE7B4
+m266f005  349   0x00149175  1:0x00139175  0x001CE7C9
+m266f005  350   0x0014917E  1:0x0013917E  0x001CE7D2
+m266f005  352   0x00149185  1:0x00139185  0x001CE7D9
+m266f005  354   0x00149195  1:0x00139195  0x001CE7E9
+m266f005  355   0x001491A3  1:0x001391A3  0x001CE7F7
+m266f005  357   0x001491B2  1:0x001391B2  0x001CE806
+m266f005  359   0x001491B6  1:0x001391B6  0x001CE80A
+m266f005  361   0x001491C1  1:0x001391C1  0x001CE815
+m266f005  362   0x001491CB  1:0x001391CB  0x001CE81F
+m266f005  363   0x001491D1  1:0x001391D1  0x001CE825
+m266f005  364   0x0014920E  1:0x0013920E  0x001CE862
+m266f005  365   0x0014921B  1:0x0013921B  0x001CE86F
+m266f005  366   0x00149224  1:0x00139224  0x001CE878
+m266f005  367   0x00149230  1:0x00139230  0x001CE884
+m266f005  368   0x00149245  1:0x00139245  0x001CE899
+m266f005  369   0x0014924E  1:0x0013924E  0x001CE8A2
+m266f005  371   0x00149255  1:0x00139255  0x001CE8A9
+m266f005  373   0x0014925A  1:0x0013925A  0x001CE8AE
+m266f005  374   0x00149264  1:0x00139264  0x001CE8B8
+m266f005  375   0x0014926D  1:0x0013926D  0x001CE8C1
+m266f005  377   0x0014927F  1:0x0013927F  0x001CE8D3
+m266f005  379   0x00149291  1:0x00139291  0x001CE8E5
+m266f005  381   0x0014929C  1:0x0013929C  0x001CE8F0
+m266f005  382   0x001492A8  1:0x001392A8  0x001CE8FC
+m266f005  384   0x001492B7  1:0x001392B7  0x001CE90B
+m266f005  385   0x001492BE  1:0x001392BE  0x001CE912
+m266f005  388   0x001492C8  1:0x001392C8  0x001CE91C
+m266f005  390   0x001492D7  1:0x001392D7  0x001CE92B
+m266f005  391   0x001492E9  1:0x001392E9  0x001CE93D
+m266f005  393   0x001492F8  1:0x001392F8  0x001CE94C
+m266f005  395   0x0014930A  1:0x0013930A  0x001CE95E
+m266f005  397   0x00149318  1:0x00139318  0x001CE96C
+m266f005  399   0x0014931E  1:0x0013931E  0x001CE972
+m266f005  400   0x00149327  1:0x00139327  0x001CE97B
+m266f005  402   0x0014932E  1:0x0013932E  0x001CE982
+m266f005  404   0x00149337  1:0x00139337  0x001CE98B
+m266f005  405   0x00149350  1:0x00139350  0x001CE9A4
+m266f005  406   0x00149353  1:0x00139353  0x001CE9A7
+m266f005  407   0x00149359  1:0x00139359  0x001CE9AD
+m266f005  410   0x0014935B  1:0x0013935B  0x001CE9AF
+m266f005  412   0x0014936C  1:0x0013936C  0x001CE9C0
+m266f005  413   0x00149371  1:0x00139371  0x001CE9C5
+m266f006  426   0x00149378  1:0x00139378  0x001CE9CC
+m266f006  430   0x0014939A  1:0x0013939A  0x001CE9EE
+m266f006  436   0x001493A1  1:0x001393A1  0x001CE9F5
+m266f006  437   0x001493AC  1:0x001393AC  0x001CEA00
+m266f006  439   0x001493B8  1:0x001393B8  0x001CEA0C
+m266f006  441   0x001493C4  1:0x001393C4  0x001CEA18
+m266f006  442   0x001493CB  1:0x001393CB  0x001CEA1F
+m266f006  444   0x001493D1  1:0x001393D1  0x001CEA25
+m266f006  446   0x001493D3  1:0x001393D3  0x001CEA27
+m266f006  447   0x001493DF  1:0x001393DF  0x001CEA33
+m266f006  450   0x001493E8  1:0x001393E8  0x001CEA3C
+m266f006  452   0x001493F4  1:0x001393F4  0x001CEA48
+m266f006  453   0x001493FB  1:0x001393FB  0x001CEA4F
+m266f006  455   0x00149401  1:0x00139401  0x001CEA55
+m266f006  457   0x00149403  1:0x00139403  0x001CEA57
+m266f006  458   0x0014940F  1:0x0013940F  0x001CEA63
+m266f006  461   0x00149418  1:0x00139418  0x001CEA6C
+m266f006  462   0x00149422  1:0x00139422  0x001CEA76
+m266f006  464   0x0014942C  1:0x0013942C  0x001CEA80
+m266f006  465   0x00149442  1:0x00139442  0x001CEA96
+m266f006  467   0x00149451  1:0x00139451  0x001CEAA5
+m266f006  468   0x00149467  1:0x00139467  0x001CEABB
+m266f006  471   0x00149476  1:0x00139476  0x001CEACA
+m266f006  472   0x0014948A  1:0x0013948A  0x001CEADE
+m266f006  474   0x00149497  1:0x00139497  0x001CEAEB
+m266f006  478   0x001494A6  1:0x001394A6  0x001CEAFA
+m266f006  480   0x001494AF  1:0x001394AF  0x001CEB03
+m266f006  481   0x001494B8  1:0x001394B8  0x001CEB0C
+m266f006  483   0x001494C7  1:0x001394C7  0x001CEB1B
+m266f006  484   0x001494E0  1:0x001394E0  0x001CEB34
+m266f006  486   0x001494EC  1:0x001394EC  0x001CEB40
+m266f006  488   0x001494F6  1:0x001394F6  0x001CEB4A
+m266f006  490   0x00149502  1:0x00139502  0x001CEB56
+m266f006  492   0x00149513  1:0x00139513  0x001CEB67
+m266f006  493   0x00149534  1:0x00139534  0x001CEB88
+m266f006  495   0x0014954A  1:0x0013954A  0x001CEB9E
+m266f006  496   0x00149551  1:0x00139551  0x001CEBA5
+m266f006  498   0x00149553  1:0x00139553  0x001CEBA7
+m266f006  500   0x0014955F  1:0x0013955F  0x001CEBB3
+m266f006  501   0x0014957A  1:0x0013957A  0x001CEBCE
+m266f006  503   0x00149586  1:0x00139586  0x001CEBDA
+m266f006  505   0x00149590  1:0x00139590  0x001CEBE4
+m266f006  506   0x0014959F  1:0x0013959F  0x001CEBF3
+m266f006  508   0x001495B4  1:0x001395B4  0x001CEC08
+m266f006  510   0x001495CD  1:0x001395CD  0x001CEC21
+m266f006  511   0x001495DA  1:0x001395DA  0x001CEC2E
+m266f006  512   0x001495E0  1:0x001395E0  0x001CEC34
+m266f006  514   0x001495E7  1:0x001395E7  0x001CEC3B
+m266f006  516   0x001495F7  1:0x001395F7  0x001CEC4B
+m266f006  517   0x00149608  1:0x00139608  0x001CEC5C
+m266f006  519   0x0014961A  1:0x0013961A  0x001CEC6E
+m266f006  521   0x00149621  1:0x00139621  0x001CEC75
+m266f006  523   0x0014962C  1:0x0013962C  0x001CEC80
+m266f006  530   0x00149636  1:0x00139636  0x001CEC8A
+m266f006  542   0x00149644  1:0x00139644  0x001CEC98
+m266f006  543   0x00149654  1:0x00139654  0x001CECA8
+m266f006  544   0x0014965B  1:0x0013965B  0x001CECAF
+m266f006  545   0x00149668  1:0x00139668  0x001CECBC
+m266f006  546   0x0014966E  1:0x0013966E  0x001CECC2
+m266f006  547   0x00149675  1:0x00139675  0x001CECC9
+m266f006  548   0x00149681  1:0x00139681  0x001CECD5
+m266f006  549   0x00149690  1:0x00139690  0x001CECE4
+m266f006  551   0x001496A5  1:0x001396A5  0x001CECF9
+m266f006  553   0x001496AA  1:0x001396AA  0x001CECFE
+m266f006  554   0x001496B4  1:0x001396B4  0x001CED08
+m266f006  555   0x001496C3  1:0x001396C3  0x001CED17
+m266f006  557   0x001496D5  1:0x001396D5  0x001CED29
+m266f006  558   0x001496E3  1:0x001396E3  0x001CED37
+m266f006  560   0x001496EA  1:0x001396EA  0x001CED3E
+m266f006  562   0x001496F9  1:0x001396F9  0x001CED4D
+m266f006  564   0x00149704  1:0x00139704  0x001CED58
+m266f006  565   0x00149710  1:0x00139710  0x001CED64
+m266f006  567   0x0014971F  1:0x0013971F  0x001CED73
+m266f006  568   0x00149726  1:0x00139726  0x001CED7A
+m266f006  571   0x00149730  1:0x00139730  0x001CED84
+m266f006  573   0x0014973C  1:0x0013973C  0x001CED90
+m266f006  574   0x0014974E  1:0x0013974E  0x001CEDA2
+m266f006  576   0x0014975D  1:0x0013975D  0x001CEDB1
+m266f006  578   0x0014976F  1:0x0013976F  0x001CEDC3
+m266f006  580   0x0014977D  1:0x0013977D  0x001CEDD1
+m266f006  582   0x00149784  1:0x00139784  0x001CEDD8
+m266f006  584   0x00149792  1:0x00139792  0x001CEDE6
+m266f006  585   0x001497AB  1:0x001397AB  0x001CEDFF
+m266f006  586   0x001497AE  1:0x001397AE  0x001CEE02
+m266f006  587   0x001497B4  1:0x001397B4  0x001CEE08
+m266f006  588   0x001497B7  1:0x001397B7  0x001CEE0B
+m266f006  591   0x001497B9  1:0x001397B9  0x001CEE0D
+m266f006  593   0x001497CD  1:0x001397CD  0x001CEE21
+m266f006  594   0x001497D2  1:0x001397D2  0x001CEE26

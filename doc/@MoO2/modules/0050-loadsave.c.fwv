@@ -1,0 +1,79 @@
+module_num=50
+module=D:\MOX\OTHERS\LOADSAVE.C
+source=0050-loadsave.c.md
+range[0]=1:0x0006D036 linear=0x0007D036 size=14998
+range[1]=2:0x0000158C linear=0x0017158C size=240
+range[2]=2:0x0000A0B4 linear=0x0017A0B4 size=8
+range[3]=2:0x00023FE8 linear=0x00193FE8 size=132
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                               CHUNK
+m050f001  1    -      0x0007D036  1:0x0006D036  static,code  Active_Save_Slot_Invalid            Active_Save_Slot_Invalid_            regions/07-object-1/00102654-00102E53.txt
+m050f002  2    -      0x0007D061  1:0x0006D061  static,code  Add_Game_Popup_Fields               Add_Game_Popup_Fields_               regions/07-object-1/00102654-00102E53.txt
+m050f003  3    -      0x0007D892  1:0x0006D892  static,code  Allocate_Data_Space_For_Game_Popup  Allocate_Data_Space_For_Game_Popup_  regions/07-object-1/00102E54-00103653.txt
+m050f004  4    -      0x0007D8F3  1:0x0006D8F3  static,code  Bad_Game_File_Message               Bad_Game_File_Message_               regions/07-object-1/00102E54-00103653.txt
+m050f005  5    -      0x0007D954  1:0x0006D954  code         Check_For_Saved_Games               Check_For_Saved_Games_               regions/07-object-1/00102E54-00103653.txt
+m050f006  6    -      0x0007DA13  1:0x0006DA13  code         Darken_Main_Screen_Background       Darken_Main_Screen_Background_       regions/07-object-1/00102E54-00103653.txt
+m050f007  7    -      0x0007DA76  1:0x0006DA76  code         Do_Load_Game_Popup                  Do_Load_Game_Popup_                  regions/07-object-1/00102E54-00103653.txt
+m050f008  8    -      0x0007DD41  1:0x0006DD41  static,code  Do_Main_Game_Popup                  Do_Main_Game_Popup_                  regions/07-object-1/00102E54-00103653.txt
+m050f009  9    -      0x0007E00F  1:0x0006E00F  static,code  Do_Options_Game_Popup               Do_Options_Game_Popup_               regions/07-object-1/00103654-00103E53.txt
+m050f010  10   -      0x0007E154  1:0x0006E154  static,code  Do_Save_Game_Popup                  Do_Save_Game_Popup_                  regions/07-object-1/00103654-00103E53.txt
+m050f011  11   -      0x0007E511  1:0x0006E511  static,code  Fiz_Game_Popup                      Fiz_Game_Popup_                      regions/07-object-1/00103654-00103E53.txt
+m050f012  12   -      0x0007E513  1:0x0006E513  static,code  Fiz_Game_Popup_Autofuction          Fiz_Game_Popup_Autofuction_          regions/07-object-1/00103654-00103E53.txt
+m050f013  13   -      0x0007E514  1:0x0006E514  static,code  Restore_Game_Popup                  Restore_Game_Popup_                  regions/07-object-1/00103654-00103E53.txt
+m050f014  14   -      0x0007E57C  1:0x0006E57C  static,code  Restore_Main_Screen                 Restore_Main_Screen_                 regions/07-object-1/00103654-00103E53.txt
+m050f015  15   -      0x0007E59A  1:0x0006E59A  static,code  Game_Popup_User_Box                 Game_Popup_User_Box_                 regions/07-object-1/00103654-00103E53.txt
+m050f016  16   -      0x0007E609  1:0x0006E609  code         Get_File_Date_String                Get_File_Date_String_                regions/07-object-1/00103654-00103E53.txt
+m050f017  17   -      0x0007E6C1  1:0x0006E6C1  static,code  Get_Game_Popup_Colors               Get_Game_Popup_Colors_               regions/07-object-1/00103654-00103E53.txt
+m050f018  18   -      0x0007E752  1:0x0006E752  code         Get_Save_Game_Date_Strings          Get_Save_Game_Date_Strings_          regions/07-object-1/00103654-00103E53.txt
+m050f019  19   -      0x0007E7FF  1:0x0006E7FF  code         Get_Star_Date_Strings               Get_Star_Date_Strings_               regions/07-object-1/00103654-00103E53.txt
+m050f020  20   -      0x0007E913  1:0x0006E913  static,code  Load_Month_Names                    Load_Month_Names_                    regions/07-object-1/00103E54-00104653.txt
+m050f021  21   -      0x0007EA5C  1:0x0006EA5C  static,code  Load_Game_Popup_Pictures            Load_Game_Popup_Pictures_            regions/07-object-1/00103E54-00104653.txt
+m050f022  22   -      0x0007ED4D  1:0x0006ED4D  static,code  Print_Load_Save_To_Bitmap           Print_Load_Save_To_Bitmap_           regions/07-object-1/00103E54-00104653.txt
+m050f023  23   -      0x0007ED66  1:0x0006ED66  static,code  Print_Main_Game_To_Bitmap           Print_Main_Game_To_Bitmap_           regions/07-object-1/00103E54-00104653.txt
+m050f024  24   -      0x0007EDB1  1:0x0006EDB1  static,code  Print_Options_To_Bitmap             Print_Options_To_Bitmap_             regions/07-object-1/00103E54-00104653.txt
+m050f025  25   -      0x0007EDC4  1:0x0006EDC4  static,code  Pull_Down_Game_Popup                Pull_Down_Game_Popup_                regions/07-object-1/00103E54-00104653.txt
+m050f026  26   -      0x0007EDD9  1:0x0006EDD9  static,code  Push_Up_Game_Popup                  Push_Up_Game_Popup_                  regions/07-object-1/00103E54-00104653.txt
+m050f027  27   -      0x0007EDF2  1:0x0006EDF2  static,code  Animate_Game_Popup                  Animate_Game_Popup_                  regions/07-object-1/00103E54-00104653.txt
+m050f028  28   -      0x0007EFEF  1:0x0006EFEF  static,code  Set_Current_Game_Option_Flags       Set_Current_Game_Option_Flags_       regions/07-object-1/00103E54-00104653.txt
+m050f029  29   -      0x0007F14C  1:0x0006F14C  static,code  Update_Game_Settings                Update_Game_Settings_                regions/07-object-1/00104654-00104E53.txt
+m050f030  30   -      0x0007F206  1:0x0006F206  static,code  _Draw_Load_Save_Game_Popup          _Draw_Load_Save_Game_Popup_          regions/07-object-1/00104654-00104E53.txt
+m050f031  31   -      0x0007F701  1:0x0006F701  static,code  _Draw_Main_Game_Popup               _Draw_Main_Game_Popup_               regions/07-object-1/00104654-00104E53.txt
+m050f032  32   -      0x0007FA28  1:0x0006FA28  static,code  _Draw_Options_Game_Popup            _Draw_Options_Game_Popup_            regions/07-object-1/00104E54-00105653.txt
+m050f033  33   -      0x0008012F  1:0x0007012F  code         _Game_Popup                         _Game_Popup_                         regions/07-object-1/00105654-00105E53.txt
+m050f034  34   -      0x000803D0  1:0x000703D0  static,code  qsort_debug                         qsort_debug_                         regions/07-object-1/00105654-00105E53.txt
+m050f035  35   -      0x000803D9  1:0x000703D9  static,code  Load_Mainmenu_Load_Game_Popup       Load_Mainmenu_Load_Game_Popup_       regions/07-object-1/00105654-00105E53.txt
+m050f036  36   -      0x000804B7  1:0x000704B7  code         Mainmenu_Load_Game_Popup            Mainmenu_Load_Game_Popup_            regions/07-object-1/00105654-00105E53.txt
+m050f037  37   -      0x00080556  1:0x00070556  static,code  Set_Up_Load_Save_Popup              Set_Up_Load_Save_Popup_              regions/07-object-1/00105654-00105E53.txt
+m050f038  38   -      0x00080658  1:0x00070658  code         Remove_Embedded_Special_Codes       Remove_Embedded_Special_Codes_       regions/07-object-1/00105654-00105E53.txt
+m050f039  39   -      0x000806A2  1:0x000706A2  code         Embed_Special_Color_Codes           Embed_Special_Color_Codes_           regions/07-object-1/00105654-00105E53.txt
+m050f040  40   -      0x00080715  1:0x00070715  code         Auto_Save_Last_Saved_Game           Auto_Save_Last_Saved_Game_           regions/07-object-1/00105654-00105E53.txt
+m050f041  41   -      0x000807A6  1:0x000707A6  code         Auto_Load_Last_Saved_Game           Auto_Load_Last_Saved_Game_           regions/07-object-1/00105654-00105E53.txt
+m050f042  42   -      0x00080841  1:0x00070841  static,code  Draw_Darkened_Load_Button           Draw_Darkened_Load_Button_           regions/07-object-1/00105E54-00106653.txt
+m050f043  43   -      0x0008086D  1:0x0007086D  static,code  Draw_Darkened_New_Game_Button       Draw_Darkened_New_Game_Button_       regions/07-object-1/00105E54-00106653.txt
+m050f044  44   -      0x00080892  1:0x00070892  static,code  Set_Music_For_Game_Popup            Set_Music_For_Game_Popup_            regions/07-object-1/00105E54-00106653.txt
+m050f045  45   -      0x00080918  1:0x00070918  static,code  Set_Sound_For_Game_Popup            Set_Sound_For_Game_Popup_            regions/07-object-1/00105E54-00106653.txt
+m050f046  46   -      0x000809AE  1:0x000709AE  static,code  Add_Fields_For_Language             Add_Fields_For_Language_             regions/07-object-1/00105E54-00106653.txt
+-         -    -      0x0017A0B4  2:0x0000A0B4  static,data  _game_lbx_file                      _game_lbx_file                       regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0B8  2:0x0000A0B8  static,data  _draw_down                          _draw_down                           regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0B9  2:0x0000A0B9  static,data  _harold_var                         _harold_var                          regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x00193FE8  2:0x00023FE8  static,data  _months                             _months                              -
+-         -    -      0x00194030  2:0x00024030  static,data  _debug                              _debug                               -
+-         -    -      0x00194034  2:0x00024034  static,data  _bitmap                             _bitmap                              -
+-         -    -      0x00194038  2:0x00024038  data         _game_popup_fields                  _game_popup_fields                   -
+-         -    -      0x0019403C  2:0x0002403C  static,data  _screen_bitmap                      _screen_bitmap                       -
+-         -    -      0x00194040  2:0x00024040  static,data  _dark_load_button_seg               _dark_load_button_seg                -
+-         -    -      0x00194044  2:0x00024044  static,data  _game_anims                         _game_anims                          -
+-         -    -      0x00194048  2:0x00024048  static,data  _empty_save_slot_message            _empty_save_slot_message             -
+-         -    -      0x0019405C  2:0x0002405C  static,data  _music_level_field                  _music_level_field                   -
+-         -    -      0x0019405E  2:0x0002405E  static,data  _hotkey_field                       _hotkey_field                        -
+-         -    -      0x00194060  2:0x00024060  static,data  _sfx_level_field                    _sfx_level_field                     -
+-         -    -      0x00194062  2:0x00024062  static,data  _print_data_to_bitmap               _print_data_to_bitmap                -
+-         -    -      0x00194063  2:0x00024063  static,data  _skip_draw_load_save                _skip_draw_load_save                 -
+-         -    -      0x00194064  2:0x00024064  static,data  _dont_draw_darkened_buttons         _dont_draw_darkened_buttons          -
+-         -    -      0x00194065  2:0x00024065  static,data  _draw_load_save_to_back             _draw_load_save_to_back              -
+-         -    -      0x00194066  2:0x00024066  static,data  _loaded_new_game                    _loaded_new_game                     -
+-         -    -      0x00194067  2:0x00024067  static,data  _double_clicked                     _double_clicked                      -
+-         -    -      0x00194068  2:0x00024068  static,data  _loaded_debug_save                  _loaded_debug_save                   -
+-         -    -      0x00194069  2:0x00024069  static,data  _save_button_active                 _save_button_active                  -
+-         -    -      0x0019406A  2:0x0002406A  static,data  _draw_game_popup_to_back            _draw_game_popup_to_back             -

@@ -35,6 +35,57 @@ enum e_Newgame_Screens
 #define AI_OBJ_PERFECTIONIST    3
 #define AI_OBJ_EXPANSIONIST     4
 
+/* the New Game bookshelf under the wizard portrait (Screens 1-4, 6, 7) */
+#define BOOKSHELF_X                 36
+#define BOOKSHELF_Y                135
+#define BOOKSHELF_BOOK_WIDTH         8
+/* m_spellbook_pict_segs[]: 3 book pictures (heights) per realm, the realms in the s_WIZARD_PRESET order life, sorcery, nature, death, chaos */
+#define NUM_BOOK_PICTS_PER_REALM     3
+#define LIFE_BOOK_PICTS              0
+#define SORCERY_BOOK_PICTS           3
+#define NATURE_BOOK_PICTS            6
+#define DEATH_BOOK_PICTS             9
+#define CHAOS_BOOK_PICTS            12
+/* Select Wizard / Select Picture (Newgame_Screen_1() / _2()): two columns of wizard buttons, 7 rows each; the right column adds Custom on Select Wizard */
+#define NUM_WIZARD_PRESETS          15  /* _wizard_presets_table[] and the wizard buttons: 14 wizards + Custom */
+#define NUM_PRESET_WIZARDS          14
+#define CUSTOM_WIZARD_IDX           14
+#define WIZARD_COLUMN_ROWS           7
+#define RIGHT_COLUMN_ROWS_CUSTOM     8
+#define WIZARD_NAME_INPUT_MAX       10  /* characters typed on Newgame_Screen_3() */
+/* Custom wizard creation (Newgame_Screen_4()) */
+#define CUSTOM_WIZARD_PICKS         11
+#define MAX_SPECIAL_ABILITIES        6  /* "You may not select more than 6 special abilities" */
+#define NUM_TWO_PICK_ABILITIES       5  /* the picklist slots of the abilities that cost 2 picks */
+#define TWO_PICK_ABILITY_COST        2
+#define MYRRAN_PICK_COST             3
+#define MYRRAN_PICKLIST_SLOT         7  /* wsa_picklist_order[7] == wsa_Myrran */
+#define NUM_NEWGAME_SCREEN_4_HELP_ENTRIES  25
+/* NEWG_PickError: which warning Newgame_Screen_4() shows */
+#define PICK_ERROR_NONE                0
+#define PICK_ERROR_PICKS_LEFT          1  /* "You need to make all your picks before you can continue" */
+#define PICK_ERROR_TOO_MANY_ABILITIES  2  /* "You may not select more than 6 special abilities" */
+#define PICK_ERROR_PREREQUISITES       3  /* "To select <ability> you need: ..." */
+#define PICK_ERROR_LIFE_AND_DEATH      4  /* "You can not select both Life and Death magic" */
+#define PICK_ERROR_NO_PICKS_LEFT       5  /* "You have already made all your picks" */
+#define PICK_ERROR_NOT_ENOUGH_PICKS    6  /* "You don't have enough picks left to make this selection. You need 2 picks" */
+/* NEWG_PickError on Select Spells (Newgame_Screen_5()) - its own two codes */
+#define SPELL_PICK_ERROR_PICKS_LEFT    1  /* "You need to make all your picks before you can continue" */
+#define SPELL_PICK_ERROR_SECTION_FULL  2  /* "You have no picks left in this area, to deselect click on a selected item" */
+/* Select Spells: s_Init_Base_Spells.spells[] holds 10 common, 2 uncommon and 1 rare pick; each rarity is a 2 x 5 grid of spell labels */
+#define NUM_START_SPELLS            13
+#define NUM_START_SPELLS_COMMON     10
+#define NUM_START_SPELLS_UNCOMMON    2
+#define NUM_START_SPELLS_RARE        1
+#define START_SPELLS_UNCOMMON       10  /* the first uncommon slot */
+#define START_SPELLS_RARE          12  /* the rare slot */
+#define SPELL_LIST_COLUMNS           2
+#define SPELL_LIST_ROWS              5
+#define SPELL_LIST_FIELDS_PER_SECTION  10
+#define NUM_SPELL_LIST_FIELDS       30  /* three sections */
+#define SPELL_SECTION_FIRST_Y       39  /* the first label of the first section */
+#define SPELL_SECTION_HEIGHT        51
+
 struct S_HERO_TEMPLATE
 {
     /* 00 */  int16_t pick_count;
@@ -126,7 +177,7 @@ enum enum_RACE_BYTE
 };
 
 
-// MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171vw ...
 // ...needed by INITGAME.c
 // ; (sizeof=0x1A)
 struct s_Init_Base_Spells
@@ -172,7 +223,7 @@ extern int16_t NEWG_Clicked_Race;
 // void Newgame_Control(void);
 /* HACK */  int16_t Newgame_Control(void);
 
-// o50p02
+// MGC o50p02
 void GAME_WizardsLaunch__WIP(int16_t save_gam_idx);
 
 // MGC  o50p03
@@ -191,43 +242,53 @@ void Newgame_Screen_0_Draw(void);
 void Randomize_Book_Heights(void);
 
 // MGC  o50p08
-int16_t Newgame_Screen_1__WIP(void);
+// int16_t Newgame_Screen_1__WIP(void);
+int16_t Newgame_Screen_1(void);
 
 // MGC  o50p09
 void Newgame_Screen_1_2_Draw(void);
 
 // MGC  o50p10
-int16_t Newgame_Screen_2__WIP(void);
+// int16_t Newgame_Screen_2__WIP(void);
+int16_t Newgame_Screen_2(void);
 
 // MGC  o50p11
-int16_t Newgame_Screen_3__WIP(void);
+// int16_t Newgame_Screen_3__WIP(void);
+int16_t Newgame_Screen_3(void);
 
 // MGC  o50p12
-void Newgame_Screen_3_Draw__WIP(void);
+// void Newgame_Screen_3_Draw__WIP(void);
+void Newgame_Screen_3_Draw(void);
 
 // MGC  o50p13
-int16_t Newgame_Screen_7__WIP(void);
+// int16_t Newgame_Screen_7__WIP(void);
+int16_t Newgame_Screen_7(void);
 
 // MGC  o50p14
-void Newgame_Screen_7_Draw__WIP(void);
+// void Newgame_Screen_7_Draw__WIP(void);
+void Newgame_Screen_7_Draw(void);
 
 // MGC  o50p15
-int16_t Newgame_Screen_6__WIP(void);
+// int16_t Newgame_Screen_6__WIP(void);
+int16_t Newgame_Screen_6(void);
 
 // MGC  o50p16
-void Newgame_Screen_6_Draw__WIP(void);
+void Newgame_Screen_6_Draw(void);
 
 // MGC  o50p17
 void Draw_Special_Abilities_String(void);
 
 // MGC  o50p18
-void NEWG_DrawDefShelf__WIP(int16_t wizard_id);
+// void NEWG_DrawDefShelf__WIP(int16_t wizard_id);
+void Draw_Default_Bookshelf(int16_t wizard_id);
 
 // MGC  o50p19
-int16_t Newgame_Screen_4__WIP(void);
+// int16_t Newgame_Screen_4__WIP(void);
+int16_t Newgame_Screen_4(void);
 
 // MGC  o50p20
-void Newgame_Screen_4_Draw__WIP(void);
+// void Newgame_Screen_4_Draw__WIP(void);
+void Newgame_Screen_4_Draw(void);
 
 // MGC  o50p21
 int16_t Newgame_Screen_5(void);
@@ -272,16 +333,17 @@ void Set_Newgame_Screen_4_Help_List(void);
 void Set_Newgame_Screen_6_Help_List(void);
 
 // MGC  o50p35
-void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest);
+// void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest);
+void Add_Comma_Or_And_MGC(int16_t * size, int16_t count, char * list);
 
-// MGC  o50p36
-// CRP_Empty_Dialog_Fn2()
+// MGC o50p36
+void s01p12_empty_function_MGC(void);
 
-// MGC  o50p37
-// CRP_Empty_Dialog_Fn1()
+// MGC o50p37
+void s01p11_empty_function_MGC(void);
 
-// MGC  o50p38
-// Do_Toggle_Pages()
+// MGC o50p38
+void PageFlip_FX_MGC(void);
 
 
 

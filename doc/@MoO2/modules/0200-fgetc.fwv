@@ -1,0 +1,10 @@
+module_num=200
+module=fgetc
+source=0200-fgetc.md
+range[0]=1:0x0012C992 linear=0x0013C992 size=356
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m200f001  1    -      0x0013C992  1:0x0012C992  code  fgetc          fgetc_          regions/07-object-1/001C1E54-001C2653.txt
+m200f002  2    -      0x0013CA1B  1:0x0012CA1B  code  __filbuf       __filbuf_       regions/07-object-1/001C1E54-001C2653.txt
+m200f003  3    -      0x0013CA4A  1:0x0012CA4A  code  __fill_buffer  __fill_buffer_  regions/07-object-1/001C1E54-001C2653.txt

@@ -29,16 +29,16 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type);
 void Cast_Incarnation(int16_t player_idx);
 
 // WZD o132p03
-// CTY_ChaosRift()
+void Apply_Chaos_Rift(int16_t city_idx);
 
 // WZD o132p04
-void WIZ_MeteorStorm(int Player_Index);
+void Apply_Meteor_Storm(int16_t player_idx);
 
 // WZD o132p05
-// CTY_StreamOfLife()
+void Apply_Stream_Of_Life(int16_t city_idx);
 
 // WZD o132p06
-int16_t WIZ_HireHero(int16_t player_idx, int16_t Type, int16_t Hero_Slot, int16_t Saved);
+int16_t Hire_Hero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag);
 
 // WZD o132p07
 void Cast_Resurrection(int16_t player_idx);
@@ -53,19 +53,19 @@ void Cast_Plane_Shift_Draw(int16_t wx, int16_t wy, int16_t wp);
 int16_t Cast_Plane_Shift(int16_t player_idx);
 
 // WZD o132p11
-void WIZ_GreatWasting(int16_t Player_Index);
+void Apply_Great_Wasting(int16_t player_idx);
 
 // WZD o132p12
-// CTY_GaiasBlessing()
+void Apply_Gaias_Blessing(int16_t city_idx);
 
 // WZD o132p13
-void WIZ_Armageddon(int Player_Index);
+void Apply_Armageddon(int16_t player_idx);
 
 // WZD o132p14
 void Cast_Floating_Island(int16_t player_idx);
 
 // WZD o132p15
-// CTY_NightshadeDispel()
+void Apply_Nightshade_Dispel(int16_t city_idx);
 
 // WZD o132p16
 int16_t Cast_Lycantrophy(int16_t player_idx);

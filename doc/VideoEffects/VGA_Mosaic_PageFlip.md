@@ -45,9 +45,9 @@ MGC
         Cast_Earth_Lore+15F                              call    j_PageFlip_Dissolve
         Cast_Transmute:loc_B0BEE                         call    j_PageFlip_Dissolve
         Cast_Enchant_Road:loc_B1460                      call    j_PageFlip_Dissolve
-        Spell_Target_Global_Enchantment_Screen:@@Done    call    j_PageFlip_Dissolve
+        Global_Enchantment_Screen:@@Done    call    j_PageFlip_Dissolve
         IDK_SummonAnim+110                               call    j_PageFlip_Dissolve
-        Cast_Spell_City_Enchantment_Animation_2__WIP+185 call    j_PageFlip_Dissolve
+        City_Enchantment_Anim_2__WIP+185 call    j_PageFlip_Dissolve
         WIZ_GlobalSpellAnim+1CA                          call    j_PageFlip_Dissolve
         Target_Wizard_Screen:loc_C0676                   call    j_PageFlip_Dissolve
 
@@ -102,44 +102,44 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:000E                                                     ;org 0Eh
 1EDD:000E                                                     assume es:nothing, ss:nothing, ds:dseg, fs:nothing, gs:nothing
 1EDD:000E 02 02 02 01 01 03 00 03 03 02 00 01 03 03 01 03+Mosaic_Rnd256_Bits db 2, 2, 2, 1, 1, 3, 0, 3, 3, 2, 0, 1, 3, 3, 1, 3, 3, 0, 3, 1, 2, 3, 0, 2, 1, 1, 2, 2, 1, 1, 3, 3, 2, 3, 3, 0, 2, 3, 0, 2, 0, 3, 2, 0, 2, 0, 0, 3, 1, 0, 1, 1, 1, 3, 3, 1, 1, 0, 0, 2, 1, 1, 2, 1, 0, 0, 0, 3, 3, 1, 1, 2, 2, 1, 2, 2, 0, 2, 3, 1, 2, 2, 2, 0
-1EDD:000E 03 00 03 01 02 03 00 02 01 01 02 02 01 01 03 03+                                        ; DATA XREF: PageFlip_Dissolve+CCr ...
+1EDD:000E 03 00 03 01 02 03 00 02 01 01 02 02 01 01 03 03+                                        ; DATA XREF: PageFlip_Dissolve+CCvr ...
 1EDD:000E 02 03 03 00 02 03 00 02 00 03 02 00 02 00 00 03+    db 0, 0, 1, 1, 0, 2, 0, 3, 2, 2, 1, 0, 3, 1, 2, 3, 0, 0, 1, 0, 2, 2, 3, 2, 1, 1, 2, 2, 0, 3, 0, 0, 2, 0, 0, 3, 3, 1, 2, 1, 0, 0, 1, 3, 1, 1, 1, 0, 0, 2, 3, 1, 0, 3, 3, 0, 1, 0, 0, 0, 1, 3, 1, 3, 3, 2, 2, 3, 2, 0, 1, 1, 0, 3, 0, 2, 0, 2, 1, 1, 3, 1, 2, 1
 1EDD:000E 01 00 01 01 01 03 03 01 01 00 00 02 01 01 02 01+    db 3, 1, 0, 1, 3, 3, 1, 1, 3, 2, 3, 2, 3, 1, 1, 2, 0, 2, 3, 3, 2, 2, 0, 2, 3, 3, 3, 2, 2, 0, 2, 0, 1, 0, 1, 3, 2, 1, 2, 2, 0, 1, 0, 2, 1, 1, 3, 0, 3, 3, 3, 0, 3, 0, 2, 1, 1, 0, 0, 2, 1, 2, 3, 3, 1, 0, 1, 3, 0, 2, 3, 0, 2, 1, 2, 3, 0, 2, 2, 0, 2, 3, 1, 0
 1EDD:000E 00 00 00 03 03 01 01 02 02 01 02 02 00 02 03 01+    db 3, 3, 3, 0
 1EDD:010E 00 03 1E 12 1C 16 1D 0C 22 2F 1F 20 07 31 2E 0E+Mosaic_Rnd50_Tbl db 0, 3, 1Eh, 12h, 1Ch, 16h, 1Dh, 0Ch, 22h, 2Fh, 1Fh, 20h, 7, 31h, 2Eh, 0Eh, 26h, 2Bh, 23h, 28h, 0Bh, 9, 24h, 4, 21h, 1Ah, 27h, 0Fh, 5, 15h, 2, 10h, 19h, 0Ah, 30h, 0Dh, 18h, 25h, 11h, 13h, 2Ch, 6, 8, 14h, 1, 17h, 29h, 1Bh, 2Dh, 2Ah
-1EDD:010E 26 2B 23 28 0B 09 24 04 21 1A 27 0F 05 15 02 10+                                        ; DATA XREF: PageFlip_Dissolve+7Er ...
+1EDD:010E 26 2B 23 28 0B 09 24 04 21 1A 27 0F 05 15 02 10+                                        ; DATA XREF: PageFlip_Dissolve+7Evr ...
 1EDD:0140 02 09 1E 26 0D 1B 1F 01 13 08 18 24 25 1A 00 0B+Mosaic_Rnd40_Tbl db 2, 9, 1Eh, 26h, 0Dh, 1Bh, 1Fh, 1, 13h, 8, 18h, 24h, 25h, 1Ah, 0, 0Bh, 17h, 20h, 16h, 0Ch, 10h, 14h, 1Dh, 12h, 1Ch, 7, 0Ah, 23h, 0Eh, 19h, 5, 21h, 0Fh, 15h, 4, 11h, 6, 3, 27h, 22h
-1EDD:0140 17 20 16 0C 10 14 1D 12 1C 07 0A 23 0E 19 05 21+                                        ; DATA XREF: PageFlip_Dissolve+B0r
+1EDD:0140 17 20 16 0C 10 14 1D 12 1C 07 0A 23 0E 19 05 21+                                        ; DATA XREF: PageFlip_Dissolve+B0vr
 1EDD:0168 00                                                  db    0
 1EDD:0169 00                                                  db    0
 1EDD:016A 00                                                  db    0
 1EDD:016B 00                                                  db    0
-1EDD:016C 00 00                                           Mosaic_InitVar dw 0                     ; DATA XREF: PageFlip_Dissolve+49w ...
-1EDD:016E 00 00                                           Mosaic_Rnd40_Index dw 0                 ; DATA XREF: PageFlip_Dissolve+6Bw ...
-1EDD:0170 00 00                                           Mosaic_Init64Times dw 0                 ; DATA XREF: PageFlip_Dissolve+67w ...
-1EDD:0172 00 00                                           Mosaic_Rnd50_Index dw 0                 ; DATA XREF: PageFlip_Dissolve:loc_1EFD6w ...
-1EDD:0174 00 00                                           VGA_ScanLine_Offset dw 0                ; DATA XREF: RP_VGA_CutRight+3Bw ...
-1EDD:0176 00 00                                           VGA_Write_Map dw 0                      ; DATA XREF: RP_VGA_CutRight:loc_1F2D5w ...
-1EDD:0178 00 00                                           VGA_Read_Map dw 0                       ; DATA XREF: RP_VGA_CutRight+49w ...
-1EDD:017A 00 00                                           VGA_SlideInColumn dw 0                  ; DATA XREF: UU_VGA_InterleaveIn+10w ...
-1EDD:017C 00 00                                           VGA_Line_Count dw 0                     ; DATA XREF: UU_VGA_CrossSlideOut+14w ...
-1EDD:017E 00 00                                           VGA_Start_Offset dw 0                   ; DATA XREF: UU_VGA_CrossSlideOut+Dw ...
+1EDD:016C 00 00                                           Mosaic_InitVar dw 0                     ; DATA XREF: PageFlip_Dissolve+49vw ...
+1EDD:016E 00 00                                           Mosaic_Rnd40_Index dw 0                 ; DATA XREF: PageFlip_Dissolve+6Bvw ...
+1EDD:0170 00 00                                           Mosaic_Init64Times dw 0                 ; DATA XREF: PageFlip_Dissolve+67vw ...
+1EDD:0172 00 00                                           Mosaic_Rnd50_Index dw 0                 ; DATA XREF: PageFlip_Dissolve:loc_1EFD6vw ...
+1EDD:0174 00 00                                           VGA_ScanLine_Offset dw 0                ; DATA XREF: RP_VGA_CutRight+3Bvw ...
+1EDD:0176 00 00                                           VGA_Write_Map dw 0                      ; DATA XREF: RP_VGA_CutRight:loc_1F2D5vw ...
+1EDD:0178 00 00                                           VGA_Read_Map dw 0                       ; DATA XREF: RP_VGA_CutRight+49vw ...
+1EDD:017A 00 00                                           VGA_SlideInColumn dw 0                  ; DATA XREF: UU_VGA_InterleaveIn+10vw ...
+1EDD:017C 00 00                                           VGA_Line_Count dw 0                     ; DATA XREF: UU_VGA_CrossSlideOut+14vw ...
+1EDD:017E 00 00                                           VGA_Start_Offset dw 0                   ; DATA XREF: UU_VGA_CrossSlideOut+Dvw ...
 1EDD:0180 00 00                                               db 2 dup(0)
-1EDD:0182 00 00                                           VGA_Horz_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine:loc_1F777w ...
-1EDD:0184 00 00                                           VGA_Vert_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+75w ...
-1EDD:0186 00 00                                           VGA_Y_Dir dw 0                          ; DATA XREF: UU_VGA_CopyLine+59w ...
-1EDD:0188 00 00                                           VGA_Line_Length dw 0                    ; DATA XREF: UU_VGA_CopyLine+70w ...
-1EDD:018A 00 00                                           VGA_Display_Seg dw 0                    ; DATA XREF: PageFlip_Dissolve+31w ...
-1EDD:018C 00 00                                           VGA_Draw_Seg dw 0                       ; DATA XREF: PageFlip_Dissolve+3Ew ...
-1EDD:018E 00 00                                           VGA_Read_Mask dw 0                      ; DATA XREF: UU_VGA_CopyLine+102w ...
-1EDD:0190 00 00                                           VGA_Line_Offset dw 0                    ; DATA XREF: VGA_ShiftCopyFromF3+27w ...
-1EDD:0192 00 00                                           VGA_Origin_Offset dw 0                  ; DATA XREF: VGA_ShiftCopyFromF3+36w ...
+1EDD:0182 00 00                                           VGA_Horz_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine:loc_1F777vw ...
+1EDD:0184 00 00                                           VGA_Vert_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+75vw ...
+1EDD:0186 00 00                                           VGA_Y_Dir dw 0                          ; DATA XREF: UU_VGA_CopyLine+59vw ...
+1EDD:0188 00 00                                           VGA_Line_Length dw 0                    ; DATA XREF: UU_VGA_CopyLine+70vw ...
+1EDD:018A 00 00                                           VGA_Display_Seg dw 0                    ; DATA XREF: PageFlip_Dissolve+31vw ...
+1EDD:018C 00 00                                           VGA_Draw_Seg dw 0                       ; DATA XREF: PageFlip_Dissolve+3Evw ...
+1EDD:018E 00 00                                           VGA_Read_Mask dw 0                      ; DATA XREF: UU_VGA_CopyLine+102vw ...
+1EDD:0190 00 00                                           VGA_Line_Offset dw 0                    ; DATA XREF: VGA_ShiftCopyFromF3+27vw ...
+1EDD:0192 00 00                                           VGA_Origin_Offset dw 0                  ; DATA XREF: VGA_ShiftCopyFromF3+36vw ...
 1EDD:0194                                                 ; =============== S U B R O U T I N E =======================================
 1EDD:0194                                                 ; mosaic-style screen transition effect with a page
 1EDD:0194                                                 ; flip at the end, after replacing 3/4ths of the screen
 1EDD:0194                                                 ; Attributes: bp-based frame
 1EDD:0194                                                 ; int __far PageFlip_Dissolve(void)
-1EDD:0194                                                 proc PageFlip_Dissolve far           ; CODE XREF: PageFlip_FX+2CP ...
+1EDD:0194                                                 proc PageFlip_Dissolve far           ; CODE XREF: PageFlip_FX+2C^P ...
 1EDD:0194                                                 UU_y2= word ptr -12h
 1EDD:0194                                                 UU_x2= word ptr -10h
 1EDD:0194                                                 UU_y1= word ptr -0Eh
@@ -186,7 +186,7 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:01DD
 1EDD:01E4 2E A1 8C 01                                         mov ax, [cs:VGA_Draw_Seg]
 1EDD:01E8 8E D8                                               mov ds, ax
-1EDD:01EA                                                 loc_1EFBA:                              ; CODE XREF: PageFlip_Dissolve+177j
+1EDD:01EA                                                 loc_1EFBA:                              ; CODE XREF: PageFlip_Dissolve+177vj
 1EDD:01EA 2E A1 6C 01                                         mov ax, [cs:Mosaic_InitVar]
 1EDD:01EE 48                                                  dec ax
 1EDD:01EF D1 E0                                               shl ax, 1
@@ -199,9 +199,9 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:01FB
 1EDD:01FB
 1EDD:01FF 2E C7 06 6E 01 27 00                                mov [cs:Mosaic_Rnd40_Index], 39
-1EDD:0206                                                 loc_1EFD6:                              ; CODE XREF: PageFlip_Dissolve+16Dj
+1EDD:0206                                                 loc_1EFD6:                              ; CODE XREF: PageFlip_Dissolve+16Dvj
 1EDD:0206 2E C7 06 72 01 31 00                                mov [cs:Mosaic_Rnd50_Index], 49
-1EDD:020D                                                 loc_1EFDD:                              ; CODE XREF: PageFlip_Dissolve+163j
+1EDD:020D                                                 loc_1EFDD:                              ; CODE XREF: PageFlip_Dissolve+163vj
 1EDD:020D 2E 8B 1E 72 01                                      mov bx, [cs:Mosaic_Rnd50_Index]
 1EDD:0212 2E 8A 9F 0E 01                                      mov bl, [cs:Mosaic_Rnd50_Tbl+bx]
 1EDD:0217 32 FF                                               xor bh, bh
@@ -224,7 +224,7 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:023A 83 F9 28                                            cmp cx, 40
 1EDD:023D 78 03                                               js  short loc_1F012
 1EDD:023F 83 E9 28                                            sub cx, 40
-1EDD:0242                                                 loc_1F012:                              ; CODE XREF: PageFlip_Dissolve+A1j ...
+1EDD:0242                                                 loc_1F012:                              ; CODE XREF: PageFlip_Dissolve+A1^j ...
 1EDD:0242 8B D9                                               mov bx, cx
 1EDD:0244 2E 8A 9F 40 01                                      mov bl, [cs:Mosaic_Rnd40_Tbl+bx]
 1EDD:0249 32 FF                                               xor bh, bh
@@ -251,10 +251,10 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:0273 B4 01                                               mov ah, 1
 1EDD:0275 80 F9 00                                            cmp cl, 0
 1EDD:0278 74 04                                               jz  short loc_1F04E
-1EDD:027A                                                 loc_1F04A:                              ; CODE XREF: PageFlip_Dissolve+E8j
+1EDD:027A                                                 loc_1F04A:                              ; CODE XREF: PageFlip_Dissolve+E8vj
 1EDD:027A D0 E4                                               shl ah, 1
 1EDD:027C E2 FC                                               loop loc_1F04A
-1EDD:027E                                                 loc_1F04E:                              ; CODE XREF: PageFlip_Dissolve+E4j
+1EDD:027E                                                 loc_1F04E:                              ; CODE XREF: PageFlip_Dissolve+E4^j
 1EDD:027E BA C4 03                                            mov dx, 3C4h
 1EDD:0281 B0 02                                               mov al, 2
 1EDD:0283 EE                                                  out dx, al                          ; EGA: sequencer address reg
@@ -288,10 +288,10 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:02BF B4 01                                               mov ah, 1
 1EDD:02C1 80 F9 00                                            cmp cl, 0
 1EDD:02C4 74 04                                               jz  short loc_1F09A
-1EDD:02C6                                                 loc_1F096:                              ; CODE XREF: PageFlip_Dissolve+134j
+1EDD:02C6                                                 loc_1F096:                              ; CODE XREF: PageFlip_Dissolve+134vj
 1EDD:02C6 D0 E4                                               shl ah, 1
 1EDD:02C8 E2 FC                                               loop loc_1F096
-1EDD:02CA                                                 loc_1F09A:                              ; CODE XREF: PageFlip_Dissolve+130j
+1EDD:02CA                                                 loc_1F09A:                              ; CODE XREF: PageFlip_Dissolve+130^j
 1EDD:02CA BA C4 03                                            mov dx, 3C4h
 1EDD:02CD B0 02                                               mov al, 2
 1EDD:02CF EE                                                  out dx, al                          ; EGA: sequencer address reg
@@ -313,17 +313,17 @@ By using SDL_RenderCopy with small SDL_Rect targets, you leverage the modern GPU
 1EDD:02F5 78 03                                               js  short loc_1F0CA
 1EDD:02F7 E9 13 FF                                            jmp loc_1EFDD
 1EDD:02FA                                                 ; ---------------------------------------------------------------------------
-1EDD:02FA                                                 loc_1F0CA:                              ; CODE XREF: PageFlip_Dissolve+161j
+1EDD:02FA                                                 loc_1F0CA:                              ; CODE XREF: PageFlip_Dissolve+161^j
 1EDD:02FA 2E FF 0E 6E 01                                      dec [cs:Mosaic_Rnd40_Index]
 1EDD:02FF 78 03                                               js  short loc_1F0D4
 1EDD:0301 E9 02 FF                                            jmp loc_1EFD6
 1EDD:0304                                                 ; ---------------------------------------------------------------------------
-1EDD:0304                                                 loc_1F0D4:                              ; CODE XREF: PageFlip_Dissolve+16Bj
+1EDD:0304                                                 loc_1F0D4:                              ; CODE XREF: PageFlip_Dissolve+16B^j
 1EDD:0304 2E FF 0E 6C 01                                      dec [cs:Mosaic_InitVar]
 1EDD:0309 74 03                                               jz  short @@Done
 1EDD:030B E9 DC FE                                            jmp loc_1EFBA
 1EDD:030E                                                 ; ---------------------------------------------------------------------------
-1EDD:030E                                                 @@Done:                                 ; CODE XREF: PageFlip_Dissolve+175j
+1EDD:030E                                                 @@Done:                                 ; CODE XREF: PageFlip_Dissolve+175^j
 1EDD:030E 0E                                                  push cs
 1EDD:030F E8 BC 07                                            call near ptr Toggle_Pages_No_Draw_Fields
 1EDD:030F

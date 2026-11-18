@@ -1,0 +1,56 @@
+module_num=51
+module=D:\MOX\OTHERS\MAINMENU.C
+source=0051-mainmenu.c.md
+range[0]=1:0x00070ACC linear=0x00080ACC size=4400
+range[1]=2:0x0000167C linear=0x0017167C size=140
+range[2]=2:0x0000A0BC linear=0x0017A0BC size=72
+range[3]=2:0x0002406C linear=0x0019406C size=52
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                             SYMBOL                            CHUNK
+m051f001  1    -      0x00080AE4  1:0x00070AE4  static,code  Add_Main_Menu_Fields             Add_Main_Menu_Fields_             regions/07-object-1/00105E54-00106653.txt
+m051f002  2    -      0x00080C6F  1:0x00070C6F  static,code  Change_Font_Color_Values         Change_Font_Color_Values_         regions/07-object-1/00105E54-00106653.txt
+m051f003  3    -      0x00080C8A  1:0x00070C8A  static,code  Copy_Credit_String_To_Bitmap     Copy_Credit_String_To_Bitmap_     regions/07-object-1/00105E54-00106653.txt
+m051f004  4    -      0x00080DB4  1:0x00070DB4  static,code  Do_Main_Menu_File_Animation      Do_Main_Menu_File_Animation_      regions/07-object-1/00105E54-00106653.txt
+m051f005  5    -      0x000810C7  1:0x000710C7  static,code  Do_Mainmenu_Load_Screen          Do_Mainmenu_Load_Screen_          regions/07-object-1/00106654-00106E53.txt
+m051f006  6    -      0x00081147  1:0x00071147  static,code  Draw_Credits                     Draw_Credits_                     regions/07-object-1/00106654-00106E53.txt
+m051f007  7    -      0x00081381  1:0x00071381  static,code  Main_Menu_Fade_Function          Main_Menu_Fade_Function_          regions/07-object-1/00106654-00106E53.txt
+m051f008  8    -      0x00081395  1:0x00071395  static,code  Main_Menu_Fade_Function2         Main_Menu_Fade_Function2_         regions/07-object-1/00106654-00106E53.txt
+m051f009  9    -      0x0008139F  1:0x0007139F  static,code  Draw_Main_Menu_File_Animation    Draw_Main_Menu_File_Animation_    regions/07-object-1/00106654-00106E53.txt
+m051f010  10   -      0x000813A4  1:0x000713A4  static,code  Draw_Main_Menu_Screen            Draw_Main_Menu_Screen_            regions/07-object-1/00106654-00106E53.txt
+m051f011  11   -      0x0008152B  1:0x0007152B  code         Get_File_Animation_Block_Space   Get_File_Animation_Block_Space_   regions/07-object-1/00106654-00106E53.txt
+m051f012  12   -      0x00081547  1:0x00071547  code         Get_File_Animation_Total_Frames  Get_File_Animation_Total_Frames_  regions/07-object-1/00106654-00106E53.txt
+m051f013  13   -      0x0008156B  1:0x0007156B  static,code  Load_Credits                     Load_Credits_                     regions/07-object-1/00106654-00106E53.txt
+m051f014  14   -      0x000816F2  1:0x000716F2  code         Main_Menu_Screen                 Main_Menu_Screen_                 regions/07-object-1/00106654-00106E53.txt
+m051f015  15   -      0x00081ABE  1:0x00071ABE  static,code  Reload_Main_Menu_Screen          Reload_Main_Menu_Screen_          regions/07-object-1/00106E54-00107653.txt
+m051f016  16   -      0x00081B7C  1:0x00071B7C  static,code  Init_Credits                     Init_Credits_                     regions/07-object-1/00106E54-00107653.txt
+-         -    -      0x0017A0BC  2:0x0000A0BC  static,data  _game_lbx_file                   _game_lbx_file                    regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0C0  2:0x0000A0C0  static,data  _fade_in_count                   _fade_in_count                    regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0C2  2:0x0000A0C2  static,data  _fade_out_count                  _fade_out_count                   regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0C4  2:0x0000A0C4  static,data  _generic_text_colors             _generic_text_colors              regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0CC  2:0x0000A0CC  data         _normal_colors                   _normal_colors                    regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0D4  2:0x0000A0D4  data         _fade_in_colors                  _fade_in_colors                   regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0DC  2:0x0000A0DC  data         _fade_out_colors                 _fade_out_colors                  regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0E4  2:0x0000A0E4  data         _fade_out0_colors                _fade_out0_colors                 regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0EC  2:0x0000A0EC  data         _fade_out1_colors                _fade_out1_colors                 regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0F4  2:0x0000A0F4  data         _fade_out2_colors                _fade_out2_colors                 regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0FC  2:0x0000A0FC  data         _fade_out3_colors                _fade_out3_colors                 regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0019406C  2:0x0002406C  data         _credits                         _credits                          -
+-         -    -      0x00194070  2:0x00024070  static,data  _bitmap                          _bitmap                           -
+-         -    -      0x00194074  2:0x00024074  static,data  _credit_count                    _credit_count                     -
+-         -    -      0x00194078  2:0x00024078  static,data  _credit_y                        _credit_y                         -
+-         -    -      0x0019407C  2:0x0002407C  static,data  _credit_x                        _credit_x                         -
+-         -    -      0x00194080  2:0x00024080  data         _mainmenu_last_seg               _mainmenu_last_seg                -
+-         -    -      0x00194084  2:0x00024084  static,data  _gametype                        _gametype                         -
+-         -    -      0x00194088  2:0x00024088  data         _mainmenu_first_seg              _mainmenu_first_seg               -
+-         -    -      0x0019408C  2:0x0002408C  static,data  _main_menu_background_seg        _main_menu_background_seg         -
+-         -    -      0x00194090  2:0x00024090  static,data  _mainmenu                        _mainmenu                         -
+-         -    -      0x00194094  2:0x00024094  static,data  _credits_font_style              _credits_font_style               -
+-         -    -      0x00194096  2:0x00024096  static,data  _delay_count                     _delay_count                      -
+-         -    -      0x00194098  2:0x00024098  static,data  _max_credits                     _max_credits                      -
+-         -    -      0x0019409A  2:0x0002409A  static,data  _credits_column_one              _credits_column_one               -
+-         -    -      0x0019409B  2:0x0002409B  static,data  _draw_main_menu_to_back          _draw_main_menu_to_back           -
+-         -    -      0x0019409C  2:0x0002409C  static,data  _credit_num                      _credit_num                       -
+-         -    -      0x0019409D  2:0x0002409D  static,data  _do_credits                      _do_credits                       -
+-         -    -      0x0019409E  2:0x0002409E  static,data  _credits_font_spacing            _credits_font_spacing             -
+-         -    -      0x0019409F  2:0x0002409F  static,data  _draw_game_popup_to_back         _draw_game_popup_to_back          -

@@ -7,6 +7,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/MOM_DAT.h"
@@ -26,6 +27,7 @@
 #include "RACETYPE.h"
 #include "SETTLE.h"
 #include "Spellbook.h"
+#include "EVENTS.h"     /* es_Ongoing */
 #include "Terrain.h"
 #include "UNITTYPE.h"   // WTFMATE
 
@@ -58,9 +60,10 @@
 void Do_City_Calculations(int16_t city_idx)
 {
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     EMMDATAH_Map();
+    /* OGBUG  every value is stored as a byte: anything of 256+ wraps mod 256 (e.g. production 280 is stored as 24) */
     CITIES_FOOD_UNITS(city_idx, (int8_t)City_Food_Production(city_idx));
     CITIES_PRODUCTION_UNITS(city_idx, (int8_t)City_Production_Production(city_idx));
     CITIES_GOLD_UNITS(city_idx, (uint8_t)City_Gold_Production(city_idx));
@@ -73,15 +76,23 @@ void Do_City_Calculations(int16_t city_idx)
         (_CITIES[city_idx].owner_idx != NEUTRAL_PLAYER_IDX)
     )
     {
+        /* OGBUG  the AI difficulty scaling is applied to the stored byte and stored back as a byte: a scaled value of 256+ wraps mod 256 (Impossible x400%: base 64+; Hard x200%: base 128+), e.g. production 70 -> 280 -> 24 */
+        // CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
+        // CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
+        // CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
+        // CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
+        // CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
+        // CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
+        /* CLAUDE */  /* REBUG */  /* asm: each byte is read zero-extended (mov al, [es:bx+...] / mov ah, 0), not sign-extended */
         CITIES_FOOD_UNITS(city_idx,           ( ( _CITIES[city_idx].food_units           * difficulty_modifiers_table[_difficulty].food                 ) / 100 ) );
         CITIES_PRODUCTION_UNITS(city_idx,     ( ( _CITIES[city_idx].production_units     * difficulty_modifiers_table[_difficulty].production           ) / 100 ) );
-        CITIES_MANA_UNITS(city_idx,           ( ( _CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
-        CITIES_GOLD_UNITS(city_idx,           ( ( _CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
+        CITIES_MANA_UNITS(city_idx,           ( ( (uint8_t)_CITIES[city_idx].mana_units           * difficulty_modifiers_table[_difficulty].mana                 ) / 100 ) );
+        CITIES_GOLD_UNITS(city_idx,           ( ( (uint8_t)_CITIES[city_idx].gold_units           * difficulty_modifiers_table[_difficulty].gold                 ) / 100 ) );
         CITIES_RESEARCH_UNITS(city_idx,       ( ( _CITIES[city_idx].research_units       * difficulty_modifiers_table[_difficulty].research             ) / 100 ) );
         CITIES_BUILDING_MAINTENANCE(city_idx, ( ( _CITIES[city_idx].building_maintenance * difficulty_modifiers_table[_difficulty].maintenance          ) / 100 ) );
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -120,7 +131,7 @@ void Players_Update_Magic_Power(void)
     int16_t itr = 0;
     int16_t node_magic_power_points = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* Phase 1 */
@@ -135,7 +146,7 @@ void Players_Update_Magic_Power(void)
     /* Global Mana Short event cancels all node and city power */
     if(events_table->Mana_Short_Status == 2)  /* ¿ 2 means "active" ? */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return;
     }
 
@@ -233,7 +244,7 @@ void Players_Update_Magic_Power(void)
         }
     }
     
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -255,7 +266,10 @@ int16_t Unit_Gold_Upkeep(int16_t unit_idx)
         {
             // Yay Hero, Nay Noble, Nay 'Toren The Chosen'
             if(
-                (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
+                /* OGBUG  dead hero (owner_idx -1): _HEROES2[-1] is the far pointer combat_enchantments (the dd below _HEROES2 in dseg), so the OG tests a bit of whatever lies */
+                /* OGBUG  at combat_enchantments + type * sizeof(s_HERO) */
+                // (!HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type))
+                /* HACK */  (!((unit_owner_idx == ST_UNDEFINED) ? ((Stack_Garbage() & 1) != 0) : HERO_NOBLE(unit_owner_idx, _UNITS[unit_idx].type)))
                 &&
                 (_UNITS[unit_idx].type != ut_Chosen)
             )
@@ -373,27 +387,34 @@ void Players_Normal_Units(int16_t normal_units[])
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        /* HACK */  if(
-        /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
-        /* HACK */      ||
-        /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
-        /* HACK */  )
-        /* HACK */  {
-        /* HACK */      continue;
-        /* HACK */  }
+        /* CLAUDE */  /* REBUG */  /* asm: no skip for dead units (owner_idx -1 / wp -1); the normal_units[-1] write it hid is bounded below */
+        // /* HACK */  if(
+        // /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        // /* HACK */      ||
+        // /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
+        // /* HACK */  )
+        // /* HACK */  {
+        // /* HACK */      continue;
+        // /* HACK */  }
 
         if(
             ((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_FANTASTIC) == 0)
             &&
             (_UNITS[itr_units].type > ut_Chosen)
             &&
-            (_UNITS[itr_units].owner_idx < _num_players)
+            // (_UNITS[itr_units].owner_idx < _num_players)
+            (_UNITS[itr_units].owner_idx <= _num_players)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax, [_num_players] / jg @@NextUnit */
             &&
             ((_UNITS[itr_units].mutations & UM_UNDEAD) == 0)
         )
         {
 
+            /* OGBUG  owner_idx -1 (a dead unit) passes the '<= _num_players' test: the OG increments normal_units[-1], the word below the caller's array */
+            // normal_units[_UNITS[itr_units].owner_idx] += 1;
+            /* HACK */  if(_UNITS[itr_units].owner_idx != ST_UNDEFINED)  /* bounded: no normal_units[-1] write */
+            /* HACK */  {
             normal_units[_UNITS[itr_units].owner_idx] += 1;
+            /* HACK */  }
 
         }
 
@@ -1197,7 +1218,7 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
     int16_t gold_units = 0;
     int16_t itr = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     gold_units = 0;
 
@@ -1215,7 +1236,7 @@ int16_t City_Gold_Mainanence(int16_t city_idx)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return gold_units;
 }
@@ -1524,8 +1545,7 @@ void Make_Road_Enchanted(int16_t wx, int16_t wy, int16_t wp)
 /*
 ; Legacy Development function, can be removed
 ;
-; would update some aspect of some resource on a square
-; by square basis with no return value
+; would update some aspect of some resource on a square by square basis with no return value
 */
 void o142p03_empty_function(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -1727,7 +1747,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
     int16_t map_square_count = 0;
     int16_t itr_city_area_squares = 0;
     int16_t square_x = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     map_square_count = 0;
     for(itr_city_area_squares = -2; itr_city_area_squares <= 2; itr_city_area_squares++)
     {
@@ -1772,7 +1792,7 @@ int16_t Get_Useable_City_Area(int16_t city_wx, int16_t city_wy, int16_t city_wp,
             }
         }
     }
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     return map_square_count;
 }
 
@@ -1783,7 +1803,7 @@ int16_t City_Food_Production(int16_t city_idx)
     int16_t city_area_food_units = 0;
     int16_t food_units = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -1843,7 +1863,8 @@ int16_t City_Food_Production(int16_t city_idx)
 
         }
 
-        if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
+        // if(_CITIES[city_idx].enchantments[FAMINE] != ST_FALSE)
+        if(_CITIES[city_idx].enchantments[FAMINE] > ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: cmp FAMINE, e_ST_FALSE / jle */
         {
 
             food_units = food_units / 2;
@@ -1884,7 +1905,7 @@ int16_t City_Food_Production(int16_t city_idx)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return food_units;
 }
@@ -1961,14 +1982,14 @@ int16_t City_Production_Production(int16_t city_idx)
     int16_t production2_per_worker = 0;
     int16_t have_gaias_blessing = 0;
     int16_t city_wp = 0;
-    int16_t City_Owner = 0;
+    int16_t city_owner_idx = 0;
     int16_t production_units = 0;
     int16_t worker_count = 0;
     int16_t itr = 0;
     int16_t useable_map_squares = 0;
     int16_t production_modifier = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -2064,14 +2085,14 @@ int16_t City_Production_Production(int16_t city_idx)
 
         production_units = ((production_units * production_modifier) / 100);
 
-        if(_CITIES[city_idx].enchantments[CURSED_LANDS] != ST_FALSE)
+        if(_CITIES[city_idx].enchantments[CURSED_LANDS] > 0)
         {
-            production_units = (production_units / 2);
+            production_units = ((production_units + 1) / 2);
         }
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return production_units;
 }
@@ -2092,7 +2113,7 @@ int16_t City_Gold_Production(int16_t city_idx)
     int16_t useable_map_squares = 0;
     int16_t gold_units = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(_CITIES[city_idx].population == 0)
     {
@@ -2205,7 +2226,7 @@ int16_t City_Gold_Production(int16_t city_idx)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return gold_units;
 }
@@ -2218,7 +2239,7 @@ int16_t City_Research_Production(int16_t city_idx)
     int16_t city_owner_idx = 0;
     int16_t research_units = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2268,7 +2289,7 @@ int16_t City_Research_Production(int16_t city_idx)
         research_units = 0;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return research_units;
 }
@@ -2291,7 +2312,7 @@ int16_t City_Mana_Production(int16_t city_idx)
     int16_t itr = 0;
     int16_t mana_units = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -2481,7 +2502,7 @@ int16_t City_Mana_Production(int16_t city_idx)
         mana_units = 0;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return mana_units;
 }
@@ -2547,7 +2568,8 @@ int16_t City_Growth_Rate(int16_t city_idx)
     }
     maximum_size = City_Maximum_Size(city_idx);
     /* If population matches maximum size, growth is 0 */
-    /* OGBUG: drake178: BUG #1: prevents negative growth at max pop */
+    /* OGBUG  growth stops only when population EQUALS the maximum: a city above its maximum (its food area shrunk) still gets (max - pop + 1) / 2 + race + Granary / Farmers' Market and Housing bonuses and can keep growing; */
+    /* OGBUG  and a starving city AT its maximum returns 0 here, before the food < population test, so it does not shrink */
     if(_CITIES[city_idx].population == maximum_size)
     {
         population_growth_rate = 0;
@@ -2560,9 +2582,11 @@ int16_t City_Growth_Rate(int16_t city_idx)
         goto Done;
     }
     /* Check for starvation (insufficient food) */
-    if(_CITIES[city_idx].food_units < _CITIES[city_idx].population)
+    // if(_CITIES[city_idx].food_units < _CITIES[city_idx].population)
+    if(_CITIES[city_idx].food_units < (uint8_t)_CITIES[city_idx].population)  /* CLAUDE */  /* REBUG */  /* asm: cmp al, [es:bx+s_CITY.population] / jnb (unsigned byte compare) */
     {
-        population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);
+        // population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);
+        population_growth_rate = ((_CITIES[city_idx].food_units - _CITIES[city_idx].population) * 5);  /* CLAUDE */  /* REBUG */  /* asm: food_units zero-extended (mov ah, 0), population cbw */
         goto Done;
     }
     /* Normal population growth calculation */
@@ -2650,6 +2674,7 @@ int16_t City_Growth_Rate(int16_t city_idx)
         if(_CITIES[city_idx].population >= MAX_CITY_POPULATION)
         {
             population_growth_rate = 0;
+            goto Done;  /* CLAUDE */  /* REBUG */  /* asm: jmp @@JmpJmpDone_Return_ZERO */
         }
     }
 /*
@@ -2702,13 +2727,22 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
 
     product_idx = _CITIES[city_idx].construction;
 
-    if(_CITIES[city_idx].race != 4)  /* R_Dwarf */
+    // if(_CITIES[city_idx].race != 4)  /* R_Dwarf */
+    // {
+    //     are_dwarf = ST_FALSE;
+    // }
+    // else
+    // {
+    //     are_dwarf = ST_TRUE;
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm: cmp race, rt_Dwarf / jnz -> FALSE, else TRUE */
+    if(_CITIES[city_idx].race == rt_Dwarf)
     {
-        are_dwarf = ST_FALSE;
+        are_dwarf = ST_TRUE;
     }
     else
     {
-        are_dwarf = ST_TRUE;
+        are_dwarf = ST_FALSE;
     }
 
     if(product_idx >= 100)
@@ -2757,22 +2791,43 @@ int16_t City_Current_Product_Cost(int16_t city_idx)
             have_miners_guild = ST_FALSE;
         }
 
+        // if(unit_cost_reduction_applies == ST_TRUE)
+        // {
+        //     for(itr = 0; itr < useable_map_squares; itr++)
+        //     {
+        //         unit_cost_percent -= Square_Unit_Cost_Reduction(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
+        //     }
+        // }
+        // 
+        // if(unit_cost_percent < 50)
+        // {
+        //     unit_cost_percent = 50;
+        // }
+        // 
+        // if(unit_cost_percent != 100)
+        // {
+        //     product_cost = ((product_cost * unit_cost_percent) / 100);
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm: cmp unit_cost_reduction_applies, e_ST_TRUE / jnz @@Done - the 50% floor and the percentage are inside this test */
         if(unit_cost_reduction_applies == ST_TRUE)
         {
+
             for(itr = 0; itr < useable_map_squares; itr++)
             {
+                /* OGBUG  passes the real Miners' Guild flag, and Square_Unit_Cost_Reduction doubles the Iron / Coal cut for it (10 / 20) instead of adding 50% */
                 unit_cost_percent -= Square_Unit_Cost_Reduction(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarf);
             }
-        }
 
-        if(unit_cost_percent < 50)
-        {
-            unit_cost_percent = 50;
-        }
+            if(unit_cost_percent < 50)
+            {
+                unit_cost_percent = 50;
+            }
 
-        if(unit_cost_percent != 100)
-        {
-            product_cost = ((product_cost * unit_cost_percent) / 100);
+            if(unit_cost_percent != 100)
+            {
+                product_cost = ((product_cost * unit_cost_percent) / 100);
+            }
+
         }
 
     }
@@ -2819,7 +2874,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
     int16_t unit_type = 0;  // _DI_
     int16_t return_value = 0;  // _AX_
 
-    Total_Cost = 0;  // HACK:  DNE in Dasm
+    /* HACK */  Total_Cost = Stack_Garbage();  /* OGBUG: Total_Cost is uninitialized */
 
     Myrror_Available = ST_FALSE;
     Arcanus_Available = ST_FALSE;
@@ -2866,7 +2921,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
     for(itr_towers = 0; itr_towers < NUM_TOWERS; itr_towers++)
     {
 
-        if(_TOWERS[itr_towers].owner_idx != player_idx)
+        if(_TOWERS[itr_towers].owner_idx == player_idx)
         {
             Arcanus_Available = ST_TRUE;
             Myrror_Available = ST_TRUE;
@@ -2882,7 +2937,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
     {
         Merc_Level = 3;
     }
-    else if(Roll_Total > 90)
+    else if(Roll_Total > 60)
     {
         Merc_Level = 2;
     }
@@ -2967,7 +3022,7 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
             }
         }
 
-        /* ¿ BUGBUG  Total_Cost is uninitialized ? */
+        /* OGBUG  Total_Cost is first set below; the first try compares against an uninitialised value, later tries against the previous try's cost */
         if((_turn / 2) < Total_Cost)
         {
             continue;
@@ -3023,7 +3078,54 @@ void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_
 
 
 // WZD o142p19
-// LD_MAP_TFUnk40_Eval()
+// drake178: LD_MAP_TFUnk40_Eval()
+/*
+Loaded_Game_Update(): records the first MAX_UNKNOWN_40H_SQUARES squares, Arcanus then Myrror, row by row, that have MSF_UNKNOWN_40H set
+    nothing in WIZARDS.EXE reads the recorded squares back
+*/
+void Record_Unknown_40H_Squares(void)
+{
+    int16_t itr_wx = 0;
+    int16_t itr_wy = 0;
+    int16_t itr_wp = 0;  // _CX_
+
+    unknown_40h_square_count = 0;
+
+    for(itr_wp = 0; ((itr_wp < NUM_PLANES) && (unknown_40h_square_count < MAX_UNKNOWN_40H_SQUARES)); itr_wp++)
+    {
+
+        for(itr_wy = 0; ((itr_wy < WORLD_HEIGHT) && (unknown_40h_square_count < MAX_UNKNOWN_40H_SQUARES)); itr_wy++)
+        {
+
+            for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
+            {
+
+                if((_map_square_flags[((itr_wp * WORLD_SIZE) + (itr_wy * WORLD_WIDTH) + itr_wx)] & MSF_UNKNOWN_40H) != 0)
+                {
+
+                    if(unknown_40h_square_count < MAX_UNKNOWN_40H_SQUARES)
+                    {
+
+                        /* OGBUG  dead stores - nothing reads unknown_40h_square_wx[] / _wy[] / _wp[] or the count */
+                        unknown_40h_square_wx[unknown_40h_square_count] = itr_wx;
+
+                        unknown_40h_square_wy[unknown_40h_square_count] = itr_wy;
+
+                        unknown_40h_square_wp[unknown_40h_square_count] = itr_wp;
+
+                        unknown_40h_square_count++;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
 
 
 // WZD o142p20
@@ -3238,7 +3340,11 @@ void All_Outpost_Population_Growth(void)
         {
             /* OGBUG: should use itr, not itr_cities */
             /* OGBUG: OOB AVRL  itr_cities >= 25 */
-            terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr_cities], wy_array[itr_cities], city_wp);
+            /* OGBUG  for itr_cities >= 25 the OG reads past the 25-entry arrays: wy_array[25 + k] is wx_array[k], wx_array[25..29] are itr / city_wp / terrain_special / useable_map_squares / shrink, then saved bp / return address and beyond */
+            // terrain_special = GET_TERRAIN_SPECIAL(wx_array[itr_cities], wy_array[itr_cities], city_wp);
+            /* HACK */  /* bounded: for itr_cities >= CITY_AREA_SIZE the stack words the OG reads are replaced by in-range stand-ins */
+            /* HACK */  terrain_special = (GET_TERRAIN_SPECIAL(((itr_cities < CITY_AREA_SIZE) ? wx_array[itr_cities] : Stack_Garbage_Range(0, (WORLD_WIDTH - 1))), ((itr_cities < CITY_AREA_SIZE) ? wy_array[itr_cities] : Stack_Garbage_Range(0, (WORLD_HEIGHT - 1))), city_wp) & 0x0F);  /* CLAUDE */  /* asm: mov ah, 0 / and ax, 0Fh (the mineral nibble) */
+            /* OGBUG  only the mineral nibble (& 0x0F) is kept, so Wild Game (TS_WILDGAME, 0x40) gives no outpost growth; any other mineral gives +10, iron / silver +5 */
             if(terrain_special != 0)
             {
                 if(
@@ -3248,6 +3354,7 @@ void All_Outpost_Population_Growth(void)
                 )
                 {
                     grow += 5;
+
                 }
                 else
                 {
@@ -3272,6 +3379,7 @@ void All_Outpost_Population_Growth(void)
         {
             shrink += 10;  // 10%  2:20
         }
+        /* OGBUG  the difficulty table's outpost growth (Intro / Easy 100, Normal 150, Hard 200, Impossible 400 %) is applied to EVERY outpost, the human's too: on harder levels the human's outposts grow up to 4x faster */
         grow = (((int32_t)difficulty_modifiers_table[_difficulty].outpost_growth * grow) / 100);
         if(Random(100) <= grow)
         {
@@ -3429,7 +3537,7 @@ void Record_History(void)
 // WZD o142p23
 int16_t Astrologer_Power(int16_t player_idx)
 {
-    int power;
+    int16_t power;
     power = _players[player_idx].Power_Base - 10;
     SETMIN(power, 0);
     return power;
@@ -3508,7 +3616,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
     int16_t unrest_races = 0;  // DNE in Dasm
     int16_t unrest_taxes = 0;  // DNE in Dasm
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     city_owner_idx = _CITIES[city_idx].owner_idx;
 
@@ -3756,7 +3864,7 @@ int16_t City_Rebel_Count(int16_t city_idx)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return rebel_count;
 
@@ -3843,6 +3951,16 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
         }
     }
 
+    /* HACK */  /* CLAUDE */  /* An out-of-range wp (AI_Stacks_Do_Settle() passes an uninitialised one, BQ #150) matches no city above, as in the OG. Every later use is a map-table read, which the OG makes at wp * WORLD_SIZE far outside the tables (garbage values); ReMoM reads a stand-in plane instead. */
+    if(
+        (wp < ARCANUS_PLANE)
+        ||
+        (wp > MYRROR_PLANE)
+    )
+    {
+        wp = Stack_Garbage_Range(ARCANUS_PLANE, MYRROR_PLANE);
+    }
+
 
     /* Initialize output values */
     *MaxPop = 0;
@@ -3865,8 +3983,10 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     /* Iterate over the 5x5 city catchment area (21 squares) */
     for(itr_wy = (wy - 2); (itr_wy < (wy + 3)); itr_wy++)
     {
+        /* OGBUG  skips map row 0 (itr_wy <= 0), where every other city-area loop accepts itr_wy >= 0: for a site at wy <= 2 the top-row squares are left out of the estimate */
         if(
-            (itr_wy < 0)
+            // (itr_wy < 0)
+            (itr_wy <= 0)  /* CLAUDE */  /* REBUG */  /* asm: or di, di / jg (else skip) */
             ||
             (itr_wy >= WORLD_HEIGHT)
         )
@@ -3914,6 +4034,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
                 curr_wx -= WORLD_WIDTH;
             }
 
+            /* OGBUG  _square_explored is the human's map; for an AI caller (AI_Stacks_Do_Settle), squares the human hasn't explored contribute nothing */
             if(SQUARE_UNEXPLORED(curr_wx, itr_wy, wp))
             {
                 *is_unexplored = ST_TRUE;
@@ -3929,11 +4050,13 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
             )
             {
 
-                *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
+                // *MaxPop = Square_Food_x2(curr_wx, itr_wy, wp);
+                *MaxPop += Square_Food_x2(curr_wx, itr_wy, wp);  /* CLAUDE */  /* REBUG */  /* asm: add [bx], ax */
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    *MaxPop += 2;  /* OGBUG: should be 8 (counting quarter foods here) */
+                    /* OGBUG  Wild Game adds 2 to a sum kept in quarter-food units (Square_Food_x2; *MaxPop / 4 below): +0.5 food where City_Food_WildGame gives +2, so the Surveyor / AI site value undervalues Wild Game 4x */
+                    *MaxPop += 2;
                 }
 
                 *production_bonus += Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE);
@@ -3954,22 +4077,27 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
                 if((GET_TERRAIN_SPECIAL(curr_wx, itr_wy, wp) & ts_Wild_Game) != 0)
                 {
-                    food2_units += 2;  /* OGBUG: should be 8 (counting quarter foods here) */
+                    /* OGBUG  Wild Game adds 2 to a sum kept in quarter-food units: +0.5 food where City_Food_WildGame gives +2 */
+                    food2_units += 2;
                 }
 
                 *MaxPop += ((food2_units + food2_remainder) / 2);
 
                 food2_remainder = ((food2_units + food2_remainder) % 2);
 
-                *production_bonus = (Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE) / 2);
+                // *production_bonus = (Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE) / 2);
+                *production_bonus += (Square_Production_Bonus(curr_wx, itr_wy, wp, ST_FALSE) / 2);  /* CLAUDE */  /* REBUG */  /* asm: add [bx], ax */
 
-                *unit_cost_reduction = (Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                // *unit_cost_reduction = (Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                *unit_cost_reduction += (Square_Unit_Cost_Reduction(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);  /* CLAUDE */  /* REBUG */  /* asm: add [bx], ax */
 
                 SETMAX(*unit_cost_reduction, 50);  // The bonus is cumulative ... up to a maximum reduction in cost of 50%.
 
-                *gold_units = (Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                // *gold_units = (Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                *gold_units += (Square_Gold_Income(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);  /* CLAUDE */  /* REBUG */  /* asm: add [bx], ax */
 
-                *magic_units = (Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                // *magic_units = (Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);
+                *magic_units += (Square_Magic_Power(curr_wx, itr_wy, wp, ST_FALSE, ST_FALSE) / 2);  /* CLAUDE */  /* REBUG */  /* asm: loc_CA3EB add [bx], ax */
 
             }
 
@@ -4053,9 +4181,11 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
 
         *gold_bonus += City_Road_Trade_Bonus(city_idx);
 
-        if((_CITIES[city_idx].population / 3) < *gold_bonus)
+        // if((_CITIES[city_idx].population / 3) < *gold_bonus)
+        if((_CITIES[city_idx].population * 3) < *gold_bonus)  /* CLAUDE */  /* REBUG */  /* asm: mov dx, 3 / imul dx */
         {
-            *gold_bonus = (_CITIES[city_idx].population / 3);
+            // *gold_bonus = (_CITIES[city_idx].population / 3);
+            *gold_bonus = (_CITIES[city_idx].population * 3);  /* CLAUDE */  /* REBUG */  /* asm: mov dx, 3 / imul dx */
         }
 
         if(
@@ -4098,8 +4228,10 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
     for(itr_wy = (wy - 1); (wy + 2) > itr_wy; itr_wy++)
     {
 
+        /* OGBUG  skips map row 0 here too: a site at wy = 1 does not see a shore square in the top row */
         if(
-            (itr_wy < 0)
+            // (itr_wy < 0)
+            (itr_wy <= 0)  /* CLAUDE */  /* REBUG */  /* asm: or di, di / jle (skip) */
             ||
             (itr_wy >= WORLD_HEIGHT)
         )
@@ -4117,7 +4249,7 @@ void Compute_Base_Values_For_Map_Square(int16_t wx, int16_t wy, int16_t wp, int1
                 curr_wx += WORLD_WIDTH;
             }
 
-            if(curr_wx > WORLD_WIDTH)
+            if(curr_wx >= WORLD_WIDTH)
             {
                 curr_wx -= WORLD_WIDTH;
             }
@@ -4194,6 +4326,7 @@ void Reset_City_Area_Bitfields(void)
             {
                 for(city_area_x = -2; city_area_x < 3; city_area_x++)
                 {
+                    /* OGBUG  x is clipped, not wrapped: squares across the x=0/59 seam are never marked in city_area_bits / city_area_shared_bits */
                     city_area_square_wx = (city_wx+ city_area_x);
 
                     if(
@@ -4309,6 +4442,7 @@ void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
     EMMDATAH_Map();
 
     // movement_mode_cost_maps + (wp * sizeof(struct s_MOVE_MODE_COST_MAPS)) + (wy * WORLD_WIDTH) + wx
+    /* OGBUG  sets the square's cost on movement maps 0-4 to 2 (1 move point) whatever its terrain: a city removed on hills / mountains / forest / swamp leaves a square that costs 1 MP for good (the cost maps are saved with the game) */
     movement_mode_cost_maps[wp].UU_MvMd.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
     movement_mode_cost_maps[wp].walking.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
     movement_mode_cost_maps[wp].forester.moves2[((wy * WORLD_WIDTH) + wx)] = 2;
@@ -4327,39 +4461,37 @@ void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp)
 /*
 ; fills the passed return structure with the food
 ; income breakdown values of the city
-; contains multiple bugs related to Gaia's Blessing,
-; Famine, and the Foresters' Guild
 */
 /*
 City Screen
 Resource Window
 Food Breakdown
-
+returns 0 for a city with no population; otherwise the OG returns whatever AX holds (City_Food_WildGame()'s result; no return value)
 */
-void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
+int16_t City_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * breakdown)
 {
-    int16_t Farmed_Food_Total = 0;
-    int16_t Tile_Food = 0;
+    int16_t farmed_food_total = 0;
+    int16_t terrain_food = 0;
     int16_t itr = 0;
-    int16_t Food_Sub_Sum = 0;
+    int16_t food_subtotal = 0;
 
     EMMDATAH_Map();
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
     {
 
-        ((int16_t *)Retn_Struct)[itr] = 0;
+        ((int16_t *)breakdown)[itr] = 0;
 
     }
 
     if(_CITIES[city_idx].population == 0)
     {
 
-        return;
+        return 0;
 
     }
 
-    Tile_Food = City_Food_Terrain(city_idx);
+    terrain_food = City_Food_Terrain(city_idx);
 
     if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
     {
@@ -4379,56 +4511,61 @@ void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
     )
     {
 
-        Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 3);
+        food_subtotal = (_CITIES[city_idx].farmer_count * 3);
 
     }
     else
     {
 
-        Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 2);
+        food_subtotal = (_CITIES[city_idx].farmer_count * 2);
 
     }
 
     if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
     {
 
-        Tile_Food = ((Tile_Food * 2) / 3);
+        terrain_food = ((terrain_food * 2) / 3);
 
     }
 
-    if(Food_Sub_Sum > Tile_Food)
+    if(food_subtotal > terrain_food)
     {
 
-        Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+        // Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+        food_subtotal = (terrain_food + ((food_subtotal - terrain_food) / 2));  /* CLAUDE */  /* REBUG */  /* asm: sub ax, Tile_Food / cwd / sub ax, dx / sar ax, 1 */
 
     }
 
-    Farmed_Food_Total = Food_Sub_Sum;
+    farmed_food_total = food_subtotal;
 
 
     if(_CITIES[city_idx].race == rt_Halfling)
     {
 
-        Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 3);
+        // Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 3);
+        food_subtotal = (_CITIES[city_idx].farmer_count * 3);  /* CLAUDE */  /* REBUG */  /* asm: cbw / mov dx, 3 / imul dx */
 
     }
     else
     {
 
-        Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 2);
+        // Food_Sub_Sum = (_CITIES[city_idx].farmer_count / 2);
+        food_subtotal = (_CITIES[city_idx].farmer_count * 2);  /* CLAUDE */  /* REBUG */  /* asm: cbw / shl ax, 1 */
 
     }
 
-    if(Food_Sub_Sum > Tile_Food)
+    /* OGBUG  the Farmers line is halved over Tile_Food, and Tile_Food here has no Gaia's Blessing (it was cut to 2/3 above); City_Food_Production halves only after Foresters' Guild +2 and Famine /2 */
+    if(food_subtotal > terrain_food)
     {
 
-        Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+        // Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+        food_subtotal = (terrain_food + ((food_subtotal - terrain_food) / 2));  /* CLAUDE */  /* REBUG */  /* asm: sub ax, Tile_Food / cwd / sub ax, dx / sar ax, 1 */
 
     }
 
-    Retn_Struct->Farmers = Food_Sub_Sum;
+    breakdown->Farmers = food_subtotal;
 
-    Retn_Struct->Animists_Guild = (Farmed_Food_Total - Food_Sub_Sum);
+    breakdown->Animists_Guild = (farmed_food_total - food_subtotal);
 
     if(
         (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
@@ -4437,27 +4574,28 @@ void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
     )
     {
 
-        if(Food_Sub_Sum > Tile_Food)
+        /* OGBUG  shows Foresters' Guild as 1 when the Farmers line is over Tile_Food; City_Food_Production always adds 2 */
+        if(food_subtotal > terrain_food)
         {
 
-            Retn_Struct->Foresters_Guild = 1;
+            breakdown->Foresters_Guild = 1;
 
         }
         else
         {
 
-            Retn_Struct->Foresters_Guild = 2;
+            breakdown->Foresters_Guild = 2;
 
         }
 
-        Food_Sub_Sum += 2;
+        food_subtotal += 2;
 
     }
 
     if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] != 0)
     {
 
-        Tile_Food = City_Food_Terrain(city_idx);
+        terrain_food = City_Food_Terrain(city_idx);
 
         if(
             (_CITIES[city_idx].race == rt_Halfling)
@@ -4470,33 +4608,417 @@ void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
         )
         {
 
-            Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 3);
+            // Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 3);
+            /* OGBUG  Halflings / Animists' Guild: ADDS farmer_count * 3 on top of the running Farmers (+ Foresters' Guild 2) total instead of setting it, so the Gaia's Blessing line double-counts the farmers */
+            food_subtotal += (_CITIES[city_idx].farmer_count * 3);  /* CLAUDE */  /* REBUG */  /* asm: imul dx / add [bp+Food_Sub_Sum], ax */
 
         }
         else
         {
 
-            Food_Sub_Sum = (_CITIES[city_idx].farmer_count * 2);
+            food_subtotal = (_CITIES[city_idx].farmer_count * 2);
 
         }
 
-        if(Food_Sub_Sum > Tile_Food)
+        if(food_subtotal > terrain_food)
         {
 
-            Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+            // Food_Sub_Sum = (Tile_Food + (Food_Sub_Sum - Tile_Food));
+            food_subtotal = (terrain_food + ((food_subtotal - terrain_food) / 2));  /* CLAUDE */  /* REBUG */  /* asm: sub ax, Tile_Food / cwd / sub ax, dx / sar ax, 1 */
 
         }
 
-        Retn_Struct->Gaias_Blessing = (Food_Sub_Sum - Retn_Struct->Farmers - Retn_Struct->Animists_Guild);
+        breakdown->Gaias_Blessing = (food_subtotal - breakdown->Farmers - breakdown->Animists_Guild);
 
     }
 
+    /* OGBUG  shows Famine as half of the running total (the Farmers line + Foresters' Guild 2, or the Gaia's Blessing sum), not of the real pre-cap food */
     if(_CITIES[city_idx].enchantments[FAMINE] > 0)
     {
 
-        Retn_Struct->Famine_POS = (Food_Sub_Sum / 2);
+        breakdown->Famine = (food_subtotal / 2);
 
     }
+
+    /* CLAUDE */  /* asm: bldg_status+1Dh (Granary) -> Granary = 2; was missing */
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Granary] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Granary] == bs_Replaced)
+    )
+    {
+
+        breakdown->Granary = 2;
+
+    }
+
+    if(
+        // (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
+        (_CITIES[city_idx].bldg_status[bt_FarmersMarket] == bs_Built)  /* CLAUDE */  /* REBUG */  /* asm: bldg_status+1Eh */
+        ||
+        // (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+        (_CITIES[city_idx].bldg_status[bt_FarmersMarket] == bs_Replaced)  /* CLAUDE */  /* REBUG */  /* asm: bldg_status+1Eh */
+    )
+    {
+
+        breakdown->Farmers_Market = 3;
+
+    }
+
+    breakdown->Wild_Game = City_Food_WildGame(city_idx);
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with City_Food_WildGame()'s AX */
+
+}
+
+
+// WZD o142p33
+// drake178: CTY_Gold_Breakdown()
+/*
+City Screen
+Resource Window
+Gold Breakdown
+returns 0 for a city with no population; otherwise the OG returns whatever AX holds (no return value)
+*/
+int16_t City_Gold_Breakdown(int16_t city_idx, struct s_GOLD_BREAKDOWN * breakdown)
+{
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t mineral_gold = 0;
+    int16_t trade_percent = 0;
+    int16_t are_dwarves = 0;
+    int16_t have_miners_guild = 0;
+    int16_t city_wp = 0;
+    int16_t city_owner_idx = 0;
+    int16_t gold_income = 0;
+    int16_t useable_map_squares = 0;
+    int16_t itr = 0;  // _DI_
+
+    EMMDATAH_Map();
+
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+    {
+
+        ((int16_t *)breakdown)[itr] = 0;
+
+    }
+
+    if(_CITIES[city_idx].population == 0)
+    {
+
+        return 0;
+
+    }
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    city_wp = _CITIES[city_idx].wp;
+
+    useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, city_wp, &wx_array[0], &wy_array[0]);
+
+    if(city_owner_idx == NEUTRAL_PLAYER_IDX)
+    {
+
+        gold_income = (_CITIES[city_idx].population - City_Rebel_Count(city_idx));
+
+    }
+    else
+    {
+
+        gold_income = (((_CITIES[city_idx].population - City_Rebel_Count(city_idx)) * _players[city_owner_idx].tax_rate) / 2);
+
+    }
+
+    breakdown->Taxes = gold_income;
+
+    if(_CITIES[city_idx].race == rt_Dwarf)
+    {
+
+        are_dwarves = ST_TRUE;
+
+    }
+    else
+    {
+
+        are_dwarves = ST_FALSE;
+
+    }
+
+    mineral_gold = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        mineral_gold += Square_Silver_Gold_Income(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+    }
+
+    breakdown->Silver_Ores = mineral_gold;
+
+    mineral_gold = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        mineral_gold += Square_Gold_Ore_Gold_Income(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+    }
+
+    breakdown->Gold_Ores = mineral_gold;
+
+    mineral_gold = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        mineral_gold += Square_Gems_Gold_Income(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+    }
+
+    breakdown->Gems = mineral_gold;
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+    )
+    {
+
+        have_miners_guild = ST_TRUE;
+
+    }
+    else
+    {
+
+        have_miners_guild = ST_FALSE;
+
+    }
+
+    if(have_miners_guild == ST_TRUE)
+    {
+
+        breakdown->Miners_Guild = ((breakdown->Silver_Ores + breakdown->Gold_Ores + breakdown->Gems) / 2);
+
+    }
+
+    /* NOTE  gold_income collects the minerals here (and Trade Goods below) but is read only by the Road/River/Ocean, Marketplace and Bank lines; the function never returns it */
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        gold_income += Square_Silver_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarves);
+
+        gold_income += Square_Gold_Ore_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarves);
+
+        gold_income += Square_Gems_Gold_Income(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarves);
+
+    }
+
+    if(_CITIES[city_idx].race == rt_Dwarf)
+    {
+
+        breakdown->Taxes += breakdown->Taxes;
+
+    }
+
+    trade_percent = (Square_Gold_Bonus(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp) + City_Road_Trade_Bonus(city_idx));
+
+    if(_CITIES[city_idx].race == rt_Nomad)
+    {
+
+        trade_percent += 50;
+
+    }
+
+    if((_CITIES[city_idx].population * 3) < trade_percent)
+    {
+
+        trade_percent = (_CITIES[city_idx].population * 3);
+
+    }
+
+    /* OGBUG  (#43) the Road/River/Ocean, Marketplace and Bank lines apply their percentages to gold_income, which has the taxes once: City_Gold_Production() doubles a Dwarf city's taxes BEFORE the modifiers, so for Dwarves these lines show less than the real gain */
+    breakdown->Road_River_Ocean = ((trade_percent * gold_income) / 100);
+
+    trade_percent = 0;  /* OGBUG  dead store - trade_percent is not read again */
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Marketplace] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Marketplace] == bs_Replaced)
+    )
+    {
+
+        breakdown->Marketplace = ((50 * gold_income) / 100);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Bank] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Bank] == bs_Replaced)
+    )
+    {
+
+        breakdown->Bank = ((50 * gold_income) / 100);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_MerchantsGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_MerchantsGuild] == bs_Replaced)  /* asm: cmp ..., 0 */
+    )
+    {
+
+        /* OGBUG  (#43) shows the Taxes line; City_Gold_Production() adds the Merchants' Guild as +100% of the whole base (taxes, x2 for Dwarves, and minerals) */
+        breakdown->Merchants_Guild = breakdown->Taxes;
+
+    }
+
+    if(_CITIES[city_idx].enchantments[PROSPERITY] > 0)
+    {
+
+        /* OGBUG  (#43) for Dwarves the Taxes line is already doubled, and the line below adds it again: 4 x the base taxes, where City_Gold_Production()'s +100% counts them twice */
+        breakdown->Prosperity = (breakdown->Taxes + breakdown->Silver_Ores + breakdown->Gold_Ores + breakdown->Gems + breakdown->Miners_Guild);
+
+        if(_CITIES[city_idx].race == rt_Dwarf)
+        {
+
+            breakdown->Prosperity += breakdown->Taxes;
+
+        }
+
+    }
+
+    if(_CITIES[city_idx].construction == bt_TradeGoods)
+    {
+
+        gold_income += (_CITIES[city_idx].production_units / 2);  /* OGBUG  dead store - gold_income is not read again (the function never returns it) */
+
+        breakdown->Trade_Goods = (_CITIES[city_idx].production_units / 2);
+
+    }
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with whatever AX holds */
+
+}
+
+
+// WZD o142p34
+// drake178: CTY_Prod_Breakdown()
+/*
+City Screen
+Resource Window
+Production Breakdown
+
+returns 0 for a city with no population; otherwise the terrain-bonus production (terrain_percent x base_production / 100)
+*/
+int16_t City_Production_Breakdown(int16_t city_idx, struct s_PRODUCTION_BREAKDOWN * breakdown)
+{
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t gaias_terrain_percent = 0;
+    int16_t worker_production_x2 = 0;
+    int16_t have_gaias_blessing = 0;
+    int16_t city_wp = 0;
+    int16_t city_owner_idx = 0;
+    int16_t base_production = 0;
+    int16_t worker_count = 0;
+    int16_t itr = 0;
+    int16_t terrain_percent = 0;
+    int16_t useable_map_squares = 0;
+
+    EMMDATAH_Map();
+
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+    {
+
+        ((int16_t *)breakdown)[itr] = 0;
+
+    }
+
+    if(_CITIES[city_idx].population == 0)
+    {
+
+        return 0;
+
+    }
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;  /* OGBUG  dead store - city_owner_idx is never read */
+
+    city_wp = _CITIES[city_idx].wp;
+
+    useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, city_wp, &wx_array[0], &wy_array[0]);
+
+    if(_CITIES[city_idx].farmer_count > _CITIES[city_idx].population)
+    {
+
+        CITIES_FARMER_COUNT(city_idx, _CITIES[city_idx].population);
+
+    }
+
+    worker_count = ((_CITIES[city_idx].population - _CITIES[city_idx].farmer_count) - City_Rebel_Count(city_idx));
+
+    if(
+        (_CITIES[city_idx].race == rt_Dwarf)
+        ||
+        (_CITIES[city_idx].race == rt_Klackon)
+    )
+    {
+
+        worker_production_x2 = 6;
+
+    }
+    else
+    {
+
+        worker_production_x2 = 4;
+
+    }
+
+    base_production = (((worker_count * worker_production_x2) + _CITIES[city_idx].farmer_count + 1) / 2);
+
+    breakdown->Workers = ((worker_count * worker_production_x2) / 2);
+
+    breakdown->Farmers = (base_production - breakdown->Workers);
+
+    have_gaias_blessing = ST_FALSE;
+
+    terrain_percent = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        terrain_percent += Square_Production_Bonus(wx_array[itr], wy_array[itr], city_wp, have_gaias_blessing);
+
+    }
+
+    /* OGBUG  (#43) each percentage line (Terrain, Gaia's Blessing, Foresters' Guild, Sawmill, Miners' Guild, Mechanicians' Guild) is truncated on its own, where City_Production_Production() divides the summed modifier once: the lines can add up to less than the real production */
+    breakdown->Terrain = ((terrain_percent * base_production) / 100);
+
+    if(_CITIES[city_idx].enchantments[GAIAS_BLESSING] > 0)
+    {
+
+        have_gaias_blessing = ST_TRUE;
+
+    }
+    else
+    {
+
+        have_gaias_blessing = ST_FALSE;
+
+    }
+
+    gaias_terrain_percent = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        gaias_terrain_percent += Square_Production_Bonus(wx_array[itr], wy_array[itr], city_wp, have_gaias_blessing);
+
+    }
+
+    breakdown->Gaias_Blessing = (((gaias_terrain_percent * base_production) / 100) - breakdown->Terrain);
 
     if(
         (_CITIES[city_idx].bldg_status[bt_ForestersGuild] == bs_Built)
@@ -4505,22 +5027,482 @@ void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct)
     )
     {
 
-        Retn_Struct->Farmers_Market = 3;
+        breakdown->Foresters_Guild = ((25 * base_production) / 100);
 
     }
 
-    Retn_Struct->Wild_Games = City_Food_WildGame(city_idx);
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Sawmill] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Sawmill] == bs_Replaced)
+    )
+    {
+
+        breakdown->Sawmill = ((25 * base_production) / 100);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown->Miners_Guild = ((50 * base_production) / 100);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_MechaniciansGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_MechaniciansGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown->Mechanicians_Guild = ((50 * base_production) / 100);
+
+    }
+
+    if(_CITIES[city_idx].enchantments[INSPIRATIONS] > 0)
+    {
+
+        terrain_percent += 100;
+
+        breakdown->Inspirations = (breakdown->Workers + breakdown->Farmers);
+
+    }
+
+    /* NOTE  the return value is terrain_percent x base_production / 100: the terrain bonus only, with no 100% base (unless Inspirations added it) and no building bonuses */
+    base_production = ((terrain_percent * base_production) / 100);
+
+    if(_CITIES[city_idx].enchantments[CURSED_LANDS] > 0)
+    {
+
+        /* OGBUG  (#43) shows the line sum / 2, rounded down; City_Production_Production() takes (production + 1) / 2 */
+        breakdown->Cursed_Lands = ((breakdown->Workers + breakdown->Farmers + breakdown->Terrain + breakdown->Sawmill + breakdown->Foresters_Guild + breakdown->Miners_Guild + breakdown->Mechanicians_Guild + breakdown->Gaias_Blessing + breakdown->Inspirations) / 2);
+
+    }
+
+    return base_production;
 
 }
 
-// WZD o142p33
-// CTY_Gold_Breakdown()
-
-// WZD o142p34
-// CTY_Prod_Breakdown()
 
 // WZD o142p35
-// CTY_Rsrc_Breakdown()
+// drake178: CTY_Rsrc_Breakdown()
+/*
+City Screen
+Resource Window
+Research Breakdown
+
+returns 0 for a city with no population or a neutral city; otherwise the OG returns whatever AX holds (no return value)
+*/
+int16_t City_Research_Breakdown(int16_t city_idx, int16_t * breakdown)
+{
+    int16_t city_owner_idx = 0;
+    int16_t itr = 0;
+
+    EMMDATAH_Map();
+
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+    {
+
+        breakdown[itr] = 0;
+
+    }
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    if(
+        (_CITIES[city_idx].population == 0)
+        ||
+        (city_owner_idx == NEUTRAL_PLAYER_IDX)
+    )
+    {
+
+        return 0;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Library] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Library] == bs_Replaced)
+    )
+    {
+
+        breakdown[0] = 2;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_SagesGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_SagesGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown[1] = 3;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_University] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_University] == bs_Replaced)
+    )
+    {
+
+        breakdown[2] = 5;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_WizardsGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_WizardsGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown[3] = 8;
+
+    }
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with whatever AX holds */
+
+}
+
 
 // WZD o142p36
-// CTY_Pwr_Breakdown()
+// drake178: CTY_Pwr_Breakdown()
+/*
+City Screen
+Resource Window
+Power Breakdown
+
+returns 0 during a Mana Short event, for a city with no population, or for a neutral city; otherwise the OG returns whatever AX holds (no return value)
+*/
+int16_t City_Power_Breakdown(int16_t city_idx, struct s_POWER_BREAKDOWN * breakdown)
+{
+    int16_t wy_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t wx_array[CITY_AREA_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t fortress_power = 0;
+    int16_t mineral_power = 0;
+    int16_t have_miners_guild = 0;
+    int16_t are_dwarves = 0;
+    int16_t city_wp = 0;
+    int16_t useable_map_squares = 0;
+    int16_t religious_power = 0;
+    int16_t religion_percent = 0;
+    int16_t racial_power = 0;
+    int16_t city_owner_idx = 0;
+    int16_t itr = 0;
+
+    EMMDATAH_Map();
+
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+    {
+
+        ((int16_t *)breakdown)[itr] = 0;
+
+    }
+
+    city_owner_idx = _CITIES[city_idx].owner_idx;
+
+    if(events_table->Mana_Short_Status == es_Ongoing)
+    {
+
+        return 0;
+
+    }
+
+    if(
+        (_CITIES[city_idx].population == 0)
+        ||
+        (city_owner_idx == NEUTRAL_PLAYER_IDX)
+    )
+    {
+
+        return 0;
+
+    }
+
+    religious_power = 0;
+
+    religion_percent = 100;
+
+    if(
+        (_players[city_owner_idx].divine_power != 0)
+        ||
+        (_players[city_owner_idx].infernal_power != 0)
+    )
+    {
+
+        religion_percent = 150;
+
+    }
+
+    // /* NOTE  the Shrine line is a flat 1, while Temple / Parthenon / Cathedral are scaled by Divine / Infernal Power; the religious_power total below scales the Shrine too */
+    /* OGBUG  (#43) the Shrine line is a flat 1, not x1.5 for Divine / Infernal Power, and the Temple / Parthenon / Cathedral lines are each truncated on their own; the religious_power total below (and City_Mana_Production()) scales the summed buildings once */
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Shrine] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Shrine] == bs_Replaced)
+    )
+    {
+
+        breakdown->Shrine = 1;
+
+        religious_power++;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Temple] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Temple] == bs_Replaced)
+    )
+    {
+
+        breakdown->Temple = ((religion_percent * 2) / 100);
+
+        religious_power += 2;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Parthenon] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Parthenon] == bs_Replaced)
+    )
+    {
+
+        breakdown->Parthenon = ((religion_percent * 3) / 100);
+
+        religious_power += 3;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_Cathedral] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_Cathedral] == bs_Replaced)
+    )
+    {
+
+        breakdown->Cathedral = ((religion_percent * 4) / 100);
+
+        religious_power += 4;
+
+    }
+
+    religious_power = ((religious_power * religion_percent) / 100);
+
+    if(_CITIES[city_idx].enchantments[DARK_RITUALS] != 0)
+    {
+
+        breakdown->Dark_Rituals = religious_power;
+
+        religious_power = (religious_power * 2);  /* OGBUG  dead store - religious_power is not read again */
+
+    }
+
+    if(
+        (
+            (_players[city_owner_idx].spellranks[sbr_Death] != 0)
+            &&
+            (events_table->Good_Moon_Status == es_Ongoing)
+        )
+        ||
+        (
+            (_players[city_owner_idx].spellranks[sbr_Life] != 0)
+            &&
+            (events_table->Bad_Moon_Status == es_Ongoing)
+        )
+    )
+    {
+
+        breakdown->Shrine = ((breakdown->Shrine + 1) / 2);
+
+        breakdown->Temple = ((breakdown->Temple + 1) / 2);
+
+        breakdown->Parthenon = ((breakdown->Parthenon + 1) / 2);
+
+        breakdown->Cathedral = ((breakdown->Cathedral + 1) / 2);
+
+        breakdown->Dark_Rituals = ((breakdown->Dark_Rituals + 1) / 2);
+
+    }
+
+    if(
+        (
+            (_players[city_owner_idx].spellranks[sbr_Life] != 0)
+            &&
+            (events_table->Good_Moon_Status == es_Ongoing)
+        )
+        ||
+        (
+            (_players[city_owner_idx].spellranks[sbr_Death] != 0)
+            &&
+            (events_table->Bad_Moon_Status == es_Ongoing)
+        )
+    )
+    {
+
+        breakdown->Shrine += breakdown->Shrine;
+
+        breakdown->Temple += breakdown->Temple;
+
+        breakdown->Parthenon += breakdown->Parthenon;
+
+        breakdown->Cathedral += breakdown->Cathedral;
+
+        breakdown->Dark_Rituals += breakdown->Dark_Rituals;
+
+    }
+
+    // /* OGBUG  inverted: the Evil Presence line is filled only when the owner HAS Death books, the one case where Evil Presence takes nothing away; the real religious-power calculation removes religion when the owner has NO Death books */
+    /* OGBUG  (#43) a display-only line: City_Mana_Production() has no Evil Presence term (in the asm only City_Rebel_Count() tests it among the turn calculations); and the line is filled only when the owner HAS Death books, the inverse of the spell's rule */
+    if(
+        (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != 0)
+        &&
+        (_players[city_owner_idx].spellranks[sbr_Death] != 0)
+    )
+    {
+
+        breakdown->Evil_Presence = (breakdown->Shrine + breakdown->Temple + breakdown->Parthenon + breakdown->Cathedral + breakdown->Dark_Rituals);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_AlchemistsGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown->Alchemists_Guild = 3;
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_WizardsGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_WizardsGuild] == bs_Replaced)
+    )
+    {
+
+        breakdown->Wizards_Guild = 3;
+
+    }
+
+    city_wp = _CITIES[city_idx].wp;
+
+    racial_power = 0;
+
+    if(_CITIES[city_idx].race == rt_Dark_Elf)
+    {
+
+        racial_power += _CITIES[city_idx].population;
+
+    }
+
+    if(
+        (_CITIES[city_idx].race == rt_High_Elf)
+        ||
+        (_CITIES[city_idx].race == rt_Beastmen)
+        ||
+        (_CITIES[city_idx].race == rt_Draconian)
+    )
+    {
+
+        racial_power += (_CITIES[city_idx].population / 2);
+
+    }
+
+    breakdown->Townsfolk = racial_power;
+
+    if(
+        (_FORTRESSES[city_owner_idx].wx == _CITIES[city_idx].wx)
+        &&
+        (_FORTRESSES[city_owner_idx].wy == _CITIES[city_idx].wy)
+        &&
+        (_FORTRESSES[city_owner_idx].wp == city_wp)
+    )
+    {
+
+        fortress_power = (_players[city_owner_idx].spellranks[sbr_Nature] + _players[city_owner_idx].spellranks[sbr_Sorcery] + _players[city_owner_idx].spellranks[sbr_Chaos] + _players[city_owner_idx].spellranks[sbr_Life] + _players[city_owner_idx].spellranks[sbr_Death]);
+
+        breakdown->Fortress = ((city_wp == ARCANUS_PLANE) ? fortress_power : (fortress_power + 5));
+
+    }
+
+    if(_CITIES[city_idx].race == rt_Dwarf)
+    {
+
+        are_dwarves = ST_TRUE;
+
+    }
+    else
+    {
+
+        are_dwarves = ST_FALSE;
+
+    }
+
+    useable_map_squares = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, city_wp, &wx_array[0], &wy_array[0]);
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        breakdown->Mithril += Square_Mithril_Power(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+        breakdown->Adamantium += Square_Adamantium_Power(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+        breakdown->Quork += Square_Quork_Power(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+        breakdown->Crysx += Square_Crysx_Power(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+    }
+
+    mineral_power = 0;
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        mineral_power += Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, ST_FALSE, are_dwarves);
+
+    }
+
+    if(
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Built)
+        ||
+        (_CITIES[city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+    )
+    {
+
+        have_miners_guild = ST_TRUE;
+
+    }
+    else
+    {
+
+        have_miners_guild = ST_FALSE;
+
+    }
+
+    racial_power = 0;  /* asm reuses this local for the mineral power with the Miners' Guild */
+
+    for(itr = 0; itr < useable_map_squares; itr++)
+    {
+
+        racial_power += Square_Magic_Power(wx_array[itr], wy_array[itr], city_wp, have_miners_guild, are_dwarves);
+
+    }
+
+    breakdown->Miners_Guild = (racial_power - mineral_power);
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with whatever AX holds */
+
+}

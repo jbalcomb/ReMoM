@@ -1,0 +1,55 @@
+module_num=92
+module=D:\MOX\OTHERS\AIDATA.C
+source=0092-aidata.c.md
+range[0]=1:0x000C27A7 linear=0x000D27A7 size=12213
+range[1]=2:0x0000B554 linear=0x0017B554 size=8
+range[2]=2:0x0002F4B4 linear=0x0019F4B4 size=11624
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                                SYMBOL                                               CHUNK
+m092f001  1    -      0x000D27A7  1:0x000C27A7  code         Uncolonized_Planet_Worth_To_Player                  Uncolonized_Planet_Worth_To_Player_                  regions/07-object-1/00157654-00157E53.txt
+m092f002  2    -      0x000D2A08  1:0x000C2A08  static,code  Colony_Dominant_Player                              Colony_Dominant_Player_                              regions/07-object-1/00157E54-00158653.txt
+m092f003  3    -      0x000D2AA9  1:0x000C2AA9  static,code  Star_In_Range_Of_Given_Star                         Star_In_Range_Of_Given_Star_                         regions/07-object-1/00157E54-00158653.txt
+m092f004  4    -      0x000D2AEA  1:0x000C2AEA  static,code  Proximity_Worth_To_Player                           Proximity_Worth_To_Player_                           regions/07-object-1/00157E54-00158653.txt
+m092f005  5    -      0x000D2CAE  1:0x000C2CAE  code         Colony_Worth_To_Player                              Colony_Worth_To_Player_                              regions/07-object-1/00157E54-00158653.txt
+m092f006  6    -      0x000D302E  1:0x000C302E  static,code  Compute_Base_Planet_Values                          Compute_Base_Planet_Values_                          regions/07-object-1/00158654-00158E53.txt
+m092f007  7    -      0x000D3125  1:0x000C3125  static,code  Compute_Contextual_Planet_Values                    Compute_Contextual_Planet_Values_                    regions/07-object-1/00158654-00158E53.txt
+m092f008  8    -      0x000D3318  1:0x000C3318  static,code  sort_ships                                          sort_ships_                                          regions/07-object-1/00158654-00158E53.txt
+m092f009  9    -      0x000D33D1  1:0x000C33D1  static,code  Refit_Desirability                                  Refit_Desirability_                                  regions/07-object-1/00158654-00158E53.txt
+m092f010  10   -      0x000D356F  1:0x000C356F  code         airefit_cmp                                         airefit_cmp_                                         regions/07-object-1/00158654-00158E53.txt
+m092f011  11   -      0x000D3576  1:0x000C3576  code         Player_N_Turns_From_Star_To_Star_With_Intermediate  Player_N_Turns_From_Star_To_Star_With_Intermediate_  regions/07-object-1/00158654-00158E53.txt
+m092f012  12   -      0x000D383F  1:0x000C383F  code         Ship_N_Turns_To_Star_With_Intermediate              Ship_N_Turns_To_Star_With_Intermediate_              regions/07-object-1/00158E54-00159653.txt
+m092f013  13   -      0x000D3A68  1:0x000C3A68  static,code  Find_Players_In_Range                               Find_Players_In_Range_                               regions/07-object-1/00158E54-00159653.txt
+m092f014  14   -      0x000D3BA0  1:0x000C3BA0  static,code  Compute_Star_Player_Range_Info                      Compute_Star_Player_Range_Info_                      regions/07-object-1/00158E54-00159653.txt
+m092f015  15   -      0x000D3D34  1:0x000C3D34  code         Compute_AI_Data                                     Compute_AI_Data_                                     regions/07-object-1/00158E54-00159653.txt
+m092f016  16   -      0x000D574D  1:0x000C574D  code         Deallocate_AI_Data                                  Deallocate_AI_Data_                                  regions/07-object-1/0015A654-0015AE53.txt
+-         -    -      0x0017B554  2:0x0000B554  data         _base_planet_values                                 _base_planet_values                                  regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B558  2:0x0000B558  data         _contextual_planet_values                           _contextual_planet_values                            regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0019F4B4  2:0x0002F4B4  static,data  _g_contextual_planet_values                         _g_contextual_planet_values                          -
+-         -    -      0x001A0B34  2:0x00030B34  static,data  _g_base_planet_values                               _g_base_planet_values                                -
+-         -    -      0x001A21B4  2:0x000321B4  data         _ship_n_turns_to                                    _ship_n_turns_to                                     -
+-         -    -      0x001A21B8  2:0x000321B8  static,data  _n_turns_from_to_intermediate                       _n_turns_from_to_intermediate                        -
+-         -    -      0x001A21BC  2:0x000321BC  static,data  _planet_stage_weights                               _planet_stage_weights                                -
+-         -    -      0x001A21C0  2:0x000321C0  static,data  _ship_n_turns_to_intermediate                       _ship_n_turns_to_intermediate                        -
+-         -    -      0x001A21C4  2:0x000321C4  data         _airefit                                            _airefit                                             -
+-         -    -      0x001A21C8  2:0x000321C8  data         _i_all_combat_ships                                 _i_all_combat_ships                                  -
+-         -    -      0x001A21CC  2:0x000321CC  data         _ship_refit_desirabilities                          _ship_refit_desirabilities                           -
+-         -    -      0x001A21D0  2:0x000321D0  data         _aitech                                             _aitech                                              -
+-         -    -      0x001A21D4  2:0x000321D4  data         _all_ships                                          _all_ships                                           -
+-         -    -      0x001A21D8  2:0x000321D8  data         _enroute_human_ships                                _enroute_human_ships                                 -
+-         -    -      0x001A21DC  2:0x000321DC  data         _ship_strengths                                     _ship_strengths                                      -
+-         -    -      0x001A21E0  2:0x000321E0  data         _star_stage_weights                                 _star_stage_weights                                  -
+-         -    -      0x001A21E4  2:0x000321E4  data         _enroute_ships                                      _enroute_ships                                       -
+-         -    -      0x001A21E8  2:0x000321E8  data         _n_turns_from_to                                    _n_turns_from_to                                     -
+-         -    -      0x001A21EC  2:0x000321EC  data         _ai_colony_info                                     _ai_colony_info                                      -
+-         -    -      0x001A21F0  2:0x000321F0  data         _enroute_ship_strengths                             _enroute_ship_strengths                              -
+-         -    -      0x001A21F4  2:0x000321F4  data         _ship_strengths_in_nebula                           _ship_strengths_in_nebula                            -
+-         -    -      0x001A21F8  2:0x000321F8  data         _ai_star_info                                       _ai_star_info                                        -
+-         -    -      0x001A21FC  2:0x000321FC  data         _ship_bomb_strengths                                _ship_bomb_strengths                                 -
+-         -    -      0x001A2200  2:0x00032200  data         _star_in_extended_range_of_player                   _star_in_extended_range_of_player                    -
+-         -    -      0x001A2204  2:0x00032204  data         _ai_player_info                                     _ai_player_info                                      -
+-         -    -      0x001A2208  2:0x00032208  data         _possible_ship_strengths                            _possible_ship_strengths                             -
+-         -    -      0x001A220C  2:0x0003220C  data         _enroute_nonstealthy_ships                          _enroute_nonstealthy_ships                           -
+-         -    -      0x001A2210  2:0x00032210  data         _base_star_stage_weights                            _base_star_stage_weights                             -
+-         -    -      0x001A2214  2:0x00032214  data         _star_in_range_of_player                            _star_in_range_of_player                             -
+-         -    -      0x001A2218  2:0x00032218  data         _n_all_ships                                        _n_all_ships                                         -

@@ -17,6 +17,9 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 
 */
 
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
+
 #include "../../MoX/src/capture.h"
 #include "../../MoX/src/Fonts.h"
 #include "../../MoX/src/Graphics.h"
@@ -27,10 +30,6 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include "../../MoX/src/MOX_SET.h"  /* magic_set */
 #include "../../MoX/src/MOX_T4.h"
 #include "../../MoX/src/random.h"
-
-/* Copilot TEMP DEBUG: targeted map reveal tracing */
-#include "../../STU/src/STU_DBG.h"
-#include "../../STU/src/STU_LOG.h"  /* CLAUDE  LOG_TRACE for the biota draw-intent hook */
 
 #include "Explore.h"
 #include "Integrity_Check.h"  /* CLAUDE: Integrity_Terrain_Square_Is_Valid(), Integrity_Report_Refused_Squares() */
@@ -46,34 +45,6 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
 #include <string.h>
 
 #include "MainScr_Maps.h"
-
-#ifdef STU_DEBUG
-/* Copilot TEMP DEBUG: set DBG_TRACE_FIX_WX/WY/WP to filter a single square; leave ST_UNDEFINED for all. */
-static int16_t DBG_TRACE_FIX_WX = ST_UNDEFINED;
-static int16_t DBG_TRACE_FIX_WY = ST_UNDEFINED;
-static int16_t DBG_TRACE_FIX_WP = ST_UNDEFINED;
-static int16_t DBG_TRACE_FIX_BUDGET = 120;
-
-static int16_t DBG_Trace_Fix_Match(int16_t wx, int16_t wy, int16_t wp)
-{
-    if((DBG_TRACE_FIX_WP != ST_UNDEFINED) && (DBG_TRACE_FIX_WP != wp))
-    {
-        return ST_FALSE;
-    }
-
-    if((DBG_TRACE_FIX_WX != ST_UNDEFINED) && (DBG_TRACE_FIX_WX != wx))
-    {
-        return ST_FALSE;
-    }
-
-    if((DBG_TRACE_FIX_WY != ST_UNDEFINED) && (DBG_TRACE_FIX_WY != wy))
-    {
-        return ST_FALSE;
-    }
-
-    return ST_TRUE;
-}
-#endif
 
 
 
@@ -131,7 +102,8 @@ int16_t map_draw_sustain = 2;
 // WZD dseg:7004                                                 ovr057
 // WZD dseg:7004                                                 ovr150
 // WZD dseg:7004
-int16_t DBG_ShowTileInfo = ST_FALSE;
+// drake178: DBG_ShowTileInfo
+int16_t dbg_show_square_info = ST_FALSE;
 
 // WZD dseg:7006 00                                              db    0
 // WZD dseg:7007 00                                              db    0
@@ -206,7 +178,7 @@ uint8_t COL_City_Banner[] = {
 };
 /*
 WZD dseg:7011
-; DATA XREF: DEPR_MainScr_Draw_Map_Cities:loc_5AD6Er ...
+; DATA XREF: DEPR_MainScr_Draw_Map_Cities:loc_5AD6Evr ...
 ; the colors to replace indices $D6-DA in the city
 ; images with for the corresponding banner colors;
 ; this is actually a single array of 7 * 5 bytes, the
@@ -392,34 +364,66 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         }
 
         /* ¿ shift 1 map square to the right or left ? */
-        if(shift_right_flag != ST_FALSE)
+        // if(shift_right_flag != ST_FALSE)
+        // {
+        //     // NIU?  CRP_OVL_MapWindowX += 20;
+        //     l_map_x++;
+        //     if(l_map_x == WORLD_WIDTH)
+        //     {
+        //         l_map_x = 0;
+        //         // NIU?  CRP_OVL_MapWindowX = 0;
+        //     }
+        //     if(half_swap_flag == ST_FALSE && l_map_x > xpos)
+        //     {
+        //         l_map_x = xpos;
+        //         // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
+        //     }
+        // }
+        // else  /* if(shift_right_flag == ST_FALSE) */
+        // {
+        //     // NIU?  CRP_OVL_MapWindowX -= 20;
+        //     l_map_x--;
+        //     if(l_map_x == 0)
+        //     {
+        //         l_map_x = WORLD_WIDTH - 1;  // ? MoO2 _MAP_MAX_X ?
+        //         // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
+        //     }
+        //     if(half_swap_flag == ST_FALSE && l_map_x < xpos)
+        //     {
+        //         l_map_x = xpos;
+        //         // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
+        //     }
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm: cmp [bp+shift_right_flag], e_ST_FALSE / jnz loc_59C6E - the shift-left body is the then-branch */
+        if(shift_right_flag == ST_FALSE)
         {
-            // NIU?  CRP_OVL_MapWindowX += 20;
-            l_map_x++;
-            if(l_map_x == WORLD_WIDTH)
-            {
-                l_map_x = 0;
-                // NIU?  CRP_OVL_MapWindowX = 0;
-            }
-            if(half_swap_flag == ST_FALSE && l_map_x > xpos)
-            {
-                l_map_x = xpos;
-                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
-            }
-        }
-        else  /* if(shift_right_flag == ST_FALSE) */
-        {
-            // NIU?  CRP_OVL_MapWindowX -= 20;
+            niu_map_window_x -= SQUARE_WIDTH;  /* CLAUDE */  /* asm: sub [CRP_OVL_MapWindowX], e_SQUARE_WIDTH */
             l_map_x--;
-            if(l_map_x == 0)
+            /* CLAUDE */  /* REBUG */  /* asm: dec si / or si, si / jge loc_59C54 - wraps when l_map_x goes below 0 */
+            if(l_map_x < 0)
             {
                 l_map_x = WORLD_WIDTH - 1;  // ? MoO2 _MAP_MAX_X ?
-                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
+                niu_map_window_x = (l_map_x * SQUARE_WIDTH);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], ax - see the OGBUG on niu_map_window_x */
             }
             if(half_swap_flag == ST_FALSE && l_map_x < xpos)
             {
                 l_map_x = xpos;
-                // NIU?  CRP_OVL_MapWindowX = l_map_x * 20;
+                niu_map_window_x = (l_map_x * SQUARE_WIDTH);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], ax - see the OGBUG on niu_map_window_x */
+            }
+        }
+        else
+        {
+            niu_map_window_x += SQUARE_WIDTH;  /* CLAUDE */  /* asm: add [CRP_OVL_MapWindowX], e_SQUARE_WIDTH */
+            l_map_x++;
+            if(l_map_x == WORLD_WIDTH)
+            {
+                l_map_x = 0;
+                niu_map_window_x = 0;  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], 0 */
+            }
+            if(half_swap_flag == ST_FALSE && l_map_x > xpos)
+            {
+                l_map_x = xpos;
+                niu_map_window_x = (l_map_x * SQUARE_WIDTH);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], ax - see the OGBUG on niu_map_window_x */
             }
         }
     }
@@ -431,6 +435,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         if(ypos < l_map_y)
         {
             // NIU?  CRP_OVL_MapWindowY -= 18;
+            niu_map_window_y -= SQUARE_HEIGHT;  /* CLAUDE */  /* asm: sub [CRP_OVL_MapWindowY], e_SQUARE_HEIGHT */
             l_map_y--;
             if(l_map_y < ypos)
             {
@@ -440,6 +445,7 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
         else
         {
             // NIU?  CRP_OVL_MapWindowY += 18;
+            niu_map_window_y += SQUARE_HEIGHT;  /* CLAUDE */  /* asm: add [CRP_OVL_MapWindowY], e_SQUARE_HEIGHT */
             l_map_y++;
             if(l_map_y > ypos)
             {
@@ -493,7 +499,8 @@ void Draw_Maps(int16_t screen_x, int16_t screen_y, int16_t map_width, int16_t ma
 
 // WZD o67p02
 // AKA IDK_CheckSet_MapDisplay_XY
-void IDK_CheckSet_MapDisplay_XY(void)
+/* keeps the map window's scroll target in the world: _prev_world_y clamped to 0 .. WORLD_HEIGHT - MAP_HEIGHT, _prev_world_x wrapped to 0 .. 59; and _map_x set to 60 when a scroll from column 0 will wrap */
+void Clamp_Map_Window_Position(void)
 {
     // bind Y on the bottom
     if(_prev_world_y + MAP_HEIGHT >= WORLD_HEIGHT)
@@ -631,7 +638,9 @@ when always draw (-1) is set for OVL_ActiveStackDraw
                         if ... entities_on_movement_map[ ( ((unit_yw - mmap_yw) * MAP_WIDTH) + unit_xw ) ]; ==/!= ST_UNDEFINED
                     */
 
-                    if(draw_active_stack_flag != -1)
+                    /* OGBUG  World_To_Screen() overwrote unit_xw / unit_yw with screen pixels, so this index is far outside entities_on_movement_map[] (12x10) and the always-draw test reads garbage */
+                    // if(((draw_active_stack_flag == -1) && (entities_on_movement_map[(((unit_yw - mmap_yw) * MAP_WIDTH) + unit_xw)] == ST_UNDEFINED)) || (draw_active_stack_flag != -1))
+                    /* HACK */  if(((draw_active_stack_flag == ST_UNDEFINED) && (Stack_Garbage() == ST_UNDEFINED)) || (draw_active_stack_flag != ST_UNDEFINED))
                     {
 
                         if(in_view == ST_TRUE)
@@ -918,7 +927,77 @@ void Add_Nodes_To_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp)
 }
 
 // WZD o67p12
-// OVL_DrawMapSection
+// drake178: OVL_DrawMapSection()
+/*
+    Redraws the map squares around a screen point: three squares wide and up to three tall, starting one square left of and one square above the point.
+    Move_Units_Draw() calls it for the moving stack's source and destination squares, after Draw_Maps().
+    Clears the map-draw history so Draw_Map_Window() redraws every square, then puts the history back.
+    Draw_Map_Units() treats a width of 3 as a section and offsets its entities lookup by the section's distance from _map_x, _map_y.
+*/
+void Draw_Map_Squares_Around_Screen_Point(int16_t screen_x, int16_t screen_y, int16_t wp, int16_t map_x, int16_t map_y)
+{
+    int16_t section_width = 0;
+    int16_t section_wx = 0;
+    int16_t section_screen_y = 0;
+    int16_t section_screen_x = 0;
+    int16_t section_height = 0;  // _SI_
+    int16_t section_wy = 0;  // _DI_
+
+    section_width = 3;
+
+    section_height = 3;
+
+    section_screen_x = (screen_x - SQUARE_WIDTH);
+
+    section_screen_y = (screen_y - SQUARE_HEIGHT);
+
+    if(section_screen_x < 0)
+    {
+        section_screen_x = 0;
+    }
+
+    if(section_screen_y < 0)
+    {
+        section_screen_y = 0;
+    }
+
+    section_wx = ((map_x + (section_screen_x / SQUARE_WIDTH)) % WORLD_WIDTH);
+
+    section_wy = (map_y + ((section_screen_y - MAP_SCREEN_Y) / SQUARE_HEIGHT));
+
+    /* OGBUG  tests >= WORLD_YMAX (39), not > : a section whose last row would be row 38 or 39 loses a row, and a section starting on row 38 is moved up to row 37
+              by the test below while section_screen_y stays put, so world rows 37-38 are drawn where rows 38-39 are on screen */
+    if((section_wy + section_height) >= WORLD_YMAX)
+    {
+        section_height--;
+    }
+
+    if(((section_wy - map_y) + section_height) > MAP_HEIGHT)
+    {
+        section_height--;
+    }
+
+    if((section_wy + section_height) >= WORLD_YMAX)
+    {
+        section_wy = (WORLD_HEIGHT - (section_height + 1));
+    }
+
+    Save_Map_Draw_State();
+
+    Reset_Map_Draw();
+
+    /* NOTE: tests the global _map_y, not the map_y parameter (asm: sub ax, [_map_y]) - Move_Units_Draw() passes *map_y, so they are the same there */
+    if((section_wy - _map_y) < 0)
+    {
+        section_wy++;
+        section_screen_y += SQUARE_HEIGHT;
+    }
+
+    Draw_Map_Window(section_screen_x, section_screen_y, section_width, section_height, section_wx, section_wy, wp);
+
+    Restore_Map_Draw_State();
+
+}
 
 // WZD o67p13
 /*
@@ -1096,6 +1175,8 @@ void Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int16_t 
 
     // TODO  CRP_OVL_MapWindowX = G_OVL_MapDisplay_X * TILE_WIDTH;
     // TODO  CRP_OVL_MapWindowY = G_OVL_MapDisplay_Y * TILE_HEIGHT;
+    niu_map_window_x = (_prev_world_x * SQUARE_WIDTH);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], ax - see the OGBUG on niu_map_window_x */
+    niu_map_window_y = (_prev_world_y * SQUARE_HEIGHT);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowY], ax */
     
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
@@ -1143,6 +1224,8 @@ void City_Center_Map(int16_t * map_x, int16_t * map_y, int16_t world_grid_x, int
 
     // NIU  CRP_OVL_MapWindowX = (_prev_world_x * SQUARE_WIDTH);
     // NIU  CRP_OVL_MapWindowY = (_prev_world_y * SQUARE_HEIGHT);
+    niu_map_window_x = (_prev_world_x * SQUARE_WIDTH);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], ax - see the OGBUG on niu_map_window_x */
+    niu_map_window_y = (_prev_world_y * SQUARE_HEIGHT);  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowY], ax */
 
     Set_Unit_Draw_Priority();
     Reset_Stack_Draw_Priority();
@@ -1287,7 +1370,125 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 
 
 // WZD o68p05
-// RP_OVL_DrawCities2()
+// drake178: RP_OVL_DrawCities2()
+/*
+; moves a stack of overland units along the path set
+; for them in the active stack's global arrays,
+; possibly building a road on the first tile; and
+; displays this movement if necessary, including
+; centering on the units if they were off-screen, and
+; adjusting the passed map display coordinate pointers
+;
+; contains a BUG-turned-feature that overlays city
+; graphics on adjacent units while drawing movement
+*/
+/* CLAUDE */  /* the drake178 note above describes Move_Units_Draw() (o95p02), not this function */
+/*
+    Draws every explored city on plane wp that falls in the map window, in its owner's banner colors (neutral: fixed colors 51..55).
+    Same steps as Draw_Map_Cities() (o150p08), except that it always sets the main-screen map window instead of choosing the City Screen's.
+
+OON XREF:
+    Move_Units_Draw()
+*/
+void Draw_Map_Cities_In_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
+{
+    int16_t city_wx = 0;
+    int16_t city_wy = 0;
+    int16_t city_owner_idx = 0;
+    SAMB_ptr city_pict_seg = ST_NULL;
+    int16_t screen_start_x = 0;
+    int16_t screen_start_y = 0;
+    int16_t city_size = 0;
+    int16_t itr_cities = 0;
+    int16_t itr_color_remap = 0;
+    Set_Window(MAP_SCREEN_X1, MAP_SCREEN_Y1, MAP_SCREEN_X2, MAP_SCREEN_Y2);
+    for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+    {
+        if(_CITIES[itr_cities].wp != wp)
+        {
+            continue;
+        }
+        city_wx = _CITIES[itr_cities].wx;
+        city_wy = _CITIES[itr_cities].wy;
+        if(GET_SQUARE_EXPLORED(city_wx, city_wy, wp) == ST_FALSE)
+        {
+            continue;
+        }
+        city_wx -= world_grid_x;
+        if(city_wx < 0)
+        {
+            city_wx += WORLD_WIDTH;
+        }
+        city_wy -= world_grid_y;
+        if((city_wy + 1) < 0)
+        {
+            continue;
+        }
+        if((city_wy - 1) >= map_grid_height)
+        {
+            continue;
+        }
+        if((city_wx + 1) < 0)
+        {
+            continue;
+        }
+        if((city_wx - 1) >= map_grid_width)
+        {
+            continue;
+        }
+        city_owner_idx = _CITIES[itr_cities].owner_idx;
+        screen_start_x = (city_wx * SQUARE_WIDTH) + screen_x - CITY_PICTURE_OVERHANG;  // start 6 pixels early, to overdraw the City Picture
+        screen_start_y = (city_wy * SQUARE_HEIGHT) + screen_y - CITY_PICTURE_OVERHANG;  // start 6 pixels early, to overdraw the City Picture
+        if(city_owner_idx == NEUTRAL_PLAYER_IDX)
+        {
+            /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+            if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
+            {
+                city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+            }
+            else
+            {
+                city_pict_seg = IMG_OVL_Walled_City;  // MAPCITY
+            }
+
+            city_size = (_CITIES[itr_cities].population - 1) / CITY_PICTURE_POPULATION_STEP;
+            if(city_size > MAX_CITY_PICTURE_FRAME)
+            {
+                city_size = MAX_CITY_PICTURE_FRAME;
+            }
+            Set_Animation_Frame(city_pict_seg, city_size);
+            Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
+            for(itr_color_remap = 0; itr_color_remap < NUM_BANNER_REMAP_COLORS; itr_color_remap++)
+            {
+                Replace_Color(map_square_scratchpad_seg, BANNER_REMAP_COLOR_BASE + itr_color_remap, NEUTRAL_CITY_REMAP_COLOR_BASE + itr_color_remap);
+            }
+        }
+        else
+        {
+            /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+            if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
+            {
+                city_pict_seg = IMG_OVL_NoWall_City;
+            }
+            else
+            {
+                city_pict_seg = IMG_OVL_Walled_City;
+            }
+            city_size = (_CITIES[itr_cities].population - 1) / CITY_PICTURE_POPULATION_STEP;
+            if(city_size > MAX_CITY_PICTURE_FRAME)
+            {
+                city_size = MAX_CITY_PICTURE_FRAME;
+            }
+            Set_Animation_Frame(city_pict_seg, city_size);
+            Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
+            for(itr_color_remap = 0; itr_color_remap < NUM_BANNER_REMAP_COLORS; itr_color_remap++)
+            {
+                Replace_Color(map_square_scratchpad_seg, BANNER_REMAP_COLOR_BASE + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx].banner_id * NUM_BANNER_REMAP_COLORS) + itr_color_remap)] - 1));
+            }
+        }
+        Draw_Picture_Windowed(screen_start_x, screen_start_y, map_square_scratchpad_seg);
+    }
+}
 
 
 // WZD o68p06
@@ -1296,10 +1497,10 @@ void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_
 /*
     called from Units_In_Tower()
         only for human_player_idx
-    called from Set_Map_Square_Explored_Flags_XYP_Range()
+    called from Set_Square_Explored_Flags_Range()
 
 */
-void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp)
+void Set_Square_Explored_Flags(int16_t wx, int16_t wy, int16_t wp)
 {
     uint8_t * ptr_square_explored = NULL;
     int16_t itr_wx = 0;
@@ -1451,7 +1652,8 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
     // ...generated by the compiler...
     memcpy(CornerOnly_Explores, NoSide_Explores, sizeof(NoSide_Explores));
     
-    ptr_square_explored = &_square_explored[wp];
+    // ptr_square_explored = &_square_explored[wp];
+    /* CLAUDE */  /* REBUG */  ptr_square_explored = &_square_explored[(wp * WORLD_SIZE)];  /* asm: mov ax, [bp+wp] / mov dx, e_WORLD_SIZE / imul dx / add bx, ax */
     
     wx_r1 = (wx + 1);
     
@@ -1464,11 +1666,12 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
         if(ptr_square_explored[((wy * WORLD_WIDTH) + wx)] == CornerOnly_Explores[IDK_itr1])
         {
             IDK_itr2++;
+            /* CLAUDE */  /* REBUG */  break;  /* asm: inc di / jmp short loc_5B0F5 */
         }
-        else
-        {
-            continue;
-        }
+        // else
+        // {
+        //     continue;
+        // }
     }
 
     if(IDK_itr2 == 0)
@@ -1481,6 +1684,7 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
         if(ptr_square_explored[((wy * WORLD_WIDTH) + wx_r1)] == CornerOnly_Explores[IDK_itr1])
         {
             IDK_itr2++;
+            /* CLAUDE */  /* REBUG */  break;  /* asm: inc di / jmp short loc_5B121 */
         }
     }
 
@@ -1491,11 +1695,10 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 
     for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
     {
-        // ; BUG: at Y=39, this is out of bounds on Myrror!
-        // ; (next alloc is the arcanus visibility table)
         if(ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx)] == CornerOnly_Explores[IDK_itr1])
         {
             IDK_itr2++;
+            /* CLAUDE */  /* REBUG */  break;  /* asm: inc di / jmp short loc_5B14E */
         }
     }
 
@@ -1506,23 +1709,38 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 
     for(IDK_itr1 = 0; IDK_itr1 < 6; IDK_itr1++)
     {
-        // ; BUG: at Y=39, this is out of bounds on Myrror!
         if(ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] == CornerOnly_Explores[IDK_itr1])
         {
             IDK_itr2++;
+            /* CLAUDE */  /* REBUG */  break;  /* asm: inc di / jmp short loc_5B17B */
         }
     }
 
+    /* OGBUG  right = wx + 1 and down = wy + 1 are not wrapped: at wx 59 the 'right' squares are column 0 of the next row, and at wy 39 the 'down' squares are Myrror's row 0 (from Arcanus) or past the Myrror table (from Myrror, into the next World_Data block, as in the OG); they are read, and written when all four match */
     if(IDK_itr2 == 4)
     {
         ptr_square_explored[((wy    * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy    * WORLD_WIDTH) + wx   )] | SCT_BottomRight;
         ptr_square_explored[((wy    * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy    * WORLD_WIDTH) + wx_r1)] | SCT_BottomLeft;
-        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] | SCT_BottomLeft;
-        ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] | SCT_BottomLeft;
+        // ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] | SCT_BottomLeft;
+        // ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] | SCT_BottomLeft;
+        /* CLAUDE */  /* REBUG */  ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx   )] | SCT_TopRight;  /* asm: or al, SCT_TopRight */
+        /* CLAUDE */  /* REBUG */  ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] = ptr_square_explored[((wy_d1 * WORLD_WIDTH) + wx_r1)] | SCT_TopLeft;   /* asm: or al, SCT_TopLeft */
     }
 
 }
 
+
+/* CLAUDE */  /* moved here from between the WZD o68p08 id tag and Set_Square_Explored_Flags_Fix(), so the tag sits on its function */
+struct Explore_Matching
+{
+    int16_t Tile_Value;
+    int16_t Adj_Scouting;
+    int16_t Mark_Tile;
+    int16_t Mark_Adj;
+    int16_t Adj_Direction;
+   
+};
+// TODO  initialize struct Explore_Matching Match_Array[38]
 
 // WZD o68p08
 // drake178: RP_TILE_ExploreMatch()
@@ -1545,16 +1763,6 @@ void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16
 /*
 
 */
-struct Explore_Matching
-{
-    int16_t Tile_Value;
-    int16_t Adj_Scouting;
-    int16_t Mark_Tile;
-    int16_t Mark_Adj;
-    int16_t Adj_Direction;
-   
-};
-// TODO  initialize struct Explore_Matching Match_Array[38]
 void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
 {
     struct Explore_Matching Match_Array[38] = { 0 };
@@ -1764,7 +1972,8 @@ void Set_Square_Explored_Flags_Fix(int16_t wx, int16_t wy, int16_t wp)
     Match_Array[37].Mark_Adj = 15;
     Match_Array[37].Adj_Direction = 1;  // ; bogus configuration, should be fixed elsewhere
     
-    ptr_square_explored = &_square_explored[wp];
+    // ptr_square_explored = &_square_explored[wp];
+    /* CLAUDE */  /* REBUG */  ptr_square_explored = &_square_explored[(wp * WORLD_SIZE)];  /* asm ovr068/Set_Square_Explored_Flags_Fix.asm 215-220: mov ax, [bp+wp] / mov dx, e_WORLD_SIZE / imul dx / add bx, ax */
     
     wx_l2 = (wx - 2);
 
@@ -1930,7 +2139,41 @@ void Reset_Map_Draw(void)
     map_draw_prev_x = ST_UNDEFINED;
 
     map_draw_prev_y = ST_UNDEFINED;
-    
+
+}
+
+// WZD o150p02
+// drake178: OVL_MapStateSave()
+/*
+    Saves the map-draw history (last drawn x, y and the sustain count) and sets the last drawn x to ST_UNDEFINED, so the next Draw_Map_Window() redraws every square.
+*/
+void Save_Map_Draw_State(void)
+{
+
+    map_draw_prev_x_save = map_draw_prev_x;
+
+    map_draw_prev_y_save = map_draw_prev_y;
+
+    map_draw_sustain_save = map_draw_sustain;
+
+    map_draw_prev_x = ST_UNDEFINED;
+
+}
+
+// WZD o150p03
+// drake178: OVL_MapStateRestore()
+/*
+    Puts back the map-draw history saved by Save_Map_Draw_State().
+*/
+void Restore_Map_Draw_State(void)
+{
+
+    map_draw_prev_x = map_draw_prev_x_save;
+
+    map_draw_prev_y = map_draw_prev_y_save;
+
+    map_draw_sustain = map_draw_sustain_save;
+
 }
 
 // WZD o150p04
@@ -2115,7 +2358,7 @@ void Draw_Map_Terrain(int16_t screen_x, int16_t screen_y, int16_t map_grid_width
 
             } /* if(unexplored_area_flag == ST_FALSE) */
 
-            if(DBG_ShowTileInfo == ST_TRUE)
+            if(dbg_show_square_info == ST_TRUE)
             {
                 // TODO  j_EMM_Map_CONTXXX();  // ; maps in the EMM_ContXXX_H handle (all 4 pages), and resets its corresponding global pointers
                 // TODO  Set_Font_Style(0,0);
@@ -2234,15 +2477,17 @@ void Draw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_gr
 // WZD o150p08
 void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
 {
-    int16_t itr_cities;
-    int16_t city_x;
-    int16_t city_y;
-    int16_t city_owner;
-    int16_t screen_start_x;
-    int16_t screen_start_y;
-    SAMB_ptr city_pict_seg;
-    int8_t city_size;
-    int16_t itr_color_remap;
+    int16_t itr_cities = 0;
+    int16_t city_x = 0;
+    int16_t city_y = 0;
+    int16_t city_owner = 0;
+    int16_t screen_start_x = 0;
+    int16_t screen_start_y = 0;
+    SAMB_ptr city_pict_seg = 0;
+    // int8_t city_size;
+    /* CLAUDE */  /* REBUG */  /* asm: mov [bp+city_size], ax / push [bp+city_size] - a word */
+    int16_t city_size = 0;
+    int16_t itr_color_remap = 0;
 
     if(current_screen == scr_City_Screen)
     {
@@ -2269,21 +2514,101 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                 }
                 city_y = city_y - world_grid_y;  // translate to map relative coordinates
 
-                if(city_y >= 0)
+                // if(city_y >= 0)
+                /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+city_y] / inc ax / jge @@IsOnMap_Bottom */
+                if((city_y + 1) >= 0)
                 {
                     if(city_y - 1 < map_grid_height)
                     {
-                        if(city_x >= 0)
+                        // if(city_x >= 0)
+                        /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bp+city_x] / inc ax / jge @@IsOnMap_Right */
+                        if((city_x + 1) >= 0)
                         {
                             if(city_x - 1 < map_grid_width)
                             {
                                 city_owner = _CITIES[itr_cities].owner_idx;
-                                screen_start_x = screen_x + (city_x * SQUARE_WIDTH) - 6;  // start 6 pixels early, to overdraw the City Picture
-                                screen_start_y = screen_y + (city_y * SQUARE_HEIGHT) - 6;  // start 6 pixels early, to overdraw the City Picture
+                                screen_start_x = screen_x + (city_x * SQUARE_WIDTH) - CITY_PICTURE_OVERHANG;  // start 6 pixels early, to overdraw the City Picture
+                                screen_start_y = screen_y + (city_y * SQUARE_HEIGHT) - CITY_PICTURE_OVERHANG;  // start 6 pixels early, to overdraw the City Picture
 
-                                if(city_owner != NEUTRAL_PLAYER_IDX)  /* Neutral Player */
+                                // if(city_owner != NEUTRAL_PLAYER_IDX)  /* Neutral Player */
+                                // {
+                                //     /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+                                //     if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
+                                //     {
+                                //         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+                                //     }
+                                //     else
+                                //     {
+                                //         city_pict_seg = IMG_OVL_Walled_City;  // MAPCITY
+                                //     }
+
+                                //     // Pop_K: ¿ {0, ..., 25} ?
+                                //     // {1,4}-1/4=0 {5,8}-1/4=1 {9,12}-1/4=2 {13,16}-1/4=3  {17,20}-1/4=4 {21,24}-1/4=5 {25}-1/4=6
+                                //     // NOTE: this would seems to indicate than an 'Outpost' is not even in the cities table
+                                //     // TODO: figure out where Outposts get drawn on the map
+                                //     city_size = (_CITIES[itr_cities].population - 1) / 4;  
+                                //     if(city_size > 4)
+                                //     {
+                                //         city_size = 4;
+                                //     }
+                                //     Set_Animation_Frame(city_pict_seg, city_size);
+                                //     Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
+                                //     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+                                //     {
+                                //         Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].banner_id * 5) + itr_color_remap)] - 1));
+                                //     }
+                                // }
+                                // else
+                                // {
+                                //     /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+                                //     if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
+                                //     {
+                                //         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+                                //     }
+                                //     else
+                                //     {
+                                //         city_pict_seg = IMG_OVL_Walled_City;
+                                //     }
+                                //     city_size = (_CITIES[itr_cities].population - 1) / 4;
+                                //     if(city_size > 4)
+                                //     {
+                                //         city_size = 4;
+                                //     }
+                                //     Set_Animation_Frame(city_pict_seg, city_size);
+                                //     Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
+                                //     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+                                //     {
+                                //         Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, 51 + itr_color_remap);
+                                //     }
+                                // }
+                                /* CLAUDE */  /* REBUG */  /* asm: cmp [bp+city_owner], 5 / jz loc_D9B4E / jmp loc_D9BD4 - the neutral body is the then-branch, the owned body the else */
+                                if(city_owner == NEUTRAL_PLAYER_IDX)
                                 {
-                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)  /* ¿ "B_Replaced" or just ST_FALSE ? */
+                                    /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
+                                    {
+                                        city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
+                                    }
+                                    else
+                                    {
+                                        city_pict_seg = IMG_OVL_Walled_City;
+                                    }
+                                    city_size = (_CITIES[itr_cities].population - 1) / CITY_PICTURE_POPULATION_STEP;
+                                    if(city_size > MAX_CITY_PICTURE_FRAME)
+                                    {
+                                        city_size = MAX_CITY_PICTURE_FRAME;
+                                    }
+                                    Set_Animation_Frame(city_pict_seg, city_size);
+                                    Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
+                                    for(itr_color_remap = 0; itr_color_remap < NUM_BANNER_REMAP_COLORS; itr_color_remap++)
+                                    {
+                                        Replace_Color(map_square_scratchpad_seg, BANNER_REMAP_COLOR_BASE + itr_color_remap, NEUTRAL_CITY_REMAP_COLOR_BASE + itr_color_remap);
+                                    }
+                                }
+                                else
+                                {
+                                    /* OGBUG  tests == bs_Replaced (0): bs_NotBuilt (0xFF) and bs_Built (1) both take the walled picture, so every city shows walls; should test == bs_Built */
+                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)
                                     {
                                         city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
                                     }
@@ -2296,38 +2621,16 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                                     // {1,4}-1/4=0 {5,8}-1/4=1 {9,12}-1/4=2 {13,16}-1/4=3  {17,20}-1/4=4 {21,24}-1/4=5 {25}-1/4=6
                                     // NOTE: this would seems to indicate than an 'Outpost' is not even in the cities table
                                     // TODO: figure out where Outposts get drawn on the map
-                                    city_size = (_CITIES[itr_cities].population - 1) / 4;  
-                                    if(city_size > 4)
+                                    city_size = (_CITIES[itr_cities].population - 1) / CITY_PICTURE_POPULATION_STEP;  
+                                    if(city_size > MAX_CITY_PICTURE_FRAME)
                                     {
-                                        city_size = 4;
+                                        city_size = MAX_CITY_PICTURE_FRAME;
                                     }
                                     Set_Animation_Frame(city_pict_seg, city_size);
                                     Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
-                                    for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+                                    for(itr_color_remap = 0; itr_color_remap < NUM_BANNER_REMAP_COLORS; itr_color_remap++)
                                     {
-                                        Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner].banner_id * 5) + itr_color_remap)] - 1));
-                                    }
-                                }
-                                else
-                                {
-                                    if(_CITIES[itr_cities].bldg_status[CITY_WALLS] == bs_Replaced)  /* ¿ "B_Replaced" or just ST_FALSE ? */
-                                    {
-                                        city_pict_seg = IMG_OVL_NoWall_City;  // CITYNOWA
-                                    }
-                                    else
-                                    {
-                                        city_pict_seg = IMG_OVL_Walled_City;
-                                    }
-                                    city_size = (_CITIES[itr_cities].population - 1) / 4;
-                                    if(city_size > 4)
-                                    {
-                                        city_size = 4;
-                                    }
-                                    Set_Animation_Frame(city_pict_seg, city_size);
-                                    Draw_Picture_To_Bitmap(city_pict_seg, map_square_scratchpad_seg);
-                                    for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
-                                    {
-                                        Replace_Color(map_square_scratchpad_seg, 214 + itr_color_remap, 51 + itr_color_remap);
+                                        Replace_Color(map_square_scratchpad_seg, BANNER_REMAP_COLOR_BASE + itr_color_remap, (COL_City_Banner[((_players[city_owner].banner_id * NUM_BANNER_REMAP_COLORS) + itr_color_remap)] - 1));
                                     }
                                 }
 
@@ -2342,6 +2645,9 @@ void Draw_Map_Cities(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
     }
 
 }
+
+/* CLAUDE */  /* the WZD dseg offset of COL_Banners[] (MOM_DAT.c: WZD dseg:00AA), the value Draw_Map_Towers() passes as a color */
+#define WZD_DSEG_OFFSET_COL_BANNERS  0x00AA
 
 // WZD o150p09
 void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp)
@@ -2382,24 +2688,42 @@ void Draw_Map_Towers(int16_t screen_x, int16_t screen_y, int16_t map_grid_width,
                             tower_owner_idx = _TOWERS[itr_towers].owner_idx;
                             start_x = screen_x + (tower_x * SQUARE_WIDTH);
                             start_y = screen_y + (tower_y * SQUARE_HEIGHT);
-                            if(tower_owner_idx != ST_UNDEFINED)
+                            // if(tower_owner_idx != ST_UNDEFINED)
+                            // {
+                            //     // SITES    unowned tower
+                            //     // SITES    owned tower
+                            //     Draw_Picture_To_Bitmap(tower_owned_seg, map_square_scratchpad_seg);
+                            //     for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
+                            //     {
+                            //         // ; BUG: parameter mismatch, passing a pointer instead of an actual color index!
+                            //         // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
+                            //         // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Bug-List'
+                            //         // ~== FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
+                            //         //     FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
+                            //         Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
+                            //     }
+                            // }
+                            // else
+                            // {
+                            //     Draw_Picture_To_Bitmap(tower_unowned_seg, map_square_scratchpad_seg);
+                            // }
+                            /* CLAUDE */  /* REBUG */  /* asm loc_D9D23: cmp [bp+tower_owner_idx], ST_UNDEFINED / jnz -> owned; the fall-through is the unowned picture */
+                            if(tower_owner_idx == ST_UNDEFINED)
                             {
                                 // SITES    unowned tower
-                                // SITES    owned tower
-                                Draw_Picture_To_Bitmap(tower_owned_seg, map_square_scratchpad_seg);
-                                for(itr_color_remap = 0; itr_color_remap < 5; itr_color_remap++)
-                                {
-                                    // ; BUG: parameter mismatch, passing a pointer instead of an actual color index!
-                                    // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
-                                    // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Bug-List'
-                                    // ~== FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_City_Banner[((_players[city_owner_idx  ].Banner * 5) + itr_color_remap)] - 1));
-                                    //     FLIC_Remap_Color(map_square_scratchpad_seg, 214 + itr_color_remap, (COL_Banners[((_players[towner_owner_idx].Banner * 5) + itr_color_remap)] - 1));
-                                    Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
-                                }
+                                Draw_Picture_To_Bitmap(tower_unowned_seg, map_square_scratchpad_seg);
                             }
                             else
                             {
-                                Draw_Picture_To_Bitmap(tower_unowned_seg, map_square_scratchpad_seg);
+                                // SITES    owned tower
+                                Draw_Picture_To_Bitmap(tower_owned_seg, map_square_scratchpad_seg);
+                                for(itr_color_remap = 0; itr_color_remap < NUM_BANNER_REMAP_COLORS; itr_color_remap++)
+                                {
+                                    // ; BUG: this is the index of repeat colors in encoded images (224), the banner replacement colors start at index $D6 instead (214)
+                                    // TODO(JimBalcomb,20230701): add this bug to the 'OG MoM v1.31 Bug-List'
+                                    /* OGBUG  the replacement color pushed is the ADDRESS banner_id * 5 + offset COL_Banners (dseg:00AA), not the byte stored there, and the same one for all five shades: an owned tower is painted flat in palette entry 0xAA / 0xAF / 0xB4 / 0xB9 / 0xBE / 0xC3 by banner, not in its owner's banner colors */
+                                    /* HACK */  Replace_Color(map_square_scratchpad_seg, (224 + itr_color_remap), (uint8_t)(WZD_DSEG_OFFSET_COL_BANNERS + (_players[tower_owner_idx].banner_id * 5)));
+                                }
                             }
 
                             Draw_Picture(start_x, start_y, map_square_scratchpad_seg);
@@ -2593,7 +2917,7 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
         {
             /* OGBUG: this is entirely unnecessary here and will have no effect on what follows */
             warp_node_seed_save = Get_Random_Seed();
-            for (shear_array_idx = 0; shear_array_idx < 20; shear_array_idx++)
+            for(shear_array_idx = 0; shear_array_idx < 20; shear_array_idx++)
             {
                 current_shear = m_node_warp_shear_array[shear_array_idx];
                 if(Random(4) == 1) { current_shear++; }
@@ -2613,25 +2937,6 @@ void Draw_Map_Nodes(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
         Clipped_Copy_Mask(0, 0, node_warp_scratchpad_seg, map_square_scratchpad_seg);
         Draw_Picture(start_x, start_y, node_warp_scratchpad_seg);
     }
-}
-
-/* CLAUDE  Draw-intent trace hook -- no asm counterpart; observation only, draws nothing.
-   Resolves the sprite handle ACTUALLY passed to FLIC_Draw back to a symbolic name, so a test can
-   assert which overlay landed on each square.  A branch-entry log would not catch a wrong-sprite
-   substitution (the 2024-08-29 regression drew UU_hunters_lodge_seg from inside the wild-game
-   branch), which is exactly the failure this hook exists to make visible.
-   Compiles to a no-op when STU_LOG_MIN_SEVERITY excludes TRACE. */
-static void DBG_Log_Biota_Draw(int16_t wp, int16_t wx, int16_t wy, SAMB_ptr seg)
-{
-    const char * sprite_name;
-
-    if(seg == IMG_OVL_WildGame)          { sprite_name = "WILDGAME";     }
-    else if(seg == UU_hunters_lodge_seg) { sprite_name = "HUNTERSLODGE"; }
-    else if(seg == IMG_OVL_Nightshade)   { sprite_name = "NIGHTSHADE";   }
-    else if(seg == IMG_OVL_Corruption)   { sprite_name = "CORRUPTION";   }
-    else                                 { sprite_name = "UNKNOWN";      }
-
-    LOG_TRACE(LOG_CAT_MAINSCR, "BIOTA_DRAW p=%d x=%d y=%d sprite=%s", (int)wp, (int)wx, (int)wy, sprite_name);
 }
 
 // WZD o150p12
@@ -2669,7 +2974,6 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 curr_world_x = itr_world_x - WORLD_WIDTH;
             }
 
-            // DELETEME  unexplored_area = _square_explored[(wp * WORLD_SIZE_DB) + (itr_world_y * WORLD_WIDTH) + (curr_world_x)];
             unexplored_area = GET_SQUARE_EXPLORED(curr_world_x, itr_world_y, wp);
 
             if(unexplored_area != ST_FALSE)
@@ -2682,7 +2986,6 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 {
                     site_pict_seg = IMG_OVL_Corruption;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
-                    DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                 }
 
                 if((terrain_special & TS_WILDGAME) != 0)
@@ -2700,13 +3003,11 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                     {
                         site_pict_seg = IMG_OVL_WildGame;
                         FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
-                        DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
 
                         if((terrain_special & TS_HUNTERSLODGE) != 0)
                         {
                             site_pict_seg = UU_hunters_lodge_seg;
                             FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
-                            DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                         }
                     }
                 }
@@ -2715,7 +3016,6 @@ void Draw_Map_Biota(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, 
                 {
                     site_pict_seg = IMG_OVL_Nightshade;
                     FLIC_Draw(itr_screen_x, itr_screen_y, site_pict_seg);
-                    DBG_Log_Biota_Draw(wp, curr_world_x, itr_world_y, site_pict_seg);  /* CLAUDE */
                 }
 
             }
@@ -3138,7 +3438,7 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
     world_data_ptr = (_world_maps + (wp * WORLD_SIZE_DW));
     minimap_pict_data_ptr = minimap_pict_seg + SZ_PARAGRAPH_B;  // +1 segment (paragraph), for the animation/picture/bitmap header
 
-    // WZD s30p06
+    // /* CLAUDE */  calls WZD s30p06 Create_Blank_Picture()  (was an id tag; the function is in FLIC_Draw.c)
     // void Create_Blank_Picture(int16_t width, int16_t height, byte_ptr pict_seg, int16_t color);
     Create_Blank_Picture(minimap_width, minimap_height, minimap_pict_seg, ST_BLACK);
     // Create_Blank_Picture(minimap_width, minimap_height, minimap_pict_seg, 171);
@@ -3163,46 +3463,61 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
             minimap_square_x = minimap_start_x + itr_minimap_width;
             minimap_square_y = minimap_start_y + itr_minimap_height;
             if(minimap_square_x < 0) { minimap_square_x += WORLD_WIDTH; }
-            if(minimap_square_x > WORLD_WIDTH) { minimap_square_x -= WORLD_WIDTH; }
+            // if(minimap_square_x > WORLD_WIDTH) { minimap_square_x -= WORLD_WIDTH; }
 
-            if(
-                (
-                    minimap_square_y >= 0
-                    &&
-                    minimap_square_y < WORLD_HEIGHT
-                )
-                &&
-                *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x) != ST_FALSE
-            )
-            {
-
-            }
-            square_explored_flag = *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x);
-            square_explored_flag = GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, wp);
-            // // if((minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && (square_explored != UNEXPLORED));
             // if(
             //     (
-            //         (minimap_square_y >= 0)
+            //         minimap_square_y >= 0
             //         &&
-            //         (minimap_square_y < WORLD_HEIGHT)
+            //         minimap_square_y < WORLD_HEIGHT
             //     )
             //     &&
-            //     (square_explored != 0)
+            //     *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x) != ST_FALSE
             // )
-            minimap_square_y_gte_zero = (minimap_square_y >= 0);
-            minimap_square_y_lt_world_height = (minimap_square_y < WORLD_HEIGHT);
-            // WTF  IDGI
+            // {
+
+            // }
+            // square_explored_flag = *(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x);
+            // square_explored_flag = GET_SQUARE_EXPLORED(minimap_square_x, minimap_square_y, wp);
+            // // // if((minimap_square_y >= 0 && minimap_square_y < WORLD_HEIGHT) && (square_explored != UNEXPLORED));
+            // // if(
+            // //     (
+            // //         (minimap_square_y >= 0)
+            // //         &&
+            // //         (minimap_square_y < WORLD_HEIGHT)
+            // //     )
+            // //     &&
+            // //     (square_explored != 0)
+            // // )
+            // minimap_square_y_gte_zero = (minimap_square_y >= 0);
+            // minimap_square_y_lt_world_height = (minimap_square_y < WORLD_HEIGHT);
+            // // WTF  IDGI
+            // if(
+            //     (
+            //         minimap_square_y_gte_zero
+            //         &&
+            //         minimap_square_y_lt_world_height
+            //     )
+            //     &&
+            //     square_explored_flag
+            // )
+            // {
+            //     assert(square_explored_flag != ST_FALSE);
+            //     terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
+            //     terrain_type_idx += terrain_type_idx_base;
+            //     minimap_terrain_color = m_terrain_lbx_002[terrain_type_idx];
+            //     *(minimap_pict_data_ptr + ((itr_minimap_width * minimap_height) + itr_minimap_height)) = minimap_terrain_color;
+            // }
+            /* CLAUDE */  /* REBUG */  /* asm loc_DA93F: cmp minimap_square_x, WORLD_WIDTH / jl (>=, not >); the explored byte is read only after the y bounds tests (loc_DA949) */
+            if(minimap_square_x >= WORLD_WIDTH) { minimap_square_x -= WORLD_WIDTH; }
             if(
-                (
-                    minimap_square_y_gte_zero
-                    &&
-                    minimap_square_y_lt_world_height
-                )
+                (minimap_square_y >= 0)
                 &&
-                square_explored_flag
+                (minimap_square_y < WORLD_HEIGHT)
+                &&
+                (*(explore_data_ptr + (minimap_square_y * WORLD_WIDTH) + minimap_square_x) != ST_FALSE)
             )
             {
-                assert(square_explored_flag != ST_FALSE);
                 terrain_type_idx = GET_2B_OFS(world_data_ptr, ((minimap_square_y * 120) + (minimap_square_x * 2)));
                 terrain_type_idx += terrain_type_idx_base;
                 minimap_terrain_color = m_terrain_lbx_002[terrain_type_idx];
@@ -3262,10 +3577,26 @@ void Create_Reduced_Map_Picture(int16_t minimap_start_x, int16_t minimap_start_y
         mark_minimap_x = mark_x - minimap_start_x;
         mark_minimap_y = mark_y - minimap_start_y;
         if(mark_minimap_x < 0) { mark_minimap_x += WORLD_WIDTH; }
-        if(mark_minimap_x > WORLD_WIDTH) { mark_minimap_x -= WORLD_WIDTH; }
+        // if(mark_minimap_x > WORLD_WIDTH) { mark_minimap_x -= WORLD_WIDTH; }
+        /* CLAUDE */  /* REBUG */  if(mark_minimap_x >= WORLD_WIDTH) { mark_minimap_x -= WORLD_WIDTH; }  /* asm: cmp si, WORLD_WIDTH / jl */
         if(mark_minimap_y < 0) { mark_minimap_y += WORLD_HEIGHT; }
-        if(mark_minimap_y > WORLD_HEIGHT) { mark_minimap_y -= WORLD_HEIGHT; }
-        *(minimap_pict_data_ptr + ((mark_minimap_x * minimap_height) + mark_minimap_y)) = MINIMAP_MARK_COLOR;
+        // if(mark_minimap_y > WORLD_HEIGHT) { mark_minimap_y -= WORLD_HEIGHT; }
+        /* OGBUG  a mark y past the bottom (>= WORLD_HEIGHT) is corrected on x (sub si, e_WORLD_HEIGHT): y stays out of range and the dot is not drawn, and x is shifted by 40 */
+        /* CLAUDE */  /* REBUG */  if(mark_minimap_y >= WORLD_HEIGHT) { mark_minimap_x -= WORLD_HEIGHT; }  /* asm loc_DAAE7: cmp di, e_WORLD_HEIGHT / jl / sub si, e_WORLD_HEIGHT */
+        // *(minimap_pict_data_ptr + ((mark_minimap_x * minimap_height) + mark_minimap_y)) = MINIMAP_MARK_COLOR;
+        /* CLAUDE */  /* REBUG */  /* asm loc_DAAEF: the dot is drawn only inside the minimap */
+        if(
+            (mark_minimap_y >= 0)
+            &&
+            (mark_minimap_y < minimap_height)
+            &&
+            (mark_minimap_x >= 0)
+            &&
+            (mark_minimap_x < minimap_width)
+        )
+        {
+            *(minimap_pict_data_ptr + ((mark_minimap_x * minimap_height) + mark_minimap_y)) = MINIMAP_MARK_COLOR;
+        }
     }
 
 }
@@ -3528,16 +3859,16 @@ void Cartograph_Screen_Draw_Map_Terrain(int16_t cartograph_plane, SAMB_ptr carto
 vs.
 Terrain.c
 ...
-    // WZD s161p24
+    // WZD o161p24
     / *
         regularly used as 'Square is Ocean-Terrain'
         also used as 'Square is Shore'
 
-    WZD s161p22
+    WZD o161p22
     TILE_IsAISailable()
-    WZD s161p24
+    WZD o161p24
     TILE_IsSailable()
-    WZD s161p39
+    WZD o161p39
     Square_Is_OceanLike()
     BUGBUG  only checks tt_AnimOcean?
     TODO  DEDU  what 'water' squares not sailable?
@@ -3545,7 +3876,7 @@ Terrain.c
     int16_t Square_Is_Sailable(int16_t wx, int16_t wy, int16_t wp)
 
 What is the difference, if any, between
-// WZD s161p24  Terrain.c  Square_Is_Sailable()
+// WZD o161p24  Terrain.c  Square_Is_Sailable()
 and
 // WZD o150p18  MainScr_Maps.c  Square_Is_Sailable__NIU()
 ?

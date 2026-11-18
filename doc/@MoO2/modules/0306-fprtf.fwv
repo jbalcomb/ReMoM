@@ -1,0 +1,9 @@
+module_num=306
+module=fprtf
+source=0306-fprtf.md
+range[0]=1:0x00143F3F linear=0x00153F3F size=144
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME       SYMBOL      CHUNK
+m306f001  1    -      0x00153F3F  1:0x00143F3F  static,code  file_putc  file_putc_  regions/07-object-1/001D8E54-001D9653.txt
+m306f002  2    -      0x00153F50  1:0x00143F50  code         __fprtf    __fprtf_    regions/07-object-1/001D8E54-001D9653.txt

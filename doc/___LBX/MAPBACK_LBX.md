@@ -9,7 +9,7 @@ Type:        0
 
 14 + {0,1,2,3,4,5}
 WZD dseg:CB92
-IMG_OVL_Army_Tiles@ dw 6 dup(0)         ; DATA XREF: Init_Terrain+F3w ...
+IMG_OVL_Army_Tiles@ dw 6 dup(0)         ; DATA XREF: Init_Terrain+F3vw ...
 ; array of 6 reserved EMM header pointers (1 per banner color)
 LBX_Load(mapback_lbx_file, 14 + itr)
 

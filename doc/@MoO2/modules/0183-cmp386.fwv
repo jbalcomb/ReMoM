@@ -1,0 +1,8 @@
+module_num=183
+module=cmp386
+source=0183-cmp386.md
+range[0]=1:0x00128B90 linear=0x00138B90 size=164
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m183f001  1    -      0x00138B90  1:0x00128B90  code  strcmp  strcmp_  regions/07-object-1/001BDE54-001BE653.txt

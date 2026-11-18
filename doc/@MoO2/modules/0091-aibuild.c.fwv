@@ -1,0 +1,35 @@
+module_num=91
+module=D:\MOX\OTHERS\AIBUILD.C
+source=0091-aibuild.c.md
+range[0]=1:0x000BF38A linear=0x000CF38A size=13341
+range[1]=2:0x00001F48 linear=0x00171F48 size=16
+range[2]=2:0x0002F234 linear=0x0019F234 size=640
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                              CHUNK
+m091f001  1    -      0x000CF398  1:0x000BF398  code         Product_Name                        Product_Name_                       regions/07-object-1/00154654-00154E53.txt
+m091f002  2    -      0x000CF3A8  1:0x000BF3A8  static,code  Compute_Colony_Ship_Need            Compute_Colony_Ship_Need_           regions/07-object-1/00154654-00154E53.txt
+m091f003  3    -      0x000CF3BD  1:0x000BF3BD  static,code  Compute_Freighter_Need              Compute_Freighter_Need_             regions/07-object-1/00154654-00154E53.txt
+m091f004  4    -      0x000CF40D  1:0x000BF40D  static,code  Compute_Needs                       Compute_Needs_                      regions/07-object-1/00154654-00154E53.txt
+m091f005  5    -      0x000CFAE5  1:0x000BFAE5  code         Mean_Ship_Strength                  Mean_Ship_Strength_                 regions/07-object-1/00154E54-00155653.txt
+m091f006  6    -      0x000CFCB6  1:0x000BFCB6  code         Compute_Empire_Building_Needs       Compute_Empire_Building_Needs_      regions/07-object-1/00154E54-00155653.txt
+m091f007  7    -      0x000CFEAB  1:0x000BFEAB  static,code  Find_Buildable_Buildings            Find_Buildable_Buildings_           regions/07-object-1/00154E54-00155653.txt
+m091f008  8    -      0x000CFEDC  1:0x000BFEDC  static,code  Industry_Worth                      Industry_Worth_                     regions/07-object-1/00154E54-00155653.txt
+m091f009  9    -      0x000CFF02  1:0x000BFF02  code         Colony_Is_Conquered                 Colony_Is_Conquered_                regions/07-object-1/00154E54-00155653.txt
+m091f010  10   -      0x000D0036  1:0x000C0036  static,code  Colony_Building_Score               Colony_Building_Score_              regions/07-object-1/00155654-00155E53.txt
+m091f011  11   -      0x000D0B08  1:0x000C0B08  code         Assign_Colony_New_Building          Assign_Colony_New_Building_         regions/07-object-1/00155E54-00156653.txt
+m091f012  12   -      0x000D0C7F  1:0x000C0C7F  static,code  colony_less_industry_cmp            colony_less_industry_cmp_           regions/07-object-1/00155E54-00156653.txt
+m091f013  13   -      0x000D0CF2  1:0x000C0CF2  static,code  Force_Produce                       Force_Produce_                      regions/07-object-1/00155E54-00156653.txt
+m091f014  14   -      0x000D0D2F  1:0x000C0D2F  code         Empire_Buy_Outright                 Empire_Buy_Outright_                regions/07-object-1/00155E54-00156653.txt
+m091f015  15   -      0x000D1006  1:0x000C1006  code         Player_War_Level                    Player_War_Level_                   regions/07-object-1/00156654-00156E53.txt
+m091f016  16   -      0x000D108B  1:0x000C108B  code         Refit_Cost                          Refit_Cost_                         regions/07-object-1/00156654-00156E53.txt
+m091f017  17   -      0x000D10EE  1:0x000C10EE  code         Assign_Empire_Building              Assign_Empire_Building_             regions/07-object-1/00156654-00156E53.txt
+m091f018  18   -      0x000D2754  1:0x000C2754  code         Assign_Colony_Building              Assign_Colony_Building_             regions/07-object-1/00157654-00157E53.txt
+m091f019  19   -      0x000D2783  1:0x000C2783  code         Player_Colony_Autobuild             Player_Colony_Autobuild_            regions/07-object-1/00157654-00157E53.txt
+-         -    -      0x0019F234  2:0x0002F234  static,data  _player_n_colony_ships              _player_n_colony_ships              -
+-         -    -      0x0019F24C  2:0x0002F24C  static,data  _player_n_freighter_groups_wanted   _player_n_freighter_groups_wanted   -
+-         -    -      0x0019F254  2:0x0002F254  static,data  _player_total_strength_vs_colonies  _player_total_strength_vs_colonies  -
+-         -    -      0x0019F274  2:0x0002F274  static,data  _player_n_transports                _player_n_transports                -
+-         -    -      0x0019F284  2:0x0002F284  static,data  _player_n_spies                     _player_n_spies                     -
+-         -    -      0x0019F294  2:0x0002F294  static,data  _player_ship_sizes                  _player_ship_sizes                  -
+-         -    -      0x0019F454  2:0x0002F454  data         _player_total_strength_vs_ships     _player_total_strength_vs_ships     -

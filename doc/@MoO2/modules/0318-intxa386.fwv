@@ -1,0 +1,9 @@
+module_num=318
+module=intxa386
+source=0318-intxa386.md
+range[0]=1:0x0014C1A4 linear=0x0015C1A4 size=990
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME       SYMBOL      CHUNK
+m318f001  1    -      0x0015C1A4  1:0x0014C1A4  code  __int386x  __int386x_  regions/07-object-1/001E1654-001E1E53.txt
+m318f002  2    -      0x0015C201  1:0x0014C201  code  _DoINTR    _DoINTR_    regions/07-object-1/001E1654-001E1E53.txt

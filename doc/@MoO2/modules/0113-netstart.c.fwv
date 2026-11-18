@@ -1,0 +1,33 @@
+module_num=113
+module=D:\MOX\OTHERS\NETSTART.C
+source=0113-netstart.c.md
+range[0]=1:0x000EA991 linear=0x000FA991 size=5662
+range[1]=2:0x00002174 linear=0x00172174 size=24
+range[2]=2:0x000330E0 linear=0x001A30E0 size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                      SYMBOL                                    CHUNK
+m113f001  1    -      0x000FA991  1:0x000EA991  code         Load_Netstart_Strings                     Load_Netstart_Strings_                    regions/07-object-1/0017FE54-00180653.txt
+m113f002  2    -      0x000FAA57  1:0x000EAA57  static,code  Russ_Net_Init                             Russ_Net_Init_                            regions/07-object-1/0017FE54-00180653.txt
+m113f003  3    -      0x000FAA71  1:0x000EAA71  static,code  Russ_Net_Create_Game                      Russ_Net_Create_Game_                     regions/07-object-1/0017FE54-00180653.txt
+m113f004  4    -      0x000FAA94  1:0x000EAA94  code         Mox_Net_Uninit                            Mox_Net_Uninit_                           regions/07-object-1/0017FE54-00180653.txt
+m113f005  5    -      0x000FAAC3  1:0x000EAAC3  code         Dump_Users                                Dump_Users_                               regions/07-object-1/0017FE54-00180653.txt
+m113f006  6    -      0x000FAAD8  1:0x000EAAD8  static,code  Net_Select_Race                           Net_Select_Race_                          regions/07-object-1/0017FE54-00180653.txt
+m113f007  7    -      0x000FAC85  1:0x000EAC85  static,code  Net_Pick_Position                         Net_Pick_Position_                        regions/07-object-1/0017FE54-00180653.txt
+m113f008  8    -      0x000FAE80  1:0x000EAE80  static,code  Do_Answer                                 Do_Answer_                                regions/07-object-1/0017FE54-00180653.txt
+m113f009  9    -      0x000FAEDB  1:0x000EAEDB  code         Join_Net_Screen                           Join_Net_Screen_                          regions/07-object-1/0017FE54-00180653.txt
+m113f010  10   -      0x000FB1F2  1:0x000EB1F2  static,code  Do_Dial                                   Do_Dial_                                  regions/07-object-1/00180654-00180E53.txt
+m113f011  11   -      0x000FB27B  1:0x000EB27B  code         Load_Net_Screen                           Load_Net_Screen_                          regions/07-object-1/00180654-00180E53.txt
+m113f012  12   -      0x000FB7E5  1:0x000EB7E5  code         Start_Net_Screen                          Start_Net_Screen_                         regions/07-object-1/00180654-00180E53.txt
+m113f013  13   -      0x000FBE75  1:0x000EBE75  code         Request_Banner_Color                      Request_Banner_Color_                     regions/07-object-1/00180E54-00181653.txt
+m113f014  14   -      0x000FBEE1  1:0x000EBEE1  code         Request_Race                              Request_Race_                             regions/07-object-1/00180E54-00181653.txt
+m113f015  15   -      0x000FBF76  1:0x000EBF76  code         Unrequest_Race                            Unrequest_Race_                           regions/07-object-1/00180E54-00181653.txt
+-         -    -      0x001A30E0  2:0x000330E0  static,data  _answering_failed_error                   _answering_failed_error                   -
+-         -    -      0x001A30E4  2:0x000330E4  static,data  _windows_string                           _windows_string                           -
+-         -    -      0x001A30E8  2:0x000330E8  static,data  _comm_failure_string                      _comm_failure_string                      -
+-         -    -      0x001A30EC  2:0x000330EC  static,data  _game_full_string                         _game_full_string                         -
+-         -    -      0x001A30F0  2:0x000330F0  static,data  _really_begin_game_with_unused_slots_msg  _really_begin_game_with_unused_slots_msg  -
+-         -    -      0x001A30F4  2:0x000330F4  static,data  _no_more_player_slots_error               _no_more_player_slots_error               -
+-         -    -      0x001A30F8  2:0x000330F8  static,data  _really_start_with_only_1_msg             _really_start_with_only_1_msg             -
+-         -    -      0x001A30FC  2:0x000330FC  static,data  _dialing_failed_error                     _dialing_failed_error                     -
+-         -    -      0x001A3100  2:0x00033100  static,data  _receiving_chunk_d_of_d                   _receiving_chunk_d_of_d                   -

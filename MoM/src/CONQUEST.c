@@ -299,6 +299,7 @@ void Resolve_Wizard_Conquest(int16_t loser_Idx, int16_t winner_idx, int16_t city
             Kill_Unit(itr_units, kt_Dismissed);
         }
     }
+    /* OGBUG  the loser's casting_spell_idx / casting_cost_remaining are not cleared, and All_Players_Apply_Spell_Casting() runs for every player with no fortress test: an eliminated wizard's spell in progress keeps advancing and can complete */
     // ; remove all of the target's overland enchantments
     overland_enchantments = &_players[loser_Idx].Globals[0];
     for(itr_oench = 0; itr_oench < NUM_OVERLAND_ENCHANTMENTS; itr_oench++)
@@ -503,7 +504,7 @@ void Conquest_Animation(int16_t loser_Idx, int16_t winner_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr093, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -656,6 +657,7 @@ void Conquest_Animation_Draw_Setup_Zap_Scene(void)
     if(magic_set.sound_effects == 1)
     {
         wizard_id = _players[GAME_Conquered_Wiz].wizard_id;
+        /* OGBUG  the table is indexed by (wizard_id - 2): Raven (wizard_id 1) gives -1, which the unsigned 'ja' sends to SFX_MaleScream */
         bx = wizard_id - 2;
         if(bx > 11)
         {
@@ -663,12 +665,16 @@ void Conquest_Animation_Draw_Setup_Zap_Scene(void)
         }
         else
         {
+            /* CLAUDE */  /* asm off_79749: entries 0, 7, 9, 11 -> loc_7971F (SFX_FemaleScream) */
             switch(bx)
             {
                 case 0:  /* Sharee */
-                case 6:  /* Kali */
+                // case 6:  /* Kali */
+                // case 9:  /* Ariel */
+                // case 10: /* Freya */
+                case 7:  /* Freya */
                 case 9:  /* Ariel */
-                case 10: /* Freya */
+                case 11: /* Kali */
                     Entry_Index = SFX_FemaleScream;
                     break;
                 default:
@@ -894,7 +900,7 @@ void Win_Animation(int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr093, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -1023,7 +1029,7 @@ void Lose_Animation(int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr093[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr093, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -1134,6 +1140,7 @@ int16_t Banish_Wizard(int16_t loser_idx, int16_t winner_idx)
     Allocate_Reduced_Map();
     Full_Draw_Main_Screen();
     Copy_On_To_Off_Page();
+    /* OGBUG  Conquest_Spells() (the spells looted from the ruins) is called only in the AI-loser branch: a winner that banishes the human loots nothing */
     if(loser_idx == _current_player_idx)
     {
         stu_itoa(turns_to_return, buffer, 10);
@@ -1179,7 +1186,7 @@ void Return_Animation(int16_t player_idx)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr093[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr093, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {

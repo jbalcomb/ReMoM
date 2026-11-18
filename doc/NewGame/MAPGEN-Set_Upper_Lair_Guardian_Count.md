@@ -24,7 +24,7 @@ Each lair tracks two guardian stacks (`guard1_count`, `guard2_count`, both `uint
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:649](../../MoM/src/MAPGEN.c#L649) | Followed by `gd_dump_lairs("30_Set_Upper_Lair_Guardian_Count_LR")` ([650](../../MoM/src/MAPGEN.c#L650)) — the final dump checkpoint of the pipeline. |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:497](../../MoM/src/MAPGEN.c#L497) | Followed by `STU_GD_Dump_Lairs("131_Set_Upper_Lair_Guardian_Count_LR")` ([498](../../MoM/src/MAPGEN.c#L498)) — the final dump checkpoint of the pipeline. |
 
 ## How it works
 

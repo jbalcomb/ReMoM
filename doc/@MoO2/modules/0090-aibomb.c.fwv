@@ -1,0 +1,9 @@
+module_num=90
+module=D:\MOX\OTHERS\AIBOMB.C
+source=0090-aibomb.c.md
+range[0]=1:0x000BF26E linear=0x000CF26E size=284
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                     CHUNK
+m090f001  1    -      0x000CF26E  1:0x000BF26E  code  AI_Invasion_Will_Succeed  AI_Invasion_Will_Succeed_  regions/07-object-1/00154654-00154E53.txt
+m090f002  2    -      0x000CF34C  1:0x000BF34C  code  AI_Player_Invades         AI_Player_Invades_         regions/07-object-1/00154654-00154E53.txt

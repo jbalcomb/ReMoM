@@ -1,0 +1,9 @@
+module_num=98
+module=D:\MOX\OTHERS\AITRADE.C
+source=0098-aitrade.c.md
+range[0]=1:0x000CCC31 linear=0x000DCC31 size=155
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                             SYMBOL                            CHUNK
+m098f001  1    -      0x000DCC31  1:0x000CCC31  code  AI_Agrees_To_Trade_Agreement     AI_Agrees_To_Trade_Agreement_     regions/07-object-1/00161E54-00162653.txt
+m098f002  2    -      0x000DCC83  1:0x000CCC83  code  AI_Agrees_To_Research_Agreement  AI_Agrees_To_Research_Agreement_  regions/07-object-1/00161E54-00162653.txt

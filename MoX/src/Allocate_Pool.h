@@ -63,7 +63,7 @@ extern "C" {
 */
 /*
     POOL_MIN_ARENA_BYTES is the measured floor, POOL_ARENA_CAPACITY the shipped
-    size. Measured via Pool_Bytes_Peak(): the HeMoM Continue scenario (full-game
+    size. Measured via Pool_Bytes_Peak(): the DeMoM Continue scenario (full-game
     entry - loads the save, enters the game, which pulls in many one-time
     sa_Single LBX graphic buffers on top of the ~1.5 MiB enumerated arenas)
     peaks at ~4.58 MiB. The capacity carries ~3.5x margin over that for heavier

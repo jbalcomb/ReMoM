@@ -17,7 +17,7 @@
 #include "../../platform/include/Platform_Replay.h"
 
 #include "../../ext/stu_compat.h"
-#include "../../STU/src/STU_DBG.h"  /* CLAUDE: trc_prn() */
+#include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
 
 #include <assert.h>
@@ -444,9 +444,7 @@ void Replay_Capture_Frame(void)
     key_count = Platform_Keyboard_Buffer_Pending_Count();
     key0 = (key_count > 0) ? Platform_Keyboard_Buffer_Peek_Latest() : 0;
     /* CLAUDE: diagnostic — trace what Replay_Capture_Frame sees in the keyboard buffer every frame.  Correlate with WIN_KEY BUFFERED and KBD_READ traces to spot the race where Read_Key() consumes a key before capture peeks it. */
-#ifdef STU_DEBUG
     LOG_TRACE(LOG_CAT_PFL, "REC_CAP t=%llu frame=%u pending=%d peek=0x%08X key_pressed=%d btn=0x%X", (unsigned long long)Platform_Get_Millies(), record_frame_count, key_count, (unsigned)key0, (int)key_pressed, (unsigned)platform_frame_mouse_buttons);
-#endif
     if(key_count > 1) { key_count = 1; }  /* Recording format supports 1 key per frame for now. */
 
     fprintf(replay_file, "%u,%llu,%llu,%d,%d,%d,%d,%d",

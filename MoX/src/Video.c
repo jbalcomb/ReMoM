@@ -49,38 +49,38 @@ int16_t g_pageflip_dissolve_pass_delay = 0;
 */
 
 // seg026:000E 02 02 02 01 01 03 00 03 03 02 00 01 03 03 01 03+Mosaic_Rnd256_Bits db 2, 2, 2, 1, 1, 3, 0, 3, 3, 2, 0, 1, 3, 3, 1, 3, 3, 0, 3, 1, 2, 3, 0, 2, 1, 1, 2, 2, 1, 1, 3, 3, 2, 3, 3, 0, 2, 3, 0, 2, 0, 3, 2, 0, 2, 0, 0, 3, 1, 0, 1, 1, 1, 3, 3, 1, 1, 0, 0, 2, 1, 1, 2, 1, 0, 0, 0, 3, 3, 1, 1, 2, 2, 1, 2, 2, 0, 2, 3, 1, 2, 2, 2, 0, 0
-// seg026:000E 03 00 03 01 02 03 00 02 01 01 02 02 01 01 03 03+                                        ; DATA XREF: PageFlip_Dissolve+CCr ...
+// seg026:000E 03 00 03 01 02 03 00 02 01 01 02 02 01 01 03 03+                                        ; DATA XREF: PageFlip_Dissolve+CCvr ...
 // seg026:000E 02 03 03 00 02 03 00 02 00 03 02 00 02 00 00 03+db 0, 1, 1, 0, 2, 0, 3, 2, 2, 1, 0, 3, 1, 2, 3, 0, 0, 1, 0, 2, 2, 3, 2, 1, 1, 2, 2, 0, 3, 0, 0, 2, 0, 0, 3, 3, 1, 2, 1, 0, 0, 1, 3, 1, 1, 1, 0, 0, 2, 3, 1, 0, 3, 3, 0, 1, 0, 0, 0, 1, 3, 1, 3, 3, 2, 2, 3, 2, 0, 1, 1, 0, 3, 0, 2, 0, 2, 1, 1, 3, 1, 2, 1, 3, 1
 // seg026:000E 01 00 01 01 01 03 03 01 01 00 00 02 01 01 02 01+db 0, 1, 3, 3, 1, 1, 3, 2, 3, 2, 3, 1, 1, 2, 0, 2, 3, 3, 2, 2, 0, 2, 3, 3, 3, 2, 2, 0, 2, 0, 1, 0, 1, 3, 2, 1, 2, 2, 0, 1, 0, 2, 1, 1, 3, 0, 3, 3, 3, 0, 3, 0, 2, 1, 1, 0, 0, 2, 1, 2, 3, 3, 1, 0, 1, 3, 0, 2, 3, 0, 2, 1, 2, 3, 0, 2, 2, 0, 2, 3, 1, 0, 3, 3, 3
 // seg026:000E 00 00 00 03 03 01 01 02 02 01 02 02 00 02 03 01+db 0
 // seg026:010E 00 03 1E 12 1C 16 1D 0C 22 2F 1F 20 07 31 2E 0E+Mosaic_Rnd50_Tbl db 0, 3, 1Eh, 12h, 1Ch, 16h, 1Dh, 0Ch, 22h, 2Fh, 1Fh, 20h, 7, 31h, 2Eh, 0Eh, 26h, 2Bh, 23h, 28h, 0Bh, 9, 24h, 4, 21h, 1Ah, 27h, 0Fh, 5, 15h, 2, 10h, 19h, 0Ah, 30h, 0Dh, 18h, 25h, 11h, 13h, 2Ch, 6, 8, 14h, 1, 17h, 29h, 1Bh, 2Dh, 2Ah
-// seg026:010E 26 2B 23 28 0B 09 24 04 21 1A 27 0F 05 15 02 10+                                        ; DATA XREF: PageFlip_Dissolve+7Er ...
+// seg026:010E 26 2B 23 28 0B 09 24 04 21 1A 27 0F 05 15 02 10+                                        ; DATA XREF: PageFlip_Dissolve+7Evr ...
 // seg026:0140 02 09 1E 26 0D 1B 1F 01 13 08 18 24 25 1A 00 0B+Mosaic_Rnd40_Tbl db 2, 9, 1Eh, 26h, 0Dh, 1Bh, 1Fh, 1, 13h, 8, 18h, 24h, 25h, 1Ah, 0, 0Bh, 17h, 20h, 16h, 0Ch, 10h, 14h, 1Dh, 12h, 1Ch, 7, 0Ah, 23h, 0Eh, 19h, 5, 21h, 0Fh, 15h, 4, 11h, 6, 3, 27h, 22h
-// seg026:0140 17 20 16 0C 10 14 1D 12 1C 07 0A 23 0E 19 05 21+                                        ; DATA XREF: PageFlip_Dissolve+B0r
+// seg026:0140 17 20 16 0C 10 14 1D 12 1C 07 0A 23 0E 19 05 21+                                        ; DATA XREF: PageFlip_Dissolve+B0vr
 // seg026:0168 00                                              db    0
 // seg026:0169 00                                              db    0
 // seg026:016A 00                                              db    0
 // seg026:016B 00                                              db    0
-// seg026:016C 00 00                                           Mosaic_InitVar dw 0                     ; DATA XREF: PageFlip_Dissolve+49w ...
-// seg026:016E 00 00                                           Mosaic_Rnd40_Index dw 0                 ; DATA XREF: PageFlip_Dissolve+6Bw ...
-// seg026:0170 00 00                                           Mosaic_Init64Times dw 0                 ; DATA XREF: PageFlip_Dissolve+67w ...
-// seg026:0172 00 00                                           Mosaic_Rnd50_Index dw 0                 ; DATA XREF: PageFlip_Dissolve:loc_1EFD6w ...
-// seg026:0174 00 00                                           VGA_ScanLine_Offset dw 0                ; DATA XREF: RP_VGA_CutRight+3Bw ...
-// seg026:0176 00 00                                           VGA_Write_Map dw 0                      ; DATA XREF: RP_VGA_CutRight:loc_1F2D5w ...
-// seg026:0178 00 00                                           VGA_Read_Map dw 0                       ; DATA XREF: RP_VGA_CutRight+49w ...
-// seg026:017A 00 00                                           VGA_SlideInColumn dw 0                  ; DATA XREF: UU_VGA_InterleaveIn+10w ...
-// seg026:017C 00 00                                           VGA_Line_Count dw 0                     ; DATA XREF: UU_VGA_CrossSlideOut+14w ...
-// seg026:017E 00 00                                           VGA_Start_Offset dw 0                   ; DATA XREF: UU_VGA_CrossSlideOut+Dw ...
+// seg026:016C 00 00                                           Mosaic_InitVar dw 0                     ; DATA XREF: PageFlip_Dissolve+49vw ...
+// seg026:016E 00 00                                           Mosaic_Rnd40_Index dw 0                 ; DATA XREF: PageFlip_Dissolve+6Bvw ...
+// seg026:0170 00 00                                           Mosaic_Init64Times dw 0                 ; DATA XREF: PageFlip_Dissolve+67vw ...
+// seg026:0172 00 00                                           Mosaic_Rnd50_Index dw 0                 ; DATA XREF: PageFlip_Dissolve:loc_1EFD6vw ...
+// seg026:0174 00 00                                           VGA_ScanLine_Offset dw 0                ; DATA XREF: RP_VGA_CutRight+3Bvw ...
+// seg026:0176 00 00                                           VGA_Write_Map dw 0                      ; DATA XREF: RP_VGA_CutRight:loc_1F2D5vw ...
+// seg026:0178 00 00                                           VGA_Read_Map dw 0                       ; DATA XREF: RP_VGA_CutRight+49vw ...
+// seg026:017A 00 00                                           VGA_SlideInColumn dw 0                  ; DATA XREF: UU_VGA_InterleaveIn+10vw ...
+// seg026:017C 00 00                                           VGA_Line_Count dw 0                     ; DATA XREF: UU_VGA_CrossSlideOut+14vw ...
+// seg026:017E 00 00                                           VGA_Start_Offset dw 0                   ; DATA XREF: UU_VGA_CrossSlideOut+Dvw ...
 // seg026:0180 00 00                                           db 2 dup(0)
-// seg026:0182 00 00                                           VGA_Horz_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+8Dw ...
-// seg026:0184 00 00                                           VGA_Vert_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+75w ...
-// seg026:0186 00 00                                           VGA_Y_Dir dw 0                          ; DATA XREF: UU_VGA_CopyLine+59w ...
-// seg026:0188 00 00                                           VGA_Line_Length dw 0                    ; DATA XREF: UU_VGA_CopyLine+70w ...
-// seg026:018A 00 00                                           VGA_Display_Seg dw 0                    ; DATA XREF: PageFlip_Dissolve+31w ...
-// seg026:018C 00 00                                           VGA_Draw_Seg dw 0                       ; DATA XREF: PageFlip_Dissolve+3Ew ...
-// seg026:018E 00 00                                           VGA_Read_Mask dw 0                      ; DATA XREF: UU_VGA_CopyLine+102w ...
-// seg026:0190 00 00                                           VGA_Line_Offset dw 0                    ; DATA XREF: VGA_ShiftCopyFromF3+27w ...
-// seg026:0192 00 00                                           VGA_Origin_Offset dw 0                  ; DATA XREF: VGA_ShiftCopyFromF3+36w ...
+// seg026:0182 00 00                                           VGA_Horz_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+8Dvw ...
+// seg026:0184 00 00                                           VGA_Vert_Slope dw 0                     ; DATA XREF: UU_VGA_CopyLine+75vw ...
+// seg026:0186 00 00                                           VGA_Y_Dir dw 0                          ; DATA XREF: UU_VGA_CopyLine+59vw ...
+// seg026:0188 00 00                                           VGA_Line_Length dw 0                    ; DATA XREF: UU_VGA_CopyLine+70vw ...
+// seg026:018A 00 00                                           VGA_Display_Seg dw 0                    ; DATA XREF: PageFlip_Dissolve+31vw ...
+// seg026:018C 00 00                                           VGA_Draw_Seg dw 0                       ; DATA XREF: PageFlip_Dissolve+3Evw ...
+// seg026:018E 00 00                                           VGA_Read_Mask dw 0                      ; DATA XREF: UU_VGA_CopyLine+102vw ...
+// seg026:0190 00 00                                           VGA_Line_Offset dw 0                    ; DATA XREF: VGA_ShiftCopyFromF3+27vw ...
+// seg026:0192 00 00                                           VGA_Origin_Offset dw 0                  ; DATA XREF: VGA_ShiftCopyFromF3+36vw ...
 
 int8_t Mosaic_Rnd256_Bits[256] ={
     2, 2, 2, 1, 1, 3, 0, 3, 3, 2, 0, 1, 3, 3, 1, 3,
@@ -116,7 +116,7 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 
 // WZD s26p01
 
-// 1EDD:0194                                                 proc PageFlip_Dissolve far           ; CODE XREF: PageFlip_FX+2CP ...
+// 1EDD:0194                                                 proc PageFlip_Dissolve far           ; CODE XREF: PageFlip_FX+2C^P ...
 // 1EDD:0194                                                 UU_y2= word ptr -12h
 // 1EDD:0194                                                 UU_x2= word ptr -10h
 // 1EDD:0194                                                 UU_y1= word ptr -0Eh
@@ -163,7 +163,7 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:01DD
 // 1EDD:01E4 2E A1 8C 01                                         mov ax, [cs:VGA_Draw_Seg]
 // 1EDD:01E8 8E D8                                               mov ds, ax
-// 1EDD:01EA                                                 loc_1EFBA:                              ; CODE XREF: PageFlip_Dissolve+177j
+// 1EDD:01EA                                                 loc_1EFBA:                              ; CODE XREF: PageFlip_Dissolve+177vj
 // 1EDD:01EA 2E A1 6C 01                                         mov ax, [cs:Mosaic_InitVar]
 // 1EDD:01EE 48                                                  dec ax
 // 1EDD:01EF D1 E0                                               shl ax, 1
@@ -176,9 +176,9 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:01FB
 // 1EDD:01FB
 // 1EDD:01FF 2E C7 06 6E 01 27 00                                mov [cs:Mosaic_Rnd40_Index], 39
-// 1EDD:0206                                                 loc_1EFD6:                              ; CODE XREF: PageFlip_Dissolve+16Dj
+// 1EDD:0206                                                 loc_1EFD6:                              ; CODE XREF: PageFlip_Dissolve+16Dvj
 // 1EDD:0206 2E C7 06 72 01 31 00                                mov [cs:Mosaic_Rnd50_Index], 49
-// 1EDD:020D                                                 loc_1EFDD:                              ; CODE XREF: PageFlip_Dissolve+163j
+// 1EDD:020D                                                 loc_1EFDD:                              ; CODE XREF: PageFlip_Dissolve+163vj
 // 1EDD:020D 2E 8B 1E 72 01                                      mov bx, [cs:Mosaic_Rnd50_Index]
 // 1EDD:0212 2E 8A 9F 0E 01                                      mov bl, [cs:Mosaic_Rnd50_Tbl+bx]
 // 1EDD:0217 32 FF                                               xor bh, bh
@@ -201,7 +201,7 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:023A 83 F9 28                                            cmp cx, 40
 // 1EDD:023D 78 03                                               js  short loc_1F012
 // 1EDD:023F 83 E9 28                                            sub cx, 40
-// 1EDD:0242                                                 loc_1F012:                              ; CODE XREF: PageFlip_Dissolve+A1j ...
+// 1EDD:0242                                                 loc_1F012:                              ; CODE XREF: PageFlip_Dissolve+A1^j ...
 // 1EDD:0242 8B D9                                               mov bx, cx
 // 1EDD:0244 2E 8A 9F 40 01                                      mov bl, [cs:Mosaic_Rnd40_Tbl+bx]
 // 1EDD:0249 32 FF                                               xor bh, bh
@@ -228,10 +228,10 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:0273 B4 01                                               mov ah, 1
 // 1EDD:0275 80 F9 00                                            cmp cl, 0
 // 1EDD:0278 74 04                                               jz  short loc_1F04E
-// 1EDD:027A                                                 loc_1F04A:                              ; CODE XREF: PageFlip_Dissolve+E8j
+// 1EDD:027A                                                 loc_1F04A:                              ; CODE XREF: PageFlip_Dissolve+E8vj
 // 1EDD:027A D0 E4                                               shl ah, 1
 // 1EDD:027C E2 FC                                               loop loc_1F04A
-// 1EDD:027E                                                 loc_1F04E:                              ; CODE XREF: PageFlip_Dissolve+E4j
+// 1EDD:027E                                                 loc_1F04E:                              ; CODE XREF: PageFlip_Dissolve+E4^j
 // 1EDD:027E BA C4 03                                            mov dx, 3C4h
 // 1EDD:0281 B0 02                                               mov al, 2
 // 1EDD:0283 EE                                                  out dx, al                          ; EGA: sequencer address reg
@@ -265,10 +265,10 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:02BF B4 01                                               mov ah, 1
 // 1EDD:02C1 80 F9 00                                            cmp cl, 0
 // 1EDD:02C4 74 04                                               jz  short loc_1F09A
-// 1EDD:02C6                                                 loc_1F096:                              ; CODE XREF: PageFlip_Dissolve+134j
+// 1EDD:02C6                                                 loc_1F096:                              ; CODE XREF: PageFlip_Dissolve+134vj
 // 1EDD:02C6 D0 E4                                               shl ah, 1
 // 1EDD:02C8 E2 FC                                               loop loc_1F096
-// 1EDD:02CA                                                 loc_1F09A:                              ; CODE XREF: PageFlip_Dissolve+130j
+// 1EDD:02CA                                                 loc_1F09A:                              ; CODE XREF: PageFlip_Dissolve+130^j
 // 1EDD:02CA BA C4 03                                            mov dx, 3C4h
 // 1EDD:02CD B0 02                                               mov al, 2
 // 1EDD:02CF EE                                                  out dx, al                          ; EGA: sequencer address reg
@@ -290,17 +290,17 @@ int8_t Mosaic_Rnd40_Tbl[40] = {
 // 1EDD:02F5 78 03                                               js  short loc_1F0CA
 // 1EDD:02F7 E9 13 FF                                            jmp loc_1EFDD
 // 1EDD:02FA                                                 ; ---------------------------------------------------------------------------
-// 1EDD:02FA                                                 loc_1F0CA:                              ; CODE XREF: PageFlip_Dissolve+161j
+// 1EDD:02FA                                                 loc_1F0CA:                              ; CODE XREF: PageFlip_Dissolve+161^j
 // 1EDD:02FA 2E FF 0E 6E 01                                      dec [cs:Mosaic_Rnd40_Index]
 // 1EDD:02FF 78 03                                               js  short loc_1F0D4
 // 1EDD:0301 E9 02 FF                                            jmp loc_1EFD6
 // 1EDD:0304                                                 ; ---------------------------------------------------------------------------
-// 1EDD:0304                                                 loc_1F0D4:                              ; CODE XREF: PageFlip_Dissolve+16Bj
+// 1EDD:0304                                                 loc_1F0D4:                              ; CODE XREF: PageFlip_Dissolve+16B^j
 // 1EDD:0304 2E FF 0E 6C 01                                      dec [cs:Mosaic_InitVar]
 // 1EDD:0309 74 03                                               jz  short @@Done
 // 1EDD:030B E9 DC FE                                            jmp loc_1EFBA
 // 1EDD:030E                                                 ; ---------------------------------------------------------------------------
-// 1EDD:030E                                                 @@Done:                                 ; CODE XREF: PageFlip_Dissolve+175j
+// 1EDD:030E                                                 @@Done:                                 ; CODE XREF: PageFlip_Dissolve+175^j
 // 1EDD:030E 0E                                                  push cs
 // 1EDD:030F E8 BC 07                                            call near ptr Toggle_Pages_No_Draw_Fields
 // 1EDD:030F
@@ -399,29 +399,87 @@ void PageFlip_Dissolve(void)
 
 }
 
+
 // WZD s26p02
 // UU_VGA_SlowMosaicFlip()
 
+
 // WZD s26p03
-// RP_VGA_CutRight()
+// drake178: RP_VGA_CutRight()
+/* CLAUDE */
+/*
+    Left-to-right wipe page-flip transition (PageFlip_FX() case pfe_WipeRight); nothing in the game sets that effect.
+
+    Reconstruction of the Mode Y original for ReMoM's linear 8bpp page model, as for PageFlip_Dissolve().
+    The original walks the 80 byte columns of a Mode Y scanline (code-segment variable VGA_ScanLine_Offset, seg026:0174) and, in each, the four planes: VGA_Read_Map 0..3 (Graphics
+    Controller read map, port 3CEh index 4) and VGA_Write_Map 1, 2, 4, 8 (Sequencer map mask, port 3C4h index 2). Each step copies that plane's byte from the off page (DS =
+    VGA_Draw_Seg) to the visible page (ES = VGA_Display_Seg = A000h + (draw_page_num << 10)) on all 200 rows (movsb / add si, 79 / add di, 79). On a linear page that is one pixel
+    column, x = byte_column * 4 + plane, so the new frame is revealed one pixel column at a time, left to right.
+    After each plane the original busy-waits (mov cx, 1000 / nop / loop). ReMoM has no equivalent; it pushes the visible page to the window once per byte column instead.
+*/
+void PageFlip_Wipe_Right(void)
+{
+    int16_t niu_frame_word = 0;  /* asm: sub sp, 2 - the one word of the frame is never read or written */
+    int16_t byte_column = 0;     /* asm: VGA_ScanLine_Offset (seg026:0174) */
+    int16_t plane_mask = 0;      /* asm: VGA_Write_Map (seg026:0176) */
+    int16_t plane = 0;           /* asm: VGA_Read_Map (seg026:0178) */
+    int16_t row = 0;             /* asm: cx, mov cx, 200 / loop */
+    int32_t pixel_offset = 0;
+    uint8_t * src = 0;           /* off page:     asm VGA_Draw_Seg (seg026:018C), DS */
+    uint8_t * dst = 0;           /* visible page: asm VGA_Display_Seg (seg026:018A), ES */
+
+    Toggle_Pages_No_Draw_Fields_Pre();
+
+    /* off page -> visible page; dst is the page Platform_Video_Update() presents */
+    src = video_page_buffer[1 - draw_page_num];
+    dst = video_page_buffer[draw_page_num];
+
+    byte_column = 0;
+    do
+    {
+        plane_mask = 1;
+        plane = 0;
+        do
+        {
+            for(row = 0; row < SCREEN_HEIGHT; row++)
+            {
+                pixel_offset = (row * SCREEN_WIDTH) + (byte_column * 4) + plane;
+                dst[pixel_offset] = src[pixel_offset];
+            }
+            plane++;
+            plane_mask <<= 1;
+        } while(plane_mask != 16);
+        Platform_Video_Update();  /* CLAUDE */  /* stands in for the original's per-plane busy-wait as the pacing */
+        byte_column++;
+    } while(byte_column != 80);
+
+    Toggle_Pages_No_Draw_Fields();
+}
+
 
 // WZD s26p04
 // UU_VGA_InterleaveOut()
 
+
 // WZD s26p05
 // UU_VGA_InterleaveIn()
+
 
 // WZD s26p06
 // UU_VGA_CrossSlideOut()
 
+
 // WZD s26p07
 // UU_VGA_CrossSlideIn()
+
 
 // WZD s26p08
 // UU_VGA_SplitCutOut()
 
+
 // WZD s26p09
 // UU_VGA_CopyLine()
+
 
 // WZD s26p10
 /*

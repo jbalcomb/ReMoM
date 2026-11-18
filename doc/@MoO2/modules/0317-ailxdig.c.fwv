@@ -1,0 +1,20 @@
+module_num=317
+module=R:\NET\LIBS\AIL\DEV3\FLAT\ailxdig.c
+source=0317-ailxdig.c.md
+range[0]=1:0x0014B614 linear=0x0015B614 size=2960
+range[1]=2:0x00004784 linear=0x00174784 size=44
+range[2]=2:0x00012544 linear=0x00182544 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                             CHUNK
+m317f001  1    -      0x0015B814  1:0x0014B814  code         AILXDIG_start                     AILXDIG_start_                     regions/07-object-1/001E0E54-001E1653.txt
+m317f002  2    -      0x0015B840  1:0x0014B840  static,code  XMI_write_log                     _XMI_write_log                     regions/07-object-1/001E0E54-001E1653.txt
+m317f003  3    -      0x0015B9F5  1:0x0014B9F5  code         WVL_search                        WVL_search_                        regions/07-object-1/001E0E54-001E1653.txt
+m317f004  4    -      0x0015BA1E  1:0x0014BA1E  code         XDIG_set_volume                   XDIG_set_volume_                   regions/07-object-1/001E0E54-001E1653.txt
+m317f005  5    -      0x0015BA8A  1:0x0014BA8A  code         XDIG_set_pitch                    XDIG_set_pitch_                    regions/07-object-1/001E0E54-001E1653.txt
+m317f006  6    -      0x0015BB94  1:0x0014BB94  code         XDIG_TIMB_trap                    _XDIG_TIMB_trap                    regions/07-object-1/001E0E54-001E1653.txt
+m317f007  7    -      0x0015BBB9  1:0x0014BBB9  code         XDIG_MIDI_trap                    _XDIG_MIDI_trap                    regions/07-object-1/001E0E54-001E1653.txt
+m317f008  8    -      0x0015BFAD  1:0x0014BFAD  code         AIL_API_create_wave_synthesizer   _AIL_API_create_wave_synthesizer   regions/07-object-1/001E0E54-001E1653.txt
+m317f009  9    -      0x0015C125  1:0x0014C125  code         AIL_API_destroy_wave_synthesizer  _AIL_API_destroy_wave_synthesizer  regions/07-object-1/001E1654-001E1E53.txt
+m317f010  10   -      0x0015C179  1:0x0014C179  code         AILXDIG_end                       AILXDIG_end_                       regions/07-object-1/001E1654-001E1E53.txt
+-         -    -      0x00182544  2:0x00012544  static,data  _locked                           _locked                            regions/08-object-2/00200654-00200E53.txt

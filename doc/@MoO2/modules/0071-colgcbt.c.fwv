@@ -1,0 +1,82 @@
+module_num=71
+module=D:\MOX\OTHERS\COLGCBT.C
+source=0071-colgcbt.c.md
+range[0]=1:0x000A6CB0 linear=0x000B6CB0 size=9931
+range[1]=2:0x00001DBC linear=0x00171DBC size=16
+range[2]=2:0x0000A8C0 linear=0x0017A8C0 size=180
+range[3]=2:0x00026AF4 linear=0x00196AF4 size=2200
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                      SYMBOL                                     CHUNK
+m071f001  1    -      0x000B6D05  1:0x000A6D05  static,code  Add_Fields                                Add_Fields_                                regions/07-object-1/0013BE54-0013C653.txt
+m071f002  2    -      0x000B6D47  1:0x000A6D47  static,code  Update_Fields                             Update_Fields_                             regions/07-object-1/0013BE54-0013C653.txt
+m071f003  3    -      0x000B6D51  1:0x000A6D51  static,code  Load_Combat_Anims                         Load_Combat_Anims_                         regions/07-object-1/0013BE54-0013C653.txt
+m071f004  4    -      0x000B7185  1:0x000A7185  code         Add_Kill_Anim_To_Queue                    Add_Kill_Anim_To_Queue_                    regions/07-object-1/0013C654-0013CE53.txt
+m071f005  5    -      0x000B71A0  1:0x000A71A0  code         Add_Hit_Anim_To_Queue                     Add_Hit_Anim_To_Queue_                     regions/07-object-1/0013C654-0013CE53.txt
+m071f006  6    -      0x000B71B9  1:0x000A71B9  static,code  Draw_Summary                              Draw_Summary_                              regions/07-object-1/0013C654-0013CE53.txt
+m071f007  7    -      0x000B7289  1:0x000A7289  static,code  Draw_Colony_Combat_Screen                 Draw_Colony_Combat_Screen_                 regions/07-object-1/0013C654-0013CE53.txt
+m071f008  8    -      0x000B7491  1:0x000A7491  code         Colony_Combat_Screen                      Colony_Combat_Screen_                      regions/07-object-1/0013C654-0013CE53.txt
+m071f009  9    -      0x000B771D  1:0x000A771D  static,code  N_Slots_Left                              N_Slots_Left_                              regions/07-object-1/0013C654-0013CE53.txt
+m071f010  10   -      0x000B774D  1:0x000A774D  static,code  Top_Line_Y                                Top_Line_Y_                                regions/07-object-1/0013C654-0013CE53.txt
+m071f011  11   -      0x000B776D  1:0x000A776D  static,code  Top_Line_X                                Top_Line_X_                                regions/07-object-1/0013C654-0013CE53.txt
+m071f012  12   -      0x000B7786  1:0x000A7786  code         Set_Up_Troops                             Set_Up_Troops_                             regions/07-object-1/0013C654-0013CE53.txt
+m071f013  13   -      0x000B77A6  1:0x000A77A6  static,code  Calc_Top_Line                             Calc_Top_Line_                             regions/07-object-1/0013C654-0013CE53.txt
+m071f014  14   -      0x000B7825  1:0x000A7825  static,code  Spatter_Down_Starting_Troops              Spatter_Down_Starting_Troops_              regions/07-object-1/0013CE54-0013D653.txt
+m071f015  15   -      0x000B78BE  1:0x000A78BE  code         Find_Unshot_Target                        Find_Unshot_Target_                        regions/07-object-1/0013CE54-0013D653.txt
+m071f016  16   -      0x000B7908  1:0x000A7908  code         Find_Lowest_Framed_Unit                   Find_Lowest_Framed_Unit_                   regions/07-object-1/0013CE54-0013D653.txt
+m071f017  17   -      0x000B7990  1:0x000A7990  code         Verify_Legal_Totals                       Verify_Legal_Totals_                       regions/07-object-1/0013CE54-0013D653.txt
+m071f018  18   -      0x000B7A12  1:0x000A7A12  code         Force_Firing_Pairs                        Force_Firing_Pairs_                        regions/07-object-1/0013CE54-0013D653.txt
+m071f019  19   -      0x000B7ACC  1:0x000A7ACC  code         Draw_Troops                               Draw_Troops_                               regions/07-object-1/0013CE54-0013D653.txt
+m071f020  20   -      0x000B7B1C  1:0x000A7B1C  static,code  N_Left_Of_Me_To_Process                   N_Left_Of_Me_To_Process_                   regions/07-object-1/0013CE54-0013D653.txt
+m071f021  21   -      0x000B7B57  1:0x000A7B57  static,code  N_Left_Active_To_Process                  N_Left_Active_To_Process_                  regions/07-object-1/0013CE54-0013D653.txt
+m071f022  22   -      0x000B7B92  1:0x000A7B92  static,code  Resort_Units                              Resort_Units_                              regions/07-object-1/0013CE54-0013D653.txt
+m071f023  23   -      0x000B7C8D  1:0x000A7C8D  code         Get_Firepoint_Offsets                     Get_Firepoint_Offsets_                     regions/07-object-1/0013CE54-0013D653.txt
+m071f024  24   -      0x000B7D48  1:0x000A7D48  code         Get_Target_Offsets                        Get_Target_Offsets_                        regions/07-object-1/0013CE54-0013D653.txt
+m071f025  25   -      0x000B7E22  1:0x000A7E22  code         Pick_Target                               Pick_Target_                               regions/07-object-1/0013CE54-0013D653.txt
+m071f026  26   -      0x000B7E84  1:0x000A7E84  code         Do_Unit_Turn                              Do_Unit_Turn_                              regions/07-object-1/0013CE54-0013D653.txt
+m071f027  27   -      0x000B81F7  1:0x000A81F7  static,code  Action_Anim                               Action_Anim_                               regions/07-object-1/0013D654-0013DE53.txt
+m071f028  28   -      0x000B828C  1:0x000A828C  static,code  Pick_Next_Action                          Pick_Next_Action_                          regions/07-object-1/0013D654-0013DE53.txt
+m071f029  29   -      0x000B83ED  1:0x000A83ED  static,code  Move_Is_Legal                             Move_Is_Legal_                             regions/07-object-1/0013D654-0013DE53.txt
+m071f030  30   -      0x000B8575  1:0x000A8575  static,code  Do_Legal_Move_Check                       Do_Legal_Move_Check_                       regions/07-object-1/0013D654-0013DE53.txt
+m071f031  31   -      0x000B861F  1:0x000A861F  static,code  Do_Delta_Y                                Do_Delta_Y_                                regions/07-object-1/0013D654-0013DE53.txt
+m071f032  32   -      0x000B86B4  1:0x000A86B4  code         Reinforce_Units                           Reinforce_Units_                           regions/07-object-1/0013D654-0013DE53.txt
+m071f033  33   -      0x000B86F6  1:0x000A86F6  code         Get_First_Unit                            Get_First_Unit_                            regions/07-object-1/0013D654-0013DE53.txt
+m071f034  34   -      0x000B8732  1:0x000A8732  static,code  N_Troop_Type                              N_Troop_Type_                              regions/07-object-1/0013D654-0013DE53.txt
+m071f035  35   -      0x000B877D  1:0x000A877D  static,code  Get_Next_Troop_Type                       Get_Next_Troop_Type_                       regions/07-object-1/0013D654-0013DE53.txt
+m071f036  36   -      0x000B87CD  1:0x000A87CD  static,code  Add_Unit                                  Add_Unit_                                  regions/07-object-1/0013D654-0013DE53.txt
+m071f037  37   -      0x000B88B2  1:0x000A88B2  static,code  Add_Initial_Unit                          Add_Initial_Unit_                          regions/07-object-1/0013DE54-0013E653.txt
+m071f038  38   -      0x000B896D  1:0x000A896D  static,code  Print_Troop_Totals                        Print_Troop_Totals_                        regions/07-object-1/0013DE54-0013E653.txt
+m071f039  39   -      0x000B8BC7  1:0x000A8BC7  static,code  Draw_Summary_Box_ATK                      Draw_Summary_Box_ATK_                      regions/07-object-1/0013DE54-0013E653.txt
+m071f040  40   -      0x000B8C86  1:0x000A8C86  static,code  Draw_Summary_Boxes                        Draw_Summary_Boxes_                        regions/07-object-1/0013DE54-0013E653.txt
+m071f041  41   -      0x000B8C8B  1:0x000A8C8B  static,code  Draw_Summary_Box_DEF                      Draw_Summary_Box_DEF_                      regions/07-object-1/0013DE54-0013E653.txt
+m071f042  42   -      0x000B8D4A  1:0x000A8D4A  static,code  Print_Data                                Print_Data_                                regions/07-object-1/0013DE54-0013E653.txt
+m071f043  43   -      0x000B8DBE  1:0x000A8DBE  static,code  Print_Best_Summary                        Print_Best_Summary_                        regions/07-object-1/0013DE54-0013E653.txt
+m071f044  44   -      0x000B8E43  1:0x000A8E43  static,code  Print_Race_Summary                        Print_Race_Summary_                        regions/07-object-1/0013DE54-0013E653.txt
+m071f045  45   -      0x000B8EFB  1:0x000A8EFB  static,code  Replace_Colgcbt_Color_With_Player_Colors  Replace_Colgcbt_Color_With_Player_Colors_  regions/07-object-1/0013DE54-0013E653.txt
+m071f046  46   -      0x000B8F5F  1:0x000A8F5F  code         Draw_Unit_Beam                            Draw_Unit_Beam_                            regions/07-object-1/0013DE54-0013E653.txt
+m071f047  47   -      0x000B90BA  1:0x000A90BA  static,code  Draw_CGCBT_Beam                           Draw_CGCBT_Beam_                           regions/07-object-1/0013E654-0013EE53.txt
+m071f048  48   -      0x000B92A4  1:0x000A92A4  code         Get_CGCBT_Beam_Len                        Get_CGCBT_Beam_Len_                        regions/07-object-1/0013E654-0013EE53.txt
+m071f049  49   -      0x000B92F8  1:0x000A92F8  code         Play_Unit_Beam_Sound                      Play_Unit_Beam_Sound_                      regions/07-object-1/0013E654-0013EE53.txt
+m071f050  50   -      0x000B9369  1:0x000A9369  code         Set_Ground_Combat_Screen_Help_List        Set_Ground_Combat_Screen_Help_List_        regions/07-object-1/0013E654-0013EE53.txt
+-         -    -      0x0017A8C0  2:0x0000A8C0  data         _mouse_list_blank                         _mouse_list_blank                          regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8CC  2:0x0000A8CC  data         _g_ctr                                    _g_ctr                                     regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8CE  2:0x0000A8CE  static,data  _N_DEF_UNIT_ROWS                          _N_DEF_UNIT_ROWS                           regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8CF  2:0x0000A8CF  static,data  _N_ATK_UNIT_ROWS                          _N_ATK_UNIT_ROWS                           regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8D0  2:0x0000A8D0  static,data  _title_changed_flag                       _title_changed_flag                        regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8D1  2:0x0000A8D1  static,data  _old_ctr                                  _old_ctr                                   regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A8D3  2:0x0000A8D3  static,data  _player_color_array                       _player_color_array                        regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A913  2:0x0000A913  static,data  _short_player_color_array                 _short_player_color_array                  regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A953  2:0x0000A953  static,data  _colony_ground_combat_screen_help_list    _colony_ground_combat_screen_help_list     regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x00196AF4  2:0x00026AF4  data         _anims                                    _anims                                     -
+-         -    -      0x00196B94  2:0x00026B94  static,data  _g_units                                  _g_units                                   -
+-         -    -      0x00197364  2:0x00027364  static,data  _explosion_anim                           _explosion_anim                            -
+-         -    -      0x00197368  2:0x00027368  static,data  _heart_anim                               _heart_anim                                -
+-         -    -      0x0019736C  2:0x0002736C  static,data  _frame_anim                               _frame_anim                                -
+-         -    -      0x00197370  2:0x00027370  data         _flip_bitm_seg2                           _flip_bitm_seg2                            -
+-         -    -      0x00197374  2:0x00027374  data         _flip_bitm_seg                            _flip_bitm_seg                             -
+-         -    -      0x00197378  2:0x00027378  static,data  _g_attack_ptr                             _g_attack_ptr                              -
+-         -    -      0x0019737C  2:0x0002737C  static,data  _g_defend_ptr                             _g_defend_ptr                              -
+-         -    -      0x00197380  2:0x00027380  static,data  _fields                                   _fields                                    -
+-         -    -      0x00197384  2:0x00027384  static,data  _display_fast                             _display_fast                              -
+-         -    -      0x00197386  2:0x00027386  static,data  _top_line                                 _top_line                                  -
+-         -    -      0x00197388  2:0x00027388  static,data  _start_combat                             _start_combat                              -

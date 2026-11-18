@@ -1,0 +1,11 @@
+module_num=305
+module=delay
+source=0305-delay.md
+range[0]=1:0x00143ED7 linear=0x00153ED7 size=104
+range[1]=2:0x000513FC linear=0x001C13FC size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME          SYMBOL         CHUNK
+m305f001  1    -      0x00153ED7  1:0x00143ED7  code         __delay_init  __delay_init_  regions/07-object-1/001D8E54-001D9653.txt
+m305f002  2    -      0x00153F09  1:0x00143F09  code         __delay       __delay_       regions/07-object-1/001D8E54-001D9653.txt
+-         -    -      0x001C13FC  2:0x000513FC  static,data  _loop_count   _loop_count    -

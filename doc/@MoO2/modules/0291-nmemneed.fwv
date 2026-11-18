@@ -1,0 +1,8 @@
+module_num=291
+module=nmemneed
+source=0291-nmemneed.md
+range[0]=1:0x00141D1F linear=0x00151D1F size=3
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m291f001  1    -      0x00151D1F  1:0x00141D1F  code  __nmemneed  __nmemneed_  regions/07-object-1/001D6E54-001D7653.txt

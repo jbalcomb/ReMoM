@@ -236,7 +236,7 @@ Per `doc/@Devel/Dependency-Vetting.md`. **No trust score is produced, by design.
 
 ## 9. Lesson carried from BRA-Combat-Testing
 
-`BRA-Combat-Testing.md` records forcing tactical combat onto a headless substrate it was never designed for. **The same shape recurred here:** MoM's timbres were forced into GENMIDI, a format they were never designed for, because it was the format the tool already accepted.
+`BRA-Combat-Testing.md` records forcing tactical combat onto a windowless substrate it was never designed for. **The same shape recurred here:** MoM's timbres were forced into GENMIDI, a format they were never designed for, because it was the format the tool already accepted.
 
 Both mistakes share a signature — *the constraint came from the tooling, not from the goal, and was not noticed until something concrete was observed* (a battle that would not run; music that sounded wrong). The general rule this reinforces: **when the substrate is chosen before the goal is stated, verify the fit explicitly rather than assuming it.**
 

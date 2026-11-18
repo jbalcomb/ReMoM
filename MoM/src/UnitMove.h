@@ -77,43 +77,25 @@ extern "C" {
 void Active_Stack_Movement_Modes(int16_t movement_mode_flags[]);
 
 // WZD o71p02
-// drake178: STK_GetMoveTypes()
 void Army_Movement_Modes(int16_t movement_mode_flags[], int16_t troops[], int16_t troop_count);
 
 // WZD o71p03
-/*
-    Unit Type - Movement Type - Flying
-    Unit Enchantment - WindWalking
-    Unit Enchantment - Flying
-    NOT Unit Ability - WindWalking
-    Unit Mutation - Chaos Channels - Demon Wings
-    returns ST_FALSE/ST_TRUE
-*/
 int16_t Unit_Has_AirTravel(int16_t unit_idx);
 
 // WZD o71p04
-// "HasWindWalking", because the manual says that is the name of the "Movement Type"
 int16_t Unit_Has_WindWalking(int16_t unit_idx);
 
 // WZD o71p05
-/*
-    Unit Type - Movement Type - Sailing
-    Unit Type - Movement Type - Swimming
-    Unit Enchantment - WaterWalking
-    returns ST_FALSE/ST_TRUE
-*/
 int16_t Unit_Has_WaterTravel(int16_t unit_idx);
 
 // WZD o71p06
-// UNIT_HasSailing                                ovr071
 int16_t Unit_Has_Sailing(int16_t unit_idx);
 
 // WZD o71p07
 int16_t Unit_Has_Swimming(int16_t unit_idx);
 
 // WZD o71p08
-// int16_t UNIT_ReturnZero(int16_t unit_idx);
-// o71p08_Empty_pFxn                              ovr071
+int16_t Unit_Has_WindWalkingItem(int16_t unit_idx);
 
 // WZD o71p09
 int16_t Unit_Has_WaterTravel_Item(int16_t unit_idx);
@@ -140,22 +122,21 @@ int16_t Unit_Has_NonCorporeal(int16_t unit_idx);
 */
 
 // WZD o148p01
-// UU_OVL_Return_2()
+int16_t o148p01_empty_function(void);
 
 // WZD o148p02
-// UU_OVL_GetLinePath()
+int16_t Move_Path_Straight_Line__NIU(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], struct s_Movement_Modes movement_modes);
 
 // WZD o148p03
-int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t one, int16_t moves2, int16_t boat_rider_count, int16_t unit_array_count, int16_t player_idx);
+int16_t Make_Move_Path(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[], int16_t use_search_box, int16_t stack_moves2, int16_t boatrider_count, int16_t troop_count, int16_t player_idx);
 
 // WZD o148p04
-// TILE_ExtendRange()
+void Move_Path_Search_Box(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t * box_x1, int16_t * box_y1, int16_t * box_x2, int16_t * box_y2);
 
 // WZD o148p05
-// sub_D601B()
+int16_t Move_Path_Build__NIU(int16_t straight_line, int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int8_t mvpth_x[], int8_t mvpth_y[], int8_t mvpth_c[]);
 
 // WZD o148p06
-// drake178: STK_SetOvlMoveMap()
 void Init_MovePathMap(int16_t MvMd_0, int16_t MvMd_1, int16_t MvMd_2, int16_t MvMd_3, int16_t MvMd_4, int16_t MvMd_5, int16_t wp);
 
 // WZD o148p07

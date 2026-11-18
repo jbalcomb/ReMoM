@@ -11,8 +11,8 @@ AI_FindClosestEnemy()  ==>  AI_Stacks_Target_Nearest_Hostile_Stack()
 AI_UNIT_SetMoveOrder()  ==>  AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 AI_CONTX_Regroup()  ==>  AI_Stacks_Init_Build_Target_Order
 TILE_IsLand()  ==>  Map_Square_Is_Land()
-AI_Stacks_Survey_Expedition_Forces()  ==>  AI_Stacks_Survey_Expedition_Forces()
-AI_Stacks_Survey_Expedition_Forces_Stack()  ==>  AI_Stacks_Survey_Expedition_Forces_Stack()
+AI_Survey_Expedition_Forces()  ==>  AI_Survey_Expedition_Forces()
+AI_Survey_Expedition_Stack()  ==>  AI_Survey_Expedition_Stack()
 AI_UNIT_SetMeldOrder()  ==>  AI_Stacks_Order_Meld()
 AI_ProcessMelders()  ==>  AI_Stacks_Do_Meld()
 TILE_CheckEnemyUnits()  ==>  Map_Square_Area_Has_Opponent()
@@ -142,8 +142,8 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned()
     |-> TILE_NextFreeLand()
     |-> AI_Stacks_Order_Attack_Target_Or_Goto_Destination()
 
-AI_Stacks_Survey_Expedition_Forces()
-    |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+AI_Survey_Expedition_Forces()
+    |-> AI_Survey_Expedition_Stack()
 
 AI_Stacks_Do_Meld()
     |-> AI_Stacks_Order_Meld()
@@ -264,8 +264,8 @@ this should be in the terrain notes  MOVE IT!!!!!
 
 
 
-## AI_Stacks_Survey_Expedition_Forces()
-    |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+## AI_Survey_Expedition_Forces()
+    |-> AI_Survey_Expedition_Stack()
 
 
 

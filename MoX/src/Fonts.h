@@ -138,14 +138,14 @@ extern "C" {
 // WZD dseg:783E
 // int16_t draw_alias_flag;
 
-// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4w
-// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181w ...
+// WZD dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4^w
+// WZD dseg:7842 00 00                                           exclusion_count dw 0                    ; DATA XREF: Print_Paragraph+181^w ...
 
 // WZD dseg:7844                                                 seg020  MoO2 Module: palette
 // WZD dseg:7844
 // PRIVATE  int16_t cycle_direction_flag;
 
-// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6w ...
+// WZD dseg:7846 68 35 68 35                                     random_seed dd 35683568h                ; DATA XREF: Set_Random_Seed+6^w ...
 
 
 
@@ -484,9 +484,7 @@ void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset);
     WIZARDS.EXE  seg019
 */
 
-// WZD s19p01
-// Print_Paragraph()
-
+// WZD s19p01   // Print_Paragraph()
 // WZD s19p02
 // WZD s19p03
 // WZD s19p04
@@ -495,11 +493,11 @@ void Print_Clipped_Letter(int16_t x_start, byte_ptr font_data_offset);
 // WZD s19p07
 // WZD s19p08
 // WZD s19p09
-
-// WZD s19p10
-int16_t Get_Font_Height(void);
+// WZD s19p10   // Remove_Paragraph_Marks
 
 // WZD s19p11
+int16_t Get_Font_Height(void);
+
 // WZD s19p12
 // WZD s19p13
 // WZD s19p14
@@ -577,10 +575,11 @@ void Tint_Palette(int16_t percent, int16_t red, int16_t green, int16_t blue);
 // drake178: VGA_SlideColors()
 // ¿ MoO2: Cycle_Palette_Color() ... Update_Cycle()
 // ¿ 1oom ?
-void VGA_SlideColors__STUB(int16_t First_Color, int16_t Count, int16_t ShiftBy);
+void Rotate_Palette_Colors(int16_t first_color, int16_t count, int16_t shift);
 
 // WZD s21p05
 // drake178: UU_VGA_ColorWave()
+void Wave_Palette_Colors__NIU(int16_t first_color, int16_t count, int16_t step);
 
 
 // WZD s21p06
@@ -605,7 +604,7 @@ uint8_t Find_Closest_Color(uint8_t red, uint8_t green, uint8_t blue);
 // uint8_t lbxpal_find_closest(uint8_t r, uint8_t g, uint8_t b);
 // uint8_t Find_Closest_Color(uint8_t r, uint8_t g, uint8_t b);
 
-// WZD s21p07
+// /* CLAUDE */  WZD s21p07  (not an id tag: FLIC_Load_Palette() is defined in FLIC_Draw.c, declared in FLIC_Draw.h)
 // FLIC_Load_Palette()
 
 

@@ -1,0 +1,11 @@
+module_num=11
+module=D:\MOX\RACECUST.C
+source=0011-racecust.c.md
+range[0]=1:0x000050FB linear=0x000150FB size=290
+range[1]=2:0x00008184 linear=0x00178184 size=2860
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                SYMBOL               CHUNK
+m011f001  1    -      0x000150FB  1:0x000050FB  code  Race_Customization  Race_Customization_  regions/07-object-1/0009A654-0009AE53.txt
+-         -    -      0x00178184  2:0x00008184  data  _race_customize     _race_customize      regions/08-object-2/001F6654-001F6E53.txt
+-         -    -      0x00178A26  2:0x00008A26  data  _race_evolution     _race_evolution      regions/08-object-2/001F6E54-001F7653.txt

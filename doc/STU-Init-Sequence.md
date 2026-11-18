@@ -1,7 +1,7 @@
 
 # ReMoM Init Sequence — Data Dependencies
 
-Traced from [ReMoM_Init_Engine()](../src/ReMoM_Init.c) (the shared init for ReMoM and HeMoM).
+Traced from [ReMoM_Init_Engine()](../src/ReMoM_Init.c) (the shared init for ReMoM and DeMoM).
 
 ## Call Order
 

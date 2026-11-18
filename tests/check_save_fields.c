@@ -1,10 +1,10 @@
 /**
- * check_save_fields.c — Field-level assertion checker for HeMoM save dumps.
+ * check_save_fields.c — Field-level assertion checker for DeMoM save dumps.
  *
  * Usage:
  *   check_save_fields <dump.txt> <assertions.txt>
  *
- * Reads a HeMoM save dump (key = value lines) and an assertions file (same
+ * Reads a DeMoM save dump (key = value lines) and an assertions file (same
  * key = value format, plus comments starting with #).  For each assertion,
  * looks up the matching line in the dump and compares values.
  *

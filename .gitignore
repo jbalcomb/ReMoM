@@ -16,9 +16,9 @@ Makefile.in
 autom4te.cache/
 *.a
 
-HeMoM
+DeMoM
 ReMoM
-HeMoM.exe
+DeMoM.exe
 ReMoM.exe
 # Pre-rename player-binary name: the in-tree autotools build used to emit ReMoMber,
 # and after the ReMoMber->ReMoM rename this line stopped ignoring it -- which let a

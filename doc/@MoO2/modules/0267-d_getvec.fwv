@@ -1,0 +1,8 @@
+module_num=267
+module=d_getvec
+source=0267-d_getvec.md
+range[0]=1:0x001397D9 linear=0x001497D9 size=50
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL         CHUNK
+m267f001  1    -      0x001497D9  1:0x001397D9  code  _dos_getvect  _dos_getvect_  regions/07-object-1/001CE654-001CEE53.txt

@@ -1,0 +1,20 @@
+module_num=77
+module=D:\MOX\OTHERS\COLSYSDI.C
+source=0077-colsysdi.c.md
+range[0]=1:0x000B49AA linear=0x000C49AA size=1880
+range[1]=2:0x000285B0 linear=0x001985B0 size=228
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                            SYMBOL                           CHUNK
+m077f001  1    -      0x000C49AA  1:0x000B49AA  code         Planet_Anims                    Planet_Anims_                    regions/07-object-1/00149E54-0014A653.txt
+m077f002  2    -      0x000C49C8  1:0x000B49C8  code         Load_Col_Sys_Disp               Load_Col_Sys_Disp_               regions/07-object-1/00149E54-0014A653.txt
+m077f003  3    -      0x000C49C9  1:0x000B49C9  code         Draw_Col_Sys_Disp               Draw_Col_Sys_Disp_               regions/07-object-1/00149E54-0014A653.txt
+m077f004  4    -      0x000C4B98  1:0x000B4B98  code         Planet_Summary_String           Planet_Summary_String_           regions/07-object-1/00149E54-0014A653.txt
+m077f005  5    -      0x000C4ED1  1:0x000B4ED1  code         Add_Col_Sys_Disp_Fields         Add_Col_Sys_Disp_Fields_         regions/07-object-1/00149E54-0014A653.txt
+m077f006  6    -      0x000C500B  1:0x000B500B  code         Draw_Col_Sys_Disp_Last_Scanned  Draw_Col_Sys_Disp_Last_Scanned_  regions/07-object-1/0014A654-0014AE53.txt
+-         -    -      0x001985B0  2:0x000285B0  static,data  _planet_anims                   _planet_anims                    -
+-         -    -      0x00198678  2:0x00028678  static,data  _gas_giant_planet_seg           _gas_giant_planet_seg            -
+-         -    -      0x0019867C  2:0x0002867C  static,data  _asteroid_planet_seg            _asteroid_planet_seg             -
+-         -    -      0x00198680  2:0x00028680  static,data  _blinker_seg                    _blinker_seg                     -
+-         -    -      0x00198684  2:0x00028684  static,data  _arrow_seg                      _arrow_seg                       -
+-         -    -      0x00198688  2:0x00028688  static,data  _fields                         _fields                          -

@@ -34,8 +34,104 @@ uint32_t DBG__cmbt_cancel_button_seg_size;
 
 
 
-int16_t STU_DBG_trigger_event = STU_FALSE;
-int16_t STU_DBG_trigger_research = STU_TRUE;
+int16_t DBG_trigger_research = STU_FALSE;
+
+
+
+#ifdef STU_DEBUG
+/*
+    Debug triggers and the Z-hotkey debug flag -- moved from MoM/src/MOM_DBG.c.  Read by EVENTS.c, NEXTTURN.c, MainMenu.c, MainScr.c and Combat.c,
+    each use inside #ifdef STU_DEBUG.  The DBG_trigger_event_* variants have no readers.
+*/
+int16_t DBG_trigger_event = STU_FALSE;
+/*
+    et_None                 =  0,
+    et_Meteor               =  1,
+    et_Gift                 =  2,
+    et_Disjunction          =  3,
+    et_Marriage             =  4,
+    et_Earthquake           =  5,
+    et_Pirates              =  6,
+    et_Plague               =  7,
+    et_Rebellion            =  8,
+    et_Donation             =  9,
+    et_Depletion            = 10,
+    et_New_Mine             = 11,
+    et_Population_Boom      = 12,
+    et_Good_Moon            = 13,
+    et_Bad_Moon             = 14,
+    et_Conjunction_Chaos    = 15,
+    et_Conjunction_Nature   = 16,
+    et_Conjunction_Sorcery  = 17,
+    et_Mana_Short           = 18
+*/
+/*
+    Plague
+    Population Boom
+    Good Moon
+    Bad Moon
+    Conjuction - Chaos
+    Conjuction - Nature
+    Conjuction - Sorcery
+    Mana Short
+*/
+int16_t DBG_trigger_event_plague = STU_FALSE;
+int16_t DBG_trigger_event_population_boom = STU_FALSE;
+int16_t DBG_trigger_event_good_moon = STU_TRUE;
+int16_t DBG_trigger_event_bad_moon = STU_FALSE;
+int16_t DBG_trigger_event_conjunction_chaos = STU_FALSE;
+int16_t DBG_trigger_event_conjunction_nature = STU_FALSE;
+int16_t DBG_trigger_event_conjunction_sorcery = STU_FALSE;
+int16_t DBG_trigger_event_mana_short = STU_FALSE;
+/*
+    msg_unit_lost_ctr
+    MSG_UnitKilled_Count
+    MSG_CityGrowth_Count
+    MSG_CityDeath_Count
+    MSG_BldLost_Count
+    MSG_UEsLost_Count
+    MSG_CEsLost_Count
+    MSG_GEs_Lost
+*/
+int16_t DBG_trigger_offer_item = STU_FALSE;
+int16_t DBG_trigger_offer_merc = STU_FALSE;
+int16_t DBG_trigger_offer_hero = STU_FALSE;
+
+int16_t DBG_trigger_complete_research_spell = STU_FALSE;
+
+uint8_t DBG_debug_flag = STU_FALSE;
+
+
+
+/*
+    Map-square trace filter -- moved from MoM/src/MainScr_Maps.c (Copilot TEMP DEBUG, cd6f198a).  No callers.
+*/
+/* Copilot TEMP DEBUG: set DBG_TRACE_FIX_WX/WY/WP to filter a single square; leave STU_UNDEFINED for all. */
+int16_t DBG_TRACE_FIX_WX = STU_UNDEFINED;
+int16_t DBG_TRACE_FIX_WY = STU_UNDEFINED;
+int16_t DBG_TRACE_FIX_WP = STU_UNDEFINED;
+int16_t DBG_TRACE_FIX_BUDGET = 120;
+
+int16_t DBG_Trace_Fix_Match(int16_t wx, int16_t wy, int16_t wp)
+{
+    if((DBG_TRACE_FIX_WP != STU_UNDEFINED) && (DBG_TRACE_FIX_WP != wp))
+    {
+        return STU_FALSE;
+    }
+
+    if((DBG_TRACE_FIX_WX != STU_UNDEFINED) && (DBG_TRACE_FIX_WX != wx))
+    {
+        return STU_FALSE;
+    }
+
+    if((DBG_TRACE_FIX_WY != STU_UNDEFINED) && (DBG_TRACE_FIX_WY != wy))
+    {
+        return STU_FALSE;
+    }
+
+    return STU_TRUE;
+}
+#endif  /* STU_DEBUG */
 
 
 

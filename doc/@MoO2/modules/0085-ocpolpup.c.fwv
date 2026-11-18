@@ -1,0 +1,14 @@
+module_num=85
+module=D:\MOX\OTHERS\OCPOLPUP.C
+source=0085-ocpolpup.c.md
+range[0]=1:0x000BD8E1 linear=0x000CD8E1 size=524
+range[1]=2:0x0000B1DC linear=0x0017B1DC size=20
+range[2]=2:0x00029368 linear=0x00199368 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                     SYMBOL                    CHUNK
+m085f001  1    -      0x000CD8E5  1:0x000BD8E5  code         Load_Oc_Pol_Anims        Load_Oc_Pol_Anims_        regions/07-object-1/00152E54-00153653.txt
+m085f002  2    -      0x000CD969  1:0x000BD969  code         Occupation_Policy_Popup  Occupation_Policy_Popup_  regions/07-object-1/00152E54-00153653.txt
+-         -    -      0x0017B1DC  2:0x0000B1DC  static,data  _anims                   _anims                    regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x00199368  2:0x00029368  static,data  _saved_autofunction      _saved_autofunction       -
+-         -    -      0x0019936C  2:0x0002936C  static,data  _value                   _value                    -

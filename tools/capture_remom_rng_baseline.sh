@@ -2,7 +2,7 @@
 #
 # capture_remom_rng_baseline.sh — Launch ReMoM for the one-time capture of
 # the ReMoM-side baseline [RNG-CALL] trace that verify_rng_alignment.sh
-# compares HeMoM against.
+# compares DeMoM against.
 #
 # What it does:
 #   1. Builds ReMoM under clang-debug (Linux) or MSVC-debug (Windows via
@@ -10,12 +10,12 @@
 #   2. Launches ReMoM with --seed ${SEED} --record menu_baseline.RMR,
 #      capturing stderr to a raw log.
 #   3. Waits for you to click through the new-game menus making the choices
-#      that match assets/matchup_hemom.ini, then quit.
+#      that match assets/matchup_demom.ini, then quit.
 #   4. After ReMoM exits, filters the [RNG-CALL] stream into
 #      tests/baseline_seed${SEED}_rng.log.
 #   5. Prints the next step (run verify_rng_alignment.sh to compare).
 #
-# Manual menu walkthrough (must match assets/matchup_hemom.ini):
+# Manual menu walkthrough (must match assets/matchup_demom.ini):
 #   Screen 0 (Options):
 #     Difficulty = Normal,  Opponents = Four,
 #     Landsize   = Large,   Magic     = Normal

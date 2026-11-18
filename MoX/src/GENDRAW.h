@@ -126,20 +126,32 @@ void Notify2(int16_t Center, int16_t Top, int16_t notify_color, char * Msg, int1
 // WZD o149p14
 void Notify2_Draw(void);
 
+#define EXPANDING_BOX_STAGES  5
+
+extern int16_t _draw_expanding_box;
+extern int16_t expanding_origin_y2;
+extern int16_t expanding_origin_x2;
+extern int16_t expanding_origin_y1;
+extern int16_t expanding_origin_x1;
+extern int16_t expanding_box_y2;
+extern int16_t expanding_box_x2;
+extern int16_t expanding_box_y1;
+extern int16_t expanding_box_x1;
+
 // WZD o149p15
-void HLP_NoResizeExpand__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag);
+void Draw_Expanding_Box(int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t draw_expanding_box);
 
 // WZD o149p16
-void HLP_DrawExpanding__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t FL, int16_t FT, int16_t FR, int16_t FB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag);
+int16_t Draw_Expanding_Box_Picture(int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t picture_x1, int16_t picture_y1, int16_t picture_x2, int16_t picture_y2, int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t draw_expanding_box);
 
 // WZD o149p17
-void G_USW_DrawEHLines__TODO(void);
+int16_t Redraw_Expanding_Box_Lines(void);
 
 // WZD o149p18
-void HLP_DrawExpandLines__TODO(int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t C11, int16_t C12, int16_t C21, int16_t C22, int16_t C31, int16_t C32);
+void Draw_Expanding_Box_Lines(int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t color_1a, int16_t color_1b, int16_t color_2a, int16_t color_2b, int16_t color_3a, int16_t color_3b);
 
 // WZD o149p19
-void ITEM_GetViewDrawPos(int16_t OrigX, int16_t OrigY, SAMB_ptr IMG_Seg, int16_t FullAt, int16_t * Left, int16_t * Top);
+void Expanding_Picture_Position(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg, int16_t stages, int16_t * draw_x, int16_t * draw_y);
 
 // WZD o149p20
 void ITEM_ResetViewGrow(void);

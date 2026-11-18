@@ -1,0 +1,631 @@
+module_num=142
+module=F:\WLIBS\mouse\mouse.c
+source=0142-mouse.c.md
+range[0]=1:0x001133B4 linear=0x001233B4 size=5100
+range[1]=2:0x00002618 linear=0x00172618 size=28
+range[2]=2:0x0000C518 linear=0x0017C518 size=28
+range[3]=2:0x0003E1EC linear=0x001AE1EC size=15432
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                         SYMBOL                        CHUNK
+m142f001  1    -      0x001233B4  1:0x001133B4  code         Get_Mouse_Sensitivity        Get_Mouse_Sensitivity_        regions/07-object-1/001A8654-001A8E53.txt
+m142f002  2    -      0x00123437  1:0x00113437  code         Set_Old_Mouse_Sensitivity    Set_Old_Mouse_Sensitivity_    regions/07-object-1/001A8654-001A8E53.txt
+m142f003  3    -      0x00123491  1:0x00113491  code         Init_Mouse_Driver            Init_Mouse_Driver_            regions/07-object-1/001A8654-001A8E53.txt
+m142f004  4    -      0x001236D1  1:0x001136D1  code         User_Mouse_Handler           User_Mouse_Handler_           regions/07-object-1/001A8654-001A8E53.txt
+m142f005  5    -      0x001237F3  1:0x001137F3  code         Set_User_Mouse_Handler       Set_User_Mouse_Handler_       regions/07-object-1/001A8654-001A8E53.txt
+m142f006  6    -      0x0012386C  1:0x0011386C  code         Mouse_Button_Handler         Mouse_Button_Handler_         regions/07-object-1/001A8E54-001A9653.txt
+m142f007  7    -      0x00123926  1:0x00113926  code         Mouse_Movement_Handler       Mouse_Movement_Handler_       regions/07-object-1/001A8E54-001A9653.txt
+m142f008  8    -      0x001239E0  1:0x001139E0  code         Enable_Mouse                 Enable_Mouse_                 regions/07-object-1/001A8E54-001A9653.txt
+m142f009  9    -      0x00123A08  1:0x00113A08  code         Disable_Mouse                Disable_Mouse_                regions/07-object-1/001A8E54-001A9653.txt
+m142f010  10   -      0x00123A30  1:0x00113A30  code         Save_Mouse_State             Save_Mouse_State_             regions/07-object-1/001A8E54-001A9653.txt
+m142f011  11   -      0x00123A64  1:0x00113A64  code         Restore_Mouse_State          Restore_Mouse_State_          regions/07-object-1/001A8E54-001A9653.txt
+m142f012  12   -      0x00123A8F  1:0x00113A8F  code         Mouse_Active                 Mouse_Active_                 regions/07-object-1/001A8E54-001A9653.txt
+m142f013  13   -      0x00123ABA  1:0x00113ABA  code         Pointer_X                    Pointer_X_                    regions/07-object-1/001A8E54-001A9653.txt
+m142f014  14   -      0x00123AE7  1:0x00113AE7  code         Pointer_Y                    Pointer_Y_                    regions/07-object-1/001A8E54-001A9653.txt
+m142f015  15   -      0x00123B14  1:0x00113B14  code         Set_Pointer_Position         Set_Pointer_Position_         regions/07-object-1/001A8E54-001A9653.txt
+m142f016  16   -      0x00123B58  1:0x00113B58  code         Set_Mouse_Position           Set_Mouse_Position_           regions/07-object-1/001A8E54-001A9653.txt
+m142f017  17   -      0x00123BC1  1:0x00113BC1  code         Mouse_Buffer_X               Mouse_Buffer_X_               regions/07-object-1/001A8E54-001A9653.txt
+m142f018  18   -      0x00123BEE  1:0x00113BEE  code         Mouse_Buffer_Y               Mouse_Buffer_Y_               regions/07-object-1/001A8E54-001A9653.txt
+m142f019  19   -      0x00123C1B  1:0x00113C1B  code         Mouse_Buffer_Button          Mouse_Buffer_Button_          regions/07-object-1/001A8E54-001A9653.txt
+m142f020  20   -      0x00123C48  1:0x00113C48  code         Mouse_Buffer                 Mouse_Buffer_                 regions/07-object-1/001A8E54-001A9653.txt
+m142f021  21   -      0x00123C84  1:0x00113C84  code         Mouse_Buffer2                Mouse_Buffer2_                regions/07-object-1/001A8E54-001A9653.txt
+m142f022  22   -      0x00123CC0  1:0x00113CC0  code         Set_Buffer_2                 Set_Buffer_2_                 regions/07-object-1/001A8E54-001A9653.txt
+m142f023  23   -      0x00123D00  1:0x00113D00  code         Set_Mouse_Buffer             Set_Mouse_Buffer_             regions/07-object-1/001A8E54-001A9653.txt
+m142f024  24   -      0x00123D53  1:0x00113D53  code         Check_Mouse_Buffer           Check_Mouse_Buffer_           regions/07-object-1/001A8E54-001A9653.txt
+m142f025  25   -      0x00123DD9  1:0x00113DD9  code         Reset_System_Mouse           Reset_System_Mouse_           regions/07-object-1/001A8E54-001A9653.txt
+m142f026  26   -      0x00123E6C  1:0x00113E6C  code         Set_Mouse_List               Set_Mouse_List_               regions/07-object-1/001A8E54-001A9653.txt
+m142f027  27   -      0x00123EA7  1:0x00113EA7  code         Check_Mouse_Shape            Check_Mouse_Shape_            regions/07-object-1/001A8E54-001A9653.txt
+m142f028  28   -      0x00123FFB  1:0x00113FFB  code         Get_Pointer_Offset           Get_Pointer_Offset_           regions/07-object-1/001A8E54-001A9653.txt
+m142f029  29   -      0x00124039  1:0x00114039  code         Get_Pointer_Image_Number     Get_Pointer_Image_Number_     regions/07-object-1/001A9654-001A9E53.txt
+m142f030  30   -      0x00124075  1:0x00114075  code         Mouse_Button                 Mouse_Button_                 regions/07-object-1/001A9654-001A9E53.txt
+m142f031  31   -      0x00124105  1:0x00114105  code         Mouse_Wait                   Mouse_Wait_                   regions/07-object-1/001A9654-001A9E53.txt
+m142f032  32   -      0x0012419D  1:0x0011419D  code         Save_Mouse_From_Off_Page     Save_Mouse_From_Off_Page_     regions/07-object-1/001A9654-001A9E53.txt
+m142f033  33   -      0x00124237  1:0x00114237  code         Save_Correct_Mouse_Hi_Res    Save_Correct_Mouse_Hi_Res_    regions/07-object-1/001A9654-001A9E53.txt
+m142f034  34   -      0x00124256  1:0x00114256  code         Restore_Mouse_From_Off_Page  Restore_Mouse_From_Off_Page_  regions/07-object-1/001A9654-001A9E53.txt
+m142f035  35   -      0x0012435C  1:0x0011435C  code         Draw_Mouse_Off_Page          Draw_Mouse_Off_Page_          regions/07-object-1/001A9654-001A9E53.txt
+m142f036  36   -      0x0012439D  1:0x0011439D  code         Draw_Mouse_Hi_Res            Draw_Mouse_Hi_Res_            regions/07-object-1/001A9654-001A9E53.txt
+m142f037  37   -      0x001243DE  1:0x001143DE  code         Draw_Mouse_To_Off_Page       Draw_Mouse_To_Off_Page_       regions/07-object-1/001A9654-001A9E53.txt
+m142f038  38   -      0x0012452A  1:0x0011452A  code         Say_Hello                    Say_Hello_                    regions/07-object-1/001A9654-001A9E53.txt
+m142f039  39   -      0x00124560  1:0x00114560  code         S_Mouse                      S_Mouse_                      regions/07-object-1/001A9654-001A9E53.txt
+m142f040  40   -      0x00124633  1:0x00114633  code         Set_Mouse_Overide_Input      Set_Mouse_Overide_Input_      regions/07-object-1/001A9654-001A9E53.txt
+m142f041  41   -      0x0012465B  1:0x0011465B  code         Clear_Mouse_Overide_Input    Clear_Mouse_Overide_Input_    regions/07-object-1/001A9654-001A9E53.txt
+m142f042  42   -      0x00124683  1:0x00114683  code         Set_Mouse_X                  Set_Mouse_X_                  regions/07-object-1/001A9654-001A9E53.txt
+m142f043  43   -      0x001246C2  1:0x001146C2  code         Set_Mouse_Y                  Set_Mouse_Y_                  regions/07-object-1/001A9654-001A9E53.txt
+m142f044  44   -      0x00124700  1:0x00114700  code         Set_Mouse_Right_Down         Set_Mouse_Right_Down_         regions/07-object-1/001A9654-001A9E53.txt
+m142f045  45   -      0x00124728  1:0x00114728  code         Set_Mouse_Left_Down          Set_Mouse_Left_Down_          regions/07-object-1/001A9654-001A9E53.txt
+m142f046  46   -      0x00124750  1:0x00114750  code         Set_Mouse_Right_Up           Set_Mouse_Right_Up_           regions/07-object-1/001A9654-001A9E53.txt
+m142f047  47   -      0x00124778  1:0x00114778  code         Set_Mouse_Left_Up            Set_Mouse_Left_Up_            regions/07-object-1/001A9654-001A9E53.txt
+-         -    -      0x0017C518  2:0x0000C518  data         _mouse_enabled               _mouse_enabled                regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C51A  2:0x0000C51A  data         _mouse_interrupt_active      _mouse_interrupt_active       regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C51C  2:0x0000C51C  static,data  _mouse_overide_flag          _mouse_overide_flag           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C51E  2:0x0000C51E  static,data  _mouse_overide_left_button   _mouse_overide_left_button    regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C520  2:0x0000C520  static,data  _mouse_overide_right_button  _mouse_overide_right_button   regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C522  2:0x0000C522  data         _default_mouse_list          _default_mouse_list           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001AE1EC  2:0x0003E1EC  data         _stck                        _stck                         -
+-         -    -      0x001B11EC  2:0x000411EC  data         _num                         _num                          -
+-         -    -      0x001B11F0  2:0x000411F0  data         _old_h_mickey_sensitivity    _old_h_mickey_sensitivity     -
+-         -    -      0x001B11F4  2:0x000411F4  data         _old_threshold               _old_threshold                -
+-         -    -      0x001B11F8  2:0x000411F8  data         _old_v_mickey_sensitivity    _old_v_mickey_sensitivity     -
+-         -    -      0x001B11FC  2:0x000411FC  data         _sp                          _sp                           -
+-         -    -      0x001B1200  2:0x00041200  data         _ss                          _ss                           -
+-         -    -      0x001B1204  2:0x00041204  data         _current_mouse_list          _current_mouse_list           -
+-         -    -      0x001B1208  2:0x00041208  data         _Restore_Mouse               _Restore_Mouse                -
+-         -    -      0x001B120C  2:0x0004120C  data         _Save_Mouse                  _Save_Mouse                   -
+-         -    -      0x001B1210  2:0x00041210  data         _Draw_Mouse                  _Draw_Mouse                   -
+-         -    -      0x001B1214  2:0x00041214  static,data  _mouse_buffer_button2        _mouse_buffer_button2         -
+-         -    -      0x001B1216  2:0x00041216  static,data  _mouse_buffer_x2             _mouse_buffer_x2              -
+-         -    -      0x001B1218  2:0x00041218  static,data  _mouse_buffer_y2             _mouse_buffer_y2              -
+-         -    -      0x001B121A  2:0x0004121A  static,data  _mouse_buttons               _mouse_buttons                -
+-         -    -      0x001B121C  2:0x0004121C  static,data  _mouse_buffer_x              _mouse_buffer_x               -
+-         -    -      0x001B121E  2:0x0004121E  static,data  _mouse_buffer_y              _mouse_buffer_y               -
+-         -    -      0x001B1220  2:0x00041220  static,data  _mouse_buffer_flag2          _mouse_buffer_flag2           -
+-         -    -      0x001B1222  2:0x00041222  static,data  _mouse_buffer_button         _mouse_buffer_button          -
+-         -    -      0x001B1224  2:0x00041224  data         _current_mouse_list_count    _current_mouse_list_count     -
+-         -    -      0x001B1226  2:0x00041226  static,data  _mouse_state                 _mouse_state                  -
+-         -    -      0x001B1228  2:0x00041228  static,data  _mouse_buffer_flag           _mouse_buffer_flag            -
+-         -    -      0x001B122A  2:0x0004122A  data         _toggle_flag                 _toggle_flag                  -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                        TYPE
+0x001AE1EC  2:0x0003E1EC  stck                        unsigned char[12288]
+0x001B11EC  2:0x000411EC  num                         int
+0x001B11F0  2:0x000411F0  old_h_mickey_sensitivity    int
+0x001B11F4  2:0x000411F4  old_threshold               int
+0x001B11F8  2:0x000411F8  old_v_mickey_sensitivity    int
+0x0017C522  2:0x0000C522  default_mouse_list          struct s_mouse_list
+0x001B11FC  2:0x000411FC  sp                          unsigned int
+0x001B1200  2:0x00041200  ss                          unsigned int
+0x001B1204  2:0x00041204  current_mouse_list          struct s_mouse_list *
+0x001B1208  2:0x00041208  Restore_Mouse               void (void) *
+0x001B120C  2:0x0004120C  Save_Mouse                  void (void) *
+0x001B1210  2:0x00041210  Draw_Mouse                  void (void) *
+0x001B1214  2:0x00041214  mouse_buffer_button2        short
+0x0017C51A  2:0x0000C51A  mouse_interrupt_active      short
+0x001B1216  2:0x00041216  mouse_buffer_x2             short
+0x001B1218  2:0x00041218  mouse_buffer_y2             short
+0x001B121A  2:0x0004121A  mouse_buttons               short
+0x001B121C  2:0x0004121C  mouse_buffer_x              short
+0x001B121E  2:0x0004121E  mouse_buffer_y              short
+0x001B1220  2:0x00041220  mouse_buffer_flag2          short
+0x0017C51E  2:0x0000C51E  mouse_overide_left_button   short
+0x001B1222  2:0x00041222  mouse_buffer_button         short
+0x0017C51C  2:0x0000C51C  mouse_overide_flag          short
+0x001B1224  2:0x00041224  current_mouse_list_count    short
+0x0017C518  2:0x0000C518  mouse_enabled               short
+0x001B1226  2:0x00041226  mouse_state                 short
+0x0017C520  2:0x0000C520  mouse_overide_right_button  short
+0x001B1228  2:0x00041228  mouse_buffer_flag           short
+0x001B122A  2:0x0004122A  toggle_flag                 char
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                         TYPE                                 CHUNK
+m142f001  0x001233B4  1:0x001133B4  131   24        7         0x18     -    -                Get_Mouse_Sensitivity        void (void)                          regions/07-object-1/001A8654-001A8E53.txt
+m142f002  0x00123437  1:0x00113437  90    24        7         0x18     -    -                Set_Old_Mouse_Sensitivity    void (void)                          regions/07-object-1/001A8654-001A8E53.txt
+m142f003  0x00123491  1:0x00113491  576   24        7         0x18     -    -                Init_Mouse_Driver            void (void)                          regions/07-object-1/001A8654-001A8E53.txt
+m142f004  0x001236D1  1:0x001136D1  290   17        7         0x10     far  EAX,EBX,ECX,EDX  User_Mouse_Handler           void (int, int, int, int)            regions/07-object-1/001A8654-001A8E53.txt
+m142f005  0x001237F3  1:0x001137F3  121   24        9         0x18     -    -                Set_User_Mouse_Handler       void (void)                          regions/07-object-1/001A8654-001A8E53.txt
+m142f006  0x0012386C  1:0x0011386C  186   24        9         0x18     -    -                Mouse_Button_Handler         void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f007  0x00123926  1:0x00113926  186   24        9         0x18     -    -                Mouse_Movement_Handler       void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f008  0x001239E0  1:0x001139E0  40    24        7         0x18     -    -                Enable_Mouse                 void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f009  0x00123A08  1:0x00113A08  40    24        7         0x18     -    -                Disable_Mouse                void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f010  0x00123A30  1:0x00113A30  52    24        7         0x18     -    -                Save_Mouse_State             void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f011  0x00123A64  1:0x00113A64  43    24        7         0x18     -    -                Restore_Mouse_State          void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f012  0x00123A8F  1:0x00113A8F  43    24        9         0x18     -    -                Mouse_Active                 int (void); returns in EAX           regions/07-object-1/001A8E54-001A9653.txt
+m142f013  0x00123ABA  1:0x00113ABA  45    24        9         0x18     -    -                Pointer_X                    short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f014  0x00123AE7  1:0x00113AE7  45    24        9         0x18     -    -                Pointer_Y                    short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f015  0x00123B14  1:0x00113B14  68    23        8         0x14     -    EAX,EDX          Set_Pointer_Position         void (short, short)                  regions/07-object-1/001A8E54-001A9653.txt
+m142f016  0x00123B58  1:0x00113B58  105   23        8         0x14     -    EAX,EDX          Set_Mouse_Position           void (short, short)                  regions/07-object-1/001A8E54-001A9653.txt
+m142f017  0x00123BC1  1:0x00113BC1  45    24        9         0x18     -    -                Mouse_Buffer_X               short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f018  0x00123BEE  1:0x00113BEE  45    24        9         0x18     -    -                Mouse_Buffer_Y               short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f019  0x00123C1B  1:0x00113C1B  45    24        9         0x18     -    -                Mouse_Buffer_Button          short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f020  0x00123C48  1:0x00113C48  60    24        9         0x18     -    -                Mouse_Buffer                 short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f021  0x00123C84  1:0x00113C84  60    24        9         0x18     -    -                Mouse_Buffer2                short (void); returns in AX          regions/07-object-1/001A8E54-001A9653.txt
+m142f022  0x00123CC0  1:0x00113CC0  64    23        8         0x14     -    EAX,EDX          Set_Buffer_2                 void (short, short)                  regions/07-object-1/001A8E54-001A9653.txt
+m142f023  0x00123D00  1:0x00113D00  83    22        7         0x10     -    EAX,EDX,EBX      Set_Mouse_Buffer             void (short, short, short)           regions/07-object-1/001A8E54-001A9653.txt
+m142f024  0x00123D53  1:0x00113D53  134   14        7         0x18     -    -                Check_Mouse_Buffer           void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f025  0x00123DD9  1:0x00113DD9  147   24        7         0x18     -    -                Reset_System_Mouse           void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f026  0x00123E6C  1:0x00113E6C  59    23        8         0x14     -    EAX,EDX          Set_Mouse_List               void (struct s_mouse_list *, short)  regions/07-object-1/001A8E54-001A9653.txt
+m142f027  0x00123EA7  1:0x00113EA7  340   14        9         0x18     -    -                Check_Mouse_Shape            void (void)                          regions/07-object-1/001A8E54-001A9653.txt
+m142f028  0x00123FFB  1:0x00113FFB  62    24        9         0x18     -    -                Get_Pointer_Offset           int (void); returns in EAX           regions/07-object-1/001A8E54-001A9653.txt
+m142f029  0x00124039  1:0x00114039  60    24        9         0x18     -    -                Get_Pointer_Image_Number     int (void); returns in EAX           regions/07-object-1/001A9654-001A9E53.txt
+m142f030  0x00124075  1:0x00114075  144   24        9         0x18     -    -                Mouse_Button                 short (void); returns in AX          regions/07-object-1/001A9654-001A9E53.txt
+m142f031  0x00124105  1:0x00114105  152   24        9         0x18     -    -                Mouse_Wait                   int (void); returns in EAX           regions/07-object-1/001A9654-001A9E53.txt
+m142f032  0x0012419D  1:0x0011419D  154   24        9         0x18     -    -                Save_Mouse_From_Off_Page     void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f033  0x00124237  1:0x00114237  31    24        7         0x18     -    -                Save_Correct_Mouse_Hi_Res    void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f034  0x00124256  1:0x00114256  262   24        9         0x18     -    -                Restore_Mouse_From_Off_Page  void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f035  0x0012435C  1:0x0011435C  65    14        7         0x18     -    -                Draw_Mouse_Off_Page          void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f036  0x0012439D  1:0x0011439D  65    14        7         0x18     -    -                Draw_Mouse_Hi_Res            void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f037  0x001243DE  1:0x001143DE  332   24        9         0x18     -    -                Draw_Mouse_To_Off_Page       void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f038  0x0012452A  1:0x0011452A  54    22        7         0x10     -    EAX,EDX,EBX      Say_Hello                    void (int, int, int)                 regions/07-object-1/001A9654-001A9E53.txt
+m142f039  0x00124560  1:0x00114560  211   24        9         0x18     -    -                S_Mouse                      void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f040  0x00124633  1:0x00114633  40    24        7         0x18     -    -                Set_Mouse_Overide_Input      void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f041  0x0012465B  1:0x0011465B  40    24        7         0x18     -    -                Clear_Mouse_Overide_Input    void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f042  0x00124683  1:0x00114683  63    24        9         0x18     -    EAX              Set_Mouse_X                  void (short)                         regions/07-object-1/001A9654-001A9E53.txt
+m142f043  0x001246C2  1:0x001146C2  62    24        9         0x18     -    EAX              Set_Mouse_Y                  void (short)                         regions/07-object-1/001A9654-001A9E53.txt
+m142f044  0x00124700  1:0x00114700  40    24        7         0x18     -    -                Set_Mouse_Right_Down         void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f045  0x00124728  1:0x00114728  40    24        7         0x18     -    -                Set_Mouse_Left_Down          void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f046  0x00124750  1:0x00114750  40    24        7         0x18     -    -                Set_Mouse_Right_Up           void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+m142f047  0x00124778  1:0x00114778  40    24        7         0x18     -    -                Set_Mouse_Left_Up            void (void)                          regions/07-object-1/001A9654-001A9E53.txt
+
+[Locals]
+KEY       ROUTINE                      BLOCK  LOCAL                 LOCATION              TYPE
+m142f004  User_Mouse_Handler           -      max                   [EBP-0x18]            int
+m142f004  User_Mouse_Handler           -      buttons               [EBP-0x14]            int
+m142f004  User_Mouse_Handler           -      mcx                   [EBP-0x10]            int
+m142f004  User_Mouse_Handler           -      mdx                   [EBP-0xC]             int
+m142f004  User_Mouse_Handler           -      last_mouse_event      [EBP-0x8]             int
+m142f004  User_Mouse_Handler           -      i                     [EBP-0x4]             int
+m142f004  User_Mouse_Handler           -      new_stack             address 2:0x0004122B  char[3072]
+m142f004  User_Mouse_Handler           -      old_stack             address 2:0x00041E2B  void *
+m142f004  User_Mouse_Handler           -      in_mouse_handeler     address 2:0x0000C52E  int
+m142f005  Set_User_Mouse_Handler       -      function_ptr          [EBP-0x8]             int (int, int, int, int) *
+m142f006  Mouse_Button_Handler         -      function_ptr          [EBP-0x8]             int (void) *
+m142f007  Mouse_Movement_Handler       -      function_ptr          [EBP-0x8]             int (void) *
+m142f015  Set_Pointer_Position         -      x                     [EBP-0x8]             short
+m142f015  Set_Pointer_Position         -      y                     [EBP-0x4]             short
+m142f016  Set_Mouse_Position           -      x                     [EBP-0x8]             short
+m142f016  Set_Mouse_Position           -      y                     [EBP-0x4]             short
+m142f020  Mouse_Buffer                 -      value                 [EBP-0x8]             short
+m142f021  Mouse_Buffer2                -      value                 [EBP-0x8]             short
+m142f022  Set_Buffer_2                 -      x                     [EBP-0x8]             short
+m142f022  Set_Buffer_2                 -      y                     [EBP-0x4]             short
+m142f023  Set_Mouse_Buffer             -      x                     [EBP-0xC]             short
+m142f023  Set_Mouse_Buffer             -      y                     [EBP-0x8]             short
+m142f023  Set_Mouse_Buffer             -      buttons               [EBP-0x4]             short
+m142f026  Set_Mouse_List               -      list                  [EBP-0x8]             struct s_mouse_list *
+m142f026  Set_Mouse_List               -      count                 [EBP-0x4]             short
+m142f027  Check_Mouse_Shape            -      i                     [EBP-0x4]             int
+m142f032  Save_Mouse_From_Off_Page     -      y                     [EBP-0x1C]            int
+m142f032  Save_Mouse_From_Off_Page     -      vpos                  [EBP-0x18]            int
+m142f032  Save_Mouse_From_Off_Page     -      line_add              [EBP-0x14]            int
+m142f032  Save_Mouse_From_Off_Page     -      current_bank          [EBP-0x10]            int
+m142f032  Save_Mouse_From_Off_Page     -      x                     [EBP-0xC]             int
+m142f032  Save_Mouse_From_Off_Page     -      pos                   [EBP-0x8]             int
+m142f032  Save_Mouse_From_Off_Page     -      long_off_page_buffer  [EBP-0x4]             long *
+m142f034  Restore_Mouse_From_Off_Page  -      y                     [EBP-0x28]            int
+m142f034  Restore_Mouse_From_Off_Page  -      vpos                  [EBP-0x24]            int
+m142f034  Restore_Mouse_From_Off_Page  -      line_add              [EBP-0x20]            int
+m142f034  Restore_Mouse_From_Off_Page  -      current_bank          [EBP-0x1C]            int
+m142f034  Restore_Mouse_From_Off_Page  -      x                     [EBP-0x18]            int
+m142f034  Restore_Mouse_From_Off_Page  -      pos                   [EBP-0x14]            int
+m142f034  Restore_Mouse_From_Off_Page  -      max_horizontal        [EBP-0x10]            int
+m142f034  Restore_Mouse_From_Off_Page  -      horizontal_add        [EBP-0xC]             int
+m142f034  Restore_Mouse_From_Off_Page  -      max_vertical          [EBP-0x8]             int
+m142f034  Restore_Mouse_From_Off_Page  -      long_off_page_buffer  [EBP-0x4]             long *
+m142f037  Draw_Mouse_To_Off_Page       -      y                     [EBP-0x2C]            int
+m142f037  Draw_Mouse_To_Off_Page       -      vpos                  [EBP-0x28]            int
+m142f037  Draw_Mouse_To_Off_Page       -      line_add              [EBP-0x24]            int
+m142f037  Draw_Mouse_To_Off_Page       -      current_bank          [EBP-0x20]            int
+m142f037  Draw_Mouse_To_Off_Page       -      x                     [EBP-0x1C]            int
+m142f037  Draw_Mouse_To_Off_Page       -      pos                   [EBP-0x18]            int
+m142f037  Draw_Mouse_To_Off_Page       -      max_horizontal        [EBP-0x14]            int
+m142f037  Draw_Mouse_To_Off_Page       -      horizontal_add        [EBP-0x10]            int
+m142f037  Draw_Mouse_To_Off_Page       -      max_vertical          [EBP-0xC]             int
+m142f037  Draw_Mouse_To_Off_Page       -      mouse_image           [EBP-0x8]             unsigned char *
+m142f037  Draw_Mouse_To_Off_Page       -      pixel                 [EBP-0x4]             unsigned char
+m142f038  Say_Hello                    -      x                     [EBP-0xC]             int
+m142f038  Say_Hello                    -      y                     [EBP-0x8]             int
+m142f038  Say_Hello                    -      x_num                 [EBP-0x4]             int
+m142f039  S_Mouse                      -      offset                [EBP-0x1C]            int
+m142f039  S_Mouse                      -      start_bank            [EBP-0x18]            int
+m142f039  S_Mouse                      -      even                  [EBP-0x8]             char
+m142f039  S_Mouse                      -      switch_bank           [EBP-0x4]             char
+m142f039  S_Mouse                      -      long_video_memory     [EBP-0xC]             long *
+m142f039  S_Mouse                      -      switch_bank_y         [EBP-0x14]            int
+m142f039  S_Mouse                      -      i                     [EBP-0x10]            int
+m142f042  Set_Mouse_X                  -      x                     [EBP-0x4]             short
+m142f043  Set_Mouse_Y                  -      y                     [EBP-0x4]             short
+
+[Types]
+NUM  KIND       NAME                 DETAILS
+-    cue table  -                    source file table (C++)
+1    scope      struct               -
+2    scope      union                -
+3    scope      enum                 -
+4    scalar     signed char          int 1 bytes
+5    scalar     unsigned char        unsigned 1 bytes
+6    scalar     short                int 2 bytes
+7    scalar     unsigned short       unsigned 2 bytes
+8    scalar     int                  int 4 bytes
+9    scalar     unsigned int         unsigned 4 bytes
+10   typedef    char                 name for unsigned char (#5)
+11   typedef    char                 name for unsigned char (#5)
+12   typedef    size_t               name for unsigned int (#9)
+13   pointer    -                    near386; of char (#10)
+14   array      __va_list            0..0; of char * (#13)
+15   typedef    __va_list            name for char *[1] (#14)
+16   scalar     long                 int 4 bytes
+17   typedef    fpos_t               name for long (#16)
+18   typedef    fpos_t               name for long (#16)
+19   typedef    BYTE                 name for unsigned char (#5)
+20   typedef    SBYTE                name for signed char (#4)
+21   typedef    UBYTE                name for unsigned char (#5)
+22   typedef    WORD                 name for unsigned short (#7)
+23   typedef    SWORD                name for short (#6)
+24   typedef    UWORD                name for unsigned short (#7)
+25   typedef    DWORD                name for unsigned int (#9)
+26   typedef    SDWORD               name for int (#8)
+27   typedef    UDWORD               name for unsigned int (#9)
+28   typedef    BOOL                 name for unsigned char (#5)
+29   typedef    SampleHandle         name for int (#8)
+30   scalar     unsigned long        unsigned 4 bytes
+31   typedef    time_t               name for unsigned long (#30)
+32   typedef    ino_t                name for unsigned int (#9)
+33   typedef    dev_t                name for int (#8)
+34   typedef    off_t                name for long (#16)
+35   typedef    clock_t              name for unsigned long (#30)
+36   typedef    time_t               name for unsigned long (#30)
+37   array      -                    0..12287; of unsigned char (#5)
+38   struct     struct s_mouse_list  6 fields, 12 bytes
+39   typedef    s_mouse_list         struct name for struct #38 (#38)
+40   pointer    -                    near386; of struct s_mouse_list (#39)
+41   scalar     void                 void 1 bytes
+42   procedure  -                    near386; returns void ()
+43   pointer    -                    near386; of void (void) (#42)
+44   procedure  -                    far386; returns void ()
+45   pointer    -                    near386; of void (void) (#44)
+46   pointer    -                    near386; of void (void) (#42)
+47   procedure  -                    far386; returns void (int, int, int, int)
+48   array      -                    0..3071; of char (#10)
+49   pointer    -                    far386; of void (#41)
+50   procedure  -                    near386; returns int (int, int, int, int)
+51   pointer    -                    far386; of int (int, int, int, int) (#50)
+52   procedure  -                    near386; returns int ()
+53   pointer    -                    far386; of int (void) (#52)
+54   pointer    -                    far386; of int (void) (#52)
+55   procedure  -                    near386; returns short ()
+56   procedure  -                    near386; returns void (short, short)
+57   procedure  -                    near386; returns void (short, short, short)
+58   procedure  -                    near386; returns void (struct s_mouse_list *, short)
+59   procedure  -                    near386; returns int (void)
+60   pointer    -                    near386; of long (#16)
+61   pointer    -                    near386; of unsigned char (#5)
+62   procedure  -                    near386; returns void (int, int, int)
+63   procedure  -                    near386; returns void (short)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER         OFFSET_VALUE  TYPE   TYPE_NAME
+38        field        image_num      0             SWORD  struct s_mouse_list
+38        field        center_offset  2             SWORD  struct s_mouse_list
+38        field        x1             4             SWORD  struct s_mouse_list
+38        field        y1             6             SWORD  struct s_mouse_list
+38        field        x2             8             SWORD  struct s_mouse_list
+38        field        y2             10            SWORD  struct s_mouse_list
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m142f001  52    0x001233B4  1:0x001133B4  0x001A8A08
+m142f001  54    0x001233CC  1:0x001133CC  0x001A8A20
+m142f001  55    0x001233D6  1:0x001133D6  0x001A8A2A
+m142f001  56    0x001233E0  1:0x001133E0  0x001A8A34
+m142f001  57    0x001233EA  1:0x001133EA  0x001A8A3E
+m142f001  59    0x001233F4  1:0x001133F4  0x001A8A48
+m142f001  60    0x001233FE  1:0x001133FE  0x001A8A52
+m142f001  61    0x00123412  1:0x00113412  0x001A8A66
+m142f001  62    0x0012341C  1:0x0011341C  0x001A8A70
+m142f001  63    0x00123426  1:0x00113426  0x001A8A7A
+m142f001  64    0x00123430  1:0x00113430  0x001A8A84
+m142f002  65    0x00123437  1:0x00113437  0x001A8A8B
+m142f002  67    0x0012344F  1:0x0011344F  0x001A8AA3
+m142f002  68    0x00123476  1:0x00113476  0x001A8ACA
+m142f002  69    0x0012348A  1:0x0011348A  0x001A8ADE
+m142f003  71    0x00123491  1:0x00113491  0x001A8AE5
+m142f003  73    0x001234A9  1:0x001134A9  0x001A8AFD
+m142f003  74    0x001234B2  1:0x001134B2  0x001A8B06
+m142f003  75    0x001234BB  1:0x001134BB  0x001A8B0F
+m142f003  76    0x001234C4  1:0x001134C4  0x001A8B18
+m142f003  77    0x001234CD  1:0x001134CD  0x001A8B21
+m142f003  79    0x001234D6  1:0x001134D6  0x001A8B2A
+m142f003  80    0x001234E0  1:0x001134E0  0x001A8B34
+m142f003  82    0x001234EA  1:0x001134EA  0x001A8B3E
+m142f003  83    0x0012350E  1:0x0011350E  0x001A8B62
+m142f003  84    0x00123513  1:0x00113513  0x001A8B67
+m142f003  86    0x00123527  1:0x00113527  0x001A8B7B
+m142f003  88    0x00123531  1:0x00113531  0x001A8B85
+m142f003  89    0x00123536  1:0x00113536  0x001A8B8A
+m142f003  91    0x00123540  1:0x00113540  0x001A8B94
+m142f003  93    0x00123545  1:0x00113545  0x001A8B99
+m142f003  94    0x00123569  1:0x00113569  0x001A8BBD
+m142f003  97    0x0012357D  1:0x0011357D  0x001A8BD1
+m142f003  98    0x001235A7  1:0x001135A7  0x001A8BFB
+m142f003  100   0x001235BB  1:0x001135BB  0x001A8C0F
+m142f003  101   0x001235E3  1:0x001135E3  0x001A8C37
+m142f003  103   0x001235F7  1:0x001135F7  0x001A8C4B
+m142f003  104   0x0012361F  1:0x0011361F  0x001A8C73
+m142f003  109   0x00123633  1:0x00113633  0x001A8C87
+m142f003  110   0x00123638  1:0x00113638  0x001A8C8C
+m142f003  112   0x0012363D  1:0x0011363D  0x001A8C91
+m142f003  114   0x00123642  1:0x00113642  0x001A8C96
+m142f003  115   0x0012364B  1:0x0011364B  0x001A8C9F
+m142f003  116   0x00123654  1:0x00113654  0x001A8CA8
+m142f003  118   0x0012365D  1:0x0011365D  0x001A8CB1
+m142f003  120   0x00123662  1:0x00113662  0x001A8CB6
+m142f003  121   0x0012366F  1:0x0011366F  0x001A8CC3
+m142f003  122   0x0012367C  1:0x0011367C  0x001A8CD0
+m142f003  123   0x0012368B  1:0x0011368B  0x001A8CDF
+m142f003  125   0x001236B8  1:0x001136B8  0x001A8D0C
+m142f003  126   0x001236C1  1:0x001136C1  0x001A8D15
+m142f003  128   0x001236CA  1:0x001136CA  0x001A8D1E
+m142f004  158   0x001236D1  1:0x001136D1  0x001A8D25
+m142f004  165   0x001236EE  1:0x001136EE  0x001A8D42
+m142f004  171   0x001236FB  1:0x001136FB  0x001A8D4F
+m142f004  176   0x00123705  1:0x00113705  0x001A8D59
+m142f004  178   0x0012370A  1:0x0011370A  0x001A8D5E
+m142f004  180   0x0012370B  1:0x0011370B  0x001A8D5F
+m142f004  183   0x00123711  1:0x00113711  0x001A8D65
+m142f004  185   0x0012371F  1:0x0011371F  0x001A8D73
+m142f004  187   0x00123729  1:0x00113729  0x001A8D7D
+m142f004  188   0x00123735  1:0x00113735  0x001A8D89
+m142f004  189   0x0012373E  1:0x0011373E  0x001A8D92
+m142f004  191   0x00123747  1:0x00113747  0x001A8D9B
+m142f004  192   0x00123749  1:0x00113749  0x001A8D9D
+m142f004  194   0x0012375C  1:0x0011375C  0x001A8DB0
+m142f004  195   0x00123772  1:0x00113772  0x001A8DC6
+m142f004  197   0x00123785  1:0x00113785  0x001A8DD9
+m142f004  198   0x0012378A  1:0x0011378A  0x001A8DDE
+m142f004  200   0x00123793  1:0x00113793  0x001A8DE7
+m142f004  201   0x0012379C  1:0x0011379C  0x001A8DF0
+m142f004  203   0x001237A1  1:0x001137A1  0x001A8DF5
+m142f004  207   0x001237AE  1:0x001137AE  0x001A8E02
+m142f004  208   0x001237B4  1:0x001137B4  0x001A8E08
+m142f004  209   0x001237BA  1:0x001137BA  0x001A8E0E
+m142f004  213   0x001237C0  1:0x001137C0  0x001A8E14
+m142f004  215   0x001237C9  1:0x001137C9  0x001A8E1D
+m142f004  217   0x001237DD  1:0x001137DD  0x001A8E31
+m142f004  220   0x001237E2  1:0x001137E2  0x001A8E36
+m142f004  223   0x001237EC  1:0x001137EC  0x001A8E40
+m142f005  239   0x001237F3  1:0x001137F3  0x001A8E47
+m142f005  243   0x0012380B  1:0x0011380B  0x001A8E5F
+m142f005  245   0x00123810  1:0x00113810  0x001A8E64
+m142f005  246   0x0012381A  1:0x0011381A  0x001A8E6E
+m142f005  247   0x00123823  1:0x00113823  0x001A8E77
+m142f005  248   0x0012382C  1:0x0011382C  0x001A8E80
+m142f005  249   0x00123834  1:0x00113834  0x001A8E88
+m142f005  250   0x00123845  1:0x00113845  0x001A8E99
+m142f005  252   0x0012385E  1:0x0011385E  0x001A8EB2
+m142f005  253   0x00123863  1:0x00113863  0x001A8EB7
+m142f006  255   0x0012386C  1:0x0011386C  0x001A8EC0
+m142f006  259   0x00123884  1:0x00113884  0x001A8ED8
+m142f006  261   0x00123889  1:0x00113889  0x001A8EDD
+m142f006  262   0x00123893  1:0x00113893  0x001A8EE7
+m142f006  263   0x0012389C  1:0x0011389C  0x001A8EF0
+m142f006  264   0x001238A5  1:0x001138A5  0x001A8EF9
+m142f006  265   0x001238AD  1:0x001138AD  0x001A8F01
+m142f006  266   0x001238BE  1:0x001138BE  0x001A8F12
+m142f006  268   0x001238D7  1:0x001138D7  0x001A8F2B
+m142f006  269   0x001238E0  1:0x001138E0  0x001A8F34
+m142f006  270   0x00123904  1:0x00113904  0x001A8F58
+m142f006  272   0x00123918  1:0x00113918  0x001A8F6C
+m142f006  273   0x0012391D  1:0x0011391D  0x001A8F71
+m142f007  275   0x00123926  1:0x00113926  0x001A8F7A
+m142f007  279   0x0012393E  1:0x0011393E  0x001A8F92
+m142f007  281   0x00123943  1:0x00113943  0x001A8F97
+m142f007  282   0x0012394D  1:0x0011394D  0x001A8FA1
+m142f007  283   0x00123956  1:0x00113956  0x001A8FAA
+m142f007  284   0x0012395F  1:0x0011395F  0x001A8FB3
+m142f007  285   0x00123967  1:0x00113967  0x001A8FBB
+m142f007  286   0x00123978  1:0x00113978  0x001A8FCC
+m142f007  288   0x00123991  1:0x00113991  0x001A8FE5
+m142f007  289   0x0012399A  1:0x0011399A  0x001A8FEE
+m142f007  290   0x001239BE  1:0x001139BE  0x001A9012
+m142f007  292   0x001239D2  1:0x001139D2  0x001A9026
+m142f007  293   0x001239D7  1:0x001139D7  0x001A902B
+m142f008  296   0x001239E0  1:0x001139E0  0x001A9034
+m142f009  297   0x00123A08  1:0x00113A08  0x001A905C
+m142f010  298   0x00123A30  1:0x00113A30  0x001A9084
+m142f011  299   0x00123A64  1:0x00113A64  0x001A90B8
+m142f012  300   0x00123A8F  1:0x00113A8F  0x001A90E3
+m142f013  301   0x00123ABA  1:0x00113ABA  0x001A910E
+m142f014  302   0x00123AE7  1:0x00113AE7  0x001A913B
+m142f015  303   0x00123B14  1:0x00113B14  0x001A9168
+m142f015  305   0x00123B31  1:0x00113B31  0x001A9185
+m142f015  306   0x00123B3A  1:0x00113B3A  0x001A918E
+m142f015  307   0x00123B43  1:0x00113B43  0x001A9197
+m142f015  308   0x00123B50  1:0x00113B50  0x001A91A4
+m142f016  309   0x00123B58  1:0x00113B58  0x001A91AC
+m142f016  312   0x00123B75  1:0x00113B75  0x001A91C9
+m142f016  313   0x00123B9B  1:0x00113B9B  0x001A91EF
+m142f016  314   0x00123BA0  1:0x00113BA0  0x001A91F4
+m142f016  315   0x00123BB4  1:0x00113BB4  0x001A9208
+m142f016  316   0x00123BB9  1:0x00113BB9  0x001A920D
+m142f017  317   0x00123BC1  1:0x00113BC1  0x001A9215
+m142f018  318   0x00123BEE  1:0x00113BEE  0x001A9242
+m142f019  319   0x00123C1B  1:0x00113C1B  0x001A926F
+m142f020  320   0x00123C48  1:0x00113C48  0x001A929C
+m142f020  323   0x00123C60  1:0x00113C60  0x001A92B4
+m142f020  324   0x00123C69  1:0x00113C69  0x001A92BD
+m142f020  325   0x00123C72  1:0x00113C72  0x001A92C6
+m142f020  326   0x00123C78  1:0x00113C78  0x001A92CC
+m142f021  327   0x00123C84  1:0x00113C84  0x001A92D8
+m142f021  330   0x00123C9C  1:0x00113C9C  0x001A92F0
+m142f021  331   0x00123CA5  1:0x00113CA5  0x001A92F9
+m142f021  332   0x00123CAE  1:0x00113CAE  0x001A9302
+m142f021  333   0x00123CB4  1:0x00113CB4  0x001A9308
+m142f022  334   0x00123CC0  1:0x00113CC0  0x001A9314
+m142f022  336   0x00123CDD  1:0x00113CDD  0x001A9331
+m142f022  337   0x00123CE6  1:0x00113CE6  0x001A933A
+m142f022  338   0x00123CEF  1:0x00113CEF  0x001A9343
+m142f022  339   0x00123CF8  1:0x00113CF8  0x001A934C
+m142f023  340   0x00123D00  1:0x00113D00  0x001A9354
+m142f023  342   0x00123D1F  1:0x00113D1F  0x001A9373
+m142f023  343   0x00123D28  1:0x00113D28  0x001A937C
+m142f023  344   0x00123D31  1:0x00113D31  0x001A9385
+m142f023  345   0x00123D3A  1:0x00113D3A  0x001A938E
+m142f023  346   0x00123D43  1:0x00113D43  0x001A9397
+m142f023  347   0x00123D4C  1:0x00113D4C  0x001A93A0
+m142f024  350   0x00123D53  1:0x00113D53  0x001A93A7
+m142f024  352   0x00123D61  1:0x00113D61  0x001A93B5
+m142f024  354   0x00123D71  1:0x00113D71  0x001A93C5
+m142f024  356   0x00123D82  1:0x00113D82  0x001A93D6
+m142f024  358   0x00123DA2  1:0x00113DA2  0x001A93F6
+m142f024  359   0x00123DAB  1:0x00113DAB  0x001A93FF
+m142f024  360   0x00123DB4  1:0x00113DB4  0x001A9408
+m142f024  361   0x00123DC0  1:0x00113DC0  0x001A9414
+m142f024  363   0x00123DCC  1:0x00113DCC  0x001A9420
+m142f024  364   0x00123DD2  1:0x00113DD2  0x001A9426
+m142f025  373   0x00123DD9  1:0x00113DD9  0x001A942D
+m142f025  375   0x00123DF1  1:0x00113DF1  0x001A9445
+m142f025  376   0x00123DF6  1:0x00113DF6  0x001A944A
+m142f025  377   0x00123DFF  1:0x00113DFF  0x001A9453
+m142f025  379   0x00123E08  1:0x00113E08  0x001A945C
+m142f025  380   0x00123E13  1:0x00113E13  0x001A9467
+m142f025  382   0x00123E1E  1:0x00113E1E  0x001A9472
+m142f025  384   0x00123E23  1:0x00113E23  0x001A9477
+m142f025  385   0x00123E47  1:0x00113E47  0x001A949B
+m142f025  386   0x00123E5B  1:0x00113E5B  0x001A94AF
+m142f025  388   0x00123E60  1:0x00113E60  0x001A94B4
+m142f025  389   0x00123E65  1:0x00113E65  0x001A94B9
+m142f026  395   0x00123E6C  1:0x00113E6C  0x001A94C0
+m142f026  397   0x00123E89  1:0x00113E89  0x001A94DD
+m142f026  398   0x00123E91  1:0x00113E91  0x001A94E5
+m142f026  399   0x00123E9A  1:0x00113E9A  0x001A94EE
+m142f026  400   0x00123E9F  1:0x00113E9F  0x001A94F3
+m142f027  402   0x00123EA7  1:0x00113EA7  0x001A94FB
+m142f027  405   0x00123EB5  1:0x00113EB5  0x001A9509
+m142f027  407   0x00123EBE  1:0x00113EBE  0x001A9512
+m142f027  409   0x00123EDF  1:0x00113EDF  0x001A9533
+m142f027  413   0x00123FB1  1:0x00113FB1  0x001A9605
+m142f027  414   0x00123FBA  1:0x00113FBA  0x001A960E
+m142f027  416   0x00123FBF  1:0x00113FBF  0x001A9613
+m142f027  418   0x00123FCC  1:0x00113FCC  0x001A9620
+m142f027  420   0x00123FD5  1:0x00113FD5  0x001A9629
+m142f027  422   0x00123FD7  1:0x00113FD7  0x001A962B
+m142f027  424   0x00123FF2  1:0x00113FF2  0x001A9646
+m142f028  427   0x00123FFB  1:0x00113FFB  0x001A964F
+m142f029  429   0x00124039  1:0x00114039  0x001A968D
+m142f029  431   0x00124051  1:0x00114051  0x001A96A5
+m142f029  432   0x00124069  1:0x00114069  0x001A96BD
+m142f030  434   0x00124075  1:0x00114075  0x001A96C9
+m142f030  436   0x0012408D  1:0x0011408D  0x001A96E1
+m142f030  437   0x00124096  1:0x00114096  0x001A96EA
+m142f030  438   0x0012409F  1:0x0011409F  0x001A96F3
+m142f030  439   0x001240A8  1:0x001140A8  0x001A96FC
+m142f030  440   0x001240B1  1:0x001140B1  0x001A9705
+m142f030  441   0x001240B6  1:0x001140B6  0x001A970A
+m142f030  442   0x001240CA  1:0x001140CA  0x001A971E
+m142f030  444   0x001240CF  1:0x001140CF  0x001A9723
+m142f030  445   0x001240D9  1:0x001140D9  0x001A972D
+m142f030  447   0x001240E9  1:0x001140E9  0x001A973D
+m142f030  448   0x001240F9  1:0x001140F9  0x001A974D
+m142f031  450   0x00124105  1:0x00114105  0x001A9759
+m142f031  452   0x0012411D  1:0x0011411D  0x001A9771
+m142f031  454   0x00124126  1:0x00114126  0x001A977A
+m142f031  456   0x0012413A  1:0x0011413A  0x001A978E
+m142f031  457   0x00124143  1:0x00114143  0x001A9797
+m142f031  458   0x0012414C  1:0x0011414C  0x001A97A0
+m142f031  459   0x00124155  1:0x00114155  0x001A97A9
+m142f031  461   0x0012415E  1:0x0011415E  0x001A97B2
+m142f031  462   0x00124163  1:0x00114163  0x001A97B7
+m142f031  463   0x00124177  1:0x00114177  0x001A97CB
+m142f031  464   0x0012417C  1:0x0011417C  0x001A97D0
+m142f031  466   0x0012417E  1:0x0011417E  0x001A97D2
+m142f031  467   0x00124191  1:0x00114191  0x001A97E5
+m142f032  469   0x0012419D  1:0x0011419D  0x001A97F1
+m142f032  474   0x001241B5  1:0x001141B5  0x001A9809
+m142f032  476   0x001241BD  1:0x001141BD  0x001A9811
+m142f032  477   0x001241C4  1:0x001141C4  0x001A9818
+m142f032  478   0x001241E5  1:0x001141E5  0x001A9839
+m142f032  480   0x001241F0  1:0x001141F0  0x001A9844
+m142f032  482   0x00124207  1:0x00114207  0x001A985B
+m142f032  483   0x00124222  1:0x00114222  0x001A9876
+m142f032  484   0x00124226  1:0x00114226  0x001A987A
+m142f032  485   0x0012422C  1:0x0011422C  0x001A9880
+m142f032  486   0x0012422E  1:0x0011422E  0x001A9882
+m142f033  489   0x00124237  1:0x00114237  0x001A988B
+m142f033  492   0x0012424F  1:0x0011424F  0x001A98A3
+m142f034  493   0x00124256  1:0x00114256  0x001A98AA
+m142f034  499   0x0012426E  1:0x0011426E  0x001A98C2
+m142f034  501   0x00124276  1:0x00114276  0x001A98CA
+m142f034  502   0x0012427D  1:0x0011427D  0x001A98D1
+m142f034  503   0x0012429E  1:0x0011429E  0x001A98F2
+m142f034  505   0x001242A9  1:0x001142A9  0x001A98FD
+m142f034  506   0x001242CB  1:0x001142CB  0x001A991F
+m142f034  508   0x001242E6  1:0x001142E6  0x001A993A
+m142f034  509   0x00124300  1:0x00114300  0x001A9954
+m142f034  511   0x00124315  1:0x00114315  0x001A9969
+m142f034  513   0x0012432E  1:0x0011432E  0x001A9982
+m142f034  514   0x00124347  1:0x00114347  0x001A999B
+m142f034  515   0x0012434B  1:0x0011434B  0x001A999F
+m142f034  516   0x00124351  1:0x00114351  0x001A99A5
+m142f034  517   0x00124353  1:0x00114353  0x001A99A7
+m142f035  522   0x0012435C  1:0x0011435C  0x001A99B0
+m142f035  524   0x0012436A  1:0x0011436A  0x001A99BE
+m142f035  526   0x00124374  1:0x00114374  0x001A99C8
+m142f035  527   0x00124391  1:0x00114391  0x001A99E5
+m142f035  529   0x00124396  1:0x00114396  0x001A99EA
+m142f036  533   0x0012439D  1:0x0011439D  0x001A99F1
+m142f036  535   0x001243AB  1:0x001143AB  0x001A99FF
+m142f036  537   0x001243B5  1:0x001143B5  0x001A9A09
+m142f036  538   0x001243D2  1:0x001143D2  0x001A9A26
+m142f036  540   0x001243D7  1:0x001143D7  0x001A9A2B
+m142f037  544   0x001243DE  1:0x001143DE  0x001A9A32
+m142f037  550   0x001243F6  1:0x001143F6  0x001A9A4A
+m142f037  552   0x00124407  1:0x00114407  0x001A9A5B
+m142f037  554   0x00124421  1:0x00114421  0x001A9A75
+m142f037  555   0x0012443B  1:0x0011443B  0x001A9A8F
+m142f037  557   0x00124450  1:0x00114450  0x001A9AA4
+m142f037  558   0x0012446A  1:0x0011446A  0x001A9ABE
+m142f037  560   0x0012447F  1:0x0011447F  0x001A9AD3
+m142f037  561   0x00124486  1:0x00114486  0x001A9ADA
+m142f037  562   0x001244A4  1:0x001144A4  0x001A9AF8
+m142f037  563   0x001244AF  1:0x001144AF  0x001A9B03
+m142f037  565   0x001244BA  1:0x001144BA  0x001A9B0E
+m142f037  567   0x001244D3  1:0x001144D3  0x001A9B27
+m142f037  569   0x001244EC  1:0x001144EC  0x001A9B40
+m142f037  578   0x001244F7  1:0x001144F7  0x001A9B4B
+m142f037  579   0x001244FD  1:0x001144FD  0x001A9B51
+m142f037  580   0x0012450B  1:0x0011450B  0x001A9B5F
+m142f037  581   0x0012450E  1:0x0011450E  0x001A9B62
+m142f037  583   0x00124511  1:0x00114511  0x001A9B65
+m142f037  584   0x00124513  1:0x00114513  0x001A9B67
+m142f037  585   0x00124519  1:0x00114519  0x001A9B6D
+m142f037  586   0x0012451F  1:0x0011451F  0x001A9B73
+m142f037  587   0x00124521  1:0x00114521  0x001A9B75
+m142f038  658   0x0012452A  1:0x0011452A  0x001A9B7E
+m142f038  660   0x00124549  1:0x00114549  0x001A9B9D
+m142f038  661   0x00124559  1:0x00114559  0x001A9BAD
+m142f039  662   0x00124560  1:0x00114560  0x001A9BB4
+m142f039  669   0x00124578  1:0x00114578  0x001A9BCC
+m142f039  671   0x00124580  1:0x00114580  0x001A9BD4
+m142f039  672   0x00124584  1:0x00114584  0x001A9BD8
+m142f039  673   0x00124588  1:0x00114588  0x001A9BDC
+m142f039  676   0x0012458F  1:0x0011458F  0x001A9BE3
+m142f039  677   0x001245AD  1:0x001145AD  0x001A9C01
+m142f039  678   0x001245C1  1:0x001145C1  0x001A9C15
+m142f039  680   0x001245D4  1:0x001145D4  0x001A9C28
+m142f039  682   0x001245DD  1:0x001145DD  0x001A9C31
+m142f039  684   0x001245E1  1:0x001145E1  0x001A9C35
+m142f039  686   0x001245FE  1:0x001145FE  0x001A9C52
+m142f039  688   0x00124616  1:0x00114616  0x001A9C6A
+m142f039  689   0x0012461A  1:0x0011461A  0x001A9C6E
+m142f039  691   0x00124620  1:0x00114620  0x001A9C74
+m142f039  693   0x00124622  1:0x00114622  0x001A9C76
+m142f039  698   0x0012462A  1:0x0011462A  0x001A9C7E
+m142f040  700   0x00124633  1:0x00114633  0x001A9C87
+m142f041  701   0x0012465B  1:0x0011465B  0x001A9CAF
+m142f042  702   0x00124683  1:0x00114683  0x001A9CD7
+m142f043  703   0x001246C2  1:0x001146C2  0x001A9D16
+m142f044  704   0x00124700  1:0x00114700  0x001A9D54
+m142f045  705   0x00124728  1:0x00114728  0x001A9D7C
+m142f046  706   0x00124750  1:0x00114750  0x001A9DA4
+m142f047  707   0x00124778  1:0x00114778  0x001A9DCC

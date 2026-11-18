@@ -1,0 +1,21 @@
+module_num=72
+module=D:\MOX\OTHERS\COLLAND.C
+source=0072-colland.c.md
+range[0]=1:0x000A937B linear=0x000B937B size=1809
+range[1]=2:0x00001DCC linear=0x00171DCC size=8
+range[2]=2:0x0002738C linear=0x0019738C size=24
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                        SYMBOL                       CHUNK
+m072f001  1    -      0x000B937B  1:0x000A937B  static,code  Add_Fields                  Add_Fields_                  regions/07-object-1/0013E654-0013EE53.txt
+m072f002  2    -      0x000B93A8  1:0x000A93A8  static,code  Load_Landing_Anims          Load_Landing_Anims_          regions/07-object-1/0013E654-0013EE53.txt
+m072f003  3    -      0x000B93C7  1:0x000A93C7  static,code  Update_Fields               Update_Fields_               regions/07-object-1/0013E654-0013EE53.txt
+m072f004  4    -      0x000B93D1  1:0x000A93D1  static,code  Draw_Colony_Landing_Screen  Draw_Colony_Landing_Screen_  regions/07-object-1/0013E654-0013EE53.txt
+m072f005  5    -      0x000B953E  1:0x000A953E  static,code  Print_Planet_Data           Print_Planet_Data_           regions/07-object-1/0013E654-0013EE53.txt
+m072f006  6    -      0x000B9802  1:0x000A9802  code         Colony_Landing_Screen       Colony_Landing_Screen_       regions/07-object-1/0013EE54-0013F653.txt
+-         -    -      0x0019738C  2:0x0002738C  static,data  _pod1l_sfx                  _pod1l_sfx                   -
+-         -    -      0x00197390  2:0x00027390  static,data  _pod2d_sfx                  _pod2d_sfx                   -
+-         -    -      0x00197394  2:0x00027394  static,data  _l_anims                    _l_anims                     -
+-         -    -      0x00197398  2:0x00027398  static,data  _pod1d_sfx                  _pod1d_sfx                   -
+-         -    -      0x0019739C  2:0x0002739C  static,data  _pod2l_sfx                  _pod2l_sfx                   -
+-         -    -      0x001973A0  2:0x000273A0  static,data  _fields                     _fields                      -

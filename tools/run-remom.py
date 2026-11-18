@@ -2,8 +2,8 @@
 """run-remom.py — drive ReMoM non-interactively.
 
 Defaults to the matchup workflow:
-    --ini assets/matchup_hemom.ini    (seed comes from [Game] unless --seed)
-    --hms assets/matchup_hemom.hms    (drives menus → save → quit)
+    --ini assets/matchup_demom.ini    (seed comes from [Game] unless --seed)
+    --hms assets/matchup_demom.hms    (drives menus → save → quit)
     cwd   bin/Debug/                  (SAVE*.GAM writes land here)
     headless                          (SDL_VIDEODRIVER=offscreen)
 
@@ -29,12 +29,12 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ini", type=Path,
-                    default=L.ASSETS_DIR / "matchup_hemom.ini",
+                    default=L.ASSETS_DIR / "matchup_demom.ini",
                     help="ReMoM .ini; seed is read from [Game] seed unless --seed overrides")
     drv = ap.add_mutually_exclusive_group()
     drv.add_argument("--hms", type=Path,
-                     default=L.ASSETS_DIR / "matchup_hemom.hms",
-                     help="HMS scenario file (Artificial Human Player)")
+                     default=L.ASSETS_DIR / "matchup_demom.hms",
+                     help="HMS scenario file (Automation Driver)")
     drv.add_argument("--rmr", type=Path,
                      help="RMR recorded-input file (replay mode)")
     ap.add_argument("--seed", type=int,

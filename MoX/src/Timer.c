@@ -22,6 +22,9 @@ void Release_Time_Seconds(uint32_t delay);
 #define DELAY_EVENT_HANDLE_LIMIT    12500
 #define DELAY_MOUSE_UPDATE_LIMIT    20000
 
+/* CLAUDE */  /* asm Release_Time: cmp ax, 4 / jns @@Done1 - the OG ends every wait after at most 4 BIOS ticks (OGBUG #333) */
+#define RELEASE_TIME_MAX_TICKS      4
+
 static uint64_t delay_start;
 
 static uint64_t timer_ticks_mark_time;
@@ -34,11 +37,11 @@ static uint64_t timer_frame_count;
 // ui_delay_prepare()
 void Mark_Time(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     timer_ticks_mark_time = Platform_Get_Millies();
 
     delay_start = Read_System_Clock_Timer();
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // WZD s02p02
@@ -79,9 +82,17 @@ void Release_Time(int ticks)
 
     uint64_t tick_end;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     tick_end = timer_ticks_mark_time + (ticks * PLATFORM_MILLISECONDS_PER_FRAME);  /* ~ IBM-PC - 55 ms per BIOS timer tick */
+
+    /* OGBUG  #333  asm: sub ax, [CLK_BIOS_Counter] / js @@Done1 / cmp ax, 4 / jns @@Done1 / sub ax, [bp+ticks] / js loc_14881 - the wait also ends once 4 ticks have passed since Mark_Time(), so
+              any wait longer than 4 ticks (~0.22 s) is cut to 4: Call_Lightning_Turn's 12, the diplomacy portrait fade's 30, Screen_Conquest's 6 */
+    /* CLAUDE */  /* replicates the OG cap */
+    if(tick_end > (timer_ticks_mark_time + (RELEASE_TIME_MAX_TICKS * PLATFORM_MILLISECONDS_PER_FRAME)))
+    {
+        tick_end = (timer_ticks_mark_time + (RELEASE_TIME_MAX_TICKS * PLATFORM_MILLISECONDS_PER_FRAME));
+    }
 
 /* CLAUDE */  { uint64_t perf_wait_begin_ms = Platform_Get_Millies();
 
@@ -110,7 +121,7 @@ void Release_Time(int ticks)
 
     timer_frame_count += ticks;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // ui_delay_us_or_click()

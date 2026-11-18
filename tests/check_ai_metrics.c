@@ -6,7 +6,7 @@
  *
  * Reads CSV files produced by the AI_METRICS system and evaluates behavioral
  * assertions defined in the assertions file. Follows the check_save_fields.c
- * pattern from the HeMoM test infrastructure.
+ * pattern from the DeMoM test infrastructure.
  *
  * Assertion types:
  *   LIVENESS  <csv> <filter> <column> MIN|MAX <value>

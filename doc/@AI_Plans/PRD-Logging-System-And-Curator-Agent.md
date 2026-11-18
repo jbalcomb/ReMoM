@@ -1,6 +1,6 @@
 # PRD: ReMoM Logging Subsystem & Log-Curator Agent
 
-> **Reference:** Builds on and supersedes [PRD-C89_Game_Logging_System_Design-Gemini.md](PRD-C89_Game_Logging_System_Design-Gemini.md). The Gemini doc defines the ring-buffer mechanics; this PRD expands it with metadata, runtime controls, dropped-message accounting, headless behavior, a full migration plan, and a custom Claude Code agent to manage all of it.
+> **Reference:** Builds on and supersedes [PRD-C89_Game_Logging_System_Design-Gemini.md](PRD-C89_Game_Logging_System_Design-Gemini.md). The Gemini doc defines the ring-buffer mechanics; this PRD expands it with metadata, runtime controls, dropped-message accounting, windowless behavior, a full migration plan, and a custom Claude Code agent to manage all of it.
 
 ## Problem Statement
 
@@ -8,7 +8,7 @@ The current ReMoM logging path (`dbg_prn`, `trc_prn` in `STU/src/STU_DBG.c`) cal
 
 - The AI walkthrough work (AIMOVE, AIDUDES, AISPELL, AIDATA) wants high-volume per-turn / per-unit / per-stack tracing without paying frame-pacing penalties.
 - Combat and main-screen rendering paths also need to be loggable without hitching.
-- The HeMoM headless runner produces logs that need to be diffed across replay runs to catch behavioral regressions, but the current format has no machine-parseable structure (no severity, no category, no consistent metadata).
+- The DeMoM windowless runner produces logs that need to be diffed across replay runs to catch behavioral regressions, but the current format has no machine-parseable structure (no severity, no category, no consistent metadata).
 - When the process dies mid-frame, anything that the OS hadn't flushed is lost — but the existing `fflush`-every-call style sacrifices throughput across the board to mitigate this.
 - 20+ files already call `dbg_prn`/`trc_prn`; any new design has to handle a real migration, not greenfield design.
 
@@ -37,8 +37,8 @@ The new logger lands and stabilizes on a separate branch first. Migration of exi
 7. As a ReMoM developer running back-to-back sessions, I want a 3-file rotation (`remom_log_new.txt` → `_current` → `_previous`) handled at startup, so that I always have the prior run available without managing files manually.
 8. As a ReMoM player, I want a `[Logging]` section in `ReMoM.ini` where I can set severity threshold and per-category enables, so that I can crank up logging for a problem area without recompiling.
 9. As a release-build user, I want `TRACE` and `DEBUG` severities compiled out entirely in Release, so that I pay no runtime cost (not even a function call) for stripped messages.
-10. As a HeMoM headless-test author, I want the same logger to drive HeMoM output to the same `remom_log_*.txt` files, so that my replay-vs-record diffs operate on consistent format.
-11. As an embedder of HeMoM in CI, I want `log_pump()` exposed publicly so I can call it at my own frame boundary, so that headless runs drain the ring deterministically.
+10. As a DeMoM windowless-test author, I want the same logger to drive DeMoM output to the same `remom_log_*.txt` files, so that my replay-vs-record diffs operate on consistent format.
+11. As an embedder of DeMoM in CI, I want `log_pump()` exposed publicly so I can call it at my own frame boundary, so that windowless runs drain the ring deterministically.
 12. As a ReMoM developer, I want to be able to call `LOG_FATAL(...)` and have the system flush the entire ring before the process terminates, so that the fatal message is never lost.
 13. As a ReMoM developer, I want the `dbg_prn` and `trc_prn` symbols deleted (not left as wrappers) after migration completes, so that there is exactly one logging path in the codebase.
 
@@ -65,7 +65,7 @@ The new logger lands and stabilizes on a separate branch first. Migration of exi
 - Categories are an enum (`LOG_CAT_AIMOVE`, `LOG_CAT_COMBAT`, `LOG_CAT_SAVE`, `LOG_CAT_PFL`, `LOG_CAT_IKI`, ...) defined in `STU_LOG.h`. New categories are added centrally — agent will enforce the convention.
 - Write logic: format to a 1 KB stack buffer with `_vsnprintf`/`vsnprintf` (preprocessor gate), prepend metadata header, copy into ring. If would-overtake-tail: increment a `dropped_since_last_pump` counter and return.
 - `log_pump()`: drains up to 4 KB to disk; if any drops were recorded since last call, emits a single `[LOGGER] N messages dropped` synthetic line first.
-- `log_pump()` is publicly exposed; callers (ReMoM frame loop, HeMoM tick loop, ReMoM loop) wire it in at their own frame boundary.
+- `log_pump()` is publicly exposed; callers (ReMoM frame loop, DeMoM tick loop, ReMoM loop) wire it in at their own frame boundary.
 - `log_fatal()` (called by `LOG_FATAL` macro after writing its own message) calls a `log_flush_all()` internal function that drains the entire ring synchronously, bypassing the 4 KB cap.
 
 ### Runtime configuration
@@ -103,7 +103,7 @@ Fixed-width severity tag, fixed-width category tag, file:line, function name, th
 
 ### `log-curator` subagent
 
-- Lives at `.claude/agents/log-curator.md`. Modeled on the existing `hemom-tester` subagent (same general shape: trigger description, tool permissions, behavior guidelines).
+- Lives at `.claude/agents/log-curator.md`. Modeled on the existing `demom-tester` subagent (same general shape: trigger description, tool permissions, behavior guidelines).
 - **Tool access (read-only default):** `Read`, `Glob`, `Grep`, `Bash` (for invoking helper scripts), `Agent` (for delegating subsearches). No `Edit`, `Write`, or `NotebookEdit` — outputs are patches or markdown reports for the user to apply.
 - Four duties, each backed by either a helper script or a documented heuristic:
   - **Triage:** invokes `tools/log-tools/log_triage.py <path>`; agent interprets the script's structured output and writes a markdown summary.
@@ -133,7 +133,7 @@ A good test exercises behavior at a module's public boundary. For `STU_LOG`, the
 - **Helper scripts:** each gets a pytest-style test file under `tools/log-tools/tests/` with golden inputs (a few short fixture logs checked into the test directory). Tests assert on the structured output of each script, not on its stdout formatting.
 - **Out of scope for automated tests:** the subagent itself. Agent behavior is exercised by humans via the four documented invocations; we rely on the helper scripts (which are tested) for correctness of the underlying analysis.
 
-Prior art in this repo: HeMoM tests under the HeMoM headless infrastructure already use a "drive an entry point with curated inputs, assert on outputs" pattern; the `STU_LOG` test follows the same shape.
+Prior art in this repo: DeMoM tests under the DeMoM windowless infrastructure already use a "drive an entry point with curated inputs, assert on outputs" pattern; the `STU_LOG` test follows the same shape.
 
 ## Out of Scope
 
@@ -143,8 +143,8 @@ Prior art in this repo: HeMoM tests under the HeMoM headless infrastructure alre
 - **Log compression/archival.** Beyond the 3-file rotation, retention is not the logger's job.
 - **Migration of the `DLOG` macro.** `DLOG` already gates on `STU_DEBUG`. Whether it gets folded into `LOG_DEBUG` is a follow-up call once the new system is proven.
 - **The `DBG_ORIG_*` diagnostic globals** in `STU_DBG.h` are not logging — they are reference pointers for debugging save-file divergence. They stay where they are.
-- **HeMoM's existing test-recording infrastructure.** This PRD makes the logger work with HeMoM; it does not redesign HeMoM's own .RMR replay format.
-- **Agent auto-triggering.** The `log-curator` agent is user-invoked only. Whether to add a hook that auto-runs `log_triage` after each HeMoM run is a separate decision.
+- **DeMoM's existing test-recording infrastructure.** This PRD makes the logger work with DeMoM; it does not redesign DeMoM's own .RMR replay format.
+- **Agent auto-triggering.** The `log-curator` agent is user-invoked only. Whether to add a hook that auto-runs `log_triage` after each DeMoM run is a separate decision.
 
 ## Further Notes
 

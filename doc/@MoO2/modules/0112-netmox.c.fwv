@@ -1,0 +1,80 @@
+module_num=112
+module=D:\MOX\OTHERS\NETMOX.C
+source=0112-netmox.c.md
+range[0]=1:0x000E5883 linear=0x000F5883 size=20750
+range[1]=2:0x000020F0 linear=0x001720F0 size=132
+range[2]=2:0x0000B608 linear=0x0017B608 size=4
+range[3]=2:0x00032EA4 linear=0x001A2EA4 size=572
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                     SYMBOL                                    CHUNK
+m112f001  1    -      0x000F5883  1:0x000E5883  code         Load_Netmox_Strings                      Load_Netmox_Strings_                      regions/07-object-1/0017AE54-0017B653.txt
+m112f002  2    -      0x000F5934  1:0x000E5934  static,code  Net_Exit_With_Message                    Net_Exit_With_Message_                    regions/07-object-1/0017AE54-0017B653.txt
+m112f003  3    -      0x000F5939  1:0x000E5939  static,code  Basic_Update                             Basic_Update_                             regions/07-object-1/0017AE54-0017B653.txt
+m112f004  4    -      0x000F5A9F  1:0x000E5A9F  static,code  Main_Receive_Message                     Main_Receive_Message_                     regions/07-object-1/0017AE54-0017B653.txt
+m112f005  5    -      0x000F67C1  1:0x000E67C1  code         Receive_Message                          Receive_Message_                          regions/07-object-1/0017B654-0017BE53.txt
+m112f006  6    -      0x000F6816  1:0x000E6816  code         Mox_Send_Message                         Mox_Send_Message_                         regions/07-object-1/0017BE54-0017C653.txt
+m112f007  7    -      0x000F69FE  1:0x000E69FE  code         Mox_Net_Update                           Mox_Net_Update_                           regions/07-object-1/0017BE54-0017C653.txt
+m112f008  8    -      0x000F6F90  1:0x000E6F90  static,code  fseek_modem_file                         fseek_modem_file_                         regions/07-object-1/0017BE54-0017C653.txt
+m112f009  9    -      0x000F6FD9  1:0x000E6FD9  static,code  fgetc_modem_file                         fgetc_modem_file_                         regions/07-object-1/0017BE54-0017C653.txt
+m112f010  10   -      0x000F7023  1:0x000E7023  static,code  fread_modem_file                         fread_modem_file_                         regions/07-object-1/0017C654-0017CE53.txt
+m112f011  11   -      0x000F707D  1:0x000E707D  static,code  fwrite_modem_file                        fwrite_modem_file_                        regions/07-object-1/0017C654-0017CE53.txt
+m112f012  12   -      0x000F70EB  1:0x000E70EB  code         Make_Difference_Buffer                   Make_Difference_Buffer_                   regions/07-object-1/0017C654-0017CE53.txt
+m112f013  13   -      0x000F72D1  1:0x000E72D1  static,code  Decode_Difference_Buffer                 Decode_Difference_Buffer_                 regions/07-object-1/0017C654-0017CE53.txt
+m112f014  14   -      0x000F73C2  1:0x000E73C2  code         Open_Modem_File                          Open_Modem_File_                          regions/07-object-1/0017C654-0017CE53.txt
+m112f015  15   -      0x000F744C  1:0x000E744C  code         Close_Modem_File                         Close_Modem_File_                         regions/07-object-1/0017C654-0017CE53.txt
+m112f016  16   -      0x000F747B  1:0x000E747B  code         Write_Modem_File                         Write_Modem_File_                         regions/07-object-1/0017C654-0017CE53.txt
+m112f017  17   -      0x000F74CD  1:0x000E74CD  code         Broadcast_Game_Data_Differential         Broadcast_Game_Data_Differential_         regions/07-object-1/0017C654-0017CE53.txt
+m112f018  18   -      0x000F79F6  1:0x000E79F6  code         Decode_Broadcast_Game_Data_Differential  Decode_Broadcast_Game_Data_Differential_  regions/07-object-1/0017CE54-0017D653.txt
+m112f019  19   -      0x000F7E95  1:0x000E7E95  code         Send_Game_Orders                         Send_Game_Orders_                         regions/07-object-1/0017CE54-0017D653.txt
+m112f020  20   -      0x000F83B7  1:0x000E83B7  static,code  Ditch_Leader                             Ditch_Leader_                             regions/07-object-1/0017D654-0017DE53.txt
+m112f021  21   -      0x000F83D8  1:0x000E83D8  code         Decode_Game_Orders                       Decode_Game_Orders_                       regions/07-object-1/0017D654-0017DE53.txt
+m112f022  22   -      0x000F88D8  1:0x000E88D8  code         Send_Pick_Target_Info                    Send_Pick_Target_Info_                    regions/07-object-1/0017DE54-0017E653.txt
+m112f023  23   -      0x000F8C8E  1:0x000E8C8E  code         Decode_Pick_Target_Info                  Decode_Pick_Target_Info_                  regions/07-object-1/0017DE54-0017E653.txt
+m112f024  24   -      0x000F8F98  1:0x000E8F98  code         Send_You_Are_Target_Info                 Send_You_Are_Target_Info_                 regions/07-object-1/0017DE54-0017E653.txt
+m112f025  25   -      0x000F93E3  1:0x000E93E3  code         Decode_You_Are_Target_Info               Decode_You_Are_Target_Info_               regions/07-object-1/0017E654-0017EE53.txt
+m112f026  26   -      0x000F9711  1:0x000E9711  code         Russ_Event_Monster_Update                Russ_Event_Monster_Update_                regions/07-object-1/0017E654-0017EE53.txt
+m112f027  27   -      0x000F975C  1:0x000E975C  code         Russ_Change_Relations                    Russ_Change_Relations_                    regions/07-object-1/0017E654-0017EE53.txt
+m112f028  28   -      0x000F97CD  1:0x000E97CD  code         Send_Battle_Results                      Send_Battle_Results_                      regions/07-object-1/0017E654-0017EE53.txt
+m112f029  29   -      0x000F9C58  1:0x000E9C58  code         Decode_Battle_Results                    Decode_Battle_Results_                    regions/07-object-1/0017EE54-0017F653.txt
+m112f030  30   -      0x000FA05D  1:0x000EA05D  code         Send_Pick_Your_Position                  Send_Pick_Your_Position_                  regions/07-object-1/0017F654-0017FE53.txt
+m112f031  31   -      0x000FA0D3  1:0x000EA0D3  static,code  Decode_Pick_Your_Position                Decode_Pick_Your_Position_                regions/07-object-1/0017F654-0017FE53.txt
+m112f032  32   -      0x000FA104  1:0x000EA104  code         Send_Dragon_Info                         Send_Dragon_Info_                         regions/07-object-1/0017F654-0017FE53.txt
+m112f033  33   -      0x000FA142  1:0x000EA142  static,code  Decode_Dragon_Info                       Decode_Dragon_Info_                       regions/07-object-1/0017F654-0017FE53.txt
+m112f034  34   -      0x000FA16C  1:0x000EA16C  code         Net_Id_To_Player_Id                      Net_Id_To_Player_Id_                      regions/07-object-1/0017F654-0017FE53.txt
+m112f035  35   -      0x000FA1A3  1:0x000EA1A3  static,code  Get_Next_AI_Talker                       Get_Next_AI_Talker_                       regions/07-object-1/0017F654-0017FE53.txt
+m112f036  36   -      0x000FA270  1:0x000EA270  code         Net_Request_AI_Diplomacy                 Net_Request_AI_Diplomacy_                 regions/07-object-1/0017F654-0017FE53.txt
+m112f037  37   -      0x000FA2A9  1:0x000EA2A9  code         Net_May_Begin_AI_Diplomacy               Net_May_Begin_AI_Diplomacy_               regions/07-object-1/0017F654-0017FE53.txt
+m112f038  38   -      0x000FA2C5  1:0x000EA2C5  code         Net_End_AI_Diplomacy                     Net_End_AI_Diplomacy_                     regions/07-object-1/0017F654-0017FE53.txt
+m112f039  39   -      0x000FA38F  1:0x000EA38F  code         Net_Cancel_AI_Diplomacy_Request          Net_Cancel_AI_Diplomacy_Request_          regions/07-object-1/0017F654-0017FE53.txt
+m112f040  40   -      0x000FA3D1  1:0x000EA3D1  code         Net_Cancel_AI_Diplomacy_Confirmed        Net_Cancel_AI_Diplomacy_Confirmed_        regions/07-object-1/0017F654-0017FE53.txt
+m112f041  41   -      0x000FA3DC  1:0x000EA3DC  code         No_AI_Diplomacy_Allowed                  No_AI_Diplomacy_Allowed_                  regions/07-object-1/0017F654-0017FE53.txt
+m112f042  42   -      0x000FA3F6  1:0x000EA3F6  code         Net_Request_Human_Diplomacy              Net_Request_Human_Diplomacy_              regions/07-object-1/0017F654-0017FE53.txt
+m112f043  43   -      0x000FA521  1:0x000EA521  code         Net_May_Begin_Human_Diplomacy            Net_May_Begin_Human_Diplomacy_            regions/07-object-1/0017F654-0017FE53.txt
+m112f044  44   -      0x000FA54B  1:0x000EA54B  code         Allowed_To_Cancel_Human_Diplomacy        Allowed_To_Cancel_Human_Diplomacy_        regions/07-object-1/0017F654-0017FE53.txt
+m112f045  45   -      0x000FA556  1:0x000EA556  code         Net_Cancel_Human_Diplomacy_Request       Net_Cancel_Human_Diplomacy_Request_       regions/07-object-1/0017F654-0017FE53.txt
+m112f046  46   -      0x000FA5A3  1:0x000EA5A3  code         Human_Hit_Next_Turn                      Human_Hit_Next_Turn_                      regions/07-object-1/0017F654-0017FE53.txt
+m112f047  47   -      0x000FA5AA  1:0x000EA5AA  code         Net_End_Human_Diplomacy                  Net_End_Human_Diplomacy_                  regions/07-object-1/0017F654-0017FE53.txt
+m112f048  48   -      0x000FA5B9  1:0x000EA5B9  code         Human_Diplomat_Says_Wait                 Human_Diplomat_Says_Wait_                 regions/07-object-1/0017F654-0017FE53.txt
+m112f049  49   -      0x000FA5C6  1:0x000EA5C6  code         Net_Diplomacy_With                       Net_Diplomacy_With_                       regions/07-object-1/0017F654-0017FE53.txt
+m112f050  50   -      0x000FA5CE  1:0x000EA5CE  code         Human_Requesting_Diplomacy               Human_Requesting_Diplomacy_               regions/07-object-1/0017F654-0017FE53.txt
+m112f051  51   -      0x000FA623  1:0x000EA623  code         Accept_Diplomacy_Request                 Accept_Diplomacy_Request_                 regions/07-object-1/0017F654-0017FE53.txt
+m112f052  52   -      0x000FA728  1:0x000EA728  code         Refuse_Diplomacy_Request                 Refuse_Diplomacy_Request_                 regions/07-object-1/0017F654-0017FE53.txt
+m112f053  53   -      0x000FA774  1:0x000EA774  code         Tell_Diplomacy_Requester_To_Wait         Tell_Diplomacy_Requester_To_Wait_         regions/07-object-1/0017F654-0017FE53.txt
+m112f054  54   -      0x000FA795  1:0x000EA795  code         Humans_Requesting_Diplomacy              Humans_Requesting_Diplomacy_              regions/07-object-1/0017F654-0017FE53.txt
+m112f055  55   -      0x000FA79B  1:0x000EA79B  code         Net_Human_Rejected_Diplomacy             Net_Human_Rejected_Diplomacy_             regions/07-object-1/0017F654-0017FE53.txt
+m112f056  56   -      0x000FA7B0  1:0x000EA7B0  static,code  Send_Drop_Out_Info                       Send_Drop_Out_Info_                       regions/07-object-1/0017F654-0017FE53.txt
+m112f057  57   -      0x000FA8A2  1:0x000EA8A2  static,code  Decode_Drop_Out_Info                     Decode_Drop_Out_Info_                     regions/07-object-1/0017FE54-00180653.txt
+m112f058  58   -      0x000FA97C  1:0x000EA97C  code         Human_Abdicates                          Human_Abdicates_                          regions/07-object-1/0017FE54-00180653.txt
+m112f059  59   -      0x000FA989  1:0x000EA989  code         Human_Surrenders                         Human_Surrenders_                         regions/07-object-1/0017FE54-00180653.txt
+-         -    -      0x001A2EA4  2:0x00032EA4  static,data  _modem_disk_error                        _modem_disk_error                         -
+-         -    -      0x001A2EA8  2:0x00032EA8  static,data  _incompatible_versions_error             _incompatible_versions_error              -
+-         -    -      0x001A2EAC  2:0x00032EAC  static,data  _modem_diff_buffer_error                 _modem_diff_buffer_error                  -
+-         -    -      0x001A2EB0  2:0x00032EB0  static,data  _sending_chunk_d_of_d_fmt                _sending_chunk_d_of_d_fmt                 -
+-         -    -      0x001A2EB4  2:0x00032EB4  static,data  _lost_net_user_error                     _lost_net_user_error                      -
+-         -    -      0x001A2EB8  2:0x00032EB8  static,data  _only_1_host_allowed_error               _only_1_host_allowed_error                -
+-         -    -      0x001A2EBC  2:0x00032EBC  static,data  _ambassador_left_before_you_arrived_fmt  _ambassador_left_before_you_arrived_fmt   -
+-         -    -      0x001A2EC0  2:0x00032EC0  static,data  _net_send_error                          _net_send_error                           -
+-         -    -      0x001A2EC4  2:0x00032EC4  data         _net                                     _net                                      -
+-         -    -      0x001A30CE  2:0x000330CE  static,data  _secret_modem_file                       _secret_modem_file                        -
+-         -    -      0x001A30DF  2:0x000330DF  static,data  _in_receive_message                      _in_receive_message                       -

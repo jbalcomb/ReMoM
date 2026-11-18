@@ -1,0 +1,10 @@
+module_num=323
+module=ioexit
+source=0323-ioexit.md
+range[0]=1:0x0014C675 linear=0x0015C675 size=105
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME            SYMBOL           CHUNK
+m323f001  1    -      0x0015C675  1:0x0014C675  code         __full_io_exit  __full_io_exit_  regions/07-object-1/001E1654-001E1E53.txt
+m323f002  2    -      0x0015C681  1:0x0014C681  code         fcloseall       fcloseall_       regions/07-object-1/001E1654-001E1E53.txt
+m323f003  3    -      0x0015C686  1:0x0014C686  static,code  docloseall      docloseall_      regions/07-object-1/001E1654-001E1E53.txt

@@ -1,0 +1,12 @@
+module_num=169
+module=timer\timer.asm
+source=0169-timer.asm.md
+range[0]=1:0x0011C2A0 linear=0x0012C2A0 size=65
+range[1]=2:0x0000C5DC linear=0x0017C5DC size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL         CHUNK
+m169f001  1    -      0x0012C2A0  1:0x0011C2A0  code  Mark_Time     Mark_Time_     regions/07-object-1/001B1654-001B1E53.txt
+m169f002  2    -      0x0012C2AE  1:0x0011C2AE  code  Time_Passed   Time_Passed_   regions/07-object-1/001B1654-001B1E53.txt
+m169f003  3    -      0x0012C2BD  1:0x0011C2BD  code  Timer_Value   Timer_Value_   regions/07-object-1/001B1654-001B1E53.txt
+m169f004  4    -      0x0012C2C6  1:0x0011C2C6  code  Release_Time  Release_Time_  regions/07-object-1/001B1654-001B1E53.txt

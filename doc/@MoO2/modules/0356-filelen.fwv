@@ -1,0 +1,8 @@
+module_num=356
+module=filelen
+source=0356-filelen.md
+range[0]=1:0x0015002C linear=0x0016002C size=61
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m356f001  1    -      0x0016002C  1:0x0015002C  code  filelength  filelength_  regions/07-object-1/001E5654-001E5E53.txt

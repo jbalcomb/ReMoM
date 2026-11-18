@@ -8,6 +8,9 @@
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GARB.h"
+#include "../../STU/src/STU_CI.h"  /* STU_CI_Get() */  /* CLAUDE */
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOX_DAT.h"  /* _players[] */
@@ -41,6 +44,11 @@
 
 #include "AIMOVE.h"
 
+
+
+
+
+
 static int16_t g_ai_set_target_caller = 0;
 
 
@@ -65,12 +73,12 @@ uint8_t * cp_landmass_wx_array;
 
 // WZD dseg:D3F2
 /*
-cleared in AI_Stacks_Survey_Expedition_Forces()
-populated in AI_Stacks_Survey_Expedition_Forces_Stack()
+cleared in AI_Survey_Expedition_Forces()
+populated in AI_Survey_Expedition_Stack()
 
 AI_Set_Unit_Orders
-    |-> AI_Stacks_Survey_Expedition_Forces()
-        |-> AI_Stacks_Survey_Expedition_Forces_Stack()
+    |-> AI_Survey_Expedition_Forces()
+        |-> AI_Survey_Expedition_Stack()
     |-> AI_Stacks_Stage_Expedition_Forces()
 
 G_Pushout_Count  ==>  cp_drafted_unit_count
@@ -78,8 +86,8 @@ G_Pushout_Count  ==>  cp_drafted_unit_count
 G_Seafaring_Lowest_Value
 G_Seafaring_Count
 XRFEF:
-    AI_Stacks_Survey_Expedition_Forces()
-    AI_Stacks_Survey_Expedition_Forces_Stack()
+    AI_Survey_Expedition_Forces()
+    AI_Survey_Expedition_Stack()
 G_Seafaring_Values[]
 G_Pushout_Values[]
 G_Seafaring_CX_IDs[]
@@ -87,7 +95,7 @@ G_Pushout_CX_IDs[]
 G_Seafaring_UL_Indices[]
 G_Seafaring_Unit_Indices[]
 XREF:
-    AI_Stacks_Survey_Expedition_Forces_Stack()
+    AI_Survey_Expedition_Stack()
 
 all of "G_Seafaring_..." is, effectively, Not-In-Use (NIU)
 
@@ -221,8 +229,6 @@ int16_t niu_unknown_var;
  *       `AI_Find_Opportunity_City_Target()` is called with `wp` before the
  *       plane loop assigns it a defined plane index.
  */
-void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void AI_Set_Unit_Orders(int16_t player_idx)
 {
     int16_t wp = 0;
@@ -233,10 +239,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
      * the stack-expedition logic).  Pairs with 613 to isolate this call's effect on
      * _UNITS -- the 911 movement divergence.  player_idx scalar records WHICH player
      * (both sides fire on the first AI player -> must match).  Fire once. */
-    { static int gd612_done = 0;
-      if(!gd612_done) { gd612_done = 1;
-        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 612_AI_Set_Unit_Orders_Entry_U player_idx = %d", (int)player_idx);
-        gd_dump_units("612_AI_Set_Unit_Orders_Entry_U"); } }
+    STU_GD_ONCE("612_AI_Set_Unit_Orders_Entry_U", STU_GD_WRITE("[GD] 612_AI_Set_Unit_Orders_Entry_U player_idx = %d", (int)player_idx); STU_GD_Dump_Units("612_AI_Set_Unit_Orders_Entry_U"));  /* CLAUDE */
 
 
     /* Phase 1: Init */
@@ -271,6 +274,8 @@ void AI_Set_Unit_Orders(int16_t player_idx)
     AI_Disband_To_Balance_Budget(player_idx);
     AI_Shift_Off_Home_Plane(player_idx);
     AI_Move_Out_Boats();
+    /* OGBUG  wp (bp-2) is pushed before its first store (the plane loop below): AI_Find_Opportunity_City_Target() compares each city's plane with stack garbage, so a Go-To stack next to a weakly held enemy city is released only if the garbage happens to equal that city's plane */
+    /* HACK */  wp = Stack_Garbage_Range(NUM_PLANES, INT16_MAX);  /* CLAUDE */  /* OG: uninitialised; a stand-in out of 0..1 that matches no city's plane */
     /* OGBUG: wp is used here before being initialized */
     AI_Find_Opportunity_City_Target(wp, player_idx);
     
@@ -291,7 +296,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
 
             AI_Stacks_Init_Build_Target_Order(player_idx, landmass_idx, wp);
             AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp);
-            AI_Stacks_Survey_Expedition_Forces();
+            AI_Survey_Expedition_Forces();
 
             AI_Stacks_Do_Meld(player_idx);
             AI_Stacks_Do_Settle(player_idx, landmass_idx);
@@ -354,8 +359,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
 
     /* CLAUDE: GD point 613 -- _UNITS AFTER AI_Set_Unit_Orders (post-EMMDATAH_Map,
      * matching where OG returns to AI_Next_Turn).  Fire once. */
-    { static int gd613_done = 0;
-      if(!gd613_done) { gd613_done = 1; gd_dump_units("613_AI_Set_Unit_Orders_Return_U"); } }
+    STU_GD_ONCE("613_AI_Set_Unit_Orders_Return_U", STU_GD_Dump_Units("613_AI_Set_Unit_Orders_Return_U"));  /* CLAUDE */
 
 }
 
@@ -365,7 +369,7 @@ void AI_Set_Unit_Orders(int16_t player_idx)
  * @brief Send ranked expedition candidates toward a landmass stage point.
  *
  * Consumes the global expedition pool previously built by
- * AI_Stacks_Survey_Expedition_Forces(), checks whether the selected landmass
+ * AI_Survey_Expedition_Forces(), checks whether the selected landmass
  * still needs additional staged or en-route units, and then issues movement
  * orders for the highest-ranked drafted units toward that landmass's current
  * stage coordinates.
@@ -445,10 +449,8 @@ void AI_Stacks_Stage_Expedition_Forces(int16_t landmass_idx, int16_t wp, int16_t
         list_unit_idx = G_Pushout_UL_Indices[itr];
         unit_idx = G_Pushout_Unit_Indices[itr];
         /* Call movement logic to set the unit's target to this landmass's stage point */
-#ifdef STU_DEBUG
 //      dbg_prn("AI_ORDERS: [GarrPush] unit %d -> continent %d coords (%d,%d)\n", unit_idx, landmass_idx, AI_Continent_X_Ptr[landmass_idx], AI_Continent_Y_Ptr[landmass_idx]);
         LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
-#endif
         g_ai_set_target_caller = 1;
         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, cp_landmass_wx_array[landmass_idx], cp_landmass_wy_array[landmass_idx], unit_list_idx, list_unit_idx);
         /* BUGBUG(JimBalcomb,20260525): Claude on iMustAi just said this is showing always 0,0 - must be bad expedition arrays */
@@ -805,9 +807,7 @@ void AI_Stacks_Garrison_Sites(int16_t player_idx, int16_t wp, int16_t landmass_i
                 {
                     continue;
                 }
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-#endif
                 g_ai_set_target_caller = 2;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
                 if(target_type == 0)
@@ -1123,7 +1123,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                 (_ai_ferry_wp_array[itr1] == wp)
             )
             {
-                /* OGBUG: for unit_idx, should use itr2, instead of itr1 */
+                /* OGBUG  indexes _UNITS[] with the ferry-request index itr1 (DI), not the moving unit itr2: the space already on its way to request #itr1 is charged with the Transport + 1 of unit #itr1, whatever that unit is, so requests are over- or under-served */
                 /* available stack slots at destination (+1 to account for the boat's place in the stack) */
                 Transport_Spaces[itr1] -= (_unit_type_table[_UNITS[itr1].type].Transport + 1);
             }
@@ -1233,9 +1233,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                     {
                         unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
                         Transport_Stack_Room -= (_unit_type_table[_UNITS[unit_idx].type].Transport + 1);
-#ifdef STU_DEBUG
                         LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-#endif
                         g_ai_set_target_caller = 3;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
                     }
@@ -1263,16 +1261,18 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
         adjacent_landmass_wx = 0;
         adjacent_landmass_wy = 0;
         Landing_Allowed = ST_FALSE;
+        /* OGBUG  no map-edge test on this or the later 3x3 scans (the asm has no wx / wy compare in the function): for a boat stack on row 0 or 39 - only possible in a port city there,
+                  since those rows are always tundra - the reads go up to 61 bytes before _landmasses (plane 0) or past its end (plane 1), and 2 words outside g_ai_evaluation_map[wp];
+                  at column 0 / 59 they read the neighbouring row. In ReMoM all of these stay inside the World_Data / EMS blocks, as in the OG */
         for(wy_offset = ST_UNDEFINED; wy_offset < 2; wy_offset++)
         {
             for(wx_offset = ST_UNDEFINED; wx_offset < 2; wx_offset++)
             {
-                /* ¿ OGBUG: bad indexing, incorrect order of operation ? */
-                /* adjacent square is a land square and occupieable */
+                /* OGBUG  the landmass test indexes (stack_wy + wy_offset) * WORLD_WIDTH, but the g_ai_evaluation_map test right after it uses (stack_wy * WORLD_WIDTH) + wy_offset (wy_offset not multiplied): for the rows above and below the boat it reads the threat of a square in the boat's own row, shifted sideways, so an occupied landing square can pass as free and a free one be rejected */
                 if(
                     (_landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] != 0)
                     &&
-                    (g_ai_evaluation_map[wp][(((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))] == 0)
+                    (g_ai_evaluation_map[wp][((stack_wy * WORLD_WIDTH) + wy_offset + wx_offset + stack_wx)] == 0)
                 )
                 {
                     adjacent_landmass_idx = _landmasses[((wp * WORLD_SIZE) + ((stack_wy + wy_offset) * WORLD_WIDTH) + (stack_wx + wx_offset))];
@@ -1416,9 +1416,7 @@ void AI_Stacks_Ocean_Landmass_Orders(int16_t player_idx, int16_t wp)
                 }
                 else
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
-#endif
                     g_ai_set_target_caller = 4;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
                 }
@@ -1470,9 +1468,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
             for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
             {
                 unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
-#endif
                 g_ai_set_target_caller = 5;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
             }
@@ -1526,9 +1522,7 @@ BEGIN:  fixup bad orders, for valid colony or military stack
                 for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
                 {
                     unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
-#endif
                     g_ai_set_target_caller = 6;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_landmass_wx, adjacent_landmass_wy, itr_stacks, itr_list_units);
                 }
@@ -1648,9 +1642,7 @@ void AI_Stacks_Roamers_Target_Or_Deploy(int16_t landmass_idx, int16_t wp, int16_
                 for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
                 {
                     unit_idx = _ai_own_stack_unit_list[itr_stacks][itr_list_units];
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
-#endif
                     g_ai_set_target_caller = 7;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, itr_list_units);
                 }
@@ -1872,10 +1864,8 @@ void AI_Stacks_Order_To_War_Landmass(int16_t player_idx, int16_t wp)
             }
             war_landmass_stage_point_wx = _ai_continents.plane[wp].player[player_idx].wx_array[war_landmass_idx];
             war_landmass_stage_point_wy = _ai_continents.plane[wp].player[player_idx].wy_array[war_landmass_idx];
-#ifdef STU_DEBUG
 //                        dbg_prn("AI_ORDERS: [PullMainWar] unit %d -> MainWarCont[%d][%d]=%d coords (%d,%d)\n", unit_idx, wp, player_idx, _ai_landmass_war_targets[wp][player_idx], war_landmass_stage_point_wx, war_landmass_stage_point_wy);
             LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
-#endif
             g_ai_set_target_caller = 8;
             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, war_landmass_stage_point_wx, war_landmass_stage_point_wy, itr_stacks, itr_list_units);
         }
@@ -1992,16 +1982,15 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
     )
     {
         list_unit_count = _ai_own_stack_unit_count[stack_idx];
-        for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+        // for(itr_list_units = 0; itr_list_units < list_unit_count; itr_list_units++)
+        /* CLAUDE */  /* REBUG */  for(itr_list_units = 0; ((itr_list_units < list_unit_count) && (stage_count_slot_count > 0)); itr_list_units++)  /* asm loc_EDD2F: both tests in the loop condition */
         {
-            if(stage_count_slot_count <= 0)
-            {
-                break;
-            }
+            // if(stage_count_slot_count <= 0)
+            // {
+            //     break;
+            // }
             unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
-#ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
-#endif
             g_ai_set_target_caller = 9;
             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, stage_wx, stage_wy, stack_idx, itr_list_units);
             stage_count_slot_count--;
@@ -2010,6 +1999,7 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
 
 
     /* Phase 5 */
+    /* OGBUG  the result of this 3x3 Square_Is_Embarkable() scan (niu_embarkable_*) is never read */
     /* DEDU  For what might this have been meant to be used? */
     /* NOTE(JimBalcomb,20260523): this block is in AI_Stacks_Reorder_Settle_Elsewhere(), used properly there */
     for(itr_stack_wy = (stack_wy - 1); (stack_wy + 2) > itr_stack_wy; itr_stack_wy++)
@@ -2110,21 +2100,26 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
     if(found_adjacent_unit_on_ocean == ST_TRUE)
     {
         /* Phase 7a: override the ferry request */
-        for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
+        // for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
+        /* CLAUDE */  /* REBUG */  for(itr_list_units = 0; ((_ai_own_stack_unit_count[stack_idx] > itr_list_units) && (itr_list_units < free_stack_slots_on_square) && (total_boat_capacity > 0)); itr_list_units++)  /* asm loc_EDFA9: all three tests in the loop condition */
         {
-            if(itr_list_units < free_stack_slots_on_square)
+            // if(itr_list_units < free_stack_slots_on_square)
             {
-                if(total_boat_capacity > 0)
+                // if(total_boat_capacity > 0)
                 {
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
-#endif
                     g_ai_set_target_caller = 10;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_unit_on_ocean_wx, adjacent_unit_on_ocean_wy, stack_idx, itr_list_units);
+                    // if(
+                    //     (Unit_Has_AirTravel(unit_idx) == ST_FALSE)
+                    //     ||
+                    //     (Unit_Has_WaterTravel(unit_idx) == ST_FALSE)
+                    // )
+                    /* CLAUDE */  /* REBUG */  /* asm loc_EDF5F: AirTravel != 0 -> skip, WaterTravel != 0 -> skip: only a unit with neither takes a seat */
                     if(
                         (Unit_Has_AirTravel(unit_idx) == ST_FALSE)
-                        ||
+                        &&
                         (Unit_Has_WaterTravel(unit_idx) == ST_FALSE)
                     )
                     {
@@ -2138,12 +2133,14 @@ void AI_Stacks_Setup_Ferry(int16_t stack_idx, int16_t landmass_idx, int16_t wp, 
     {
         /* Phase 7b: set ferry request */
         /* would have been an optimization, because us_Ferry? otherwise, Phase 3 and 4 still set up the stage move and ferry dispatch */
-        for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
+        /* OGBUG  the loop runs only while total_boat_capacity > 0, but that is 0 here (it only changes for a unit found on an adjacent ocean square, and none was): no unit ever gets the AI_Stacks_Order_Ferry() order */
+        // for(itr_list_units = 0; _ai_own_stack_unit_count[stack_idx] > itr_list_units; itr_list_units++)
+        /* CLAUDE */  /* REBUG */  for(itr_list_units = 0; ((_ai_own_stack_unit_count[stack_idx] > itr_list_units) && (itr_list_units < free_stack_slots_on_square) && (total_boat_capacity > 0)); itr_list_units++)  /* asm loc_EDFF0: all three tests in the loop condition */
         {
-            if(itr_list_units < free_stack_slots_on_square)
+            // if(itr_list_units < free_stack_slots_on_square)
             {
                 /* unreachable - total_boat_capacity is always zero if there was no adjacent ocean unit found */
-                if(total_boat_capacity > 0)
+                // if(total_boat_capacity > 0)
                 {
                     unit_idx = _ai_own_stack_unit_list[stack_idx][itr_list_units];
                     AI_Stacks_Order_Ferry(unit_idx, stack_idx, itr_list_units);
@@ -2207,6 +2204,8 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 
 
     /* Phase 2 */
+    /* HACK */  fortress_wx = Stack_Garbage_Range(0, (WORLD_WIDTH - 1));  /* OG: fortress_wx is uninitialised here (stack garbage) */
+    /* HACK */  fortress_wy = Stack_Garbage_Range(0, (WORLD_HEIGHT - 1));  /* OG: fortress_wy is uninitialised here (stack garbage) */
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         /* ¿ OGBUG: own fortress is not excluded - caught by _players[player_idx].Hostility[] check ? */
@@ -2223,11 +2222,15 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             target_value_base = 1;
         }
+        /* OGBUG  the fortress strength is read from g_ai_evaluation_map at fortress_wx / fortress_wy BEFORE they are loaded for this fortress: it is the strength at the previous fortress on this plane, and for the first one at an uninitialised (stack garbage) square */
         /* Human Player Fortress is 25% more difficult/tougher */
         if(itr_players == HUMAN_PLAYER_IDX)
         {
             /* OGBUG: unset fortress_wx, fortress_wy */
-            target_strength = ((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_STRENGTH_MASK) * 5 / 4);
+            /* CLAUDE */  // target_strength = ((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_STRENGTH_MASK) * 5 / 4);
+            /* CLAUDE */  /* REBUG */  // asm (ovr158/AI_Build_Target_List.asm 69-72 'imul dx / shr ax, 2'): 16-bit product, unsigned divide
+            target_strength = (int16_t)((uint16_t)((g_ai_evaluation_map[wp][((fortress_wy * WORLD_WIDTH) + fortress_wx)] & AI_TARGET_STRENGTH_MASK) * 5) / 4);
+
         }
         else
         {
@@ -2273,27 +2276,39 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             target_value_base = 1;
         }
-        /* OGBUG: should be target_owner_idx, not itr; c&p error from above? */
         /* Human Player Fortress is 25% more difficult/tougher */
+        /* OGBUG  tests the CITY index, not the owner (a copy of the fortress loop, where the index is the player): the x5/4 strength factor is applied to city 0 whoever owns it, and never to the human's other cities */
         if(itr_cities == HUMAN_PLAYER_IDX)
         {
-            target_strength = ((g_ai_evaluation_map[wp][((city_wy * WORLD_WIDTH) + city_wx)] & AI_TARGET_STRENGTH_MASK) * 5 / 4);
+            /* CLAUDE */  // target_strength = ((g_ai_evaluation_map[wp][((city_wy * WORLD_WIDTH) + city_wx)] & AI_TARGET_STRENGTH_MASK) * 5 / 4);
+            /* CLAUDE */  /* REBUG */  // asm (ovr158/AI_Build_Target_List.asm 212-216 'imul dx / shr ax, 2'): 16-bit product, unsigned divide
+            target_strength = (int16_t)((uint16_t)((g_ai_evaluation_map[wp][((city_wy * WORLD_WIDTH) + city_wx)] & AI_TARGET_STRENGTH_MASK) * 5) / 4);
         }
         else
         {
             target_strength = (g_ai_evaluation_map[wp][((city_wy * WORLD_WIDTH) + city_wx)] & AI_TARGET_STRENGTH_MASK);
         }
-        if(
-            (target_owner_idx == NEUTRAL_PLAYER_IDX)
-            &&
-            (_landmasses[((wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)] == landmass_idx)
-        )
+        /* CLAUDE */  // if(
+        /* CLAUDE */  //     (target_owner_idx == NEUTRAL_PLAYER_IDX)
+        /* CLAUDE */  //     &&
+        /* CLAUDE */  //     (_landmasses[((wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)] == landmass_idx)
+        /* CLAUDE */  // )
+        /* CLAUDE */  // {
+        /* CLAUDE */  //     neutral_city_value = ((((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100) * target_value_base);
+        /* CLAUDE */  //     AI_Add_Target(city_wx, city_wy, target_strength, neutral_city_value);
+        /* CLAUDE */  // }
+        /* CLAUDE */  /* REBUG */  // asm 233-280: a neutral city on another landmass is skipped ('jnz loc_EE27C / jmp loc_EE3F5'); it does not fall into the owned-city branch
+        if(target_owner_idx == NEUTRAL_PLAYER_IDX)
         {
-            neutral_city_value = ((((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100) * target_value_base);
-            AI_Add_Target(city_wx, city_wy, target_strength, neutral_city_value);
+            if(_landmasses[((wp * WORLD_SIZE) + (city_wy * WORLD_WIDTH) + city_wx)] == landmass_idx)
+            {
+                neutral_city_value = ((((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100) * target_value_base);
+                AI_Add_Target(city_wx, city_wy, target_strength, neutral_city_value);
+            }
         }
         else
         {
+
             if(target_owner_idx == player_idx)
             {
                 continue;
@@ -2317,11 +2332,13 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 /* DEAD */  {
 /* DEAD */      if(target_owner_idx != HUMAN_PLAYER_IDX)
 /* DEAD */      {
-/* DEAD */          AI_Add_Target(city_wx, city_wy, target_strength, (((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 5) + 50));
+/* DEAD */          // AI_Add_Target(city_wx, city_wy, target_strength, (((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 5) + 50));
+/* DEAD */          /* CLAUDE */  /* REBUG */  AI_Add_Target(city_wx, city_wy, target_strength, ((((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 5) + 50) * target_value_base));  /* asm 402-405, 429: imul 5 / add 50 / jmp loc_EE3E0 / imul [bp+target_value_base] */
 /* DEAD */      }
 /* DEAD */      else
 /* DEAD */      {
-/* DEAD */          AI_Add_Target(city_wx, city_wy, target_strength, (((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100));
+/* DEAD */          // AI_Add_Target(city_wx, city_wy, target_strength, (((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100));
+/* DEAD */          /* CLAUDE */  /* REBUG */  AI_Add_Target(city_wx, city_wy, target_strength, ((((_CITIES[itr_cities].population + _CITIES[itr_cities].bldg_cnt) * 10) + 100) * target_value_base));  /* asm 425-429: imul 10 / add 100 / loc_EE3E0: imul [bp+target_value_base] */
 /* DEAD */      }
 /* DEAD */  }
         }
@@ -2389,8 +2406,10 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             continue;
         }
         /* OGBUG: WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
+        /* OGBUG  an unowned node (owner ST_UNDEFINED) passes whatever the hostility, and _players[player_idx].Hostility[-1] (the word before Hostility[]) is read first; with the AI_Evaluation_Map() strength counting every non-own unit, another wizard's units on a free node, an ally's too, make it a target worth power * 5 + 25, while the same units elsewhere are ignored at hostility < 2 */
         if(
-            (_players[player_idx].Hostility[target_owner_idx] < 2)
+            // (_players[player_idx].Hostility[target_owner_idx] < 2)
+            /* HACK */  (((target_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[player_idx].Hostility[target_owner_idx]) < 2)  /* CLAUDE */  /* bounds the OG's Hostility[-1] read; the && below decides */
             &&
             (target_owner_idx != ST_UNDEFINED)
         )
@@ -2412,7 +2431,8 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
         {
             if((g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_STRENGTH_MASK) != 0)
             {
-                AI_Add_Target(node_wx, node_wy, (g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_STRENGTH_MASK), ((_NODES[itr_nodes].power * 10) + 25));
+                // AI_Add_Target(node_wx, node_wy, (g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_STRENGTH_MASK), ((_NODES[itr_nodes].power * 10) + 25));
+                /* CLAUDE */  /* REBUG */  AI_Add_Target(node_wx, node_wy, (g_ai_evaluation_map[wp][((node_wy * WORLD_WIDTH) + node_wx)] & AI_TARGET_STRENGTH_MASK), ((_NODES[itr_nodes].power * 5) + 25));  /* asm loc_EE62E: power * 5 + 25 */
             }
         }
     }
@@ -2478,8 +2498,10 @@ void AI_Build_Target_List(int16_t player_idx, int16_t landmass_idx, int16_t wp)
             else
             {
                 /* OGBUG: WTF? (target_owner_idx != ST_UNDEFINED) accessing arrays with ST_UNDEFINED index? */
+                /* OGBUG  for an unowned tower (owner ST_UNDEFINED) _players[player_idx].Hostility[-1] (the word before Hostility[]) is read before the owner test; the && below then lets the tower through whatever that word holds */
                 if(
-                    (_players[player_idx].Hostility[target_owner_idx] < 2)
+                    // (_players[player_idx].Hostility[target_owner_idx] < 2)
+                    /* HACK */  (((target_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : _players[player_idx].Hostility[target_owner_idx]) < 2)  /* CLAUDE */  /* bounds the OG's Hostility[-1] read; the && below decides */
                     &&
                     (target_owner_idx != ST_UNDEFINED)
                 )
@@ -2736,11 +2758,9 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     int16_t itr_stacks2 = 0;
     int16_t itr_units2 = 0;  // DNE in Dasm, reuses itr_stacks2
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-#endif
 
 
     /* Phase 1: Init */
@@ -2760,6 +2780,7 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
     /* Iterate through all units to group them into stacks by location */
     for(itr_units1 = 0; itr_units1 < _units; itr_units1++)
     {
+        /* OGBUG  the table-full test gates every unit: once MAX_AI_STACKS (80) stacks are recorded, each later unit is skipped, also one on a square already in the table, so those stacks miss units from their count and unit list (and cp_staged_unit_count misses them) */
         if
         (
             /* ¿ OGBUG: should break on >= MAX_AI_STACKS ? */
@@ -2812,18 +2833,14 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
 */
         if(stack_idx != ST_UNDEFINED)
         {
+            /* CLAUDE */  /* asm loc_EEDF1: GOTO / Purify / BuildRoad -> busy (jz loc_EEE2A), else free: the busy branch comes first */
             if(
-                (_UNITS[itr_units1].Status != us_GOTO)
-                &&
-                (_UNITS[itr_units1].Status != us_Purify)
-                &&
-                (_UNITS[itr_units1].Status != us_BuildRoad)
+                (_UNITS[itr_units1].Status == us_GOTO)
+                ||
+                (_UNITS[itr_units1].Status == us_Purify)
+                ||
+                (_UNITS[itr_units1].Status == us_BuildRoad)
             )
-            {
-                // *free*
-                _ai_own_stack_unit_list[stack_idx][_ai_own_stack_unit_count[stack_idx]] = itr_units1;
-            }
-            else
             {
                 // *busy*
                 _ai_own_stack_unit_list[stack_idx][_ai_own_stack_unit_count[stack_idx]] = ST_UNDEFINED;
@@ -2836,6 +2853,11 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                     cp_enroute_unit_count++;
                 }
             }
+            else
+            {
+                // *free*
+                _ai_own_stack_unit_list[stack_idx][_ai_own_stack_unit_count[stack_idx]] = itr_units1;
+            }
             _ai_own_stack_unit_count[stack_idx]++;
         }
         else
@@ -2845,18 +2867,14 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
             _ai_own_stack_wy[_ai_own_stack_count] = (unsigned char)unit_wy;
             _ai_own_stack_wp[_ai_own_stack_count] = (unsigned char)unit_wp;
             _ai_own_stack_unit_count[_ai_own_stack_count] = 1;
+            /* CLAUDE */  /* asm loc_EEC93: GOTO / Purify / BuildRoad -> busy (jz loc_EED02), else free: the busy branch comes first */
             if(
-                (_UNITS[itr_units1].Status != us_GOTO)
-                &&
-                (_UNITS[itr_units1].Status != us_Purify)
-                &&
-                (_UNITS[itr_units1].Status != us_BuildRoad)
+                (_UNITS[itr_units1].Status == us_GOTO)
+                ||
+                (_UNITS[itr_units1].Status == us_Purify)
+                ||
+                (_UNITS[itr_units1].Status == us_BuildRoad)
             )
-            {
-                // *free*
-                _ai_own_stack_unit_list[_ai_own_stack_count][0] = itr_units1;
-            }
-            else
             {
                 // *busy*
                 _ai_own_stack_unit_list[_ai_own_stack_count][0] = ST_UNDEFINED;
@@ -2868,6 +2886,11 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                 {
                     cp_enroute_unit_count++;
                 }
+            }
+            else
+            {
+                // *free*
+                _ai_own_stack_unit_list[_ai_own_stack_count][0] = itr_units1;
             }
             /* Classify the new stack */
             /* weird but clever way to check if a stack is effectively a garrison - it's on a City, Node, or Tower (or, but probably not, on a Lair or Enemy Stack) */
@@ -2910,19 +2933,54 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
             continue;
         }
         /* If the stack contains a valid primary unit ready to move */
+        /* CLAUDE */  /* the original Phase 3 body (tests inverted against the asm), kept for reference: */
+//        first_unit_idx = _ai_own_stack_unit_list[itr_stacks1][0];
+//        if(
+//            (first_unit_idx == ST_UNDEFINED)
+//            ||
+//            (_UNITS[first_unit_idx].Status != us_Move)
+//        )
+//        {
+//            if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)  /* NOTE(JimBalcomb,20260522): double-checked, this really does weirdly test +1<3 */
+//            {
+//                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
+//            }
+//        }
+//        else  /* (first_unit_idx != ST_UNDEFINED) && (_UNITS[first_unit_idx].Status == us_Move) */
+//        {
+//            /* Redirect to attack nearest hostile free-roaming stack */
+//            if(AI_Stacks_Target_Nearest_Hostile_Stack(itr_stacks1, landmass_idx, &target_wx, &target_wy, wp) == ST_TRUE)
+//            {
+//                /* Assign move orders to all units in the stack */
+//                for(itr_units2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_units2; itr_units2++)
+//                {
+//#ifdef STU_DEBUG
+//                    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, _ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
+//#endif
+//                    g_ai_set_target_caller = 11;
+//                    AI_Stacks_Order_Attack_Target_Or_Goto_Destination(_ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
+//                }
+//            }
+//            else
+//            {
+//                /* (first_unit_idx != ST_UNDEFINED) && (_UNITS[first_unit_idx].Status == us_Move) */
+//                /* (AI_Stacks_Target_Nearest_Hostile_Stack(itr_stacks1, landmass_idx, &target_wx, &target_wy, wp) == ST_FALSE) */
+//                for(itr_units2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_units2; itr_units2++)
+//                {
+//                    _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
+//                }
+//                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
+//            }
+//        }
+//    }
+
         first_unit_idx = _ai_own_stack_unit_list[itr_stacks1][0];
+        /* CLAUDE */  /* asm loc_EEED6: first unit != ST_UNDEFINED and Status == us_Move -> the target branch first, else the small-stack test (loc_EEF9B) */
         if(
-            (first_unit_idx == ST_UNDEFINED)
-            ||
-            (_UNITS[first_unit_idx].Status != us_Move)
+            (first_unit_idx != ST_UNDEFINED)
+            &&
+            (_UNITS[first_unit_idx].Status == us_Move)
         )
-        {
-            if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)  /* NOTE(JimBalcomb,20260522): double-checked, this really does weirdly test +1<3 */
-            {
-                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
-            }
-        }
-        else  /* (first_unit_idx != ST_UNDEFINED) && (_UNITS[first_unit_idx].Status == us_Move) */
         {
             /* Redirect to attack nearest hostile free-roaming stack */
             if(AI_Stacks_Target_Nearest_Hostile_Stack(itr_stacks1, landmass_idx, &target_wx, &target_wy, wp) == ST_TRUE)
@@ -2930,31 +2988,37 @@ void AI_Stacks_Init_Build_Target_Order(int16_t player_idx, int16_t landmass_idx,
                 /* Assign move orders to all units in the stack */
                 for(itr_units2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_units2; itr_units2++)
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, _ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
-#endif
                     g_ai_set_target_caller = 11;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(_ai_own_stack_unit_list[itr_stacks1][itr_units2], target_wx, target_wy, itr_stacks1, itr_units2);
                 }
             }
             else
             {
-                /* (first_unit_idx != ST_UNDEFINED) && (_UNITS[first_unit_idx].Status == us_Move) */
-                /* (AI_Stacks_Target_Nearest_Hostile_Stack(itr_stacks1, landmass_idx, &target_wx, &target_wy, wp) == ST_FALSE) */
+                /* OGBUG  a busy slot (a unit already on GOTO / Purify / BuildRoad) holds ST_UNDEFINED, and this loop has no test: for each one it writes _UNITS[-1].Status = us_Ready, 32 bytes before the unit table (the order call in the branch above returns on -1) */
                 for(itr_units2 = 0; _ai_own_stack_unit_count[itr_stacks1] > itr_units2; itr_units2++)
                 {
-                    _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
+                    // _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
+                    /* HACK */  if(_ai_own_stack_unit_list[itr_stacks1][itr_units2] != ST_UNDEFINED)  /* CLAUDE */  /* bounds the OG's _UNITS[-1] write */
+                    /* HACK */  {
+                        _UNITS[_ai_own_stack_unit_list[itr_stacks1][itr_units2]].Status = us_Ready;
+                    /* HACK */  }
                 }
+                _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
+            }
+        }
+        else
+        {
+            if((_ai_own_stack_unit_count[itr_stacks1] + 1) < 3)  /* NOTE(JimBalcomb,20260522): double-checked, this really does weirdly test +1<3 */
+            {
                 _ai_own_stack_type[itr_stacks1] = AISTK_Unknown;
             }
         }
     }
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Init_Build_Target_Order()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -3192,7 +3256,8 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
     }
 
 
-    for(tries = 0; ((tries < 200) && ((food_deficit > 0) || (gold_deficit > 0))); tries++)
+    // for(tries = 0; ((tries < 200) && ((food_deficit > 0) || (gold_deficit > 0))); tries++)
+    /* CLAUDE */  /* REBUG */  for(tries = 0; (((food_deficit > 0) || (gold_deficit > 0)) && (tries < 200)); tries++)  /* asm loc_EF4E7: deficits first, then tries */
     {
 
         lowest_unit_value = 10000;
@@ -3265,7 +3330,8 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
     }
 
 
-    for(tries = 0; ((tries < 200) && (mana_deficit > 0)); tries++)
+    // for(tries = 0; ((tries < 200) && (mana_deficit > 0)); tries++)
+    /* CLAUDE */  /* REBUG */  for(tries = 0; ((mana_deficit > 0) && (tries < 200)); tries++)  /* asm loc_EF668: deficit first, then tries */
     {
 
         lowest_unit_value = 10000;
@@ -3289,6 +3355,7 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
                 if(unit_landmass_idx > 0)
                 {
 
+                    /* OGBUG  passes the unit TYPE where Effective_Unit_Strength() takes a unit index: the 'weakest' summoned unit is chosen by the strength of _UNITS[type], whatever unit has that index */
                     /* OGBUG: should use Effective_Unit_Type_Strength() or pass itr_units */
                     unit_value = (Effective_Unit_Strength(_UNITS[itr_units].type) / 10);
 
@@ -3319,7 +3386,8 @@ void AI_Disband_To_Balance_Budget(int16_t player_idx)
 
             lowest_value_unit_upkeep = ((_unit_type_table[_UNITS[lowest_value_unit_idx].type].Upkeep * difficulty_modifiers_table[_difficulty].maintenance) / 100);
 
-            if(lowest_value_unit_upkeep == 0)
+            // if(lowest_value_unit_upkeep == 0)
+            /* CLAUDE */  /* REBUG */  if(lowest_value_unit_upkeep <= 0)  /* asm loc_EF5FB: cmp 0; jg skip (the gold / food loop uses jnz) */
             {
 
                 lowest_value_unit_upkeep = 1;
@@ -3547,9 +3615,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
             {
                 if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
-#endif
                     g_ai_set_target_caller = 12;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
                 }
@@ -3580,9 +3646,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
                 {
                     if(Adjacent_Free_Square(_ai_own_stack_wx[itr_stacks], _ai_own_stack_wy[itr_stacks], _ai_own_stack_wp[itr_stacks], &adjacent_wx, &adjacent_wy) == ST_TRUE)
                     {
-#ifdef STU_DEBUG
                         LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
-#endif
                         g_ai_set_target_caller = 13;
                         AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, adjacent_wx, adjacent_wy, itr_stacks, itr_stack_units);
                     }
@@ -3599,7 +3663,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
  *
  * Clears the global pushout and seafaring expedition bookkeeping, then scans
  * every stack in `_ai_own_stack_*` and submits qualifying stacks to
- * AI_Stacks_Survey_Expedition_Forces_Stack(). Roaming and unknown stacks can
+ * AI_Survey_Expedition_Stack(). Roaming and unknown stacks can
  * contribute all of their military units, while garrison-style stacks only
  * contribute units beyond the five-unit reserve threshold used here.
  *
@@ -3614,7 +3678,7 @@ void AI_Stacks_Move_Out_NonMilitary_Garrisoned(int16_t wp)
  *       (`_turn < 100`), preserving the current heuristic that avoids stripping
  *       the fortress city too aggressively in early turns.
  */
-void AI_Stacks_Survey_Expedition_Forces(void)
+void AI_Survey_Expedition_Forces(void)
 {
     int16_t itr_stacks = 0;
     int16_t stack_unit_count = 0;
@@ -3633,13 +3697,13 @@ void AI_Stacks_Survey_Expedition_Forces(void)
         {
             case AISTK_Unknown:
             {
-                AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+                AI_Survey_Expedition_Stack(itr_stacks, stack_unit_count, stack_unit_count);
             } break;
             case AISTK_Roamer:
             {
                 if(_ai_own_stack_unit_list[itr_stacks][0] != ST_UNDEFINED)
                 {
-                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, stack_unit_count);
+                    AI_Survey_Expedition_Stack(itr_stacks, stack_unit_count, stack_unit_count);
                 }
             } break;
             case AISTK_DNE:
@@ -3650,7 +3714,7 @@ void AI_Stacks_Survey_Expedition_Forces(void)
             {
                 if(stack_unit_count > 5)
                 {
-                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                    AI_Survey_Expedition_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
                 }
             } break;
             case AISTK_FortressGarrison:
@@ -3658,7 +3722,7 @@ void AI_Stacks_Survey_Expedition_Forces(void)
                 /* ¿ hack to avoid over-garrisoning of Fortress City in the early-game ? */
                 if((_turn < 100) && (stack_unit_count > 5))
                 {
-                    AI_Stacks_Survey_Expedition_Forces_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
+                    AI_Survey_Expedition_Stack(itr_stacks, stack_unit_count, (stack_unit_count - 5));
                 }
             } break;
             default:
@@ -3701,7 +3765,7 @@ void AI_Stacks_Survey_Expedition_Forces(void)
  *       list length after sorting, matching the current reverse-engineered
  *       implementation rather than an idealized ranking pass.
  */
-void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
+void AI_Survey_Expedition_Stack(int16_t stack_idx, int16_t unit_count, int16_t excess_count)
 {
     int16_t military_unit_indices[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t military_unit_values[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* holds Effective_Unit_Type_Strength() */
@@ -3741,6 +3805,7 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
         military_unit_indices[military_unit_count] = unit_idx;
 
         /* Calculate unit strength value. */
+        /* OGBUG  passes the unit TYPE where Effective_Unit_Strength() takes a unit index: the units drafted for expeditions (strongest first) are ranked by the strength of _UNITS[type], whatever unit has that index; the seafaring list's lowest value below is the one place that passes unit_idx */
         /* OGBUG: should pass unit_idx or use Effective_Unit_Type_Strength() */
         military_unit_values[military_unit_count] = (Effective_Unit_Strength(unit_type) / 10);
 
@@ -3764,6 +3829,7 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
     /* Phase 4 */
     /* Limit processing to the requested number of excess units */
     // OGBUG: This truncates by list order, not by score — so for a type-3/4 garrison, it sends the first N combat units in list order, not the N weakest.
+    /* CLAUDE */  /* the note above is wrong: Phase 2 already sorted the list by military_unit_values descending, so this keeps the excess_count highest-valued units (by the type-indexed value) */
     if(excess_count < military_unit_count)
     {
         military_unit_count = excess_count;
@@ -3775,10 +3841,16 @@ void AI_Stacks_Survey_Expedition_Forces_Stack(int16_t stack_idx, int16_t unit_co
         stack_ul_idx = military_unit_ul_indices[local_itr];
         unit_idx = military_unit_indices[local_itr];
         unit_value = military_unit_values[local_itr];
+        // if(
+        //     (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
+        //     ||
+        //     (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)
+        // )
+        /* CLAUDE */  /* REBUG */  /* asm loc_EFE07: or ax, ax; jnz / jz - any non-zero result */
         if(
-            (Unit_Has_AirTravel(unit_idx) == ST_TRUE)
+            (Unit_Has_AirTravel(unit_idx) != ST_FALSE)
             ||
-            (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)
+            (Unit_Has_WaterTravel(unit_idx) != ST_FALSE)
         )
         {
             is_seafaring = ST_TRUE;
@@ -4052,9 +4124,7 @@ void AI_Stacks_Do_Meld(int16_t player_idx)
                     /* Move toward the closest target node */
                     node_wx = _NODES[target_node_idx].wx;
                     node_wy = _NODES[target_node_idx].wy;
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, node_wx, node_wy, itr, list_unit_idx);
-#endif
                     g_ai_set_target_caller = 14;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, node_wx, node_wy, itr, list_unit_idx);
                 }
@@ -4103,16 +4173,41 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
     int16_t unit_idx = 0;
 
 
+    /* OGBUG  wp (bp-2) is never written in this function, yet it is the plane passed to Compute_Base_Values_For_Map_Square() in Phase 3: each candidate site is scored on whatever plane number the stack slot holds (wrong plane, or map tables read far out of range) */
+    // /* HACK */  wp = Stack_Garbage_Range(ARCANUS_PLANE, MYRROR_PLANE);  /* CLAUDE */  /* OG: uninitialised; kept in range because Compute_Base_Values_For_Map_Square() indexes the map with it */
+    /* HACK */  wp = Stack_Garbage_Range(NUM_PLANES, INT16_MAX);  /* CLAUDE */  /* OG: uninitialised; bp-2 holds AI_Stacks_Do_Meld()'s leftover min_delta_distance (1000 or a node distance), so out of range like the OG: no city matches it in Compute_Base_Values_For_Map_Square(), which bounds its map reads */
+
     /* Phase 1 */
     /* Determine expansion chance based on Wizard Objective */
     Fast_Expand_Chance = 1;
-    switch (_players[player_idx].Objective)
+    // switch(_players[player_idx].Objective)
+    // {
+    //     case OBJ_Expansionist:  { Fast_Expand_Chance = 4; } break;
+    //     case OBJ_Militarist:    { Fast_Expand_Chance = 2; } break;
+    //     case OBJ_Pragmatist:    { Fast_Expand_Chance = 2; } break;
+    //     case OBJ_Perfectionist: { Fast_Expand_Chance = 1; } break;
+    //     case OBJ_Theurgist:     { Fast_Expand_Chance = 3; } break;
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm loc_F0426..loc_F046E: an if / else-if chain that re-reads Objective for each test */
+    if(_players[player_idx].Objective == OBJ_Expansionist)
     {
-        case OBJ_Expansionist:  { Fast_Expand_Chance = 4; } break;
-        case OBJ_Militarist:    { Fast_Expand_Chance = 2; } break;
-        case OBJ_Pragmatist:    { Fast_Expand_Chance = 2; } break;
-        case OBJ_Perfectionist: { Fast_Expand_Chance = 1; } break;
-        case OBJ_Theurgist:     { Fast_Expand_Chance = 3; } break;
+        Fast_Expand_Chance = 4;
+    }
+    else if(_players[player_idx].Objective == OBJ_Militarist)
+    {
+        Fast_Expand_Chance = 2;
+    }
+    else if(_players[player_idx].Objective == OBJ_Pragmatist)
+    {
+        Fast_Expand_Chance = 2;
+    }
+    else if(_players[player_idx].Objective == OBJ_Perfectionist)
+    {
+        Fast_Expand_Chance = 1;
+    }
+    else if(_players[player_idx].Objective == OBJ_Theurgist)
+    {
+        Fast_Expand_Chance = 3;
     }
 
 
@@ -4182,9 +4277,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
             if(AI_Find_Tower_To_Settle_Elsewhere(player_idx, unit_idx, &tower_wx, &tower_wy, unit_wp) == ST_TRUE)
             {
 
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, tower_wx, tower_wy, itr_stacks, itr_list_units);
-#endif
 
                 g_ai_set_target_caller = 15;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, tower_wx, tower_wy, itr_stacks, itr_list_units);
@@ -4205,6 +4298,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                             distance = Range(unit_wx, unit_wy, wx, wy);
                             if(distance != 0)
                             {
+                                /* OGBUG  Unexplored is never read; a site's score is not adjusted for squares skipped as unexplored */
                                 Compute_Base_Values_For_Map_Square(wx, wy, wp, &maximum_population, &production_bonus, &gold_bonus, &unit_cost_reduction, &gold_units, &magic_units, &have_nightshade, &have_mithril, &have_adamantium, &have_shore, &Unexplored);
                                 map_square_value = 
                                     (
@@ -4246,7 +4340,8 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                             }
                         }
                     }
-                    landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
+                    // landmass_node_index = _ai_landmass_land_squares_lists[wp][landmass_node_index];
+                    /* CLAUDE */  /* REBUG */  landmass_node_index = _ai_landmass_land_squares_lists[unit_wp][landmass_node_index];  /* asm loc_F074D: _ai_landmass_land_squares_lists[unit_wp] */
                 }
 
                 if(highest_map_square_value == ST_UNDEFINED)
@@ -4258,9 +4353,7 @@ void AI_Stacks_Do_Settle(int16_t player_idx, int16_t landmass_idx)
                 }
                 else
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, highest_value_wx, highest_value_wy, itr_stacks, itr_list_units);
-#endif
                     g_ai_set_target_caller = 16;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, highest_value_wx, highest_value_wy, itr_stacks, itr_list_units);
 
@@ -4394,9 +4487,7 @@ void AI_Stacks_Do_Purify(int16_t landmass_idx, int16_t wp)
                         {
                             /* Otherwise, move toward the target corrupted square */
 
-#ifdef STU_DEBUG
                             LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
-#endif
                             g_ai_set_target_caller = 17;
                             AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, itr_stacks, list_unit_idx);
 
@@ -4497,6 +4588,7 @@ void AI_Stacks_Do_RoadBuild(int16_t landmass_idx)
 
                 nearest_city_idx = ST_UNDEFINED;
                 min_delta_distance = 1000;
+                /* OGBUG  no owner test here or in the road-target loop below: engineers walk to, and build roads between, enemy and neutral cities as well as their own */
                 for(city_idx = 0; city_idx < _cities; city_idx++)
                 {
                     /* OGBUG: `_CITIES[city_idx].wp != unit_wp` is redundant */
@@ -4505,6 +4597,7 @@ void AI_Stacks_Do_RoadBuild(int16_t landmass_idx)
                     {
                         continue;
                     }
+                    /* OGBUG  itr_stacks indexes the per-landmass _ai_own_stack_* tables, but here it reads _ai_all_own_stacks[itr_stacks].abilities, a different table: whether the nearest city must be on the same landmass is decided by an unrelated stack's AICAP_LandOnly bit */
                     /* If stack is walker and city is on different landmass */
                     /* ¿ OGBUG: should be walker && can't walk there ? */
                     if(
@@ -4532,9 +4625,7 @@ void AI_Stacks_Do_RoadBuild(int16_t landmass_idx)
                 if(min_delta_distance > 1)
                 {
 
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
-#endif
                     g_ai_set_target_caller = 18;
                     AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, _CITIES[nearest_city_idx].wx, _CITIES[nearest_city_idx].wy, itr_stacks, itr_list_units);
 
@@ -4620,17 +4711,13 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
 {
     int16_t wp = 0;
     int16_t target_value = 0;
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: BEGIN: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
-#endif
     if((unit_idx < 0) || (unit_idx >= MAX_UNIT_COUNT)) { return; }
     wp = _UNITS[unit_idx].wp;
     target_value = g_ai_evaluation_map[wp][((target_wy * WORLD_WIDTH) + target_wx)];
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: unit_idx: %d, target_wx: %d, target_wy: %d, target_value: %d", __FILE__, __LINE__, unit_idx, target_wx, target_wy, target_value);
-#endif
     if(
         ((target_value & AI_TARGET_SITE) == 0)
         &&
@@ -4646,9 +4733,7 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     _UNITS[unit_idx].dst_wx = (int8_t)target_wx;
     _UNITS[unit_idx].dst_wy = (int8_t)target_wy;
 
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: unit_idx: %d, status: %d, dst_wx: %d, dst_wy: %d", __FILE__, __LINE__, unit_idx, _UNITS[unit_idx].Status, _UNITS[unit_idx].dst_wx, _UNITS[unit_idx].dst_wy);
-#endif
 
     _ai_own_stack_unit_list[stack_idx][list_unit_idx] = ST_UNDEFINED;
 
@@ -4659,11 +4744,9 @@ void AI_Stacks_Order_Attack_Target_Or_Goto_Destination(int16_t unit_idx, int16_t
     }
 #endif
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: END: AI_Stacks_Order_Attack_Target_Or_Goto_Destination()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -5070,16 +5153,18 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
 
 
     /* Phase 4 */
-    destination_wx = _ai_landmass_settler_targets_wx_array[wp][player_idx];
-    destination_wy = _ai_landmass_settler_targets_wy_array[wp][player_idx];
+    // destination_wx = _ai_landmass_settler_targets_wx_array[wp][player_idx];
+    // destination_wy = _ai_landmass_settler_targets_wy_array[wp][player_idx];
+    /* CLAUDE */  /* REBUG */  /* asm loc_F14E1: the settler target goes into target_wx / target_wy (bp-1Ah / bp-1Ch); the transport square below is a separate pair (bp-0Ah / bp-0Ch) */
+    /* CLAUDE */  target_wx = _ai_landmass_settler_targets_wx_array[wp][player_idx];
+    /* CLAUDE */  target_wy = _ai_landmass_settler_targets_wy_array[wp][player_idx];
     if(is_seafaring == ST_TRUE)
     {
         /* Phase 4a: send it directly */
-#ifdef STU_DEBUG
-        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
-#endif
+        LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, target_wx, target_wy, unit_list_idx, list_unit_idx);
         g_ai_set_target_caller = 19;
-        AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
+        // AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
+        /* CLAUDE */  /* REBUG */  AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, target_wx, target_wy, unit_list_idx, list_unit_idx);
     }
     else
     {
@@ -5123,9 +5208,7 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
             Next_Nearest_Ferry_Square(wx, wy, wp, &new_target_wx, &new_target_wy);
             if(Adjacent_Land_Square(new_target_wx, new_target_wy, wp, &new_target_wx, &new_target_wy) == ST_TRUE)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, new_target_wx, new_target_wy, unit_list_idx, list_unit_idx);
-#endif
                 g_ai_set_target_caller = 20;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, new_target_wx, new_target_wy, unit_list_idx, list_unit_idx);
             }
@@ -5134,6 +5217,7 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
         {
             /* Phase 4c2: */
             /* Unit is near water: check if a transport is already nearby */
+            /* OGBUG  any own stack with AICAP_Transport within one square is taken: its free room (transport_capacity, unit_count) is read into locals that are never used, and the transport gets no order to wait, so a full boat, or one that sails off this turn, leaves the unit on the shore */
             found_transport = ST_FALSE;
             for(itr_stacks = 0; ((itr_stacks < _ai_all_own_stack_count) && (found_transport == ST_FALSE)); itr_stacks++)
             {
@@ -5161,9 +5245,7 @@ void AI_Stacks_Reorder_Settle_Elsewhere(int16_t unit_idx, int16_t wx, int16_t wy
             }
             if(found_transport == ST_TRUE)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "DEBUG: [%s, %d]: %s: -> AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx=%d, target_wx=%d, target_wy=%d, stack_idx=%d, list_unit_idx=%d)", __FILE__, __LINE__, __FUNCTION__, unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
-#endif
                 g_ai_set_target_caller = 21;
                 AI_Stacks_Order_Attack_Target_Or_Goto_Destination(unit_idx, destination_wx, destination_wy, unit_list_idx, list_unit_idx);
             }
@@ -5254,6 +5336,7 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
     {
         for(itr_cities = 0; ((itr_cities < _cities) && (Have_City_Target == ST_FALSE)); itr_cities++)
         {
+            /* OGBUG  only the landmass id is compared, never the city's plane against Opposite_Plane: landmass ids restart on each plane, so a neutral or hostile city on the tower's own plane, on a landmass with the same id, also makes the crossing worthwhile */
             if(_landmasses[((_CITIES[itr_cities].wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == Opposite_Landmass)
             {
                 city_owner_idx = _CITIES[itr_cities].owner_idx;
@@ -5276,18 +5359,28 @@ int16_t AI_Tower_Target_Worthwhile(int16_t player_idx, int16_t wx, int16_t wy, i
     {
         itr_cities = 0;
         landmass_node_index = _ai_landmass_land_squares_heads[Opposite_Plane][Opposite_Landmass];
-        while(landmass_node_index != ST_UNDEFINED)
+        // while(landmass_node_index != ST_UNDEFINED)
+        // {
+        //     if(Have_City_Target != ST_FALSE)
+        //     {
+        //         break;
+        //     }
+        //     itr_cities++;
+        //     if(itr_cities > 10)
+        //     {
+        //         Have_City_Target = ST_TRUE;
+        //     }
+        //     landmass_node_index = _ai_landmass_land_squares_lists[Opposite_Plane][landmass_node_index];
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm loc_F18E7 / loc_F190A: both tests in the loop condition; the next index is read before the count test */
+        while((landmass_node_index != ST_UNDEFINED) && (Have_City_Target == ST_FALSE))
         {
-            if(Have_City_Target != ST_FALSE)
-            {
-                break;
-            }
             itr_cities++;
+            landmass_node_index = _ai_landmass_land_squares_lists[Opposite_Plane][landmass_node_index];
             if(itr_cities > 10)
             {
                 Have_City_Target = ST_TRUE;
             }
-            landmass_node_index = _ai_landmass_land_squares_lists[Opposite_Plane][landmass_node_index];
         }
     }
     return Have_City_Target;
@@ -5334,16 +5427,14 @@ OON XREF: AI_Set_Unit_Orders() |-> AI_Stacks_Stage_Expedition_Forces() |-> AI_Re
 Per Player, Per Landmass+Plane
 (no plane and landmass loops, so can not use continue style logic, like AI_Evaluate_Continents())
 */
-/* CLAUDE: forward decl -- gd_dump_ai_continents is defined later (with AICWL).
- * Non-static: called from AI_Evaluate_Continents (610/611 GD points) and from
- * MOM_SCR.c (314 at-load snapshot; also declared in INITGAME.h). */
-void gd_dump_ai_continents(const char* point);
 void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t wp)
 {
     int16_t delta_distance = 0;
     int16_t unit_type = 0;
-    int16_t sum_own_city_wy__enemy_units_cost = 0;
-    int16_t sum_own_city_wx__own_units_cost = 0;
+    // int16_t sum_own_city_wy__enemy_units_cost = 0;
+    // int16_t sum_own_city_wx__own_units_cost = 0;
+    /* CLAUDE */  /* REBUG */  uint16_t sum_own_city_wy__enemy_units_cost = 0;  /* unsigned in the asm: div / jnb */
+    /* CLAUDE */  /* REBUG */  uint16_t sum_own_city_wx__own_units_cost = 0;  /* unsigned in the asm: div / jnb */
     int16_t target_square_wy = 0;
     int16_t target_square_wx = 0;
     int16_t landmass_node_wy = 0;
@@ -5395,16 +5486,22 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
     sum_own_city_wy__enemy_units_cost = 0;
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(
-            (_CITIES[itr_cities].owner_idx == player_idx)
-            &&
-            (_landmasses[((_CITIES[itr_cities].wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
-        )
+        // if(
+        //     (_CITIES[itr_cities].owner_idx == player_idx)
+        //     &&
+        //     (_landmasses[((_CITIES[itr_cities].wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
+        // )
+        /* CLAUDE */  /* REBUG */  if(_CITIES[itr_cities].owner_idx == player_idx)
+        /* CLAUDE */  {
+        /* OGBUG  overwrites the plane parameter (DI) with this city's plane: from here on every plane[wp] / [wp] access uses the plane of the last own city (and after the unit loop below, of the last non-settler unit), so the strength counts mix both planes' landmasses that share the number, and the status / stage square can be written into the other plane's table */
+        /* CLAUDE */  wp = _CITIES[itr_cities].wp;
+        /* CLAUDE */  if(_landmasses[((wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
         {
             sum_own_city_wx__own_units_cost += _CITIES[itr_cities].wx;
             sum_own_city_wy__enemy_units_cost += _CITIES[itr_cities].wy;
             _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] += 1;
         }
+        /* CLAUDE */  }
     }
     own_city_count = _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx];
     if(own_city_count > 0)
@@ -5422,6 +5519,7 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
     BEGIN:  Classify the landmass  {lmt_NoOwnCity, lmt_Own, lmt_Contested, lmt_NoOwnCityAndAllyHasCity}
 */
 
+    /* OGBUG  the two sums are not reset after the city loop: the own-units cost starts from the sum of the own cities' wx and the enemy-units cost from the sum of their wy, so the lmt_Own (enemy * 10 < own) / lmt_Contested test below is skewed by the city coordinates */
     /* OGBUG: should use separate vars/clear vars beforehand - vars still contain city coordinate sums */
     for (itr_units = 0; itr_units < _units; itr_units++)
     {
@@ -5433,7 +5531,10 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
             continue;
         }
         /* OGBUG: should condition on same plane */
-        if(_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
+        /* OGBUG  overwrites the plane parameter (DI) with this unit's plane (see the city loop above) */
+        /* CLAUDE */  wp = _UNITS[itr_units].wp;
+        // if(_landmasses[((_UNITS[itr_units].wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
+        /* CLAUDE */  /* REBUG */  if(_landmasses[((wp * WORLD_SIZE) + (_UNITS[itr_units].wy * WORLD_WIDTH) + _UNITS[itr_units].wx)] == landmass_idx)
         {
             if(_UNITS[itr_units].owner_idx == player_idx)
             {
@@ -5451,7 +5552,8 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
     if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] > 0)  /* HERE: stills 'own city count' */
     {
         /* If enemy forces are less than 10% of ours, we own it */
-        if((sum_own_city_wy__enemy_units_cost * 10) < sum_own_city_wx__own_units_cost)
+        // if((sum_own_city_wy__enemy_units_cost * 10) < sum_own_city_wx__own_units_cost)
+        /* CLAUDE */  /* REBUG */  if((uint16_t)(sum_own_city_wy__enemy_units_cost * 10) < sum_own_city_wx__own_units_cost)
         {
             _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_Own;
         }
@@ -5472,7 +5574,8 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
             &&
             (_CITIES[itr_cities].owner_idx != NEUTRAL_PLAYER_IDX)
             &&
-            (_landmasses[((_CITIES[itr_cities].wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
+            // (_landmasses[((_CITIES[itr_cities].wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
+            /* CLAUDE */  /* REBUG */  (_landmasses[((wp * WORLD_SIZE) + (_CITIES[itr_cities].wy * WORLD_WIDTH) + _CITIES[itr_cities].wx)] == landmass_idx)
         )
         {
             if(
@@ -5557,6 +5660,43 @@ void AI_Reevaluate_Continent(int16_t player_idx, int16_t landmass_idx, int16_t w
             _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCityAndAllyHasCity;
         }
     }
+
+
+    /* CLAUDE */  /* REBUG */  /* lmt_NoOwnCity: stage square = the unoccupied dock square nearest the stored centroid, + Random(20) jitter  (was missing; asm loc_F2002 - loc_F21CD) */
+    /* CLAUDE */  if(_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoOwnCity)
+    /* CLAUDE */  {
+    /* CLAUDE */      territory_centroid_wx = _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx];
+    /* CLAUDE */      territory_centroid_wy = _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx];
+    /* CLAUDE */      min_delta_distance = 1000;
+    /* CLAUDE */      landmass_node_index = _ai_landmass_dock_squares_heads[wp][landmass_idx];
+    /* CLAUDE */      while(landmass_node_index != ST_UNDEFINED)
+    /* CLAUDE */      {
+    /* CLAUDE */          landmass_node_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
+    /* CLAUDE */          landmass_node_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
+    /* CLAUDE */          if(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0)
+    /* CLAUDE */          {
+    /* CLAUDE */              delta_distance = (Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH) + Random(20));
+    /* CLAUDE */              if(delta_distance < min_delta_distance)
+    /* CLAUDE */              {
+    /* CLAUDE */                  min_delta_distance = delta_distance;
+    /* CLAUDE */                  target_square_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
+    /* CLAUDE */                  target_square_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
+    /* CLAUDE */              }
+    /* CLAUDE */          }
+    /* CLAUDE */          landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
+    /* CLAUDE */      }
+    /* CLAUDE */      if(min_delta_distance < 1000)
+    /* CLAUDE */      {
+    /* CLAUDE */          _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = (uint8_t)target_square_wx;
+    /* CLAUDE */          _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = (uint8_t)target_square_wy;
+    /* CLAUDE */      }
+    /* CLAUDE */      else
+    /* CLAUDE */      {
+    /* CLAUDE */          _ai_continents.plane[wp].player[player_idx].wx_array[landmass_idx] = 0;
+    /* CLAUDE */          _ai_continents.plane[wp].player[player_idx].wy_array[landmass_idx] = 0;
+    /* CLAUDE */          _ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] = lmt_NoOwnCityAndAllyHasCity;
+    /* CLAUDE */      }
+    /* CLAUDE */  }
 
 
     /* Phase 9: set stage-square for landmasses we can afford to pull troops from */
@@ -5810,6 +5950,13 @@ void AI_Stack_Set_Boats_Goto(int16_t ai_stack_idx, int16_t wx, int16_t wy)
 
 
 // WZD o162p20
+void sub_F60F4(void)
+{
+    // TODO
+}
+
+
+// WZD o162p21
 /**
  * @brief Finds the nearest eligible dock square for ferry movement from a source square.
  *
@@ -5896,6 +6043,10 @@ void Next_Nearest_Ferry_Square(int16_t wx, int16_t wy, int16_t wp, int16_t * tar
 
 // WZD o162p22
 // drake178: sub_F6316()
+void sub_F6316(void)
+{
+    // TODO
+}
 
 
 // WZD o162p23
@@ -6294,16 +6445,22 @@ int16_t AI_Stack_Can_Mobilize(int16_t stack_idx, int16_t wx, int16_t wy, int16_t
  *       @c CONTXXX_Map() and restores the default data mapping with
  *       @c EMMDATAH_Map() before returning.
  */
-/* CI (Capture/Inject) accessor -- defined in INITGAME.c (INITGAME.h not included). */
-int gd_ci_get(const char* key, const char* site, long* out, int max);
 
 void AI_Evaluate_Continents(int16_t player_idx)
 {
-    int16_t sum_own_city_wy__enemy_units_cost[NUM_PLANES][NUM_LANDMASSES] = {
+    // int16_t sum_own_city_wy__enemy_units_cost[NUM_PLANES][NUM_LANDMASSES] = {
+    //     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    //     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    // };
+    /* CLAUDE */  /* REBUG */  uint16_t sum_own_city_wy__enemy_units_cost[NUM_PLANES][NUM_LANDMASSES] = {  /* asm: xor dx, dx / div [bp+city_count] and cmp / jbe - unsigned */
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
-    int16_t sum_own_city_wx__own_units_cost[NUM_PLANES][NUM_LANDMASSES] = {
+    // int16_t sum_own_city_wx__own_units_cost[NUM_PLANES][NUM_LANDMASSES] = {
+    //     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    //     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    // };
+    /* CLAUDE */  /* REBUG */  uint16_t sum_own_city_wx__own_units_cost[NUM_PLANES][NUM_LANDMASSES] = {  /* asm: xor dx, dx / div [bp+city_count] and cmp / jbe - unsigned */
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     };
@@ -6332,7 +6489,7 @@ void AI_Evaluate_Continents(int16_t player_idx)
     int16_t square_occupation_value = 0;  // DNE in Dasm, resuses found_targe
     int16_t landmass_node_count = 0;  // DNE in Dasm, reuses world_offset
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CLAUDE: GD point 610 -- _ai_continents on-ENTRY to AI_Evaluate_Continents,
      * before it rebuilds the per-plane/per-player continent status (type_array) +
@@ -6342,14 +6499,7 @@ void AI_Evaluate_Continents(int16_t player_idx)
      * Paired with 611 (at-return) so a diff shows exactly what this pass produced.
      * Emit player_idx so compare-gd can confirm both sides captured the same
      * (first) invocation.  Fire once. */
-    {
-        static int aievalcont_gd_entry_done = 0;
-        if(!aievalcont_gd_entry_done) {
-            aievalcont_gd_entry_done = 1;
-            gd_dump_ai_continents("610_AI_Evaluate_Continents_Entry_Continents");
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 610_AI_Evaluate_Continents_Entry_Continents player_idx = %d", (int)player_idx);
-        }
-    }
+    STU_GD_ONCE("610_AI_Evaluate_Continents_Entry_Continents", STU_GD_Dump_AI_Continents("610_AI_Evaluate_Continents_Entry_Continents"); STU_GD_WRITE("[GD] 610_AI_Evaluate_Continents_Entry_Continents player_idx = %d", (int)player_idx));  /* CLAUDE */
 
 
     /* Phase 1: */
@@ -6389,18 +6539,13 @@ HERE:
     }
     _ai_reevaluate_continents_countdown[player_idx] -= 1;
     LOG_DEBUG(LOG_CAT_GENERAL, "_ai_reevaluate_continents_countdown = %d", _ai_reevaluate_continents_countdown[player_idx]);
-    /* CLAUDE: 611 fire-once flag, shared across BOTH return paths (this throttle
-     * early-return AND the full-eval end at the bottom) so it fires on whatever
-     * return the first invocation takes -- the OG probe captures at the far-return
-     * regardless of path.  On this early return _ai_continents == on-entry (== 610). */
-    static int aievalcont_gd_return_done = 0;
+    /* CLAUDE: GD point 611 fires once across BOTH return paths (this throttle early-return AND the full-eval end at the bottom) -- STU_GD_ONCE
+     * keys on the point string, so the two sites share one gate.  The OG probe captures at the far-return regardless of path.  On this early return
+     * _ai_continents == on-entry (== 610). */
     if(_ai_reevaluate_continents_countdown[player_idx] > 0)
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-        if(!aievalcont_gd_return_done) {
-            aievalcont_gd_return_done = 1;
-            gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
-        }
+        TRACE_EXIT();
+        STU_GD_ONCE("611_AI_Evaluate_Continents_Return_Continents", STU_GD_Dump_AI_Continents("611_AI_Evaluate_Continents_Return_Continents"));  /* CLAUDE */
         return;
     }
     _ai_reevaluate_continents_countdown[player_idx] = (25 + Random(10) + Random(10));
@@ -6441,7 +6586,9 @@ HERE:
                     LOG_DEBUG(LOG_CAT_OGBUG, "_UNITS[%d].dst_wx: %d, dst_wy: %d", itr_units, _UNITS[itr_units].dst_wx, _UNITS[itr_units].dst_wy);
                     STU_DEBUG_BREAK();
                 }
-                if(g_ai_evaluation_map[wp][((_UNITS[itr_units].dst_wy * WORLD_WIDTH) + _UNITS[itr_units].dst_wx)] == 0)
+                /* OGBUG  wp is left at NUM_PLANES (2) by the Phase 2 plane loop: les bx,[g_ai_evaluation_map+bx] with bx = 8 loads the next far pointer in dseg, city_area_bits, so a unit's orders are cancelled when the city-area bitmap WORD at (dst_wy * WORLD_WIDTH + dst_wx) * 2 is 0, unrelated to any threat */
+                // if(g_ai_evaluation_map[wp][((_UNITS[itr_units].dst_wy * WORLD_WIDTH) + _UNITS[itr_units].dst_wx)] == 0)
+                /* HACK */  if((((wp == NUM_PLANES) ? (uint16_t *)city_area_bits : g_ai_evaluation_map[wp]))[((_UNITS[itr_units].dst_wy * WORLD_WIDTH) + _UNITS[itr_units].dst_wx)] == 0)  /* CLAUDE */  /* g_ai_evaluation_map[2] is out of bounds in ReMoM; read city_area_bits as the OG does (301 PR, the word index stays inside it) */
                 {
                     _UNITS[itr_units].Status = us_Ready;  // 'MoM Demo': NO ORDERS
                 }
@@ -6533,6 +6680,7 @@ HERE:
         for(landmass_idx = 0; landmass_idx < NUM_LANDMASSES; landmass_idx++)
         {
             /* if already lmt_NoTargets and no enemy units, then still lmt_NoTargets */
+            /* OGBUG  type_array was zeroed and then used to count the AI's own cities, so this lmt_NoTargets (6) test reads the city count: a landmass with exactly 6 own cities and no foreign unit cost stays at 6 ('no targets'), and a real earlier lmt_NoTargets is never kept */
             /* OGBUG: checking for landmass status/type, but actually just city count */
             if(
                 (_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx] == lmt_NoTargets)
@@ -6595,16 +6743,21 @@ HERE:
 */
 
 
+    /* OGBUG  landmass_node_centroid_wx / wy (bp-0Eh / bp-10h) are first written in Phase 9: the Phase 6 expansion-target distance is measured from stack garbage, so where the AI settlers expand to is chosen relative to an arbitrary point */
+    /* HACK */  landmass_node_centroid_wx = Stack_Garbage();  /* CLAUDE */  /* OG: uninitialised; only used as a Delta_XY_With_Wrap() argument */
+    /* HACK */  landmass_node_centroid_wy = Stack_Garbage();  /* CLAUDE */  /* OG: uninitialised; only used as a Delta_XY_With_Wrap() argument */
     /* CI: OG uses landmass_node_centroid_wx/wy UNINITIALIZED in Phase 6 (they're only
      * set in Phase 9).  Inject OG's captured stack value (capture order: wy, wx) so
      * ReMoM's Phase 6 delta matches; Phase 9's assignment overwrites it legitimately. */
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
     {
         long ci_c[2];
-        if(gd_ci_get("centroid", "ai_eval_cont", ci_c, 2) == 2) {
+        if(STU_CI_Get("centroid", "ai_eval_cont", ci_c, 2) == 2) {
             landmass_node_centroid_wy = (int16_t)ci_c[0];
             landmass_node_centroid_wx = (int16_t)ci_c[1];
         }
     }
+#endif
 
     /* Phase 6: Choose Unoccupied Landmass for Settler Target */
     for(wp = 0; wp < NUM_PLANES; wp++)
@@ -6621,10 +6774,17 @@ HERE:
                 continue;
             }
             landmass_node_index = _ai_landmass_land_squares_heads[wp][landmass_idx];
+            /* OGBUG  the loop also requires the shared slot bp-22h to be ST_FALSE, and at this point it still holds force_reevaluation from Phase 2: when the re-plan was forced by a threatened lmt_NoOwnCity stage point, no square is examined and the settler target is cleared below */
+            // while(
+            //     (landmass_node_index != ST_UNDEFINED)
+            //     &&
+            //     (square_occupation_value == ST_FALSE)
+            // )
+            /* CLAUDE */  /* REBUG */  /* asm loc_F7C98: cmp [bp+force_reevaluation__square_occupation_value], 0 - square_occupation_value is not written until Phase 7 */
             while(
                 (landmass_node_index != ST_UNDEFINED)
                 &&
-                (square_occupation_value == ST_FALSE)
+                (force_reevaluation == ST_FALSE)
             )
             {
                 landmass_node_wx = _ai_landmass_land_squares_wx_array[wp][landmass_node_index];
@@ -6634,10 +6794,16 @@ HERE:
                 if(g_ai_evaluation_map[wp][world_offset] == 0)
                 {
                     /* OGBUG: landmass_node_centroid_wx and landmass_node_centroid_wy are uninitialized */
+                    // delta_distance = (
+                    //     Random(20)
+                    //     +
+                    //     Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, landmass_node_centroid_wx, landmass_node_centroid_wy, WORLD_WIDTH)
+                    // );
+                    /* CLAUDE */  /* REBUG */  /* asm loc_F7BD9: Delta_XY_With_Wrap() first, then Random(20) */
                     delta_distance = (
-                        Random(20)
-                        +
                         Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, landmass_node_centroid_wx, landmass_node_centroid_wy, WORLD_WIDTH)
+                        +
+                        Random(20)
                     );
                     if(delta_distance < min_delta_distance)
                     {
@@ -6652,9 +6818,15 @@ HERE:
         }
         if(min_delta_distance < 1000)
         {
-            _ai_landmass_settler_targets[wp][player_idx] = (uint8_t)target_landmass_idx;
-            _ai_landmass_settler_targets_wx_array[wp][player_idx] = (uint8_t)target_square_wx;
-            _ai_landmass_settler_targets_wy_array[wp][player_idx] = (uint8_t)target_square_wy;
+            // _ai_landmass_settler_targets[wp][player_idx] = (uint8_t)target_landmass_idx;
+            // _ai_landmass_settler_targets_wx_array[wp][player_idx] = (uint8_t)target_square_wx;
+            // _ai_landmass_settler_targets_wy_array[wp][player_idx] = (uint8_t)target_square_wy;
+            /* CLAUDE */  /* REBUG */  /* asm: mov bx, [_ai_landmass_settler_targets+bx] / mov ax, [bp+player_idx] / shl ax, 1 / add bx, ax / mov ax, [bp+target_landmass_idx] / mov [bx], ax */
+            _ai_landmass_settler_targets[wp][player_idx] = target_landmass_idx;
+            /* CLAUDE */  /* REBUG */  /* asm: mov bx, [_ai_landmass_settler_targets_wx_array+bx] / mov ax, [bp+player_idx] / shl ax, 1 / add bx, ax / mov ax, [bp+Target_Tile_X] / mov [bx], ax */
+            _ai_landmass_settler_targets_wx_array[wp][player_idx] = target_square_wx;
+            /* CLAUDE */  /* REBUG */  /* asm: mov bx, [_ai_landmass_settler_targets_wy_array+bx] / mov ax, [bp+player_idx] / shl ax, 1 / add bx, ax / mov ax, [bp+Target_Tile_Y] / mov [bx], ax */
+            _ai_landmass_settler_targets_wy_array[wp][player_idx] = target_square_wy;
         }
         else
         {
@@ -6759,10 +6931,16 @@ HERE:
                 /* occupieable - no site or enemy stack */
                 if(g_ai_evaluation_map[wp][((landmass_node_wy * WORLD_WIDTH) + landmass_node_wx)] == 0)
                 {
+                    // delta_distance = (
+                    //     Random(20)
+                    //     +
+                    //     Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH)
+                    // );
+                    /* CLAUDE */  /* REBUG */  /* asm loc_F8028: call Delta_XY_With_Wrap / push ax / Random(20) / pop dx / add dx, ax - Delta_XY_With_Wrap() first, then Random(20) */
                     delta_distance = (
-                        Random(20)
-                        +
                         Delta_XY_With_Wrap(landmass_node_wx, landmass_node_wy, territory_centroid_wx, territory_centroid_wy, WORLD_WIDTH)
+                        +
+                        Random(20)
                     );
                     if(delta_distance < min_delta_distance)
                     {
@@ -6874,12 +7052,9 @@ if we can move units off the current landmass, make sure the stage-square is the
      * after the full continent-status/stage-point rebuild (and after EMMDATAH_Map(),
      * matching the OG far-return capture point).  Diff against 610 to see what this
      * evaluation produced.  Fire once, on the same (first) invocation as 610. */
-    if(!aievalcont_gd_return_done) {  /* shared flag declared at the throttle above */
-        aievalcont_gd_return_done = 1;
-        gd_dump_ai_continents("611_AI_Evaluate_Continents_Return_Continents");
-    }
+    STU_GD_ONCE("611_AI_Evaluate_Continents_Return_Continents", STU_GD_Dump_AI_Continents("611_AI_Evaluate_Continents_Return_Continents"));  /* CLAUDE */  /* shares its gate with the throttle early-return above */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -6910,37 +7085,6 @@ if we can move units off the current landmass, make sure the stage-square is the
  * defensive range checks and naming that do not yet fully describe the final
  * intent of the original routine.
  */
-/* 608: g_ai_evaluation_map -- per-plane WORLD_SIZE uint16 occupation map (CONTXXX
- * EMS frame); the occupiable gate AI_Evaluate_Continents reads.  Chunked <=100/line
- * @base, %u (values can be a cost OR-ed with AI_TARGET_SITE 0x8000).  Defined before
- * AI_Evaluation_Map so it can be called at that function's return. */
-static void gd_dump_ai_evaluation_map(const char* point)
-{
-    static char buf[1024];
-    int wp, base, end, i, q;
-    for(wp = 0; wp < NUM_PLANES; wp++)
-    {
-        for(base = 0; base < WORLD_SIZE; base += 100)
-        {
-            end = (base + 100 < WORLD_SIZE) ? base + 100 : WORLD_SIZE;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%u" : "%u",
-                              (unsigned)g_ai_evaluation_map[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s g_ai_evaluation_map[%d]@%d = %s",
-                      point, wp, base, buf);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* GD capture (defined in INITGAME.c) -- AI_Evaluation_Map's on-entry inputs (608_*). */
-void gd_dump_players(const char* point);
-void gd_dump_units(const char* point);
-void gd_dump_lairs(const char* point);
-void gd_dump_cities(const char* point);
-void gd_dump_nodes(const char* point);
-
 void AI_Evaluation_Map(int16_t player_idx)
 {
     int16_t nonhostiles[NUM_PLAYERS] = { 0, 0, 0, 0, 0, 0 };
@@ -6951,7 +7095,9 @@ void AI_Evaluation_Map(int16_t player_idx)
     int16_t itr_units = 0;
     int16_t wp = 0;
     int16_t strength = 0;
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
     int aiem_capture_strength = 0;  /* CLAUDE: 608 per-unit strength fire-once gate */
+#endif
     struct s_UNIT * p_unit = NULL;
     struct s_LAIR * p_lair = NULL;
     struct s_CITY * p_city = NULL;
@@ -6960,17 +7106,7 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* CLAUDE: GD point 608 inputs -- capture the arrays AI_Evaluation_Map sums into
      * g_ai_evaluation_map (all DGROUP, valid on-entry before CONTXXX_Map), to pin
      * which input drives the 608 strength divergence.  Fire once (first AI player). */
-    {
-        static int aiem_inputs_gd_done = 0;
-        if(!aiem_inputs_gd_done) {
-            aiem_inputs_gd_done = 1;
-            gd_dump_players("608_AI_Evaluation_Map_P");
-            gd_dump_units  ("608_AI_Evaluation_Map_U");
-            gd_dump_lairs  ("608_AI_Evaluation_Map_L");
-            gd_dump_cities ("608_AI_Evaluation_Map_C");
-            gd_dump_nodes  ("608_AI_Evaluation_Map_N");
-        }
-    }
+    STU_GD_ONCE("608_AI_Evaluation_Map_Inputs", STU_GD_Dump_Players("608_AI_Evaluation_Map_P"); STU_GD_Dump_Units("608_AI_Evaluation_Map_U"); STU_GD_Dump_Lairs("608_AI_Evaluation_Map_L"); STU_GD_Dump_Cities("608_AI_Evaluation_Map_C"); STU_GD_Dump_Nodes("608_AI_Evaluation_Map_N"));  /* CLAUDE */
 
     CONTXXX_Map();
 
@@ -7011,50 +7147,69 @@ void AI_Evaluation_Map(int16_t player_idx)
      * pin which unit(s) drive the 608 map divergence.  Mirrors the OG probe, which
      * captures AX at the j_Effective_Unit_Strength return indexed by SI (== itr).
      * Fire once (first AI player). */
-    {
-        static int aiem_strength_gd_done = 0;
-        aiem_capture_strength = !aiem_strength_gd_done;
-        aiem_strength_gd_done = 1;
-    }
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
+    STU_GD_ONCE("608_AI_Evaluation_Map_Strength", aiem_capture_strength = 1);  /* CLAUDE */  /* open the per-unit strength capture for this (first) invocation */
+#endif
 
     /* Iterate through all units and add their strength to the map */
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        /* HACK */ if(_UNITS[itr_units].wp == ST_UNDEFINED) { continue; }  /* TODO  make g_ai_evaluation_map[][] not SIGSEGV when wp is -1 */
+        /* OGBUG  no owner / plane test: dead / disbanded units (owner_idx -1, still in _UNITS[] until Units_Compact()) are processed like any other non-own unit. Units killed */
+        /* OGBUG  before the AI turn had their plane reset to 0 by AI_Next_Turn()'s sanity loop, so their strength goes on the Arcanus map at their last square; units killed by an */
+        /* OGBUG  earlier player's AI turn in this same AI_Next_Turn() still have wp -1 from Kill_Unit(), and their g_ai_evaluation_map[-1] accesses go through the far pointer */
+        /* OGBUG  stored just before g_ai_evaluation_map in dseg (_ai_move_path_table); see the HACKs below */
+        /* CLAUDE */  /* no asm counterpart (loc_F8451..loc_F8524 has no wp test): ReMoM now processes wp -1 units like the OG */
+        // /* HACK */ if(_UNITS[itr_units].wp == ST_UNDEFINED) { continue; }  /* TODO  make g_ai_evaluation_map[][] not SIGSEGV when wp is -1 */
 
         p_unit = &_UNITS[itr_units];
 
-        unit_owner_idx = p_unit->owner_idx;  /* OGBUG: OOB AVRL  _UNITS[itr_units].owner_idx is ST_UNDEFINED */
+        unit_owner_idx = p_unit->owner_idx;
 
         /* Skip units belonging to the player being evaluated */
         if(
             (unit_owner_idx == player_idx)
             ||
-            (p_unit->owner_idx == player_idx)  /* OGBUG: conflicting condition - will always jump */
+            (p_unit->owner_idx == player_idx)  /* asm loc_F8470: re-reads _UNITS[].owner_idx and repeats the same test; it can never be true when the first one is false */
         )
         {
             continue;
         }
 
-        wp = p_unit->wp;  /* OGBUG: OOB AVRL  p_unit->wp is ST_UNDEFINED */
+        wp = p_unit->wp;
         xy_ofst = ((p_unit->wy * WORLD_WIDTH) + p_unit->wx);
 
+        /* OGBUG  the strength of every non-own unit is added, hostile or not (a non-hostile owner only adds the AI_TARGET_NONHOSTILE flag below): AI_Build_Target_List() takes an unowned node with any strength on it as a target, so an ally's army on a free node draws an attack */
         /* Add 1/10th of the unit's effective strength to the map square */
         strength = Effective_Unit_Strength(itr_units);   /* raw (before /10) */
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
         if(aiem_capture_strength)
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d", (int)itr_units, (int)strength);
+            STU_GD_WRITE("[GD] 608_AI_Evaluation_Map_Strength unit_strength[%d].s = %d", (int)itr_units, (int)strength);
+#endif
         strength = strength / 10;
-        g_ai_evaluation_map[wp][xy_ofst] += strength;  /* OGBUG: could index g_ai_evaluation_map with wp = -1 */
+        /* OGBUG  wp -1: les bx,[g_ai_evaluation_map+bx] with bx = -4 loads the far pointer _ai_move_path_table, and add [es:bx],ax adds strength to the word at _ai_move_path_table + (xy_ofst * 2) */
+        // g_ai_evaluation_map[wp][xy_ofst] += strength;
+        /* HACK */  if(wp != ST_UNDEFINED)
+        /* HACK */  {
+                        g_ai_evaluation_map[wp][xy_ofst] += strength;
+        /* HACK */  }
 
         /* If the unit owner is non-hostile, mark the square with a flag */
-        // OGBUG: OOB AVRL  will index nonhostiles[] with unit_owner_idx = ST_UNDEFINED, because it *sanitizes* owner_idx to ST_UNDEFINED at start of turn
-        if(nonhostiles[unit_owner_idx] == ST_TRUE)
+        /* OGBUG  owner_idx -1: nonhostiles[-1] is read - [bp-14h], the word below the array, which is the caller's SI pushed in the prologue */
+        // if(nonhostiles[unit_owner_idx] == ST_TRUE)
+        /* HACK */  if(((unit_owner_idx == ST_UNDEFINED) ? Stack_Garbage() : nonhostiles[unit_owner_idx]) == ST_TRUE)
         {
-            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;  /* OGBUG: OOB AVRL  could index g_ai_evaluation_map with wp = -1 */
+            /* OGBUG  wp -1: the read and the store both go through the far pointer _ai_move_path_table (g_ai_evaluation_map[-1]), setting 4000h in the word at _ai_move_path_table + (xy_ofst * 2) */
+            // g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;
+            /* HACK */  if(wp != ST_UNDEFINED)
+            /* HACK */  {
+                            g_ai_evaluation_map[wp][xy_ofst] |= AI_TARGET_NONHOSTILE;
+            /* HACK */  }
         }
 
     }
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
     if(aiem_capture_strength) STU_Log_Flush_All();
+#endif
 
     /* Iterate through all lairs and add guardian strength */
     for(itr = 0; itr < NUM_LAIRS; itr++)
@@ -7114,197 +7269,11 @@ void AI_Evaluation_Map(int16_t player_idx)
     /* CLAUDE: GD point 608 -- g_ai_evaluation_map at AI_Evaluation_Map return (the
      * occupiable gate feeding AI_Evaluate_Continents's stage-point selection).  No
      * EMMDATAH_Map() here, so CONTXXX is still mapped.  Fire once. */
-    { static int evalmap_gd_done = 0;
-      if(!evalmap_gd_done) { evalmap_gd_done = 1; gd_dump_ai_evaluation_map("608_AI_Evaluation_Map"); } }
+    STU_GD_ONCE("608_AI_Evaluation_Map", STU_GD_Dump_AI_Evaluation_Map("608_AI_Evaluation_Map"));  /* CLAUDE */
 
 }
 
 
-/* CLAUDE: GD capture of the AI landmass-square scratch arrays (per-landmass
- * linked-list heads, per-node next-index lists, per-node wx/wy coords -- in the
- * CONTXXX EMS frame) at AI_Choose_War_Landmass entry, for the Stage-2 landmass-
- * weight divergence hunt.  Mirrors the OG capfn (og_sort_trace.h, 605_AI_Choose_War_Landmass_Squares)
- * byte-for-byte: heads dumped per-landmass (all NUM_LANDMASSES -- reset every
- * rebuild, always valid); lists/wx/wy only up to the used node count (their tails
- * are stale scratch and would diff spuriously).  used = total nodes reachable
- * from all heads (== the builder's count[wp]), by traversal so no _landmasses
- * read is needed.  The arrays are map-derived (player-independent), so the caller
- * fires this once per turn. */
-void gd_dump_ai_landmass_squares(const char* point)
-{
-    static char buf[1024];
-    int16_t wp;
-    int i, used, node, guard, base, end, q;
-
-    for(wp = 0; wp < NUM_PLANES; wp++)
-    {
-        /* used = total nodes reachable from all heads == builder count[wp].
-         * A node index outside [0,1600) is the list terminator (ST_UNDEFINED or
-         * stale); guard bounds the walk against a corrupt cycle. */
-        used = 0;
-        for(i = 0; i < NUM_LANDMASSES; i++)
-        {
-            node = _ai_landmass_land_squares_heads[wp][i];
-            guard = 0;
-            while(node >= 0 && node < 1600 && guard++ < 1600)
-            {
-                used++;
-                node = _ai_landmass_land_squares_lists[wp][node];
-            }
-        }
-
-        /* Emit <=100 values per [GD] line, tagged with the start index (@base),
-         * so each line stays under the logger's LOG_FMT_BUF_LEN.  The OG capfn
-         * chunks identically, so the two logs diff line-for-line. */
-        for(base = 0; base < NUM_LANDMASSES; base += 100)
-        {
-            end = (base + 100 < NUM_LANDMASSES) ? base + 100 : NUM_LANDMASSES;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_land_squares_heads[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].heads@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_land_squares_lists[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].lists@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_land_squares_wx_array[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wx_array@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_land_squares_wy_array[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_land_squares[%d].wy_array@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        STU_Log_Flush_All();   /* drain per plane -- avoid async-logger ring overrun */
-    }
-}
-
-/* 606: dock (embark) squares -- parallel structure to the land squares above, same
- * CONTXXX EMS frame, built once at load by Build_Dock_Linked_List.  AICWL's dock
- * loop walks these to compute min_delta_distance, so dumping them at the same
- * CONTXXX_Map() return as 605 lets compare-gd pin a dock-square-data divergence. */
-void gd_dump_ai_dock_squares(const char* point)
-{
-    static char buf[1024];
-    int16_t wp;
-    int i, used, node, guard, base, end, q;
-
-    for(wp = 0; wp < NUM_PLANES; wp++)
-    {
-        used = 0;
-        for(i = 0; i < NUM_LANDMASSES; i++)
-        {
-            node = _ai_landmass_dock_squares_heads[wp][i];
-            guard = 0;
-            while(node >= 0 && node < 1600 && guard++ < 1600)
-            {
-                used++;
-                node = _ai_landmass_dock_squares_lists[wp][node];
-            }
-        }
-        for(base = 0; base < NUM_LANDMASSES; base += 100)
-        {
-            end = (base + 100 < NUM_LANDMASSES) ? base + 100 : NUM_LANDMASSES;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_dock_squares_heads[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].heads@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_dock_squares_lists[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].lists@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_dock_squares_wx_array[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wx_array@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        for(base = 0; base < used; base += 100)
-        {
-            end = (base + 100 < used) ? base + 100 : used;
-            q = 0; buf[0] = 0;
-            for(i = base; i < end; i++)
-                q += snprintf(buf + q, sizeof(buf) - q, i > base ? ",%d" : "%d",
-                              (int)_ai_landmass_dock_squares_wy_array[wp][i]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_landmass_dock_squares[%d].wy_array@%d = %s",
-                      point, (int)wp, base, buf);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-
-/* gd_dump_fortresses / gd_dump_cities / gd_dump_players are in INITGAME.c (INITGAME.h not included here). */
-void gd_dump_fortresses(const char* point);
-void gd_dump_cities(const char* point);
-void gd_dump_players(const char* point);
-
-/* CLAUDE: GD capture of _ai_continents (604) -- the per-plane/per-player continent
- * evaluation that gates AI_Choose_War_Landmass's plane reevaluation (the switch
- * reads .type_array).  s_LANDMASSES = { wx_array[60], wy_array[60], type_array[60] }
- * (uint8) per (plane,player); flat record idx = plane*NUM_NONNPC_PLAYERS + player.
- * DGROUP global -- valid on-entry.  Mirrors the OG capfn byte-for-byte. */
-void gd_dump_ai_continents(const char* point)
-{
-    static char buf[1024];
-    int wp, pl, lm, q, flat;
-    for(wp = 0; wp < NUM_PLANES; wp++)
-    {
-        for(pl = 0; pl < NUM_NONNPC_PLAYERS; pl++)
-        {
-            flat = wp * NUM_NONNPC_PLAYERS + pl;
-            q = 0; buf[0] = 0;
-            for(lm = 0; lm < NUM_LANDMASSES; lm++)
-                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
-                              (int)_ai_continents.plane[wp].player[pl].wx_array[lm]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wx_array = %s", point, flat, buf);
-            q = 0; buf[0] = 0;
-            for(lm = 0; lm < NUM_LANDMASSES; lm++)
-                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
-                              (int)_ai_continents.plane[wp].player[pl].wy_array[lm]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].wy_array = %s", point, flat, buf);
-            q = 0; buf[0] = 0;
-            for(lm = 0; lm < NUM_LANDMASSES; lm++)
-                q += snprintf(buf + q, sizeof(buf) - q, lm ? ",%d" : "%d",
-                              (int)_ai_continents.plane[wp].player[pl].type_array[lm]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ai_continents[%d].type_array = %s", point, flat, buf);
-        }
-    }
-}
 
 // WZD o162p37
 void AI_Choose_War_Landmass(int16_t player_idx)
@@ -7332,25 +7301,16 @@ void AI_Choose_War_Landmass(int16_t player_idx)
     int16_t landmass_weight_check = 0;  // DNE in Dasm, reuses Value_Sum
     int16_t landmass_node_index = 0;  // DNE in Dasm, reuses Value_Sum
     /* CLAUDE: 607 shadow -- min_delta_distance is a scalar reused each landmass
-     * iteration; snapshot it per-landmass so 607 can dump the whole array. */
+     * iteration; snapshot it per-landmass so 607 can dump the whole array.  GD capture builds only. */
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
     int16_t gd_min_delta_distance[NUM_LANDMASSES] = {0};
+#endif
 
     /* CLAUDE: GD point -- capture _FORTRESSES + _CITIES on-entry.  Both live in
      * DGROUP (not the CONTXXX EMS frame), so they are valid here without a
      * CONTXXX_Map(); matches the OG probe's aicwl_entry landmark.  Fire once. */
-    {
-        static int aicwl_dgroup_gd_done = 0;
-        if(!aicwl_dgroup_gd_done) {
-            aicwl_dgroup_gd_done = 1;
-            /* which player this (first) call is for -- whose _ai_continents row
-             * the reevaluation reads. */
-            gd_dump_fortresses   ("601_AI_Choose_War_Landmass_F");
-            gd_dump_cities       ("602_AI_Choose_War_Landmass_C");
-            gd_dump_ai_continents("603_AI_Choose_War_Landmass_Continents");
-            gd_dump_players      ("604_AI_Choose_War_Landmass_P");
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 604_AI_Choose_War_Landmass_P player_idx = %d", (int)player_idx);
-        }
-    }
+    /* the player_idx line records which player this (first) call is for -- whose _ai_continents row the reevaluation reads */
+    STU_GD_ONCE("601_AI_Choose_War_Landmass_Entry", STU_GD_Dump_Fortresses("601_AI_Choose_War_Landmass_F"); STU_GD_Dump_Cities("602_AI_Choose_War_Landmass_C"); STU_GD_Dump_AI_Continents("603_AI_Choose_War_Landmass_Continents"); STU_GD_Dump_Players("604_AI_Choose_War_Landmass_P"); STU_GD_WRITE("[GD] 604_AI_Choose_War_Landmass_P player_idx = %d", (int)player_idx));  /* CLAUDE */
 
     first_hostile_player_idx = ST_UNDEFINED;
 
@@ -7363,14 +7323,13 @@ void AI_Choose_War_Landmass(int16_t player_idx)
      * OG probe, which triggers at this same CONTXXX_Map() return.  Arrays are
      * map-derived (player-independent), so capture once; lift the guard for
      * per-turn captures. */
-    {
-        static int aicwl_gd_done = 0;
-        if(!aicwl_gd_done) { aicwl_gd_done = 1; gd_dump_ai_landmass_squares("605_AI_Choose_War_Landmass_Squares"); gd_dump_ai_dock_squares("606_AI_Choose_War_Landmass_Dock_Squares"); }
-    }
+    STU_GD_ONCE("605_AI_Choose_War_Landmass_Squares", STU_GD_Dump_AI_Landmass_Squares("605_AI_Choose_War_Landmass_Squares"); STU_GD_Dump_AI_Dock_Squares("606_AI_Choose_War_Landmass_Dock_Squares"));  /* CLAUDE */
 
     /* OGBUG: should check spl_Spell_Of_Mastery, not spl_Fire_Elemental */
     /* OGBUG: should exclude self - `itr_players != player_idx` */
-    for(itr_players = 0; ((itr_players < _num_players) & (first_hostile_player_idx == ST_UNDEFINED)); itr_players++)
+    /* OGBUG  spell 90 (spl_Fire_Elemental) where the Spell of Mastery would be expected: any wizard whose casting_spell_idx is 90 is taken as the war target, besides those at diplomacy status >= DIPL_War */
+    // for(itr_players = 0; ((itr_players < _num_players) & (first_hostile_player_idx == ST_UNDEFINED)); itr_players++)
+    /* CLAUDE */  /* REBUG */  for(itr_players = 0; ((itr_players < _num_players) && (first_hostile_player_idx == ST_UNDEFINED)); itr_players++)  /* asm loc_F8842: jge / jz, short-circuit */
     {
         if(
             (_players[player_idx].Dipl.Dipl_Status[itr_players] >= DIPL_War)
@@ -7577,20 +7536,26 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                 {
                     dock_square_wx = _ai_landmass_dock_squares_wx_array[wp][landmass_node_index];
                     dock_square_wy = _ai_landmass_dock_squares_wy_array[wp][landmass_node_index];
+                    /* OGBUG  for a dock square with threat the Delta_XY_With_Wrap() call is skipped, but the minimum test still runs on the stale value in the shared slot (bp-12h): the previous square's distance or, for the first square, own_city_count, so a partly threatened coast can get a smaller distance than any safe square has and a larger (2000 - 10 * cities) / distance weight */
                     if(g_ai_evaluation_map[wp][((dock_square_wy * WORLD_WIDTH) + dock_square_wx)] == 0)
                     {
-                        delta_distance = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);
+                        // delta_distance = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);
+                        /* CLAUDE */  /* REBUG */  own_city_count = Delta_XY_With_Wrap(dock_square_wx, dock_square_wy, empire_wx, empire_wy, WORLD_WIDTH);  /* asm loc_F8C0A: stored into own_city_count__distance (bp-12h) */
                     }
                     /* OGBUG: this nearest test should be inside the occupieable test block */
-                    if(delta_distance < min_delta_distance)
+                    // if(delta_distance < min_delta_distance)
+                    /* CLAUDE */  /* REBUG */  if(own_city_count < min_delta_distance)  /* asm loc_F8C6F: compares bp-12h, which still holds own_city_count before the first Delta_XY_With_Wrap() */
                     {
-                        min_delta_distance = delta_distance;
+                        // min_delta_distance = delta_distance;
+                        /* CLAUDE */  /* REBUG */  min_delta_distance = own_city_count;
                     }
                     landmass_node_index = _ai_landmass_dock_squares_lists[wp][landmass_node_index];
                 }
                 /* to avoid divide by zero */
                 if(min_delta_distance == 0) { min_delta_distance = 1; }
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
                 gd_min_delta_distance[itr_landmasses] = min_delta_distance;  /* CLAUDE 607 */
+#endif
 
                 if(first_hostile_player_idx <= ST_UNDEFINED)
                 {
@@ -7708,30 +7673,8 @@ void AI_Choose_War_Landmass(int16_t player_idx)
                  * on the same call.  OG mirror reads Continent_Values_2 @
                  * SS:(BP-0x10A) at the Get_Weighted_Choice entry.  Fire once (first
                  * call that reaches Get_Weighted_Choice). */
-                {
-                    static int aicwl_weights_gd_done = 0;
-                    if(!aicwl_weights_gd_done) {
-                        static char wbuf[1024];
-                        int wi, wq = 0;
-                        aicwl_weights_gd_done = 1;
-                        wbuf[0] = 0;
-                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
-                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)final_landmass_weights[wi]);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights final_landmass_weights = %s", wbuf);
-                        wq = 0; wbuf[0] = 0;
-                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
-                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)Continent_Values[wi]);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights Continent_Values = %s", wbuf);
-                        wq = 0; wbuf[0] = 0;
-                        for(wi = 0; wi < NUM_LANDMASSES; wi++)
-                            wq += snprintf(wbuf + wq, sizeof(wbuf) - (size_t)wq, wi ? ",%d" : "%d", (int)gd_min_delta_distance[wi]);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights min_delta_distance = %s", wbuf);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights wp = %d", (int)wp);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights player_idx = %d", (int)player_idx);
-                        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 607_AI_Choose_War_Landmass_Weights first_hostile_player_idx = %d", (int)first_hostile_player_idx);
-                    }
-                }
-                LOG_TRACE(LOG_CAT_GENERAL, "[GD] first_hostile_player_idx = %d", first_hostile_player_idx);
+                STU_GD_ONCE("607_AI_Choose_War_Landmass_Weights", STU_GD_Dump_Csv("607_AI_Choose_War_Landmass_Weights", "final_landmass_weights", final_landmass_weights, GD_I16, NUM_LANDMASSES); STU_GD_Dump_Csv("607_AI_Choose_War_Landmass_Weights", "Continent_Values", Continent_Values, GD_I16, NUM_LANDMASSES); STU_GD_Dump_Csv("607_AI_Choose_War_Landmass_Weights", "min_delta_distance", gd_min_delta_distance, GD_I16, NUM_LANDMASSES); STU_GD_WRITE("[GD] 607_AI_Choose_War_Landmass_Weights wp = %d", (int)wp); STU_GD_WRITE("[GD] 607_AI_Choose_War_Landmass_Weights player_idx = %d", (int)player_idx); STU_GD_WRITE("[GD] 607_AI_Choose_War_Landmass_Weights first_hostile_player_idx = %d", (int)first_hostile_player_idx));  /* CLAUDE */
+                STU_GD_TRACE("[GD] first_hostile_player_idx = %d", first_hostile_player_idx);  /* CLAUDE */
                 _ai_landmass_war_targets[wp][player_idx] = Get_Weighted_Choice(&final_landmass_weights[0], NUM_LANDMASSES);
             }
 

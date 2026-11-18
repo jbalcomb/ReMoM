@@ -1,0 +1,8 @@
+module_num=160
+module=set386
+source=0160-set386.md
+range[0]=1:0x00119C70 linear=0x00129C70 size=24
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m160f001  1    -      0x00129C70  1:0x00119C70  code  memset  memset_  regions/07-object-1/001AEE54-001AF653.txt

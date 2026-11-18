@@ -1,0 +1,8 @@
+module_num=363
+module=calloc
+source=0363-calloc.md
+range[0]=1:0x0015321B linear=0x0016321B size=24
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m363f001  1    -      0x0016321B  1:0x0015321B  code  calloc  calloc_  regions/07-object-1/001E8654-001E8E53.txt

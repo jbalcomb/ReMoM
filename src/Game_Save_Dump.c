@@ -279,11 +279,15 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.hidden_rel[%d] = %d\n",          itr, p, rd_i8(sav,  d + 0x78 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_7E[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x7E + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_84[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x84 + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_8A[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x8A + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_90[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x90 + p)); }
+            // for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_8A[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x8A + p)); }
+            // for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_90[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0x90 + p)); }
+            /* CLAUDE */  /* REBUG */  /* field_8A is int16_t[6] at 0x8A..0x95 (asm: word ptr, player_idx shl 1); there is no separate field_90 */
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_8A[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x8A + (p * 2))); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_spell[%d] = %d\n",       itr, p, rd_i8(sav,  d + 0x96 + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_want_tech[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0x9C + p)); }
-            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_A2[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0xA2 + p)); }
+            // for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_want_tech[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0x9C + p)); }
+            // for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.field_A2[%d] = %d\n",            itr, p, rd_u8(sav,  d + 0xA2 + p)); }
+            /* CLAUDE */  /* REBUG */  /* niu_au_want_tech is int16_t[6] at 0x9C..0xA7 (asm: word ptr, idx shl 1); there is no separate field_A2 */
+            for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_want_tech[%d] = %d\n",            itr, p, rd_i16(sav, d + 0x9C + (p * 2))); }
             for (k = 0; k < (SD_NUM_PLAYERS * 6); k++) { fprintf(fp, "player[%d].dipl.field_A8[%d] = %d\n",      itr, k, rd_i16(sav, d + 0xA8 + (k * 2))); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.niu_au_tech_trade_num[%d] = %d\n",            itr, p, rd_i8(sav,  d + 0xF0 + p)); }
             for (p = 0; p < SD_NUM_PLAYERS; p++) { fprintf(fp, "player[%d].dipl.tribute_gold[%d] = %d\n",        itr, p, rd_i16(sav, d + 0xF6 + (p * 2))); }
@@ -299,7 +303,9 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
 
         /* --- 0x025A research / mana / casting skill / researching spell --- */
         fprintf(fp, "player[%d].research_cost_remaining = %d\n", itr, rd_u16(sav, base + 0x25A));
-        fprintf(fp, "player[%d].mana_reserve = %d\n",            itr, rd_u16(sav, base + 0x25C));
+        // fprintf(fp, "player[%d].mana_reserve = %d\n",            itr, rd_u16(sav, base + 0x25C));
+        /* CLAUDE */  /* REBUG */  /* mana_reserve / gold_reserve are int16_t (asm: cwd) */
+        fprintf(fp, "player[%d].mana_reserve = %d\n",            itr, rd_i16(sav, base + 0x25C));
         fprintf(fp, "player[%d].spell_casting_skill = %d\n",     itr, rd_i32(sav, base + 0x25E));
         fprintf(fp, "player[%d].researching_spell_idx = %d\n",   itr, rd_i16(sav, base + 0x262));
 
@@ -311,7 +317,9 @@ static void Dump_Players(FILE *fp, const uint8_t *sav)
 
         /* --- 0x0354 tail fields --- */
         fprintf(fp, "player[%d].defeated_wizards = %d\n", itr, rd_u16(sav, base + 0x354));
-        fprintf(fp, "player[%d].gold_reserve = %d\n",     itr, rd_u16(sav, base + 0x356));
+        // fprintf(fp, "player[%d].gold_reserve = %d\n",     itr, rd_u16(sav, base + 0x356));
+        /* CLAUDE */  /* REBUG */  /* mana_reserve / gold_reserve are int16_t (asm: cwd) */
+        fprintf(fp, "player[%d].gold_reserve = %d\n",     itr, rd_i16(sav, base + 0x356));
         fprintf(fp, "player[%d].field_358 = %d\n",        itr, rd_u16(sav, base + 0x358));
 
         /* --- 0x035A astrologer (s_ASTROLOGER, 6 bytes) --- */
@@ -495,13 +503,21 @@ static void Dump_Cities(FILE *fp, const uint8_t *sav)
         {
             fprintf(fp, "city[%d].enchantment[%d] = %d\n", itr, b, rd_u8(sav, base + 0x43 + b));
         }
-        /* 0x5D */ fprintf(fp, "city[%d].production_units = %d\n",  itr, rd_i8(sav, base + 0x5D));
+        // /* 0x5D */ fprintf(fp, "city[%d].production_units = %d\n",  itr, rd_i8(sav, base + 0x5D));
+        /* CLAUDE */  /* REBUG */  /* s_CITY.production_units is uint8_t (asm: mov ah, 0) */
+        /* 0x5D */ fprintf(fp, "city[%d].production_units = %d\n",  itr, rd_u8(sav, base + 0x5D));
         /* 0x5E */ fprintf(fp, "city[%d].prod_accu = %d\n",         itr, rd_i16(sav, base + 0x5E));
         /* 0x60 */ fprintf(fp, "city[%d].gold_units = %d\n",        itr, rd_u8(sav, base + 0x60));
-        /* 0x61 */ fprintf(fp, "city[%d].building_maintenance = %d\n", itr, rd_i8(sav, base + 0x61));
+        // /* 0x61 */ fprintf(fp, "city[%d].building_maintenance = %d\n", itr, rd_i8(sav, base + 0x61));
+        /* CLAUDE */  /* REBUG */  /* s_CITY.building_maintenance is uint8_t (asm: mov ah, 0) */
+        /* 0x61 */ fprintf(fp, "city[%d].building_maintenance = %d\n", itr, rd_u8(sav, base + 0x61));
         /* 0x62 */ fprintf(fp, "city[%d].mana_units = %d\n",        itr, rd_i8(sav, base + 0x62));
-        /* 0x63 */ fprintf(fp, "city[%d].research_units = %d\n",    itr, rd_i8(sav, base + 0x63));
-        /* 0x64 */ fprintf(fp, "city[%d].food_units = %d\n",        itr, rd_i8(sav, base + 0x64));
+        // /* 0x63 */ fprintf(fp, "city[%d].research_units = %d\n",    itr, rd_i8(sav, base + 0x63));
+        /* CLAUDE */  /* REBUG */  /* s_CITY.research_units is uint8_t (asm: mov ah, 0) */
+        /* 0x63 */ fprintf(fp, "city[%d].research_units = %d\n",    itr, rd_u8(sav, base + 0x63));
+        // /* 0x64 */ fprintf(fp, "city[%d].food_units = %d\n",        itr, rd_i8(sav, base + 0x64));
+        /* CLAUDE */  /* REBUG */  /* s_CITY.food_units is uint8_t (asm: mov ah, 0) */
+        /* 0x64 */ fprintf(fp, "city[%d].food_units = %d\n",        itr, rd_u8(sav, base + 0x64));
         /* 0x65 */ for (b = 0; b < 13; b++)
         {
             fprintf(fp, "city[%d].road_connections[%d] = %d\n", itr, b, rd_u8(sav, base + 0x65 + b));
@@ -606,7 +622,7 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
     fin = stu_fopen_ci(save_filepath, "rb");
     if(fin == NULL)
     {
-        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not open: %s", save_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[DeMoM SaveDump] Could not open: %s", save_filepath);
         return 1;
     }
 
@@ -615,18 +631,18 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 
     if(bytes_read != SD_TOTAL_SIZE)
     {
-        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Short read: %zu bytes (expected %d) from %s", bytes_read, SD_TOTAL_SIZE, save_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[DeMoM SaveDump] Short read: %zu bytes (expected %d) from %s", bytes_read, SD_TOTAL_SIZE, save_filepath);
         return 1;
     }
 
     fout = fopen(text_filepath, "w");
     if(fout == NULL)
     {
-        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Could not create: %s", text_filepath);
+        LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[DeMoM SaveDump] Could not create: %s", text_filepath);
         return 1;
     }
 
-    fprintf(fout, "# HeMoM Save Dump\n");
+    fprintf(fout, "# DeMoM Save Dump\n");
     fprintf(fout, "# Source: %s\n\n", save_filepath);
 
     Dump_Heroes(fout, sav);
@@ -699,6 +715,6 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath)
 
     fclose(fout);
 
-    LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[HeMoM SaveDump] Wrote: %s", text_filepath);
+    LOG_INFO(LOG_CAT_GAME_SAVE_DUMP, "[DeMoM SaveDump] Wrote: %s", text_filepath);
     return 0;
 }

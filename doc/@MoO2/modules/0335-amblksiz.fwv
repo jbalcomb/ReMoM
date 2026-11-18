@@ -1,0 +1,8 @@
+module_num=335
+module=amblksiz
+source=0335-amblksiz.md
+range[0]=2:0x00012CC8 linear=0x00182CC8 size=4
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL      CHUNK
+-    -    -      0x00182CC8  2:0x00012CC8  data  __amblksiz  __amblksiz  regions/08-object-2/00200E54-00201653.txt

@@ -1,0 +1,603 @@
+module_num=307
+module=F:\WLIBS\sound\dllload.c
+source=0307-dllload.c.md
+range[0]=1:0x00143FCF linear=0x00153FCF size=3505
+range[1]=2:0x00004274 linear=0x00174274 size=4
+range[2]=2:0x00011860 linear=0x00181860 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME              SYMBOL             CHUNK
+m307f001  1    -      0x00153FD7  1:0x00143FD7  static,code  DLL_read          _DLL_read          regions/07-object-1/001D8E54-001D9653.txt
+m307f002  2    -      0x0015403E  1:0x0014403E  code         MEM_use_malloc    _MEM_use_malloc    regions/07-object-1/001D9654-001D9E53.txt
+m307f003  3    -      0x00154072  1:0x00144072  code         MEM_use_free      _MEM_use_free      regions/07-object-1/001D9654-001D9E53.txt
+m307f004  4    -      0x001540A6  1:0x001440A6  code         MEM_alloc_lock    _MEM_alloc_lock    regions/07-object-1/001D9654-001D9E53.txt
+m307f005  5    -      0x001540EC  1:0x001440EC  code         MEM_free_lock     _MEM_free_lock     regions/07-object-1/001D9654-001D9E53.txt
+m307f006  6    -      0x00154124  1:0x00144124  code         MEM_alloc_DOS     _MEM_alloc_DOS     regions/07-object-1/001D9654-001D9E53.txt
+m307f007  7    -      0x001541D2  1:0x001441D2  code         MEM_free_DOS      _MEM_free_DOS      regions/07-object-1/001D9654-001D9E53.txt
+m307f008  8    -      0x0015421D  1:0x0014421D  code         VMM_lock_range    _VMM_lock_range    regions/07-object-1/001D9654-001D9E53.txt
+m307f009  9    -      0x001542DF  1:0x001442DF  code         VMM_unlock_range  _VMM_unlock_range  regions/07-object-1/001D9654-001D9E53.txt
+m307f010  10   -      0x001543A1  1:0x001443A1  code         VMM_lock          _VMM_lock          regions/07-object-1/001D9654-001D9E53.txt
+m307f011  11   -      0x001543D5  1:0x001443D5  code         VMM_unlock        _VMM_unlock        regions/07-object-1/001D9654-001D9E53.txt
+m307f012  12   -      0x00154409  1:0x00144409  code         DLL_size          _DLL_size          regions/07-object-1/001D9654-001D9E53.txt
+m307f013  13   -      0x0015455B  1:0x0014455B  code         DLL_load          _DLL_load          regions/07-object-1/001D9654-001D9E53.txt
+m307f014  14   -      0x00154A74  1:0x00144A74  code         FILE_error        _FILE_error        regions/07-object-1/001D9E54-001DA653.txt
+m307f015  15   -      0x00154A9A  1:0x00144A9A  code         FILE_size         _FILE_size         regions/07-object-1/001D9E54-001DA653.txt
+m307f016  16   -      0x00154B18  1:0x00144B18  code         FILE_read         _FILE_read         regions/07-object-1/001D9E54-001DA653.txt
+m307f017  17   -      0x00154C26  1:0x00144C26  code         FILE_write        _FILE_write        regions/07-object-1/001D9E54-001DA653.txt
+m307f018  18   -      0x00154CD4  1:0x00144CD4  code         FILE_append       _FILE_append       regions/07-object-1/001D9E54-001DA653.txt
+-         -    -      0x00181860  2:0x00011860  static,data  _disk_err         _disk_err          regions/08-object-2/001FFE54-00200653.txt
+-         -    -      0x00181864  2:0x00011864  data         _MEM_alloc        _MEM_alloc         regions/08-object-2/001FFE54-00200653.txt
+-         -    -      0x00181868  2:0x00011868  data         _MEM_free         _MEM_free          regions/08-object-2/001FFE54-00200653.txt
+
+[Module variables]
+LINEAR      SEGOFF        NAME       TYPE
+0x00181860  2:0x00011860  disk_err   LONG
+0x00181864  2:0x00011864  MEM_alloc  void * (size_t) *
+0x00181868  2:0x00011868  MEM_free   void (void *) *
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME              TYPE                                                         CHUNK
+m307f001  0x00153FD7  1:0x00143FD7  103   21        6         0xC      -    -           DLL_read          void * (ULONG, ULONG, ULONG, void *, ULONG); returns in EAX  regions/07-object-1/001D8E54-001D9653.txt
+m307f002  0x0015403E  1:0x0014403E  52    21        6         0xC      -    -           MEM_use_malloc    void * (void * (size_t) *); returns in EAX                   regions/07-object-1/001D9654-001D9E53.txt
+m307f003  0x00154072  1:0x00144072  52    21        6         0xC      -    -           MEM_use_free      void * (void (void *) *); returns in EAX                     regions/07-object-1/001D9654-001D9E53.txt
+m307f004  0x001540A6  1:0x001440A6  70    21        6         0xC      -    -           MEM_alloc_lock    void * (size_t); returns in EAX                              regions/07-object-1/001D9654-001D9E53.txt
+m307f005  0x001540EC  1:0x001440EC  56    21        4         0xC      -    -           MEM_free_lock     void (void *, size_t)                                        regions/07-object-1/001D9654-001D9E53.txt
+m307f006  0x00154124  1:0x00144124  174   21        6         0xC      -    -           MEM_alloc_DOS     LONG (ULONG, void * *, ULONG *, ULONG *); returns in EAX     regions/07-object-1/001D9654-001D9E53.txt
+m307f007  0x001541D2  1:0x001441D2  75    21        6         0xC      -    -           MEM_free_DOS      void (void *, ULONG, ULONG)                                  regions/07-object-1/001D9654-001D9E53.txt
+m307f008  0x0015421D  1:0x0014421D  194   21        6         0xC      -    -           VMM_lock_range    LONG (void *, void *); returns in EAX                        regions/07-object-1/001D9654-001D9E53.txt
+m307f009  0x001542DF  1:0x001442DF  194   21        6         0xC      -    -           VMM_unlock_range  LONG (void *, void *); returns in EAX                        regions/07-object-1/001D9654-001D9E53.txt
+m307f010  0x001543A1  1:0x001443A1  52    21        6         0xC      -    -           VMM_lock          LONG (void *, ULONG); returns in EAX                         regions/07-object-1/001D9654-001D9E53.txt
+m307f011  0x001543D5  1:0x001443D5  52    21        6         0xC      -    -           VMM_unlock        LONG (void *, ULONG); returns in EAX                         regions/07-object-1/001D9654-001D9E53.txt
+m307f012  0x00154409  1:0x00144409  338   21        6         0xC      -    -           DLL_size          ULONG (void *, ULONG); returns in EAX                        regions/07-object-1/001D9654-001D9E53.txt
+m307f013  0x0015455B  1:0x0014455B  1305  21        6         0xC      -    -           DLL_load          void * (void *, ULONG, void *); returns in EAX               regions/07-object-1/001D9654-001D9E53.txt
+m307f014  0x00154A74  1:0x00144A74  38    21        6         0xC      -    -           FILE_error        LONG (void); returns in EAX                                  regions/07-object-1/001D9E54-001DA653.txt
+m307f015  0x00154A9A  1:0x00144A9A  126   21        6         0xC      -    -           FILE_size         LONG (SBYTE *); returns in EAX                               regions/07-object-1/001D9E54-001DA653.txt
+m307f016  0x00154B18  1:0x00144B18  270   21        6         0xC      -    -           FILE_read         void * (SBYTE *, void *); returns in EAX                     regions/07-object-1/001D9E54-001DA653.txt
+m307f017  0x00154C26  1:0x00144C26  174   21        6         0xC      -    -           FILE_write        LONG (SBYTE *, void *, ULONG); returns in EAX                regions/07-object-1/001D9E54-001DA653.txt
+m307f018  0x00154CD4  1:0x00144CD4  169   21        6         0xC      -    -           FILE_append       LONG (SBYTE *, void *, ULONG); returns in EAX                regions/07-object-1/001D9E54-001DA653.txt
+
+[Locals]
+KEY       ROUTINE           BLOCK  LOCAL                  LOCATION     TYPE
+m307f001  DLL_read          -      src                    [EBP+0x10]   ULONG
+m307f001  DLL_read          -      srcoff                 [EBP+0x14]   ULONG
+m307f001  DLL_read          -      flags                  [EBP+0x18]   ULONG
+m307f001  DLL_read          -      dest                   [EBP+0x1C]   void *
+m307f001  DLL_read          -      length                 [EBP+0x20]   ULONG
+m307f002  MEM_use_malloc    -      fn                     [EBP+0x10]   void * (size_t) *
+m307f002  MEM_use_malloc    -      old                    [EBP-0x8]    void *
+m307f003  MEM_use_free      -      fn                     [EBP+0x10]   void (void *) *
+m307f003  MEM_use_free      -      old                    [EBP-0x8]    void *
+m307f004  MEM_alloc_lock    -      size                   [EBP+0x10]   size_t
+m307f004  MEM_alloc_lock    -      ptr                    [EBP-0x8]    void *
+m307f005  MEM_free_lock     -      ptr                    [EBP+0x10]   void *
+m307f005  MEM_free_lock     -      size                   [EBP+0x14]   size_t
+m307f006  MEM_alloc_DOS     -      n_paras                [EBP+0x10]   ULONG
+m307f006  MEM_alloc_DOS     -      protected_ptr          [EBP+0x14]   void * *
+m307f006  MEM_alloc_DOS     -      segment_far_ptr        [EBP+0x18]   ULONG *
+m307f006  MEM_alloc_DOS     -      selector               [EBP+0x1C]   ULONG *
+m307f006  MEM_alloc_DOS     -      inregs                 [EBP-0x2C]   union REGS
+m307f006  MEM_alloc_DOS     -      outregs                [EBP-0x48]   union REGS
+m307f006  MEM_alloc_DOS     -      success                [EBP-0x10]   LONG
+m307f006  MEM_alloc_DOS     -      p1                     [EBP-0xC]    void *
+m307f006  MEM_alloc_DOS     -      p2                     [EBP-0x8]    void *
+m307f007  MEM_free_DOS      -      protected_ptr          [EBP+0x10]   void *
+m307f007  MEM_free_DOS      -      segment_far_ptr        [EBP+0x14]   ULONG
+m307f007  MEM_free_DOS      -      selector               [EBP+0x18]   ULONG
+m307f007  MEM_free_DOS      -      inregs                 [EBP-0x1C]   union REGS
+m307f007  MEM_free_DOS      -      outregs                [EBP-0x38]   union REGS
+m307f008  VMM_lock_range    -      p1                     [EBP+0x10]   void *
+m307f008  VMM_lock_range    -      p2                     [EBP+0x14]   void *
+m307f008  VMM_lock_range    -      success                [EBP-0x10]   LONG
+m307f008  VMM_lock_range    -      inregs                 [EBP-0x48]   union REGS
+m307f008  VMM_lock_range    -      outregs                [EBP-0x2C]   union REGS
+m307f008  VMM_lock_range    -      linear                 [EBP-0xC]    ULONG
+m307f008  VMM_lock_range    -      len                    [EBP-0x8]    ULONG
+m307f009  VMM_unlock_range  -      p1                     [EBP+0x10]   void *
+m307f009  VMM_unlock_range  -      p2                     [EBP+0x14]   void *
+m307f009  VMM_unlock_range  -      success                [EBP-0x10]   LONG
+m307f009  VMM_unlock_range  -      inregs                 [EBP-0x48]   union REGS
+m307f009  VMM_unlock_range  -      outregs                [EBP-0x2C]   union REGS
+m307f009  VMM_unlock_range  -      linear                 [EBP-0xC]    ULONG
+m307f009  VMM_unlock_range  -      len                    [EBP-0x8]    ULONG
+m307f010  VMM_lock          -      start                  [EBP+0x10]   void *
+m307f010  VMM_lock          -      size                   [EBP+0x14]   ULONG
+m307f011  VMM_unlock        -      start                  [EBP+0x10]   void *
+m307f011  VMM_unlock        -      size                   [EBP+0x14]   ULONG
+m307f012  DLL_size          -      source                 [EBP+0x10]   void *
+m307f012  DLL_size          -      flags                  [EBP+0x14]   ULONG
+m307f012  DLL_size          -      cword                  [EBP-0x1C]   SBYTE[4]
+m307f012  DLL_size          -      src_ptr                [EBP-0x18]   void *
+m307f012  DLL_size          -      LX_hdr                 [EBP-0xE0]   LX_header_struct
+m307f012  DLL_size          -      object_table           [EBP-0x34]   object_table_struct
+m307f012  DLL_size          -      lx                     [EBP-0x14]   ULONG
+m307f012  DLL_size          -      i                      [EBP-0x10]   ULONG
+m307f012  DLL_size          -      LX_offset              [EBP-0xC]    ULONG
+m307f012  DLL_size          -      module_size            [EBP-0x8]    ULONG
+m307f013  DLL_load          -      source                 [EBP+0x10]   void *
+m307f013  DLL_load          -      flags                  [EBP+0x14]   ULONG
+m307f013  DLL_load          -      dll                    [EBP+0x18]   void *
+m307f013  DLL_load          -      LX_hdr                 [EBP-0x150]  LX_header_struct
+m307f013  DLL_load          -      src_ptr                [EBP-0x48]   void *
+m307f013  DLL_load          -      object_table_pos       [EBP-0x54]   void *
+m307f013  DLL_load          -      object_page_table_pos  [EBP-0x5C]   void *
+m307f013  DLL_load          -      fixup_page_table_pos   [EBP-0x58]   void *
+m307f013  DLL_load          -      object_table           [EBP-0x7C]   object_table_struct
+m307f013  DLL_load          -      object_page_table      [EBP-0x64]   object_page_table_struct
+m307f013  DLL_load          -      cword                  [EBP-0x50]   SBYTE[4]
+m307f013  DLL_load          -      dll_ptr                [EBP-0x4C]   UBYTE *
+m307f013  DLL_load          -      object_ptr             [EBP-0xA4]   UBYTE *[10]
+m307f013  DLL_load          -      page_ptr               [EBP-0x2E0]  UBYTE *[100]
+m307f013  DLL_load          -      src                    [EBP-0x4]    UBYTE
+m307f013  DLL_load          -      fix_flags              [EBP-0xC]    UBYTE
+m307f013  DLL_load          -      f_object               [EBP-0x8]    UBYTE
+m307f013  DLL_load          -      trg_val                [EBP-0x38]   UBYTE *
+m307f013  DLL_load          -      srcoff                 [EBP-0x14]   UWORD
+m307f013  DLL_load          -      trgoff                 [EBP-0x10]   UWORD
+m307f013  DLL_load          -      read_size              [EBP-0x2C]   ULONG
+m307f013  DLL_load          -      dll_size               [EBP-0x28]   ULONG
+m307f013  DLL_load          -      i                      [EBP-0x24]   ULONG
+m307f013  DLL_load          -      j                      [EBP-0x44]   ULONG
+m307f013  DLL_load          -      lx                     [EBP-0x40]   ULONG
+m307f013  DLL_load          -      page_count             [EBP-0x3C]   ULONG
+m307f013  DLL_load          -      LX_offset              [EBP-0x20]   ULONG
+m307f013  DLL_load          -      fix_src_ptr            [EBP-0x34]   ULONG *
+m307f013  DLL_load          -      page_offset            [EBP-0x30]   ULONG
+m307f013  DLL_load          -      next_page_offset       [EBP-0x18]   ULONG
+m307f015  FILE_size         -      filename               [EBP+0x10]   SBYTE *
+m307f015  FILE_size         -      handle                 [EBP-0xC]    LONG
+m307f015  FILE_size         -      len                    [EBP-0x8]    LONG
+m307f016  FILE_read         -      filename               [EBP+0x10]   SBYTE *
+m307f016  FILE_read         -      dest                   [EBP+0x14]   void *
+m307f016  FILE_read         -      i                      [EBP-0x18]   LONG
+m307f016  FILE_read         -      handle                 [EBP-0x14]   LONG
+m307f016  FILE_read         -      len                    [EBP-0x10]   LONG
+m307f016  FILE_read         -      buf                    [EBP-0xC]    SBYTE *
+m307f016  FILE_read         -      mem                    [EBP-0x8]    SBYTE *
+m307f017  FILE_write        -      filename               [EBP+0x10]   SBYTE *
+m307f017  FILE_write        -      buf                    [EBP+0x14]   void *
+m307f017  FILE_write        -      len                    [EBP+0x18]   ULONG
+m307f017  FILE_write        -      i                      [EBP-0xC]    LONG
+m307f017  FILE_write        -      handle                 [EBP-0x8]    LONG
+m307f018  FILE_append       -      filename               [EBP+0x10]   SBYTE *
+m307f018  FILE_append       -      buf                    [EBP+0x14]   void *
+m307f018  FILE_append       -      len                    [EBP+0x18]   ULONG
+m307f018  FILE_append       -      i                      [EBP-0xC]    LONG
+m307f018  FILE_append       -      handle                 [EBP-0x8]    LONG
+
+[Types]
+NUM  KIND       NAME                      DETAILS
+-    cue table  -                         source file table (C++)
+1    scope      struct                    -
+2    scope      union                     -
+3    scope      enum                      -
+4    scalar     signed char               int 1 bytes
+5    scalar     unsigned char             unsigned 1 bytes
+6    scalar     short                     int 2 bytes
+7    scalar     unsigned short            unsigned 2 bytes
+8    scalar     int                       int 4 bytes
+9    scalar     unsigned int              unsigned 4 bytes
+10   typedef    char                      name for unsigned char (#5)
+11   typedef    char                      name for unsigned char (#5)
+12   scalar     unsigned long             unsigned 4 bytes
+13   typedef    time_t                    name for unsigned long (#12)
+14   typedef    size_t                    name for unsigned int (#9)
+15   typedef    ino_t                     name for unsigned int (#9)
+16   typedef    dev_t                     name for int (#8)
+17   scalar     long                      int 4 bytes
+18   typedef    off_t                     name for long (#17)
+19   pointer    -                         near386; of char (#10)
+20   array      __va_list                 0..0; of char * (#19)
+21   typedef    __va_list                 name for char *[1] (#20)
+22   typedef    fpos_t                    name for long (#17)
+23   typedef    fpos_t                    name for long (#17)
+24   typedef    wchar_t                   name for unsigned short (#7)
+25   typedef    wchar_t                   name for unsigned short (#7)
+26   scalar     void                      void 1 bytes
+27   procedure  -                         near386; returns void ()
+28   pointer    onexit_t                  near386; of void (void) (#27)
+29   typedef    onexit_t                  name for void (void) * (#28)
+30   typedef    UBYTE                     name for unsigned char (#5)
+31   typedef    UWORD                     name for unsigned short (#7)
+32   typedef    ULONG                     name for unsigned long (#12)
+33   typedef    SBYTE                     name for signed char (#4)
+34   typedef    SWORD                     name for short (#6)
+35   typedef    LONG                      name for long (#17)
+36   pointer    -                         near386; of void (#26)
+37   procedure  -                         near386; returns void * (size_t)
+38   pointer    -                         near386; of void * (size_t) (#37)
+39   procedure  -                         near386; returns void (void *)
+40   pointer    -                         near386; of void (void *) (#39)
+41   procedure  -                         near386; returns void * (ULONG, ULONG, ULONG, void *, ULONG)
+42   pointer    -                         near386; of void * (size_t) (#37)
+43   procedure  -                         near386; returns void * (void * (size_t) *)
+44   pointer    -                         near386; of void (void *) (#39)
+45   procedure  -                         near386; returns void * (void (void *) *)
+46   procedure  -                         near386; returns void * (size_t)
+47   procedure  -                         near386; returns void (void *, size_t)
+48   pointer    -                         near386; of void * (#36)
+49   pointer    -                         near386; of ULONG (#32)
+50   procedure  -                         near386; returns LONG (ULONG, void * *, ULONG *, ULONG *)
+51   struct     struct DWORDREGS          7 fields, 28 bytes
+52   typedef    DWORDREGS                 struct name for struct #51 (#51)
+53   struct     struct WORDREGS           13 fields, 28 bytes
+54   typedef    WORDREGS                  struct name for struct #53 (#53)
+55   struct     struct BYTEREGS           12 fields, 16 bytes
+56   typedef    BYTEREGS                  struct name for struct #55 (#55)
+57   struct     union REGS                3 fields, 28 bytes
+58   typedef    REGS                      union name for struct #57 (#57)
+59   procedure  -                         near386; returns void (void *, ULONG, ULONG)
+60   procedure  -                         near386; returns LONG (void *, void *)
+61   procedure  -                         near386; returns LONG (void *, ULONG)
+62   procedure  -                         near386; returns ULONG (void *, ULONG)
+63   array      -                         0..3; of SBYTE (#33)
+64   struct     LX_header_struct          43 fields, 172 bytes
+65   typedef    LX_header_struct          name for struct #64 (#64)
+66   struct     object_table_struct       6 fields, 24 bytes
+67   typedef    object_table_struct       name for struct #66 (#66)
+68   procedure  -                         near386; returns void * (void *, ULONG, void *)
+69   struct     object_page_table_struct  3 fields, 8 bytes
+70   typedef    object_page_table_struct  name for struct #69 (#69)
+71   array      -                         0..3; of SBYTE (#33)
+72   pointer    -                         near386; of UBYTE (#30)
+73   array      -                         0..9; of UBYTE * (#72)
+74   array      -                         0..99; of UBYTE * (#72)
+75   procedure  -                         near386; returns LONG (void)
+76   pointer    -                         near386; of SBYTE (#33)
+77   procedure  -                         near386; returns LONG (SBYTE *)
+78   procedure  -                         near386; returns void * (SBYTE *, void *)
+79   procedure  -                         near386; returns LONG (SBYTE *, void *, ULONG)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER                      OFFSET_VALUE  TYPE              TYPE_NAME
+51        field        eax                         0             unsigned int      struct DWORDREGS
+51        field        ebx                         4             unsigned int      struct DWORDREGS
+51        field        ecx                         8             unsigned int      struct DWORDREGS
+51        field        edx                         12            unsigned int      struct DWORDREGS
+51        field        esi                         16            unsigned int      struct DWORDREGS
+51        field        edi                         20            unsigned int      struct DWORDREGS
+51        field        cflag                       24            unsigned int      struct DWORDREGS
+53        field        ax                          0             unsigned short    struct WORDREGS
+53        field        _1                          2             unsigned short    struct WORDREGS
+53        field        bx                          4             unsigned short    struct WORDREGS
+53        field        _2                          6             unsigned short    struct WORDREGS
+53        field        cx                          8             unsigned short    struct WORDREGS
+53        field        _3                          10            unsigned short    struct WORDREGS
+53        field        dx                          12            unsigned short    struct WORDREGS
+53        field        _4                          14            unsigned short    struct WORDREGS
+53        field        si                          16            unsigned short    struct WORDREGS
+53        field        _5                          18            unsigned short    struct WORDREGS
+53        field        di                          20            unsigned short    struct WORDREGS
+53        field        _6                          22            unsigned short    struct WORDREGS
+53        field        cflag                       24            unsigned int      struct WORDREGS
+55        field        al                          0             unsigned char     struct BYTEREGS
+55        field        ah                          1             unsigned char     struct BYTEREGS
+55        field        _1                          2             unsigned short    struct BYTEREGS
+55        field        bl                          4             unsigned char     struct BYTEREGS
+55        field        bh                          5             unsigned char     struct BYTEREGS
+55        field        _2                          6             unsigned short    struct BYTEREGS
+55        field        cl                          8             unsigned char     struct BYTEREGS
+55        field        ch                          9             unsigned char     struct BYTEREGS
+55        field        _3                          10            unsigned short    struct BYTEREGS
+55        field        dl                          12            unsigned char     struct BYTEREGS
+55        field        dh                          13            unsigned char     struct BYTEREGS
+55        field        _4                          14            unsigned short    struct BYTEREGS
+57        field        h                           0             struct BYTEREGS   union REGS
+57        field        w                           0             struct WORDREGS   union REGS
+57        field        x                           0             struct DWORDREGS  union REGS
+64        field        lxbw                        0             ULONG             LX_header_struct
+64        field        format_level                4             ULONG             LX_header_struct
+64        field        cpu_os_type                 8             ULONG             LX_header_struct
+64        field        module_version              12            ULONG             LX_header_struct
+64        field        module_flags                16            ULONG             LX_header_struct
+64        field        module_num_of_pages         20            ULONG             LX_header_struct
+64        field        eip_object_num              24            ULONG             LX_header_struct
+64        field        eip                         28            ULONG             LX_header_struct
+64        field        esp_object_num              32            ULONG             LX_header_struct
+64        field        esp                         36            ULONG             LX_header_struct
+64        field        page_size                   40            ULONG             LX_header_struct
+64        field        page_offset_shift           44            ULONG             LX_header_struct
+64        field        fixup_section_size          48            ULONG             LX_header_struct
+64        field        fixup_section_chksum        52            ULONG             LX_header_struct
+64        field        loader_section_size         56            ULONG             LX_header_struct
+64        field        loader_section_chksum       60            ULONG             LX_header_struct
+64        field        object_table_off            64            ULONG             LX_header_struct
+64        field        num_objects_in_module       68            ULONG             LX_header_struct
+64        field        object_page_table_off       72            ULONG             LX_header_struct
+64        field        object_iter_pages_off       76            ULONG             LX_header_struct
+64        field        resource_table_off          80            ULONG             LX_header_struct
+64        field        num_resource_table_entries  84            ULONG             LX_header_struct
+64        field        resident_name_table_off     88            ULONG             LX_header_struct
+64        field        entry_table_off             92            ULONG             LX_header_struct
+64        field        module_directives_off       96            ULONG             LX_header_struct
+64        field        num_module_directives       100           ULONG             LX_header_struct
+64        field        fixup_page_table_off        104           ULONG             LX_header_struct
+64        field        fixup_record_table_off      108           ULONG             LX_header_struct
+64        field        import_module_table_off     112           ULONG             LX_header_struct
+64        field        num_import_mod_entries      116           ULONG             LX_header_struct
+64        field        import_proc_table_off       120           ULONG             LX_header_struct
+64        field        per_page_chksum_off         124           ULONG             LX_header_struct
+64        field        data_pages_off              128           ULONG             LX_header_struct
+64        field        num_preload_pages           132           ULONG             LX_header_struct
+64        field        nonres_name_table_off       136           ULONG             LX_header_struct
+64        field        nonres_name_table_len       140           ULONG             LX_header_struct
+64        field        nonres_name_table_chksum    144           ULONG             LX_header_struct
+64        field        auto_ds_object_num          148           ULONG             LX_header_struct
+64        field        debug_info_off              152           ULONG             LX_header_struct
+64        field        debug_info_len              156           ULONG             LX_header_struct
+64        field        numinstance_preload         160           ULONG             LX_header_struct
+64        field        numinstance_demand          164           ULONG             LX_header_struct
+64        field        heapsize                    168           ULONG             LX_header_struct
+66        field        virtual_size                0             ULONG             object_table_struct
+66        field        reloc_base_addr             4             ULONG             object_table_struct
+66        field        object_flags                8             ULONG             object_table_struct
+66        field        page_table_index            12            ULONG             object_table_struct
+66        field        num_page_table_entries      16            ULONG             object_table_struct
+66        field        reserved_space              20            ULONG             object_table_struct
+69        field        page_data_offset            0             ULONG             object_page_table_struct
+69        field        data_size                   4             UWORD             object_page_table_struct
+69        field        flags                       6             UWORD             object_page_table_struct
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m307f001  184   0x00153FD7  1:0x00143FD7  0x001D962B
+m307f001  187   0x00153FEC  1:0x00143FEC  0x001D9640
+m307f001  189   0x00153FF5  1:0x00143FF5  0x001D9649
+m307f001  190   0x00154006  1:0x00144006  0x001D965A
+m307f001  194   0x00154011  1:0x00144011  0x001D9665
+m307f001  195   0x0015401E  1:0x0014401E  0x001D9672
+m307f001  197   0x0015402C  1:0x0014402C  0x001D9680
+m307f001  199   0x00154035  1:0x00144035  0x001D9689
+m307f002  210   0x0015403E  1:0x0014403E  0x001D9692
+m307f002  214   0x00154053  1:0x00144053  0x001D96A7
+m307f002  216   0x0015405B  1:0x0014405B  0x001D96AF
+m307f002  218   0x00154063  1:0x00144063  0x001D96B7
+m307f002  219   0x00154069  1:0x00144069  0x001D96BD
+m307f003  221   0x00154072  1:0x00144072  0x001D96C6
+m307f003  225   0x00154087  1:0x00144087  0x001D96DB
+m307f003  227   0x0015408F  1:0x0014408F  0x001D96E3
+m307f003  229   0x00154097  1:0x00144097  0x001D96EB
+m307f003  230   0x0015409D  1:0x0014409D  0x001D96F1
+m307f004  240   0x001540A6  1:0x001440A6  0x001D96FA
+m307f004  244   0x001540BB  1:0x001440BB  0x001D970F
+m307f004  246   0x001540C7  1:0x001440C7  0x001D971B
+m307f004  248   0x001540CD  1:0x001440CD  0x001D9721
+m307f004  251   0x001540DD  1:0x001440DD  0x001D9731
+m307f004  253   0x001540E3  1:0x001440E3  0x001D9737
+m307f005  255   0x001540EC  1:0x001440EC  0x001D9740
+m307f005  257   0x00154101  1:0x00144101  0x001D9755
+m307f005  259   0x00154107  1:0x00144107  0x001D975B
+m307f005  261   0x00154117  1:0x00144117  0x001D976B
+m307f005  263   0x00154120  1:0x00144120  0x001D9774
+m307f006  273   0x00154124  1:0x00144124  0x001D9778
+m307f006  284   0x00154139  1:0x00144139  0x001D978D
+m307f006  285   0x00154140  1:0x00144140  0x001D9794
+m307f006  287   0x00154146  1:0x00144146  0x001D979A
+m307f006  289   0x00154156  1:0x00144156  0x001D97AA
+m307f006  291   0x0015415C  1:0x0014415C  0x001D97B0
+m307f006  293   0x00154163  1:0x00144163  0x001D97B7
+m307f006  295   0x00154165  1:0x00144165  0x001D97B9
+m307f006  296   0x00154170  1:0x00144170  0x001D97C4
+m307f006  297   0x00154181  1:0x00144181  0x001D97D5
+m307f006  299   0x0015418E  1:0x0014418E  0x001D97E2
+m307f006  368   0x00154195  1:0x00144195  0x001D97E9
+m307f006  370   0x0015419B  1:0x0014419B  0x001D97EF
+m307f006  371   0x001541A6  1:0x001441A6  0x001D97FA
+m307f006  373   0x001541B3  1:0x001441B3  0x001D9807
+m307f006  376   0x001541C3  1:0x001441C3  0x001D9817
+m307f006  377   0x001541C9  1:0x001441C9  0x001D981D
+m307f007  385   0x001541D2  1:0x001441D2  0x001D9826
+m307f007  392   0x001541E7  1:0x001441E7  0x001D983B
+m307f007  393   0x001541EE  1:0x001441EE  0x001D9842
+m307f007  395   0x001541F9  1:0x001441F9  0x001D984D
+m307f007  397   0x00154209  1:0x00144209  0x001D985D
+m307f007  398   0x00154210  1:0x00144210  0x001D9864
+m307f007  426   0x00154217  1:0x00144217  0x001D986B
+m307f008  438   0x0015421D  1:0x0014421D  0x001D9871
+m307f008  440   0x00154232  1:0x00144232  0x001D9886
+m307f008  448   0x00154239  1:0x00144239  0x001D988D
+m307f008  449   0x00154255  1:0x00144255  0x001D98A9
+m307f008  451   0x00154275  1:0x00144275  0x001D98C9
+m307f008  452   0x0015427C  1:0x0014427C  0x001D98D0
+m307f008  453   0x00154285  1:0x00144285  0x001D98D9
+m307f008  454   0x00154290  1:0x00144290  0x001D98E4
+m307f008  455   0x00154299  1:0x00144299  0x001D98ED
+m307f008  457   0x001542A4  1:0x001442A4  0x001D98F8
+m307f008  459   0x001542B4  1:0x001442B4  0x001D9908
+m307f008  497   0x001542D0  1:0x001442D0  0x001D9924
+m307f008  498   0x001542D6  1:0x001442D6  0x001D992A
+m307f009  510   0x001542DF  1:0x001442DF  0x001D9933
+m307f009  512   0x001542F4  1:0x001442F4  0x001D9948
+m307f009  520   0x001542FB  1:0x001442FB  0x001D994F
+m307f009  521   0x00154317  1:0x00144317  0x001D996B
+m307f009  523   0x00154337  1:0x00144337  0x001D998B
+m307f009  524   0x0015433E  1:0x0014433E  0x001D9992
+m307f009  525   0x00154347  1:0x00144347  0x001D999B
+m307f009  526   0x00154352  1:0x00144352  0x001D99A6
+m307f009  527   0x0015435B  1:0x0014435B  0x001D99AF
+m307f009  529   0x00154366  1:0x00144366  0x001D99BA
+m307f009  531   0x00154376  1:0x00144376  0x001D99CA
+m307f009  569   0x00154392  1:0x00144392  0x001D99E6
+m307f009  570   0x00154398  1:0x00144398  0x001D99EC
+m307f010  579   0x001543A1  1:0x001443A1  0x001D99F5
+m307f010  581   0x001543B6  1:0x001443B6  0x001D9A0A
+m307f010  582   0x001543CC  1:0x001443CC  0x001D9A20
+m307f011  591   0x001543D5  1:0x001443D5  0x001D9A29
+m307f011  593   0x001543EA  1:0x001443EA  0x001D9A3E
+m307f011  594   0x00154400  1:0x00144400  0x001D9A54
+m307f012  602   0x00154409  1:0x00144409  0x001D9A5D
+m307f012  604   0x0015441E  1:0x0014441E  0x001D9A72
+m307f012  611   0x00154426  1:0x00144426  0x001D9A7A
+m307f012  613   0x0015442D  1:0x0014442D  0x001D9A81
+m307f012  615   0x00154436  1:0x00144436  0x001D9A8A
+m307f012  617   0x0015443C  1:0x0014443C  0x001D9A90
+m307f012  619   0x0015443E  1:0x0014443E  0x001D9A92
+m307f012  621   0x00154452  1:0x00144452  0x001D9AA6
+m307f012  622   0x00154458  1:0x00144458  0x001D9AAC
+m307f012  629   0x00154464  1:0x00144464  0x001D9AB8
+m307f012  635   0x0015447F  1:0x0014447F  0x001D9AD3
+m307f012  637   0x0015449C  1:0x0014449C  0x001D9AF0
+m307f012  643   0x001544AD  1:0x001444AD  0x001D9B01
+m307f012  644   0x001544B5  1:0x001444B5  0x001D9B09
+m307f012  651   0x001544C1  1:0x001444C1  0x001D9B15
+m307f012  657   0x001544E4  1:0x001444E4  0x001D9B38
+m307f012  659   0x001544F0  1:0x001444F0  0x001D9B44
+m307f012  661   0x0015450C  1:0x0014450C  0x001D9B60
+m307f012  662   0x00154529  1:0x00144529  0x001D9B7D
+m307f012  663   0x0015452F  1:0x0014452F  0x001D9B83
+m307f012  665   0x00154531  1:0x00144531  0x001D9B85
+m307f012  667   0x0015453A  1:0x0014453A  0x001D9B8E
+m307f012  674   0x00154542  1:0x00144542  0x001D9B96
+m307f012  676   0x0015454C  1:0x0014454C  0x001D9BA0
+m307f012  677   0x00154552  1:0x00144552  0x001D9BA6
+m307f013  685   0x0015455B  1:0x0014455B  0x001D9BAF
+m307f013  692   0x00154570  1:0x00144570  0x001D9BC4
+m307f013  699   0x00154578  1:0x00144578  0x001D9BCC
+m307f013  704   0x0015457F  1:0x0014457F  0x001D9BD3
+m307f013  706   0x00154588  1:0x00144588  0x001D9BDC
+m307f013  708   0x0015458E  1:0x0014458E  0x001D9BE2
+m307f013  710   0x00154590  1:0x00144590  0x001D9BE4
+m307f013  712   0x001545A4  1:0x001445A4  0x001D9BF8
+m307f013  713   0x001545AA  1:0x001445AA  0x001D9BFE
+m307f013  720   0x001545B6  1:0x001445B6  0x001D9C0A
+m307f013  722   0x001545C9  1:0x001445C9  0x001D9C1D
+m307f013  724   0x001545D2  1:0x001445D2  0x001D9C26
+m307f013  726   0x001545DE  1:0x001445DE  0x001D9C32
+m307f013  728   0x001545E4  1:0x001445E4  0x001D9C38
+m307f013  729   0x001545ED  1:0x001445ED  0x001D9C41
+m307f013  731   0x001545F5  1:0x001445F5  0x001D9C49
+m307f013  735   0x00154601  1:0x00144601  0x001D9C55
+m307f013  737   0x0015460E  1:0x0014460E  0x001D9C62
+m307f013  743   0x00154614  1:0x00144614  0x001D9C68
+m307f013  749   0x0015462F  1:0x0014462F  0x001D9C83
+m307f013  751   0x0015464C  1:0x0014464C  0x001D9CA0
+m307f013  757   0x0015465D  1:0x0014465D  0x001D9CB1
+m307f013  758   0x00154666  1:0x00144666  0x001D9CBA
+m307f013  760   0x0015466E  1:0x0014466E  0x001D9CC2
+m307f013  767   0x0015467A  1:0x0014467A  0x001D9CCE
+m307f013  773   0x0015469D  1:0x0014469D  0x001D9CF1
+m307f013  775   0x001546A9  1:0x001446A9  0x001D9CFD
+m307f013  777   0x001546C8  1:0x001446C8  0x001D9D1C
+m307f013  784   0x001546E5  1:0x001446E5  0x001D9D39
+m307f013  786   0x001546EB  1:0x001446EB  0x001D9D3F
+m307f013  788   0x001546F7  1:0x001446F7  0x001D9D4B
+m307f013  790   0x00154713  1:0x00144713  0x001D9D67
+m307f013  797   0x00154730  1:0x00144730  0x001D9D84
+m307f013  806   0x00154736  1:0x00144736  0x001D9D8A
+m307f013  809   0x0015474A  1:0x0014474A  0x001D9D9E
+m307f013  810   0x0015475B  1:0x0014475B  0x001D9DAF
+m307f013  812   0x0015476D  1:0x0014476D  0x001D9DC1
+m307f013  815   0x0015477D  1:0x0014477D  0x001D9DD1
+m307f013  816   0x00154790  1:0x00144790  0x001D9DE4
+m307f013  818   0x00154796  1:0x00144796  0x001D9DEA
+m307f013  821   0x001547EB  1:0x001447EB  0x001D9E3F
+m307f013  825   0x00154801  1:0x00144801  0x001D9E55
+m307f013  827   0x00154820  1:0x00144820  0x001D9E74
+m307f013  829   0x00154826  1:0x00144826  0x001D9E7A
+m307f013  830   0x0015482C  1:0x0014482C  0x001D9E80
+m307f013  832   0x00154831  1:0x00144831  0x001D9E85
+m307f013  833   0x00154837  1:0x00144837  0x001D9E8B
+m307f013  839   0x0015483C  1:0x0014483C  0x001D9E90
+m307f013  841   0x00154848  1:0x00144848  0x001D9E9C
+m307f013  844   0x00154865  1:0x00144865  0x001D9EB9
+m307f013  846   0x00154884  1:0x00144884  0x001D9ED8
+m307f013  849   0x001548A1  1:0x001448A1  0x001D9EF5
+m307f013  856   0x001548AD  1:0x001448AD  0x001D9F01
+m307f013  858   0x001548B3  1:0x001448B3  0x001D9F07
+m307f013  862   0x001548C4  1:0x001448C4  0x001D9F18
+m307f013  864   0x001548E1  1:0x001448E1  0x001D9F35
+m307f013  867   0x001548FE  1:0x001448FE  0x001D9F52
+m307f013  873   0x0015490C  1:0x0014490C  0x001D9F60
+m307f013  874   0x00154915  1:0x00144915  0x001D9F69
+m307f013  876   0x0015491D  1:0x0014491D  0x001D9F71
+m307f013  879   0x00154929  1:0x00144929  0x001D9F7D
+m307f013  885   0x00154947  1:0x00144947  0x001D9F9B
+m307f013  886   0x00154950  1:0x00144950  0x001D9FA4
+m307f013  888   0x00154958  1:0x00144958  0x001D9FAC
+m307f013  891   0x00154964  1:0x00144964  0x001D9FB8
+m307f013  897   0x00154972  1:0x00144972  0x001D9FC6
+m307f013  898   0x0015497B  1:0x0014497B  0x001D9FCF
+m307f013  900   0x00154983  1:0x00144983  0x001D9FD7
+m307f013  904   0x0015498F  1:0x0014498F  0x001D9FE3
+m307f013  906   0x001549AC  1:0x001449AC  0x001DA000
+m307f013  908   0x001549C9  1:0x001449C9  0x001DA01D
+m307f013  915   0x001549E6  1:0x001449E6  0x001DA03A
+m307f013  917   0x001549F4  1:0x001449F4  0x001DA048
+m307f013  918   0x00154A0C  1:0x00144A0C  0x001DA060
+m307f013  920   0x00154A26  1:0x00144A26  0x001DA07A
+m307f013  925   0x00154A2E  1:0x00144A2E  0x001DA082
+m307f013  928   0x00154A43  1:0x00144A43  0x001DA097
+m307f013  931   0x00154A49  1:0x00144A49  0x001DA09D
+m307f013  933   0x00154A4F  1:0x00144A4F  0x001DA0A3
+m307f013  934   0x00154A54  1:0x00144A54  0x001DA0A8
+m307f013  935   0x00154A5D  1:0x00144A5D  0x001DA0B1
+m307f013  937   0x00154A65  1:0x00144A65  0x001DA0B9
+m307f013  938   0x00154A6B  1:0x00144A6B  0x001DA0BF
+m307f014  946   0x00154A74  1:0x00144A74  0x001DA0C8
+m307f014  948   0x00154A89  1:0x00144A89  0x001DA0DD
+m307f014  949   0x00154A91  1:0x00144A91  0x001DA0E5
+m307f015  957   0x00154A9A  1:0x00144A9A  0x001DA0EE
+m307f015  962   0x00154AAF  1:0x00144AAF  0x001DA103
+m307f015  964   0x00154AB9  1:0x00144AB9  0x001DA10D
+m307f015  966   0x00154ACD  1:0x00144ACD  0x001DA121
+m307f015  968   0x00154AD3  1:0x00144AD3  0x001DA127
+m307f015  969   0x00154ADD  1:0x00144ADD  0x001DA131
+m307f015  972   0x00154AE6  1:0x00144AE6  0x001DA13A
+m307f015  973   0x00154AF1  1:0x00144AF1  0x001DA145
+m307f015  975   0x00154B01  1:0x00144B01  0x001DA155
+m307f015  976   0x00154B09  1:0x00144B09  0x001DA15D
+m307f015  977   0x00154B0F  1:0x00144B0F  0x001DA163
+m307f016  985   0x00154B18  1:0x00144B18  0x001DA16C
+m307f016  991   0x00154B2D  1:0x00144B2D  0x001DA181
+m307f016  993   0x00154B37  1:0x00144B37  0x001DA18B
+m307f016  995   0x00154B46  1:0x00144B46  0x001DA19A
+m307f016  997   0x00154B4C  1:0x00144B4C  0x001DA1A0
+m307f016  998   0x00154B56  1:0x00144B56  0x001DA1AA
+m307f016  1001  0x00154B62  1:0x00144B62  0x001DA1B6
+m307f016  1003  0x00154B88  1:0x00144B88  0x001DA1DC
+m307f016  1005  0x00154B8E  1:0x00144B8E  0x001DA1E2
+m307f016  1006  0x00154B98  1:0x00144B98  0x001DA1EC
+m307f016  1009  0x00154BA4  1:0x00144BA4  0x001DA1F8
+m307f016  1011  0x00154BB8  1:0x00144BB8  0x001DA20C
+m307f016  1013  0x00154BBE  1:0x00144BBE  0x001DA212
+m307f016  1014  0x00154BC7  1:0x00144BC7  0x001DA21B
+m307f016  1015  0x00154BD1  1:0x00144BD1  0x001DA225
+m307f016  1018  0x00154BDA  1:0x00144BDA  0x001DA22E
+m307f016  1020  0x00154BEB  1:0x00144BEB  0x001DA23F
+m307f016  1022  0x00154BF3  1:0x00144BF3  0x001DA247
+m307f016  1023  0x00154BFC  1:0x00144BFC  0x001DA250
+m307f016  1024  0x00154C06  1:0x00144C06  0x001DA25A
+m307f016  1027  0x00154C0F  1:0x00144C0F  0x001DA263
+m307f016  1028  0x00154C17  1:0x00144C17  0x001DA26B
+m307f016  1029  0x00154C1D  1:0x00144C1D  0x001DA271
+m307f017  1041  0x00154C26  1:0x00144C26  0x001DA27A
+m307f017  1045  0x00154C3B  1:0x00144C3B  0x001DA28F
+m307f017  1047  0x00154C45  1:0x00144C45  0x001DA299
+m307f017  1049  0x00154C5E  1:0x00144C5E  0x001DA2B2
+m307f017  1051  0x00154C64  1:0x00144C64  0x001DA2B8
+m307f017  1052  0x00154C6E  1:0x00144C6E  0x001DA2C2
+m307f017  1055  0x00154C77  1:0x00144C77  0x001DA2CB
+m307f017  1057  0x00154C88  1:0x00144C88  0x001DA2DC
+m307f017  1059  0x00154C8E  1:0x00144C8E  0x001DA2E2
+m307f017  1060  0x00154C98  1:0x00144C98  0x001DA2EC
+m307f017  1063  0x00154CA1  1:0x00144CA1  0x001DA2F5
+m307f017  1065  0x00154CA9  1:0x00144CA9  0x001DA2FD
+m307f017  1066  0x00154CB3  1:0x00144CB3  0x001DA307
+m307f017  1069  0x00154CBC  1:0x00144CBC  0x001DA310
+m307f017  1071  0x00154CC4  1:0x00144CC4  0x001DA318
+m307f017  1072  0x00154CCB  1:0x00144CCB  0x001DA31F
+m307f018  1082  0x00154CD4  1:0x00144CD4  0x001DA328
+m307f018  1086  0x00154CE9  1:0x00144CE9  0x001DA33D
+m307f018  1088  0x00154CF3  1:0x00144CF3  0x001DA347
+m307f018  1089  0x00154D07  1:0x00144D07  0x001DA35B
+m307f018  1091  0x00154D0D  1:0x00144D0D  0x001DA361
+m307f018  1092  0x00154D17  1:0x00144D17  0x001DA36B
+m307f018  1095  0x00154D20  1:0x00144D20  0x001DA374
+m307f018  1097  0x00154D31  1:0x00144D31  0x001DA385
+m307f018  1099  0x00154D37  1:0x00144D37  0x001DA38B
+m307f018  1100  0x00154D41  1:0x00144D41  0x001DA395
+m307f018  1103  0x00154D4A  1:0x00144D4A  0x001DA39E
+m307f018  1105  0x00154D52  1:0x00144D52  0x001DA3A6
+m307f018  1106  0x00154D5C  1:0x00144D5C  0x001DA3B0
+m307f018  1109  0x00154D65  1:0x00144D65  0x001DA3B9
+m307f018  1111  0x00154D6D  1:0x00144D6D  0x001DA3C1
+m307f018  1112  0x00154D74  1:0x00144D74  0x001DA3C8

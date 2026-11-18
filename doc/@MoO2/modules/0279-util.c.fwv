@@ -1,0 +1,93 @@
+module_num=279
+module=F:\WLIBS\sound\util.c
+source=0279-util.c.md
+range[0]=1:0x0014092B linear=0x0015092B size=173
+range[1]=2:0x000503C0 linear=0x001C03C0 size=4096
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL          CHUNK
+m279f001  1    -      0x0015092B  1:0x0014092B  code  File_Size       File_Size_      regions/07-object-1/001D5E54-001D6653.txt
+m279f002  2    -      0x0015098A  1:0x0014098A  code  fileExists      fileExists_     regions/07-object-1/001D5E54-001D6653.txt
+-         -    -      0x001C03C0  2:0x000503C0  data  _scratchBuffer  _scratchBuffer  -
+
+[Module variables]
+LINEAR      SEGOFF        NAME           TYPE
+0x001C03C0  2:0x000503C0  scratchBuffer  char[4096]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME        TYPE                           CHUNK
+m279f001  0x0015092B  1:0x0014092B  95    24        9         0x18     -    EAX         File_Size   long (FILE *); returns in EAX  regions/07-object-1/001D5E54-001D6653.txt
+m279f002  0x0015098A  1:0x0014098A  78    24        9         0x18     -    EAX         fileExists  int (char *); returns in EAX   regions/07-object-1/001D5E54-001D6653.txt
+
+[Locals]
+KEY       ROUTINE     BLOCK  LOCAL     LOCATION    TYPE
+m279f001  File_Size   -      f         [EBP-0x10]  FILE *
+m279f001  File_Size   -      size      [EBP-0xC]   long
+m279f001  File_Size   -      curpos    [EBP-0x8]   long
+m279f002  fileExists  -      filename  [EBP-0x8]   char *
+m279f002  fileExists  -      ffblk     [EBP-0x34]  struct find_t
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   array      -               0..4095; of char (#10)
+20   pointer    -               near386; of unsigned char (#5)
+21   struct     struct __iobuf  8 fields, 26 bytes
+22   typedef    __iobuf         struct name for struct #21 (#21)
+23   typedef    FILE            name for struct __iobuf (#22)
+24   pointer    -               near386; of FILE (#23)
+25   procedure  -               near386; returns long (FILE *)
+26   procedure  -               near386; returns int (char *)
+27   array      -               0..20; of char (#10)
+28   scalar     unsigned long   unsigned 4 bytes
+29   array      -               0..12; of char (#10)
+30   struct     struct find_t   6 fields, 43 bytes
+31   typedef    find_t          struct name for struct #30 (#30)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER     OFFSET_VALUE  TYPE             TYPE_NAME
+21        field        _ptr       0             unsigned char *  struct __iobuf
+21        field        _cnt       4             int              struct __iobuf
+21        field        _base      8             unsigned char *  struct __iobuf
+21        field        _flag      12            unsigned int     struct __iobuf
+21        field        _handle    16            int              struct __iobuf
+21        field        _bufsize   20            unsigned int     struct __iobuf
+21        field        _ungotten  24            unsigned char    struct __iobuf
+21        field        _tmpfchar  25            unsigned char    struct __iobuf
+30        field        reserved   0             char[21]         struct find_t
+30        field        attrib     21            char             struct find_t
+30        field        wr_time    22            unsigned short   struct find_t
+30        field        wr_date    24            unsigned short   struct find_t
+30        field        size       26            unsigned long    struct find_t
+30        field        name       30            char[13]         struct find_t
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m279f001  7     0x0015092B  1:0x0014092B  0x001D5F7F
+m279f001  10    0x00150946  1:0x00140946  0x001D5F9A
+m279f001  11    0x00150951  1:0x00140951  0x001D5FA5
+m279f001  12    0x00150960  1:0x00140960  0x001D5FB4
+m279f001  13    0x0015096B  1:0x0014096B  0x001D5FBF
+m279f001  14    0x00150978  1:0x00140978  0x001D5FCC
+m279f001  15    0x0015097E  1:0x0014097E  0x001D5FD2
+m279f002  18    0x0015098A  1:0x0014098A  0x001D5FDE
+m279f002  22    0x001509A5  1:0x001409A5  0x001D5FF9
+m279f002  23    0x001509CC  1:0x001409CC  0x001D6020

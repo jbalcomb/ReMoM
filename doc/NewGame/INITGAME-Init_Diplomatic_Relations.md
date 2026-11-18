@@ -30,7 +30,7 @@ and zeroes each pair's peace timer.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_Runtime` / INITGAME | [INITGAME.c:664](../../MoM/src/INITGAME.c#L664) | Between `gd_dump_players("207_capital_race_P")` ([662](../../MoM/src/INITGAME.c#L662)) and `gd_dump_players("208_Init_Diplomatic_Relations_P")` ([665](../../MoM/src/INITGAME.c#L665)). |
+| `Init_Runtime` / INITGAME | [INITGAME.c:228](../../MoM/src/INITGAME.c#L228) | Between `STU_GD_Dump_Players("207_capital_race_P")` ([226](../../MoM/src/INITGAME.c#L226)) and `STU_GD_Dump_Players("208_Init_Diplomatic_Relations_P")` ([229](../../MoM/src/INITGAME.c#L229)). |
 
 ## How it works
 

@@ -1,0 +1,177 @@
+module_num=170
+module=F:\WLIBS\keybdjoy\key.c
+source=0170-key.c.md
+range[0]=1:0x0011C2E1 linear=0x0012C2E1 size=806
+range[1]=2:0x000442AC linear=0x001B42AC size=60
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME               SYMBOL             CHUNK
+m170f001  1    -      0x0012C2E1  1:0x0011C2E1  code  Read_Key           Read_Key_          regions/07-object-1/001B1654-001B1E53.txt
+m170f002  2    -      0x0012C35B  1:0x0011C35B  code  Check_Key          Check_Key_         regions/07-object-1/001B1654-001B1E53.txt
+m170f003  3    -      0x0012C392  1:0x0011C392  code  Keyboard_Status    Keyboard_Status_   regions/07-object-1/001B1654-001B1E53.txt
+m170f004  4    -      0x0012C3D3  1:0x0011C3D3  code  Key_Waiting        Key_Waiting_       regions/07-object-1/001B1654-001B1E53.txt
+m170f005  5    -      0x0012C420  1:0x0011C420  code  Init_Keyboard      Init_Keyboard_     regions/07-object-1/001B1654-001B1E53.txt
+m170f006  6    -      0x0012C493  1:0x0011C493  code  Disable_Keyboard   Disable_Keyboard_  regions/07-object-1/001B1654-001B1E53.txt
+m170f007  7    -      0x0012C4D8  1:0x0011C4D8  code  New09_Handler      New09_Handler_     regions/07-object-1/001B1654-001B1E53.txt
+m170f008  8    -      0x0012C574  1:0x0011C574  code  getch              getch_             regions/07-object-1/001B1654-001B1E53.txt
+m170f009  9    -      0x0012C5AE  1:0x0011C5AE  code  Scan_Key           Scan_Key_          regions/07-object-1/001B1654-001B1E53.txt
+-         -    -      0x001B42AC  2:0x000442AC  data  _last_key_pressed  _last_key_pressed  -
+-         -    -      0x001B42D4  2:0x000442D4  data  _lastbioschar      _lastbioschar      -
+-         -    -      0x001B42D8  2:0x000442D8  data  _nextbioschar      _nextbioschar      -
+-         -    -      0x001B42DC  2:0x000442DC  data  _Old_Int09         _Old_Int09         -
+-         -    -      0x001B42E2  2:0x000442E2  data  _key_write         _key_write         -
+-         -    -      0x001B42E3  2:0x000442E3  data  _key_read          _key_read          -
+-         -    -      0x001B42E4  2:0x000442E4  data  _key_pressed       _key_pressed       -
+
+[Module variables]
+LINEAR      SEGOFF        NAME              TYPE
+0x001B42AC  2:0x000442AC  last_key_pressed  int[10]
+0x001B42D4  2:0x000442D4  lastbioschar      short *
+0x001B42D8  2:0x000442D8  nextbioschar      short *
+0x001B42DC  2:0x000442DC  Old_Int09         void (void) *
+0x001B42E2  2:0x000442E2  key_write         char
+0x001B42E3  2:0x000442E3  key_read          char
+0x001B42E4  2:0x000442E4  key_pressed       char
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME              TYPE                         CHUNK
+m170f001  0x0012C2E1  1:0x0011C2E1  122   24        9         0x18     -    -           Read_Key          int (void); returns in EAX   regions/07-object-1/001B1654-001B1E53.txt
+m170f002  0x0012C35B  1:0x0011C35B  55    24        9         0x18     -    -           Check_Key         int (void); returns in EAX   regions/07-object-1/001B1654-001B1E53.txt
+m170f003  0x0012C392  1:0x0011C392  65    24        9         0x18     -    -           Keyboard_Status   char (void); returns in AL   regions/07-object-1/001B1654-001B1E53.txt
+m170f004  0x0012C3D3  1:0x0011C3D3  77    24        9         0x18     -    -           Key_Waiting       char (void); returns in AL   regions/07-object-1/001B1654-001B1E53.txt
+m170f005  0x0012C420  1:0x0011C420  115   24        7         0x18     -    -           Init_Keyboard     void (void)                  regions/07-object-1/001B1654-001B1E53.txt
+m170f006  0x0012C493  1:0x0011C493  69    24        7         0x18     -    -           Disable_Keyboard  void (void)                  regions/07-object-1/001B1654-001B1E53.txt
+m170f007  0x0012C4D8  1:0x0011C4D8  156   21        10        0x30     far  -           New09_Handler     void (void)                  regions/07-object-1/001B1654-001B1E53.txt
+m170f008  0x0012C574  1:0x0011C574  58    24        9         0x18     -    -           getch             int (void); returns in EAX   regions/07-object-1/001B1654-001B1E53.txt
+m170f009  0x0012C5AE  1:0x0011C5AE  89    24        9         0x18     -    -           Scan_Key          short (void); returns in AX  regions/07-object-1/001B1654-001B1E53.txt
+
+[Locals]
+KEY       ROUTINE        BLOCK  LOCAL         LOCATION   TYPE
+m170f001  Read_Key       -      return_key    [EBP-0x8]  int
+m170f004  Key_Waiting    -      start_buffer  [EBP-0xC]  short
+m170f004  Key_Waiting    -      end_buffer    [EBP-0x8]  short
+m170f007  New09_Handler  -      code          [EBP-0x4]  char
+m170f007  New09_Handler  -      get_the_key   [EBP-0x8]  short *
+m170f009  Scan_Key       -      key_num       [EBP-0x8]  short
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    wchar_t         name for unsigned short (#7)
+20   typedef    wchar_t         name for unsigned short (#7)
+21   scalar     void            void 1 bytes
+22   procedure  -               near386; returns void ()
+23   pointer    onexit_t        near386; of void (void) (#22)
+24   typedef    onexit_t        name for void (void) * (#23)
+25   scalar     unsigned long   unsigned 4 bytes
+26   typedef    time_t          name for unsigned long (#25)
+27   typedef    ino_t           name for unsigned int (#9)
+28   typedef    dev_t           name for int (#8)
+29   typedef    off_t           name for long (#16)
+30   typedef    clock_t         name for unsigned long (#25)
+31   typedef    time_t          name for unsigned long (#25)
+32   typedef    BYTE            name for unsigned char (#5)
+33   typedef    SBYTE           name for signed char (#4)
+34   typedef    UBYTE           name for unsigned char (#5)
+35   typedef    WORD            name for unsigned short (#7)
+36   typedef    SWORD           name for short (#6)
+37   typedef    UWORD           name for unsigned short (#7)
+38   typedef    DWORD           name for unsigned int (#9)
+39   typedef    SDWORD          name for int (#8)
+40   typedef    UDWORD          name for unsigned int (#9)
+41   typedef    BOOL            name for unsigned char (#5)
+42   typedef    SampleHandle    name for int (#8)
+43   array      -               0..9; of int (#8)
+44   pointer    -               near386; of short (#6)
+45   procedure  -               far386; returns void ()
+46   pointer    -               far386; of void (void) (#45)
+47   procedure  -               near386; returns int (void)
+48   procedure  -               near386; returns char (void)
+49   procedure  -               near386; returns void (void)
+50   procedure  -               far386; returns void (void)
+51   procedure  -               near386; returns int ()
+52   procedure  -               near386; returns short ()
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m170f001  35    0x0012C2E1  1:0x0011C2E1  0x001B1935
+m170f001  39    0x0012C2F9  1:0x0011C2F9  0x001B194D
+m170f001  40    0x0012C30C  1:0x0011C30C  0x001B1960
+m170f001  41    0x0012C312  1:0x0011C312  0x001B1966
+m170f001  42    0x0012C32C  1:0x0011C32C  0x001B1980
+m170f001  44    0x0012C339  1:0x0011C339  0x001B198D
+m170f001  46    0x0012C340  1:0x0011C340  0x001B1994
+m170f001  48    0x0012C342  1:0x0011C342  0x001B1996
+m170f001  50    0x0012C349  1:0x0011C349  0x001B199D
+m170f001  51    0x0012C34F  1:0x0011C34F  0x001B19A3
+m170f002  53    0x0012C35B  1:0x0011C35B  0x001B19AF
+m170f002  55    0x0012C373  1:0x0011C373  0x001B19C7
+m170f002  56    0x0012C386  1:0x0011C386  0x001B19DA
+m170f003  58    0x0012C392  1:0x0011C392  0x001B19E6
+m170f003  61    0x0012C3AA  1:0x0011C3AA  0x001B19FE
+m170f003  63    0x0012C3B6  1:0x0011C3B6  0x001B1A0A
+m170f003  64    0x0012C3BD  1:0x0011C3BD  0x001B1A11
+m170f003  68    0x0012C3C3  1:0x0011C3C3  0x001B1A17
+m170f003  71    0x0012C3C7  1:0x0011C3C7  0x001B1A1B
+m170f004  73    0x0012C3D3  1:0x0011C3D3  0x001B1A27
+m170f004  76    0x0012C3EB  1:0x0011C3EB  0x001B1A3F
+m170f004  77    0x0012C3F6  1:0x0011C3F6  0x001B1A4A
+m170f004  79    0x0012C401  1:0x0011C401  0x001B1A55
+m170f004  81    0x0012C40A  1:0x0011C40A  0x001B1A5E
+m170f004  84    0x0012C410  1:0x0011C410  0x001B1A64
+m170f004  85    0x0012C414  1:0x0011C414  0x001B1A68
+m170f005  87    0x0012C420  1:0x0011C420  0x001B1A74
+m170f005  89    0x0012C438  1:0x0011C438  0x001B1A8C
+m170f005  90    0x0012C43D  1:0x0011C43D  0x001B1A91
+m170f005  91    0x0012C458  1:0x0011C458  0x001B1AAC
+m170f005  92    0x0012C473  1:0x0011C473  0x001B1AC7
+m170f005  93    0x0012C47D  1:0x0011C47D  0x001B1AD1
+m170f005  94    0x0012C487  1:0x0011C487  0x001B1ADB
+m170f005  95    0x0012C48C  1:0x0011C48C  0x001B1AE0
+m170f006  97    0x0012C493  1:0x0011C493  0x001B1AE7
+m170f006  99    0x0012C4AB  1:0x0011C4AB  0x001B1AFF
+m170f006  100   0x0012C4B0  1:0x0011C4B0  0x001B1B04
+m170f006  101   0x0012C4CC  1:0x0011C4CC  0x001B1B20
+m170f006  102   0x0012C4D1  1:0x0011C4D1  0x001B1B25
+m170f007  105   0x0012C4D8  1:0x0011C4D8  0x001B1B2C
+m170f007  109   0x0012C4ED  1:0x0011C4ED  0x001B1B41
+m170f007  111   0x0012C4F4  1:0x0011C4F4  0x001B1B48
+m170f007  113   0x0012C4F9  1:0x0011C4F9  0x001B1B4D
+m170f007  115   0x0012C502  1:0x0011C502  0x001B1B56
+m170f007  116   0x0012C509  1:0x0011C509  0x001B1B5D
+m170f007  117   0x0012C51A  1:0x0011C51A  0x001B1B6E
+m170f007  118   0x0012C531  1:0x0011C531  0x001B1B85
+m170f007  119   0x0012C537  1:0x0011C537  0x001B1B8B
+m170f007  122   0x0012C551  1:0x0011C551  0x001B1BA5
+m170f007  123   0x0012C55B  1:0x0011C55B  0x001B1BAF
+m170f007  125   0x0012C565  1:0x0011C565  0x001B1BB9
+m170f007  126   0x0012C56A  1:0x0011C56A  0x001B1BBE
+m170f008  130   0x0012C574  1:0x0011C574  0x001B1BC8
+m170f008  132   0x0012C58C  1:0x0011C58C  0x001B1BE0
+m170f008  133   0x0012C595  1:0x0011C595  0x001B1BE9
+m170f008  134   0x0012C5A2  1:0x0011C5A2  0x001B1BF6
+m170f009  137   0x0012C5AE  1:0x0011C5AE  0x001B1C02
+m170f009  140   0x0012C5C6  1:0x0011C5C6  0x001B1C1A
+m170f009  142   0x0012C5D5  1:0x0011C5D5  0x001B1C29
+m170f009  143   0x0012C5DD  1:0x0011C5DD  0x001B1C31
+m170f009  144   0x0012C5EC  1:0x0011C5EC  0x001B1C40
+m170f009  146   0x0012C5F4  1:0x0011C5F4  0x001B1C48
+m170f009  147   0x0012C5FB  1:0x0011C5FB  0x001B1C4F

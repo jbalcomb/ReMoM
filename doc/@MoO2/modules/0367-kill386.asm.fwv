@@ -1,0 +1,8 @@
+module_num=367
+module=..\ASM_386\KILL386.ASM
+source=0367-kill386.asm.md
+range[0]=1:0x00158692 linear=0x00168692 size=1
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME             SYMBOL           CHUNK
+m367f001  1    -      0x00168692  1:0x00158692  code  __asi_kill_time  __asi_kill_time  regions/07-object-1/001ED654-001EDE53.txt

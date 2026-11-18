@@ -1,0 +1,9 @@
+module_num=264
+module=flushall
+source=0264-flushall.md
+range[0]=1:0x001384F6 linear=0x001484F6 size=54
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m264f001  1    -      0x001484F6  1:0x001384F6  code  flushall    flushall_    regions/07-object-1/001CD654-001CDE53.txt
+m264f002  2    -      0x001484FB  1:0x001384FB  code  __flushall  __flushall_  regions/07-object-1/001CD654-001CDE53.txt

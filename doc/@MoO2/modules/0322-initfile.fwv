@@ -1,0 +1,9 @@
+module_num=322
+module=initfile
+source=0322-initfile.md
+range[0]=1:0x0014C5FE linear=0x0015C5FE size=119
+range[1]=2:0x000047D4 linear=0x001747D4 size=48
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL        CHUNK
+m322f001  1    -      0x0015C5FE  1:0x0014C5FE  code  __InitFiles  __InitFiles_  regions/07-object-1/001E1654-001E1E53.txt

@@ -1,0 +1,12 @@
+module_num=261
+module=dosret
+source=0261-dosret.md
+range[0]=1:0x001383DB linear=0x001483DB size=124
+range[1]=2:0x00011128 linear=0x00181128 size=20
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME             SYMBOL            CHUNK
+m261f001  1    -      0x001483DB  1:0x001383DB  code         _dosret0         _dosret0_         regions/07-object-1/001CD654-001CDE53.txt
+m261f002  2    -      0x001483E2  1:0x001383E2  code         _dosretax        _dosretax_        regions/07-object-1/001CD654-001CDE53.txt
+m261f003  3    -      0x001483E6  1:0x001383E6  code         __set_errno_dos  __set_errno_dos_  regions/07-object-1/001CD654-001CDE53.txt
+-         -    -      0x00181128  2:0x00011128  static,data  _xlat            _xlat             regions/08-object-2/001FF654-001FFE53.txt

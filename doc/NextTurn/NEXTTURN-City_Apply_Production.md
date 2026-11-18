@@ -44,7 +44,7 @@ void City_Apply_Production(int16_t city_idx)
 | `bldg_data_table[]` (`s_BLDG_DATA`) | read | `replace_bldg` lookup for upgrade chains. |
 | `GUI_NearMsgString`, `cnst_TooManyUnits`, `message_lbx_file` | read/written | "too many units" warning text assembly. |
 
-External calls: `City_Current_Product_Cost`, `Create_Unit`, `Evict_Weakest_Unit`, `Army_At_City`, `Set_Map_Square_Explored_Flags_XYP_Range`, `Player_Colony_Autobuild_HP`, `LBX_Load_Data_Static`, `Warn0`, `stu_strcpy`, `stu_strcat`.
+External calls: `City_Current_Product_Cost`, `Create_Unit`, `Evict_Weakest_Unit`, `Army_At_City`, `Set_Square_Explored_Flags_Range`, `Player_Colony_Autobuild_HP`, `LBX_Load_Data_Static`, `Warn0`, `stu_strcpy`, `stu_strcat`.
 
 ## Locals
 

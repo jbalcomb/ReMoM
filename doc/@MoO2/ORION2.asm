@@ -405404,7 +405404,7 @@ movsx   eax, word ptr [ebp+current_field]
 imul    edx, eax, 37h                   ; SAR: y1
 mov     eax, p_fields
 add     eax, edx
-cmp     [eax+s_field.field_12], e_ST_FALSE ; s_Field.Selectable
+cmp     [eax+s_field.field_12], e_ST_FALSE ; s_Field.active_flag
 jnz     short loc_11425D
 mov     [ebp+retval_current_field], 0
 jmp     @@Done

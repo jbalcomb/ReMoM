@@ -5,7 +5,7 @@
     AI Metrics Collection System
 
     Collects structured per-turn CSV data for automated evaluation
-    of AI behavior in both interactive (ReMoM) and headless (HeMoM) modes.
+    of AI behavior in both interactive (ReMoM) and headless (DeMoM) modes.
 
     Output files (when enabled):
         AI_TURN_SUMMARY.CSV   — per-player scoreboard each turn

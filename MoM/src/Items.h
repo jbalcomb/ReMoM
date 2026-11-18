@@ -29,15 +29,15 @@ void Player_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t it
 void Remove_Item(int16_t item_idx);
 
 // WZD o109p03
-void AI_Process_Item_Pool__STUB(int16_t player_idx, int16_t item_count, int16_t item_list[]);
+void AI_Process_Item_Pool(int16_t player_idx, int16_t item_count, int16_t item_list[]);
 
 // WZD o109p04
 // drake178: AI_EquipHeroFirst()
-// AI_EquipHeroFirst()
+void AI_Equip_Hero_Best_Items(int16_t player_idx, int16_t hero_slot_idx, int16_t item_list[], int16_t * item_count);
 
 // WZD o109p05
 // drake178: AI_EquipRemainder()
-// AI_EquipRemainder()
+void AI_Equip_Hero_Empty_Slots(int16_t player_idx, int16_t hero_slot_idx, int16_t item_list[], int16_t * item_count);
 
 
 

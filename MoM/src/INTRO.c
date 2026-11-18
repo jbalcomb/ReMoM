@@ -150,8 +150,8 @@ void Draw_Logos(void)
     Clear_Fields();
 
     /* NOTE(JimBalcomb,20260315): it is odd that they didn't do the fullscreen-escape field here */
-    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__MGC_ovr058[0], ST_UNDEFINED);
-    hotkey_idx_ESC = Add_Hot_Key(str_ESC__MGC_ovr058[0]);
+    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__MGC_ovr058, ST_UNDEFINED);
+    hotkey_idx_ESC = Add_Hot_Key(str_ESC__MGC_ovr058);
 
     /*
         SimTex logo fades in and fades out

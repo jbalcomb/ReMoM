@@ -2,7 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(cmake --build build --target ReMoM)",
-      "Bash(cmake --build build --target HeMoM)",
+      "Bash(cmake --build build --target DeMoM)",
       "Bash(cmake .. -DCMAKE_BUILD_TYPE=Debug)",
       "Bash(ctest -L ai -V)",
       "Bash(cmake ..)",

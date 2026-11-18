@@ -1,0 +1,12 @@
+module_num=101
+module=D:\MOX\OTHERS\CHAT.C
+source=0101-chat.c.md
+range[0]=1:0x000CD351 linear=0x000DD351 size=356
+range[1]=2:0x00032250 linear=0x001A2250 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME               SYMBOL              CHUNK
+m101f001  1    -      0x000DD351  1:0x000CD351  code  Receive_Chat_Msg   Receive_Chat_Msg_   regions/07-object-1/00162654-00162E53.txt
+m101f002  2    -      0x000DD3B8  1:0x000CD3B8  code  Send_Chat_Msg      Send_Chat_Msg_      regions/07-object-1/00162654-00162E53.txt
+m101f003  3    -      0x000DD42A  1:0x000CD42A  code  Send_GNN_Chat_Msg  Send_GNN_Chat_Msg_  regions/07-object-1/00162654-00162E53.txt
+-         -    -      0x001A2250  2:0x00032250  data  _chat_info         _chat_info          -

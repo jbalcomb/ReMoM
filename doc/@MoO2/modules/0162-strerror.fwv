@@ -1,0 +1,12 @@
+module_num=162
+module=strerror
+source=0162-strerror.md
+range[0]=1:0x00119C94 linear=0x00129C94 size=23
+range[1]=2:0x00002868 linear=0x00172868 size=320
+range[2]=2:0x0000C594 linear=0x0017C594 size=68
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL        CHUNK
+m162f001  1    -      0x00129C94  1:0x00119C94  code  strerror      strerror_     regions/07-object-1/001AEE54-001AF653.txt
+-         -    -      0x0017C594  2:0x0000C594  data  _sys_nerr     _sys_nerr     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C598  2:0x0000C598  data  _sys_errlist  _sys_errlist  regions/08-object-2/001FA654-001FAE53.txt

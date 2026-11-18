@@ -22,7 +22,10 @@ MoO2
 */
 
 #include "../../STU/src/STU_DBG.h"
-#include "../../STU/src/STU_LOG.h"  /* CLAUDE 2026-06-01: LOG_INFO for [LOC_PICK] iteration trace */
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage_Range() */  /* CLAUDE */
+#include "../../STU/src/STU_CI.h"    /* STU_CI_Get() */  /* CLAUDE */
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
+#include "../../STU/src/STU_LOG.h"  /* CLAUDE: CALL_TRACE, the [connectivity_grids] dump, the Done_Done: marker */
 #include "../../STU/src/STU_VLD.h"
 
 #include "../../ext/stu_compat.h"
@@ -68,6 +71,10 @@ extern struct s_MOVE_MODE_COST_MAPS * movement_mode_cost_maps;
 
 // forward declare; non-static to match the definition and the MAPGEN.h prototype (was erroneously static -> C4211)
 void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map);
+
+
+
+
 
 
 
@@ -152,17 +159,17 @@ char builddat_lbx_file__MGC_ovr051[] = "BUILDDAT";
 // MGC  dseg:340F
 char str_BuildingTheWorlds[] = "Building The Worlds...";
 
-// MGC  dseg:3426 74 6F 77 65 72 00                               UU_cnst_Tower db 'tower',0              ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:342C 63 68 61 6F 73 20 6E 6F 64 65 00                UU_cnst_ChaosNode db 'chaos node',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3437 6E 61 74 75 72 65 20 6E 6F 64 65 00             UU_cnst_NatureNode db 'nature node',0   ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3443 73 6F 72 63 65 72 79 20 6E 6F 64 65 00          UU_cnst_SorceryNode db 'sorcery node',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3450 6D 79 73 74 65 72 69 6F 75 73 20 63 61 76 65 00 UU_cnst_Cave db 'mysterious cave',0     ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3460 64 75 6E 67 65 6F 6E 00                         UU_cnst_Dungeon db 'dungeon',0          ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3426 74 6F 77 65 72 00                               UU_cnst_Tower db 'tower',0              ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:342C 63 68 61 6F 73 20 6E 6F 64 65 00                UU_cnst_ChaosNode db 'chaos node',0     ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3437 6E 61 74 75 72 65 20 6E 6F 64 65 00             UU_cnst_NatureNode db 'nature node',0   ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3443 73 6F 72 63 65 72 79 20 6E 6F 64 65 00          UU_cnst_SorceryNode db 'sorcery node',0 ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3450 6D 79 73 74 65 72 69 6F 75 73 20 63 61 76 65 00 UU_cnst_Cave db 'mysterious cave',0     ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3460 64 75 6E 67 65 6F 6E 00                         UU_cnst_Dungeon db 'dungeon',0          ; DATA XREF: dseg:UU_EZ_Names@_Array^o
 // MGC  dseg:3468 61 6E 63 69 65 6E 74 20 74 65 6D 70 6C 65 00    UU_cnst_AncientTmpl db 'ancient temple',0
-// MGC  dseg:3477 61 62 61 6E 64 6F 6E 65 64 20 6B 65 65 70 00    UU_cnst_Keep db 'abandoned keep',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3486 6D 6F 6E 73 74 65 72 20 6C 61 69 72 00          UU_cnst_Lair db 'monster lair',0        ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
-// MGC  dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Arrayo
+// MGC  dseg:3477 61 62 61 6E 64 6F 6E 65 64 20 6B 65 65 70 00    UU_cnst_Keep db 'abandoned keep',0      ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3486 6D 6F 6E 73 74 65 72 20 6C 61 69 72 00          UU_cnst_Lair db 'monster lair',0        ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:3493 61 6E 63 69 65 6E 74 20 72 75 69 6E 73 00       UU_cnst_Ruins db 'ancient ruins',0      ; DATA XREF: dseg:UU_EZ_Names@_Array^o
+// MGC  dseg:34A1 66 61 6C 6C 65 6E 20 74 65 6D 70 6C 65 00       UU_cnst_FallenTmpl db 'fallen temple',0 ; DATA XREF: dseg:UU_EZ_Names@_Array^o
 
 // MGC  dseg:34AF
 char terrtype_lbx_file__MGC_ovr051[] = "TERRTYPE";
@@ -274,168 +281,12 @@ and their order of execution
  * @see Generate_Roads
  * @see Init_Square_Explored
  */
-
-/* CLAUDE: capture the world map (a [GD] dump) so it can be byte-compared against
- * OG -- Generate_Towers reads p_world_map, so this tells us whether the map
- * going INTO the tower/lair phase already differs, or whether Generate_Towers
- * reads an identical map+seed and still draws differently.  One [GD] line per
- * (plane,row): "[GD] <point> _world_maps[<plane>].y<NN> = csv int16 squares". */
-void gd_dump_world_map(const char* point)
-{
-    int plane, y, x, q;
-    char row[WORLD_WIDTH * 8];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        for(y = 0; y < WORLD_HEIGHT; y++) {
-            q = 0;
-            for(x = 0; x < WORLD_WIDTH; x++) {
-                int16_t v = p_world_map[plane][y][x];
-                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", (int)v);
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _world_maps[%d].y%02d = %s",
-                      point, plane, y, row);
-        }
-        STU_Log_Flush_All();   /* drain the async ring between planes (flood fix) */
-    }
-}
-
-/* CLAUDE: capture _landmasses (uint8 landmass-id per square) for OG byte-compare. */
-void gd_dump_landmasses(const char* point)
-{
-    int plane, y, x, q;
-    char row[WORLD_WIDTH * 5];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        for(y = 0; y < WORLD_HEIGHT; y++) {
-            q = 0;
-            for(x = 0; x < WORLD_WIDTH; x++) {
-                int v = GET_LANDMASS(x, y, plane);
-                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _landmasses[%d].y%02d = %s",
-                      point, plane, y, row);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* CLAUDE: capture _map_square_terrain_specials (uint8 terrain-special id per square) for OG byte-compare. */
-void gd_dump_terrain_specials(const char* point)
-{
-    int plane, y, x, q;
-    char row[WORLD_WIDTH * 5];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        for(y = 0; y < WORLD_HEIGHT; y++) {
-            q = 0;
-            for(x = 0; x < WORLD_WIDTH; x++) {
-                int v = GET_TERRAIN_SPECIAL(x, y, plane);
-                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _map_square_terrain_specials[%d].y%02d = %s",
-                      point, plane, y, row);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* CLAUDE: capture _map_square_flags (uint8 per-square flag bits) for OG byte-compare. */
-void gd_dump_map_square_flags(const char* point)
-{
-    int plane, y, x, q;
-    char row[WORLD_WIDTH * 5];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        for(y = 0; y < WORLD_HEIGHT; y++) {
-            q = 0;
-            for(x = 0; x < WORLD_WIDTH; x++) {
-                int v = GET_MAP_SQUARE_FLAG(x, y, plane);
-                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _map_square_flags[%d].y%02d = %s",
-                      point, plane, y, row);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* CLAUDE: capture _square_explored (uint8 per-square explored flag) for OG byte-compare. */
-static void gd_dump_square_explored(const char* point)
-{
-    int plane, y, x, q;
-    char row[WORLD_WIDTH * 5];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        for(y = 0; y < WORLD_HEIGHT; y++) {
-            q = 0;
-            for(x = 0; x < WORLD_WIDTH; x++) {
-                int v = GET_SQUARE_EXPLORED(x, y, plane);
-                q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _square_explored[%d].y%02d = %s",
-                      point, plane, y, row);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* CLAUDE: capture movement_mode_cost_maps (int8 move cost per square, 6 modes x
- * 2 planes) for OG byte-compare.  One [GD] line per (plane, mode, row). */
-static void gd_dump_movement_mode_cost_maps(const char* point)
-{
-    int plane, m, y, x, q;
-    char row[WORLD_WIDTH * 5];
-    static const char* const mode_names[6] = {
-        "UU_MvMd", "walking", "forester", "mountaineer", "swimming", "sailing"
-    };
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        struct s_MOVE_COST_MAP* modes[6] = {
-            &movement_mode_cost_maps[plane].UU_MvMd,
-            &movement_mode_cost_maps[plane].walking,
-            &movement_mode_cost_maps[plane].forester,
-            &movement_mode_cost_maps[plane].mountaineer,
-            &movement_mode_cost_maps[plane].swimming,
-            &movement_mode_cost_maps[plane].sailing,
-        };
-        for(m = 0; m < 6; m++) {
-            for(y = 0; y < WORLD_HEIGHT; y++) {
-                q = 0;
-                for(x = 0; x < WORLD_WIDTH; x++) {
-                    int v = (int)modes[m]->moves2[(y * WORLD_WIDTH) + x];
-                    q += snprintf(row + q, sizeof(row) - q, x ? ",%d" : "%d", v);
-                }
-                LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s movement_mode_cost_maps[%d].%s_y%02d = %s",
-                          point, plane, mode_names[m], y, row);
-            }
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* CLAUDE: capture connectivity_grid_land / connectivity_grid_sea (path grids, NUM_PLANES x 96 uint8) for
- * OG byte-compare.  SAMB_ptr = unsigned char*; one [GD] line per (table,plane). */
-static void gd_dump_one_uu_tbl(const char* point, const char* name, const unsigned char* tbl)
-{
-    int plane, i, q;
-    char row[96 * 5];
-    for(plane = 0; plane < NUM_PLANES; plane++) {
-        q = 0;
-        for(i = 0; i < 96; i++) {
-            int v = (int)tbl[(plane * 96) + i];
-            q += snprintf(row + q, sizeof(row) - q, i ? ",%d" : "%d", v);
-        }
-        LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s %s[%d].vals = %s", point, name, plane, row);
-    }
-}
-
-static void gd_dump_uu_tbls(const char* point)
-{
-    gd_dump_one_uu_tbl(point, "connectivity_grid_land", (unsigned char *)connectivity_grid_land);
-    gd_dump_one_uu_tbl(point, "connectivity_grid_sea", (unsigned char *)connectivity_grid_sea);
-    STU_Log_Flush_All();
-}
-
 void Init_New_Game(void)
 {
     int16_t rivers = 0;
     int16_t tries = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     bldg_data_table = (struct s_BLDG_DATA *)LBX_Load_Data(builddat_lbx_file__MGC_ovr051, 0, 0, 36, 52);
     
@@ -469,7 +320,7 @@ void Init_New_Game(void)
 
     Init_Landmasses(MYRROR_PLANE);
 
-    gd_dump_landmasses("102_Init_Landmasses_L");   /* CLAUDE: _landmasses after Init_Landmasses */
+    STU_GD_DO(STU_GD_Dump_Landmasses("102_Init_Landmasses_L"));   /* CLAUDE: _landmasses after Init_Landmasses */
 
     Draw_Building_The_Worlds(15);
 
@@ -479,8 +330,8 @@ void Init_New_Game(void)
 
     Generate_Landmasses(MYRROR_PLANE);
 
-    gd_dump_landmasses("103_Generate_Landmasses_L");   /* CLAUDE: _landmasses after Generate_Landmasses */
-    gd_dump_world_map("104_Landmasses_W");   /* CLAUDE: bisect map-divergence checkpoint */
+    STU_GD_DO(STU_GD_Dump_Landmasses("103_Generate_Landmasses_L"));   /* CLAUDE: _landmasses after Generate_Landmasses */
+    STU_GD_DO(STU_GD_Dump_World_Map("104_Landmasses_W"));   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(25);
 
@@ -490,7 +341,7 @@ void Init_New_Game(void)
 
     Translate_Heightmap_To_Base_Terrain_Types(MYRROR_PLANE);
 
-    gd_dump_world_map("105_BaseTerrain_W");   /* CLAUDE: bisect map-divergence checkpoint */
+    STU_GD_DO(STU_GD_Dump_World_Map("105_BaseTerrain_W"));   /* CLAUDE: bisect map-divergence checkpoint */
 
     Draw_Building_The_Worlds(35);
 
@@ -502,42 +353,42 @@ void Init_New_Game(void)
 
     /* CLAUDE: full map now built (both planes climate-terraformed) -- capture
      * for OG byte-compare before Nodes/Towers/Lairs run. */
-    gd_dump_world_map("106_ClimateTerrain_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("106_ClimateTerrain_W"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(45);
 
     Generate_Nodes();
 
-    gd_dump_nodes("107_Generate_Nodes_N");   /* CLAUDE: _NODES at end of Generate_Nodes */
+    STU_GD_DO(STU_GD_Dump_Nodes("107_Generate_Nodes_N"));   /* CLAUDE: _NODES at end of Generate_Nodes */
 
     Draw_Building_The_Worlds(50);
 
     Rebalance_Node_Types(ARCANUS_PLANE);
     Rebalance_Node_Types(MYRROR_PLANE);
 
-    gd_dump_nodes("108_Rebalance_Node_Types_N");   /* CLAUDE: _NODES after Rebalance */
+    STU_GD_DO(STU_GD_Dump_Nodes("108_Rebalance_Node_Types_N"));   /* CLAUDE: _NODES after Rebalance */
 
     Draw_Building_The_Worlds(55);
 
     /* CLAUDE: map state immediately BEFORE Generate_Towers -- does the tower
      * loop read an identical map (so the divergence is internal to it) or not? */
-    gd_dump_world_map("109_PreTowers_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("109_PreTowers_W"));  /* CLAUDE */
 
     Generate_Towers();
 
-    gd_dump_towers("110_Generate_Towers_T");   /* CLAUDE: _TOWERS after Generate_Towers */
+    STU_GD_DO(STU_GD_Dump_Towers("110_Generate_Towers_T"));   /* CLAUDE: _TOWERS after Generate_Towers */
 
     Draw_Building_The_Worlds(60);
 
     Extend_Islands(ARCANUS_PLANE);
     Extend_Islands(MYRROR_PLANE);
 
-    gd_dump_landmasses("111_Extend_Islands_L");
-    gd_dump_world_map("112_Extend_Islands_W");
+    STU_GD_DO(STU_GD_Dump_Landmasses("111_Extend_Islands_L"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_World_Map("112_Extend_Islands_W"));  /* CLAUDE */
 
     Generate_Lairs();
 
-    gd_dump_lairs("113_Generate_Lairs_LR");   /* CLAUDE: _LAIRS after Generate_Lairs */
+    STU_GD_DO(STU_GD_Dump_Lairs("113_Generate_Lairs_LR"));   /* CLAUDE: _LAIRS after Generate_Lairs */
 
     Draw_Building_The_Worlds(65);
 
@@ -545,8 +396,8 @@ void Init_New_Game(void)
 
     Generate_Home_Cities();
 
-    gd_dump_cities("114_Generate_Home_Cities_C");
-    gd_dump_units("115_Generate_Home_Cities_U");
+    STU_GD_DO(STU_GD_Dump_Cities("114_Generate_Home_Cities_C"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_Units("115_Generate_Home_Cities_U"));  /* CLAUDE */
     
 
 #ifdef STU_DEBUG
@@ -558,8 +409,8 @@ void Init_New_Game(void)
     Generate_Neutral_Cities(ARCANUS_PLANE);
     Generate_Neutral_Cities(MYRROR_PLANE);
 
-    gd_dump_cities("116_Generate_Neutral_Cities_C");
-    gd_dump_units("117_Generate_Neutral_Cities_U");
+    STU_GD_DO(STU_GD_Dump_Cities("116_Generate_Neutral_Cities_C"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_Units("117_Generate_Neutral_Cities_U"));  /* CLAUDE */
 
 #ifdef STU_DEBUG
     assert(Validate_All_Neutral_Cities() == ST_TRUE);
@@ -569,17 +420,17 @@ void Init_New_Game(void)
 
     Generate_Terrain_Specials(ARCANUS_PLANE);
     Generate_Terrain_Specials(MYRROR_PLANE);
-    gd_dump_terrain_specials("118_Generate_Terrain_Specials_TS");
-    gd_dump_world_map("119_Generate_Terrain_Specials_W");
+    STU_GD_DO(STU_GD_Dump_Terrain_Specials("118_Generate_Terrain_Specials_TS"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_World_Map("119_Generate_Terrain_Specials_W"));  /* CLAUDE */
 
     Generate_Roads(ARCANUS_PLANE);
     Generate_Roads(MYRROR_PLANE);
-    gd_dump_map_square_flags("120_Generate_Roads_F");
+    STU_GD_DO(STU_GD_Dump_Map_Square_Flags("120_Generate_Roads_F"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(80);
 
     Simtex_Autotiling();
-    gd_dump_world_map("121_Simtex_Autotiling_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("121_Simtex_Autotiling_W"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(85);
 
@@ -588,24 +439,24 @@ void Init_New_Game(void)
         for(tries = 0; ((tries < 2000) && (Generate_River(ARCANUS_PLANE) == ST_FALSE)); tries++) { }
         for(tries = 0; ((tries < 2000) && (Generate_River(MYRROR_PLANE)  == ST_FALSE)); tries++) { }
     }
-    gd_dump_world_map("122_Generate_River_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("122_Generate_River_W"));  /* CLAUDE */
 
     River_Autotile(ARCANUS_PLANE);
     River_Autotile(MYRROR_PLANE);
-    gd_dump_world_map("123_River_Autotile_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("123_River_Autotile_W"));  /* CLAUDE */
 
     Desert_Autotile();
-    gd_dump_landmasses("124_Desert_Autotile_L");
-    gd_dump_world_map("125_Desert_Autotile_W");
+    STU_GD_DO(STU_GD_Dump_Landmasses("124_Desert_Autotile_L"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_World_Map("125_Desert_Autotile_W"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(85);
 
     Shuffle_Terrains();
-    gd_dump_world_map("126_Shuffle_Terrains_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("126_Shuffle_Terrains_W"));  /* CLAUDE */
 
     Movement_Mode_Cost_Maps(ARCANUS_PLANE);
     Movement_Mode_Cost_Maps(MYRROR_PLANE);
-    gd_dump_movement_mode_cost_maps("127_Movement_Mode_Cost_Maps_M");
+    STU_GD_DO(STU_GD_Dump_Movement_Mode_Cost_Maps("127_Movement_Mode_Cost_Maps_M"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(90);
 
@@ -632,20 +483,20 @@ void Init_New_Game(void)
             }
         }
     }
-    gd_dump_uu_tbls("128_CRP_NEWG_CreatePathGrids_U");
+    STU_GD_DO(STU_GD_Dump_Connectivity_Grids("128_CRP_NEWG_CreatePathGrids_U"));  /* CLAUDE */
 
     Draw_Building_The_Worlds(95);
 
     Init_Square_Explored();
-    gd_dump_square_explored("129_Init_Square_Explored_E");
+    STU_GD_DO(STU_GD_Dump_Square_Explored("129_Init_Square_Explored_E"));  /* CLAUDE */
 
     Animate_Oceans();
-    gd_dump_world_map("130_Animate_Oceans_W");
+    STU_GD_DO(STU_GD_Dump_World_Map("130_Animate_Oceans_W"));  /* CLAUDE */
 
     Set_Upper_Lair_Guardian_Count();
-    gd_dump_lairs("131_Set_Upper_Lair_Guardian_Count_LR");
+    STU_GD_DO(STU_GD_Dump_Lairs("131_Set_Upper_Lair_Guardian_Count_LR"));  /* CLAUDE */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -671,13 +522,13 @@ void Init_New_Game(void)
 void Set_Upper_Lair_Guardian_Count(void)
 {
     int16_t itr_lairs = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     for(itr_lairs = 0; itr_lairs < NUM_LAIRS; itr_lairs++)
     {
         _LAIRS[itr_lairs].guard1_count = (_LAIRS[itr_lairs].guard1_count + (_LAIRS[itr_lairs].guard1_count << 4));
         _LAIRS[itr_lairs].guard2_count = (_LAIRS[itr_lairs].guard2_count + (_LAIRS[itr_lairs].guard2_count << 4));
     }
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -720,7 +571,7 @@ void Extend_Islands(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_wy = 1; itr_wy < (WORLD_HEIGHT - 1); itr_wy++)
     {
@@ -783,13 +634,15 @@ void Extend_Islands(int16_t wp)
                                         Grid_Index was meant to map the 3x3 neighborhood (current + 8 adjacent
                                         squares) to {1,...,9}, which needs ((rnd_wy + 1) * 3) + (rnd_wx + 1) + 1.
                                         The OG instead uses the formula below, whose range is {-3,...,5}, NOT
-                                        {1,...,9}  (BUG observed by drake189).
+                                        {1,...,9}  (BUG observed by drake178).
 
                                         Effect: only rnd values that land on Grid_Index 2/3/4/5 reach the switch,
                                         so an island extends only toward E (case 2), S (case 4), and conditionally
                                         SW (case 3).  N/NE/NW/W produce a negative Grid_Index (no matching case,
                                         skipped) and SE produces case 5 (never converts).  switch cases 1 and 6-9
-                                        are therefore dead code.  Do NOT "fix" the formula -- preserve as-is.
+                                        are therefore dead code.  The SW offset (-1, +1) reaches case 3, the test laid out for
+                                        the NE diagonal, so it looks at the unrelated squares (x - 1, y + 2) and (x - 2, y + 1).
+                                        Do NOT "fix" the formula -- preserve as-is.
                                     */
                                     Grid_Index = ((rnd_wy * 3) + rnd_wx + 1);  // {-3,...,3} + {-1,0,1} + 1 = {-3,...,5}
                                     convert = ST_FALSE;
@@ -885,7 +738,7 @@ void Extend_Islands(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -921,24 +774,26 @@ void Extend_Islands(int16_t wp)
  */
 void Generate_Towers(void)
 {
-    int16_t tries = 0;  /* CI: OG leaves this auto stack local [bp-8] uninitialized; injected from capture below (gd_ci "tries"). */
+    int16_t tries = 0;  /* CI: OG leaves this auto stack local [bp-8] uninitialized; injected from capture below (STU_CI_Get "tries", GD capture builds only). */
     int16_t min_distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
     int16_t itr1 = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CI: OG leaves `tries` (auto stack local [bp-8]) uninitialized; it comes up
      * as leftover stack memory (13173 in the captured run) and drives an immediate
      * min_distance relaxation.  Inject the captured value instead of hardcoding it. */
+#if defined(STU_GD_CAPTURE)  /* CLAUDE */
     {
         long ci_tries;
-        if(gd_ci_get("tries", "gen_towers", &ci_tries, 1) == 1) {
+        if(STU_CI_Get("tries", "gen_towers", &ci_tries, 1) == 1) {
             tries = (int16_t)ci_tries;
         }
     }
+#endif
 
     min_distance = 10;
 
@@ -946,7 +801,8 @@ void Generate_Towers(void)
     while(itr1 < NUM_TOWERS)
     {
 
-        tries++;  /* OGBUG: Tries is uninitialized in the OG (stack leftover 13173, not 0) — see init above */
+        /* OGBUG  tries ([bp-8]) is never initialised (stack leftover, 13173 in the captured run) and never reset between towers: with a leftover > 500 the very first try already relaxes min_distance 10 -> 9, and min_distance has no lower bound */
+        tries++;
         if(tries > 500)
         {
             tries = 450;
@@ -1012,11 +868,13 @@ void Generate_Towers(void)
         itr1++;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
 
+// MGC o051p05
+// BinAlgo: Place_Fortresses
 /**
  * @brief Places each wizard's starting fortress and capital, then creates starting garrison units.
  *
@@ -1049,30 +907,18 @@ void Generate_Home_Cities(void)
     int16_t max_pop_failures = 0;
     int16_t minimum_site_distance = 0;  // used for _NODES[], _TOWERS[], _LAIRS[]
     int16_t minimum_fortress_distance = 0;
-    int16_t itr = 0;
-    int16_t Invalid = 0;
-    int16_t Tries_Per_Distance = 0;
+    int16_t itr_players = 0;
+    int16_t invalid_site = 0;
+    int16_t tries_per_distance = 0;
     int16_t wy = 0;
     int16_t wx = 0;
     int16_t wp = 0;
-    int16_t niu_fortresses[NUM_PLANES] = { 0, 0 };  // tracks fortress record populations? 1:1 with player_idx in the players loop?
+    int16_t niu_plane_fortress_count[NUM_PLANES] = { 0, 0 };  /* OGBUG  dead stores: the fortresses placed on each plane are counted and never read */
     int16_t player_idx = 0;
-    int16_t unit_type = 0;
-    int16_t bldg_idx = 0;
-    int16_t DBG_pop_min = 0;
-    int16_t DBG_pop_max = 0;
-// #ifdef STU_DEBUG
-    int16_t DBG_Invalid_Reason = 0;
-    int16_t DBG_Invalid_Reason_1_Count = 0;  // Ocean
-    int16_t DBG_Invalid_Reason_2_Count = 0;  // Fortress
-    int16_t DBG_Invalid_Reason_3_Count = 0;  // Node
-    int16_t DBG_Invalid_Reason_4_Count = 0;  // Tower
-    int16_t DBG_Invalid_Reason_5_Count = 0;  // Lair
-    int16_t DBG_Invalid_Reason_6_Count = 0;  // Max Pop
-    int16_t DBG_Loop_Location[7] = { 0, 0, 0, 0, 0, 0, 0 };
-// #endif
+    int16_t unit_type = 0;  // _DI_
+    int16_t itr_records = 0;  // _SI_  fortress / node / tower / lair record, then building index
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     minimum_fortress_distance = 16;
     minimum_site_distance = 8;
@@ -1085,151 +931,103 @@ Loop_Distances:
         minimum_site_distance--;
         SETMIN(minimum_site_distance, 1);
         SETMIN(minimum_fortress_distance, 10);
-        Tries_Per_Distance = 0;
-        niu_fortresses[ARCANUS_PLANE] = 0;
-        niu_fortresses[MYRROR_PLANE] = 0;
+        tries_per_distance = 0;
+        niu_plane_fortress_count[ARCANUS_PLANE] = 0;
+        niu_plane_fortress_count[MYRROR_PLANE] = 0;
         max_pop_failures = 0;
-        DBG_Invalid_Reason_1_Count = 0;
-        DBG_Invalid_Reason_2_Count = 0;
-        DBG_Invalid_Reason_3_Count = 0;
-        DBG_Invalid_Reason_4_Count = 0;
-        DBG_Invalid_Reason_5_Count = 0;
-        DBG_Invalid_Reason_6_Count = 0;
 
         while(1)
         {
 Loop_MaxPopTries:
 
             /* OGBUG: there are only at most 5 players, should iter over _num_players */
-            for(player_idx = 0; player_idx < NUM_PLAYERS; player_idx++)
+            for(player_idx = 0; ((player_idx < NUM_PLAYERS) && (tries_per_distance < 1000)); player_idx++)
             {
 
-                if(Tries_Per_Distance < 1000)
                 {
 // jump back here if the location is invalid
 // jump back here if the max pop is too low
 Loop_Location_1:
-                    Tries_Per_Distance++;
+                    tries_per_distance++;
                     wp = ARCANUS_PLANE;
-                    if(_players[player_idx].myrran != ST_FALSE)
+                    /* OGBUG  on the High Elf retry below, player_idx is NUM_PLAYERS (6) or more: the OG reads _players[6].myrran, the byte after _players in MAGIC's dseg (_help_entries[10], high byte of y2) */
+                    // if(_players[player_idx].myrran != ST_FALSE)
+                    if(((player_idx < NUM_PLAYERS) ? _players[player_idx].myrran : ST_FALSE) != ST_FALSE)  /* HACK */  /* CLAUDE */  /* stand-in ST_FALSE: the high byte of an on-screen y2 */
                     {
                         wp = MYRROR_PLANE;
                     }
                     wx = (2 + Random((WORLD_WIDTH  - 6)));  // { 3, ..., 56}
                     wy = (2 + Random((WORLD_HEIGHT - 6)));  // { 3, ..., 36}
 
-                    Invalid = ST_FALSE;
-                    DBG_Invalid_Reason = 0;
+                    invalid_site = ST_FALSE;
 
                     if(GET_TERRAIN_TYPE(wx, wy, wp) == tt_Ocean)
                     {
-                        Invalid = ST_TRUE;
-                        DBG_Invalid_Reason = 1;
-                        DBG_Invalid_Reason_1_Count++;
+                        invalid_site = ST_TRUE;
                     }
 
-                    for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
+                    for(itr_records = 0; itr_records < player_idx; itr_records++)
                     {
-                        if(_FORTRESSES[bldg_idx].wp == wp)
+                        if(_FORTRESSES[itr_records].wp == wp)
                         {
-                            if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, WORLD_WIDTH) < minimum_fortress_distance)
+                            if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[itr_records].wx, _FORTRESSES[itr_records].wy, WORLD_WIDTH) < minimum_fortress_distance)
                             {
-                                Invalid = ST_TRUE;
-                                DBG_Invalid_Reason = 2;
-                                DBG_Invalid_Reason_2_Count++;
+                                invalid_site = ST_TRUE;
                             }
                         }
                     }
 
-                    for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
+                    for(itr_records = 0; itr_records < NUM_NODES; itr_records++)
                     {
-                        if(_NODES[bldg_idx].wp == wp)
+                        if(_NODES[itr_records].wp == wp)
                         {
-                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                            if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
+                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */  /* CLAUDE */  /* once minimum_site_distance has relaxed to 1 (from 7, 6, ... per pass); before that the bound is 3, 3, 2, 2, 1, 1 */
+                            if(Delta_XY_With_Wrap(wx, wy, _NODES[itr_records].wx, _NODES[itr_records].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
-                                Invalid = ST_TRUE;
-                                DBG_Invalid_Reason = 3;
-                                DBG_Invalid_Reason_3_Count++;
+                                invalid_site = ST_TRUE;
                             }
                         }
                     }
 
-                    for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
+                    for(itr_records = 0; itr_records < NUM_TOWERS; itr_records++)
                     {
-                        /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                        if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
+                        /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */  /* CLAUDE */  /* once minimum_site_distance has relaxed to 1 (from 7, 6, ... per pass); before that the bound is 3, 3, 2, 2, 1, 1 */
+                        if(Range(wx, wy, _TOWERS[itr_records].wx, _TOWERS[itr_records].wy) < (minimum_site_distance / 2))
                         {
-                            Invalid = ST_TRUE;
-                            DBG_Invalid_Reason = 4;
-                            DBG_Invalid_Reason_4_Count++;
+                            invalid_site = ST_TRUE;
                         }
                     }
 
-                    for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
+                    for(itr_records = 0; itr_records < NUM_LAIRS; itr_records++)
                     {
-                        if(_LAIRS[bldg_idx].wp == wp)
+                        if(_LAIRS[itr_records].wp == wp)
                         {
-                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
+                            /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */  /* CLAUDE */  /* once minimum_site_distance has relaxed to 1 (from 7, 6, ... per pass); before that the bound is 3, 3, 2, 2, 1, 1 */
+                            if(Delta_XY_With_Wrap(wx, wy, _LAIRS[itr_records].wx, _LAIRS[itr_records].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
                             {
-                                Invalid = ST_TRUE;
-                                DBG_Invalid_Reason = 5;
-                                DBG_Invalid_Reason_5_Count++;
+                                invalid_site = ST_TRUE;
                             }
                         }
                     }
-
-                    /* CLAUDE 2026-06-01: per-iteration trace of the
-                     * location-pick retry loop.  Emitted on every
-                     * iteration whether the picked (wx,wy) was valid
-                     * or not.  Use when ReMoM's New Game iterates this
-                     * loop more times than OG MAGIC.EXE did and you
-                     * need to see, iteration by iteration, what
-                     * Random()-picked location was rejected and which
-                     * of the five bound checks rejected it.
-                     *
-                     * Fields:
-                     *   player=N     placement attempt is for which player slot
-                     *   try=N        Tries_Per_Distance at this iteration
-                     *   wx,wy,wp     the Random-picked location
-                     *   invalid=0/1  rejected this iteration?
-                     *   reason=N     1=Ocean, 2=NearFortress, 3=NearNode,
-                     *                4=NearTower, 5=NearLair, 6=PopTooLow,
-                     *                0=accepted
-                     */
-                    LOG_INFO(LOG_CAT_GENERAL, "[LOC_PICK] player=%d try=%d wp=%d wx=%d wy=%d invalid=%d reason=%d", (int)player_idx, (int)Tries_Per_Distance, (int)wp, (int)wx, (int)wy, (int)Invalid, (int)DBG_Invalid_Reason);
 
                     if(
-                        (Tries_Per_Distance < 1000)
+                        (tries_per_distance < 1000)
                         &&
-                        (Invalid == ST_TRUE)
+                        (invalid_site == ST_TRUE)
                     )
                     {
-                        DBG_Loop_Location[DBG_Invalid_Reason]++;
                         goto Loop_Location_1;
                     }
 
-                    // if((8 - (player_idx / 3)) < City_Maximum_Size_NewGame(wx, wy, wp))
-                    // NOTE(JimBalcomb,20260328): this calculation could just be making it easier to find a valid location as more players are placed
-                    DBG_pop_min = (8 - (player_idx / 3));
-                    DBG_pop_max = City_Maximum_Size_NewGame(wx, wy, wp);
-                    /* CLAUDE */ // BUG FIX: comparison was inverted — was rejecting valid locations and accepting invalid ones
-                    // check if the estimated maximum city population for this map square is too low to support the home city population (absolute minimum is 7)
-                    if(DBG_pop_min > DBG_pop_max)
+                    if(City_Maximum_Size_NewGame(wx, wy, wp) < (8 - (player_idx / 3)))
                     {
-                        DBG_Invalid_Reason = 6;
-                        DBG_Invalid_Reason_6_Count++;
                         max_pop_failures++;
                         if(max_pop_failures > 500)
                         {
-                            LOG_INFO(LOG_CAT_GENERAL, "[LOC_GIVEUP_POP] player=%d max_pop_failures>%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d", (int)player_idx, 500, (int)minimum_fortress_distance, (int)minimum_site_distance, (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count, (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count, (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
-                            STU_DEBUG_BREAK();
                             goto Loop_MaxPopTries;
                         }
                         else
                         {
-                            DBG_Loop_Location[DBG_Invalid_Reason]++;
                             goto Loop_Location_1;
                         }
                     }
@@ -1240,7 +1038,7 @@ Loop_Location_1:
                         _FORTRESSES[player_idx].wy = (int8_t)wy;
                         _FORTRESSES[player_idx].wp = (int8_t)wp;
                         _FORTRESSES[player_idx].active = ST_TRUE;
-                        niu_fortresses[wp]++;
+                        niu_plane_fortress_count[wp]++;
 
                     }
 
@@ -1248,35 +1046,28 @@ Loop_Location_1:
 
             }
 
-            if(Tries_Per_Distance >= 1000)
+            if(tries_per_distance >= 1000)
             {
-                /* CLAUDE 2026-06-14: failed to place at this distance — log reasons
-                   then shrink min distances and try again at Loop_Distances. */
-                LOG_INFO(LOG_CAT_GENERAL, "[LOC_GIVEUP_DIST] tries>=%d at player=%d  min_fortress_dist=%d min_site_dist=%d  reasons: Ocean=%d Fortress=%d Node=%d Tower=%d Lair=%d PopTooLow=%d", 1000, (int)player_idx, (int)minimum_fortress_distance, (int)minimum_site_distance, (int)DBG_Invalid_Reason_1_Count, (int)DBG_Invalid_Reason_2_Count, (int)DBG_Invalid_Reason_3_Count, (int)DBG_Invalid_Reason_4_Count, (int)DBG_Invalid_Reason_5_Count, (int)DBG_Invalid_Reason_6_Count);
                 goto Loop_Distances;
             }
 
-
-
 // @@Do_The_Cities:
-
-
 
             _cities = 0;  /* NOTE: first settings of _cities */
 
-            for(itr = 0; itr < _num_players; itr++)
+            for(itr_players = 0; itr_players < _num_players; itr_players++)
             {
 
 /*
     BEGIN:  City Race
 */
-                if(itr == 0)
+                if(itr_players == 0)
                 {
                     _CITIES[_cities].race = (int8_t)NEWG_Clicked_Race;
                 }
                 else
                 {
-                    if(_players[itr].myrran != ST_FALSE)
+                    if(_players[itr_players].myrran != ST_FALSE)
                     {
                         switch((Random(5) - 1))
                         {
@@ -1289,7 +1080,18 @@ Loop_Location_1:
                     }
                     else
                     {
-                        if(_difficulty <= god_Normal)
+                        if(_difficulty > god_Normal)
+                        {
+                            switch((Random(5) - 1))
+                            {
+                                case 0: { _CITIES[_cities].race = rt_Klackon;  } break;
+                                case 1: { _CITIES[_cities].race = rt_High_Elf; } break;
+                                case 2: { _CITIES[_cities].race = rt_Halfling; } break;
+                                case 3: { _CITIES[_cities].race = rt_High_Men; } break;
+                                case 4: { _CITIES[_cities].race = rt_Nomad;    } break;
+                            }
+                        }
+                        else
                         {
                             switch((Random(9) - 1))
                             {
@@ -1304,26 +1106,15 @@ Loop_Location_1:
                                 case 8: { _CITIES[_cities].race = rt_Orc;       } break;
                             }
                         }
-                        else
-                        {
-                            switch((Random(5) - 1))
-                            {
-                                case 0: { _CITIES[_cities].race = rt_Klackon;  } break;
-                                case 1: { _CITIES[_cities].race = rt_High_Elf; } break;
-                                case 2: { _CITIES[_cities].race = rt_Halfling; } break;
-                                case 3: { _CITIES[_cities].race = rt_High_Men; } break;
-                                case 4: { _CITIES[_cities].race = rt_Nomad;    } break;
-                            }
-                        }
                     }
-                    /* OGBUG: wx/wy/wp here are leftover from the last fortress placed in the location loop, NOT this city's own square (_FORTRESSES[itr]); so for every city except the last-placed one, the High Elf forest requirement is tested against the wrong square. Faithful to the asm (loc_44375 pushes [bp+wx]/[bp+wy]/[bp+wp]). */
+                    /* OGBUG  wx / wy / wp here are left over from the last fortress site tried (the 6th, _FORTRESSES[5]), NOT this capital's square (_FORTRESSES[itr]): the High Elf AI capital's forest requirement tests the wrong square. asm loc_44375 pushes [bp+wx] / [bp+wy] / [bp+wp] */
                     if(
                         (_CITIES[_cities].race == rt_High_Elf)
                         &&
                         (Square_Is_Forest_NewGame(wx, wy, wp) == ST_FALSE)
                     )
                     {
-                        /* OGBUG: taking this jump lands in a bad state: the location loop has already run to completion, so player_idx == NUM_PLAYERS (6) here (this loop iterates itr, not player_idx). Re-entering Loop_Location_1 does a junk location pick for the nonexistent 6th slot (_players[6] / _FORTRESSES[6] — the B1 over-iteration) before the whole city loop restarts at _cities=0. Faithful to the asm (jmp @@Loop_Location with player_idx left at 6). */
+                        /* OGBUG  the retry jumps back into the fortress site loop with player_idx still NUM_PLAYERS (6): it reads _players[6].myrran, picks a site and writes it as _FORTRESSES[6] (then [7], ... on later retries; records 6..11 stay inside the 3-paragraph _FORTRESSES block, as in the OG), then rebuilds every capital from _cities = 0 with new races. asm jmp @@Loop_Location */
                         goto Loop_Location_1;
                     }
                 }
@@ -1331,16 +1122,16 @@ Loop_Location_1:
     END:  City Race
 */
 
-                _CITIES[_cities].wx = _FORTRESSES[itr].wx;
-                _CITIES[_cities].wy = _FORTRESSES[itr].wy;
-                _CITIES[_cities].wp = _FORTRESSES[itr].wp;
-                _CITIES[_cities].owner_idx = (int8_t)itr;
+                _CITIES[_cities].wx = _FORTRESSES[itr_players].wx;
+                _CITIES[_cities].wy = _FORTRESSES[itr_players].wy;
+                _CITIES[_cities].wp = _FORTRESSES[itr_players].wp;
+                _CITIES[_cities].owner_idx = (int8_t)itr_players;
                 _CITIES[_cities].size = 1;  // CTY_Hamlet ... ~== (4 / 4)
                 _CITIES[_cities].population = 4;
                 _CITIES[_cities].bldg_cnt = 0;
                 _CITIES[_cities].Prod_Accu = 0;
                 _CITIES[_cities].Pop_10s = 0;
-                if(itr == HUMAN_PLAYER_IDX)
+                if(itr_players == HUMAN_PLAYER_IDX)
                 {
                     _CITIES[_cities].construction = bt_Housing;
                 }
@@ -1375,9 +1166,9 @@ Loop_Location_1:
                 _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
                 _CITIES[_cities].enchantments[NIGHTSHADE] = ST_FALSE;
                 _CITIES[_cities].farmer_count = 3;
-                for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+                for(itr_records = 0; itr_records < NUM_BUILDINGS; itr_records++)
                 {
-                    _CITIES[_cities].bldg_status[bldg_idx] = bs_NotBuilt;
+                    _CITIES[_cities].bldg_status[itr_records] = bs_NotBuilt;
                 }
                 _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
                 _CITIES[_cities].bldg_status[bt_Smithy] = bs_Built;
@@ -1397,15 +1188,13 @@ Loop_Location_1:
 
     }
 
-
-
 Done_Done:
 
     LOG_INFO(LOG_CAT_GENERAL, "Done_Done:");
 
-    for(itr = 0; itr < _num_players; itr++)
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        switch(_CITIES[itr].race)
+        switch(_CITIES[itr_players].race)
         {
             case rt_Barbarian: { unit_type = ut_BarbSpearmen;   } break;
             case rt_Beastmen:  { unit_type = ut_BeastSpearmen;  } break;
@@ -1422,14 +1211,14 @@ Done_Done:
             case rt_Orc:       { unit_type = ut_OrcSpearmen;    } break;
             case rt_Troll:     { unit_type = ut_TrlSpearmen;    } break;
         }
-        if(_CITIES[itr].race != rt_Dwarf)
+        if(_CITIES[itr_players].race != rt_Dwarf)
         {
-            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+            Create_Unit_NewGame(unit_type, itr_players, _CITIES[itr_players].wx, _CITIES[itr_players].wy, _CITIES[itr_players].wp, itr_players);
         }
     }
-    for(itr = 0; itr < _num_players; itr++)
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
-        switch(_CITIES[itr].race)
+        switch(_CITIES[itr_players].race)
         {
             case rt_Barbarian: { unit_type = ut_BarbSwordsmen;  } break;
             case rt_Beastmen:  { unit_type = ut_BeastSwordsmen; } break;
@@ -1446,378 +1235,18 @@ Done_Done:
             case rt_Orc:       { unit_type = ut_OrcSwordsmen;   } break;
             case rt_Troll:     { unit_type = ut_TrlSwordsmen;   } break;
         }
-        if(_CITIES[itr].race == rt_Dwarf)
+        if(_CITIES[itr_players].race == rt_Dwarf)
         {
-            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+            Create_Unit_NewGame(unit_type, itr_players, _CITIES[itr_players].wx, _CITIES[itr_players].wy, _CITIES[itr_players].wp, itr_players);
         }
-        Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
+        Create_Unit_NewGame(unit_type, itr_players, _CITIES[itr_players].wx, _CITIES[itr_players].wy, _CITIES[itr_players].wp, itr_players);
     }
 
     // @@Done
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
-/* GEMINI */
-#if 0
-void Generate_Home_City__GEMINI(void)
-{
-    int max_pop_failures;           /* [bp-18h] */
-    int minimum_site_distance;      /* [bp-16h] */
-    int minimum_fortress_distance;  /* [bp-14h] */
-    int itr;                        /* [bp-12h] */
-    int Invalid;                    /* [bp-10h] */
-    int Tries_Per_Distance;         /* [bp-0Eh] */
-    int wy;                         /* [bp-0Ch] */
-    int wx;                         /* [bp-0Ah] */
-    int wp;                         /* [bp-08h] */
-    int UU_Fortresses[2];           /* [bp-06h] */
-    int player_idx;                 /* [bp-02h] */
-    int unit_type;                  /* itr2 */
-    int bldg_idx;                   /* itr1 */
-
-    minimum_fortress_distance = 16;
-    minimum_site_distance = 8;
-
-@@Loop_Distances:
-    minimum_fortress_distance--;
-    minimum_site_distance--;
-
-    if(minimum_site_distance < 1)
-    {
-        minimum_site_distance = 1;
-    }
-
-    if(minimum_fortress_distance < 10)
-    {
-        minimum_fortress_distance = 10;
-    }
-
-    Tries_Per_Distance = 0;
-    UU_Fortresses[0] = 0;
-    UU_Fortresses[1] = 0;
-    max_pop_failures = 0;
-
-@@Loop_CapitalTries:
-    player_idx = 0;
-
-@@Loop_Players:
-    while(player_idx < 6)
-    {
-@@Loop_Location:
-        Tries_Per_Distance++;
-        wp = 0;
-
-        /* Check if player starts on Myrror */
-        if(_players[player_idx].myrran != e_ST_FALSE)
-        {
-            wp = 1;
-        }
-
-        wx = Random(54) + 2;
-        wy = Random(34) + 2;
-        Invalid = e_ST_FALSE;
-
-        /* Check if terrain is Ocean */
-        if(_world_maps[wp * (WORLD_WIDTH * e_WORLD_HEIGHT) + wy * WORLD_WIDTH + wx] == tt_Ocean1)
-        {
-            Invalid = e_ST_TRUE;
-        }
-
-        /* Check distance to other players' fortresses */
-        if(Invalid == e_ST_FALSE)
-        {
-            for(bldg_idx = 0; bldg_idx < player_idx; bldg_idx++)
-            {
-                if(_FORTRESSES[bldg_idx].wp == wp)
-                {
-                    if(Delta_XY_With_Wrap(wx, wy, _FORTRESSES[bldg_idx].wx, _FORTRESSES[bldg_idx].wy, WORLD_WIDTH) < minimum_fortress_distance)
-                    {
-                        Invalid = e_ST_TRUE;
-                        break;
-                    }
-                }
-            }
-        }
-
-        /* Check distance to Magic Nodes */
-        if(Invalid == e_ST_FALSE)
-        {
-            for(bldg_idx = 0; bldg_idx < NUM_NODES; bldg_idx++)
-            {
-                if(_NODES[bldg_idx].wp == wp)
-                {
-                    /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                    if(Delta_XY_With_Wrap(wx, wy, _NODES[bldg_idx].wx, _NODES[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
-                    {
-                        Invalid = e_ST_TRUE;
-                        break;
-                    }
-                }
-            }
-        }
-
-        /* Check distance to Towers of Wizardry */
-        if(Invalid == e_ST_FALSE)
-        {
-            for(bldg_idx = 0; bldg_idx < NUM_TOWERS; bldg_idx++)
-            {
-                /* Towers exist on both planes, no wp check? */
-                /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                if(Range(wx, wy, _TOWERS[bldg_idx].wx, _TOWERS[bldg_idx].wy) < (minimum_site_distance / 2))
-                {
-                    Invalid = e_ST_TRUE;
-                    break;
-                }
-            }
-        }
-
-        /* Check distance to Lairs */
-        if(Invalid == e_ST_FALSE)
-        {
-            for(bldg_idx = 0; bldg_idx < NUM_LAIRS; bldg_idx++)
-            {
-                if(_LAIRS[bldg_idx].wp == wp)
-                {
-                    /* OGBUG  (minimum_site_distance / 2) === (1 / 2) = 0 means same map square is never excluded */
-                    if(Delta_XY_With_Wrap(wx, wy, _LAIRS[bldg_idx].wx, _LAIRS[bldg_idx].wy, WORLD_WIDTH) < (minimum_site_distance / 2))
-                    {
-                        Invalid = e_ST_TRUE;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if(Tries_Per_Distance < 1000 && Invalid == e_ST_TRUE)
-        {
-            goto @@Loop_Location;
-        }
-
-        /* Verify city maximum potential size */
-        if(City_Maximum_Size_NewGame(wx, wy, wp) < (8 - (player_idx / 3)))
-        {
-            max_pop_failures++;
-            if(max_pop_failures <= 500)
-            {
-                goto @@Loop_Location;
-            }
-            else
-            {
-                goto @@Loop_CapitalTries;
-            }
-        }
-
-@@AddFortress:
-        _FORTRESSES[player_idx].wx = (unsigned char)wx;
-        _FORTRESSES[player_idx].wy = (unsigned char)wy;
-        _FORTRESSES[player_idx].wp = (unsigned char)wp;
-        _FORTRESSES[player_idx].active = e_ST_TRUE;
-
-        UU_Fortresses[wp]++;
-        player_idx++;
-
-        if(Tries_Per_Distance >= 1000)
-        {
-            break;
-        }
-    }
-
-    if(Tries_Per_Distance >= 1000)
-    {
-        goto @@Loop_Distances;
-    }
-
-@@Do_The_Cities:
-    _cities = 0;
-    for(itr = 0; itr < _num_players; itr++)
-    {
-        /* Determine Race for the city */
-        if(itr == 0)
-        {
-            _CITIES[_cities].race = (unsigned char)NEWG_Clicked_Race;
-        }
-        else
-        {
-            if(_players[itr].myrran != 0)
-            {
-                /* Myrran AI Races */
-                switch (Random(5) - 1)
-                {
-                case 0: _CITIES[_cities].race = rt_Beastmen; break;
-                case 1: _CITIES[_cities].race = rt_Dark_Elf; break;
-                case 2: _CITIES[_cities].race = rt_Draconian; break;
-                case 3: _CITIES[_cities].race = rt_Dwarf; break;
-                case 4: _CITIES[_cities].race = rt_Troll; break;
-                }
-            }
-            else if(_difficulty > god_Normal)
-            {
-                /* Arcanus Hard AI Races */
-                switch (Random(5) - 1)
-                {
-                case 0: _CITIES[_cities].race = rt_Klackon; break;
-                case 1: _CITIES[_cities].race = rt_High_Elf; break;
-                case 2: _CITIES[_cities].race = rt_Halfling; break;
-                case 3: _CITIES[_cities].race = rt_High_Man; break;
-                case 4: _CITIES[_cities].race = rt_Nomad; break;
-                }
-            }
-            else
-            {
-                /* Arcanus Normal AI Races */
-                switch (Random(9) - 1)
-                {
-                case 0: _CITIES[_cities].race = rt_Barbarian; break;
-                case 1: _CITIES[_cities].race = rt_Gnoll; break;
-                case 2: _CITIES[_cities].race = rt_Halfling; break;
-                case 3: _CITIES[_cities].race = rt_High_Elf; break;
-                case 4: _CITIES[_cities].race = rt_High_Man; break;
-                case 5: _CITIES[_cities].race = rt_Klackon; break;
-                case 6: _CITIES[_cities].race = rt_Lizardman; break;
-                case 7: _CITIES[_cities].race = rt_Nomad; break;
-                case 8: _CITIES[_cities].race = rt_Orc; break;
-                }
-            }
-
-            /* High Elves must start in a Forest */
-            if(_CITIES[_cities].race == rt_High_Elf)
-            {
-                if(!Square_Is_Forest_NewGame(_FORTRESSES[itr].wx, _FORTRESSES[itr].wy, _FORTRESSES[itr].wp))
-                {
-                    /* Failed forest check, restart placement for all players */
-                    goto @@Loop_Location;
-                }
-            }
-        }
-
-        /* Initialize City Structure */
-        _CITIES[_cities].wx = _FORTRESSES[itr].wx;
-        _CITIES[_cities].wy = _FORTRESSES[itr].wy;
-        _CITIES[_cities].wp = _FORTRESSES[itr].wp;
-        _CITIES[_cities].owner_idx = (unsigned char)itr;
-        _CITIES[_cities].size = CTY_Hamlet;
-        _CITIES[_cities].population = 4;
-        _CITIES[_cities].Building_Count = 0;
-        _CITIES[_cities].Prod_Accu = 0;
-        _CITIES[_cities].Pop_10s = 0;
-
-        if(itr == 0)
-        {
-            _CITIES[_cities].construction = bt_Housing;
-        }
-        else
-        {
-            _CITIES[_cities].construction = bt_AUTOBUILD;
-        }
-
-        /* Clear Enchantments */
-        _CITIES[_cities].Enchants.Wall_of_Fire = 0;
-        _CITIES[_cities].Enchants.Wall_of_Darkness = 0;
-        _CITIES[_cities].Enchants._Chaos_Rift = 0;
-        _CITIES[_cities].Enchants.Dark_Rituals = 0;
-        _CITIES[_cities].Enchants._Evil_Presence = 0;
-        _CITIES[_cities].Enchants._Cursed_Lands = 0;
-        _CITIES[_cities].Enchants._Pestilence = 0;
-        _CITIES[_cities].Enchants.Cloud_of_Shadow = 0;
-        _CITIES[_cities].Enchants.Altar_of_Battle = 0;
-        _CITIES[_cities].Enchants._Famine = 0;
-        _CITIES[_cities].Enchants.Flying_Fortress = 0;
-        _CITIES[_cities].Enchants.Death_Ward = 0;
-        _CITIES[_cities].Enchants.Chaos_Ward = 0;
-        _CITIES[_cities].Enchants.Life_Ward = 0;
-        _CITIES[_cities].Enchants.Sorcery_Ward = 0;
-        _CITIES[_cities].Enchants.Nature_Ward = 0;
-        _CITIES[_cities].Enchants.Natures_Eye = 0;
-        _CITIES[_cities].Enchants.Earth_Gate = 0;
-        _CITIES[_cities].Enchants.Stream_of_Life = 0;
-        _CITIES[_cities].Enchants.Gaias_Blessing = 0;
-        _CITIES[_cities].Enchants.Inspirations = 0;
-        _CITIES[_cities].Enchants.Prosperity = 0;
-        _CITIES[_cities].Enchants.Astral_Gate = 0;
-        _CITIES[_cities].Enchants.Heavenly_Light = 0;
-        _CITIES[_cities].Enchants.Consecration = 0;
-        _CITIES[_cities].Nightshade = 0;
-        _CITIES[_cities].farmer_count = 3;
-
-        for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
-        {
-            _CITIES[_cities].Buildings[bldg_idx] = bs_NotBuilt;
-        }
-        _CITIES[_cities].Buildings[0] = bs_Replaced; /* None/PlaceHolder */
-        _CITIES[_cities].Buildings[bt_Smithy] = bs_Built;
-        _CITIES[_cities].Buildings[bt_Barracks] = bs_Built;
-        _CITIES[_cities].Buildings[bt_BuildersHall] = bs_Built;
-
-        Random_City_Name_By_Race_NewGame(_CITIES[_cities].race, &_CITIES[_cities]);
-
-        _cities++;
-    }
-
-    /* Create Starting Units - Loop 1 (Spearmen/Early Unit) */
-    for(itr = 0; itr < _num_players; itr++)
-    {
-        switch (_CITIES[itr].race)
-        {
-        case rt_Barbarian: unit_type = _BarbSpearmen; break;
-        case rt_Beastmen:  unit_type = _BeastSpearmen; break;
-        case rt_Dark_Elf:  unit_type = _DrowSpearmen; break;
-        case rt_Draconian: unit_type = _DracSpearmen; break;
-        case rt_Dwarf:     unit_type = _DwarfSwordsmen; break;
-        case rt_Gnoll:     unit_type = _GnollSpearmen; break;
-        case rt_Halfling:  unit_type = _HflngSpearmen; break;
-        case rt_High_Elf:  unit_type = _HElfSpearmen; break;
-        case rt_High_Man:  unit_type = _HMenSpearmen; break;
-        case rt_Klackon:   unit_type = _KlckSpearmen; break;
-        case rt_Lizardman: unit_type = _LizSpearmen; break;
-        case rt_Nomad:     unit_type = _NmdSpearmen; break;
-        case rt_Orc:       unit_type = _OrcSpearmen; break;
-        case rt_Troll:     unit_type = _TrlSpearmen; break;
-        default:           unit_type = _OrcSpearmen; break;
-        }
-
-        /* Dwarves don't get spearmen in the first pass */
-        if(_CITIES[itr].race != rt_Dwarf)
-        {
-            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-        }
-    }
-
-    /* Create Starting Units - Loop 2 (Swordsmen/Second Unit) */
-    for(itr = 0; itr < _num_players; itr++)
-    {
-        switch (_CITIES[itr].race)
-        {
-        case rt_Barbarian: unit_type = ut_BarbSwordsmen; break;
-        case rt_Beastmen:  unit_type = _BeastSwordsmen; break;
-        case rt_Dark_Elf:  unit_type = _DrowSwordsmen; break;
-        case rt_Draconian: unit_type = _DracSwordsmen; break;
-        case rt_Dwarf:     unit_type = _DwarfSwordsmen; break;
-        case rt_Gnoll:     unit_type = _GnollSwordsmen; break;
-        case rt_Halfling:  unit_type = _HflngSwordsmen; break;
-        case rt_High_Elf:  unit_type = _HElfSwordsmen; break;
-        case rt_High_Man:  unit_type = _HMenSwordsmen; break;
-        case rt_Klackon:   unit_type = _KlckSwordsmen; break;
-        case rt_Lizardman: unit_type = _LizSwordsmen; break;
-        case rt_Nomad:     unit_type = _NmdSwordsmen; break;
-        case rt_Orc:       unit_type = _OrcSwordsmen; break;
-        case rt_Troll:     unit_type = _TrlSwordsmen; break;
-        default:           unit_type = _OrcSwordsmen; break;
-        }
-
-        /* Dwarves get two swordsmen */
-        if(_CITIES[itr].race == rt_Dwarf)
-        {
-            Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-        }
-
-        Create_Unit_NewGame(unit_type, itr, _CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, itr);
-    }
-
-@@Done:
-    return;
-}
-#endif
 
 
 // MGC o51p06
@@ -1843,7 +1272,7 @@ void Init_Landmasses(int16_t wp)
     int16_t wy = 0;
     int16_t wx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     m_landmasses_ctr = 1;
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -1854,7 +1283,7 @@ void Init_Landmasses(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -1901,7 +1330,7 @@ void Rebalance_Node_Types(int16_t wp)
     int16_t Chaos_Count = 0;
     int16_t random_node_idx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     Chaos_Count = 0;
     Sorcery_Count = 0;
@@ -1925,7 +1354,7 @@ void Rebalance_Node_Types(int16_t wp)
     Nature_Convert = 0;
     if(wp == ARCANUS_PLANE)
     {
-        /* OGBUG: does not decrement the excess sorcery count */
+        /* OGBUG  Excess_Sorcery is tested but never decremented: with any excess (Sorcery_Count > 9) Chaos and Nature are both raised to 6, converting more Sorcery nodes than the excess */
         if(Sorcery_Count > 9)
         {
             Excess_Sorcery = (Sorcery_Count - 9);
@@ -1947,7 +1376,7 @@ void Rebalance_Node_Types(int16_t wp)
     }
     else  /* MYRROR_PLANE */
     {
-        /* OGBUG: does not decrement the excess sorcery count */
+        /* OGBUG  Excess_Sorcery is tested but never decremented: with any excess (Sorcery_Count > 4) Chaos and Nature are both raised to 3, converting more Sorcery nodes than the excess */
         if(Sorcery_Count > 4)
         {
             Excess_Sorcery = (Sorcery_Count - 4);
@@ -2002,7 +1431,7 @@ void Rebalance_Node_Types(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     
 }
 
@@ -2064,7 +1493,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     int16_t itr_wx = 0;
     int16_t itr_wy = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 /*
     BEGIN:  tt_Tundra1
@@ -2186,7 +1615,7 @@ void Generate_Climate_Terrain_Types(int16_t wp)
     END:  tt_Swamp1
 */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2226,7 +1655,7 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
@@ -2263,7 +1692,7 @@ void Translate_Heightmap_To_Base_Terrain_Types(int16_t wp)
 
     Add_Tundra(wp);
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 /*
@@ -2294,7 +1723,7 @@ void Add_Tundra(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx++)
     {
@@ -2318,7 +1747,7 @@ void Add_Tundra(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2385,7 +1814,7 @@ void Generate_Landmasses(int16_t wp)
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* Phase 1: Init */
@@ -2516,7 +1945,7 @@ void Generate_Landmasses(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2562,7 +1991,7 @@ void Generate_Nodes(void)
     int16_t itr = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr = 0; itr < 16; itr++)
     {
@@ -2678,7 +2107,7 @@ Attempt_Myrror:
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2694,7 +2123,7 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
     int16_t itr = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     wx_array[0] = (int8_t)wx;
     wy_array[0] = (int8_t)wy;
@@ -2772,7 +2201,7 @@ void Make_Aura(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t wx, 
         wy_array[itr] = (int8_t)curr_wy;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2787,7 +2216,7 @@ int16_t Aura_Overlap(int16_t node_idx)
     int16_t itr3 = 0;
     int16_t itr1 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     power = _NODES[node_idx].power;
     for(itr1 = 0; itr1 < power; itr1++)
@@ -2807,14 +2236,14 @@ int16_t Aura_Overlap(int16_t node_idx)
                     (wy_array[itr3] == _NODES[itr1].Aura_Ys[itr2])
                 )
                 {
-                    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+                    TRACE_EXIT();
                     return ST_TRUE;
                 }
             }
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return ST_FALSE;
 }
@@ -2828,7 +2257,7 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
     int16_t sorcery_bias = 0;
     int16_t itr = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     sorcery_bias = 0;
     chaos_bias = 0;
@@ -2858,6 +2287,7 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
         }
     }
     /* NOTE(drake178): changed in v1.1 */
+    /* OGBUG  the aura's ocean / mountain + desert / grassland + forest counts from the loop above are overwritten here by Random(25) / Random(15) / Random(15) and never used, so a node's realm ignores its aura terrain */
     sorcery_bias = Random(25);
     chaos_bias   = Random(15);
     nature_bias  = Random(15);
@@ -2886,7 +2316,7 @@ void Set_Node_Type(int16_t power, int8_t * wx_array, int8_t * wy_array, int16_t 
         Build_Landmass(wp, wx_array[0], wy_array[0]);
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2934,7 +2364,7 @@ void Build_Landmass(int16_t wp, int16_t wx, int16_t wy)
     int16_t overlap_landmass_first = 0;  /* landmass_idx of the first landmass added to the array */
     int16_t overlap_ctr = 0;  // _CX_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     overlap_landmass_first = 0;
 
@@ -3028,7 +2458,7 @@ void Build_Landmass(int16_t wp, int16_t wx, int16_t wy)
         SET_LANDMASS(wx, wy, wp, (uint8_t)overlap_landmass_first);
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -3080,7 +2510,7 @@ void Generate_Lairs(void)
     int16_t tail_start = 0;
     int16_t generate_lair_budget_value = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     strong_lair_count = NUM_STRONG_LAIRS;
 
@@ -3193,7 +2623,7 @@ void Generate_Lairs(void)
     assert(Validate_All_Lairs() == ST_TRUE);
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -3250,7 +2680,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     int16_t unit_type = 0;
     int16_t loot_budget = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 #ifdef STU_DEBUG
     assert(lair_idx >= 0);
@@ -3274,7 +2704,8 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
         case (nt_Sorcery + 1): { _LAIRS[lair_idx].type = lt_Sorcery_Node;             } break;
         case (nt_Nature  + 1): { _LAIRS[lair_idx].type = lt_Nature_Node;              } break;
         case (nt_Chaos   + 1): { _LAIRS[lair_idx].type = lt_Chaos_Node;               } break;
-        default:               { _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1)); } break;
+        // default:               { _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1)); } break;
+        /* CLAUDE */  /* REBUG */  case 4:                { _LAIRS[lair_idx].type = (lt_Cave + (Random(7) - 1)); } break;  /* asm: cmp bx, 4 / ja (no store above 4); index 4 -> loc_46881 */
     }
 
     _LAIRS[lair_idx].Loot_Gold = 0;
@@ -3328,6 +2759,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     }
     else
     {
+        /* OGBUG  no break between the cases: every Random(5) roll falls through to rt_Nature, so every Cave / Dungeon / Keep / Monster Lair is guarded by Nature creatures (as written: Death 2/5, Chaos 2/5, Nature 1/5) */
         switch((Random(5) - 1))
         {
             case 0: { race_type = rt_Death;  }  /* OGBUG: falls through, missing break */
@@ -3379,15 +2811,22 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     }
 
     /* Pick Guard 2 */
+    /* CLAUDE */  /* REBUG */  /* asm: loc_46BF8: mov [bp+Tries], 0 before the guard1_count tests, and no Tries < 200 test (guard1_count is still 0 when Guard 1 was not found) */
+    tries = 0;
+    // if(
+    //     (tries < 200)
+    //     &&
+    //     (_LAIRS[lair_idx].guard1_count != 9)  /* OGBUG: not possible, we just set the max to 8 */
+    //     &&
+    //     (_LAIRS[lair_idx].guard1_count != 0)
+    // )
     if(
-        (tries < 200)
-        &&
         (_LAIRS[lair_idx].guard1_count != 9)  /* OGBUG: not possible, we just set the max to 8 */
         &&
         (_LAIRS[lair_idx].guard1_count != 0)
     )
     {
-        tries = 0;
+        // tries = 0;
         do
         {
             divided_budget = (budget / Random((10 - _LAIRS[lair_idx].guard1_count)));
@@ -3655,7 +3094,7 @@ void Create_Lair(int16_t lair_idx, int16_t wp, int16_t wx, int16_t wy, int16_t n
     assert(Validate_Lair_Record(lair_idx) == ST_TRUE);
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -3720,7 +3159,7 @@ void Desert_Autotile(void)
     int16_t wy = 0;
     int16_t neighbor_idx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
@@ -3844,7 +3283,7 @@ void Desert_Autotile(void)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -3907,7 +3346,7 @@ void Simtex_Autotiling(void)
     int16_t wy = 0;
     int16_t terrain_subtype_index = 0;  // DNE in Dasm
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     terrtype = (int16_t *)Near_Allocate_First((5 * 512));
     LBX_Load_Data_Static(terrtype_lbx_file__MGC_ovr051, 0, (SAMB_ptr)terrtype, 0, 5, 512);
@@ -4541,7 +3980,9 @@ void Simtex_Autotiling(void)
                 mask += 128;
                 }
 
-                /* OGBUG: no-cardinal conversion causes the square to become Grassland instead e.g., Hills pass writes 16 + terrtype[256+mask] → 0xA4 + 16 = 0xB4 = tt_Grasslands4. The lone hill becomes grassland. */
+                // /* OGBUG: no-cardinal conversion causes the square to become Grassland instead e.g., Hills pass writes 16 + terrtype[256+mask] → 0xA4 + 16 = 0xB4 = tt_Grasslands4. The lone hill becomes grassland. */
+                /* CLAUDE */  /* corrected the note above: a lone hill (mask 0) is not rewritten; it is a hill whose hill neighbours are all diagonal that turns to grassland */
+                /* OGBUG  the Hills pass reads the Mountain table (terrtype[256 + mask], asm [si+200h]) + 16: for every mask with no N / E / S / W bit (hill neighbours on the diagonals only) TERRTYPE.LBX holds 0xA4 there, so the hill is written as 0xA4 + 16 = 0xB4 = tt_Grasslands4 */
                 if(mask > 0)
                 {
                     p_world_map[wp][wy][wx] = (16 + terrtype[(256 + mask)]);
@@ -4554,7 +3995,7 @@ void Simtex_Autotiling(void)
     END:  Hills
 */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -4600,7 +4041,7 @@ void Shuffle_Terrains(void)
     int16_t wx = 0;
     int16_t wy = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* OGBUG: this terrtype load is never used (is in Desert_Autile()) */
     terrtype = (int16_t *)Near_Allocate_First(5 * 512);
@@ -4723,7 +4164,7 @@ void Shuffle_Terrains(void)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -4789,7 +4230,7 @@ int16_t Generate_River(int16_t wp)
     int16_t base_wx = 0;
     int16_t length = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     base_wx = (4 + Random((WORLD_WIDTH  - 8)));  /* start 4 from left, end 4 from right */
     base_wy = (4 + Random((WORLD_HEIGHT - 8)));  /* start 4 from top, end 4 from bottom */
@@ -4857,7 +4298,7 @@ int16_t Generate_River(int16_t wp)
         attemps++;
         if(attemps > 30)
         {
-            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+            TRACE_EXIT();
             return ST_FALSE;
         }
 
@@ -4885,7 +4326,7 @@ int16_t Generate_River(int16_t wp)
 
         if(length > 28)
         {
-            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+            TRACE_EXIT();
             return ST_FALSE;
         }
 
@@ -4896,7 +4337,7 @@ int16_t Generate_River(int16_t wp)
     /* Post-generation validation */
     if(length < 4)
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
 
@@ -4905,27 +4346,27 @@ int16_t Generate_River(int16_t wp)
     end_wy = wy_array[(length - 1)];
     if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy - 1), wp) == ST_TRUE)  /* N */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
     if(Square_Is_Bad_River_Mouth((end_wx - 1), (end_wy    ), wp) == ST_TRUE)  /* W */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
     if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy    ), wp) == ST_TRUE)  /* C */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
     if(Square_Is_Bad_River_Mouth((end_wx + 1), (end_wy    ), wp) == ST_TRUE)  /* E */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
     if(Square_Is_Bad_River_Mouth((end_wx    ), (end_wy + 1), wp) == ST_TRUE)  /* S */
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return ST_FALSE;
     }
 
@@ -4935,7 +4376,7 @@ int16_t Generate_River(int16_t wp)
         p_world_map[wp][wy_array[itr]][wx_array[itr]] = tt_River_Placeholder;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return ST_TRUE;
 }
@@ -4984,9 +4425,9 @@ void River_Autotile(int16_t wp)
     int16_t river_mask = 0;
     int16_t wy = 0;
     int16_t wx = 0;
-    int16_t DBG_river_type = 0;
+    int16_t river_type = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CLAUDE  All square writes below use p_world_map[wp][wy][wx] (int16_t (*)[40][60], word-strided), matching the asm's `shl ax,1` / `mov [word ptr es:bx], ...` writes. The Gemini source wrote 52 of these as `_world_maps[wp*WORLD_SIZE + ...]` -- but _world_maps is uint8_t* (byte heap), so that byte-indexes a word map (half offset) and truncates values > 255 (e.g. _1Desert == 0x134; MSVC C4305). Converted all 52 to p_world_map. */
 
@@ -5011,8 +4452,8 @@ void River_Autotile(int16_t wp)
                 if((Square_Is_Ocean_NewGame((wx    ), (wy + 1), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx    ), (wy + 1), wp) == ST_TRUE)) { river_mask += 4; }  /* S */
                 if((Square_Is_Ocean_NewGame((wx - 1), (wy    ), wp) == ST_TRUE) || (Square_Is_River_NewGame((wx - 1), (wy    ), wp) == ST_TRUE)) { river_mask += 8; }  /* W */
                 // p_world_map[wp][wy][wx] = TILE_River_Types[river_mask][(Random(4) - 1)];
-                DBG_river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
-                p_world_map[wp][wy][wx] = DBG_river_type;
+                river_type = TILE_River_Types[river_mask][(Random(4) - 1)];
+                p_world_map[wp][wy][wx] = river_type;
             }
 
             river_mask = 0;
@@ -5025,7 +4466,7 @@ void River_Autotile(int16_t wp)
             if(terrain_type == _1Lake)  /* @@ Block_1 */
             {
                 // NOTE(drake178): if the square has no river flowing into it, turn it into a desert ($134); if it has one, use the corresponding single lake square; but if it has more than one, convert surrounding squares to grasslands until only one river inflow remains, and backtrack the loop variables to compensate since previous river squares may need adjusting
-                switch (river_mask)
+                switch(river_mask)
                 {
                 case 0:
                     p_world_map[wp][wy][wx] = _1Desert;
@@ -5121,7 +4562,7 @@ void River_Autotile(int16_t wp)
                 // ¿ DEDU first Shore block/group except Lake? The game Civilation calls these a "watershed"
                 // NOTE(drake178): if the square has river inflow from its only valid cardinal direction, turn it into the corresponding river outlet shore square
                 // Dasm (terrain_type - 3)
-                switch (terrain_type)
+                switch(terrain_type)
                 {
                 case 3:
                     if(river_mask == 4) p_world_map[wp][wy][wx] = _Shore00001R00;
@@ -5177,7 +4618,7 @@ void River_Autotile(int16_t wp)
             {
                 // NOTE(drake178): if the square has a river inflow from either or both of its two valid sides, turn it into a corresponding single or double river outlet
                 // Dasm (terrain_type - 34)  ; switch 16 cases
-                switch (terrain_type)
+                switch(terrain_type)
                 {
                 case 34:
                     if(river_mask == 1) p_world_map[wp][wy][wx] = _Shore1R000001;
@@ -5299,7 +4740,7 @@ void River_Autotile(int16_t wp)
             }
             else if(terrain_type == _Shore00011111 || terrain_type == _Shore10011111 || terrain_type == _Shore00111111 || terrain_type == _Shore10111111)  /* @@Block_6 */
             {
-                switch (river_mask)
+                switch(river_mask)
                 {
                 case 2:
                     p_world_map[wp][wy][wx] = terrain_type + (_Shore000R1111 - _Shore00011111);
@@ -5339,7 +4780,7 @@ void River_Autotile(int16_t wp)
             }
             else if(terrain_type == _Shore11000111 || terrain_type == _Shore11100111 || terrain_type == _Shore11001111 || terrain_type == _Shore11101111)  /* @@Block_7 */
             {
-                switch (river_mask)
+                switch(river_mask)
                 {
                 case 1:
                     p_world_map[wp][wy][wx] = terrain_type + (_Shore1R000111 - _Shore11000111);
@@ -5380,7 +4821,7 @@ void River_Autotile(int16_t wp)
             }
             else if(terrain_type == _Shore11110001 || terrain_type == _Shore11111001 || terrain_type == _Shore11110011 || terrain_type == _Shore11111011)  /* @@Block_8 */
             {
-                switch (river_mask)
+                switch(river_mask)
                 {
                 case 1:
                     p_world_map[wp][wy][wx] = terrain_type + (_Shore1R110001 - _Shore11110001);
@@ -5420,7 +4861,7 @@ void River_Autotile(int16_t wp)
             }
             else if(terrain_type == _Shore01111100 || terrain_type == _Shore01111110 || terrain_type == _Shore11111100 || terrain_type == _Shore11111110)  /* @@Block_9 */
             {
-                switch (river_mask)
+                switch(river_mask)
                 {
                 case 1:
                     p_world_map[wp][wy][wx] = terrain_type + (_Shore0R111100 - _Shore01111100);
@@ -5463,7 +4904,7 @@ void River_Autotile(int16_t wp)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -5518,7 +4959,7 @@ void Generate_Neutral_Cities(int16_t wp)
     int16_t itr2 = 0;
     int16_t itr1 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* Phase 1: Init */
@@ -5564,9 +5005,12 @@ void Generate_Neutral_Cities(int16_t wp)
 
 
     /* Phase 3: Place 15 Neutral Cities */
-    for(itr1 = 0; itr1 < 15; itr1++)
+    // for(itr1 = 0; itr1 < 15; itr1++)
+    /* CLAUDE */  /* REBUG */  /* asm: loc_4B8E6: cmp itr1, 15 / jge @@Done / cmp [bp+tries], 1000 / jge @@Done / jmp loc_4AA47 */
+    for(itr1 = 0; ((itr1 < 15) && (tries < 1000)); itr1++)
     {
-        if(tries >= 1000) { goto Done; }
+        // if(tries >= 1000) { goto Done; }
+        /* CLAUDE */  /* REBUG */  /* asm: no test here - the tries test is in the loop condition above */
         do
         {
             tries++;
@@ -5634,8 +5078,11 @@ void Generate_Neutral_Cities(int16_t wp)
                 }
             }
 
-        } while(reject == ST_TRUE && tries < 1000);
+        // } while(reject == ST_TRUE && tries < 1000);
+        /* CLAUDE */  /* REBUG */  /* asm: cmp [bp+tries], 1000 / jge / cmp [bp+Invalid], e_ST_TRUE / jnz / jmp loc_4AA47 */
+        } while((tries < 1000) && (reject == ST_TRUE));
 
+        /* CLAUDE */  /* asm: xor ax, ax / jmp @@Done (returns 0; both callers ignore ax) - ReMoM's Generate_Neutral_Cities() is void */
         if(tries >= 1000) { goto Done; }
 
 
@@ -5737,7 +5184,8 @@ void Generate_Neutral_Cities(int16_t wp)
         _CITIES[_cities].bldg_status[bt_NONE] = bs_Replaced;
         switch(_CITIES[_cities].population - 2)
         {
-            case 24:
+            // case 24:
+            /* CLAUDE */  /* REBUG */  /* asm: cmp bx, 23 / jbe (jt_sw_ng_np_bt has 24 entries, 0..23); 24 goes to the default (no buildings) */
             case 23:
             case 22:
             case 21:
@@ -5776,7 +5224,8 @@ void Generate_Neutral_Cities(int16_t wp)
         {
             if(_CITIES[_cities].bldg_status[itr2] == bs_Built)
             {
-                /* ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union? ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1 */
+                // /* ¿ BUGBUG  code should not be same on both branches ?  maybe, was two different fields, then got merged into a union? ...or, should just be checking reqd_bldg_2, because the first one is reqd_terrain and not reqd_bldg_1 */
+                /* CLAUDE */  /* asm: both branches index bldg_status[] with the same word, s_BLDG_DATA.reqd_bldg_1__reqd_terrain (one field, hence the union); the > 100 branch tests only it, the other branch also tests reqd_bldg_2 - the branches are not the same */
                 if(bldg_data_table[itr2].reqd_bldg_1 > 100)  // bldg_idx  >= 100 is Terrain Type
                 {
                     if(_CITIES[_cities].bldg_status[bldg_data_table[itr2].reqd_terrain] == bs_NotBuilt)  /* OGBUG: OOB AVRL */
@@ -5936,7 +5385,7 @@ void Generate_Neutral_Cities(int16_t wp)
     }
 
 Done:
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -5949,7 +5398,7 @@ void Random_City_Name_By_Race_NewGame(int16_t race_idx, char * name)
     int16_t attempts = 0;
     char * city_names_buffer = 0;
     int16_t itr_cities = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     city_names_buffer = (char *)Near_Allocate_First(SZ_CITY_NAME_RECORD);
     LBX_Load_Data_Static(cityname_lbx_file__MGC_ovr051, 0, (SAMB_ptr)city_names_buffer, race_idx, 1, SZ_CITY_NAME_RECORD);
     attempts = 0;
@@ -5972,7 +5421,7 @@ attempt:
         }
     }
     stu_strcpy(name, &city_names_buffer[(city_name_idx * LEN_CITY_NAME)]);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -6012,7 +5461,7 @@ void Generate_Roads(int16_t wp)
     int16_t dst_city_idx = 0;
     int16_t src_city_idx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     for(wy = 0; wy < WORLD_HEIGHT; wy++)
@@ -6130,7 +5579,7 @@ Roads beneath captured neutral cities and original Fortress sites on Myrror lack
 /*
 If no city pair qualifies on Myrror (no roads built), wx and wy retain (60, 40) from the flag-clear loop's exit.
 SET_MAP_SQUARE_FLAG(60, 40, 1, …) indexes _map_square_flags[(1*2400)+(40*60)+60 = 4860] — past the logical 4800.
-_map_square_flags is allocated with + WORLD_WIDTH + 1 padding (ALLOC.c, STU_WRLD.c) = 4880 bytes, which covers index 4860, so the OOB lands in padding instead of faulting.
+CLAUDE: _map_square_flags is 302 paragraphs (ALLOC.c, STU_WRLD.c; the + WORLD_WIDTH + 1 padding this once described was retired), as in the OG (ovr152/Allocate_Data_Space.asm: 302 for each), so the OOB write lands in the next World_Data block, _square_explored, in both.
 */
             SET_MAP_SQUARE_FLAG(
                 wx,
@@ -6149,7 +5598,7 @@ _map_square_flags is allocated with + WORLD_WIDTH + 1 padding (ALLOC.c, STU_WRLD
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -6182,11 +5631,11 @@ _map_square_flags is allocated with + WORLD_WIDTH + 1 padding (ALLOC.c, STU_WRLD
  */
 void Build_Connectivity_Graphs(int16_t wp)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     EMMDATAH_Map();
     Build_Connectivity_Graph(&movement_mode_cost_maps[wp].walking.moves2[0], (uint8_t *)&connectivity_grid_land[(wp * 96)]);
     Build_Connectivity_Graph(&movement_mode_cost_maps[wp].sailing.moves2[0], (uint8_t *)&connectivity_grid_sea[(wp * 96)]);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -6235,7 +5684,7 @@ void Generate_Terrain_Specials(int16_t wp)
     int16_t wy = 0;
     int16_t wx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* Clear specials and flags map squares for the selected plane */
@@ -6274,8 +5723,11 @@ void Generate_Terrain_Specials(int16_t wp)
         for(itr_wx = 0; itr_wx < WORLD_WIDTH; itr_wx += radius)  /* {0,...,56}; {0,...,57} */
         {
             /* Add random jitter inside the grid cell */
-            wy = (itr_wy + Random((radius * 2)));  /* OGBUG: could be 39 + random(8) = 46, which is out of bounds */
-            wx = (itr_wx + Random((radius * 2)));  /* OGBUG: could be 59 + random(8) = 67, which is out of bounds */
+            // wy = (itr_wy + Random((radius * 2)));  /* OGBUG: could be 39 + random(8) = 46, which is out of bounds */
+            // wx = (itr_wx + Random((radius * 2)));  /* OGBUG: could be 59 + random(8) = 67, which is out of bounds */
+            /* CLAUDE */  /* corrected the ranges in the notes above: Arcanus (radius 4) itr_wy <= 36 / itr_wx <= 56, Myrror (radius 3) itr_wy <= 39 / itr_wx <= 57 */
+            wy = (itr_wy + Random((radius * 2)));  /* OGBUG: Arcanus 36 + Random(8) = up to 44, Myrror 39 + Random(6) = up to 45, which is out of bounds */
+            wx = (itr_wx + Random((radius * 2)));  /* OGBUG: Arcanus 56 + Random(8) = up to 64, Myrror 57 + Random(6) = up to 63, which is out of bounds */
             /* OGBUG: OOB AVRL  e.g., wx=63,wy=45,p=1,offset = 5163 ACCESS VIOLATION READING LOCATION!!!!! */
 
             /* Sanity check location */
@@ -6318,6 +5770,9 @@ void Generate_Terrain_Specials(int16_t wp)
                     square_has_city = ST_TRUE;
                 }
             }
+            /* OGBUG  the edge test is written with && (wy <= 2 AND wy >= 38 AND wx <= 2 AND wx >= 58), never true, so no site is skipped: with Random(2 * radius) = 1..2 * radius a site can be at up to */
+            /* OGBUG  wx 64 / wy 44 (Arcanus, radius 4) or wx up to 63 / wy up to 45 (Myrror, radius 3); wx >= 60 wraps onto the start of the NEXT row (the lair / tower / city tests compare */
+            /* OGBUG  the unwrapped wx and see nothing), Arcanus wy >= 40 lands in Myrror's rows, and Myrror wy >= 40 reads and writes past the end of the terrain and terrain-special maps */
             if(
                 (GET_TERRAIN_SPECIAL(wx, wy, wp) != ts_NONE)
                 ||
@@ -6369,7 +5824,7 @@ void Generate_Terrain_Specials(int16_t wp)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -6392,7 +5847,7 @@ int16_t Desert_Terrain_Special(int16_t wp)
     int16_t _DI_ = 0;  // _DI_
     int16_t terrain_special = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(wp == ARCANUS_PLANE)
     {
@@ -6418,7 +5873,7 @@ int16_t Desert_Terrain_Special(int16_t wp)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return terrain_special;
 
@@ -6473,7 +5928,7 @@ int16_t Hills_Terrain_Special(int16_t wp)
     int16_t _DI_ = 0;  // _DI_
     int16_t terrain_special = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(wp == ARCANUS_PLANE)
     {
@@ -6508,7 +5963,7 @@ int16_t Hills_Terrain_Special(int16_t wp)
         case 19: { terrain_special = ts_Adamantium; } break;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return terrain_special;
 
@@ -6536,7 +5991,7 @@ int16_t Mountain_Terrain_Special(int16_t wp)
     int16_t _DI_ = 0;  // _DI_
     int16_t terrain_special = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(wp == ARCANUS_PLANE)
     {
@@ -6571,7 +6026,7 @@ int16_t Mountain_Terrain_Special(int16_t wp)
         case 19: { terrain_special = ts_Adamantium; } break;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return terrain_special;
 
@@ -6606,7 +6061,7 @@ void Init_Square_Explored(void)
     int16_t wy = 0;
     int16_t wx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* set the whole map for both worlds to 'unexplored' */
     for(wp = 0; wp < NUM_PLANES; wp++)
@@ -6665,7 +6120,7 @@ void Init_Square_Explored(void)
     /* NE */
     Set_Square_Explored_Bits(wp, (wx + 1), (wy - 1), (SCT_BottomLeft | SCT_TopLeft | SCT_BottomRight));
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -6679,7 +6134,7 @@ void Init_Square_Explored(void)
 */
 /*
 
-NOT Set_Map_Square_Explored_Flags_XYP_Range()
+NOT Set_Square_Explored_Flags_Range()
 NOT j_Set_Map_Square_Explored_Flags_XYP()
 
 */
@@ -6746,7 +6201,7 @@ void Movement_Mode_Cost_Maps(int16_t wp)
     int16_t terrain_type_idx = 0;
     int16_t itr_wy = 0;
     int16_t itr_wx = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     EMMDATAH_Map();
     for(itr_wy = 0; itr_wy < WORLD_HEIGHT; itr_wy++)
     {
@@ -6785,7 +6240,7 @@ void Movement_Mode_Cost_Maps(int16_t wp)
             }
         }
     }
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -6859,7 +6314,7 @@ WARNING: can't go backwards with this setup
 void Draw_Building_The_Worlds(int16_t percent)
 {
     int16_t width = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     Set_Page_Off();
     if(percent == 0)
     {
@@ -6875,7 +6330,7 @@ void Draw_Building_The_Worlds(int16_t percent)
         Fill(90, 89, (90 + width), 94, 172);
     }
     Toggle_Pages();
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // MGC o51p37
@@ -6889,11 +6344,11 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 {
     int16_t WTF = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(unit_type == 0)
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+        TRACE_EXIT();
         return;
     }
 
@@ -6934,6 +6389,8 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
         // ; ; PATCHED here to prevent units starting with XP
 
+        /* OGBUG  WTF ([bp-2]) is never set: city_idx only gates the test, the Fighters' Guild / War College are read from _CITIES[stack garbage]; a starting unit gets level 1 / 2 only if that index lands on non-zero bytes */
+        /* HACK */  WTF = Stack_Garbage_Range(0, (NUM_CITIES - 1));  /* bounded: the OG's uninitialised index, kept inside _CITIES[] */
         if(_CITIES[WTF].bldg_status[bt_FightersGuild] > bs_Replaced)
         {
 
@@ -6972,7 +6429,7 @@ void Create_Unit_NewGame(int16_t unit_type, int16_t player_idx, int16_t wx, int1
 
     _units++;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -7011,13 +6468,13 @@ void Animate_Oceans(void)
     int16_t wy = 0;
     int16_t wp = 0;
     
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* OGBUG: the wy/wx loops use `<=` so the final iteration reads (and possibly
      *   writes) one row/column past the declared world map bounds.  The extra
-     *   reads land in the WORLD_OVERFLOW padding at the tail of the _world_maps
-     *   allocation (7 * WORLD_WIDTH int16_t cells) — always allocated, but past
+     *   reads land past the _world_maps block, in the next World_Data block (CLAUDE: the
+     *   WORLD_OVERFLOW padding this once described was retired, ALLOC.c Phase 5a) — past
      *   the [WORLD_HEIGHT][WORLD_WIDTH] bound the typed p_world_map advertises.
      *   Access via a flat int16_t* keeps GCC's -Waggressive-loop-optimizations
      *   quiet while preserving OG's OOB read/write behavior (RNG-relevant —
@@ -7025,6 +6482,8 @@ void Animate_Oceans(void)
      *   OG (preserved):    ((int16_t*)_world_maps)[wp*WORLD_SIZE + wy*WORLD_WIDTH + wx]
      *   Correct loops:     for(wy = 0; wy < WORLD_HEIGHT; wy++) / wx < WORLD_WIDTH  */
     int16_t * flat_map = (int16_t *)_world_maps;
+    /* OGBUG  [wy][60] is [wy + 1][0] and Arcanus row 40 is Myrror row 0, so Arcanus column 0 and Myrror's top row and column 0 get two 1-in-5 rolls (36% variant instead of 20%); */
+    /* OGBUG  Myrror row 40 (61 squares) is past the end of both maps: the reads / writes land in the next World_Data block, in ReMoM's pool as in the OG (not bounded) */
     for(wp = 0; wp < NUM_PLANES; wp++)
     {
         for(wy = 0; wy <= WORLD_HEIGHT; wy++)  /* OGBUG: OOB AVRL; should be <, not <=; overruns by 1 */
@@ -7051,7 +6510,7 @@ void Animate_Oceans(void)
             }
         }
     }
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -7112,24 +6571,12 @@ int16_t Square_Has_Tower_NewGame(int16_t wx, int16_t wy)
 // MGC o51p42
 // drake178: Square_Is_Forest_NewGame()
 /*
-
-*/
-/*
-
-~==
-Terrain.c
-// WZD s161p23
-// drake178: TILE_IsVisibleForest()
-// AKA Square_Is_Explored_Forest()
-int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
-
+===  Terrain.c  // WZD o161p24  int16_t Square_Is_Forest(int16_t wx, int16_t wy, int16_t wp)
 */
 int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
-    int16_t terrain_type = 0;  // _CX_
-
+    int16_t terrain_type = 0;
     terrain_type = (TERRAIN_TYPE(wx, wy, wp) % NUM_TERRAIN_TYPES);
-
     if(
         (terrain_type == tt_Forest1)
         ||
@@ -7138,17 +6585,12 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp)
         (terrain_type == tt_Forest3)
     )
     {
-
         return ST_TRUE;
-
     }
     else
     {
-
         return ST_FALSE;
-
     }
-
 }
 
 
@@ -7338,21 +6780,13 @@ int16_t Square_Is_Grassland_NewGame(int16_t wx, int16_t wy, int16_t wp)
 // MGC o51p51
 // drake178: TILE_GetFood()
 /*
-; returns the amount of food provided by the map square based
-; on its type, in units of 1/2
-;
-; BUG: swamps do not yield the described amount of 1/2,
-;  while nature nodes yield less than in WIZARDS.EXE
+; returns the amount of food provided by the map square based on its type, in units of 1/2
+; BUG: swamps do not yield the described amount of 1/2, while nature nodes yield less than in WIZARDS.EXE
 */
 /*
 returns food, not food2
-
-Terrain.c
-// WZD s161p03
-int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
-
+=== Terrain.c  // WZD o161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
 traced with terrain_type == tt_Grasslands1
-
 */
 int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 {
@@ -7473,7 +6907,7 @@ int16_t Square_Food2_NewGame(int16_t wx, int16_t wy, int16_t wp)
 
             case tt_NatureNode:
             {
-                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD s161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
+                food_units = 4;  // BUGBUG  is 5 in Terrain.c // WZD o161p03  int16_t Square_Food_x2(int16_t wx, int16_t wy, int16_t wp)
             } break;
 
             case tt_ChaosNode:
@@ -8318,6 +7752,8 @@ void Build_Connectivity_Graph(int8_t * move_map, uint8_t * result_map)
                 Passable_Direction_Flags &= ~8;
             }
 
+            /* OGBUG  the East pre-check is a copy of the West one with -1 -> +1: it compares columns x0 / x0 + 1 (the wrap at 60 never applies), not the east edge x0 + 4 / x0 + 5; the East path search uses the right window */
+            /* OGBUG  and the reciprocal pass restores bit 2 from the east neighbour's West bit, so only the kept 0x20 flag is wrong */
             Adjacent_Section_X = X_GridBase + 1;
             if(Adjacent_Section_X >= WORLD_WIDTH)
             {

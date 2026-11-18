@@ -1,0 +1,9 @@
+module_num=258
+module=__stos
+source=0258-__stos.md
+range[0]=1:0x00138220 linear=0x00148220 size=163
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL   CHUNK
+m258f001  1    -      0x00148220  1:0x00138220  code  __STOSB  __STOSB  regions/07-object-1/001CD654-001CDE53.txt
+m258f002  2    -      0x00148257  1:0x00138257  code  __STOSD  __STOSD  regions/07-object-1/001CD654-001CDE53.txt

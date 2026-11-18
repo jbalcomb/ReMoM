@@ -6,7 +6,7 @@
 #
 # Usage:
 #   ReMoM --continue --scenario test_continue_save.hms
-#   HeMoM    --continue --scenario test_continue_save.hms
+#   DeMoM    --continue --scenario test_continue_save.hms
 #
 # Notes:
 #   - The save slot name field rejects underscore.  Using `-` instead.

@@ -108,12 +108,12 @@ When one stage dominates, PHASE *its* sub-calls to drill in (a slow city screen 
 
 You're right that this is the point to get serious. "Feels slow" is exactly the unmeasurable, unregressable complaint the input work already had to solve — so **reuse that discipline and most of that harness** rather than inventing a new one. The BRA/PRD/PLAN-Platform-Input trio is the template; this is the same shape of problem one layer up.
 
-**What you already have to build on:** deterministic RNG seed (`--seed1`), `.RMR` record/replay, the **HeMoM headless deterministic runner** ([`src/HeMoM.c`](../../src/HeMoM.c)), the `PFL_Input_Metrics` frame-time `.fwv`, the `PHASE` macro, and CTest fixtures. Very little is missing.
+**What you already have to build on:** deterministic RNG seed (`--seed1`), `.RMR` record/replay, the **DeMoM windowless deterministic runner** ([`src/DeMoM.c`](../../src/DeMoM.c)), the `PFL_Input_Metrics` frame-time `.fwv`, the `PHASE` macro, and CTest fixtures. Very little is missing.
 
 **Stand up two complementary test modes:**
 
-### Mode A — Headless logic perf (the backbone)
-Run a **deterministic scenario** (fixed seed or a committed late-game save) headless in HeMoM to a fixed point — e.g. *N* turns of a large, populated map — and time the logic stages with `PHASE` / `Platform_Get_Millies`. **No rendering**, so it isolates pure CPU/logic cost, is fully deterministic, and runs in CI without a display. Because the dominant MoM slowdown is AI/turn logic, this is where most of the signal is, and HeMoM can already drive it. Output: per-stage ms for `Next_Turn`, `AI_Next_Turn`, `All_City_Calculations`, etc.
+### Mode A — Windowless logic perf (the backbone)
+Run a **deterministic scenario** (fixed seed or a committed late-game save) windowless in DeMoM to a fixed point — e.g. *N* turns of a large, populated map — and time the logic stages with `PHASE` / `Platform_Get_Millies`. **No rendering**, so it isolates pure CPU/logic cost, is fully deterministic, and runs in CI without a display. Because the dominant MoM slowdown is AI/turn logic, this is where most of the signal is, and DeMoM can already drive it. Output: per-stage ms for `Next_Turn`, `AI_Next_Turn`, `All_City_Calculations`, etc.
 
 ### Mode B — Windowed frame-time perf (the render half)
 Drive a deterministic `.RMR` replay through the real windowed backend with the metrics `.fwv` on, and assert `dt_ms` p95/max against a committed baseline. This is **literally Layer 2 of the Platform-Input plan, generalized** from cursor position to frame time — same replay+capture+analyze+threshold chain, same "windowed, runs where a display exists" constraint.
@@ -121,7 +121,7 @@ Drive a deterministic `.RMR` replay through the real windowed backend with the m
 ### The regression gate
 Commit a baseline on **named reference hardware**; a CTest test asserts "**not measurably worse than baseline**" using relative thresholds on **percentiles** (p95/p99/max), and fails the build on regression — the same model as the combat-testing and input-metrics gates. Natural targets:
 - **Absolute budget** for the windowed loop: **55 ms/frame** is the built-in SLA — flag frames over budget.
-- **Relative** for headless logic: "turn *N* on the reference save takes ≤ *X* ms," X set from the baseline, ratcheted down as it's optimized.
+- **Relative** for windowless logic: "turn *N* on the reference save takes ≤ *X* ms," X set from the baseline, ratcheted down as it's optimized.
 
 This converts every future perf complaint (and every optimization) into a number and a pass/fail, instead of another round of "does this feel better to you?"
 
@@ -133,7 +133,7 @@ This converts every future perf complaint (and every optimization) into a number
 2. **FPS in the title bar.** `Platform_Set_Window_Title`, rolling avg + worst-frame, ~1 Hz. Immediate feedback for you and reporters.
 3. **Periodic summary log + Debug-screen FPS.** Extend `DBG_Frame_Reset` to a time-based percentile summary; draw it on `DBG_Main_Screen_Draw_Summary_Window`.
 4. **PHASE-ize the per-frame path.** Add frame-stage `PHASE` wrappers; localize the guilty stage on the repro; drill into its sub-calls.
-5. **Real perf tests.** Mode A (headless logic) first — biggest signal, CI-able, deterministic — then Mode B (windowed frame-time). Commit reference baselines; wire the CTest regression gate.
+5. **Real perf tests.** Mode A (windowless logic) first — biggest signal, CI-able, deterministic — then Mode B (windowed frame-time). Commit reference baselines; wire the CTest regression gate.
 
 Steps 1–4 are hours-to-days and mostly wiring existing pieces; step 5 is the durable investment.
 
@@ -149,7 +149,7 @@ Steps 1–4 are hours-to-days and mostly wiring existing pieces; step 5 is the d
 | Existing per-frame counter/summary | `DBG_Frame_Reset`, [`sdl2_PFL.c`](../../platform/sdl2/sdl2_PFL.c) |
 | Debug summary window | `DBG_Main_Screen_Draw_Summary_Window` [`STU_DBG.h:114`](../../STU/src/STU_DBG.h#L114) |
 | Window titles (need a runtime setter) | [`win_PFL.cpp:67`](../../platform/win32/win_PFL.cpp#L67), [`sdl2_PFL.c:54`](../../platform/sdl2/sdl2_PFL.c#L54) |
-| Headless deterministic runner | [`src/HeMoM.c`](../../src/HeMoM.c), `--seed1`, `--load`, `--continue` |
+| Windowless deterministic runner | [`src/DeMoM.c`](../../src/DeMoM.c), `--seed1`, `--load`, `--continue` |
 | Measurement discipline (reuse it) | [`BRA-Platform-Input.md`](BRA-Platform-Input.md) §1, §6 |
 
-**The one-liner to remember:** MoM's frame budget is **55 ms**; confirm slowdowns with the existing `REMOM_INPUT_METRICS` `.fwv` (`dt_ms`, percentiles not means); localize with the `PHASE` macro; and make it a pass/fail with a deterministic HeMoM-headless (logic) + replay-capture (render) perf harness gated in CTest — the same play the input work already ran.
+**The one-liner to remember:** MoM's frame budget is **55 ms**; confirm slowdowns with the existing `REMOM_INPUT_METRICS` `.fwv` (`dt_ms`, percentiles not means); localize with the `PHASE` macro; and make it a pass/fail with a deterministic windowless-DeMoM (logic) + replay-capture (render) perf harness gated in CTest — the same play the input work already ran.

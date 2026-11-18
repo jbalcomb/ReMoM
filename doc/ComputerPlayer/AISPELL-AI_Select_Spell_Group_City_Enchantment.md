@@ -21,7 +21,7 @@ Next_Turn_Proc()
 |---|---|---|
 | `AI_Select_Spell_Group_City_Enchantment` | [AISPELL.c:1668-1890](../../MoM/src/AISPELL.c#L1668-L1890) | When the category picker chose "city enchant" (category 3), decide *which* city/terrain spell the AI casts: weight each spell **only if both** it is known **and** its `AITP_*` target-picker finds a valid target, scale by realm suppression, then weighted-random pick and return its `spl_*` id (0 = none). |
 
-> **Status: BUILDS CLEAN — faithful to the asm.** The body ([AISPELL.c:1668-1890](../../MoM/src/AISPELL.c#L1668-L1890)) is a Piethawn IDA-C paste, adapted to production. The gating logic, suppression scaling, and dispatch `switch` all match `AI_OVL_PickCityBuff.asm` — the switch reproduces the 20-entry jump table 1:1, including the slot-4 `return 0` gap (handled by the absent `case 4` → `default`). `players_spell_list` keeps the `- 1`. The 19 `AITP_*` target-pickers are stubbed, the 6 spell constants corrected to `*_Of_*`, the locals are `int16_t`, and `choice` rename applied. `cmake --build --preset MSVC-debug` compiles and links with no errors or warnings (momlib.lib, HeMoM.exe). The asm + the `_misc.asm` jump-table bytes are the authority.
+> **Status: BUILDS CLEAN — faithful to the asm.** The body ([AISPELL.c:1668-1890](../../MoM/src/AISPELL.c#L1668-L1890)) is a Piethawn IDA-C paste, adapted to production. The gating logic, suppression scaling, and dispatch `switch` all match `AI_OVL_PickCityBuff.asm` — the switch reproduces the 20-entry jump table 1:1, including the slot-4 `return 0` gap (handled by the absent `case 4` → `default`). `players_spell_list` keeps the `- 1`. The 19 `AITP_*` target-pickers are stubbed, the 6 spell constants corrected to `*_Of_*`, the locals are `int16_t`, and `choice` rename applied. `cmake --build --preset MSVC-debug` compiles and links with no errors or warnings (momlib.lib, DeMoM.exe). The asm + the `_misc.asm` jump-table bytes are the authority.
 
 ## Purpose
 
@@ -83,7 +83,7 @@ All index ranges, thresholds, and factors match the asm.
 
 ## Build status
 
-`cmake --build --preset MSVC-debug` builds clean (0 errors, 0 warnings; momlib.lib and HeMoM.exe link). This picker's blockers were all resolved: the 19 `AITP_*` target-pickers are stubbed, the 6 spell constants use the correct `*_Of_*` spelling (`spl_Wall_Of_Stone`, etc.), the locals are `int16_t`, and `Random_Result` was renamed `choice`.
+`cmake --build --preset MSVC-debug` builds clean (0 errors, 0 warnings; momlib.lib and DeMoM.exe link). This picker's blockers were all resolved: the 19 `AITP_*` target-pickers are stubbed, the 6 spell constants use the correct `*_Of_*` spelling (`spl_Wall_Of_Stone`, etc.), the locals are `int16_t`, and `Random_Result` was renamed `choice`.
 
 The `AITP_*` are stubs that return 0, so the picker's per-spell gates currently never fire — the function is structurally complete and compiles, but won't pick a real city spell until the target-pickers (o156p17-35) and the `Pick_Target_For_*` dispatchers are reconstructed for real. Those are tracked separately.
 

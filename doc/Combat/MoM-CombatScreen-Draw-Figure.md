@@ -29,11 +29,11 @@ Combat_Grid_Entities()
 
 CMB_Predraw_Figures__WIP()
     UE_Rlm = battle_units[itr].outline_magic_realm;
-    Combat_Unit_Enchantment_Outline_Draw(UE_Rlm);
+    Draw_Combat_Enchantment_Outline(UE_Rlm);
 
-Combat_Unit_Enchantment_Outline_Set()
+Set_Combat_Enchantment_Outline()
     sets battle_units[itr].outline_magic_realm
-Combat_Unit_Enchantment_Outline_Draw()
+Draw_Combat_Enchantment_Outline()
     uses battle_units[itr].outline_magic_realm to draw figure outline
 
 

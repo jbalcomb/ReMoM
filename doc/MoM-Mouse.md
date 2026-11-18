@@ -711,7 +711,7 @@ So, ...
 
 
 MoO2
-cseg01:001250BB video_card_00:                          ; DATA XREF: Assign_Video_Function_Pointers:off_12507Fo
+cseg01:001250BB video_card_00:                          ; DATA XREF: Assign_Video_Function_Pointers:off_12507F^o
 cseg01:001250BB mov     Full_Screen_Dump, offset Full_Screen_Dump_Lo_Res
 cseg01:001250C5 mov     Partial_Screen_Dump, offset Partial_Screen_Dump_Lo_Res
 cseg01:001250CF mov     Masked_Screen_Dump, offset Masked_Screen_Dump_Lo_Res

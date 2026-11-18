@@ -1,0 +1,88 @@
+module_num=122
+module=D:\MOX\BILL.C
+source=0122-bill.c.md
+range[0]=1:0x000F2037 linear=0x00102037 size=6489
+range[1]=2:0x000021E0 linear=0x001721E0 size=52
+range[2]=2:0x0000B684 linear=0x0017B684 size=28
+range[3]=2:0x00034E98 linear=0x001A4E98 size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                            SYMBOL                                           CHUNK
+m122f001  1    -      0x00102037  1:0x000F2037  code         Bill_Init                                       Bill_Init_                                       regions/07-object-1/00187654-00187E53.txt
+m122f002  2    -      0x0010206E  1:0x000F206E  code         Bill_Default                                    Bill_Default_                                    regions/07-object-1/00187654-00187E53.txt
+m122f003  3    -      0x0010208A  1:0x000F208A  code         Record_History                                  Record_History_                                  regions/07-object-1/00187654-00187E53.txt
+m122f004  4    -      0x00102428  1:0x000F2428  code         Is_Ignoring                                     Is_Ignoring_                                     regions/07-object-1/00187654-00187E53.txt
+m122f005  5    -      0x0010244D  1:0x000F244D  code         Stop_Ignoring                                   Stop_Ignoring_                                   regions/07-object-1/00187654-00187E53.txt
+m122f006  6    -      0x0010246E  1:0x000F246E  code         Concatenate_Percent                             Concatenate_Percent_                             regions/07-object-1/00187654-00187E53.txt
+m122f007  7    -      0x0010248B  1:0x000F248B  code         Get_Active_Players                              Get_Active_Players_                              regions/07-object-1/00187654-00187E53.txt
+m122f008  8    -      0x00102547  1:0x000F2547  code         Get_Players_Dead_Or_Alive                       Get_Players_Dead_Or_Alive_                       regions/07-object-1/00187654-00187E53.txt
+m122f009  9    -      0x00102597  1:0x000F2597  code         Get_Players_Dead_Or_Alive_Or_Omniscient         Get_Players_Dead_Or_Alive_Or_Omniscient_         regions/07-object-1/00187654-00187E53.txt
+m122f010  10   -      0x00102633  1:0x000F2633  code         Get_Players_Alive_Or_Omniscient                 Get_Players_Alive_Or_Omniscient_                 regions/07-object-1/00187654-00187E53.txt
+m122f011  11   -      0x001026CF  1:0x000F26CF  code         Get_Their_Spy_Number                            Get_Their_Spy_Number_                            regions/07-object-1/00187654-00187E53.txt
+m122f012  12   -      0x001026F1  1:0x000F26F1  code         Get_Their_Spy_Mission                           Get_Their_Spy_Mission_                           regions/07-object-1/00187654-00187E53.txt
+m122f013  13   -      0x00102711  1:0x000F2711  code         Get_My_Spy_Number                               Get_My_Spy_Number_                               regions/07-object-1/00187654-00187E53.txt
+m122f014  14   -      0x00102739  1:0x000F2739  code         Get_My_Spy_Mission                              Get_My_Spy_Mission_                              regions/07-object-1/00187654-00187E53.txt
+m122f015  15   -      0x0010275F  1:0x000F275F  code         Get_My_Agent_Number                             Get_My_Agent_Number_                             regions/07-object-1/00187654-00187E53.txt
+m122f016  16   -      0x00102776  1:0x000F2776  code         Get_My_Agent_Mission                            Get_My_Agent_Mission_                            regions/07-object-1/00187654-00187E53.txt
+m122f017  17   -      0x0010278D  1:0x000F278D  code         Set_Their_Spy_Number                            Set_Their_Spy_Number_                            regions/07-object-1/00187654-00187E53.txt
+m122f018  18   -      0x001027B5  1:0x000F27B5  code         Set_Their_Spy_Mission                           Set_Their_Spy_Mission_                           regions/07-object-1/00187654-00187E53.txt
+m122f019  19   -      0x001027D9  1:0x000F27D9  code         Set_My_Spy_Number                               Set_My_Spy_Number_                               regions/07-object-1/00187654-00187E53.txt
+m122f020  20   -      0x0010280D  1:0x000F280D  code         Set_My_Spy_Mission                              Set_My_Spy_Mission_                              regions/07-object-1/00187E54-00188653.txt
+m122f021  21   -      0x0010283D  1:0x000F283D  code         Set_My_Agent_Number                             Set_My_Agent_Number_                             regions/07-object-1/00187E54-00188653.txt
+m122f022  22   -      0x00102872  1:0x000F2872  code         Set_My_Agent_Mission                            Set_My_Agent_Mission_                            regions/07-object-1/00187E54-00188653.txt
+m122f023  23   -      0x001028A2  1:0x000F28A2  code         Take_Their_Spy                                  Take_Their_Spy_                                  regions/07-object-1/00187E54-00188653.txt
+m122f024  24   -      0x001028D5  1:0x000F28D5  code         Take_My_Spy                                     Take_My_Spy_                                     regions/07-object-1/00187E54-00188653.txt
+m122f025  25   -      0x00102912  1:0x000F2912  code         Take_My_Agent                                   Take_My_Agent_                                   regions/07-object-1/00187E54-00188653.txt
+m122f026  26   -      0x0010294B  1:0x000F294B  code         Add_Their_Spy                                   Add_Their_Spy_                                   regions/07-object-1/00187E54-00188653.txt
+m122f027  27   -      0x00102982  1:0x000F2982  code         Add_My_Spy                                      Add_My_Spy_                                      regions/07-object-1/00187E54-00188653.txt
+m122f028  28   -      0x00102994  1:0x000F2994  code         Add_My_Agent                                    Add_My_Agent_                                    regions/07-object-1/00187E54-00188653.txt
+m122f029  29   -      0x001029D1  1:0x000F29D1  code         Get_History_Params                              Get_History_Params_                              regions/07-object-1/00187E54-00188653.txt
+m122f030  30   -      0x001029FA  1:0x000F29FA  code         Update_List_Window_Data                         Update_List_Window_Data_                         regions/07-object-1/00187E54-00188653.txt
+m122f031  31   -      0x00102CDF  1:0x000F2CDF  code         Turn_Off_Palettes                               Turn_Off_Palettes_                               regions/07-object-1/00187E54-00188653.txt
+m122f032  32   -      0x00102CF5  1:0x000F2CF5  code         Turn_On_Palettes                                Turn_On_Palettes_                                regions/07-object-1/00187E54-00188653.txt
+m122f033  33   -      0x00102CF9  1:0x000F2CF9  code         Disable_Draw_Current_Fields                     Disable_Draw_Current_Fields_                     regions/07-object-1/00187E54-00188653.txt
+m122f034  34   -      0x00102D1B  1:0x000F2D1B  code         Enable_Draw_Current_Fields                      Enable_Draw_Current_Fields_                      regions/07-object-1/00187E54-00188653.txt
+m122f035  35   -      0x00102D3D  1:0x000F2D3D  code         Draw_Prior_Fields                               Draw_Prior_Fields_                               regions/07-object-1/00187E54-00188653.txt
+m122f036  36   -      0x00102D7D  1:0x000F2D7D  code         Disable_Draw_Selected_Fields                    Disable_Draw_Selected_Fields_                    regions/07-object-1/00187E54-00188653.txt
+m122f037  37   -      0x00102D94  1:0x000F2D94  code         Enable_Draw_Selected_Fields                     Enable_Draw_Selected_Fields_                     regions/07-object-1/00187E54-00188653.txt
+m122f038  38   -      0x00102DAB  1:0x000F2DAB  code         _Squeeze_Print                                  _Squeeze_Print_                                  regions/07-object-1/00187E54-00188653.txt
+m122f039  39   -      0x00102F10  1:0x000F2F10  code         Squeeze_Print                                   Squeeze_Print_                                   regions/07-object-1/00187E54-00188653.txt
+m122f040  40   -      0x00102F23  1:0x000F2F23  code         Squeeze_Print_To_Bitmap                         Squeeze_Print_To_Bitmap_                         regions/07-object-1/00187E54-00188653.txt
+m122f041  41   -      0x00102F3D  1:0x000F2F3D  code         Squeeze_Print_Right                             Squeeze_Print_Right_                             regions/07-object-1/00187E54-00188653.txt
+m122f042  42   -      0x00102F43  1:0x000F2F43  code         Squeeze_Print_Right_To_Bitmap                   Squeeze_Print_Right_To_Bitmap_                   regions/07-object-1/00187E54-00188653.txt
+m122f043  43   -      0x00102F4F  1:0x000F2F4F  code         Squeeze_Print_Centered                          Squeeze_Print_Centered_                          regions/07-object-1/00187E54-00188653.txt
+m122f044  44   -      0x00102F78  1:0x000F2F78  code         Squeeze_Print_Centered_To_Bitmap                Squeeze_Print_Centered_To_Bitmap_                regions/07-object-1/00187E54-00188653.txt
+m122f045  45   -      0x00102FA8  1:0x000F2FA8  code         Squeeze_Centered_Print                          Squeeze_Centered_Print_                          regions/07-object-1/00187E54-00188653.txt
+m122f046  46   -      0x00102FB1  1:0x000F2FB1  code         Squeeze_Centered_Print_To_Bitmap                Squeeze_Centered_Print_To_Bitmap_                regions/07-object-1/00187E54-00188653.txt
+m122f047  47   -      0x00102FC0  1:0x000F2FC0  code         Squeeze_Print_Full                              Squeeze_Print_Full_                              regions/07-object-1/00187E54-00188653.txt
+m122f048  48   -      0x00102FC9  1:0x000F2FC9  code         Squeeze_Print_Full_To_Bitmap                    Squeeze_Print_Full_To_Bitmap_                    regions/07-object-1/00187E54-00188653.txt
+m122f049  49   -      0x00102FD8  1:0x000F2FD8  code         _Squeeze_Print_Paragraph                        _Squeeze_Print_Paragraph_                        regions/07-object-1/00187E54-00188653.txt
+m122f050  50   -      0x0010315D  1:0x000F315D  code         Squeeze_Print_Paragraph                         Squeeze_Print_Paragraph_                         regions/07-object-1/00188654-00188E53.txt
+m122f051  51   -      0x00103183  1:0x000F3183  code         Squeeze_Print_Paragraph_To_Bitmap               Squeeze_Print_Paragraph_To_Bitmap_               regions/07-object-1/00188654-00188E53.txt
+m122f052  52   -      0x001031AA  1:0x000F31AA  code         Squeeze_Print_Formatted_Paragraph               Squeeze_Print_Formatted_Paragraph_               regions/07-object-1/00188654-00188E53.txt
+m122f053  53   -      0x001031B8  1:0x000F31B8  code         Squeeze_Print_Formatted_Paragraph_To_Bitmap     Squeeze_Print_Formatted_Paragraph_To_Bitmap_     regions/07-object-1/00188654-00188E53.txt
+m122f054  54   -      0x001031C6  1:0x000F31C6  code         Squeeze_Paragraph_Centered                      Squeeze_Paragraph_Centered_                      regions/07-object-1/00188654-00188E53.txt
+m122f055  55   -      0x00103200  1:0x000F3200  code         Squeeze_Paragraph_Centered_To_Bitmap            Squeeze_Paragraph_Centered_To_Bitmap_            regions/07-object-1/00188654-00188E53.txt
+m122f056  56   -      0x0010323B  1:0x000F323B  code         Squeeze_Formatted_Paragraph_Centered            Squeeze_Formatted_Paragraph_Centered_            regions/07-object-1/00188654-00188E53.txt
+m122f057  57   -      0x0010324A  1:0x000F324A  code         Squeeze_Formatted_Paragraph_Centered_To_Bitmap  Squeeze_Formatted_Paragraph_Centered_To_Bitmap_  regions/07-object-1/00188654-00188E53.txt
+m122f058  58   -      0x00103259  1:0x000F3259  code         _Print_1_Or_More_Lines_Centered                 _Print_1_Or_More_Lines_Centered_                 regions/07-object-1/00188654-00188E53.txt
+m122f059  59   -      0x001032C9  1:0x000F32C9  code         Print_1_Or_More_Lines_Centered                  Print_1_Or_More_Lines_Centered_                  regions/07-object-1/00188654-00188E53.txt
+m122f060  60   -      0x001032D8  1:0x000F32D8  code         Print_1_Or_More_Lines_Centered_To_Bitmap        Print_1_Or_More_Lines_Centered_To_Bitmap_        regions/07-object-1/00188654-00188E53.txt
+m122f061  61   -      0x001032EE  1:0x000F32EE  code         Pseudo_App_Index_To_Hyper_Field                 Pseudo_App_Index_To_Hyper_Field_                 regions/07-object-1/00188654-00188E53.txt
+m122f062  62   -      0x001032FB  1:0x000F32FB  code         Hyper_Field_To_Pseudo_App_Index                 Hyper_Field_To_Pseudo_App_Index_                 regions/07-object-1/00188654-00188E53.txt
+m122f063  63   -      0x00103307  1:0x000F3307  code         Singular_Or_Plural_String                       Singular_Or_Plural_String_                       regions/07-object-1/00188654-00188E53.txt
+m122f064  64   -      0x00103313  1:0x000F3313  code         Copy_File_To_File                               Copy_File_To_File_                               regions/07-object-1/00188654-00188E53.txt
+m122f065  65   -      0x00103421  1:0x000F3421  code         Cache_Player_Scientist_Anim                     Cache_Player_Scientist_Anim_                     regions/07-object-1/00188654-00188E53.txt
+m122f066  66   -      0x00103428  1:0x000F3428  code         Cache_Other_Scientist_Anim                      Cache_Other_Scientist_Anim_                      regions/07-object-1/00188654-00188E53.txt
+m122f067  67   -      0x001034CB  1:0x000F34CB  code         Cache_Player_Spy_Anim                           Cache_Player_Spy_Anim_                           regions/07-object-1/00188654-00188E53.txt
+m122f068  68   -      0x00103521  1:0x000F3521  code         Cache_Player_Trooper_Anim                       Cache_Player_Trooper_Anim_                       regions/07-object-1/00188654-00188E53.txt
+m122f069  69   -      0x001035AF  1:0x000F35AF  code         _Print_String_Bill                              _Print_String_Bill_                              regions/07-object-1/00188654-00188E53.txt
+m122f070  70   -      0x0010370A  1:0x000F370A  code         _Print_Paragraph_Bill                           _Print_Paragraph_Bill_                           regions/07-object-1/00188654-00188E53.txt
+m122f071  71   -      0x00103915  1:0x000F3915  code         _Print_Paragraph                                _Print_Paragraph_                                regions/07-object-1/00188E54-00189653.txt
+m122f072  72   -      0x00103933  1:0x000F3933  code         _Print_Paragraph_To_Bitmap                      _Print_Paragraph_To_Bitmap_                      regions/07-object-1/00188E54-00189653.txt
+m122f073  73   -      0x00103952  1:0x000F3952  code         _Get_Paragraph_Max_Height                       _Get_Paragraph_Max_Height_                       regions/07-object-1/00188E54-00189653.txt
+m122f074  74   -      0x00103971  1:0x000F3971  code         _Get_Paragraph_Max_Width                        _Get_Paragraph_Max_Width_                        regions/07-object-1/00188E54-00189653.txt
+-         -    -      0x0017B684  2:0x0000B684  static,data  _space_limits                                   _space_limits                                    regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x001A4E98  2:0x00034E98  static,data  _dest_file_name                                 _dest_file_name                                  -
+-         -    -      0x001A4EB8  2:0x00034EB8  data         __pp_max_height                                 __pp_max_height                                  -
+-         -    -      0x001A4EBA  2:0x00034EBA  data         __pp_max_width                                  __pp_max_width                                   -

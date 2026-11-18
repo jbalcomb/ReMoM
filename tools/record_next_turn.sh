@@ -29,7 +29,7 @@
 set -euo pipefail
 
 REPO_ROOT="c:/STU/devel/ReMoM"
-HEMOM_DIR="${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug"
+DEMOM_DIR="${REPO_ROOT}/out/build/MSVC-headless-debug/bin/Debug"
 REMOM_DIR="${REPO_ROOT}/out/build/MSVC-debug/bin/Debug"
 ASSETS="${REPO_ROOT}/assets"
 
@@ -37,30 +37,30 @@ PRE_SCENARIO="${ASSETS}/test_continue_pre_next_turn.hms"
 NEWGAME_CONFIG="${ASSETS}/test_worldgen.ini"
 NEWGAME_SCENARIO="${ASSETS}/test_worldgen_smoke.hms"
 
-echo "=== Step 0/5: Rebuild MSVC-headless-debug (HeMoM) and MSVC-debug (ReMoM) ==="
+echo "=== Step 0/5: Rebuild MSVC-headless-debug (DeMoM) and MSVC-debug (ReMoM) ==="
 # Both presets consume shared sources (Artificial_Human_Player.c, platform/*, etc.).  A
 # stale build on either side silently breaks this workflow, so rebuild both
 # before doing anything else.
-cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target HeMoM     >/dev/null
+cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target DeMoM     >/dev/null
 cmake --build "${REPO_ROOT}/out/build/MSVC-headless-debug" --config Debug --target savedump  >/dev/null || true
 cmake --build "${REPO_ROOT}/out/build/MSVC-debug"          --config Debug --target ReMoM  >/dev/null
 cmake --build "${REPO_ROOT}/out/build/MSVC-debug"          --config Debug --target savedump  >/dev/null
-echo "  rebuilt: HeMoM (MSVC-headless-debug), ReMoM + savedump (MSVC-debug)"
+echo "  rebuilt: DeMoM (MSVC-headless-debug), ReMoM + savedump (MSVC-debug)"
 
 echo
 echo "=== Step 1/5: Generate fresh SAVE9.GAM (headless, seed=12345) ==="
-if [ ! -x "${HEMOM_DIR}/HeMoM.exe" ]; then
-    echo "FAIL: HeMoM.exe not found at ${HEMOM_DIR}"
+if [ ! -x "${DEMOM_DIR}/DeMoM.exe" ]; then
+    echo "FAIL: DeMoM.exe not found at ${DEMOM_DIR}"
     echo "      Build the MSVC-headless-debug preset first."
     exit 1
 fi
-cd "${HEMOM_DIR}"
-./HeMoM.exe --newgame "${NEWGAME_CONFIG}" --scenario "${NEWGAME_SCENARIO}" > /dev/null 2>&1
+cd "${DEMOM_DIR}"
+./DeMoM.exe --newgame "${NEWGAME_CONFIG}" --scenario "${NEWGAME_SCENARIO}" > /dev/null 2>&1
 if [ ! -f SAVE9.GAM ]; then
-    echo "FAIL: HeMoM did not produce SAVE9.GAM"
+    echo "FAIL: DeMoM did not produce SAVE9.GAM"
     exit 1
 fi
-echo "  generated: ${HEMOM_DIR}/SAVE9.GAM"
+echo "  generated: ${DEMOM_DIR}/SAVE9.GAM"
 
 echo
 echo "=== Step 2/5: Copy SAVE9.GAM and baseline dump to ReMoM build ==="
@@ -74,7 +74,7 @@ if [ ! -x "${REMOM_DIR}/savedump.exe" ]; then
     echo "      Build the savedump target under MSVC-debug."
     exit 1
 fi
-cp "${HEMOM_DIR}/SAVE9.GAM" "${REMOM_DIR}/SAVE9.GAM"
+cp "${DEMOM_DIR}/SAVE9.GAM" "${REMOM_DIR}/SAVE9.GAM"
 cd "${REMOM_DIR}"
 ./savedump.exe SAVE9.GAM SAVE9.txt > /dev/null
 echo "  copied:  ${REMOM_DIR}/SAVE9.GAM"

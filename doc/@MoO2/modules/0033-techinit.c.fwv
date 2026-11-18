@@ -1,0 +1,14 @@
+module_num=33
+module=D:\MOX\OTHERS\TECHINIT.C
+source=0033-techinit.c.md
+range[0]=1:0x0004DF0A linear=0x0005DF0A size=3031
+range[1]=2:0x00000FB0 linear=0x00170FB0 size=40
+range[2]=2:0x0000911C linear=0x0017911C size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                           SYMBOL                          CHUNK
+m033f001  1    -      0x0005DF0A  1:0x0004DF0A  code  Load_Tech_Names                Load_Tech_Names_                regions/07-object-1/000E2E54-000E3653.txt
+m033f002  2    -      0x0005E1E3  1:0x0004E1E3  code  Init_Tech                      Init_Tech_                      regions/07-object-1/000E3654-000E3E53.txt
+m033f003  3    -      0x0005E3FF  1:0x0004E3FF  code  At_Least_One_App_Researchable  At_Least_One_App_Researchable_  regions/07-object-1/000E3654-000E3E53.txt
+m033f004  4    -      0x0005E481  1:0x0004E481  code  Tech_Is_Legal_For_Player       Tech_Is_Legal_For_Player_       regions/07-object-1/000E3654-000E3E53.txt
+m033f005  5    -      0x0005E55F  1:0x0004E55F  code  Init_Player_Tech               Init_Player_Tech_               regions/07-object-1/000E3654-000E3E53.txt

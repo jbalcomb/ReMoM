@@ -1,6 +1,6 @@
 # Crash reports and symbol resolution
 
-When ReMoM or HeMoM crashes, [STU_BRAK](../../STU/src/STU_BRAK.c) catches the
+When ReMoM or DeMoM crashes, [STU_BRAK](../../STU/src/STU_BRAK.c) catches the
 signal (`SIGFPE`, `SIGSEGV`, `SIGILL`, `SIGABRT`, `SIGBUS`) and prints a stack
 trace to stderr and the STU_LOG file *before* the process dies. Whether that
 trace shows readable function names or just hex addresses depends on how the
@@ -46,7 +46,7 @@ addresses into names.
 
 The knob is set portably in [src/CMakeLists.txt](../../src/CMakeLists.txt) via
 `set_target_properties(<tgt> PROPERTIES ENABLE_EXPORTS ON)` on both `ReMoM`
-and `HeMoM`. CMake's `ENABLE_EXPORTS`:
+and `DeMoM`. CMake's `ENABLE_EXPORTS`:
 
 - On **GNU/Clang** it passes `-rdynamic` (which the linker turns into
   `--export-dynamic`).
@@ -95,7 +95,7 @@ do this — you just want to know how to read what's there:
 
 ## Using STU_BRAK
 
-STU_BRAK is installed at process start by `ReMoM.c` and `HeMoM.c` via
+STU_BRAK is installed at process start by `ReMoM.c` and `DeMoM.c` via
 `STU_BRAK_Install()`. Nothing else you have to do — a crash just prints:
 
 ```

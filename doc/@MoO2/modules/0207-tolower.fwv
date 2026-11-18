@@ -1,0 +1,9 @@
+module_num=207
+module=tolower
+source=0207-tolower.md
+range[0]=1:0x0012E238 linear=0x0013E238 size=14
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m207f001    1    1/2    0x0013E238  1:0x0012E238  code  tolower   tolower_   regions/07-object-1/001C3654-001C3E53.txt
+m207f001_2  1    2/2    0x0013E238  1:0x0012E238  code  _tolower  _tolower_  regions/07-object-1/001C3654-001C3E53.txt

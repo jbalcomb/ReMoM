@@ -1,0 +1,28 @@
+module_num=106
+module=D:\MOX\OTHERS\GEO.C
+source=0106-geo.c.md
+range[0]=1:0x000DB4C1 linear=0x000EB4C1 size=3227
+range[1]=2:0x000323EC linear=0x001A23EC size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                        SYMBOL                                       CHUNK
+m106f001  1    -      0x000EB4C1  1:0x000DB4C1  static,code  orbit_consts                                _orbit_consts                                regions/07-object-1/00170654-00170E53.txt
+m106f002  2    -      0x000EB4DD  1:0x000DB4DD  code         Points_On_Same_Side_Of_Line                 Points_On_Same_Side_Of_Line_                 regions/07-object-1/00170654-00170E53.txt
+m106f003  3    -      0x000EB531  1:0x000DB531  code         Point_Within_D_Of_Seg                       Point_Within_D_Of_Seg_                       regions/07-object-1/00170654-00170E53.txt
+m106f004  4    -      0x000EB7C5  1:0x000DB7C5  code         Collect_Black_Holes                         Collect_Black_Holes_                         regions/07-object-1/00170654-00170E53.txt
+m106f005  5    -      0x000EB7FD  1:0x000DB7FD  code         Black_Hole_Blocks_Points                    Black_Hole_Blocks_Points_                    regions/07-object-1/00170654-00170E53.txt
+m106f006  6    -      0x000EB87D  1:0x000DB87D  code         Initialize_Black_Hole_Blocks                Initialize_Black_Hole_Blocks_                regions/07-object-1/00170E54-00171653.txt
+m106f007  7    -      0x000EB9C8  1:0x000DB9C8  code         Point_Is_In_Nebula_N                        Point_Is_In_Nebula_N_                        regions/07-object-1/00170E54-00171653.txt
+m106f008  8    -      0x000EBA3A  1:0x000DBA3A  code         Point_Is_In_Some_Nebula                     Point_Is_In_Some_Nebula_                     regions/07-object-1/00170E54-00171653.txt
+m106f009  9    -      0x000EBA7C  1:0x000DBA7C  code         Star_Is_In_Some_Nebula                      Star_Is_In_Some_Nebula_                      regions/07-object-1/00170E54-00171653.txt
+m106f010  10   -      0x000EBA96  1:0x000DBA96  code         Initialize_Star_In_Nebula_Info              Initialize_Star_In_Nebula_Info_              regions/07-object-1/00170E54-00171653.txt
+m106f011  11   -      0x000EBAC3  1:0x000DBAC3  code         Point_Is_In_Warp_Field_Interdictor_Of_Star  Point_Is_In_Warp_Field_Interdictor_Of_Star_  regions/07-object-1/00170E54-00171653.txt
+m106f012  12   -      0x000EBB0C  1:0x000DBB0C  code         Move_Player_1_Turn_To_Star                  Move_Player_1_Turn_To_Star_                  regions/07-object-1/00170E54-00171653.txt
+m106f013  13   -      0x000EBCB2  1:0x000DBCB2  code         Union_Find                                  Union_Find_                                  regions/07-object-1/00170E54-00171653.txt
+m106f014  14   -      0x000EBD80  1:0x000DBD80  code         Map_Is_Connected                            Map_Is_Connected_                            regions/07-object-1/00170E54-00171653.txt
+m106f015  15   -      0x000EBE79  1:0x000DBE79  code         Parsecs_Between_Points                      Parsecs_Between_Points_                      regions/07-object-1/00170E54-00171653.txt
+m106f016  16   -      0x000EBEB7  1:0x000DBEB7  code         Parsecs_Between_Stars                       Parsecs_Between_Stars_                       regions/07-object-1/00170E54-00171653.txt
+m106f017  17   -      0x000EBEEB  1:0x000DBEEB  code         Get_Orbit_Display_X_Y                       Get_Orbit_Display_X_Y_                       regions/07-object-1/00170E54-00171653.txt
+m106f018  18   -      0x000EBFCB  1:0x000DBFCB  code         Get_Orbit_From_X_Y                          Get_Orbit_From_X_Y_                          regions/07-object-1/00170E54-00171653.txt
+m106f019  19   -      0x000EC0DE  1:0x000DC0DE  code         Actual_Expected_Damage                      Actual_Expected_Damage_                      regions/07-object-1/00171654-00171E53.txt
+-         -    -      0x001A23EC  2:0x000323EC  static,data  _dads                                       _dads                                        -

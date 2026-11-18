@@ -92,30 +92,30 @@ struct s_RACE_TYPE _race_type_table[NUM_RACES] =
 
 
 
-// dseg:2089 00                                              cnst_ZeroString_3 db 0                  ; DATA XREF: _main+226o ...
+// dseg:2089 00                                              cnst_ZeroString_3 db 0                  ; DATA XREF: _main+226^o ...
 
-// dseg:21D9 42 61 72 62 61 72 69 61 6E 00                   cnst_Barbarian db 'Barbarian',0         ; DATA XREF: dseg:_unit_type_tableo ...
+// dseg:21D9 42 61 72 62 61 72 69 61 6E 00                   cnst_Barbarian db 'Barbarian',0         ; DATA XREF: dseg:_unit_type_table^o ...
 
-// dseg:2262 44 72 61 63 6F 6E 69 61 6E 00                   cnst_Draconian db 'Draconian',0         ; DATA XREF: dseg:_unit_type_tableo ...
+// dseg:2262 44 72 61 63 6F 6E 69 61 6E 00                   cnst_Draconian db 'Draconian',0         ; DATA XREF: dseg:_unit_type_table^o ...
 
-// dseg:2681 42 65 61 73 74 6D 65 6E 00                      cnst_Beastmen db 'Beastmen',0           ; DATA XREF: dseg:race_tableo
-// dseg:268A 44 61 72 6B 20 45 6C 66 00                      cnst_DarkElf db 'Dark Elf',0            ; DATA XREF: dseg:race_tableo
-// dseg:2693 44 77 61 72 76 65 6E 00                         cnst_Dwarven db 'Dwarven',0             ; DATA XREF: dseg:race_tableo
-// dseg:269B 47 6E 6F 6C 6C 00                               cnst_Gnoll db 'Gnoll',0                 ; DATA XREF: dseg:race_tableo
-// dseg:26A1 48 61 6C 66 6C 69 6E 67 00                      cnst_Halfling db 'Halfling',0           ; DATA XREF: dseg:race_tableo
-// dseg:26AA 48 69 67 68 20 45 6C 66 00                      cnst_HighElf db 'High Elf',0            ; DATA XREF: dseg:race_tableo
-// dseg:26B3 48 69 67 68 20 4D 65 6E 00                      cnst_HighMen db 'High Men',0            ; DATA XREF: dseg:race_tableo
-// dseg:26BC 4B 6C 61 63 6B 6F 6E 00                         cnst_Klackon db 'Klackon',0             ; DATA XREF: dseg:race_tableo
-// dseg:26C4 4C 69 7A 61 72 64 6D 61 6E 00                   cnst_Lizardman db 'Lizardman',0         ; DATA XREF: dseg:race_tableo
-// dseg:26CE 4E 6F 6D 61 64 00                               cnst_Nomad db 'Nomad',0                 ; DATA XREF: dseg:race_tableo
-// dseg:26D4 4F 72 63 00                                     cnst_Orc db 'Orc',0                     ; DATA XREF: dseg:race_tableo
-// dseg:26D8 54 72 6F 6C 6C 00                               cnst_Troll db 'Troll',0                 ; DATA XREF: dseg:race_tableo
+// dseg:2681 42 65 61 73 74 6D 65 6E 00                      cnst_Beastmen db 'Beastmen',0           ; DATA XREF: dseg:race_table^o
+// dseg:268A 44 61 72 6B 20 45 6C 66 00                      cnst_DarkElf db 'Dark Elf',0            ; DATA XREF: dseg:race_table^o
+// dseg:2693 44 77 61 72 76 65 6E 00                         cnst_Dwarven db 'Dwarven',0             ; DATA XREF: dseg:race_table^o
+// dseg:269B 47 6E 6F 6C 6C 00                               cnst_Gnoll db 'Gnoll',0                 ; DATA XREF: dseg:race_table^o
+// dseg:26A1 48 61 6C 66 6C 69 6E 67 00                      cnst_Halfling db 'Halfling',0           ; DATA XREF: dseg:race_table^o
+// dseg:26AA 48 69 67 68 20 45 6C 66 00                      cnst_HighElf db 'High Elf',0            ; DATA XREF: dseg:race_table^o
+// dseg:26B3 48 69 67 68 20 4D 65 6E 00                      cnst_HighMen db 'High Men',0            ; DATA XREF: dseg:race_table^o
+// dseg:26BC 4B 6C 61 63 6B 6F 6E 00                         cnst_Klackon db 'Klackon',0             ; DATA XREF: dseg:race_table^o
+// dseg:26C4 4C 69 7A 61 72 64 6D 61 6E 00                   cnst_Lizardman db 'Lizardman',0         ; DATA XREF: dseg:race_table^o
+// dseg:26CE 4E 6F 6D 61 64 00                               cnst_Nomad db 'Nomad',0                 ; DATA XREF: dseg:race_table^o
+// dseg:26D4 4F 72 63 00                                     cnst_Orc db 'Orc',0                     ; DATA XREF: dseg:race_table^o
+// dseg:26D8 54 72 6F 6C 6C 00                               cnst_Troll db 'Troll',0                 ; DATA XREF: dseg:race_table^o
 
-// dseg:26DE 41 72 63 61 6E 65 00                            cnst_Rlm5_Arcane db 'Arcane',0          ; DATA XREF: dseg:race_table_15o
-// dseg:26E5 4E 61 74 75 72 65 00                            cnst_Rlm0_Nature db 'Nature',0          ; DATA XREF: dseg:rtn2o
-// dseg:26EC 53 6F 72 63 65 72 79 00                         cnst_Rlm1_Sorcery db 'Sorcery',0        ; DATA XREF: dseg:rtn3o
-// dseg:26F4 43 68 61 6F 73 00                               cnst_Rlm2_Chaos db 'Chaos',0            ; DATA XREF: dseg:rtn4o
-// dseg:26FA 44 65 61 74 68 00                               cnst_Rlm4_Death db 'Death',0            ; DATA XREF: dseg:rtn6o
+// dseg:26DE 41 72 63 61 6E 65 00                            cnst_Rlm5_Arcane db 'Arcane',0          ; DATA XREF: dseg:race_table_15^o
+// dseg:26E5 4E 61 74 75 72 65 00                            cnst_Rlm0_Nature db 'Nature',0          ; DATA XREF: dseg:rtn2^o
+// dseg:26EC 53 6F 72 63 65 72 79 00                         cnst_Rlm1_Sorcery db 'Sorcery',0        ; DATA XREF: dseg:rtn3^o
+// dseg:26F4 43 68 61 6F 73 00                               cnst_Rlm2_Chaos db 'Chaos',0            ; DATA XREF: dseg:rtn4^o
+// dseg:26FA 44 65 61 74 68 00                               cnst_Rlm4_Death db 'Death',0            ; DATA XREF: dseg:rtn6^o
 
 
 
@@ -140,5 +140,5 @@ struct s_RACE_TYPE _race_type_table[NUM_RACES] =
 
 // WZD dseg:1ED6 89 20                                           STR_USW_NoRace@ dw offset cnst_ZeroString_3
 // WZD dseg:1ED8 DE 26 E5 26 EC 26 F4 26 9C 21 FA 26             STR_USW_MagicRaces@ dw offset cnst_Rlm5_Arcane, offset cnst_Rlm0_Nature, offset cnst_Rlm1_Sorcery, offset cnst_Rlm2_Chaos, offset cnst_Rlm3_Life, offset cnst_Rlm4_Death
-// WZD dseg:1ED8                                                                                         ; DATA XREF: USW_DrawView+453t ...
+// WZD dseg:1ED8                                                                                         ; DATA XREF: USW_DrawView+453vt ...
 // WZD dseg:1ED8                                                                                         ; "Life"

@@ -1,0 +1,68 @@
+module_num=130
+module=D:\MOX\TECH.C
+source=0130-tech.c.md
+range[0]=1:0x000FDB17 linear=0x0010DB17 size=7966
+range[1]=2:0x000023A0 linear=0x001723A0 size=76
+range[2]=2:0x0000C178 linear=0x0017C178 size=352
+range[3]=2:0x0003559C linear=0x001A559C size=288
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                            SYMBOL                           CHUNK
+m130f001  1    -      0x0010DB17  1:0x000FDB17  code         Print_Tech_Indent_Item          Print_Tech_Indent_Item_          regions/07-object-1/00192E54-00193653.txt
+m130f002  2    -      0x0010DB69  1:0x000FDB69  code         Tech_Select                     Tech_Select_                     regions/07-object-1/00192E54-00193653.txt
+m130f003  3    -      0x0010DBCE  1:0x000FDBCE  code         Tech_Change                     Tech_Change_                     regions/07-object-1/00192E54-00193653.txt
+m130f004  4    -      0x0010DC05  1:0x000FDC05  code         _Tech_Finished                  _Tech_Finished_                  regions/07-object-1/00192E54-00193653.txt
+m130f005  5    -      0x0010DC12  1:0x000FDC12  code         _Tech_Select                    _Tech_Select_                    regions/07-object-1/00192E54-00193653.txt
+m130f006  6    -      0x0010E4B2  1:0x000FE4B2  static,code  Draw_Tech_Select                Draw_Tech_Select_                regions/07-object-1/00193654-00193E53.txt
+m130f007  7    -      0x0010E563  1:0x000FE563  code         Draw_Little_Arrow               Draw_Little_Arrow_               regions/07-object-1/00193654-00193E53.txt
+m130f008  8    -      0x0010E6C7  1:0x000FE6C7  code         _Tech_List                      _Tech_List_                      regions/07-object-1/00193654-00193E53.txt
+m130f009  9    -      0x0010EC96  1:0x000FEC96  static,code  Draw_Tech_List                  Draw_Tech_List_                  regions/07-object-1/00193E54-00194653.txt
+m130f010  10   -      0x0010ECE2  1:0x000FECE2  static,code  Display_All_Entry_Text          Display_All_Entry_Text_          regions/07-object-1/00193E54-00194653.txt
+m130f011  11   -      0x0010ED00  1:0x000FED00  static,code  Display_Entry_Text              Display_Entry_Text_              regions/07-object-1/00193E54-00194653.txt
+m130f012  12   -      0x0010EE6F  1:0x000FEE6F  static,code  Display_Selected_Entry_Text     Display_Selected_Entry_Text_     regions/07-object-1/00193E54-00194653.txt
+m130f013  13   -      0x0010EF45  1:0x000FEF45  static,code  Set_Selected_Entry              Set_Selected_Entry_              regions/07-object-1/00193E54-00194653.txt
+m130f014  14   -      0x0010EFA9  1:0x000FEFA9  static,code  Get_Selected_Entry              Get_Selected_Entry_              regions/07-object-1/00193E54-00194653.txt
+m130f015  15   -      0x0010EFC3  1:0x000FEFC3  static,code  Init_Entry_Positions            Init_Entry_Positions_            regions/07-object-1/00193E54-00194653.txt
+m130f016  16   -      0x0010F089  1:0x000FF089  static,code  Init_Entry_Data                 Init_Entry_Data_                 regions/07-object-1/00194654-00194E53.txt
+m130f017  17   -      0x0010F409  1:0x000FF409  static,code  Setup_Entry_Buttons             Setup_Entry_Buttons_             regions/07-object-1/00194654-00194E53.txt
+m130f018  18   -      0x0010F49B  1:0x000FF49B  static,code  Get_Group_List                  Get_Group_List_                  regions/07-object-1/00194654-00194E53.txt
+m130f019  19   -      0x0010F62F  1:0x000FF62F  static,code  Draw_Application_Description    Draw_Application_Description_    regions/07-object-1/00194654-00194E53.txt
+m130f020  20   -      0x0010F772  1:0x000FF772  code         Technology_Fields_Name          Technology_Fields_Name_          regions/07-object-1/00194654-00194E53.txt
+m130f021  21   -      0x0010F7A1  1:0x000FF7A1  code         Technology_Applications_Name    Technology_Applications_Name_    regions/07-object-1/00194654-00194E53.txt
+m130f022  22   -      0x0010F85D  1:0x000FF85D  code         New_Get_Tech_Cost               New_Get_Tech_Cost_               regions/07-object-1/00194E54-00195653.txt
+m130f023  23   -      0x0010F884  1:0x000FF884  code         Save_Hyper_Tech_Values          Save_Hyper_Tech_Values_          regions/07-object-1/00194E54-00195653.txt
+m130f024  24   -      0x0010F8B7  1:0x000FF8B7  code         Restore_Hyper_Tech_Values       Restore_Hyper_Tech_Values_       regions/07-object-1/00194E54-00195653.txt
+m130f025  25   -      0x0010F8ED  1:0x000FF8ED  code         Promote_Hyper_Field_Values      Promote_Hyper_Field_Values_      regions/07-object-1/00194E54-00195653.txt
+m130f026  26   -      0x0010F919  1:0x000FF919  code         Promote_A_Hyper_Value_By_Field  Promote_A_Hyper_Value_By_Field_  regions/07-object-1/00194E54-00195653.txt
+m130f027  27   -      0x0010F93B  1:0x000FF93B  code         Get_Tech_Cost                   Get_Tech_Cost_                   regions/07-object-1/00194E54-00195653.txt
+m130f028  28   -      0x0010F94B  1:0x000FF94B  code         Sort_Tech_List_By_Cost          Sort_Tech_List_By_Cost_          regions/07-object-1/00194E54-00195653.txt
+m130f029  29   -      0x0010F9E0  1:0x000FF9E0  code         Get_Parent_Index                Get_Parent_Index_                regions/07-object-1/00194E54-00195653.txt
+m130f030  30   -      0x0010FA06  1:0x000FFA06  code         Crack_Tech_Select_List_Entry    Crack_Tech_Select_List_Entry_    regions/07-object-1/00194E54-00195653.txt
+-         -    -      0x0017C178  2:0x0000C178  data         _tech_select_lbx                _tech_select_lbx                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C184  2:0x0000C184  data         _tech_room_lbx_fmt              _tech_room_lbx_fmt               regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C193  2:0x0000C193  data         _tech_anim_lbx_fmt              _tech_anim_lbx_fmt               regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C1A2  2:0x0000C1A2  data         _research_desc_fmt              _research_desc_fmt               regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C1B5  2:0x0000C1B5  data         _tech_select_pos                _tech_select_pos                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C1D5  2:0x0000C1D5  data         _tech_change_pos                _tech_change_pos                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C1F5  2:0x0000C1F5  static,data  _tech_field_y1                  _tech_field_y1                   regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C1FD  2:0x0000C1FD  static,data  _tech_field_y2                  _tech_field_y2                   regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C205  2:0x0000C205  static,data  _app_name_y                     _app_name_y                      regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C20F  2:0x0000C20F  static,data  _list_window_x_offsets          _list_window_x_offsets           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C21F  2:0x0000C21F  data         _tech_button_pos                _tech_button_pos                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C23F  2:0x0000C23F  data         _entry_to_group                 _entry_to_group                  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C247  2:0x0000C247  data         _tech_select_colors             _tech_select_colors              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C26F  2:0x0000C26F  data         _tech_change_colors             _tech_change_colors              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C297  2:0x0000C297  data         _g_tech_list_header             _g_tech_list_header              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001A559C  2:0x0003559C  data         _saved_hyper_advanced_tech      _saved_hyper_advanced_tech       -
+-         -    -      0x001A55A4  2:0x000355A4  data         _tech_color                     _tech_color                      -
+-         -    -      0x001A55CC  2:0x000355CC  data         _tech_group_names               _tech_group_names                -
+-         -    -      0x001A5694  2:0x00035694  static,data  _g_selected_list_entry_p        _g_selected_list_entry_p         -
+-         -    -      0x001A5698  2:0x00035698  data         _g_entries_p                    _g_entries_p                     -
+-         -    -      0x001A569C  2:0x0003569C  data         _g_selected_entry_p             _g_selected_entry_p              -
+-         -    -      0x001A56A0  2:0x000356A0  static,data  _tech_field_save                _tech_field_save                 -
+-         -    -      0x001A56B2  2:0x000356B2  static,data  _g_first_tech_field             _g_first_tech_field              -
+-         -    -      0x001A56B4  2:0x000356B4  static,data  _g_scrn_x                       _g_scrn_x                        -
+-         -    -      0x001A56B6  2:0x000356B6  static,data  _g_scrn_y                       _g_scrn_y                        -
+-         -    -      0x001A56B8  2:0x000356B8  static,data  _g_last_tech_field              _g_last_tech_field               -
+-         -    -      0x001A56BA  2:0x000356BA  static,data  _g_changing_tech                _g_changing_tech                 -
+-         -    -      0x001A56BB  2:0x000356BB  static,data  _g_cursor_box_color             _g_cursor_box_color              -

@@ -38,7 +38,7 @@ char DEFAULT_FONT_FILE[] = "FONTS.LBX";
 // MoO2  Module: init  void Init_Drivers()
 void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi_driver, int MIDI_IO, int MIDI_IRQ, int MIDI_DMA, int digi_driver, int Digi_IO, int Digi_IRQ, int Digi_DMA)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* NEWCODE */  // DBG_Open_ERROR_LOG();  // from MoO1
 
@@ -73,18 +73,25 @@ void Init_Drivers(int input_type, int sound_channels, char * font_file, int midi
     }
 
     /* set the random seed for the new game path, with support for deterministic behavior */
-    if(_cmd_line_seed != 0)
-    {
-        Set_Random_Seed((uint32_t)_cmd_line_seed);
-    }
-    else
-    {
-        Randomize();
-    }
+    // if(_cmd_line_seed != 0)
+    // {
+    //     Set_Random_Seed((uint32_t)_cmd_line_seed);
+    // }
+    // else
+    // {
+    //     Randomize();
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm: call Randomize -- always, not only when no CLI seed */
+    Randomize();
+    /* CLAUDE: --seed1 (_cmd_line_seed) is layered AFTER the OG Randomize(), so it overrides the timer seed without replacing the call */
+    /* CLAUDE */  if(_cmd_line_seed != 0)
+    /* CLAUDE */  {
+    /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
+    /* CLAUDE */  }
 
     Set_Page_Off();  // initializes `current_video_page`
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 // WZD s014p02
@@ -121,13 +128,20 @@ void UU_Legacy_Startup(int input_type, int midi_driver, int sound_channels, char
     }
 
     /* set the random seed for the new game path, with support for deterministic behavior */
-    if(_cmd_line_seed != 0)
-    {
-        Set_Random_Seed((uint32_t)_cmd_line_seed);
-    }
-    else
-    {
-        Randomize();
-    }
+    // if(_cmd_line_seed != 0)
+    // {
+    //     Set_Random_Seed((uint32_t)_cmd_line_seed);
+    // }
+    // else
+    // {
+    //     Randomize();
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm: call Randomize -- always, not only when no CLI seed */
+    Randomize();
+    /* CLAUDE: --seed1 (_cmd_line_seed) is layered AFTER the OG Randomize(), so it overrides the timer seed without replacing the call */
+    /* CLAUDE */  if(_cmd_line_seed != 0)
+    /* CLAUDE */  {
+    /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
+    /* CLAUDE */  }
 
 }

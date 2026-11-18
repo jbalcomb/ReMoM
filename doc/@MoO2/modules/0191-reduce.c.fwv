@@ -1,0 +1,387 @@
+module_num=191
+module=F:\WLIBS\palette\reduce.c
+source=0191-reduce.c.md
+range[0]=1:0x00129AF3 linear=0x00139AF3 size=4587
+range[1]=2:0x00002F94 linear=0x00172F94 size=168
+range[2]=2:0x00045154 linear=0x001B5154 size=6660
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                             SYMBOL                            CHUNK
+m191f001  1    -      0x00139AF3  1:0x00129AF3  code  Reduce_Palette                   Reduce_Palette_                   regions/07-object-1/001BEE54-001BF653.txt
+m191f002  2    -      0x00139D7E  1:0x00129D7E  code  Split_Cube                       Split_Cube_                       regions/07-object-1/001BEE54-001BF653.txt
+m191f003  3    -      0x0013A4A9  1:0x0012A4A9  code  Sort_Cube_Points                 Sort_Cube_Points_                 regions/07-object-1/001BF654-001BFE53.txt
+m191f004  4    -      0x0013A711  1:0x0012A711  code  Find_Longest_Axis                Find_Longest_Axis_                regions/07-object-1/001BF654-001BFE53.txt
+m191f005  5    -      0x0013A7CC  1:0x0012A7CC  code  Initial_Cube                     Initial_Cube_                     regions/07-object-1/001BF654-001BFE53.txt
+m191f006  6    -      0x0013A84F  1:0x0012A84F  code  Find_Next_Lowest_Cube_Level      Find_Next_Lowest_Cube_Level_      regions/07-object-1/001BFE54-001C0653.txt
+m191f007  7    -      0x0013A993  1:0x0012A993  code  Shrink_Cube                      Shrink_Cube_                      regions/07-object-1/001BFE54-001C0653.txt
+m191f008  8    -      0x0013AAC1  1:0x0012AAC1  code  Clear_Reduced_Palette_Groups     Clear_Reduced_Palette_Groups_     regions/07-object-1/001BFE54-001C0653.txt
+m191f009  9    -      0x0013AAE9  1:0x0012AAE9  code  Add_Reduced_Palette_Group        Add_Reduced_Palette_Group_        regions/07-object-1/001BFE54-001C0653.txt
+m191f010  10   -      0x0013AC01  1:0x0012AC01  code  Compress_Reduced_Palette_Groups  Compress_Reduced_Palette_Groups_  regions/07-object-1/001BFE54-001C0653.txt
+-         -    -      0x001B5154  2:0x00045154  data  _color_weight                    _color_weight                     -
+-         -    -      0x001B5354  2:0x00045354  data  _cube_list                       _cube_list                        -
+-         -    -      0x001B5F54  2:0x00045F54  data  _HistPtr                         _HistPtr                          -
+-         -    -      0x001B6354  2:0x00046354  data  _reduced_palette_list            _reduced_palette_list             -
+-         -    -      0x001B6B54  2:0x00046B54  data  _ncubes                          _ncubes                           -
+-         -    -      0x001B6B56  2:0x00046B56  data  _reduced_palette_count           _reduced_palette_count            -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                   TYPE
+0x001B5154  2:0x00045154  color_weight           unsigned char[512]
+0x001B5354  2:0x00045354  cube_list              struct s_cube[256]
+0x001B5F54  2:0x00045F54  HistPtr                unsigned short[512]
+0x001B6354  2:0x00046354  reduced_palette_list   unsigned char[4][512]
+0x001B6B54  2:0x00046B54  ncubes                 unsigned short
+0x001B6B56  2:0x00046B56  reduced_palette_count  short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                             TYPE                                              CHUNK
+m191f001  0x00139AF3  1:0x00129AF3  651   21        6         0xC      -    EAX,EDX,EBX,ECX  Reduce_Palette                   void (unsigned char[4] *, short, short, short)    regions/07-object-1/001BEE54-001BF653.txt
+m191f002  0x00139D7E  1:0x00129D7E  1835  21        6         0xC      -    EAX,EDX,EBX,ECX  Split_Cube                       void (unsigned char[4] *, short, short, short)    regions/07-object-1/001BEE54-001BF653.txt
+m191f003  0x0013A4A9  1:0x0012A4A9  616   21        6         0xC      -    EAX,EDX,EBX,ECX  Sort_Cube_Points                 void (unsigned char[4] *, short *, short, short)  regions/07-object-1/001BF654-001BFE53.txt
+m191f004  0x0013A711  1:0x0012A711  187   24        9         0x18     -    EAX              Find_Longest_Axis                short (short); returns in AX                      regions/07-object-1/001BF654-001BFE53.txt
+m191f005  0x0013A7CC  1:0x0012A7CC  131   23        8         0x14     -    EAX,EDX          Initial_Cube                     void (unsigned char[4] *, short)                  regions/07-object-1/001BF654-001BFE53.txt
+m191f006  0x0013A84F  1:0x0012A84F  324   24        9         0x18     -    -                Find_Next_Lowest_Cube_Level      short (void); returns in AX                       regions/07-object-1/001BFE54-001C0653.txt
+m191f007  0x0013A993  1:0x0012A993  302   23        8         0x14     -    EAX,EDX          Shrink_Cube                      void (struct s_cube *, unsigned char[4] *)        regions/07-object-1/001BFE54-001C0653.txt
+m191f008  0x0013AAC1  1:0x0012AAC1  40    24        7         0x18     -    -                Clear_Reduced_Palette_Groups     void (void)                                       regions/07-object-1/001BFE54-001C0653.txt
+m191f009  0x0013AAE9  1:0x0012AAE9  280   24        9         0x18     -    EAX              Add_Reduced_Palette_Group        void (char *)                                     regions/07-object-1/001BFE54-001C0653.txt
+m191f010  0x0013AC01  1:0x0012AC01  221   23        8         0x14     -    EAX,EDX          Compress_Reduced_Palette_Groups  void (short, short)                               regions/07-object-1/001BFE54-001C0653.txt
+
+[Locals]
+KEY       ROUTINE                          BLOCK  LOCAL                LOCATION    TYPE
+m191f001  Reduce_Palette                   -      palette_list         [EBP-0x38]  unsigned char[4] *
+m191f001  Reduce_Palette                   -      start_color          [EBP-0x34]  short
+m191f001  Reduce_Palette                   -      total_color_count    [EBP-0x30]  short
+m191f001  Reduce_Palette                   -      reduced_color_count  [EBP-0x2C]  short
+m191f001  Reduce_Palette                   -      split_cube           [EBP-0x28]  short
+m191f001  Reduce_Palette                   -      i                    [EBP-0x24]  short
+m191f001  Reduce_Palette                   -      j                    [EBP-0x20]  short
+m191f001  Reduce_Palette                   -      axis                 [EBP-0x1C]  short
+m191f001  Reduce_Palette                   -      color_error          [EBP-0x18]  short
+m191f001  Reduce_Palette                   -      best_color           [EBP-0x14]  short
+m191f001  Reduce_Palette                   -      dr                   [EBP-0x10]  short
+m191f001  Reduce_Palette                   -      db                   [EBP-0xC]   short
+m191f001  Reduce_Palette                   -      dg                   [EBP-0x8]   short
+m191f001  Reduce_Palette                   -      best_error           [EBP-0x4]   short
+m191f002  Split_Cube                       -      palette_list         [EBP-0x28]  unsigned char[4] *
+m191f002  Split_Cube                       -      split_pos            [EBP-0x20]  short
+m191f002  Split_Cube                       -      axis                 [EBP-0xC]   short
+m191f002  Split_Cube                       -      total_color_count    [EBP-0x1C]  short
+m191f002  Split_Cube                       -      slice_point          [EBP-0x18]  unsigned short
+m191f002  Split_Cube                       -      i                    [EBP-0x14]  unsigned short
+m191f002  Split_Cube                       -      running_total        [EBP-0x10]  unsigned short
+m191f002  Split_Cube                       -      total_weight         [EBP-0x24]  int
+m191f002  Split_Cube                       -      temp_weight1         [EBP-0x8]   unsigned char
+m191f002  Split_Cube                       -      temp_weight2         [EBP-0x4]   unsigned char
+m191f003  Sort_Cube_Points                 -      palette_list         [EBP-0x1C]  unsigned char[4] *
+m191f003  Sort_Cube_Points                 -      points               [EBP-0x18]  short *
+m191f003  Sort_Cube_Points                 -      count                [EBP-0x14]  short
+m191f003  Sort_Cube_Points                 -      axis                 [EBP-0x10]  short
+m191f003  Sort_Cube_Points                 -      i                    [EBP-0xC]   short
+m191f003  Sort_Cube_Points                 -      j                    [EBP-0x8]   short
+m191f003  Sort_Cube_Points                 -      changed_flag         [EBP-0x4]   short
+m191f004  Find_Longest_Axis                -      split_pos            [EBP-0x14]  short
+m191f004  Find_Longest_Axis                -      lr                   [EBP-0xC]   unsigned char
+m191f004  Find_Longest_Axis                -      lg                   [EBP-0x4]   unsigned char
+m191f004  Find_Longest_Axis                -      lb                   [EBP-0x8]   unsigned char
+m191f005  Initial_Cube                     -      palette_list         [EBP-0xC]   unsigned char[4] *
+m191f005  Initial_Cube                     -      total_color_count    [EBP-0x8]   short
+m191f005  Initial_Cube                     -      i                    [EBP-0x4]   short
+m191f006  Find_Next_Lowest_Cube_Level      -      level                [EBP-0x20]  short
+m191f006  Find_Next_Lowest_Cube_Level      -      i                    [EBP-0x1C]  short
+m191f006  Find_Next_Lowest_Cube_Level      -      next_split           [EBP-0x18]  short
+m191f006  Find_Next_Lowest_Cube_Level      -      largest_cube         [EBP-0x14]  short
+m191f006  Find_Next_Lowest_Cube_Level      -      lr                   [EBP-0x4]   unsigned char
+m191f006  Find_Next_Lowest_Cube_Level      -      lg                   [EBP-0xC]   unsigned char
+m191f006  Find_Next_Lowest_Cube_Level      -      lb                   [EBP-0x8]   unsigned char
+m191f007  Shrink_Cube                      -      cube                 [EBP-0x1C]  struct s_cube *
+m191f007  Shrink_Cube                      -      palette_list         [EBP-0x18]  unsigned char[4] *
+m191f007  Shrink_Cube                      -      r                    [EBP-0x8]   unsigned char
+m191f007  Shrink_Cube                      -      g                    [EBP-0x4]   unsigned char
+m191f007  Shrink_Cube                      -      b                    [EBP-0xC]   unsigned char
+m191f007  Shrink_Cube                      -      i                    [EBP-0x14]  short
+m191f007  Shrink_Cube                      -      color_num            [EBP-0x10]  short
+m191f009  Add_Reduced_Palette_Group        -      picture              [EBP-0x10]  char *
+m191f009  Add_Reduced_Palette_Group        -      index                [EBP-0x4]   short
+m191f009  Add_Reduced_Palette_Group        -      i                    [EBP-0x8]   short
+m191f009  Add_Reduced_Palette_Group        -      palette_data         [EBP-0xC]   char *
+m191f010  Compress_Reduced_Palette_Groups  -      start_color          [EBP-0xC]   short
+m191f010  Compress_Reduced_Palette_Groups  -      color_count          [EBP-0x8]   short
+m191f010  Compress_Reduced_Palette_Groups  -      i                    [EBP-0x4]   short
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   array      -               0..511; of unsigned char (#5)
+31   struct     struct s_cube   9 fields, 12 bytes
+32   typedef    s_cube          struct name for struct #31 (#31)
+33   array      -               0..255; of struct s_cube (#32)
+34   array      -               0..511; of unsigned short (#7)
+35   array      -               0..3; of unsigned char (#5)
+36   array      -               0..511; of unsigned char[4] (#35)
+37   scalar     void            void 1 bytes
+38   array      -               0..3; of unsigned char (#5)
+39   pointer    -               near386; of unsigned char[4] (#38)
+40   procedure  -               near386; returns void (unsigned char[4] *, short, short, short)
+41   array      -               0..3; of unsigned char (#5)
+42   pointer    -               near386; of unsigned char[4] (#41)
+43   procedure  -               near386; returns void (unsigned char[4] *, short, short, short)
+44   array      -               0..3; of unsigned char (#5)
+45   pointer    -               near386; of unsigned char[4] (#44)
+46   pointer    -               near386; of short (#6)
+47   procedure  -               near386; returns void (unsigned char[4] *, short *, short, short)
+48   procedure  -               near386; returns short (short)
+49   array      -               0..3; of unsigned char (#5)
+50   pointer    -               near386; of unsigned char[4] (#49)
+51   procedure  -               near386; returns void (unsigned char[4] *, short)
+52   procedure  -               near386; returns short (void)
+53   pointer    -               near386; of struct s_cube (#32)
+54   array      -               0..3; of unsigned char (#5)
+55   pointer    -               near386; of unsigned char[4] (#54)
+56   procedure  -               near386; returns void (struct s_cube *, unsigned char[4] *)
+57   procedure  -               near386; returns void ()
+58   procedure  -               near386; returns void (char *)
+59   procedure  -               near386; returns void (short, short)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER  OFFSET_VALUE  TYPE           TYPE_NAME
+31        field        lower   0             short          struct s_cube
+31        field        upper   2             short          struct s_cube
+31        field        level   4             short          struct s_cube
+31        field        rmin    6             unsigned char  struct s_cube
+31        field        rmax    7             unsigned char  struct s_cube
+31        field        gmin    8             unsigned char  struct s_cube
+31        field        gmax    9             unsigned char  struct s_cube
+31        field        bmin    10            unsigned char  struct s_cube
+31        field        bmax    11            unsigned char  struct s_cube
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m191f001  53    0x00139AF3  1:0x00129AF3  0x001BF147
+m191f001  58    0x00139B14  1:0x00129B14  0x001BF168
+m191f001  59    0x00139B1F  1:0x00129B1F  0x001BF173
+m191f001  61    0x00139B29  1:0x00129B29  0x001BF17D
+m191f001  62    0x00139B34  1:0x00129B34  0x001BF188
+m191f001  64    0x00139B3E  1:0x00129B3E  0x001BF192
+m191f001  66    0x00139B4A  1:0x00129B4A  0x001BF19E
+m191f001  68    0x00139B5F  1:0x00129B5F  0x001BF1B3
+m191f001  69    0x00139B67  1:0x00129B67  0x001BF1BB
+m191f001  71    0x00139B70  1:0x00129B70  0x001BF1C4
+m191f001  73    0x00139B7C  1:0x00129B7C  0x001BF1D0
+m191f001  75    0x00139BC1  1:0x00129BC1  0x001BF215
+m191f001  76    0x00139BD5  1:0x00129BD5  0x001BF229
+m191f001  78    0x00139BDA  1:0x00129BDA  0x001BF22E
+m191f001  80    0x00139BFE  1:0x00129BFE  0x001BF252
+m191f001  81    0x00139C11  1:0x00129C11  0x001BF265
+m191f001  82    0x00139C4F  1:0x00129C4F  0x001BF2A3
+m191f001  83    0x00139C90  1:0x00129C90  0x001BF2E4
+m191f001  84    0x00139CD5  1:0x00129CD5  0x001BF329
+m191f001  86    0x00139CDA  1:0x00129CDA  0x001BF32E
+m191f001  88    0x00139CE7  1:0x00129CE7  0x001BF33B
+m191f001  89    0x00139CFA  1:0x00129CFA  0x001BF34E
+m191f001  90    0x00139D20  1:0x00129D20  0x001BF374
+m191f001  91    0x00139D48  1:0x00129D48  0x001BF39C
+m191f001  92    0x00139D70  1:0x00129D70  0x001BF3C4
+m191f001  93    0x00139D73  1:0x00129D73  0x001BF3C7
+m191f001  94    0x00139D78  1:0x00129D78  0x001BF3CC
+m191f002  96    0x00139D7E  1:0x00129D7E  0x001BF3D2
+m191f002  103   0x00139D9F  1:0x00129D9F  0x001BF3F3
+m191f002  105   0x00139DD2  1:0x00129DD2  0x001BF426
+m191f002  107   0x00139E0A  1:0x00129E0A  0x001BF45E
+m191f002  108   0x00139E6A  1:0x00129E6A  0x001BF4BE
+m191f002  109   0x00139E6F  1:0x00129E6F  0x001BF4C3
+m191f002  110   0x00139E89  1:0x00129E89  0x001BF4DD
+m191f002  111   0x00139ED0  1:0x00129ED0  0x001BF524
+m191f002  113   0x00139ED5  1:0x00129ED5  0x001BF529
+m191f002  114   0x00139F0F  1:0x00129F0F  0x001BF563
+m191f002  115   0x00139F50  1:0x00129F50  0x001BF5A4
+m191f002  116   0x00139F67  1:0x00129F67  0x001BF5BB
+m191f002  118   0x00139F78  1:0x00129F78  0x001BF5CC
+m191f002  119   0x00139F94  1:0x00129F94  0x001BF5E8
+m191f002  120   0x00139F99  1:0x00129F99  0x001BF5ED
+m191f002  122   0x00139F9E  1:0x00129F9E  0x001BF5F2
+m191f002  124   0x00139FD6  1:0x00129FD6  0x001BF62A
+m191f002  125   0x0013A036  1:0x0012A036  0x001BF68A
+m191f002  126   0x0013A03B  1:0x0012A03B  0x001BF68F
+m191f002  127   0x0013A055  1:0x0012A055  0x001BF6A9
+m191f002  128   0x0013A09C  1:0x0012A09C  0x001BF6F0
+m191f002  130   0x0013A0A1  1:0x0012A0A1  0x001BF6F5
+m191f002  131   0x0013A0DB  1:0x0012A0DB  0x001BF72F
+m191f002  132   0x0013A11C  1:0x0012A11C  0x001BF770
+m191f002  133   0x0013A133  1:0x0012A133  0x001BF787
+m191f002  135   0x0013A144  1:0x0012A144  0x001BF798
+m191f002  136   0x0013A160  1:0x0012A160  0x001BF7B4
+m191f002  137   0x0013A165  1:0x0012A165  0x001BF7B9
+m191f002  139   0x0013A16A  1:0x0012A16A  0x001BF7BE
+m191f002  141   0x0013A1A2  1:0x0012A1A2  0x001BF7F6
+m191f002  142   0x0013A202  1:0x0012A202  0x001BF856
+m191f002  143   0x0013A207  1:0x0012A207  0x001BF85B
+m191f002  144   0x0013A221  1:0x0012A221  0x001BF875
+m191f002  145   0x0013A268  1:0x0012A268  0x001BF8BC
+m191f002  147   0x0013A26D  1:0x0012A26D  0x001BF8C1
+m191f002  148   0x0013A2A7  1:0x0012A2A7  0x001BF8FB
+m191f002  149   0x0013A2E8  1:0x0012A2E8  0x001BF93C
+m191f002  150   0x0013A2FF  1:0x0012A2FF  0x001BF953
+m191f002  152   0x0013A310  1:0x0012A310  0x001BF964
+m191f002  153   0x0013A32C  1:0x0012A32C  0x001BF980
+m191f002  157   0x0013A331  1:0x0012A331  0x001BF985
+m191f002  158   0x0013A338  1:0x0012A338  0x001BF98C
+m191f002  159   0x0013A36D  1:0x0012A36D  0x001BF9C1
+m191f002  161   0x0013A385  1:0x0012A385  0x001BF9D9
+m191f002  163   0x0013A395  1:0x0012A395  0x001BF9E9
+m191f002  164   0x0013A3A6  1:0x0012A3A6  0x001BF9FA
+m191f002  166   0x0013A3BA  1:0x0012A3BA  0x001BFA0E
+m191f002  168   0x0013A3DC  1:0x0012A3DC  0x001BFA30
+m191f002  169   0x0013A3DF  1:0x0012A3DF  0x001BFA33
+m191f002  171   0x0013A3F3  1:0x0012A3F3  0x001BFA47
+m191f002  173   0x0013A3F5  1:0x0012A3F5  0x001BFA49
+m191f002  174   0x0013A40B  1:0x0012A40B  0x001BFA5F
+m191f002  175   0x0013A42C  1:0x0012A42C  0x001BFA80
+m191f002  177   0x0013A44D  1:0x0012A44D  0x001BFAA1
+m191f002  178   0x0013A45E  1:0x0012A45E  0x001BFAB2
+m191f002  180   0x0013A46C  1:0x0012A46C  0x001BFAC0
+m191f002  181   0x0013A482  1:0x0012A482  0x001BFAD6
+m191f002  183   0x0013A49C  1:0x0012A49C  0x001BFAF0
+m191f002  184   0x0013A4A3  1:0x0012A4A3  0x001BFAF7
+m191f003  186   0x0013A4A9  1:0x0012A4A9  0x001BFAFD
+m191f003  190   0x0013A4CA  1:0x0012A4CA  0x001BFB1E
+m191f003  192   0x0013A4FD  1:0x0012A4FD  0x001BFB51
+m191f003  193   0x0013A504  1:0x0012A504  0x001BFB58
+m191f003  195   0x0013A52A  1:0x0012A52A  0x001BFB7E
+m191f003  196   0x0013A531  1:0x0012A531  0x001BFB85
+m191f003  198   0x0013A54F  1:0x0012A54F  0x001BFBA3
+m191f003  200   0x0013A57F  1:0x0012A57F  0x001BFBD3
+m191f003  201   0x0013A59B  1:0x0012A59B  0x001BFBEF
+m191f003  203   0x0013A5A2  1:0x0012A5A2  0x001BFBF6
+m191f003  204   0x0013A5A4  1:0x0012A5A4  0x001BFBF8
+m191f003  205   0x0013A5A9  1:0x0012A5A9  0x001BFBFD
+m191f003  207   0x0013A5AE  1:0x0012A5AE  0x001BFC02
+m191f003  208   0x0013A5B5  1:0x0012A5B5  0x001BFC09
+m191f003  210   0x0013A5DB  1:0x0012A5DB  0x001BFC2F
+m191f003  211   0x0013A5E2  1:0x0012A5E2  0x001BFC36
+m191f003  213   0x0013A600  1:0x0012A600  0x001BFC54
+m191f003  215   0x0013A630  1:0x0012A630  0x001BFC84
+m191f003  216   0x0013A64C  1:0x0012A64C  0x001BFCA0
+m191f003  218   0x0013A653  1:0x0012A653  0x001BFCA7
+m191f003  219   0x0013A655  1:0x0012A655  0x001BFCA9
+m191f003  220   0x0013A65A  1:0x0012A65A  0x001BFCAE
+m191f003  222   0x0013A65F  1:0x0012A65F  0x001BFCB3
+m191f003  223   0x0013A666  1:0x0012A666  0x001BFCBA
+m191f003  225   0x0013A68C  1:0x0012A68C  0x001BFCE0
+m191f003  226   0x0013A693  1:0x0012A693  0x001BFCE7
+m191f003  228   0x0013A6B1  1:0x0012A6B1  0x001BFD05
+m191f003  230   0x0013A6E1  1:0x0012A6E1  0x001BFD35
+m191f003  231   0x0013A6FD  1:0x0012A6FD  0x001BFD51
+m191f003  233   0x0013A704  1:0x0012A704  0x001BFD58
+m191f003  234   0x0013A706  1:0x0012A706  0x001BFD5A
+m191f003  239   0x0013A70B  1:0x0012A70B  0x001BFD5F
+m191f004  242   0x0013A711  1:0x0012A711  0x001BFD65
+m191f004  246   0x0013A72C  1:0x0012A72C  0x001BFD80
+m191f004  247   0x0013A749  1:0x0012A749  0x001BFD9D
+m191f004  248   0x0013A766  1:0x0012A766  0x001BFDBA
+m191f004  250   0x0013A783  1:0x0012A783  0x001BFDD7
+m191f004  251   0x0013A79E  1:0x0012A79E  0x001BFDF2
+m191f004  253   0x0013A7B9  1:0x0012A7B9  0x001BFE0D
+m191f004  254   0x0013A7C0  1:0x0012A7C0  0x001BFE14
+m191f005  258   0x0013A7CC  1:0x0012A7CC  0x001BFE20
+m191f005  262   0x0013A7E9  1:0x0012A7E9  0x001BFE3D
+m191f005  264   0x0013A815  1:0x0012A815  0x001BFE69
+m191f005  265   0x0013A81E  1:0x0012A81E  0x001BFE72
+m191f005  266   0x0013A828  1:0x0012A828  0x001BFE7C
+m191f005  268   0x0013A831  1:0x0012A831  0x001BFE85
+m191f005  269   0x0013A83E  1:0x0012A83E  0x001BFE92
+m191f005  271   0x0013A847  1:0x0012A847  0x001BFE9B
+m191f006  273   0x0013A84F  1:0x0012A84F  0x001BFEA3
+m191f006  278   0x0013A867  1:0x0012A867  0x001BFEBB
+m191f006  280   0x0013A87C  1:0x0012A87C  0x001BFED0
+m191f006  281   0x0013A8A0  1:0x0012A8A0  0x001BFEF4
+m191f006  282   0x0013A8C2  1:0x0012A8C2  0x001BFF16
+m191f006  285   0x0013A8DA  1:0x0012A8DA  0x001BFF2E
+m191f006  286   0x0013A8F7  1:0x0012A8F7  0x001BFF4B
+m191f006  287   0x0013A914  1:0x0012A914  0x001BFF68
+m191f006  289   0x0013A931  1:0x0012A931  0x001BFF85
+m191f006  291   0x0013A93C  1:0x0012A93C  0x001BFF90
+m191f006  292   0x0013A944  1:0x0012A944  0x001BFF98
+m191f006  294   0x0013A94A  1:0x0012A94A  0x001BFF9E
+m191f006  296   0x0013A955  1:0x0012A955  0x001BFFA9
+m191f006  297   0x0013A95D  1:0x0012A95D  0x001BFFB1
+m191f006  299   0x0013A963  1:0x0012A963  0x001BFFB7
+m191f006  301   0x0013A96E  1:0x0012A96E  0x001BFFC2
+m191f006  302   0x0013A976  1:0x0012A976  0x001BFFCA
+m191f006  304   0x0013A97C  1:0x0012A97C  0x001BFFD0
+m191f006  306   0x0013A981  1:0x0012A981  0x001BFFD5
+m191f006  308   0x0013A987  1:0x0012A987  0x001BFFDB
+m191f007  310   0x0013A993  1:0x0012A993  0x001BFFE7
+m191f007  315   0x0013A9B0  1:0x0012A9B0  0x001C0004
+m191f007  316   0x0013A9BE  1:0x0012A9BE  0x001C0012
+m191f007  317   0x0013A9CC  1:0x0012A9CC  0x001C0020
+m191f007  319   0x0013A9DA  1:0x0012A9DA  0x001C002E
+m191f007  321   0x0013A9FC  1:0x0012A9FC  0x001C0050
+m191f007  323   0x0013AA0C  1:0x0012AA0C  0x001C0060
+m191f007  324   0x0013AA1C  1:0x0012AA1C  0x001C0070
+m191f007  325   0x0013AA30  1:0x0012AA30  0x001C0084
+m191f007  327   0x0013AA44  1:0x0012AA44  0x001C0098
+m191f007  328   0x0013AA54  1:0x0012AA54  0x001C00A8
+m191f007  329   0x0013AA68  1:0x0012AA68  0x001C00BC
+m191f007  331   0x0013AA7C  1:0x0012AA7C  0x001C00D0
+m191f007  332   0x0013AA8C  1:0x0012AA8C  0x001C00E0
+m191f007  333   0x0013AAA0  1:0x0012AAA0  0x001C00F4
+m191f007  334   0x0013AAB4  1:0x0012AAB4  0x001C0108
+m191f007  335   0x0013AAB9  1:0x0012AAB9  0x001C010D
+m191f008  340   0x0013AAC1  1:0x0012AAC1  0x001C0115
+m191f008  342   0x0013AAD9  1:0x0012AAD9  0x001C012D
+m191f008  343   0x0013AAE2  1:0x0012AAE2  0x001C0136
+m191f009  345   0x0013AAE9  1:0x0012AAE9  0x001C013D
+m191f009  350   0x0013AB04  1:0x0012AB04  0x001C0158
+m191f009  352   0x0013AB0C  1:0x0012AB0C  0x001C0160
+m191f009  353   0x0013AB1F  1:0x0012AB1F  0x001C0173
+m191f009  355   0x0013AB29  1:0x0012AB29  0x001C017D
+m191f009  358   0x0013AB48  1:0x0012AB48  0x001C019C
+m191f009  360   0x0013AB53  1:0x0012AB53  0x001C01A7
+m191f009  362   0x0013AB76  1:0x0012AB76  0x001C01CA
+m191f009  363   0x0013AB7F  1:0x0012AB7F  0x001C01D3
+m191f009  364   0x0013AB9B  1:0x0012AB9B  0x001C01EF
+m191f009  365   0x0013ABB7  1:0x0012ABB7  0x001C020B
+m191f009  366   0x0013ABD3  1:0x0012ABD3  0x001C0227
+m191f009  368   0x0013ABDA  1:0x0012ABDA  0x001C022E
+m191f009  369   0x0013ABE9  1:0x0012ABE9  0x001C023D
+m191f009  370   0x0013ABF3  1:0x0012ABF3  0x001C0247
+m191f009  371   0x0013ABF8  1:0x0012ABF8  0x001C024C
+m191f010  373   0x0013AC01  1:0x0012AC01  0x001C0255
+m191f010  377   0x0013AC1E  1:0x0012AC1E  0x001C0272
+m191f010  378   0x0013AC2A  1:0x0012AC2A  0x001C027E
+m191f010  380   0x0013AC43  1:0x0012AC43  0x001C0297
+m191f010  382   0x0013AC60  1:0x0012AC60  0x001C02B4
+m191f010  383   0x0013AC74  1:0x0012AC74  0x001C02C8
+m191f010  384   0x0013AC94  1:0x0012AC94  0x001C02E8
+m191f010  385   0x0013ACB4  1:0x0012ACB4  0x001C0308
+m191f010  386   0x0013ACD4  1:0x0012ACD4  0x001C0328
+m191f010  387   0x0013ACD6  1:0x0012ACD6  0x001C032A

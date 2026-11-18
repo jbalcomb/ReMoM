@@ -1,0 +1,10 @@
+module_num=189
+module=find386
+source=0189-find386.md
+range[0]=1:0x00129A4C linear=0x00139A4C size=130
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL           CHUNK
+m189f001  1    -      0x00139A4C  1:0x00129A4C  code  _dos_findfirst  _dos_findfirst_  regions/07-object-1/001BEE54-001BF653.txt
+m189f002  2    -      0x00139A69  1:0x00129A69  code  _dos_findnext   _dos_findnext_   regions/07-object-1/001BEE54-001BF653.txt
+m189f003  3    -      0x00139A85  1:0x00129A85  code  _dos_findclose  _dos_findclose_  regions/07-object-1/001BEE54-001BF653.txt

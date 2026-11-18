@@ -70,8 +70,8 @@ SAMB_ptr PS_product_pict_seg;
 int16_t UU_ProdScr_flag;
 int16_t production_screen_ok_button;
 int16_t production_screen_cancel_button;
-// WZD dseg:C00E 00 00                                           _ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20w ...
-// WZD dseg:C010 00 00                                           _ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window_Pup+272r ...
+// WZD dseg:C00E 00 00                                           _ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20vw ...
+// WZD dseg:C010 00 00                                           _ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window_Pup+272vr ...
 int16_t * product_fields;
 int16_t bldg_list_y1;
 int16_t bldg_list_x1;
@@ -89,34 +89,34 @@ int16_t current_item;
 int16_t popup_base_y;
 int16_t popup_base_x;
 
-// WZD dseg:BFFC 00 00                                           G_CTY_ProdUnitCount dw 0                ; DATA XREF: Production_Screen+77o ...
-// WZD dseg:BFFE 00 00                                           G_CTY_ProducableCount2 dw 0             ; DATA XREF: Production_Screen+7Bo ...
-// WZD dseg:C000 00 00                                           build_table_field_count dw 0            ; DATA XREF: Production_Screen+7Fo ...
-// WZD dseg:C002 00 00                                           PS_product_pict_seg dw 0                ; DATA XREF: Production_Screen_Allocate_First_Block+15w ...
-// WZD dseg:C004 00 00                                           UU_ProdScr_flag dw 0                    ; DATA XREF: Production_Screen+1ACw ...
-// WZD dseg:C006 00 00                                           production_screen_ok_button dw 0        ; DATA XREF: Production_Screen+3BBr ...
-// WZD dseg:C008 00 00                                           production_screen_cancel_button dw 0    ; DATA XREF: Production_Screen+261r ...
+// WZD dseg:BFFC 00 00                                           G_CTY_ProdUnitCount dw 0                ; DATA XREF: Production_Screen+77vo ...
+// WZD dseg:BFFE 00 00                                           G_CTY_ProducableCount2 dw 0             ; DATA XREF: Production_Screen+7Bvo ...
+// WZD dseg:C000 00 00                                           build_table_field_count dw 0            ; DATA XREF: Production_Screen+7Fvo ...
+// WZD dseg:C002 00 00                                           PS_product_pict_seg dw 0                ; DATA XREF: Production_Screen_Allocate_First_Block+15vw ...
+// WZD dseg:C004 00 00                                           UU_ProdScr_flag dw 0                    ; DATA XREF: Production_Screen+1ACvw ...
+// WZD dseg:C006 00 00                                           production_screen_ok_button dw 0        ; DATA XREF: Production_Screen+3BBvr ...
+// WZD dseg:C008 00 00                                           production_screen_cancel_button dw 0    ; DATA XREF: Production_Screen+261vr ...
 // WZD dseg:C00A 00                                              db    0
 // WZD dseg:C00B 00                                              db    0
 // WZD dseg:C00C 00                                              db    0
 // WZD dseg:C00D 00                                              db    0
-// WZD dseg:C00E 00 00                                           _ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20w ...
-// WZD dseg:C010 00 00                                           _ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window_Pup+272r ...
+// WZD dseg:C00E 00 00                                           _ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20vw ...
+// WZD dseg:C010 00 00                                           _ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window_Pup+272vr ...
 // WZD dseg:C012 00 00                                           product_fields dw 0
-// WZD dseg:C014 00 00                                           bldg_list_y1 dw 0            ; DATA XREF: Production_Screen+66w ...
-// WZD dseg:C016 00 00                                           bldg_list_x1 dw 0            ; DATA XREF: Production_Screen+5Dw ...
-// WZD dseg:C018 00 00                                           list_item_height dw 0            ; DATA XREF: Production_Screen+2Aw ...
-// WZD dseg:C01A 00 00                                           unit_list_y1 dw 0           ; DATA XREF: Production_Screen+57w ...
-// WZD dseg:C01C 00 00                                           unit_list_x1 dw 0           ; DATA XREF: Production_Screen+4Ew ...
-// WZD dseg:C01E 00 00                                           IDK_ProdScr_w42ABE dw 0                 ; DATA XREF: Production_Screen+42w ...
-// WZD dseg:C020 00 00                                           IDK_ProdScr_w42AC0 dw 0                 ; DATA XREF: Production_Screen+3Cw ...
-// WZD dseg:C022 00 00                                           UU_height_28 dw 0                ; DATA XREF: Production_Screen:loc_4E5F6w ...
-// WZD dseg:C024 00 00                                           UU_width_90 dw 0                ; DATA XREF: Production_Screen+30w ...
-// WZD dseg:C026 00 00                                           list_field_height dw 0              ; DATA XREF: Production_Screen+24w ...
-// WZD dseg:C028 00 00                                           list_field_width dw 0              ; DATA XREF: Production_Screen+1Ew ...
+// WZD dseg:C014 00 00                                           bldg_list_y1 dw 0            ; DATA XREF: Production_Screen+66vw ...
+// WZD dseg:C016 00 00                                           bldg_list_x1 dw 0            ; DATA XREF: Production_Screen+5Dvw ...
+// WZD dseg:C018 00 00                                           list_item_height dw 0            ; DATA XREF: Production_Screen+2Avw ...
+// WZD dseg:C01A 00 00                                           unit_list_y1 dw 0           ; DATA XREF: Production_Screen+57vw ...
+// WZD dseg:C01C 00 00                                           unit_list_x1 dw 0           ; DATA XREF: Production_Screen+4Evw ...
+// WZD dseg:C01E 00 00                                           IDK_ProdScr_w42ABE dw 0                 ; DATA XREF: Production_Screen+42vw ...
+// WZD dseg:C020 00 00                                           IDK_ProdScr_w42AC0 dw 0                 ; DATA XREF: Production_Screen+3Cvw ...
+// WZD dseg:C022 00 00                                           UU_height_28 dw 0                ; DATA XREF: Production_Screen:loc_4E5F6vw ...
+// WZD dseg:C024 00 00                                           UU_width_90 dw 0                ; DATA XREF: Production_Screen+30vw ...
+// WZD dseg:C026 00 00                                           list_field_height dw 0              ; DATA XREF: Production_Screen+24vw ...
+// WZD dseg:C028 00 00                                           list_field_width dw 0              ; DATA XREF: Production_Screen+1Evw ...
 // WZD dseg:C02A 00                                              db    0
 // WZD dseg:C02B 00                                              db    0
-// WZD dseg:C02C 00 00                                           current_item dw 0              ; DATA XREF: Production_Screen+DFw ...
+// WZD dseg:C02C 00 00                                           current_item dw 0              ; DATA XREF: Production_Screen+DFvw ...
 // WZD dseg:C02E 00                                              db    0
 // WZD dseg:C02F 00                                              db    0
 // WZD dseg:C030 00                                              db    0
@@ -129,8 +129,8 @@ int16_t popup_base_x;
 // WZD dseg:C037 00                                              db    0
 // WZD dseg:C038 00                                              db    0
 // WZD dseg:C039 00                                              db    0
-// WZD dseg:C03A 00 00                                           popup_base_y dw 0           ; DATA XREF: Production_Screen+18w ...
-// WZD dseg:C03C 00 00                                           popup_base_x dw 0           ; DATA XREF: Production_Screen+12w ...
+// WZD dseg:C03A 00 00                                           popup_base_y dw 0           ; DATA XREF: Production_Screen+18vw ...
+// WZD dseg:C03C 00 00                                           popup_base_x dw 0           ; DATA XREF: Production_Screen+12vw ...
 
 // WZD dseg:C03C                                                 ¿ END:  ovr056  Production Screen ?
 
@@ -208,16 +208,28 @@ void Production_Screen(void)
 
     uv_specials_list_count = 0;
 
-    if(product_indexes[current_item] < 100)
-    {
-        LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
-    }
-    else
+    /* CLAUDE */  /* REBUG */  // branch order 1:1 with ovr056/Production_Screen.asm 105-146 ('cmp [bx], 100 / jl' to the building case)
+    // if(product_indexes[current_item] < 100)
+    // {
+    //     LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
+    // }
+    // else
+    // {
+    //     active_product_idx = (product_indexes[current_item] - 100);
+    //     Prod_Load_Battle_Unit(active_product_idx, global_battle_unit);
+    //     Prod_Build_Specials_List(active_product_idx, prod_specials_list, &uv_specials_list_count);
+    // }
+    if(product_indexes[current_item] >= 100)
     {
         active_product_idx = (product_indexes[current_item] - 100);
         Prod_Load_Battle_Unit(active_product_idx, global_battle_unit);
         Prod_Build_Specials_List(active_product_idx, prod_specials_list, &uv_specials_list_count);
     }
+    else
+    {
+        LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
+    }
+
 
     uv_specials_list_index = 0;
     uv_multipage = ST_FALSE;
@@ -271,7 +283,7 @@ void Production_Screen(void)
 
         Production_Screen_Add_Fields();
 
-        hotkey_idx_ESC = Add_Hot_Key('\x1B');
+        hotkey_idx_ESC = Add_Hot_Key("\x1B");
 
         input_field_idx = Get_Input();
         
@@ -295,49 +307,98 @@ void Production_Screen(void)
         /*
             BEGIN:  Left-Click Build Table Left/Right
         */
+        /* CLAUDE */  /* REBUG */  // restructured 1:1 with ovr056/Production_Screen.asm 244-366: test itr < depr count first (population warning in the else), and Set_Production_Screen_Help() + leave the loop only on the matched field
+//        for(itr = 0; itr < build_table_field_count; itr++)
+//        {
+//            if(product_fields[itr] == input_field_idx)
+//            {
+//                Play_Left_Click();
+//                Deactivate_Help_List();
+//                if(itr >= G_CTY_ProducableCount2)
+//                {
+//                    // WZD dseg:2DB5 54 68 65 72 65 20 69 73 20 6E 6F 74 20 65 6E 6F+aThereIsNotEnoughPop db 'There is not enough population to support new construction.',0
+//                    stu_strcpy(GUI_String_1, "There is not enough population to support new construction.");
+//                    Warn1(GUI_String_1);
+//                    Assign_Auto_Function(Production_Screen_Draw, 1);
+//                    screen_changed = ST_TRUE;
+//                }
+//                else if((garrison_full == ST_TRUE) && (itr < G_CTY_ProdUnitCount))
+//                {
+//                    // WZD dseg:2D7D 54 68 65 72 65 20 61 72 65 20 61 6C 72 65 61 64+aThereAreAlreadyTooM db 'There are already too many units currently in the city.',0
+//                    stu_strcpy(GUI_String_1, "There are already too many units currently in the city.");
+//                    Warn1(GUI_String_1);
+//                    Assign_Auto_Function(Production_Screen_Draw, 1);
+//                    screen_changed = ST_TRUE;
+//                }
+//                else if(current_item == itr)
+//                {
+//                    /* Left-Click on what is already being produced - Close Pop-Up ~ ESC, Cancel, OK  ¿ ~== Double-Click ? */
+//                    _CITIES[_city_idx].construction = product_indexes[current_item];
+//                    leave_screen = ST_TRUE;
+//                    current_screen = scr_City_Screen;
+//                    Do_City_Calculations(_city_idx);
+//                }
+//                else
+//                {
+//                    current_item = itr;
+//                    current_index = product_indexes[current_item];
+//                    screen_changed = ST_TRUE;
+//                    Production_Screen_Allocate_First_Block();
+//                    if(current_index < 100)
+//                    {
+//                        LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
+//                    }
+//                }
+//            }
+//            Set_Production_Screen_Help();
+//        }
         for(itr = 0; itr < build_table_field_count; itr++)
         {
             if(product_fields[itr] == input_field_idx)
             {
                 Play_Left_Click();
                 Deactivate_Help_List();
-                if(itr >= G_CTY_ProducableCount2)
+                if(itr < G_CTY_ProducableCount2)
                 {
+                    if((garrison_full == ST_TRUE) && (itr < G_CTY_ProdUnitCount))
+                    {
+                        // WZD dseg:2D7D 54 68 65 72 65 20 61 72 65 20 61 6C 72 65 61 64+aThereAreAlreadyTooM db 'There are already too many units currently in the city.',0
+                        stu_strcpy(GUI_String_1, "There are already too many units currently in the city.");
+                        Warn1(GUI_String_1);
+                        Assign_Auto_Function(Production_Screen_Draw, 1);
+                        screen_changed = ST_TRUE;
+                    }
+                    else if(current_item == itr)
+                    {
+                        _CITIES[_city_idx].construction = product_indexes[current_item];
+                        leave_screen = ST_TRUE;
+                        current_screen = scr_City_Screen;
+                        Do_City_Calculations(_city_idx);
+                    }
+                    else
+                    {
+                        current_item = itr;
+                        current_index = product_indexes[current_item];
+                        screen_changed = ST_TRUE;
+                        Production_Screen_Allocate_First_Block();
+                        if(current_index < 100)
+                        {
+                            LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
+                        }
+                    }
+                }
+                else
+                {
+                    /* OGBUG  unreachable: Calculate_Product_Array ends with *depr_count = *total_count = product_count, and this loop only runs while itr < build_table_field_count (the total count), so 'itr >= G_CTY_ProducableCount2' is never true and the population warning is never shown */
                     // WZD dseg:2DB5 54 68 65 72 65 20 69 73 20 6E 6F 74 20 65 6E 6F+aThereIsNotEnoughPop db 'There is not enough population to support new construction.',0
                     stu_strcpy(GUI_String_1, "There is not enough population to support new construction.");
                     Warn1(GUI_String_1);
                     Assign_Auto_Function(Production_Screen_Draw, 1);
                     screen_changed = ST_TRUE;
                 }
-                else if((garrison_full == ST_TRUE) && (itr < G_CTY_ProdUnitCount))
-                {
-                    // WZD dseg:2D7D 54 68 65 72 65 20 61 72 65 20 61 6C 72 65 61 64+aThereAreAlreadyTooM db 'There are already too many units currently in the city.',0
-                    stu_strcpy(GUI_String_1, "There are already too many units currently in the city.");
-                    Warn1(GUI_String_1);
-                    Assign_Auto_Function(Production_Screen_Draw, 1);
-                    screen_changed = ST_TRUE;
-                }
-                else if(current_item == itr)
-                {
-                    /* Left-Click on what is already being produced - Close Pop-Up ~ ESC, Cancel, OK  ¿ ~== Double-Click ? */
-                    _CITIES[_city_idx].construction = product_indexes[current_item];
-                    leave_screen = ST_TRUE;
-                    current_screen = scr_City_Screen;
-                    Do_City_Calculations(_city_idx);
-                }
-                else
-                {
-                    current_item = itr;
-                    current_index = product_indexes[current_item];
-                    screen_changed = ST_TRUE;
-                    Production_Screen_Allocate_First_Block();
-                    if(current_index < 100)
-                    {
-                        LBX_Load_Data_Static(buildesc_lbx_file, 0, (SAMB_ptr)building_description, product_indexes[current_item], 1, 200);
-                    }
-                }
+                Set_Production_Screen_Help();
+                break;
             }
-            Set_Production_Screen_Help();
         }
         /*
             END:  Left-Click Build Table Left/Right
@@ -469,7 +530,7 @@ void Production_Screen_Add_Fields(void)
         x2 = x1 + list_field_width - 1;
         y2 = y1 + list_field_height - 1;
 
-        product_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, 0, ST_UNDEFINED);
+        product_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, "", ST_UNDEFINED);
     }
 
     UV_Clear_Specials_Fields();
@@ -491,11 +552,11 @@ void Production_Screen_Add_Fields(void)
     Set_Font_Style(4, 4, 0, 0);
     Set_Alias_Color(203);
 
-    production_screen_cancel_button = Add_Button_Field((popup_base_x + 99), (popup_base_y + 181), "Cancel", red_button_seg, 'C', ST_UNDEFINED);
+    production_screen_cancel_button = Add_Button_Field((popup_base_x + 99), (popup_base_y + 181), "Cancel", red_button_seg, "C", ST_UNDEFINED);
 
     production_screen_ok_button = INVALID_FIELD;
 
-    production_screen_ok_button = Add_Button_Field((popup_base_x + 172), (popup_base_y + 181), "OK", red_button_seg, 'O', ST_UNDEFINED);
+    production_screen_ok_button = Add_Button_Field((popup_base_x + 172), (popup_base_y + 181), "OK", red_button_seg, "O", ST_UNDEFINED);
 
 }
 
@@ -774,6 +835,7 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
     product_count = 0;
 
     _CITIES[city_idx].bldg_cnt = 0;
+    /* OGBUG  dead store: niu_bldg_built is counted below and never read */
     UU_bldg_built_count = 0;
 
     for(itr = 1; itr < NUM_BUILDINGS; itr++)
@@ -782,7 +844,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
         if(_CITIES[city_idx].bldg_status[itr] != bs_NotBuilt)
         {
 
-            _CITIES[city_idx].bldg_cnt++;
+            // _CITIES[city_idx].bldg_cnt++;
+            /* CLAUDE */  /* REBUG */  /* asm: mov al, [es:bx+s_CITY.bldg_cnt] / inc al / push ax / ... / pop ax / mov [es:bx+s_CITY.bldg_cnt], al */
+            _CITIES[city_idx].bldg_cnt = _CITIES[city_idx].bldg_cnt + 1;
         }
 
         if(_CITIES[city_idx].bldg_status[itr] == bs_Built)
@@ -805,26 +869,35 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
         {
 
             if(
-                (_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)
+                /* OGBUG  dead test: the asm zero-extends the byte (mov ah, 0) before cmp ax, 0FFFFh, so this is never false */
+                // (_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)
+                ((uint8_t)_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)  /* CLAUDE */  /* REBUG */
                 &&
-                (_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)
+                // (_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)
+                ((uint8_t)_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)  /* CLAUDE */  /* REBUG */
             )
             {
 
                 if(
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                    // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                    (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_1+bx] / mov ah, 0 (the index is zero-extended) */
                     &&
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                    // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                    (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_1] != bs_Removed)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_1+bx] / mov ah, 0 (the index is zero-extended) */
                     &&
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                    // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                    (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_2+bx] / mov ah, 0 (the index is zero-extended) */
                     &&
-                    (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
+                    // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
+                    (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_2] != bs_Removed)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_2+bx] / mov ah, 0 (the index is zero-extended) */
                 )
                 {
 
                     product_array[product_count] = (itr + 100);
 
-                    product_count++;
+                    // product_count++;
+                    /* CLAUDE */  /* REBUG */  /* asm: mov ax, product_count / inc ax / mov product_count, ax */
+                    product_count = product_count + 1;
 
                 }
 
@@ -857,35 +930,55 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
             {
 
                 if(
-                    (_unit_type_table[itr].reqd_bldg_1 != -1)
+                    /* OGBUG  dead test: the asm zero-extends the byte (mov ah, 0) before cmp ax, -1, so this is never false */
+                    // (_unit_type_table[itr].reqd_bldg_1 != -1)
+                    ((uint8_t)_unit_type_table[itr].reqd_bldg_1 != ST_UNDEFINED)  /* CLAUDE */  /* REBUG */
                     &&
-                    (_unit_type_table[itr].reqd_bldg_2 != -1)
+                    // (_unit_type_table[itr].reqd_bldg_2 != -1)
+                    ((uint8_t)_unit_type_table[itr].reqd_bldg_2 != ST_UNDEFINED)  /* CLAUDE */  /* REBUG */
                 )
                 {
 
                     if
                     (
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                        // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)
+                        (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_1] != bs_NotBuilt)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_1+bx] / mov ah, 0 (the index is zero-extended) */
                         &&
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                        // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_1] != bs_Removed)
+                        (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_1] != bs_Removed)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_1+bx] / mov ah, 0 (the index is zero-extended) */
                         &&
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                        // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)
+                        (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_2] != bs_NotBuilt)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_2+bx] / mov ah, 0 (the index is zero-extended) */
                         &&
-                        (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
+                        // (_CITIES[city_idx].bldg_status[_unit_type_table[itr].reqd_bldg_2] != bs_Removed)
+                        (_CITIES[city_idx].bldg_status[(uint8_t)_unit_type_table[itr].reqd_bldg_2] != bs_Removed)  /* CLAUDE */  /* REBUG */  /* asm: mov al, [_unit_type_table.reqd_bldg_2+bx] / mov ah, 0 (the index is zero-extended) */
                     )
                     {
 
+                        // if(
+                        //     (stu_stricmp("Spearmen", *_unit_type_table[itr].name) != 0)
+                        //     &&
+                        //     (stu_stricmp("Swordsmen", *_unit_type_table[itr].name) != 0)
+                        // )
+                        // {
+                        // 
+                        //     product_array[product_count] = (itr + 100);
+                        // 
+                        //     product_count++;
+                        // 
+                        // }
+                        /* CLAUDE */  /* REBUG */  /* asm: push offset cnst_Spearmen_2 / push name / call stricmp (name is the 1st argument); or ax, ax / jz short (to the empty then's jmp short); ... or ax, ax / jnz short $+4 / jmp short (an empty then and an else; BCC 3.1 -c bytes checked) */
                         if(
-                            (stu_stricmp("Spearmen", *_unit_type_table[itr].name) != 0)
-                            &&
-                            (stu_stricmp("Swordsmen", *_unit_type_table[itr].name) != 0)
+                            (stu_stricmp(*_unit_type_table[itr].name, "Spearmen") == 0)
+                            ||
+                            (stu_stricmp(*_unit_type_table[itr].name, "Swordsmen") == 0)
                         )
                         {
-
+                        }
+                        else
+                        {
                             product_array[product_count] = (itr + 100);
-
-                            product_count++;
-
+                            product_count = product_count + 1;
                         }
                     }
 
@@ -897,13 +990,15 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     }
 
-    *depr_count = product_count;  // BUGBUG  drake178: will be overwritten before returning
+    /* OGBUG  dead stores: *depr_count is set to the unit count here and has 2 added after the building pass, but both are overwritten by *depr_count = product_count before the return */
+    *depr_count = product_count;
 
     *unit_count = product_count;
 
     bldg_max_adj_amt = product_count;
 
     // ¿ ~== MoO2  Module: COLBLDG  Colony_Can_Build_Product_()
+    /* OGBUG  the list is capped at 20 entries and the units fill it first (at most 12; at 12 the unit pass is redone without Spearmen and Swordsmen, still capped at 12), so a city with 12 buildable units lists at most 8 buildings and the remaining buildable buildings are left off */
     for(itr = 1; ((itr < NUM_BUILDINGS) && (product_count < 20)); itr++)
     {
 
@@ -952,7 +1047,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
                             product_array[product_count] = itr;
 
-                            product_count++;
+                            // product_count++;
+                            /* CLAUDE */  /* REBUG */  /* asm: mov ax, product_count / inc ax / mov product_count, ax */
+                            product_count = product_count + 1;
 
                         }
 
@@ -975,7 +1072,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
                         product_array[product_count] = itr;
 
-                        product_count++;
+                        // product_count++;
+                        /* CLAUDE */  /* REBUG */  /* asm: mov ax, product_count / inc ax / mov product_count, ax */
+                        product_count = product_count + 1;
 
                     }
 
@@ -987,7 +1086,9 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     }
 
-    *depr_count += 2;  // BUGBUG  drake178: will be overwritten before returning
+    // *depr_count += 2;  // BUGBUG  drake178: will be overwritten before returning
+    /* CLAUDE */  /* REBUG */  /* asm: mov ax, [bx] / add ax, 2 / mov [bx], ax */
+    *depr_count = *depr_count + 2;
 
     /*
         Total Max    20
@@ -1007,9 +1108,11 @@ void Calculate_Product_Array(int16_t city_idx, int16_t * total_count, int16_t * 
 
     }
 
-    *total_count = product_count;
+    // *total_count = product_count;
 
     *depr_count = product_count;  // overrides the previous two assignments to depr_count
+
+    *total_count = product_count;  /* CLAUDE */  /* REBUG */  // asm: depr_count@ is stored before total_count@
 
 }
 
@@ -1049,37 +1152,41 @@ int16_t City_Check_Terrain_Requisite(int16_t city_idx, int16_t btp_idx)
         SETMIN(itr_wy, 0);
 
         itr_wx = (_CITIES[city_idx].wx - 1);
-        SETMIN(itr_wx, (itr_wx + WORLD_WIDTH));
+        // SETMIN(itr_wx, (itr_wx + WORLD_WIDTH));
+        /* CLAUDE */  /* REBUG */  if(itr_wx < 0) { itr_wx = (itr_wx + WORLD_WIDTH); }  /* asm: cmp [bp+itr_wx], 0 / jge / add ax, WORLD_WIDTH (SETMIN() always added 60) */
 
         for(square_wy = itr_wy; square_wy < (itr_wy + 3); square_wy++)
         {
-            if(square_wy >= WORLD_HEIGHT)
-            {
-                break;
-            }
-
-            for(itr = itr_wx; itr < (itr_wx + 3); itr++)
-            {
-                if(itr >= WORLD_WIDTH)
+            // if(square_wy >= WORLD_HEIGHT)
+            // {
+            //     break;
+            // }
+            /* CLAUDE */  /* REBUG */  if(square_wy < WORLD_HEIGHT)  /* asm loc_4F7A7: cmp [bp+square_wy], e_WORLD_HEIGHT / jge loc_4F7FC (the row increment, not out of the loop) */
+            {  /* CLAUDE */
+                for(itr = itr_wx; itr < (itr_wx + 3); itr++)
                 {
-                    square_wx = (itr - WORLD_WIDTH);
-                }
-                else
-                {
-                    square_wx = itr;
-                }
+                    if(itr >= WORLD_WIDTH)
+                    {
+                        square_wx = (itr - WORLD_WIDTH);
+                    }
+                    else
+                    {
+                        square_wx = itr;
+                    }
 
-                if(Square_Is_OceanLike(square_wx, square_wy, _CITIES[city_idx].wp) == ST_TRUE)
-                {
-                    can_build_flag = ST_TRUE;
-                    break;
+                    /* OGBUG  the break leaves only the column loop (jmp loc_4F7FC, the row increment): the row loop goes on testing the remaining rows after water is found; the result is the same, only extra Square_Is_OceanLike() calls */
+                    if(Square_Is_OceanLike(square_wx, square_wy, _CITIES[city_idx].wp) == ST_TRUE)
+                    {
+                        can_build_flag = ST_TRUE;
+                        break;
+                    }
                 }
-            }
+            }  /* CLAUDE */
 
-            if(can_build_flag != ST_FALSE)
-            {
-                break;
-            }
+            // DNE  if(can_build_flag != ST_FALSE)
+            // DNE  {
+            // DNE      break;
+            // DNE  }
         }
     }
     else
@@ -1087,7 +1194,8 @@ int16_t City_Check_Terrain_Requisite(int16_t city_idx, int16_t btp_idx)
 
         useable_city_area = Get_Useable_City_Area(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, &wx_array[0], &wy_array[0]);
 
-        for(itr = 0; itr < useable_city_area; itr++)
+        // for(itr = 0; itr < useable_city_area; itr++)
+        /* CLAUDE */  /* REBUG */  for(itr = 0; ((itr < useable_city_area) && (can_build_flag == ST_FALSE)); itr++)  /* asm loc_4F8AB: cmp itr, [bp+useable_city_area] / jge / cmp [bp+can_build_flag], e_ST_FALSE / jz */
         {
             wx = wx_array[itr];
             wy = wy_array[itr];
@@ -1099,10 +1207,10 @@ int16_t City_Check_Terrain_Requisite(int16_t city_idx, int16_t btp_idx)
                 can_build_flag = ST_TRUE;
             }
 
-            if(can_build_flag != ST_FALSE)
-            {
-                break;
-            }
+            // DNE  if(can_build_flag != ST_FALSE)
+            // DNE  {
+            // DNE      break;
+            // DNE  }
         }
     }
 

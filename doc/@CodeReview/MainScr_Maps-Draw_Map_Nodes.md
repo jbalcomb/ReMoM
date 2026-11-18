@@ -28,7 +28,7 @@ Shear_Array_Bitmap_Y(&TBL_Warp_GFX_Lines[0], Warp_Node_WorkArea);  (Column-wise 
 
 ---
 
-> **Status: DONE-DONE — behaviourally faithful 1:1, builds clean.** `MSVC-debug` compiles `FLIC_Draw.c` (`MOX.lib`) and `MainScr_Maps.c` (`momlib.lib`) with zero `/WX` warnings, and `HeMoM.exe` links them (2026-07-23). Three OG bugs (**B1**-**B3**) are preserved in `Shear_Array_Bitmap_X` and must not be "fixed". One structural-only item (**S1**) remains open by choice — see below; it does not change any pixel and is not a blocker.
+> **Status: DONE-DONE — behaviourally faithful 1:1, builds clean.** `MSVC-debug` compiles `FLIC_Draw.c` (`MOX.lib`) and `MainScr_Maps.c` (`momlib.lib`) with zero `/WX` warnings, and `DeMoM.exe` links them (2026-07-23). Three OG bugs (**B1**-**B3**) are preserved in `Shear_Array_Bitmap_X` and must not be "fixed". One structural-only item (**S1**) remains open by choice — see below; it does not change any pixel and is not a blocker.
 
 ## Source
 

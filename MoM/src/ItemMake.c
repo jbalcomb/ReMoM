@@ -8,6 +8,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -66,19 +67,19 @@ static void Item_Make_Screen_Add_Fields(void);
 int16_t Item_Make_Screen(int16_t player_idx, int16_t type);
 // WZD o115p09
 static void Create_Item_Record(int16_t item_idx);
-// WZD o115p11
+// WZD o115p10
 static int16_t Itam_Make_Screen_Build_Weapon_Powers_List(int16_t player_idx, int16_t max_cost);
+// WZD o115p11
+static void Draw_Item_Make_Spellbook_Popup(void);
 // WZD o115p12
-static void Item_Make_Screen_Spellbook_Popup_Draw(void);
+static int16_t Item_Make_Spellbook_Popup(void);
 // WZD o115p13
-static int16_t Item_Make_Screen_Spellbook_Popup(void);
-// WZD o115p14
 static int16_t Add_Item(int16_t itemdata_idx);
-// WZD o115p15
+// WZD o115p14
 int16_t Activate_Item(int16_t old_item_idx);
-// WZD o115p16
+// WZD o115p15
 static void Create_Random_Item(int16_t Power, int16_t Value);
-// WZD o115p17
+// WZD o115p16
 int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value);
 
 
@@ -426,20 +427,16 @@ static void Item_Make_Screen_Load(void)
 // drake178: sub_94FDD()
 static void Item_Make_Screen_Draw(void)
 {
-    int16_t item_cost = 0;
-    int16_t cost_reduction = 0;
-    uint8_t * colors2 = 0;
-    uint8_t * colors1 = 0;
-    int16_t x_start = 0;
-    int16_t y_start = 0;
-    int16_t itr_current_columns_counts = 0;
     int16_t attribute_column = 0;
-    int16_t itr = 0;  // _SI_
+    int16_t itr_current_columns_counts = 0;
+    int16_t y_start = 0;
+    int16_t x_start = 0;
+    uint8_t colors1[COLOR_SET_COUNT] = { 0, 177, 178, 179 };
+    uint8_t colors2[COLOR_SET_COUNT] = { 0, 31, 29, 28 };
+    int16_t cost_reduction = 0;
+    int16_t item_cost = 0;
     int16_t powers_count = 0;  // _DI_
-
-    // DEDU  why does these look like a 4-byte value? ...Long? Far Pointer?
-    colors1 = m_itemmake_colors1;
-    colors2 = m_itemmake_colors2;
+    int16_t itr = 0;  // _SI_
 
     Copy_Back_To_Off();
 
@@ -498,7 +495,7 @@ static void Item_Make_Screen_Draw(void)
 
                     Set_Outline_Color(18);
 
-                    Set_Font_Colors_15(3, &colors2[0]);
+                    Set_Font_Colors_15(3, colors2);
 
                     Set_Font_Style_Shadow_Up(3, 15, 0, 0);
 
@@ -524,7 +521,7 @@ static void Item_Make_Screen_Draw(void)
 
                     Set_Outline_Color(16);
 
-                    Set_Font_Colors_15(3, &colors2[0]);
+                    Set_Font_Colors_15(3, colors2);
 
                     Set_Font_Style_Shadow_Up(3, 15, 0, 0);
 
@@ -553,7 +550,7 @@ static void Item_Make_Screen_Draw(void)
 
                     Set_Outline_Color(18);
 
-                    Set_Font_Colors_15(3, &colors1[0]);
+                    Set_Font_Colors_15(3, colors1);
 
                     Set_Font_Style_Shadow_Up(3, 15, 0, 0);
 
@@ -594,7 +591,7 @@ static void Item_Make_Screen_Draw(void)
 
                     Set_Outline_Color(16);
 
-                    Set_Font_Colors_15(3, &colors1[0]);
+                    Set_Font_Colors_15(3, colors1);
 
                     Set_Font_Style_Shadow_Up(3, 15, 0, 0);
 
@@ -740,7 +737,10 @@ static const char * Get_Item_Name(int16_t item_idx)
 {
     char spell_name[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char * Attrib_Suffixes[7] = { 0, 0, 0, 0, 0, 0, 0 };
-    static char item_name[LEN_ITEM_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* OGBUG  item_name is a 30-byte buffer in this function's stack frame (bp-36h) and its address is the return value; the callers copy it straight away */
+    /* OGBUG  a '+N' name can be longer than the 30 bytes, e.g. "+6 Plate Mail of Invulnerability" (32 characters + NUL), and strcat() writes past item_name into temp_buffer; the 3 x Clear_Structure(0, item_name, 1, 30) below only shift the first 30 bytes, so that name becomes "Plate Mail of Invulnerabili" */
+    // static char item_name[LEN_ITEM_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */  static char item_name[(LEN_ITEM_NAME + LEN_ITEM_NAME)] = { 0 };  /* CLAUDE */  // static, so the returned pointer stays valid; oversized, so the overflowing strcat() stays inside the buffer (the trim below still works on the first LEN_ITEM_NAME bytes, as in the OG)
     char temp_buffer[LEN_TEMP_BUFFER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t Have_Prefix = 0;
     int16_t Unprocessed_Powers[NUM_ITEM_POWERS] = { 0, 0, 0, 0 };
@@ -794,6 +794,33 @@ static const char * Get_Item_Name(int16_t item_idx)
             Unprocessed_Powers[itr] = -2;
 
             Have_Prefix = ST_TRUE;
+
+            break;  /* CLAUDE */  /* REBUG */  // asm: jmp short loc_9582B (out of the loop)
+        }
+    }
+
+    /* CLAUDE */  /* REBUG */  // asm: loc_9582B ... loc_958D2  (armour '+N' prefix; not reconstructed before)
+    for(itr = 0; itr < 4; itr++)
+    {
+        if(
+            (Unprocessed_Powers[itr] > 5)
+            &&
+            (Unprocessed_Powers[itr] < 12)
+            &&
+            (item_type > it_Misc)
+        )
+        {
+            stu_strcpy(item_name, cnst_Plus_4);
+            stu_itoa((Unprocessed_Powers[itr] - 5), temp_buffer, 10);
+            stu_strcat(item_name, temp_buffer);
+            stu_strcat(item_name, cnst_Space_4);
+            stu_strcat(item_name, Get_Item_Type_Name(item_idx));
+
+            Unprocessed_Powers[itr] = -2;
+
+            Have_Prefix = ST_TRUE;
+
+            break;  // asm: jmp short loc_958D2 (out of the loop)
         }
     }
 
@@ -826,20 +853,36 @@ static const char * Get_Item_Name(int16_t item_idx)
         {
             stu_strcat(item_name, Attrib_Suffixes[_ITEM_POWERS[Highest_Index_Power].type]);
         }
-        else if(Highest_Index_Power < 65)
+        // else if(Highest_Index_Power < 65)
+        // {
+        //     stu_strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
+        // }
+        // else
+        // {
+        //     stu_strcpy(spell_name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
+        //     stu_strcat(item_name, spell_name);
+        //     if(strlen(item_name) < 26)
+        //     {
+        //         stu_strcat(item_name, cnst_TimesSign_2);
+        //         stu_itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
+        //         stu_strcat(item_name, temp_buffer);
+        //     }
+        // }
+        /* CLAUDE */  /* REBUG */  // asm: cmp [bp+Highest_Index_Power], 65; jz  -> spell charges; any other power >= 33 -> the power's name
+        else if(Highest_Index_Power == 65)
         {
-            stu_strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
-        }
-        else
-        {
-            stu_strcpy(spell_name, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
+            stu_strcpy(spell_name, spell_data_table[(uint8_t)_ITEMS[item_idx].embed_spell_idx].name);
             stu_strcat(item_name, spell_name);
             if(strlen(item_name) < 26)
             {
                 stu_strcat(item_name, cnst_TimesSign_2);
-                stu_itoa(_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
+                stu_itoa((int8_t)_ITEMS[item_idx].embed_spell_cnt, temp_buffer, 10);
                 stu_strcat(item_name, temp_buffer);
             }
+        }
+        else
+        {
+            stu_strcat(item_name, _ITEM_POWERS[Highest_Index_Power].name);
         }
 
     }
@@ -1012,24 +1055,24 @@ static void Item_Make_Screen_Add_Fields(void)
         {
 
             // selected / highlighted
-            m_itemmake_weapon_fields[itr] = Add_Button_Field((156 + (33 * (itr % 5))), (3 + (15 * (itr / 5))), empty_string__ovr115, m_itemmake_weapon_highlight_buttons_seg[itr], empty_string__ovr115[0], ST_UNDEFINED);
+            m_itemmake_weapon_fields[itr] = Add_Button_Field((156 + (33 * (itr % 5))), (3 + (15 * (itr / 5))), empty_string__ovr115, m_itemmake_weapon_highlight_buttons_seg[itr], empty_string__ovr115, ST_UNDEFINED);
 
         }
         else
         {
 
             // deselected / normal
-            m_itemmake_weapon_fields[itr] = Add_Button_Field((156 + (33 * (itr % 5))), (3 + (15 * (itr / 5))), empty_string__ovr115, m_itemmake_weapon_buttons_seg[itr], empty_string__ovr115[0], ST_UNDEFINED);
+            m_itemmake_weapon_fields[itr] = Add_Button_Field((156 + (33 * (itr % 5))), (3 + (15 * (itr / 5))), empty_string__ovr115, m_itemmake_weapon_buttons_seg[itr], empty_string__ovr115, ST_UNDEFINED);
 
         }
 
     }
 
-    m_itemmake_cost_window_ok_button = Add_Button_Field(281, 180, empty_string__ovr115, m_itemmake_cost_window_ok_seg, cnst_HOTKEY_Esc18[0], ST_UNDEFINED);
+    m_itemmake_cost_window_ok_button = Add_Button_Field(281, 180, empty_string__ovr115, m_itemmake_cost_window_ok_seg, cnst_HOTKEY_Esc18, ST_UNDEFINED);
 
-    m_itemmake_icon_window_left_arrow_button = Add_Button_Field(4, 24, empty_string__ovr115, m_itemmake_icon_window_left_arrow_seg, empty_string__ovr115[0], ST_UNDEFINED);
+    m_itemmake_icon_window_left_arrow_button = Add_Button_Field(4, 24, empty_string__ovr115, m_itemmake_icon_window_left_arrow_seg, empty_string__ovr115, ST_UNDEFINED);
 
-    m_itemmake_icon_window_right_arrow_button = Add_Button_Field(17, 24, empty_string__ovr115, m_itemmake_icon_window_right_arrow_seg, empty_string__ovr115[0], ST_UNDEFINED);
+    m_itemmake_icon_window_right_arrow_button = Add_Button_Field(17, 24, empty_string__ovr115, m_itemmake_icon_window_right_arrow_seg, empty_string__ovr115, ST_UNDEFINED);
 
     // 
     for(itr_columns = 0; itr_columns < 3; itr_columns++)
@@ -1087,7 +1130,7 @@ static void Item_Make_Screen_Add_Fields(void)
                 if(itr_columns != 2)
                 {
 
-                    m_itemmake_weapon_power_fields[(FullList_LoopVar + itr)] = Add_Hidden_Field(x_start, (y_start - 2), (x_start + 78),(y_start + 7), empty_string__ovr115[0], ST_UNDEFINED);
+                    m_itemmake_weapon_power_fields[(FullList_LoopVar + itr)] = Add_Hidden_Field(x_start, (y_start - 2), (x_start + 78),(y_start + 7), empty_string__ovr115, ST_UNDEFINED);
 
                     y_start += 11;
 
@@ -1095,7 +1138,7 @@ static void Item_Make_Screen_Add_Fields(void)
                 else
                 {
 
-                    m_itemmake_weapon_power_fields[(FullList_LoopVar + itr)] = Add_Hidden_Field(x_start, (y_start - 2), (x_start + 98),(y_start + 7), empty_string__ovr115[0], ST_UNDEFINED);
+                    m_itemmake_weapon_power_fields[(FullList_LoopVar + itr)] = Add_Hidden_Field(x_start, (y_start - 2), (x_start + 98),(y_start + 7), empty_string__ovr115, ST_UNDEFINED);
 
                     y_start += 11;
 
@@ -1141,7 +1184,8 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
     memcpy(Item_Type_Icon_Ranges, ITEM_IconRanges, (10 * sizeof(struct s_ITEM_TYPE_ICONS_ENTRY)));
     
     // MEM_Clear_Far(_ITEMS, 50);
-    memset(_ITEMS, 0, sizeof(struct s_ITEM));
+    // memset(_ITEMS, 0, sizeof(struct s_ITEM));
+    memset(&_ITEMS[MAX_ITEM_COUNT], 0, sizeof(struct s_ITEM));  /* CLAUDE */  /* REBUG */  // asm: Clear_Memory((_ITEMS + (89h*32h)), 50)
 
     if(type != 0)  /* Create Artifact */
     {
@@ -1199,6 +1243,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
     Item_Make_Screen_Add_Fields();
 
+Item_Make_Screen_Loop:  /* CLAUDE */  /* REBUG */  // asm: loc_95F5C: jmp loc_96525  (the while test)
     while(leave_screen == ST_FALSE)
     {
 
@@ -1234,7 +1279,9 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                         itr2++;
                     }
 
-                    while(_ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2++]].type == var_6)
+                    // while(_ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2++]].type == var_6)
+                    /* CLAUDE */  /* REBUG */  // asm: loc_960AB tests list[itr2], the body uses the same itr2, loc_960A8 increments it after the body
+                    while(_ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2]].type == var_6)
                     {
                     
                         if(itr_field_arrays != itr2)
@@ -1251,7 +1298,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                                     if(m_itemmake_item_powers_array[itr] == m_itemmake_weapon_type_powers_list[itr2])
                                     {
 
-                                        _ITEMS[MAX_ITEM_COUNT].Powers ^= _ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2]].powers;
+                                        _ITEMS[MAX_ITEM_COUNT].powers ^= _ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr2]].powers;
 
                                         Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1262,14 +1309,18 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                                 }
 
                             }
-                            else
-                            {
-
-                                ITEM_PwrLabel_States[itr2] = 0;
-
-                            }
+                            // else
+                            // {
+                            //
+                            //     ITEM_PwrLabel_States[itr2] = 0;
+                            //
+                            // }
+                            /* CLAUDE */  /* REBUG */  // asm: both paths reach loc_96099, which clears the label state
+                            ITEM_PwrLabel_States[itr2] = 0;
 
                         }
+
+                        itr2++;  /* CLAUDE */  /* REBUG */  // asm: loc_960A8: inc [bp+itr2]
 
                     }
 
@@ -1281,7 +1332,9 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                     if(m_itemmake_item_powers_array[itr] == m_itemmake_weapon_type_powers_list[itr_field_arrays])
                     {
 
-                        _ITEMS[MAX_ITEM_COUNT].Powers ^= m_itemmake_weapon_type_powers_list[itr_field_arrays];
+                        /* OGBUG  un-picking "Spell Charges" (power 65) by clicking it again removes the power but leaves _ITEMS[MAX_ITEM_COUNT].embed_spell_idx / embed_spell_cnt set (only the weapon-type change below clears them); Create_Item_Record() carries them over, so the finished item keeps the spell and charges while Get_Item_Cost() and Get_Item_Name() no longer count them */
+                        // _ITEMS[MAX_ITEM_COUNT].powers ^= m_itemmake_weapon_type_powers_list[itr_field_arrays];
+                        _ITEMS[MAX_ITEM_COUNT].powers ^= _ITEM_POWERS[m_itemmake_weapon_type_powers_list[itr_field_arrays]].powers;  /* CLAUDE */  /* REBUG */
 
                         Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1313,22 +1366,25 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                     if(G_Removed_Power != ST_TRUE)
                     {
 
-                        if(m_itemmake_weapon_type_powers_list[itr_field_arrays] != 65)
-                        {
-
-                            m_itemmake_item_powers_array[m_itemmake_item_powers_count] = m_itemmake_weapon_type_powers_list[itr_field_arrays];
-
-                            m_itemmake_item_powers_count++;
-
-                            TOGGLE(ITEM_PwrLabel_States[itr_field_arrays]);
-
-                        }
-                        else
+                        // if(m_itemmake_weapon_type_powers_list[itr_field_arrays] != 65)
+                        // {
+                        //
+                        //     m_itemmake_item_powers_array[m_itemmake_item_powers_count] = m_itemmake_weapon_type_powers_list[itr_field_arrays];
+                        //
+                        //     m_itemmake_item_powers_count++;
+                        //
+                        //     TOGGLE(ITEM_PwrLabel_States[itr_field_arrays]);
+                        //
+                        // }
+                        // else
+                        /* CLAUDE */  /* REBUG */  /* asm 365-367: cmp [word ptr bx], 65 / jz short loc_961CB / jmp loc_9625B - the Spell Charges block is the then-branch, the plain add is the else at loc_9625B */
+                        if(m_itemmake_weapon_type_powers_list[itr_field_arrays] == 65)
                         {
 
                             Item_Make_Screen_Build_Spell_List();
 
-                            itr2 = Item_Make_Screen_Spellbook_Popup();
+                            // itr2 = Item_Make_Spellbook_Popup();
+                            itr2 = (uint8_t)Item_Make_Spellbook_Popup();  /* CLAUDE */  /* REBUG */  // asm: returns AL; caller does mov ah, 0
 
                             if(itr2 > 0)
                             {
@@ -1356,6 +1412,17 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                             }
 
                             Assign_Auto_Function(Item_Make_Screen_Draw, 2);
+
+                        }
+                        /* CLAUDE */  /* REBUG */  /* asm loc_9625B: the else-branch */
+                        else
+                        {
+
+                            m_itemmake_item_powers_array[m_itemmake_item_powers_count] = m_itemmake_weapon_type_powers_list[itr_field_arrays];
+
+                            m_itemmake_item_powers_count++;
+
+                            TOGGLE(ITEM_PwrLabel_States[itr_field_arrays]);
 
                         }
 
@@ -1401,7 +1468,7 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                 m_itemmake_item_icon_idx = Item_Type_Icon_Ranges[weapon_type_num].start;
 
-                _ITEMS[MAX_ITEM_COUNT].icon_idx = (int8_t)m_itemmake_item_icon_idx;
+                _ITEMS[MAX_ITEM_COUNT].icon_idx = m_itemmake_item_icon_idx;
 
                 Itam_Make_Screen_Build_Weapon_Powers_List(player_idx, max_power_cost);
 
@@ -1429,13 +1496,15 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                 for(itr = 0; itr < 4; itr++)
                 {
 
-                    if(m_itemmake_item_powers_array[itr] >= 100)
-                    {
-
-                        m_itemmake_item_powers_array[itr] -= 100;
-
-                    }
-                    else
+                    // if(m_itemmake_item_powers_array[itr] >= 100)
+                    // {
+                    //
+                    //     m_itemmake_item_powers_array[itr] -= 100;
+                    //
+                    // }
+                    // else
+                    /* CLAUDE */  /* REBUG */  /* asm 548-550: cmp [m_itemmake_item_powers_array+bx], 100 / jl short loc_963A0 / jmp loc_96425 - the remove block is the then-branch, the -= 100 is the else at loc_96425 */
+                    if(m_itemmake_item_powers_array[itr] < 100)
                     {
 
                         if(m_itemmake_item_powers_array[itr] > -1)
@@ -1450,7 +1519,8 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
                             }
 
-                            _ITEMS[MAX_ITEM_COUNT].Powers ^= m_itemmake_item_powers_array[itr];
+                            // _ITEMS[MAX_ITEM_COUNT].powers ^= m_itemmake_item_powers_array[itr];
+                            _ITEMS[MAX_ITEM_COUNT].powers ^= _ITEM_POWERS[m_itemmake_item_powers_array[itr]].powers;  /* CLAUDE */  /* REBUG */
 
                             Clear_Structure(itr, (uint8_t *)&m_itemmake_item_powers_array[0], 2, 4);
 
@@ -1463,10 +1533,19 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
                         }
 
                     }
+                    /* CLAUDE */  /* REBUG */  /* asm loc_96425: the else-branch */
+                    else
+                    {
+
+                        m_itemmake_item_powers_array[itr] -= 100;
+
+                    }
 
                 }
 
                 m_itemmake_item_cost = Get_Item_Cost(MAX_ITEM_COUNT);
+
+                break;  /* CLAUDE */  /* REBUG */  // asm: jmp short loc_96451 (out of the loop)
 
             }
 
@@ -1534,33 +1613,55 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type)
 
             PageFlip_FX();
 
-            _page_flip_effect = pfe_None;
+            _page_flip_effect = pfe_Default;
 
         }
 
-        if(leave_screen != ST_FALSE)
+        // if(leave_screen != ST_FALSE)
+        // {
+        //
+        //     cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, spl_Enchant_Item);
+        //
+        //     m_itemmake_item_cost -= ((m_itemmake_item_cost * cost_reduction) / 100);
+        //
+        //     if(m_itemmake_item_powers_count == 0)
+        //     {
+        //
+        //         LBX_Load_Data_Static(message_lbx_file__ovr115, 0, (SAMB_ptr)&message[0], 1, 1, 150);
+        //
+        //         leave_screen = Confirmation_Box(message);
+        //
+        //         m_itemmake_item_cost = 0;
+        //
+        //         if(leave_screen != ST_FALSE)
+        //         {
+        //             break;
+        //         }
+        //
+        //     }
+        //
+        // }
+
+    }
+
+    /* CLAUDE */  /* REBUG */  // asm: loc_9652E follows the while test (loc_96525); a declined confirmation jumps back to loc_95F5C, the while test
+    /* OGBUG  the Artificer / Runemaster discount comes off the returned casting cost only; the item already built in _ITEMS[137] by Create_Item_Record() keeps its full cost, and Destroy_Item() pays half of that, so with both retorts (25% paid) smashing the item returns more mana than it cost */
+    cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, spl_Enchant_Item);
+
+    m_itemmake_item_cost -= ((m_itemmake_item_cost * cost_reduction) / 100);
+
+    if(m_itemmake_item_powers_count == 0)
+    {
+
+        LBX_Load_Data_Static(message_lbx_file__ovr115, 0, (SAMB_ptr)&message[0], 1, 1, 150);
+
+        leave_screen = Confirmation_Box(message);
+
+        m_itemmake_item_cost = 0;
+
+        if(leave_screen == ST_FALSE)
         {
-
-            cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, spl_Enchant_Item);
-
-            m_itemmake_item_cost -= ((m_itemmake_item_cost * cost_reduction) / 100);
-
-            if(m_itemmake_item_powers_count == 0)
-            {
-
-                LBX_Load_Data_Static(message_lbx_file__ovr115, 0, (SAMB_ptr)&message[0], 1, 1, 150);
-
-                leave_screen = Confirmation_Box(message);
-
-                m_itemmake_item_cost = 0;
-
-                if(leave_screen != ST_FALSE)
-                {
-                    break;
-                }
-
-            }
-
+            goto Item_Make_Screen_Loop;
         }
 
     }
@@ -1686,7 +1787,7 @@ static void Create_Item_Record(int16_t item_idx)
             }
             else
             {
-                _ITEMS[item_idx].Powers |= _ITEM_POWERS[m_itemmake_item_powers_array[itr]].powers;
+                _ITEMS[item_idx].powers |= _ITEM_POWERS[m_itemmake_item_powers_array[itr]].powers;
             }
         }
     }
@@ -1704,7 +1805,7 @@ static void Create_Item_Record(int16_t item_idx)
 }
 
 
-// WZD o115p11
+// WZD o115p10
 // ITEM_Get_IC_Powers()
 /*
 ; sets up the global arrays for displaying the item
@@ -1814,11 +1915,19 @@ static int16_t Itam_Make_Screen_Build_Weapon_Powers_List(int16_t player_idx, int
         if((_ITEM_POWERS[itr].item_types & m_itemmake_weapon_type_bits) > 0)
         {
 
+            /* OGBUG  ITEMPOW.LBX record 62 (Merging, realm Nature) has Books_or_Bonus 22, where every other special power (records 33-65) needs 0-7 books, so the forge offers Merging only to a wizard with 22 or more Nature spellranks */
+            // if(
+            //     (_players[player_idx].spellranks[_ITEM_POWERS[itr].magic_realm] >= _ITEM_POWERS[itr].Books_or_Bonus)
+            //     &&
+            //     _ITEM_POWERS[itr].cost <= max_power_cost
+            // )
+            /* CLAUDE */  /* REBUG */  // asm (ovr115/Itam_Make_Screen_Build_Weapon_Powers_List.asm 174-175) reads Books_or_Bonus as a byte: 'mov al, byte ptr ... / cbw'
             if(
-                (_players[player_idx].spellranks[_ITEM_POWERS[itr].magic_realm] >= _ITEM_POWERS[itr].Books_or_Bonus)
+                (_players[player_idx].spellranks[_ITEM_POWERS[itr].magic_realm] >= (int8_t)_ITEM_POWERS[itr].Books_or_Bonus)
                 &&
                 _ITEM_POWERS[itr].cost <= max_power_cost
             )
+
             {
 
                 m_itemmake_weapon_type_powers_list[power_count] = itr;
@@ -1838,8 +1947,8 @@ static int16_t Itam_Make_Screen_Build_Weapon_Powers_List(int16_t player_idx, int
 }
 
 
-// WZD o115p12
-static void Item_Make_Screen_Spellbook_Popup_Draw(void)
+// WZD o115p11
+static void Draw_Item_Make_Spellbook_Popup(void)
 {
     uint8_t colors2[5] = { 0, 0, 0, 0, 0 };
     uint8_t colors1[5] = { 0, 0, 0, 0, 0 };
@@ -1976,8 +2085,8 @@ static void Item_Make_Screen_Spellbook_Popup_Draw(void)
 }
 
 
-// WZD o115p13
-static int16_t Item_Make_Screen_Spellbook_Popup(void)
+// WZD o115p12
+static int16_t Item_Make_Spellbook_Popup(void)
 {
     char string[LEN_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t spell_fields[28] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2008,13 +2117,14 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
     word_4336C = 0;
 
-    Assign_Auto_Function(Item_Make_Screen_Spellbook_Popup_Draw, 2);
+    Assign_Auto_Function(Draw_Item_Make_Spellbook_Popup, 2);
 
-    bookmark_field = Add_Hidden_Field(187, 168, 205, 199, ST_UNDEFINED, ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    bookmark_field = Add_Hidden_Field(187, 168, 205, 199, "", ST_UNDEFINED);
 
-    foreward_field = Add_Hidden_Field((x_start + 259), (y_start + 2), (x_start + 272), (y_start + 15), (int16_t)cnst_HOTKEY_F_3[0], ST_UNDEFINED);
+    foreward_field = Add_Hidden_Field((x_start + 259), (y_start + 2), (x_start + 272), (y_start + 15), cnst_HOTKEY_F_3, ST_UNDEFINED);
 
-    backward_field = Add_Hidden_Field((x_start +  13), (y_start + 2), (x_start +  26), (y_start + 14), (int16_t)cnst_HOTKEY_B_4[0], ST_UNDEFINED);
+    backward_field = Add_Hidden_Field((x_start +  13), (y_start + 2), (x_start +  26), (y_start + 14), cnst_HOTKEY_B_4, ST_UNDEFINED);
 
     Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
 
@@ -2022,7 +2132,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
     for(itr = 0; itr < 28; itr++)
     {
 
-        spell_fields[itr] = Add_Hidden_Field((x_start + 28 + ((itr / 14) * 130)), (y_start + 7 + ((itr % 14) * 10)), (x_start + 133 + ((itr / 14) * 130)), (y_start + 16 + ((itr % 14) * 10)), (int16_t)empty_string__ovr115[0], ST_UNDEFINED);
+        spell_fields[itr] = Add_Hidden_Field((x_start + 28 + ((itr / 14) * 130)), (y_start + 7 + ((itr % 14) * 10)), (x_start + 133 + ((itr / 14) * 130)), (y_start + 16 + ((itr % 14) * 10)), empty_string__ovr115, ST_UNDEFINED);
 
     }
 
@@ -2116,7 +2226,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
                 for(itr2 = 0; itr2 < 4; itr2++)
                 {
 
-                    spell_fields[itr2] = Add_Button_Field(((itr2 * 23) + (158 + x_start) - (leave_screen * 140)), (11 + (itr * 10) + y_start + (leave_screen * 10)), empty_string__ovr115, m_itemmake_charges_segs[itr2], (int16_t)empty_string__ovr115[0], ST_UNDEFINED);
+                    spell_fields[itr2] = Add_Button_Field(((itr2 * 23) + (158 + x_start) - (leave_screen * 140)), (11 + (itr * 10) + y_start + (leave_screen * 10)), empty_string__ovr115, m_itemmake_charges_segs[itr2], empty_string__ovr115, ST_UNDEFINED);
 
                 }
 
@@ -2144,7 +2254,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
                         Set_Page_Off();
 
-                        Item_Make_Screen_Spellbook_Popup_Draw();
+                        Draw_Item_Make_Spellbook_Popup();
 
                         PageFlip_FX();
 
@@ -2163,7 +2273,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 
             Set_Page_Off();
 
-            Item_Make_Screen_Spellbook_Popup_Draw();
+            Draw_Item_Make_Spellbook_Popup();
             
             PageFlip_FX();
 
@@ -2178,7 +2288,7 @@ static int16_t Item_Make_Screen_Spellbook_Popup(void)
 }
 
 
-// WZD o115p14
+// WZD o115p13
 static int16_t Add_Item(int16_t itemdata_idx)
 {
     struct s_ITEM_DATA itemdata =
@@ -2209,7 +2319,9 @@ static int16_t Add_Item(int16_t itemdata_idx)
     int16_t item_idx = 0;
     if(itemdata_idx != ST_UNDEFINED)
     {
+        /* OGBUG  the prefab's 'in game' mark is set here and never cleared: no WIZARDS.EXE code writes _prefab_item_table except this store and Load_SAVE_GAM (Remove_Item only zeroes the record's cost, Destroy_Item sets it to -1), so a prefab item that is destroyed, sold or lost can never be generated again by Make_Item */
         _prefab_item_table[itemdata_idx] = 1;
+
         LBX_Load_Data_Static(itemdata_lbx_file__ovr115, 0, (SAMB_ptr)&itemdata, itemdata_idx, 1, 56);
         itemdata.moves *= 2;  /* convert moves to moves2 */
         memcpy(&_ITEMS[RANDOM_ITEM_IDX], &itemdata, sizeof(_ITEMS[0]));
@@ -2219,7 +2331,7 @@ static int16_t Add_Item(int16_t itemdata_idx)
 }
 
 
-// WZD o115p15
+// WZD o115p14
 /*
 ; copies the item into the first empty slot of the
 ; active part of the item table (0-131)
@@ -2253,10 +2365,9 @@ int16_t Activate_Item(int16_t old_item_idx)
 }
 
 
-// WZD o115p16
+// WZD o115p15
 /*
 ; generates a random item into index $88 (136)
-; BUG: uses an unintialized variable to set the desired amount of powers on artifact quality items
 ; WARNING: can only use stat-boosting powers
 ; WARNING: value is checked only after adding a power
 
@@ -2271,9 +2382,11 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
     int16_t not_done;
     int16_t item_power_idx;
     int16_t max_item_cost;
-    int16_t weapon_type = 0;  // BUGBUG  used before initialized
+    int16_t weapon_type;
     int16_t itr;  // _SI_
     int16_t power_ctr;  // _DI_
+
+    /* HACK */  weapon_type = Stack_Garbage();  /* CLAUDE */  // OG reads [bp+weapon_type] before it is set; see the OGBUG below
 
     memcpy(&Item_Type_Icon_Ranges, &CRP_ITEM_IconRanges_2, 40);
 
@@ -2299,8 +2412,7 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
     else
     {
         max_item_cost = 20000;
-        // ¿ ; BUG: variable not set yet ?
-        // ¿ so, always = 4 ?
+        /* OGBUG  weapon_type is tested here before it is rolled below (asm: loc_971F2 compares [bp+weapon_type]; it is first written after the Random(10) at loc_97215), so whether a Power != 1 item gets 4 or 3 powers depends on whatever an earlier call left in that stack slot, not on the item's type */
         if(
             (weapon_type < it_Axe)
             ||
@@ -2329,7 +2441,7 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
 
     _ITEMS[RANDOM_ITEM_IDX].type = (int8_t)weapon_type;
 
-    _ITEMS[RANDOM_ITEM_IDX].icon_idx = (int8_t)m_itemmake_item_icon_idx;
+    _ITEMS[RANDOM_ITEM_IDX].icon_idx = m_itemmake_item_icon_idx;
 
     // allocate for and load all of the item power data records
     _ITEM_POWERS = (struct s_ITEM_POWER * )Near_Allocate_First(2010);  // 2010 B;  67 * 30 = 2010
@@ -2388,7 +2500,7 @@ static void Create_Random_Item(int16_t Power, int16_t Value)
 }
 
 
-// WZD o115p17
+// WZD o115p16
 /*
 
 int16_t Power           {0,1,2}
@@ -2480,7 +2592,8 @@ int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value)
             ((Value / 2) > itemdata.cost)
         )
         {
-            if(Value == 0)
+            // if(Value == 0)
+            if(Value != 0)  /* CLAUDE */  /* REBUG */  // asm: cmp [bp+Value], 0; jz -> keep; mov item_idx, -1
             {
                 item_idx = ST_UNDEFINED;
             }

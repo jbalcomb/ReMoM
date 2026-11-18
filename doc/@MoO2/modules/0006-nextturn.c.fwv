@@ -1,0 +1,14 @@
+module_num=6
+module=L:\MOX\NEXTTURN.C
+source=0006-nextturn.c.md
+range[0]=1:0x000036B3 linear=0x000136B3 size=903
+range[1]=2:0x000009C0 linear=0x001709C0 size=28
+range[2]=2:0x000058A8 linear=0x001758A8 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME            SYMBOL           CHUNK
+m006f001  1    -      0x000136B3  1:0x000036B3  code         Next_Turn_Calc  Next_Turn_Calc_  regions/07-object-1/00098654-00098E53.txt
+m006f002  2    -      0x00013822  1:0x00003822  code         Do_Autosave     Do_Autosave_     regions/07-object-1/00098E54-00099653.txt
+m006f003  3    -      0x00013870  1:0x00003870  code         Next_Turn       Next_Turn_       regions/07-object-1/00098E54-00099653.txt
+m006f004  4    -      0x000139E8  1:0x000039E8  static,code  Get_Winner      Get_Winner_      regions/07-object-1/00098E54-00099653.txt
+-         -    -      0x001758A8  2:0x000058A8  data         _caveman        _caveman         regions/08-object-2/001F3E54-001F4653.txt

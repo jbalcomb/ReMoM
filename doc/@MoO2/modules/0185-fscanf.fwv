@@ -1,0 +1,11 @@
+module_num=185
+module=fscanf
+source=0185-fscanf.md
+range[0]=1:0x00128E12 linear=0x00138E12 size=164
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m185f001  1    -      0x00138E12  1:0x00128E12  static,code  cget_file    cget_file_    regions/07-object-1/001BDE54-001BE653.txt
+m185f002  2    -      0x00138E66  1:0x00128E66  static,code  uncget_file  uncget_file_  regions/07-object-1/001BDE54-001BE653.txt
+m185f003  3    -      0x00138E6E  1:0x00128E6E  code         vfscanf      vfscanf_      regions/07-object-1/001BDE54-001BE653.txt
+m185f004  4    -      0x00138E95  1:0x00128E95  code         fscanf       fscanf_       regions/07-object-1/001BDE54-001BE653.txt

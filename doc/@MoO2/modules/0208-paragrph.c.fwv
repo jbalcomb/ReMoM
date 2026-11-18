@@ -1,0 +1,351 @@
+module_num=208
+module=F:\WLIBS\fonts\paragrph.c
+source=0208-paragrph.c.md
+range[0]=1:0x0012E246 linear=0x0013E246 size=3091
+range[1]=2:0x0000C9EC linear=0x0017C9EC size=4
+range[2]=2:0x00048AF4 linear=0x001B8AF4 size=836
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                             SYMBOL                            CHUNK
+m208f001  1    -      0x0013E246  1:0x0012E246  code  Print_Paragraph                  Print_Paragraph_                  regions/07-object-1/001C3654-001C3E53.txt
+m208f002  2    -      0x0013E47F  1:0x0012E47F  code  Mark_Paragraph                   Mark_Paragraph_                   regions/07-object-1/001C3654-001C3E53.txt
+m208f003  3    -      0x0013E87F  1:0x0012E87F  code  Get_Paragraph_Max_Height         Get_Paragraph_Max_Height_         regions/07-object-1/001C3E54-001C4653.txt
+m208f004  4    -      0x0013E8FA  1:0x0012E8FA  code  Get_Paragraph_Max_Width          Get_Paragraph_Max_Width_          regions/07-object-1/001C3E54-001C4653.txt
+m208f005  5    -      0x0013EA9E  1:0x0012EA9E  code  Reset_Paragraph_Exclusions       Reset_Paragraph_Exclusions_       regions/07-object-1/001C3E54-001C4653.txt
+m208f006  6    -      0x0013EAC6  1:0x0012EAC6  code  Set_Paragraph_Exclusion_Area     Set_Paragraph_Exclusion_Area_     regions/07-object-1/001C3E54-001C4653.txt
+m208f007  7    -      0x0013EB55  1:0x0012EB55  code  Set_Paragraph_Exclusion_Picture  Set_Paragraph_Exclusion_Picture_  regions/07-object-1/001C3E54-001C4653.txt
+m208f008  8    -      0x0013EBFE  1:0x0012EBFE  code  Remove_Paragraph_Marks           Remove_Paragraph_Marks_           regions/07-object-1/001C3E54-001C4653.txt
+m208f009  9    -      0x0013EC54  1:0x0012EC54  code  Print_Paragraph_To_Bitmap        Print_Paragraph_To_Bitmap_        regions/07-object-1/001C3E54-001C4653.txt
+-         -    -      0x0017C9EC  2:0x0000C9EC  data  _loaded_paragraph_space_flag     _loaded_paragraph_space_flag      regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017C9EE  2:0x0000C9EE  data  _exclusion_count                 _exclusion_count                  regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x001B8AF4  2:0x00048AF4  data  _exclusion_area_x1               _exclusion_area_x1                -
+-         -    -      0x001B8AFC  2:0x00048AFC  data  _exclusion_area_x2               _exclusion_area_x2                -
+-         -    -      0x001B8B04  2:0x00048B04  data  _exclusion_area_y1               _exclusion_area_y1                -
+-         -    -      0x001B8B0C  2:0x00048B0C  data  _exclusion_area_y2               _exclusion_area_y2                -
+-         -    -      0x001B8B14  2:0x00048B14  data  _paragraph_line_y_start          _paragraph_line_y_start           -
+-         -    -      0x001B8BDC  2:0x00048BDC  data  _paragraph_line_x_start          _paragraph_line_x_start           -
+-         -    -      0x001B8CA4  2:0x00048CA4  data  _paragraph_line_offset           _paragraph_line_offset            -
+-         -    -      0x001B8D6C  2:0x00048D6C  data  _paragraph_line_x_end            _paragraph_line_x_end             -
+-         -    -      0x001B8E34  2:0x00048E34  data  _paragraph_max_lines             _paragraph_max_lines              -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                         TYPE
+0x001B8AF4  2:0x00048AF4  exclusion_area_x1            short[4]
+0x001B8AFC  2:0x00048AFC  exclusion_area_x2            short[4]
+0x001B8B04  2:0x00048B04  exclusion_area_y1            short[4]
+0x001B8B0C  2:0x00048B0C  exclusion_area_y2            short[4]
+0x001B8B14  2:0x00048B14  paragraph_line_y_start       short[100]
+0x001B8BDC  2:0x00048BDC  paragraph_line_x_start       short[100]
+0x001B8CA4  2:0x00048CA4  paragraph_line_offset        short[100]
+0x001B8D6C  2:0x00048D6C  paragraph_line_x_end         short[100]
+0x0017C9EC  2:0x0000C9EC  loaded_paragraph_space_flag  short
+0x001B8E34  2:0x00048E34  paragraph_max_lines          short
+0x0017C9EE  2:0x0000C9EE  exclusion_count              short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                             TYPE                                               CHUNK
+m208f001  0x0013E246  1:0x0012E246  569   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Paragraph                  void (short, short, short, char *, short)          regions/07-object-1/001C3654-001C3E53.txt
+m208f002  0x0013E47F  1:0x0012E47F  1024  21        6         0xC      -    EAX,EDX,EBX,ECX  Mark_Paragraph                   int (short, short, short, char *); returns in EAX  regions/07-object-1/001C3654-001C3E53.txt
+m208f003  0x0013E87F  1:0x0012E87F  123   23        8         0x14     -    EAX,EDX          Get_Paragraph_Max_Height         short (short, char *); returns in AX               regions/07-object-1/001C3E54-001C4653.txt
+m208f004  0x0013E8FA  1:0x0012E8FA  420   22        7         0x10     -    EAX,EDX,EBX      Get_Paragraph_Max_Width          short (short, char *, short); returns in AX        regions/07-object-1/001C3E54-001C4653.txt
+m208f005  0x0013EA9E  1:0x0012EA9E  40    24        7         0x18     -    -                Reset_Paragraph_Exclusions       void (void)                                        regions/07-object-1/001C3E54-001C4653.txt
+m208f006  0x0013EAC6  1:0x0012EAC6  143   21        6         0xC      -    EAX,EDX,EBX,ECX  Set_Paragraph_Exclusion_Area     void (short, short, short, short)                  regions/07-object-1/001C3E54-001C4653.txt
+m208f007  0x0013EB55  1:0x0012EB55  169   22        7         0x10     -    EAX,EDX,EBX      Set_Paragraph_Exclusion_Picture  void (short, short, void *)                        regions/07-object-1/001C3E54-001C4653.txt
+m208f008  0x0013EBFE  1:0x0012EBFE  86    24        9         0x18     -    EAX              Remove_Paragraph_Marks           void (char *)                                      regions/07-object-1/001C3E54-001C4653.txt
+m208f009  0x0013EC54  1:0x0012EC54  517   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Paragraph_To_Bitmap        void (short, short, short, char *, short, void *)  regions/07-object-1/001C3E54-001C4653.txt
+
+[Locals]
+KEY       ROUTINE                          BLOCK  LOCAL               LOCATION    TYPE
+m208f001  Print_Paragraph                  -      x                   [EBP-0xC]   short
+m208f001  Print_Paragraph                  -      y                   [EBP-0x10]  short
+m208f001  Print_Paragraph                  -      max_width           [EBP-0x8]   short
+m208f001  Print_Paragraph                  -      string              [EBP-0x14]  char *
+m208f001  Print_Paragraph                  -      print_type          [EBP+0x10]  short
+m208f001  Print_Paragraph                  -      i                   [EBP-0x4]   short
+m208f002  Mark_Paragraph                   -      x                   [EBP-0x58]  short
+m208f002  Mark_Paragraph                   -      y                   [EBP-0x4C]  short
+m208f002  Mark_Paragraph                   -      full_width          [EBP-0x54]  short
+m208f002  Mark_Paragraph                   -      string              [EBP-0x68]  char *
+m208f002  Mark_Paragraph                   -      error               [EBP-0x3C]  short
+m208f002  Mark_Paragraph                   -      str_ptr             [EBP-0x38]  short
+m208f002  Mark_Paragraph                   -      font_height         [EBP-0x50]  short
+m208f002  Mark_Paragraph                   -      i                   [EBP-0x40]  short
+m208f002  Mark_Paragraph                   -      spacing             [EBP-0x48]  short
+m208f002  Mark_Paragraph                   -      line_feed           [EBP-0x44]  short
+m208f002  Mark_Paragraph                   -      line_num            [EBP-0xC]   short
+m208f002  Mark_Paragraph                   -      terminated_flag     [EBP-0x8]   short
+m208f002  Mark_Paragraph                   -      xmin                [EBP-0x4]   short
+m208f002  Mark_Paragraph                   -      ypos                [EBP-0x34]  short
+m208f002  Mark_Paragraph                   -      xmax                [EBP-0x30]  short
+m208f002  Mark_Paragraph                   -      skip_flag           [EBP-0x2C]  short
+m208f002  Mark_Paragraph                   -      blank_pos           [EBP-0x28]  short
+m208f002  Mark_Paragraph                   -      temp_ptr            [EBP-0x24]  short
+m208f002  Mark_Paragraph                   -      character           [EBP-0x20]  short
+m208f002  Mark_Paragraph                   -      tab                 [EBP-0x1C]  short
+m208f002  Mark_Paragraph                   -      max_width           [EBP-0x18]  short
+m208f002  Mark_Paragraph                   -      x_override          [EBP-0x14]  short
+m208f002  Mark_Paragraph                   -      pseg                [EBP-0x10]  short
+m208f002  Mark_Paragraph                   -      string_widths       [EBP-0x5C]  unsigned char *
+m208f002  Mark_Paragraph                   -      buffer              [EBP-0x64]  char[4]
+m208f003  Get_Paragraph_Max_Height         -      max_width           [EBP-0x1C]  short
+m208f003  Get_Paragraph_Max_Height         -      string              [EBP-0x20]  char *
+m208f003  Get_Paragraph_Max_Height         -      line_feed           [EBP-0x18]  short
+m208f003  Get_Paragraph_Max_Height         -      font_height         [EBP-0x14]  short
+m208f003  Get_Paragraph_Max_Height         -      height              [EBP-0x10]  short
+m208f003  Get_Paragraph_Max_Height         -      i                   [EBP-0xC]   short
+m208f003  Get_Paragraph_Max_Height         -      ymax                [EBP-0x8]   short
+m208f004  Get_Paragraph_Max_Width          -      max_width           [EBP-0x34]  short
+m208f004  Get_Paragraph_Max_Width          -      string              [EBP-0x38]  char *
+m208f004  Get_Paragraph_Max_Width          -      print_type          [EBP-0x30]  short
+m208f004  Get_Paragraph_Max_Width          -      width               [EBP-0x2C]  short
+m208f004  Get_Paragraph_Max_Width          -      xmax                [EBP-0x28]  short
+m208f004  Get_Paragraph_Max_Width          -      i                   [EBP-0x24]  short
+m208f004  Get_Paragraph_Max_Width          -      x1                  [EBP-0x20]  short
+m208f004  Get_Paragraph_Max_Width          -      x2                  [EBP-0x1C]  short
+m208f004  Get_Paragraph_Max_Width          -      xc                  [EBP-0x18]  short
+m208f004  Get_Paragraph_Max_Width          -      string_width        [EBP-0x14]  short
+m208f004  Get_Paragraph_Max_Width          -      x1min               [EBP-0x10]  short
+m208f004  Get_Paragraph_Max_Width          -      x2max               [EBP-0xC]   short
+m208f004  Get_Paragraph_Max_Width          -      horizontal_spacing  [EBP-0x8]   short
+m208f006  Set_Paragraph_Exclusion_Area     -      x1                  [EBP-0x10]  short
+m208f006  Set_Paragraph_Exclusion_Area     -      y1                  [EBP-0xC]   short
+m208f006  Set_Paragraph_Exclusion_Area     -      x2                  [EBP-0x8]   short
+m208f006  Set_Paragraph_Exclusion_Area     -      y2                  [EBP-0x4]   short
+m208f007  Set_Paragraph_Exclusion_Picture  -      x1                  [EBP-0xC]   short
+m208f007  Set_Paragraph_Exclusion_Picture  -      y1                  [EBP-0x10]  short
+m208f007  Set_Paragraph_Exclusion_Picture  -      picture             [EBP-0x14]  void *
+m208f007  Set_Paragraph_Exclusion_Picture  -      ddx                 [EBP-0x8]   short
+m208f007  Set_Paragraph_Exclusion_Picture  -      ddy                 [EBP-0x4]   short
+m208f008  Remove_Paragraph_Marks           -      string              [EBP-0x8]   char *
+m208f008  Remove_Paragraph_Marks           -      i                   [EBP-0x4]   int
+m208f009  Print_Paragraph_To_Bitmap        -      x                   [EBP-0x4]   short
+m208f009  Print_Paragraph_To_Bitmap        -      y                   [EBP-0xC]   short
+m208f009  Print_Paragraph_To_Bitmap        -      max_width           [EBP-0x8]   short
+m208f009  Print_Paragraph_To_Bitmap        -      string              [EBP-0x10]  char *
+m208f009  Print_Paragraph_To_Bitmap        -      print_type          [EBP+0x10]  short
+m208f009  Print_Paragraph_To_Bitmap        -      bitmap_seg          [EBP+0x14]  void *
+m208f009  Print_Paragraph_To_Bitmap        -      i                   [EBP-0x14]  int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    BYTE            name for unsigned char (#5)
+13   typedef    SBYTE           name for signed char (#4)
+14   typedef    UBYTE           name for unsigned char (#5)
+15   typedef    WORD            name for unsigned short (#7)
+16   typedef    SWORD           name for short (#6)
+17   typedef    UWORD           name for unsigned short (#7)
+18   typedef    DWORD           name for unsigned int (#9)
+19   typedef    SDWORD          name for int (#8)
+20   typedef    UDWORD          name for unsigned int (#9)
+21   typedef    BOOL            name for unsigned char (#5)
+22   typedef    SampleHandle    name for int (#8)
+23   array      -               0..3; of short (#6)
+24   array      -               0..3; of short (#6)
+25   array      -               0..3; of short (#6)
+26   array      -               0..3; of short (#6)
+27   array      -               0..99; of short (#6)
+28   array      -               0..99; of short (#6)
+29   array      -               0..99; of short (#6)
+30   array      -               0..99; of short (#6)
+31   scalar     void            void 1 bytes
+32   pointer    -               near386; of char (#10)
+33   procedure  -               near386; returns void (short, short, short, char *, short)
+34   procedure  -               near386; returns int (short, short, short, char *)
+35   pointer    -               near386; of unsigned char (#5)
+36   array      -               0..3; of char (#10)
+37   procedure  -               near386; returns short (short, char *)
+38   procedure  -               near386; returns short (short, char *, short)
+39   procedure  -               near386; returns void ()
+40   procedure  -               near386; returns void (short, short, short, short)
+41   pointer    -               near386; of void (#31)
+42   procedure  -               near386; returns void (short, short, void *)
+43   procedure  -               near386; returns void (char *)
+44   procedure  -               near386; returns void (short, short, short, char *, short, void *)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m208f001  30    0x0013E246  1:0x0012E246  0x001C389A
+m208f001  34    0x0013E267  1:0x0012E267  0x001C38BB
+m208f001  36    0x0013E27B  1:0x0012E27B  0x001C38CF
+m208f001  38    0x0013E29B  1:0x0012E29B  0x001C38EF
+m208f001  40    0x0013E2D6  1:0x0012E2D6  0x001C392A
+m208f001  42    0x0013E2F7  1:0x0012E2F7  0x001C394B
+m208f001  44    0x0013E32C  1:0x0012E32C  0x001C3980
+m208f001  45    0x0013E331  1:0x0012E331  0x001C3985
+m208f001  47    0x0013E366  1:0x0012E366  0x001C39BA
+m208f001  48    0x0013E36B  1:0x0012E36B  0x001C39BF
+m208f001  50    0x0013E3BD  1:0x0012E3BD  0x001C3A11
+m208f001  51    0x0013E3C2  1:0x0012E3C2  0x001C3A16
+m208f001  52    0x0013E3D3  1:0x0012E3D3  0x001C3A27
+m208f001  55    0x0013E42A  1:0x0012E42A  0x001C3A7E
+m208f001  56    0x0013E42C  1:0x0012E42C  0x001C3A80
+m208f001  61    0x0013E461  1:0x0012E461  0x001C3AB5
+m208f001  63    0x0013E466  1:0x0012E466  0x001C3ABA
+m208f001  65    0x0013E46E  1:0x0012E46E  0x001C3AC2
+m208f001  66    0x0013E477  1:0x0012E477  0x001C3ACB
+m208f002  68    0x0013E47F  1:0x0012E47F  0x001C3AD3
+m208f002  76    0x0013E4A0  1:0x0012E4A0  0x001C3AF4
+m208f002  78    0x0013E4A7  1:0x0012E4A7  0x001C3AFB
+m208f002  79    0x0013E4B0  1:0x0012E4B0  0x001C3B04
+m208f002  81    0x0013E4B7  1:0x0012E4B7  0x001C3B0B
+m208f002  82    0x0013E4BE  1:0x0012E4BE  0x001C3B12
+m208f002  83    0x0013E4C7  1:0x0012E4C7  0x001C3B1B
+m208f002  84    0x0013E4D0  1:0x0012E4D0  0x001C3B24
+m208f002  86    0x0013E4D9  1:0x0012E4D9  0x001C3B2D
+m208f002  88    0x0013E4DF  1:0x0012E4DF  0x001C3B33
+m208f002  90    0x0013E4EF  1:0x0012E4EF  0x001C3B43
+m208f002  92    0x0013E4F6  1:0x0012E4F6  0x001C3B4A
+m208f002  94    0x0013E4FF  1:0x0012E4FF  0x001C3B53
+m208f002  95    0x0013E505  1:0x0012E505  0x001C3B59
+m208f002  97    0x0013E50F  1:0x0012E50F  0x001C3B63
+m208f002  99    0x0013E511  1:0x0012E511  0x001C3B65
+m208f002  100   0x0013E517  1:0x0012E517  0x001C3B6B
+m208f002  101   0x0013E521  1:0x0012E521  0x001C3B75
+m208f002  104   0x0013E528  1:0x0012E528  0x001C3B7C
+m208f002  106   0x0013E54F  1:0x0012E54F  0x001C3BA3
+m208f002  109   0x0013E5B2  1:0x0012E5B2  0x001C3C06
+m208f002  111   0x0013E5D8  1:0x0012E5D8  0x001C3C2C
+m208f002  112   0x0013E5FB  1:0x0012E5FB  0x001C3C4F
+m208f002  114   0x0013E60E  1:0x0012E60E  0x001C3C62
+m208f002  116   0x0013E61E  1:0x0012E61E  0x001C3C72
+m208f002  118   0x0013E623  1:0x0012E623  0x001C3C77
+m208f002  120   0x0013E62E  1:0x0012E62E  0x001C3C82
+m208f002  122   0x0013E638  1:0x0012E638  0x001C3C8C
+m208f002  123   0x0013E63F  1:0x0012E63F  0x001C3C93
+m208f002  125   0x0013E646  1:0x0012E646  0x001C3C9A
+m208f002  128   0x0013E64C  1:0x0012E64C  0x001C3CA0
+m208f002  130   0x0013E65E  1:0x0012E65E  0x001C3CB2
+m208f002  132   0x0013E66C  1:0x0012E66C  0x001C3CC0
+m208f002  134   0x0013E675  1:0x0012E675  0x001C3CC9
+m208f002  135   0x0013E686  1:0x0012E686  0x001C3CDA
+m208f002  137   0x0013E695  1:0x0012E695  0x001C3CE9
+m208f002  139   0x0013E697  1:0x0012E697  0x001C3CEB
+m208f002  142   0x0013E6C8  1:0x0012E6C8  0x001C3D1C
+m208f002  143   0x0013E6D1  1:0x0012E6D1  0x001C3D25
+m208f002  146   0x0013E6D7  1:0x0012E6D7  0x001C3D2B
+m208f002  147   0x0013E6DA  1:0x0012E6DA  0x001C3D2E
+m208f002  149   0x0013E6DF  1:0x0012E6DF  0x001C3D33
+m208f002  151   0x0013E6EA  1:0x0012E6EA  0x001C3D3E
+m208f002  153   0x0013E6F7  1:0x0012E6F7  0x001C3D4B
+m208f002  154   0x0013E70C  1:0x0012E70C  0x001C3D60
+m208f002  155   0x0013E721  1:0x0012E721  0x001C3D75
+m208f002  156   0x0013E736  1:0x0012E736  0x001C3D8A
+m208f002  157   0x0013E74B  1:0x0012E74B  0x001C3D9F
+m208f002  159   0x0013E752  1:0x0012E752  0x001C3DA6
+m208f002  161   0x0013E75B  1:0x0012E75B  0x001C3DAF
+m208f002  162   0x0013E76F  1:0x0012E76F  0x001C3DC3
+m208f002  163   0x0013E780  1:0x0012E780  0x001C3DD4
+m208f002  164   0x0013E789  1:0x0012E789  0x001C3DDD
+m208f002  167   0x0013E78D  1:0x0012E78D  0x001C3DE1
+m208f002  169   0x0013E796  1:0x0012E796  0x001C3DEA
+m208f002  170   0x0013E7AA  1:0x0012E7AA  0x001C3DFE
+m208f002  171   0x0013E7BB  1:0x0012E7BB  0x001C3E0F
+m208f002  172   0x0013E7C1  1:0x0012E7C1  0x001C3E15
+m208f002  173   0x0013E7C7  1:0x0012E7C7  0x001C3E1B
+m208f002  175   0x0013E7CB  1:0x0012E7CB  0x001C3E1F
+m208f002  177   0x0013E7D1  1:0x0012E7D1  0x001C3E25
+m208f002  179   0x0013E7D3  1:0x0012E7D3  0x001C3E27
+m208f002  180   0x0013E7E8  1:0x0012E7E8  0x001C3E3C
+m208f002  181   0x0013E7FD  1:0x0012E7FD  0x001C3E51
+m208f002  182   0x0013E812  1:0x0012E812  0x001C3E66
+m208f002  183   0x0013E827  1:0x0012E827  0x001C3E7B
+m208f002  185   0x0013E82E  1:0x0012E82E  0x001C3E82
+m208f002  187   0x0013E837  1:0x0012E837  0x001C3E8B
+m208f002  188   0x0013E841  1:0x0012E841  0x001C3E95
+m208f002  193   0x0013E848  1:0x0012E848  0x001C3E9C
+m208f002  194   0x0013E862  1:0x0012E862  0x001C3EB6
+m208f002  196   0x0013E86A  1:0x0012E86A  0x001C3EBE
+m208f002  197   0x0013E86F  1:0x0012E86F  0x001C3EC3
+m208f002  198   0x0013E876  1:0x0012E876  0x001C3ECA
+m208f003  201   0x0013E87F  1:0x0012E87F  0x001C3ED3
+m208f003  205   0x0013E89C  1:0x0012E89C  0x001C3EF0
+m208f003  207   0x0013E8A4  1:0x0012E8A4  0x001C3EF8
+m208f003  209   0x0013E8B4  1:0x0012E8B4  0x001C3F08
+m208f003  210   0x0013E8CA  1:0x0012E8CA  0x001C3F1E
+m208f003  212   0x0013E8E1  1:0x0012E8E1  0x001C3F35
+m208f003  214   0x0013E8E9  1:0x0012E8E9  0x001C3F3D
+m208f003  215   0x0013E8EF  1:0x0012E8EF  0x001C3F43
+m208f004  218   0x0013E8FA  1:0x0012E8FA  0x001C3F4E
+m208f004  223   0x0013E919  1:0x0012E919  0x001C3F6D
+m208f004  225   0x0013E929  1:0x0012E929  0x001C3F7D
+m208f004  226   0x0013E930  1:0x0012E930  0x001C3F84
+m208f004  229   0x0013E937  1:0x0012E937  0x001C3F8B
+m208f004  231   0x0013E96A  1:0x0012E96A  0x001C3FBE
+m208f004  233   0x0013E985  1:0x0012E985  0x001C3FD9
+m208f004  235   0x0013E9A6  1:0x0012E9A6  0x001C3FFA
+m208f004  236   0x0013E9B6  1:0x0012E9B6  0x001C400A
+m208f004  237   0x0013E9BF  1:0x0012E9BF  0x001C4013
+m208f004  239   0x0013E9C4  1:0x0012E9C4  0x001C4018
+m208f004  240   0x0013E9D4  1:0x0012E9D4  0x001C4028
+m208f004  241   0x0013E9DD  1:0x0012E9DD  0x001C4031
+m208f004  243   0x0013E9DF  1:0x0012E9DF  0x001C4033
+m208f004  244   0x0013EA0B  1:0x0012EA0B  0x001C405F
+m208f004  245   0x0013EA21  1:0x0012EA21  0x001C4075
+m208f004  246   0x0013EA37  1:0x0012EA37  0x001C408B
+m208f004  248   0x0013EA39  1:0x0012EA39  0x001C408D
+m208f004  249   0x0013EA49  1:0x0012EA49  0x001C409D
+m208f004  253   0x0013EA59  1:0x0012EA59  0x001C40AD
+m208f004  254   0x0013EA68  1:0x0012EA68  0x001C40BC
+m208f004  255   0x0013EA77  1:0x0012EA77  0x001C40CB
+m208f004  256   0x0013EA7C  1:0x0012EA7C  0x001C40D0
+m208f004  258   0x0013EA84  1:0x0012EA84  0x001C40D8
+m208f004  260   0x0013EA8E  1:0x0012EA8E  0x001C40E2
+m208f004  261   0x0013EA94  1:0x0012EA94  0x001C40E8
+m208f005  265   0x0013EA9E  1:0x0012EA9E  0x001C40F2
+m208f005  267   0x0013EAB6  1:0x0012EAB6  0x001C410A
+m208f005  268   0x0013EABF  1:0x0012EABF  0x001C4113
+m208f006  270   0x0013EAC6  1:0x0012EAC6  0x001C411A
+m208f006  272   0x0013EAE7  1:0x0012EAE7  0x001C413B
+m208f006  274   0x0013EAF4  1:0x0012EAF4  0x001C4148
+m208f006  275   0x0013EB09  1:0x0012EB09  0x001C415D
+m208f006  276   0x0013EB1E  1:0x0012EB1E  0x001C4172
+m208f006  277   0x0013EB33  1:0x0012EB33  0x001C4187
+m208f006  278   0x0013EB48  1:0x0012EB48  0x001C419C
+m208f006  280   0x0013EB4F  1:0x0012EB4F  0x001C41A3
+m208f007  282   0x0013EB55  1:0x0012EB55  0x001C41A9
+m208f007  286   0x0013EB74  1:0x0012EB74  0x001C41C8
+m208f007  287   0x0013EB7D  1:0x0012EB7D  0x001C41D1
+m208f007  289   0x0013EB87  1:0x0012EB87  0x001C41DB
+m208f007  291   0x0013EB94  1:0x0012EB94  0x001C41E8
+m208f007  292   0x0013EBA9  1:0x0012EBA9  0x001C41FD
+m208f007  293   0x0013EBBE  1:0x0012EBBE  0x001C4212
+m208f007  294   0x0013EBD7  1:0x0012EBD7  0x001C422B
+m208f007  295   0x0013EBF0  1:0x0012EBF0  0x001C4244
+m208f007  297   0x0013EBF7  1:0x0012EBF7  0x001C424B
+m208f008  302   0x0013EBFE  1:0x0012EBFE  0x001C4252
+m208f008  306   0x0013EC19  1:0x0012EC19  0x001C426D
+m208f008  308   0x0013EC20  1:0x0012EC20  0x001C4274
+m208f008  310   0x0013EC2B  1:0x0012EC2B  0x001C427F
+m208f008  311   0x0013EC46  1:0x0012EC46  0x001C429A
+m208f008  312   0x0013EC49  1:0x0012EC49  0x001C429D
+m208f008  313   0x0013EC4B  1:0x0012EC4B  0x001C429F
+m208f009  362   0x0013EC54  1:0x0012EC54  0x001C42A8
+m208f009  366   0x0013EC75  1:0x0012EC75  0x001C42C9
+m208f009  368   0x0013EC89  1:0x0012EC89  0x001C42DD
+m208f009  370   0x0013ECBA  1:0x0012ECBA  0x001C430E
+m208f009  372   0x0013ECDB  1:0x0012ECDB  0x001C432F
+m208f009  374   0x0013ED10  1:0x0012ED10  0x001C4364
+m208f009  375   0x0013ED15  1:0x0012ED15  0x001C4369
+m208f009  377   0x0013ED4A  1:0x0012ED4A  0x001C439E
+m208f009  378   0x0013ED4F  1:0x0012ED4F  0x001C43A3
+m208f009  380   0x0013EDA0  1:0x0012EDA0  0x001C43F4
+m208f009  381   0x0013EDA5  1:0x0012EDA5  0x001C43F9
+m208f009  382   0x0013EDB3  1:0x0012EDB3  0x001C4407
+m208f009  385   0x0013EE04  1:0x0012EE04  0x001C4458
+m208f009  386   0x0013EE06  1:0x0012EE06  0x001C445A
+m208f009  390   0x0013EE3B  1:0x0012EE3B  0x001C448F
+m208f009  393   0x0013EE40  1:0x0012EE40  0x001C4494
+m208f009  395   0x0013EE48  1:0x0012EE48  0x001C449C
+m208f009  396   0x0013EE51  1:0x0012EE51  0x001C44A5

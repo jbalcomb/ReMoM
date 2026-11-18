@@ -1,0 +1,8 @@
+module_num=355
+module=close
+source=0355-close.md
+range[0]=1:0x0015000C linear=0x0016000C size=32
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m355f001  1    -      0x0016000C  1:0x0015000C  code  close  close_  regions/07-object-1/001E5654-001E5E53.txt

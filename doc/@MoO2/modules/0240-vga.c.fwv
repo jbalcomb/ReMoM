@@ -1,0 +1,188 @@
+module_num=240
+module=F:\WLIBS\video\vga.c
+source=0240-vga.c.md
+range[0]=1:0x00135ADA linear=0x00145ADA size=1272
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                           SYMBOL                          CHUNK
+m240f001  1    -      0x00145ADA  1:0x00135ADA  code  Set_Video_Mode_Lo_Res          Set_Video_Mode_Lo_Res_          regions/07-object-1/001CAE54-001CB653.txt
+m240f002  2    -      0x00145AF9  1:0x00135AF9  code  Set_Video_Mode_Mode_X          Set_Video_Mode_Mode_X_          regions/07-object-1/001CAE54-001CB653.txt
+m240f003  3    -      0x00145B18  1:0x00135B18  code  Set_Video_Mode_Mode_X240       Set_Video_Mode_Mode_X240_       regions/07-object-1/001CAE54-001CB653.txt
+m240f004  4    -      0x00145B37  1:0x00135B37  code  Set_Video_Mode_Mode_Y          Set_Video_Mode_Mode_Y_          regions/07-object-1/001CAE54-001CB653.txt
+m240f005  5    -      0x00145B56  1:0x00135B56  code  Full_Screen_Dump_Lo_Res        Full_Screen_Dump_Lo_Res_        regions/07-object-1/001CAE54-001CB653.txt
+m240f006  6    -      0x00145B75  1:0x00135B75  code  Full_Screen_Dump_Mode_X        Full_Screen_Dump_Mode_X_        regions/07-object-1/001CAE54-001CB653.txt
+m240f007  7    -      0x00145B94  1:0x00135B94  code  Full_Screen_Dump_Mode_X240     Full_Screen_Dump_Mode_X240_     regions/07-object-1/001CAE54-001CB653.txt
+m240f008  8    -      0x00145BB3  1:0x00135BB3  code  Full_Screen_Dump_Mode_Y        Full_Screen_Dump_Mode_Y_        regions/07-object-1/001CAE54-001CB653.txt
+m240f009  9    -      0x00145BD2  1:0x00135BD2  code  Partial_Screen_Dump_Lo_Res     Partial_Screen_Dump_Lo_Res_     regions/07-object-1/001CAE54-001CB653.txt
+m240f010  10   -      0x00145BF1  1:0x00135BF1  code  Partial_Screen_Dump_Mode_X     Partial_Screen_Dump_Mode_X_     regions/07-object-1/001CAE54-001CB653.txt
+m240f011  11   -      0x00145C10  1:0x00135C10  code  Partial_Screen_Dump_Mode_X240  Partial_Screen_Dump_Mode_X240_  regions/07-object-1/001CAE54-001CB653.txt
+m240f012  12   -      0x00145C2F  1:0x00135C2F  code  Partial_Screen_Dump_Mode_Y     Partial_Screen_Dump_Mode_Y_     regions/07-object-1/001CAE54-001CB653.txt
+m240f013  13   -      0x00145C4E  1:0x00135C4E  code  Masked_Screen_Dump_Lo_Res      Masked_Screen_Dump_Lo_Res_      regions/07-object-1/001CAE54-001CB653.txt
+m240f014  14   -      0x00145C6D  1:0x00135C6D  code  Masked_Screen_Dump_Mode_X      Masked_Screen_Dump_Mode_X_      regions/07-object-1/001CAE54-001CB653.txt
+m240f015  15   -      0x00145C8C  1:0x00135C8C  code  Masked_Screen_Dump_Mode_X240   Masked_Screen_Dump_Mode_X240_   regions/07-object-1/001CAE54-001CB653.txt
+m240f016  16   -      0x00145CAB  1:0x00135CAB  code  Masked_Screen_Dump_Mode_Y      Masked_Screen_Dump_Mode_Y_      regions/07-object-1/001CAE54-001CB653.txt
+m240f017  17   -      0x00145CCA  1:0x00135CCA  code  Copy_Off_To_On_Lo_Res          Copy_Off_To_On_Lo_Res_          regions/07-object-1/001CAE54-001CB653.txt
+m240f018  18   -      0x00145CF1  1:0x00135CF1  code  Copy_Off_To_On_Mode_X          Copy_Off_To_On_Mode_X_          regions/07-object-1/001CAE54-001CB653.txt
+m240f019  19   -      0x00145D18  1:0x00135D18  code  Copy_Off_To_On_Mode_X240       Copy_Off_To_On_Mode_X240_       regions/07-object-1/001CAE54-001CB653.txt
+m240f020  20   -      0x00145D3F  1:0x00135D3F  code  Copy_Off_To_On_Mode_Y          Copy_Off_To_On_Mode_Y_          regions/07-object-1/001CAE54-001CB653.txt
+m240f021  21   -      0x00145D66  1:0x00135D66  code  Save_Mouse_Lo_Res              Save_Mouse_Lo_Res_              regions/07-object-1/001CAE54-001CB653.txt
+m240f022  22   -      0x00145D85  1:0x00135D85  code  Save_Mouse_Mode_X              Save_Mouse_Mode_X_              regions/07-object-1/001CAE54-001CB653.txt
+m240f023  23   -      0x00145DA4  1:0x00135DA4  code  Save_Mouse_Mode_X240           Save_Mouse_Mode_X240_           regions/07-object-1/001CAE54-001CB653.txt
+m240f024  24   -      0x00145DC3  1:0x00135DC3  code  Save_Mouse_Mode_Y              Save_Mouse_Mode_Y_              regions/07-object-1/001CAE54-001CB653.txt
+m240f025  25   -      0x00145DE2  1:0x00135DE2  code  Restore_Mouse_Lo_Res           Restore_Mouse_Lo_Res_           regions/07-object-1/001CAE54-001CB653.txt
+m240f026  26   -      0x00145E01  1:0x00135E01  code  Restore_Mouse_Mode_X           Restore_Mouse_Mode_X_           regions/07-object-1/001CAE54-001CB653.txt
+m240f027  27   -      0x00145E20  1:0x00135E20  code  Restore_Mouse_Mode_X240        Restore_Mouse_Mode_X240_        regions/07-object-1/001CAE54-001CB653.txt
+m240f028  28   -      0x00145E3F  1:0x00135E3F  code  Restore_Mouse_Mode_Y           Restore_Mouse_Mode_Y_           regions/07-object-1/001CAE54-001CB653.txt
+m240f029  29   -      0x00145E5E  1:0x00135E5E  code  Draw_Mouse_Lo_Res              Draw_Mouse_Lo_Res_              regions/07-object-1/001CAE54-001CB653.txt
+m240f030  30   -      0x00145E7D  1:0x00135E7D  code  Draw_Mouse_Mode_X              Draw_Mouse_Mode_X_              regions/07-object-1/001CAE54-001CB653.txt
+m240f031  31   -      0x00145E9C  1:0x00135E9C  code  Draw_Mouse_Mode_X240           Draw_Mouse_Mode_X240_           regions/07-object-1/001CAE54-001CB653.txt
+m240f032  32   -      0x00145EBB  1:0x00135EBB  code  Draw_Mouse_Mode_Y              Draw_Mouse_Mode_Y_              regions/07-object-1/001CAE54-001CB653.txt
+m240f033  33   -      0x00145EDA  1:0x00135EDA  code  Save_Video_State_Lo_Res        Save_Video_State_Lo_Res_        regions/07-object-1/001CAE54-001CB653.txt
+m240f034  34   -      0x00145EF9  1:0x00135EF9  code  Save_Video_State_Mode_X        Save_Video_State_Mode_X_        regions/07-object-1/001CAE54-001CB653.txt
+m240f035  35   -      0x00145F18  1:0x00135F18  code  Save_Video_State_Mode_X240     Save_Video_State_Mode_X240_     regions/07-object-1/001CAE54-001CB653.txt
+m240f036  36   -      0x00145F37  1:0x00135F37  code  Save_Video_State_Mode_Y        Save_Video_State_Mode_Y_        regions/07-object-1/001CAE54-001CB653.txt
+m240f037  37   -      0x00145F56  1:0x00135F56  code  Restore_Video_State_Lo_Res     Restore_Video_State_Lo_Res_     regions/07-object-1/001CAE54-001CB653.txt
+m240f038  38   -      0x00145F75  1:0x00135F75  code  Restore_Video_State_Mode_X     Restore_Video_State_Mode_X_     regions/07-object-1/001CAE54-001CB653.txt
+m240f039  39   -      0x00145F94  1:0x00135F94  code  Restore_Video_State_Mode_X240  Restore_Video_State_Mode_X240_  regions/07-object-1/001CAE54-001CB653.txt
+m240f040  40   -      0x00145FB3  1:0x00135FB3  code  Restore_Video_State_Mode_Y     Restore_Video_State_Mode_Y_     regions/07-object-1/001CAE54-001CB653.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                           TYPE                               CHUNK
+m240f001  0x00145ADA  1:0x00135ADA  31    24        7         0x18     -    -                Set_Video_Mode_Lo_Res          void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f002  0x00145AF9  1:0x00135AF9  31    24        7         0x18     -    -                Set_Video_Mode_Mode_X          void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f003  0x00145B18  1:0x00135B18  31    24        7         0x18     -    -                Set_Video_Mode_Mode_X240       void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f004  0x00145B37  1:0x00135B37  31    24        7         0x18     -    -                Set_Video_Mode_Mode_Y          void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f005  0x00145B56  1:0x00135B56  31    24        7         0x18     -    -                Full_Screen_Dump_Lo_Res        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f006  0x00145B75  1:0x00135B75  31    24        7         0x18     -    -                Full_Screen_Dump_Mode_X        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f007  0x00145B94  1:0x00135B94  31    24        7         0x18     -    -                Full_Screen_Dump_Mode_X240     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f008  0x00145BB3  1:0x00135BB3  31    24        7         0x18     -    -                Full_Screen_Dump_Mode_Y        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f009  0x00145BD2  1:0x00135BD2  31    24        7         0x18     -    -                Partial_Screen_Dump_Lo_Res     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f010  0x00145BF1  1:0x00135BF1  31    24        7         0x18     -    -                Partial_Screen_Dump_Mode_X     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f011  0x00145C10  1:0x00135C10  31    24        7         0x18     -    -                Partial_Screen_Dump_Mode_X240  void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f012  0x00145C2F  1:0x00135C2F  31    24        7         0x18     -    -                Partial_Screen_Dump_Mode_Y     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f013  0x00145C4E  1:0x00135C4E  31    24        7         0x18     -    -                Masked_Screen_Dump_Lo_Res      void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f014  0x00145C6D  1:0x00135C6D  31    24        7         0x18     -    -                Masked_Screen_Dump_Mode_X      void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f015  0x00145C8C  1:0x00135C8C  31    24        7         0x18     -    -                Masked_Screen_Dump_Mode_X240   void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f016  0x00145CAB  1:0x00135CAB  31    24        7         0x18     -    -                Masked_Screen_Dump_Mode_Y      void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f017  0x00145CCA  1:0x00135CCA  39    21        6         0xC      -    EAX,EDX,EBX,ECX  Copy_Off_To_On_Lo_Res          void (short, short, short, short)  regions/07-object-1/001CAE54-001CB653.txt
+m240f018  0x00145CF1  1:0x00135CF1  39    21        6         0xC      -    EAX,EDX,EBX,ECX  Copy_Off_To_On_Mode_X          void (short, short, short, short)  regions/07-object-1/001CAE54-001CB653.txt
+m240f019  0x00145D18  1:0x00135D18  39    21        6         0xC      -    EAX,EDX,EBX,ECX  Copy_Off_To_On_Mode_X240       void (short, short, short, short)  regions/07-object-1/001CAE54-001CB653.txt
+m240f020  0x00145D3F  1:0x00135D3F  39    21        6         0xC      -    EAX,EDX,EBX,ECX  Copy_Off_To_On_Mode_Y          void (short, short, short, short)  regions/07-object-1/001CAE54-001CB653.txt
+m240f021  0x00145D66  1:0x00135D66  31    24        7         0x18     -    -                Save_Mouse_Lo_Res              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f022  0x00145D85  1:0x00135D85  31    24        7         0x18     -    -                Save_Mouse_Mode_X              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f023  0x00145DA4  1:0x00135DA4  31    24        7         0x18     -    -                Save_Mouse_Mode_X240           void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f024  0x00145DC3  1:0x00135DC3  31    24        7         0x18     -    -                Save_Mouse_Mode_Y              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f025  0x00145DE2  1:0x00135DE2  31    24        7         0x18     -    -                Restore_Mouse_Lo_Res           void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f026  0x00145E01  1:0x00135E01  31    24        7         0x18     -    -                Restore_Mouse_Mode_X           void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f027  0x00145E20  1:0x00135E20  31    24        7         0x18     -    -                Restore_Mouse_Mode_X240        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f028  0x00145E3F  1:0x00135E3F  31    24        7         0x18     -    -                Restore_Mouse_Mode_Y           void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f029  0x00145E5E  1:0x00135E5E  31    24        7         0x18     -    -                Draw_Mouse_Lo_Res              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f030  0x00145E7D  1:0x00135E7D  31    24        7         0x18     -    -                Draw_Mouse_Mode_X              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f031  0x00145E9C  1:0x00135E9C  31    24        7         0x18     -    -                Draw_Mouse_Mode_X240           void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f032  0x00145EBB  1:0x00135EBB  31    24        7         0x18     -    -                Draw_Mouse_Mode_Y              void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f033  0x00145EDA  1:0x00135EDA  31    24        7         0x18     -    -                Save_Video_State_Lo_Res        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f034  0x00145EF9  1:0x00135EF9  31    24        7         0x18     -    -                Save_Video_State_Mode_X        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f035  0x00145F18  1:0x00135F18  31    24        7         0x18     -    -                Save_Video_State_Mode_X240     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f036  0x00145F37  1:0x00135F37  31    24        7         0x18     -    -                Save_Video_State_Mode_Y        void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f037  0x00145F56  1:0x00135F56  31    24        7         0x18     -    -                Restore_Video_State_Lo_Res     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f038  0x00145F75  1:0x00135F75  31    24        7         0x18     -    -                Restore_Video_State_Mode_X     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f039  0x00145F94  1:0x00135F94  31    24        7         0x18     -    -                Restore_Video_State_Mode_X240  void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+m240f040  0x00145FB3  1:0x00135FB3  31    24        7         0x18     -    -                Restore_Video_State_Mode_Y     void (void)                        regions/07-object-1/001CAE54-001CB653.txt
+
+[Locals]
+KEY       ROUTINE                   BLOCK  LOCAL  LOCATION    TYPE
+m240f017  Copy_Off_To_On_Lo_Res     -      x1     [EBP-0x10]  short
+m240f017  Copy_Off_To_On_Lo_Res     -      y1     [EBP-0xC]   short
+m240f017  Copy_Off_To_On_Lo_Res     -      x2     [EBP-0x8]   short
+m240f017  Copy_Off_To_On_Lo_Res     -      y2     [EBP-0x4]   short
+m240f018  Copy_Off_To_On_Mode_X     -      x1     [EBP-0x10]  short
+m240f018  Copy_Off_To_On_Mode_X     -      y1     [EBP-0xC]   short
+m240f018  Copy_Off_To_On_Mode_X     -      x2     [EBP-0x8]   short
+m240f018  Copy_Off_To_On_Mode_X     -      y2     [EBP-0x4]   short
+m240f019  Copy_Off_To_On_Mode_X240  -      x1     [EBP-0x10]  short
+m240f019  Copy_Off_To_On_Mode_X240  -      y1     [EBP-0xC]   short
+m240f019  Copy_Off_To_On_Mode_X240  -      x2     [EBP-0x8]   short
+m240f019  Copy_Off_To_On_Mode_X240  -      y2     [EBP-0x4]   short
+m240f020  Copy_Off_To_On_Mode_Y     -      x1     [EBP-0x10]  short
+m240f020  Copy_Off_To_On_Mode_Y     -      y1     [EBP-0xC]   short
+m240f020  Copy_Off_To_On_Mode_Y     -      x2     [EBP-0x8]   short
+m240f020  Copy_Off_To_On_Mode_Y     -      y2     [EBP-0x4]   short
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   scalar     void            void 1 bytes
+31   procedure  -               near386; returns void ()
+32   procedure  -               near386; returns void (short, short, short, short)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m240f001  6     0x00145ADA  1:0x00135ADA  0x001CB12E
+m240f002  7     0x00145AF9  1:0x00135AF9  0x001CB14D
+m240f003  8     0x00145B18  1:0x00135B18  0x001CB16C
+m240f004  9     0x00145B37  1:0x00135B37  0x001CB18B
+m240f005  11    0x00145B56  1:0x00135B56  0x001CB1AA
+m240f006  12    0x00145B75  1:0x00135B75  0x001CB1C9
+m240f007  13    0x00145B94  1:0x00135B94  0x001CB1E8
+m240f008  14    0x00145BB3  1:0x00135BB3  0x001CB207
+m240f009  16    0x00145BD2  1:0x00135BD2  0x001CB226
+m240f010  17    0x00145BF1  1:0x00135BF1  0x001CB245
+m240f011  18    0x00145C10  1:0x00135C10  0x001CB264
+m240f012  19    0x00145C2F  1:0x00135C2F  0x001CB283
+m240f013  21    0x00145C4E  1:0x00135C4E  0x001CB2A2
+m240f014  22    0x00145C6D  1:0x00135C6D  0x001CB2C1
+m240f015  23    0x00145C8C  1:0x00135C8C  0x001CB2E0
+m240f016  24    0x00145CAB  1:0x00135CAB  0x001CB2FF
+m240f017  26    0x00145CCA  1:0x00135CCA  0x001CB31E
+m240f018  27    0x00145CF1  1:0x00135CF1  0x001CB345
+m240f019  28    0x00145D18  1:0x00135D18  0x001CB36C
+m240f020  29    0x00145D3F  1:0x00135D3F  0x001CB393
+m240f021  31    0x00145D66  1:0x00135D66  0x001CB3BA
+m240f022  32    0x00145D85  1:0x00135D85  0x001CB3D9
+m240f023  33    0x00145DA4  1:0x00135DA4  0x001CB3F8
+m240f024  34    0x00145DC3  1:0x00135DC3  0x001CB417
+m240f025  36    0x00145DE2  1:0x00135DE2  0x001CB436
+m240f026  37    0x00145E01  1:0x00135E01  0x001CB455
+m240f027  38    0x00145E20  1:0x00135E20  0x001CB474
+m240f028  39    0x00145E3F  1:0x00135E3F  0x001CB493
+m240f029  41    0x00145E5E  1:0x00135E5E  0x001CB4B2
+m240f030  42    0x00145E7D  1:0x00135E7D  0x001CB4D1
+m240f031  43    0x00145E9C  1:0x00135E9C  0x001CB4F0
+m240f032  44    0x00145EBB  1:0x00135EBB  0x001CB50F
+m240f033  46    0x00145EDA  1:0x00135EDA  0x001CB52E
+m240f034  47    0x00145EF9  1:0x00135EF9  0x001CB54D
+m240f035  48    0x00145F18  1:0x00135F18  0x001CB56C
+m240f036  49    0x00145F37  1:0x00135F37  0x001CB58B
+m240f037  51    0x00145F56  1:0x00135F56  0x001CB5AA
+m240f038  52    0x00145F75  1:0x00135F75  0x001CB5C9
+m240f039  53    0x00145F94  1:0x00135F94  0x001CB5E8
+m240f040  54    0x00145FB3  1:0x00135FB3  0x001CB607

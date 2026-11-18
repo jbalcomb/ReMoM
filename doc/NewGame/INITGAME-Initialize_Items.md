@@ -29,7 +29,7 @@ premade-item availability/usage table.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_Runtime` / INITGAME | [INITGAME.c:637](../../MoM/src/INITGAME.c#L637) | `gd_dump_items("200_Initialize_Items_I")` is a `// TODO` ([638](../../MoM/src/INITGAME.c#L638)), not yet wired. |
+| `Init_Runtime` / INITGAME | [INITGAME.c:201](../../MoM/src/INITGAME.c#L201) | Followed by `STU_GD_Dump_Items("200_Initialize_Items_I")` ([202](../../MoM/src/INITGAME.c#L202)). |
 
 ## How it works
 

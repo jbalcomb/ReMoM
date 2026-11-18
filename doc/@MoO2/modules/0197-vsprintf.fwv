@@ -1,0 +1,9 @@
+module_num=197
+module=vsprintf
+source=0197-vsprintf.md
+range[0]=1:0x0012C8DD linear=0x0013C8DD size=40
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME      SYMBOL     CHUNK
+m197f001  1    -      0x0013C8DD  1:0x0012C8DD  static,code  mem_putc  mem_putc_  regions/07-object-1/001C1E54-001C2653.txt
+m197f002  2    -      0x0013C8F0  1:0x0012C8F0  code         vsprintf  vsprintf_  regions/07-object-1/001C1E54-001C2653.txt

@@ -43,7 +43,6 @@ set(LIBMOM_SOURCES
     MAPGEN.c
     MGC_DATA.c
     MOM_SCR.c
-    MOM_DBG.c
     MovePath.c
     NewGame.c
     NEXTTURN.c
@@ -77,6 +76,7 @@ set(LIBMOM_SOURCES
     UnitView.c
     WIZVIEW.c
     WZD_o059.c
+    WZD_o108.c
     WZD_o143.c
     WZD_o146.c
 )

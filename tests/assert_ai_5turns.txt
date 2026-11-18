@@ -1,7 +1,7 @@
 # assert_ai_5turns.txt — Behavioral assertions for a 5-turn AI test.
 #
 # These are evaluated by check_ai_metrics against the CSV files
-# produced by a 5-turn headless run with --ai-metrics.
+# produced by a 5-turn windowless run with --ai-metrics.
 
 # ===================================================================
 #  Liveness checks — things that should always be happening

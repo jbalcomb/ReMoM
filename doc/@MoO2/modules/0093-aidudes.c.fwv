@@ -1,0 +1,45 @@
+module_num=93
+module=D:\MOX\OTHERS\AIDUDES.C
+source=0093-aidudes.c.md
+range[0]=1:0x000C575C linear=0x000D575C size=6270
+range[1]=2:0x0003221C linear=0x001A221C size=32
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                   SYMBOL                                  CHUNK
+m093f001  1    -      0x000D5761  1:0x000C5761  static,code  Sort_Colonies_Blockaded                Sort_Colonies_Blockaded_                regions/07-object-1/0015A654-0015AE53.txt
+m093f002  2    -      0x000D5795  1:0x000C5795  static,code  Collect_AI_Colonies                    Collect_AI_Colonies_                    regions/07-object-1/0015A654-0015AE53.txt
+m093f003  3    -      0x000D589B  1:0x000C589B  static,code  Assign_Buildings                       Assign_Buildings_                       regions/07-object-1/0015AE54-0015B653.txt
+m093f004  4    -      0x000D58D4  1:0x000C58D4  static,code  Clear_Build_Queues_If_New_Tech         Clear_Build_Queues_If_New_Tech_         regions/07-object-1/0015AE54-0015B653.txt
+m093f005  5    -      0x000D5CEE  1:0x000C5CEE  static,code  Keep_Ship_Designs_Up_To_Date           Keep_Ship_Designs_Up_To_Date_           regions/07-object-1/0015AE54-0015B653.txt
+m093f006  6    -      0x000D5D99  1:0x000C5D99  static,code  Freighter_Cheat                        Freighter_Cheat_                        regions/07-object-1/0015AE54-0015B653.txt
+m093f007  7    -      0x000D5E19  1:0x000C5E19  static,code  Do_Ship_Upgrade_Cheats                 Do_Ship_Upgrade_Cheats_                 regions/07-object-1/0015AE54-0015B653.txt
+m093f008  8    -      0x000D5FA9  1:0x000C5FA9  static,code  Sort_Pops_Fixed                        Sort_Pops_Fixed_                        regions/07-object-1/0015AE54-0015B653.txt
+m093f009  9    -      0x000D5FE1  1:0x000C5FE1  static,code  Assign_Required_Colonists              Assign_Required_Colonists_              regions/07-object-1/0015AE54-0015B653.txt
+m093f010  10   -      0x000D6125  1:0x000C6125  static,code  FI_Worthiness                          FI_Worthiness_                          regions/07-object-1/0015B654-0015BE53.txt
+m093f011  11   -      0x000D614D  1:0x000C614D  static,code  Sort_Pops_FI                           Sort_Pops_FI_                           regions/07-object-1/0015B654-0015BE53.txt
+m093f012  12   -      0x000D61E7  1:0x000C61E7  static,code  Do_Blockaded_Colony                    Do_Blockaded_Colony_                    regions/07-object-1/0015B654-0015BE53.txt
+m093f013  13   -      0x000D6315  1:0x000C6315  static,code  Sort_Pops_R_I                          Sort_Pops_R_I_                          regions/07-object-1/0015B654-0015BE53.txt
+m093f014  14   -      0x000D63A6  1:0x000C63A6  static,code  Sort_Pops_FR_I                         Sort_Pops_FR_I_                         regions/07-object-1/0015B654-0015BE53.txt
+m093f015  15   -      0x000D648A  1:0x000C648A  static,code  Compute_Max_Min_R_I_Worthiness         Compute_Max_Min_R_I_Worthiness_         regions/07-object-1/0015B654-0015BE53.txt
+m093f016  16   -      0x000D652C  1:0x000C652C  static,code  Do_Unblockaded_Colony                  Do_Unblockaded_Colony_                  regions/07-object-1/0015B654-0015BE53.txt
+m093f017  17   -      0x000D664B  1:0x000C664B  static,code  Grab_Worker                            Grab_Worker_                            regions/07-object-1/0015B654-0015BE53.txt
+m093f018  18   -      0x000D6682  1:0x000C6682  static,code  Grab_Scientist                         Grab_Scientist_                         regions/07-object-1/0015B654-0015BE53.txt
+m093f019  19   -      0x000D66B3  1:0x000C66B3  static,code  Assign_Additional_Research_Industry    Assign_Additional_Research_Industry_    regions/07-object-1/0015B654-0015BE53.txt
+m093f020  20   -      0x000D682A  1:0x000C682A  static,code  F_IR_Worthiness                        F_IR_Worthiness_                        regions/07-object-1/0015BE54-0015C653.txt
+m093f021  21   -      0x000D68CB  1:0x000C68CB  static,code  Sort_Pops_F_IR                         Sort_Pops_F_IR_                         regions/07-object-1/0015BE54-0015C653.txt
+m093f022  22   -      0x000D6A00  1:0x000C6A00  static,code  Make_First_Unassigned_Into_Farmer      Make_First_Unassigned_Into_Farmer_      regions/07-object-1/0015BE54-0015C653.txt
+m093f023  23   -      0x000D6AD4  1:0x000C6AD4  static,code  Assign_Additional_Unblockaded_Farmers  Assign_Additional_Unblockaded_Farmers_  regions/07-object-1/0015BE54-0015C653.txt
+m093f024  24   -      0x000D6D80  1:0x000C6D80  static,code  Industry_Sanity_Check                  Industry_Sanity_Check_                  regions/07-object-1/0015BE54-0015C653.txt
+m093f025  25   -      0x000D6E1D  1:0x000C6E1D  code         Colony_AI_Given_Tax                    Colony_AI_Given_Tax_                    regions/07-object-1/0015BE54-0015C653.txt
+m093f026  26   -      0x000D6ED4  1:0x000C6ED4  code         Colony_AI                              Colony_AI_                              regions/07-object-1/0015BE54-0015C653.txt
+m093f027  27   -      0x000D6F67  1:0x000C6F67  code         All_Colony_AI                          All_Colony_AI_                          regions/07-object-1/0015BE54-0015C653.txt
+-         -    -      0x001A221C  2:0x0003221C  static,data  _p_ai                                  _p_ai                                   -
+-         -    -      0x001A2220  2:0x00032220  static,data  _our_blockaded                         _our_blockaded                          -
+-         -    -      0x001A2224  2:0x00032224  static,data  _Sort_Pops_colony                      _Sort_Pops_colony                       -
+-         -    -      0x001A2228  2:0x00032228  static,data  _Sort_Pops_colony_info                 _Sort_Pops_colony_info                  -
+-         -    -      0x001A222C  2:0x0003222C  static,data  _our_colonies                          _our_colonies                           -
+-         -    -      0x001A2230  2:0x00032230  static,data  _our_unblockaded                       _our_unblockaded                        -
+-         -    -      0x001A2234  2:0x00032234  static,data  _i_ai                                  _i_ai                                   -
+-         -    -      0x001A2236  2:0x00032236  static,data  _n_our_unblockaded                     _n_our_unblockaded                      -
+-         -    -      0x001A2238  2:0x00032238  static,data  _n_our_colonies                        _n_our_colonies                         -
+-         -    -      0x001A223A  2:0x0003223A  static,data  _n_our_blockaded                       _n_our_blockaded                        -

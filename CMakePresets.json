@@ -268,7 +268,7 @@
             "targets": [
                 "all",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -279,7 +279,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -290,7 +290,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -301,7 +301,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -312,7 +312,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -323,7 +323,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -334,7 +334,7 @@
             "targets": [
                 "ALL_BUILD",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -345,7 +345,7 @@
             "targets": [
                 "all",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -356,7 +356,7 @@
             "targets": [
                 "all",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         },
         {
@@ -373,7 +373,7 @@
             "targets": [
                 "all",
                 "ReMoM",
-                "HeMoM"
+                "DeMoM"
             ]
         }
     ],

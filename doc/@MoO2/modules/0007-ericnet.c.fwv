@@ -1,0 +1,22 @@
+module_num=7
+module=L:\MOX\ERICNET.C
+source=0007-ericnet.c.md
+range[0]=1:0x00003A3A linear=0x00013A3A size=4174
+range[1]=2:0x000009DC linear=0x001709DC size=40
+range[2]=2:0x000058AC linear=0x001758AC size=88
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                             CHUNK
+m007f001  1    -      0x00013A3D  1:0x00003A3D  code         Init_Homeworld_Colony2            Init_Homeworld_Colony2_            regions/07-object-1/00098E54-00099653.txt
+m007f002  2    -      0x00013FA7  1:0x00003FA7  code         Init_Homeworld_Colony             Init_Homeworld_Colony_             regions/07-object-1/00098E54-00099653.txt
+m007f003  3    -      0x00013FB7  1:0x00003FB7  code         Init_Advanced_Civilization_Fleet  Init_Advanced_Civilization_Fleet_  regions/07-object-1/00098E54-00099653.txt
+m007f004  4    -      0x00013FB8  1:0x00003FB8  code         Init_Non_Homeworld_Colony         Init_Non_Homeworld_Colony_         regions/07-object-1/00098E54-00099653.txt
+m007f005  5    -      0x00013FD9  1:0x00003FD9  code         Add_Building                      Add_Building_                      regions/07-object-1/00098E54-00099653.txt
+m007f006  6    -      0x000145EA  1:0x000045EA  code         Remove_Building                   Remove_Building_                   regions/07-object-1/00099654-00099E53.txt
+m007f007  7    -      0x000147D7  1:0x000047D7  code         Mox_Play_Sound                    Mox_Play_Sound_                    regions/07-object-1/00099654-00099E53.txt
+m007f008  8    -      0x000147E7  1:0x000047E7  code         Calc_Ship_Level                   Calc_Ship_Level_                   regions/07-object-1/00099654-00099E53.txt
+m007f009  9    -      0x0001487A  1:0x0000487A  code         Do_Academy_At_Location_Check      Do_Academy_At_Location_Check_      regions/07-object-1/00099E54-0009A653.txt
+m007f010  10   -      0x00014915  1:0x00004915  code         Best_Instructor_Bonus             Best_Instructor_Bonus_             regions/07-object-1/00099E54-0009A653.txt
+m007f011  11   -      0x000149D5  1:0x000049D5  code         Do_XP_For_Ship                    Do_XP_For_Ship_                    regions/07-object-1/00099E54-0009A653.txt
+m007f012  12   -      0x00014A27  1:0x00004A27  code         Do_All_Ships_XP_Check             Do_All_Ships_XP_Check_             regions/07-object-1/00099E54-0009A653.txt
+-         -    -      0x001758AC  2:0x000058AC  static,data  _buildlist                        _buildlist                         regions/08-object-2/001F3E54-001F4653.txt

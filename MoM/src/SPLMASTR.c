@@ -178,7 +178,7 @@ char monster_lbx_file__ovr138[] = "Monster";
 
 // WZD dseg:C9EE                                                 ¿ END:  ovr127 - Uninitialized Data ?
 // WZD dseg:C9EE
-// WZD dseg:C9F0 00 00                                           g_ai_recompute_needed dw 0                ; DATA XREF: UNIT_ConvSpellATK+Bw ...
+// WZD dseg:C9F0 00 00                                           g_ai_recompute_needed dw 0                ; DATA XREF: UNIT_ConvSpellATK+Bvw ...
 // WZD dseg:C9F2 00                                              db    0
 // WZD dseg:C9F3 00                                              db    0
 
@@ -383,7 +383,7 @@ int16_t Select_Hero_To_Ressurect(int16_t hero_count, int16_t hero_list[])
     for(itr = 0; itr < hero_count; itr++)
     {
 
-        _fstrcpy(&strings_seg[(itr * 40)], hero_names_table[hero_list[itr]].name);
+        String_Copy_Far(&strings_seg[(itr * 40)], hero_names_table[hero_list[itr]].name);
 
         stu_strcat(&strings_seg[(itr * 40)], aThe_0);
 
@@ -552,7 +552,6 @@ void Spellbook_Mana_Adder_Draw(void)
 ; player to specify the additional power they wish to
 ; channel into an infusable spell, setting both the
 ; initial and final cost into the wizard record
-; BUG: ignores Evil Omens almost entirely
 */
 /*
 
@@ -593,18 +592,20 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
 
     Clear_Fields();
 
-    Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
+    Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, str_empty_string__ovr136, ST_UNDEFINED);
 
-    ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, (int16_t)str_hotkey_O__ovr136[0], ST_UNDEFINED);
+    ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, str_hotkey_O__ovr136, ST_UNDEFINED);
 
     Assign_Auto_Function(Spellbook_Mana_Adder_Draw, 2);
 
     _osc_leave_screen = ST_FALSE;
 
     // ; completely redundant, the result of all this is zero
-    g_total_casting_cost = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);
+    // g_total_casting_cost = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * spell_data_table[g_active_spell_idx].casting_cost) / 100);
+    g_total_casting_cost = (int16_t)(((int32_t)(_xtra_mana_pos - 3) * ((int32_t)spell_data_table[g_active_spell_idx].casting_cost * 4)) / 100);  /* CLAUDE */  /* REBUG */  /* asm: LXLSH@ by 2 of casting_cost */
     g_total_casting_cost += spell_data_table[g_active_spell_idx].casting_cost;
     _players[HUMAN_PLAYER_IDX].casting_cost_original = g_total_casting_cost;
+    /* OGBUG  the cost is base + extra, less Casting_Cost_Reduction(); Casting_Cost()'s x 3 / 2 for Life / Nature spells while any wizard has Evil Omens is never applied, so a variable-power Life / Nature spell escapes it (Spellbook_Mana_Adder_Draw() does the same each frame) */
     _players[HUMAN_PLAYER_IDX].casting_cost_remaining = (uint16_t)(g_total_casting_cost - ((int32_t)g_total_casting_cost * Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx)) / 100);
 
     while(_osc_leave_screen == ST_FALSE)
@@ -641,7 +642,10 @@ void Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx)
     Deactivate_Auto_Function();
 
     // BUGBUG  Release_Block();
-    Release_Block(_screen_seg);
+    /* OGBUG  Release_Block() is called with nothing pushed (ovr136/Spellbook_Mana_Adder_Screen.asm 183, no push and no 'pop cx'): its block argument is the word on top of the stack, the caller's DI saved by this function's prologue ('push _DI_x_start', asm 14), so the OG reads SAMB.mark and writes SAMB.used at that value taken as a segment, and the _screen_seg scratch heap is not reset */
+    /* HACK */  // Release_Block(_screen_seg);
+    /* HACK */  /* skipped: the OG's segment is a register leftover, not a block ReMoM owns; without the call _screen_seg is not reset, as in the OG */
+
 
 }
 
@@ -726,9 +730,6 @@ void Combat_Spellbook_Mana_Adder_Draw(void)
 
 
 // WZD o136p07
-/*
-OGBUG: ignores Evil Omens, should use Casting_Cost() and different calculation
-*/
 int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_field_idx, int16_t caster_idx)
 {
     int16_t y_start = 0;
@@ -743,6 +744,7 @@ int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_
     Copy_Off_To_Back();
     if(caster_idx > (CASTER_IDX_BASE - 1))
     {
+        /* OGBUG  the slider and the charged cost (Combat_Spellbook_Mana_Adder_Draw()) are base + extra, less Casting_Cost_Reduction(); Casting_Cost()'s x 3 / 2 for Life / Nature spells while any wizard has Evil Omens is used only for the mana-reserve limit below, never for the cost, so a variable-power Life / Nature spell escapes it */
         cost_reduction = Casting_Cost_Reduction(HUMAN_PLAYER_IDX, g_active_spell_idx);
         combat_max_extra_casting_cost = (spell_data_table[g_active_spell_idx].casting_cost * 4);
         if((int16_t)(((int32_t)_players[HUMAN_PLAYER_IDX].Cmbt_Skill_Left * (cost_reduction + 100)) / 100) < combat_max_extra_casting_cost)
@@ -783,11 +785,12 @@ int16_t Combat_Spellbook_Mana_Adder_Screen(int16_t spell_idx, int16_t spellbook_
     g_total_casting_cost = spell_data_table[spell_idx].casting_cost;
     _xtra_mana_pos = 3;
     Clear_Fields();
-    Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
-    ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, (int16_t)str_hotkey_O__ovr136[0], ST_UNDEFINED);
+    Add_Scroll_Field((x_start + 12), (y_start + 22), 0, 106, 3, 103, 106, 7, &_xtra_mana_pos, str_empty_string__ovr136, ST_UNDEFINED);
+    ok_button_field = Add_Button_Field((x_start + 123), (y_start + 18), &str_empty_string__ovr136[0], xtramana_ok_button_seg, str_hotkey_O__ovr136, ST_UNDEFINED);
     Assign_Auto_Function(Combat_Spellbook_Mana_Adder_Draw, 2);
     _osc_leave_screen = ST_FALSE;
-    if(_osc_leave_screen == ST_FALSE)
+    // if(_osc_leave_screen == ST_FALSE)
+    while(_osc_leave_screen == ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: jz loc_BD843, the screen loop */
     {
         Mark_Time();
         input_field_idx = Get_Input();
@@ -818,7 +821,7 @@ screen for targeting other players' overland enchantments
 "Tries to remove one global enemy enchantment."
 "...the purposes of dispelling the target overland enchantment."
 */
-void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
+void Load_Global_Enchantment_Screen(int16_t spell_idx)
 {
     int16_t x_start = 0;
     int16_t itr1 = 0;
@@ -932,7 +935,7 @@ void Spell_Target_Global_Enchantment_Screen_Load(int16_t spell_idx)
 /*
 screen for targeting other players' overland enchantments
 */
-void Spell_Target_Global_Enchantment_Screen_Draw(void)
+void Draw_Global_Enchantment_Screen(void)
 {
     char string[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint8_t colors[6] = { 0, 0, 0, 0, 0, 0 };
@@ -1027,7 +1030,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
 
                     Set_Alias_Color(186);
 
-                    _fstrcpy((char *)&string[0], spell_data_table[ovl_ench_list_ptr[(itr2 - 1)][(ovl_ench_list_fst[(itr2 - 1)] + itr1)]].name);
+                    String_Copy_Far((char *)&string[0], spell_data_table[ovl_ench_list_ptr[(itr2 - 1)][(ovl_ench_list_fst[(itr2 - 1)] + itr1)]].name);
 
                     Print(x, (y + (itr1 * 13)), (char *)&string[0]);
 
@@ -1117,7 +1120,7 @@ void Spell_Target_Global_Enchantment_Screen_Draw(void)
 /*
 screen for targeting other players' overland enchantments
 */
-int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx)
+int16_t Global_Enchantment_Screen(int16_t spell_idx, int16_t player_idx)
 {
     int16_t fields[(3 * (5 - 1))] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t bot_arrow_fields[4] = { 0, 0, 0, 0 };
@@ -1148,7 +1151,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
         {  \
             x = (x_start + 74);  \
             y = (y_start + 16 + ((itr / 3) * 46) + ((itr % 3) * 13));  \
-            fields[itr] = Add_Hidden_Field(x, y, (x + 120), (y + 13), (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+            fields[itr] = Add_Hidden_Field(x, y, (x + 120), (y + 13), str_empty_string__ovr136, ST_UNDEFINED);  \
         }  \
     } while(0)
 #define ADD_ARROW_FIELDS_LOCAL()  \
@@ -1157,7 +1160,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
         {  \
             if(ovl_ench_list_fst[itr] > 0)  \
             {  \
-                top_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 19 + (itr * 46)), str_empty_string__ovr136, selectbk_top_arrow_seg, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+                top_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 19 + (itr * 46)), str_empty_string__ovr136, selectbk_top_arrow_seg, str_empty_string__ovr136, ST_UNDEFINED);  \
             }  \
             else  \
             {  \
@@ -1165,7 +1168,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
             }  \
             if((ovl_ench_list_fst[itr] + 3) < ovl_ench_list_cnt2[(itr + 1)])  \
             {  \
-                bot_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 43 + (itr * 46)), str_empty_string__ovr136, selectbk_bottom_arrow_seg, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);  \
+                bot_arrow_fields[itr] = Add_Button_Field((x_start + 61), (y_start + 43 + (itr * 46)), str_empty_string__ovr136, selectbk_bottom_arrow_seg, str_empty_string__ovr136, ST_UNDEFINED);  \
             }  \
             else  \
             {  \
@@ -1190,7 +1193,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 
     g_active_spell_idx = spell_idx;
 
-    Spell_Target_Global_Enchantment_Screen_Load(spell_idx);
+    Load_Global_Enchantment_Screen(spell_idx);
 
     // total count - human player count ... you might, but they don't
     if((ovl_ench_cnt - ovl_ench_list_cnt2[0]) <= 0)
@@ -1214,7 +1217,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
     else
     {
 
-        Assign_Auto_Function(Spell_Target_Global_Enchantment_Screen_Draw, 2);
+        Assign_Auto_Function(Draw_Global_Enchantment_Screen, 2);
 
         ADD_FIELDS_LOCAL();
 
@@ -1288,7 +1291,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 
                 Set_Page_Off();
 
-                Spell_Target_Global_Enchantment_Screen_Draw();
+                Draw_Global_Enchantment_Screen();
 
                 PageFlip_FX();
 
@@ -1300,7 +1303,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 
     Clear_Fields();
 
-    fields[0] = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_empty_string__ovr136[0], ST_UNDEFINED);
+    fields[0] = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_empty_string__ovr136, ST_UNDEFINED);
 
     // we did it
     if(var_A > ST_UNDEFINED)
@@ -1313,7 +1316,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
             // apply the effects of spl_Disjunction or spl_Disjunction_True
 
             // ; is this part of a redraw function? (seravy's bug)
-            Spell_Target_Global_Enchantment_Disjunct__WIP(var_4, player_idx, spell_idx, var_C);
+            Global_Enchantment_Disjunct__WIP(var_4, player_idx, spell_idx, var_C);
 
         }
         else
@@ -1322,7 +1325,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
             // apply the effects ofspl_Spell_Binding
 
             // ; is this part of a redraw function? (seravy's bug)
-            Spell_Target_Global_Enchantment_Bind__WIP(var_4, player_idx, spell_idx, var_C);
+            Global_Enchantment_Bind__WIP(var_4, player_idx, spell_idx, var_C);
 
         }
 
@@ -1345,7 +1348,7 @@ int16_t Spell_Target_Global_Enchantment_Screen(int16_t spell_idx, int16_t player
 /*
 applies the effects of spl_Spell_Binding
 */
-void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
+void Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
 {
     char string[LEN_SPELL_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
     int16_t spell_idx = 0;
@@ -1381,6 +1384,7 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 
     casting_cost = ((_players[player_idx].casting_cost_original * 250) / casting_cost);
 
+    /* OGBUG  the success threshold goes through Calculate_Dispel_Difficulty() with the TARGET's player_idx and the realm of Spell Binding, so the target's Archmage and that realm's Mastery MULTIPLY the caster's chance (x2 / x3) instead of resisting it; the strength is casting_cost_original x 20 (no Runemaster on this human path), and Random(250) <= threshold */
     threshold = Calculate_Dispel_Difficulty(casting_cost, target_player_idx, spell_data_table[target_spell_idx].magic_realm);
 
     if(Random(250) <= threshold)
@@ -1405,7 +1409,7 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
     y = (y_start + 16 + (field_idx * 13) + ((field_idx / 3) * 7));
 // FLIC_Draw((x_start + 73), (y_start + 16 + ((_osc_scanned_field - 1) * 13) + (((_osc_scanned_field - 1) / 3) * 7)), spellscr_oversbut_seg);
 
-    _fstrcpy(string, spell_data_table[spell_idx].name);
+    String_Copy_Far(string, spell_data_table[spell_idx].name);
 
     character_count = (int16_t)strlen(string);
 
@@ -1424,7 +1428,7 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 
         Set_Page_Off();
 
-        Spell_Target_Global_Enchantment_Screen_Draw();
+        Draw_Global_Enchantment_Screen();
 
         if(itr > 23)
         {
@@ -1487,6 +1491,8 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 
     }
 
+    Wait_For_Input();  /* CLAUDE */  /* REBUG */  // asm: @@Done: call Wait_For_Input
+
 }
 
 
@@ -1494,7 +1500,7 @@ void Spell_Target_Global_Enchantment_Bind__WIP(int16_t field_idx, int16_t player
 /*
 applies the effects of spl_Disjunction or spl_Disjunction_True
 */
-void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
+void Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t player_idx, int16_t target_spell_idx, int16_t target_player_idx)
 {
     int16_t spell_idx = 0;
     int16_t input_field_idx = 0;
@@ -1516,7 +1522,7 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 
     y_start = ((5 - _num_players) * 23);
 
-    spell_idx = ovl_ench_list_ptr[(target_player_idx - 1)][(ovl_ench_list_fst[target_player_idx] + (field_idx % 3))];
+    spell_idx = ovl_ench_list_ptr[(target_player_idx - 1)][((field_idx % 3) + ovl_ench_list_fst[(target_player_idx - 1)])];
 
     if(target_spell_idx == spl_Disjunction_True)
     {
@@ -1532,6 +1538,7 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
     casting_cost = ((_players[player_idx].casting_cost_original * 250) / casting_cost);
 
 
+    /* OGBUG  the success threshold goes through Calculate_Dispel_Difficulty() with the TARGET's player_idx, so the target's Archmage MULTIPLIES the caster's chance instead of resisting it (plus that realm's Mastery, which Calculate_Dispel_Difficulty() only applies for Nature / Sorcery / Chaos); the strength is casting_cost_original (x 3 for Disjunction True, no Runemaster on this human path), and Random(250) <= threshold */
     threshold = Calculate_Dispel_Difficulty(casting_cost, target_player_idx, spell_data_table[target_spell_idx].magic_realm);
 
     if(Random(250) <= threshold)
@@ -1562,7 +1569,7 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
 
         Set_Page_Off();
 
-        Spell_Target_Global_Enchantment_Screen_Draw();
+        Draw_Global_Enchantment_Screen();
 
         if(itr > 10)
         {
@@ -1596,15 +1603,12 @@ void Spell_Target_Global_Enchantment_Disjunct__WIP(int16_t field_idx, int16_t pl
         PageFlip_FX();
 
         Release_Time(2);
-        
-    }
-
-    if(succeeded == ST_TRUE)
-    {
-
-        _ce_bldg_idx = ST_TRUE;
 
     }
+
+    _ce_bldg_idx = ST_TRUE;
+
+    Wait_For_Input();
 
 }
 
@@ -1844,7 +1848,7 @@ void Cast_Spell_Of_Mastery(int16_t player_idx)
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
     Clear_Fields();
-    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138, ST_UNDEFINED);
     _combat_wx = 0;  /* incremented in Cast_Spell_Of_Mastery_Draw() */
     while((_combat_wx < 200) && (Get_Input() != full_screen_esc))
     {
@@ -1981,7 +1985,7 @@ void Spell_Of_Mastery(int16_t player_idx)
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
     }
     Clear_Fields();
-    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138, ST_UNDEFINED);
     parade_frame_total = (12 + ((_num_players - 1) * 60));
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
@@ -2105,7 +2109,7 @@ void Undead_Animation(int16_t unit_type)
     _osc_anim_ctr = 0;
     Assign_Auto_Function(Undead_Animation_Draw, 2);
     Clear_Fields();
-    fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr138[0], ST_UNDEFINED);
+    fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr138, ST_UNDEFINED);
     leave_screen = ST_FALSE;
     _osc_anim_ctr = 0;
     while((_osc_anim_ctr < 100) && (leave_screen == ST_FALSE))

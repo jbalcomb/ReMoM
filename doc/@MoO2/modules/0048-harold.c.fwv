@@ -1,0 +1,106 @@
+module_num=48
+module=D:\MOX\OTHERS\HAROLD.C
+source=0048-harold.c.md
+range[0]=1:0x00068E07 linear=0x00078E07 size=7721
+range[1]=2:0x000013B0 linear=0x001713B0 size=388
+range[2]=2:0x0000A0A8 linear=0x0017A0A8 size=12
+range[3]=2:0x00023F0C linear=0x00193F0C size=188
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                               CHUNK
+m048f001  1    -      0x00078E07  1:0x00068E07  code         Absolute_Location                   Absolute_Location_                   regions/07-object-1/000FDE54-000FE653.txt
+m048f002  2    -      0x00078E2D  1:0x00068E2D  code         Actual_Star_Id                      Actual_Star_Id_                      regions/07-object-1/000FDE54-000FE653.txt
+m048f003  3    -      0x00078E67  1:0x00068E67  code         Confirm_Planet_And_Star_Index_Link  Confirm_Planet_And_Star_Index_Link_  regions/07-object-1/000FDE54-000FE653.txt
+m048f004  4    -      0x00078F4B  1:0x00068F4B  code         Contact_With_One_Colony             Contact_With_One_Colony_             regions/07-object-1/000FDE54-000FE653.txt
+m048f005  5    -      0x00078FB8  1:0x00068FB8  code         Contact_With_Player                 Contact_With_Player_                 regions/07-object-1/000FDE54-000FE653.txt
+m048f006  6    -      0x00078FE6  1:0x00068FE6  code         Decrement_Zoom_Count                Decrement_Zoom_Count_                regions/07-object-1/000FDE54-000FE653.txt
+m048f007  7    -      0x00079001  1:0x00069001  code         Empty_System                        Empty_System_                        regions/07-object-1/000FE654-000FEE53.txt
+m048f008  8    -      0x00079037  1:0x00069037  code         Enemy_Has_Colony_At_Star            Enemy_Has_Colony_At_Star_            regions/07-object-1/000FE654-000FEE53.txt
+m048f009  9    -      0x000790A4  1:0x000690A4  code         Get_Map_Scale                       Get_Map_Scale_                       regions/07-object-1/000FE654-000FEE53.txt
+m048f010  10   -      0x00079138  1:0x00069138  code         Get_Player_Font_Colors              Get_Player_Font_Colors_              regions/07-object-1/000FE654-000FEE53.txt
+m048f011  11   -      0x0007926C  1:0x0006926C  code         Get_Scaled_Value                    Get_Scaled_Value_                    regions/07-object-1/000FE654-000FEE53.txt
+m048f012  12   -      0x0007927F  1:0x0006927F  code         Get_Up_Scaled_Value                 Get_Up_Scaled_Value_                 regions/07-object-1/000FE654-000FEE53.txt
+m048f013  13   -      0x00079293  1:0x00069293  code         Get_Zoom_Ratio_Value                Get_Zoom_Ratio_Value_                regions/07-object-1/000FE654-000FEE53.txt
+m048f014  14   -      0x000792A9  1:0x000692A9  code         Habitable_Spectral_Class            Habitable_Spectral_Class_            regions/07-object-1/000FE654-000FEE53.txt
+m048f015  15   -      0x000792C3  1:0x000692C3  code         Harold_Defaults                     Harold_Defaults_                     regions/07-object-1/000FE654-000FEE53.txt
+m048f016  16   -      0x0007962C  1:0x0006962C  code         Harold_Init                         Harold_Init_                         regions/07-object-1/000FE654-000FEE53.txt
+m048f017  17   -      0x0007966E  1:0x0006966E  code         Has_Colony                          Has_Colony_                          regions/07-object-1/000FE654-000FEE53.txt
+m048f018  18   -      0x000796BF  1:0x000696BF  code         Increment_Zoom_Count                Increment_Zoom_Count_                regions/07-object-1/000FE654-000FEE53.txt
+m048f019  19   -      0x000796E2  1:0x000696E2  code         Increment_Zoom_Count_With_Limit     Increment_Zoom_Count_With_Limit_     regions/07-object-1/000FE654-000FEE53.txt
+m048f020  20   -      0x0007971F  1:0x0006971F  code         Init_Fleet_Movement_Box             Init_Fleet_Movement_Box_             regions/07-object-1/000FE654-000FEE53.txt
+m048f021  21   -      0x00079756  1:0x00069756  code         Init_Moving_Boxes                   Init_Moving_Boxes_                   regions/07-object-1/000FE654-000FEE53.txt
+m048f022  22   -      0x000797DD  1:0x000697DD  code         Init_System_Display_Box             Init_System_Display_Box_             regions/07-object-1/000FE654-000FEE53.txt
+m048f023  23   -      0x0007983D  1:0x0006983D  code         Inverse_Map_Scale_Ratio             Inverse_Map_Scale_Ratio_             regions/07-object-1/000FEE54-000FF653.txt
+m048f024  24   -      0x0007987A  1:0x0006987A  code         Is_Colony_Star                      Is_Colony_Star_                      regions/07-object-1/000FEE54-000FF653.txt
+m048f025  25   -      0x000798C4  1:0x000698C4  code         Is_Home_Star                        Is_Home_Star_                        regions/07-object-1/000FEE54-000FF653.txt
+m048f026  26   -      0x000798D2  1:0x000698D2  code         Galaxy_Size_From_N_Stars            Galaxy_Size_From_N_Stars_            regions/07-object-1/000FEE54-000FF653.txt
+m048f027  27   -      0x00079917  1:0x00069917  code         Map_Scale_To_Zoom_Level             Map_Scale_To_Zoom_Level_             regions/07-object-1/000FEE54-000FF653.txt
+m048f028  28   -      0x00079979  1:0x00069979  code         N_Colony_Owners                     N_Colony_Owners_                     regions/07-object-1/000FEE54-000FF653.txt
+m048f029  29   -      0x000799F7  1:0x000699F7  code         Colony_Owners                       Colony_Owners_                       regions/07-object-1/000FEE54-000FF653.txt
+m048f030  30   -      0x00079AE8  1:0x00069AE8  code         N_Food_Planets_In_System            N_Food_Planets_In_System_            regions/07-object-1/000FEE54-000FF653.txt
+m048f031  31   -      0x00079B2D  1:0x00069B2D  code         N_Planets_In_System                 N_Planets_In_System_                 regions/07-object-1/000FEE54-000FF653.txt
+m048f032  32   -      0x00079B73  1:0x00069B73  code         N_Player_Ships                      N_Player_Ships_                      regions/07-object-1/000FEE54-000FF653.txt
+m048f033  33   -      0x00079BAE  1:0x00069BAE  code         N_Satellites                        N_Satellites_                        regions/07-object-1/000FEE54-000FF653.txt
+m048f034  34   -      0x00079BDF  1:0x00069BDF  code         No_Planets_In_System                No_Planets_In_System_                regions/07-object-1/000FEE54-000FF653.txt
+m048f035  35   -      0x00079BEB  1:0x00069BEB  code         N_Turns_To_Star                     N_Turns_To_Star_                     regions/07-object-1/000FEE54-000FF653.txt
+m048f036  36   -      0x00079C1C  1:0x00069C1C  code         Planet_Data_Screen                  Planet_Data_Screen_                  regions/07-object-1/000FEE54-000FF653.txt
+m048f037  37   -      0x00079C1D  1:0x00069C1D  code         Planet_Has_Outpost                  Planet_Has_Outpost_                  regions/07-object-1/000FEE54-000FF653.txt
+m048f038  38   -      0x00079C54  1:0x00069C54  code         Planet_Index                        Planet_Index_                        regions/07-object-1/000FEE54-000FF653.txt
+m048f039  39   -      0x00079C6B  1:0x00069C6B  code         Planet_Number                       Planet_Number_                       regions/07-object-1/000FEE54-000FF653.txt
+m048f040  40   -      0x00079CD2  1:0x00069CD2  code         Planet_Type                         Planet_Type_                         regions/07-object-1/000FEE54-000FF653.txt
+m048f041  41   -      0x00079CF9  1:0x00069CF9  code         Player_Has_Artemis_Net              Player_Has_Artemis_Net_              regions/07-object-1/000FEE54-000FF653.txt
+m048f042  42   -      0x00079D1C  1:0x00069D1C  code         Player_Has_Colony                   Player_Has_Colony_                   regions/07-object-1/000FEE54-000FF653.txt
+m048f043  43   -      0x00079D40  1:0x00069D40  code         Star_Has_Dimensional_Portal         Star_Has_Dimensional_Portal_         regions/07-object-1/000FEE54-000FF653.txt
+m048f044  44   -      0x00079D48  1:0x00069D48  code         Star_Has_Artemis_Net                Star_Has_Artemis_Net_                regions/07-object-1/000FEE54-000FF653.txt
+m048f045  45   -      0x00079D50  1:0x00069D50  code         Player_Has_Dimensional_Portal       Player_Has_Dimensional_Portal_       regions/07-object-1/000FEE54-000FF653.txt
+m048f046  46   -      0x00079D68  1:0x00069D68  code         Player_Has_Jumpgate                 Player_Has_Jumpgate_                 regions/07-object-1/000FEE54-000FF653.txt
+m048f047  47   -      0x00079D86  1:0x00069D86  code         Player_Has_Outpost                  Player_Has_Outpost_                  regions/07-object-1/000FEE54-000FF653.txt
+m048f048  48   -      0x00079DEA  1:0x00069DEA  code         Player_Has_Stargate                 Player_Has_Stargate_                 regions/07-object-1/000FEE54-000FF653.txt
+m048f049  49   -      0x00079E06  1:0x00069E06  code         Player_Is_Omniscient                Player_Is_Omniscient_                regions/07-object-1/000FEE54-000FF653.txt
+m048f050  50   -      0x00079E32  1:0x00069E32  code         Player_Has_Visited                  Player_Has_Visited_                  regions/07-object-1/000FEE54-000FF653.txt
+m048f051  51   -      0x00079E4D  1:0x00069E4D  code         Player_Sighted_Monster              Player_Sighted_Monster_              regions/07-object-1/000FEE54-000FF653.txt
+m048f052  52   -      0x00079E8D  1:0x00069E8D  code         Players_Home_Star                   Players_Home_Star_                   regions/07-object-1/000FEE54-000FF653.txt
+m048f053  53   -      0x00079F05  1:0x00069F05  code         Random_With_Restore                 Random_With_Restore_                 regions/07-object-1/000FEE54-000FF653.txt
+m048f054  54   -      0x00079F26  1:0x00069F26  code         Randomize_List                      Randomize_List_                      regions/07-object-1/000FEE54-000FF653.txt
+m048f055  55   -      0x00079FA6  1:0x00069FA6  code         Read_Random_Seed                    Read_Random_Seed_                    regions/07-object-1/000FEE54-000FF653.txt
+m048f056  56   -      0x00079FDB  1:0x00069FDB  code         Set_All_Visited_Flags               Set_All_Visited_Flags_               regions/07-object-1/000FEE54-000FF653.txt
+m048f057  57   -      0x0007A00A  1:0x0006A00A  code         Set_Player_Font_Style               Set_Player_Font_Style_               regions/07-object-1/000FF654-000FFE53.txt
+m048f058  58   -      0x0007A06C  1:0x0006A06C  code         Set_Sound_Volume_To_Settings        Set_Sound_Volume_To_Settings_        regions/07-object-1/000FF654-000FFE53.txt
+m048f059  59   -      0x0007A0D9  1:0x0006A0D9  code         Star_Id_From_Colony_Id              Star_Id_From_Colony_Id_              regions/07-object-1/000FF654-000FFE53.txt
+m048f060  60   -      0x0007A115  1:0x0006A115  code         Star_Is_Orion                       Star_Is_Orion_                       regions/07-object-1/000FF654-000FFE53.txt
+m048f061  61   -      0x0007A133  1:0x0006A133  code         Star_Is_Outpost_Star                Star_Is_Outpost_Star_                regions/07-object-1/000FF654-000FFE53.txt
+m048f062  62   -      0x0007A1A8  1:0x0006A1A8  code         Star_Owner                          Star_Owner_                          regions/07-object-1/000FF654-000FFE53.txt
+m048f063  63   -      0x0007A25F  1:0x0006A25F  code         User_Box                            User_Box_                            regions/07-object-1/000FF654-000FFE53.txt
+m048f064  64   -      0x0007A352  1:0x0006A352  code         First_Ship_Orbiting_Star            First_Ship_Orbiting_Star_            regions/07-object-1/000FF654-000FFE53.txt
+m048f065  65   -      0x0007A371  1:0x0006A371  code         Star_XY_To_Ship_Id                  Star_XY_To_Ship_Id_                  regions/07-object-1/000FF654-000FFE53.txt
+m048f066  66   -      0x0007A3E3  1:0x0006A3E3  code         XY_To_Star_Id                       XY_To_Star_Id_                       regions/07-object-1/000FF654-000FFE53.txt
+m048f067  67   -      0x0007A440  1:0x0006A440  code         Zoom_Level_Font_Style               Zoom_Level_Font_Style_               regions/07-object-1/000FF654-000FFE53.txt
+m048f068  68   -      0x0007A47A  1:0x0006A47A  code         Star_Guarded_By_Monster             Star_Guarded_By_Monster_             regions/07-object-1/000FF654-000FFE53.txt
+m048f069  69   -      0x0007A523  1:0x0006A523  code         At_Least_One_Ship_At_Location       At_Least_One_Ship_At_Location_       regions/07-object-1/000FF654-000FFE53.txt
+m048f070  70   -      0x0007A54F  1:0x0006A54F  code         Get_N_Remaining_Humans              Get_N_Remaining_Humans_              regions/07-object-1/000FF654-000FFE53.txt
+m048f071  71   -      0x0007A586  1:0x0006A586  code         Get_Picture_Actual_Size             Get_Picture_Actual_Size_             regions/07-object-1/000FF654-000FFE53.txt
+m048f072  72   -      0x0007A5F7  1:0x0006A5F7  code         Draw_Multi_Colored_Box              Draw_Multi_Colored_Box_              regions/07-object-1/000FF654-000FFE53.txt
+m048f073  73   -      0x0007A795  1:0x0006A795  code         Save_Mouse_List                     Save_Mouse_List_                     regions/07-object-1/000FF654-000FFE53.txt
+m048f074  74   -      0x0007A7CF  1:0x0006A7CF  code         Restore_Mouse_List                  Restore_Mouse_List_                  regions/07-object-1/000FF654-000FFE53.txt
+m048f075  75   -      0x0007A7EC  1:0x0006A7EC  code         Clear_Saved_Mouse_List              Clear_Saved_Mouse_List_              regions/07-object-1/000FF654-000FFE53.txt
+m048f076  76   -      0x0007A7F6  1:0x0006A7F6  code         Was_Mouse_List_Saved                Was_Mouse_List_Saved_                regions/07-object-1/000FF654-000FFE53.txt
+m048f077  77   -      0x0007A801  1:0x0006A801  code         Read_Windows_Cmdline_File           Read_Windows_Cmdline_File_           regions/07-object-1/000FFE54-00100653.txt
+m048f078  78   -      0x0007A816  1:0x0006A816  code         Load_H_Strings                      Load_H_Strings_                      regions/07-object-1/000FFE54-00100653.txt
+m048f079  79   -      0x0007A990  1:0x0006A990  code         H_Message                           H_Message_                           regions/07-object-1/000FFE54-00100653.txt
+m048f080  80   -      0x0007A9B1  1:0x0006A9B1  code         Reload_Language_Strings             Reload_Language_Strings_             regions/07-object-1/000FFE54-00100653.txt
+m048f081  81   -      0x0007AA05  1:0x0006AA05  code         Load_Language_Fonts                 Load_Language_Fonts_                 regions/07-object-1/000FFE54-00100653.txt
+m048f082  82   -      0x0007AA33  1:0x0006AA33  code         Get_Font_File                       Get_Font_File_                       regions/07-object-1/000FFE54-00100653.txt
+m048f083  83   -      0x0007AA79  1:0x0006AA79  code         Write_Language_Setting_File         Write_Language_Setting_File_         regions/07-object-1/000FFE54-00100653.txt
+m048f084  84   -      0x0007AAD3  1:0x0006AAD3  code         Get_Officer_Data_LBX_Name           Get_Officer_Data_LBX_Name_           regions/07-object-1/000FFE54-00100653.txt
+m048f085  85   -      0x0007AB13  1:0x0006AB13  code         Load_Leader_Titles                  Load_Leader_Titles_                  regions/07-object-1/000FFE54-00100653.txt
+m048f086  86   -      0x0007ABA6  1:0x0006ABA6  code         Get_Monetary_Unit_String            Get_Monetary_Unit_String_            regions/07-object-1/000FFE54-00100653.txt
+m048f087  87   -      0x0007ABD7  1:0x0006ABD7  static,code  Set_Language_Race_Names             Set_Language_Race_Names_             regions/07-object-1/000FFE54-00100653.txt
+-         -    -      0x0017A0A8  2:0x0000A0A8  data         _alt_colors                         _alt_colors                          regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A0B0  2:0x0000A0B0  static,data  _fptr_trace                         _fptr_trace                          regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x00193F0C  2:0x00023F0C  static,data  _saved_mouse_list                   _saved_mouse_list                    -
+-         -    -      0x00193F84  2:0x00023F84  data         _flic_offset_x                      _flic_offset_x                       -
+-         -    -      0x00193F9C  2:0x00023F9C  data         _flic_offset_y                      _flic_offset_y                       -
+-         -    -      0x00193FB4  2:0x00023FB4  static,data  _prev_mouse_list                    _prev_mouse_list                     -
+-         -    -      0x00193FC0  2:0x00023FC0  static,data  _saved_mouse_list_count             _saved_mouse_list_count              -
+-         -    -      0x00193FC2  2:0x00023FC2  static,data  _prev_mouse_list_count              _prev_mouse_list_count               -
+-         -    -      0x00193FC4  2:0x00023FC4  data         _set_fade_for_first_fltpop          _set_fade_for_first_fltpop           -

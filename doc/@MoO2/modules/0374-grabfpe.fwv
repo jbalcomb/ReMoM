@@ -1,0 +1,8 @@
+module_num=374
+module=grabfpe
+source=0374-grabfpe.md
+range[0]=1:0x00153B68 linear=0x00163B68 size=5
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m374f001  1    -      0x00163B68  1:0x00153B68  code  __grab_fpe  __grab_fpe_  regions/07-object-1/001E8E54-001E9653.txt

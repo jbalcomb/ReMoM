@@ -1,0 +1,17 @@
+module_num=82
+module=D:\MOX\OTHERS\FLCQUEUE.C
+source=0082-flcqueue.c.md
+range[0]=1:0x000B6CA4 linear=0x000C6CA4 size=378
+range[1]=2:0x0000B1A8 linear=0x0017B1A8 size=4
+range[2]=2:0x00028C64 linear=0x00198C64 size=1200
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                               CHUNK
+m082f001    1    1/2    0x000C6CA4  1:0x000B6CA4  code         Deallocate_Flic_Queue_And_Pointers  Deallocate_Flic_Queue_And_Pointers_  regions/07-object-1/0014BE54-0014C653.txt
+m082f001_2  1    2/2    0x000C6CA4  1:0x000B6CA4  code         Allocate_Flic_Queue_And_Pointers    Allocate_Flic_Queue_And_Pointers_    regions/07-object-1/0014BE54-0014C653.txt
+m082f002    2    -      0x000C6CAE  1:0x000B6CAE  code         Add_Flic_To_End_Of_Queue            Add_Flic_To_End_Of_Queue_            regions/07-object-1/0014BE54-0014C653.txt
+m082f003    3    -      0x000C6CF7  1:0x000B6CF7  code         Draw_Flic_Queue                     Draw_Flic_Queue_                     regions/07-object-1/0014BE54-0014C653.txt
+m082f004    4    -      0x000C6D10  1:0x000B6D10  static,code  Draw_Queue_Entry                    Draw_Queue_Entry_                    regions/07-object-1/0014BE54-0014C653.txt
+m082f005    5    -      0x000C6DFB  1:0x000B6DFB  static,code  Squeze_Out_Queue_Entry              Squeze_Out_Queue_Entry_              regions/07-object-1/0014BE54-0014C653.txt
+-           -    -      0x0017B1A8  2:0x0000B1A8  static,data  _n_queue_entries                    _n_queue_entries                     regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x00198C64  2:0x00028C64  static,data  _flic_queue                         _flic_queue                          -

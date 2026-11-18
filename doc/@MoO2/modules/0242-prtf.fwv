@@ -1,0 +1,17 @@
+module_num=242
+module=prtf
+source=0242-prtf.md
+range[0]=1:0x001363B7 linear=0x001463B7 size=3038
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME               SYMBOL              CHUNK
+m242f001  1    -      0x001463B7  1:0x001363B7  code         __prtf             __prtf_             regions/07-object-1/001CB654-001CBE53.txt
+m242f002  2    -      0x00146756  1:0x00136756  static,code  getprintspecs      getprintspecs_      regions/07-object-1/001CB654-001CBE53.txt
+m242f003  3    -      0x00146894  1:0x00136894  static,code  evalflags          evalflags_          regions/07-object-1/001CBE54-001CC653.txt
+m242f004  4    -      0x001468F3  1:0x001368F3  static,code  far_strlen         far_strlen_         regions/07-object-1/001CBE54-001CC653.txt
+m242f005  5    -      0x00146917  1:0x00136917  static,code  far_other_strlen   far_other_strlen_   regions/07-object-1/001CBE54-001CC653.txt
+m242f006  6    -      0x0014693A  1:0x0013693A  static,code  fmt4hex            fmt4hex_            regions/07-object-1/001CBE54-001CC653.txt
+m242f007  7    -      0x00146998  1:0x00136998  static,code  FixedPoint_Format  FixedPoint_Format_  regions/07-object-1/001CBE54-001CC653.txt
+m242f008  8    -      0x00146A8D  1:0x00136A8D  static,code  float_format       float_format_       regions/07-object-1/001CBE54-001CC653.txt
+m242f009  9    -      0x00146A94  1:0x00136A94  static,code  formstring         formstring_         regions/07-object-1/001CBE54-001CC653.txt
+m242f010  10   -      0x00146F7D  1:0x00136F7D  static,code  zupstr             zupstr_             regions/07-object-1/001CBE54-001CC653.txt

@@ -56,7 +56,7 @@ uint64_t win_ticks_startup;
 
 struct win32_offscreen_buffer win_video_back_buffer;
 
-/* Optional per-frame callback for synthetic input injection (HeMoM). */
+/* Optional per-frame callback for synthetic input injection (DeMoM). */
 static void (*platform_frame_callback)(void) = NULL;
 
 void Platform_Register_Frame_Callback(void (*callback)(void))
@@ -636,7 +636,7 @@ static void Win_Init_Window(void)
 
 static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
+    switch(message)
     {
 
         case WM_PAINT:

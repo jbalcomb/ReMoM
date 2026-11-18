@@ -1,0 +1,11 @@
+module_num=5
+module=L:\MOX\LOADER.C
+source=0005-loader.c.md
+range[0]=1:0x00003174 linear=0x00013174 size=1343
+range[1]=2:0x0000099C linear=0x0017099C size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m005f001  1    -      0x00013174  1:0x00003174  code         Load_Pictures              Load_Pictures_              regions/07-object-1/00098654-00098E53.txt
+m005f002  2    -      0x000131C2  1:0x000031C2  static,code  Load_Main_Screen_Pictures  Load_Main_Screen_Pictures_  regions/07-object-1/00098654-00098E53.txt
+m005f003  3    -      0x00013652  1:0x00003652  code         Load_Player_Special_Names  Load_Player_Special_Names_  regions/07-object-1/00098654-00098E53.txt

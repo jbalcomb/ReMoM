@@ -1,0 +1,36 @@
+module_num=37
+module=D:\MOX\OTHERS\ADVCIV.C
+source=0037-advciv.c.md
+range[0]=1:0x00052BB7 linear=0x00062BB7 size=4571
+range[1]=2:0x00009730 linear=0x00179730 size=4
+range[2]=2:0x00023884 linear=0x00193884 size=20
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                         SYMBOL                                        CHUNK
+m037f001  1    -      0x00062BB7  1:0x00052BB7  static,code  Num_Adv_Civ_Planets                          Num_Adv_Civ_Planets_                          regions/07-object-1/000E7E54-000E8653.txt
+m037f002  2    -      0x00062BE1  1:0x00052BE1  static,code  qsort_planet_worth                           qsort_planet_worth_                           regions/07-object-1/000E7E54-000E8653.txt
+m037f003  3    -      0x00062BEA  1:0x00052BEA  static,code  Build_Parsec_Star_Distances                  Build_Parsec_Star_Distances_                  regions/07-object-1/000E7E54-000E8653.txt
+m037f004  4    -      0x00062C70  1:0x00052C70  code         Advanced_Civilization_Colonies               Advanced_Civilization_Colonies_               regions/07-object-1/000E7E54-000E8653.txt
+m037f005  5    -      0x00062E98  1:0x00052E98  static,code  Build_Adv_Civ_Star_List                      Build_Adv_Civ_Star_List_                      regions/07-object-1/000E7E54-000E8653.txt
+m037f006  6    -      0x00063035  1:0x00053035  static,code  Build_Adv_Civ_Planet_List                    Build_Adv_Civ_Planet_List_                    regions/07-object-1/000E8654-000E8E53.txt
+m037f007  7    -      0x00063156  1:0x00053156  static,code  Get_Worth_For_All_Planets                    Get_Worth_For_All_Planets_                    regions/07-object-1/000E8654-000E8E53.txt
+m037f008  8    -      0x00063259  1:0x00053259  static,code  Get_Adv_Civ_Planet_Worthiness                Get_Adv_Civ_Planet_Worthiness_                regions/07-object-1/000E8654-000E8E53.txt
+m037f009  9    -      0x00063312  1:0x00053312  static,code  Proximity_Bonus                              Proximity_Bonus_                              regions/07-object-1/000E8654-000E8E53.txt
+m037f010  10   -      0x000633D5  1:0x000533D5  static,code  Enemy_Has_Colony_At_Star                     Enemy_Has_Colony_At_Star_                     regions/07-object-1/000E8654-000E8E53.txt
+m037f011  11   -      0x000633FE  1:0x000533FE  static,code  Player_Has_Colony_At_Star                    Player_Has_Colony_At_Star_                    regions/07-object-1/000E8654-000E8E53.txt
+m037f012  12   -      0x0006341C  1:0x0005341C  static,code  Get_Next_Adv_Civ_Planet                      Get_Next_Adv_Civ_Planet_                      regions/07-object-1/000E8654-000E8E53.txt
+m037f013  13   -      0x00063577  1:0x00053577  static,code  Choose_Adv_Civ_Planets                       Choose_Adv_Civ_Planets_                       regions/07-object-1/000E8654-000E8E53.txt
+m037f014  14   -      0x00063848  1:0x00053848  code         Assign_Advanced_Civilization_Starting_Ships  Assign_Advanced_Civilization_Starting_Ships_  regions/07-object-1/000E8E54-000E9653.txt
+m037f015  15   -      0x00063860  1:0x00053860  static,code  List_Of_Other_Players_With_Same_Planet       List_Of_Other_Players_With_Same_Planet_       regions/07-object-1/000E8E54-000E9653.txt
+m037f016  16   -      0x00063861  1:0x00053861  static,code  Get_Saved_Planet_Worth                       Get_Saved_Planet_Worth_                       regions/07-object-1/000E8E54-000E9653.txt
+m037f017  17   -      0x000638A9  1:0x000538A9  static,code  Twiddle_Selected_Adv_Civ_Planets             Twiddle_Selected_Adv_Civ_Planets_             regions/07-object-1/000E8E54-000E9653.txt
+m037f018  18   -      0x00063B5A  1:0x00053B5A  static,code  Init_Adv_Civ_Homeworlds                      Init_Adv_Civ_Homeworlds_                      regions/07-object-1/000E8E54-000E9653.txt
+m037f019  19   -      0x00063B8F  1:0x00053B8F  static,code  Twiddle_Planet                               Twiddle_Planet_                               regions/07-object-1/000E8E54-000E9653.txt
+m037f020  20   -      0x00063CA0  1:0x00053CA0  static,code  Get_Players_Planet_Worthiness_Average        Get_Players_Planet_Worthiness_Average_        regions/07-object-1/000E8E54-000E9653.txt
+m037f021  21   -      0x00063D0A  1:0x00053D0A  static,code  Write_Adv_Civ_Planet_Info                    Write_Adv_Civ_Planet_Info_                    regions/07-object-1/000E8E54-000E9653.txt
+-         -    -      0x00179730  2:0x00009730  static,data  _fAdvCiv                                     _fAdvCiv                                      regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00193884  2:0x00023884  static,data  _parsec                                      _parsec                                       -
+-         -    -      0x00193888  2:0x00023888  static,data  _adv_civ_player                              _adv_civ_player                               -
+-         -    -      0x0019388C  2:0x0002388C  static,data  _planet_worth_to_player                      _planet_worth_to_player                       -
+-         -    -      0x00193890  2:0x00023890  static,data  _star_colony_owner                           _star_colony_owner                            -
+-         -    -      0x00193894  2:0x00023894  static,data  _planet_selected_flag                        _planet_selected_flag                         -

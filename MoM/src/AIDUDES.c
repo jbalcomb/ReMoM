@@ -5,9 +5,12 @@
         ¿ ovr145 ?
 */
 
-#include "../../STU/src/STU_DBG.h"
-#include "../../STU/src/STU_LOG.h"
 #include "../../STU/src/AI_METRICS.h"
+#include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
+#include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
+
 #include "../../platform/include/Platform.h"  /* Platform_Get_Millies() */
 #include "../../platform/include/Platform_Perf.h"  /* PERF_CALL() zones -- compiled out unless PERF_INSTRUMENT */
 
@@ -37,6 +40,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>     /* memcpy() memset(), stu_strcat(), stu_strcpy(), stricmp() */
+
+
+
 
 
 
@@ -156,8 +162,6 @@ static void AI_Log_Metrics(void)
 
 // WZD o145p02
 // ¿ MoO2  Module: AIDATA  Compute_AI_Data_() ?
-void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void AI_Next_Turn(void)
 {
     int i;                  /* _DI_itr_units__peace */
@@ -170,7 +174,7 @@ void AI_Next_Turn(void)
     uint64_t ntc_start_ms = Platform_Get_Millies();
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 /* CLAUDE: the hand-toggled two-#define PHASE macro that used to sit here has been replaced by the
  * build-gated PERF_CALL zone (platform/include/Platform_Perf.h, PRD-Performance-Management FR6/FR7).
@@ -204,9 +208,7 @@ void AI_Next_Turn(void)
         }
     }
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === BEGIN Turn %d ===", _turn);
-#endif
 
     PERF_CALL(EMMDATAH_Map());
     PERF_CALL(Allocate_AI_Data());
@@ -223,9 +225,7 @@ void AI_Next_Turn(void)
         {
             if((g_timestop_player_num - 1) != player_idx)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (Time Stop)", player_idx, _players[player_idx].name);
-#endif
                 continue;
             }
         }
@@ -234,18 +234,14 @@ void AI_Next_Turn(void)
         /* MoO2 ~ `s_PLAYER.eliminated == ST_FALSE` */
         if(_FORTRESSES[player_idx].active != ST_TRUE && _players[player_idx].casting_spell_idx != spl_Spell_Of_Return)
         {
-#ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Player %d (%s) SKIPPED (inactive)", player_idx, _players[player_idx].name);
-#endif
             continue;
         }
 
         /* Update Summoning Circle re-evaluation counter */
         _ai_reevaluate_summoning_circle_countdown[player_idx]--;
 
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) BEGIN ---", player_idx, _players[player_idx].name);
-#endif
 
         PERF_CALL(AI_Evaluate_Hostility(player_idx));
 
@@ -306,13 +302,6 @@ void AI_Next_Turn(void)
         }
 
         PERF_CALL(Player_All_Colony_Autobuild(player_idx));
-        for(int itr = 0; itr < _units; itr++)
-        {
-            if(_UNITS[itr].wp == ST_UNDEFINED)
-            {
-                _UNITS[itr].Finished = ST_FALSE;
-            }
-        }
         PERF_CALL(AI_Evaluation_Map(player_idx));
         PERF_CALL(AI_Evaluate_Continents(player_idx));
         PERF_CALL(AI_Set_Unit_Orders(player_idx));
@@ -320,9 +309,7 @@ void AI_Next_Turn(void)
         PERF_CALL(EMMDATAH_Map());
         PERF_CALL(AI_Kill_Excess_Settlers_And_Engineers(player_idx));
 
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: --- Player %d (%s) END ---", player_idx, _players[player_idx].name);
-#endif
     }
 
     PERF_CALL(EMMDATAH_Map());
@@ -337,9 +324,7 @@ void AI_Next_Turn(void)
     }
 
     /* AI Unit Movement Phase */
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === Movement Phase ===");
-#endif
     for (player_idx = 1; player_idx < _num_players; player_idx++)
     {
 
@@ -358,9 +343,7 @@ void AI_Next_Turn(void)
         /* Check if Wizard is active or returning */
         if(_FORTRESSES[player_idx].active == ST_TRUE || _players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
         {
-#ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Moving units for Player %d (%s)", player_idx, _players[player_idx].name);
-#endif
             PERF_CALL(AI_Execute_Orders(player_idx));
         }
     }
@@ -368,22 +351,14 @@ void AI_Next_Turn(void)
     PERF_CALL(EMMDATAH_Map());
 
     /* Neutral Player Turn Processing */
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === Neutral Player Phase ===");
-#endif
     PERF_CALL(Player_All_Colony_Autobuild(NEUTRAL_PLAYER_IDX));
     PERF_CALL(NPC_Farmers());
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Farmers done");
-#endif
     PERF_CALL(NPC_Destinations());
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC_Destinations done");
-#endif
     PERF_CALL(AI_Execute_Orders(NEUTRAL_PLAYER_IDX));
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: NPC movement done");
-#endif
 
     /* The neutral turn can end the game (a rampaging stack takes the human's last city). If it does, skip Make_Raiders/Make_Monsters/cleanup and return. */
     /* EOG_HACK */  if(magic_master_idx != ST_UNDEFINED) { return; }
@@ -393,18 +368,14 @@ void AI_Next_Turn(void)
     /* CLAUDE: GD point 616 -- _UNITS AFTER Make_Raiders (NPC raider unit generation).
      * Captured at the call site (mirrors OG's far-return into AI_Next_Turn) so the
      * function's many early-return paths are handled automatically.  Fire once. */
-    { static int gd616_done = 0; if(!gd616_done) { gd616_done = 1; gd_dump_units("616_Make_Raiders_Return_U"); } }
-#ifdef STU_DEBUG
+    STU_GD_ONCE("616_Make_Raiders_Return_U", STU_GD_Dump_Units("616_Make_Raiders_Return_U"));  /* CLAUDE */
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Raiders done");
-#endif
     PERF_CALL(Make_Monsters());
     /* CLAUDE: GD point 617 -- _UNITS AFTER Make_Monsters (NPC monster unit generation).
      * Same call-site capture.  Pairs with 616 to see which NPC-generation pass creates
      * the divergent late unit records (e.g. _UNITS[48..50]).  Fire once. */
-    { static int gd617_done = 0; if(!gd617_done) { gd617_done = 1; gd_dump_units("617_Make_Monsters_Return_U"); } }
-#ifdef STU_DEBUG
+    STU_GD_ONCE("617_Make_Monsters_Return_U", STU_GD_Dump_Units("617_Make_Monsters_Return_U"));  /* CLAUDE */
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: Make_Monsters done");
-#endif
 
     /* Cleanup and Stasis */
     PERF_CALL(NPC_Excess_Garrison());
@@ -412,11 +383,9 @@ void AI_Next_Turn(void)
 
     AI_Log_Metrics();
     AI_Metrics_Emit_Turn_Summary(_turn, _difficulty, _num_players);
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_TURN: === END Turn %d ===", _turn);
-#endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -620,9 +589,11 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
     /* OGBUG: spells that are already research candidates are ignored by this loop */
     knowable_spell_count = 0;
-    for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) & (knowable_spell_count == 0)); itr_realms++)
+    // for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) & (knowable_spell_count == 0)); itr_realms++)
+    /* CLAUDE */  /* REBUG */  for(itr_realms = 0; ((itr_realms < NUM_MAGIC_REALMS) && (knowable_spell_count == 0)); itr_realms++)  /* asm loc_D298B: jge / jz, short-circuit */
     {
-        for(itr_spells = 0; ((itr_spells < NUM_SPELLS_PER_MAGIC_REALM) & (knowable_spell_count == 0)); itr_spells++)
+        // for(itr_spells = 0; ((itr_spells < NUM_SPELLS_PER_MAGIC_REALM) & (knowable_spell_count == 0)); itr_spells++)
+        /* CLAUDE */  /* REBUG */  for(itr_spells = 0; ((itr_spells < NUM_SPELLS_PER_MAGIC_REALM) && (knowable_spell_count == 0)); itr_spells++)  /* asm loc_D297C: jge / jz, short-circuit */
         {
             if(_players[player_idx].spells_list[((itr_realms * NUM_SPELLS_PER_MAGIC_REALM) + itr_spells)] == sls_Knowable)
             {
@@ -634,6 +605,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
     /* OGBUG: branching this here removes the AI's ability to adjust power distribution entirely when all spells have been researched, including the intended modifiers for researching and casting the SoM */
     if(knowable_spell_count == 0)
     {
+        /* OGBUG  a store, not an add: the skill share becomes research_ratio / 2 and research_ratio is zeroed, so on the next re-evaluation (still no spell left to research, research_ratio still 0) skill_ratio = 0 / 2 = 0 and mana_ratio = 100 - 0 - 0 takes all the power: the AI stops raising its casting skill */
         _players[player_idx].skill_ratio = (_players[player_idx].research_ratio / 2);  /* OGBUG: should be added, not replacing */
         _players[player_idx].research_ratio = 0;
     }
@@ -769,6 +741,7 @@ void AI_Update_Magic_Power(int16_t player_idx)
 
         }
 
+        /* OGBUG  spell 90 (spl_Fire_Elemental) where the neighbouring tests use spl_Spell_Of_Mastery: while the AI researches Fire Elemental its power goes 70 % research / 10 skill / 20 mana */
         /* OGBUG: should be spl_Spell_Of_Mastery, not spl_Fire_Elemental */
         if(_players[player_idx].researching_spell_idx == spl_Fire_Elemental)
         {
@@ -937,8 +910,9 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     int16_t itr = 0;
     int16_t city_owner_idx = 0;
     int16_t itr_cities = 0;
-    int16_t itr_units = 0;
-
+    int16_t itr_units = 0;  /* OGBUG: itr_units is uninitialized */
+    /* OGBUG  itr_units (DI) is read as a _CITIES[] index before it is set; it holds whatever the caller left in DI */
+    /* HACK */  itr_units = Stack_Garbage_Range(0, (_cities - 1));
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
 
@@ -1060,15 +1034,21 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
 
-        /* ¿ OGBUG: gets here with -1 and illegally indexes arrays ? */
-        /* HACK */  if(
-        /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
-        /* HACK */      ||
-        /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
-        /* HACK */  )
-        /* HACK */  {
-        /* HACK */      continue;
-        /* HACK */  }
+        /* OGBUG  no owner / plane test: every unit not owned by player_idx goes into the enemy stack list and the city threat below, allies included, and so do dead / disbanded */
+        /* OGBUG  units (owner_idx -1, still in _UNITS[] until Units_Compact()). Units killed before the AI turn had their plane reset to 0 by AI_Next_Turn()'s sanity loop, so */
+        /* OGBUG  they count as enemies on Arcanus at their last square; units killed by an earlier player's AI_Set_Unit_Orders() / AI_Kill_Excess_Settlers_And_Engineers() in */
+        /* OGBUG  this same AI_Next_Turn() still have wp -1 from Kill_Unit(), so they match no city and join / start an enemy stack on plane -1 but add no city threat. */
+        /* OGBUG  Effective_Unit_Strength() of a dead unit indexes _players[-1] and _HEROES2[-1] (Load_Battle_Unit(), Unit_Gold_Upkeep(), Unit_Hit_Points(), Unit_Moves2(), and */
+        /* OGBUG  for a dead hero the hero skill / item code); those reads are bounded with HACKs at the access sites */
+        /* CLAUDE */  /* no asm counterpart: ReMoM now processes dead units like the OG */
+        // /* HACK */  if(
+        // /* HACK */      (_UNITS[itr_units].owner_idx == ST_UNDEFINED)
+        // /* HACK */      ||
+        // /* HACK */      (_UNITS[itr_units].wp == ST_UNDEFINED)
+        // /* HACK */  )
+        // /* HACK */  {
+        // /* HACK */      continue;
+        // /* HACK */  }
 
         effective_unit_strength = Effective_Unit_Strength(itr_units);
 
@@ -1107,148 +1087,16 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
         // `seen_unit`: the intent is the standard linear-search-then-insert pattern
 
-        if(_UNITS[itr_units].owner_idx != player_idx)
-        {
-
-            /* Enemy Unit Processing */
-
-            if(_ai_all_enemy_stack_count >= 240) { continue; }
-
-            seen_unit = ST_FALSE;
-
-            for(itr = 0; ((itr < _cities) & (seen_unit == ST_FALSE)); itr++)
-            {
-
-                if(
-                    (_UNITS[itr_units].wx == _CITIES[itr].wx)
-                    &&
-                    (_UNITS[itr_units].wy == _CITIES[itr].wy)
-                    &&
-                    (_UNITS[itr_units].wp == _CITIES[itr].wp)
-                )
-                {
-
-                    seen_unit = ST_TRUE;
-
-                }
-
-            }
-
-
-            for(itr = 0; ((itr < _ai_all_enemy_stack_count) & (seen_unit == ST_FALSE)); itr++)
-            {
-
-                if(
-                    (_UNITS[itr_units].wx == _ai_all_enemy_stacks[itr].wx)
-                    &&
-                    (_UNITS[itr_units].wy == _ai_all_enemy_stacks[itr].wy)
-                    &&
-                    (_UNITS[itr_units].wp == _ai_all_enemy_stacks[itr].wp)
-                )
-                {
-
-                    if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
-                    {
-
-                        effective_unit_strength = 0;
-
-                    }
-
-                    if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
-                    {
-
-                        effective_unit_strength = 0;
-
-                    }
-
-                    if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
-                    {
-
-                        effective_unit_strength = 0;
-
-                    }
-
-                    _ai_all_enemy_stacks[itr].value = effective_unit_strength;
-
-                    seen_unit = ST_TRUE;
-
-                }
-
-            }
-
-            /* not in a City Garrison and not in a known enemy stack, so must be previously unseen enemy stack */
-            /* Units Loop; Enemy Units; New Stack; loc_D3D24; grey-purple (not light-purple) */
-            if(seen_unit == ST_FALSE)
-            {
-
-                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wx = _UNITS[itr_units].wx;
-
-                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wy = _UNITS[itr_units].wy;
-
-                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wp = _UNITS[itr_units].wp;
-
-                if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
-                {
-
-                    effective_unit_strength = 0;
-
-                }
-
-                if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
-                {
-
-                    effective_unit_strength = 0;
-
-                }
-
-                if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
-                {
-
-                    effective_unit_strength = 0;
-
-                }
-
-                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].value = effective_unit_strength;
-
-                _ai_all_enemy_stack_count++;
-
-            }
-
-            for(itr = 0; itr < _cities; itr++)
-            {
-                if(_UNITS[itr_units].wp == _CITIES[itr].wp)
-                {
-                    if(
-                        (_UNITS[itr_units].wx == _CITIES[itr].wx)
-                        &&
-                        (_UNITS[itr_units].wy == _CITIES[itr].wy)
-                    )
-                    {
-                        _ai_all_enemy_garrison_strengths[itr] += effective_unit_strength;
-                    }
-                    else
-                    {
-                        if(
-                            (abs(_UNITS[itr_units].wx - _CITIES[itr].wx) < 3)
-                            &&
-                            (abs(_UNITS[itr_units].wy - _CITIES[itr].wy) < 3)
-                        )
-                        {
-                            _ai_all_enemy_garrison_strengths[itr] += (effective_unit_strength / 2);
-                        }
-                    }
-                }
-            }
-
-        }
-        else
+        // if(_UNITS[itr_units].owner_idx != player_idx)
+        if(_UNITS[itr_units].owner_idx == player_idx)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax,[bp+player_idx] / jz loc_D315E (own) / jmp loc_D3B66 (enemy) - own-unit block comes first */
         {
 
             if(_ai_all_own_stack_count >= MAX_AI_STACKS) { continue; }
             
             seen_unit = ST_FALSE;
 
-            for(itr = 0; ((itr < _ai_all_own_stack_count) & (seen_unit == ST_FALSE)); itr++)
+            // for(itr = 0; ((itr < _ai_all_own_stack_count) & (seen_unit == ST_FALSE)); itr++)
+            for(itr = 0; ((itr < _ai_all_own_stack_count) && (seen_unit == ST_FALSE)); itr++)  /* CLAUDE */  /* REBUG */  /* asm: jge / jnz out, short-circuit */
             {
 
                 if(
@@ -1346,7 +1194,8 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     )
                     {
 
-                        _ai_all_own_stacks[itr].abilities ^= AICAP_LandOnly;
+                        // _ai_all_own_stacks[itr].abilities ^= AICAP_LandOnly;
+                        _ai_all_own_stacks[itr].abilities &= ~AICAP_LandOnly;  /* CLAUDE */  /* REBUG */  /* asm: and al, not AICAP_LandOnly */
 
                     }
 
@@ -1379,9 +1228,11 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
                     {
 
+                        effective_unit_strength = 0;  /* CLAUDE */  /* REBUG */  /* asm loc_D3511: mov [bp+effective_unit_strength], 0 precedes the or AICAP_RoadBuild */
+
                         _ai_all_own_stacks[itr].abilities |= AICAP_RoadBuild;
 
-                        effective_unit_strength = 0;
+                        // effective_unit_strength = 0;
 
                     }
 
@@ -1487,7 +1338,8 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                 )
                 {
 
-                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities ^= AICAP_LandOnly;
+                    // _ai_all_own_stacks[_ai_all_own_stack_count].abilities ^= AICAP_LandOnly;
+                    _ai_all_own_stacks[_ai_all_own_stack_count].abilities &= ~AICAP_LandOnly;  /* CLAUDE */  /* REBUG */  /* asm: and al, not AICAP_LandOnly */
 
                 }
 
@@ -1516,7 +1368,8 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
 
                 }
 
-                _ai_all_own_stacks[_ai_all_own_stack_count].value += effective_unit_strength;
+                // _ai_all_own_stacks[_ai_all_own_stack_count].value += effective_unit_strength;
+                _ai_all_own_stacks[_ai_all_own_stack_count].value = effective_unit_strength;  /* CLAUDE */  /* REBUG */  /* asm loc_D3968: mov [bx+s_AI_STACK_DATA.value], ax */
 
                 _ai_all_own_stacks[_ai_all_own_stack_count].unit_status = _UNITS[itr_units].Status;
 
@@ -1596,6 +1449,143 @@ void AI_Player_Calculate_Target_Values(int16_t player_idx)
                     _ai_all_own_garrison_strengths[itr] += effective_unit_strength;
                 }
 
+            }
+
+        }
+        else
+        {
+
+            /* Enemy Unit Processing */
+
+            if(_ai_all_enemy_stack_count >= 240) { continue; }
+
+            seen_unit = ST_FALSE;
+
+            // for(itr = 0; ((itr < _cities) & (seen_unit == ST_FALSE)); itr++)
+            for(itr = 0; ((itr < _cities) && (seen_unit == ST_FALSE)); itr++)  /* CLAUDE */  /* REBUG */  /* asm: jge / jnz out, short-circuit */
+            {
+
+                if(
+                    (_UNITS[itr_units].wx == _CITIES[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _CITIES[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _CITIES[itr].wp)
+                )
+                {
+
+                    seen_unit = ST_TRUE;
+
+                }
+
+            }
+
+
+            // for(itr = 0; ((itr < _ai_all_enemy_stack_count) & (seen_unit == ST_FALSE)); itr++)
+            for(itr = 0; ((itr < _ai_all_enemy_stack_count) && (seen_unit == ST_FALSE)); itr++)  /* CLAUDE */  /* REBUG */  /* asm: jge / jnz out, short-circuit */
+            {
+
+                if(
+                    (_UNITS[itr_units].wx == _ai_all_enemy_stacks[itr].wx)
+                    &&
+                    (_UNITS[itr_units].wy == _ai_all_enemy_stacks[itr].wy)
+                    &&
+                    (_UNITS[itr_units].wp == _ai_all_enemy_stacks[itr].wp)
+                )
+                {
+
+                    if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
+                    {
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
+                    {
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
+                    {
+
+                        effective_unit_strength = 0;
+
+                    }
+
+                    // _ai_all_enemy_stacks[itr].value = effective_unit_strength;
+                    _ai_all_enemy_stacks[itr].value += effective_unit_strength;  /* CLAUDE */  /* REBUG */  /* asm: add [bx+s_AI_TARGET.value], ax */
+
+                    seen_unit = ST_TRUE;
+
+                }
+
+            }
+
+            /* not in a City Garrison and not in a known enemy stack, so must be previously unseen enemy stack */
+            /* Units Loop; Enemy Units; New Stack; loc_D3D24; grey-purple (not light-purple) */
+            if(seen_unit == ST_FALSE)
+            {
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wx = _UNITS[itr_units].wx;
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wy = _UNITS[itr_units].wy;
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].wp = _UNITS[itr_units].wp;
+
+                if(_unit_type_table[_UNITS[itr_units].type].Transport > 0)
+                {
+
+                    effective_unit_strength = 0;
+
+                }
+
+                if((_unit_type_table[_UNITS[itr_units].type].Abilities & UA_CREATEOUTPOST) != 0)
+                {
+
+                    effective_unit_strength = 0;
+
+                }
+
+                if(_unit_type_table[_UNITS[itr_units].type].Construction > 0)
+                {
+
+                    effective_unit_strength = 0;
+
+                }
+
+                _ai_all_enemy_stacks[_ai_all_enemy_stack_count].value = effective_unit_strength;
+
+                _ai_all_enemy_stack_count++;
+
+            }
+
+            for(itr = 0; itr < _cities; itr++)
+            {
+                if(_UNITS[itr_units].wp == _CITIES[itr].wp)
+                {
+                    if(
+                        (_UNITS[itr_units].wx == _CITIES[itr].wx)
+                        &&
+                        (_UNITS[itr_units].wy == _CITIES[itr].wy)
+                    )
+                    {
+                        _ai_all_enemy_garrison_strengths[itr] += effective_unit_strength;
+                    }
+                    else
+                    {
+                        if(
+                            (abs(_UNITS[itr_units].wx - _CITIES[itr].wx) < 3)
+                            &&
+                            (abs(_UNITS[itr_units].wy - _CITIES[itr].wy) < 3)
+                        )
+                        {
+                            _ai_all_enemy_garrison_strengths[itr] += (effective_unit_strength / 2);
+                        }
+                    }
+                }
             }
 
         }
@@ -1738,6 +1728,7 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
     int32_t desired_mana = 0;
     int32_t desired_gold = 0;
     int32_t resource_total = 0;
+    /* OGBUG  every turn the AI is casting Spell of Return, mana_reserve is SET to gold_reserve (Alchemy) or gold_reserve / 2 and gold_reserve is zeroed: whatever mana the wizard held is discarded each turn, leaving only that turn's converted gold */
     if(_players[player_idx].casting_spell_idx == spl_Spell_Of_Return)
     {
         if(_players[player_idx].alchemy == 1)
@@ -1752,7 +1743,33 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
     }
     else
     {
-        if(_players[player_idx].alchemy != 1)
+        // if(_players[player_idx].alchemy != 1)
+        /* CLAUDE */  /* REBUG */  /* asm loc_D41B0: cmp alchemy, 1; jz -> the retort path first, the non-alchemy path is the else (loc_D4318) */
+        /* CLAUDE */  if(_players[player_idx].alchemy == 1)  /* "the retort path" */
+        {
+            // want more gold or more mana
+            // if(_turn >= 150)
+            /* CLAUDE */  /* REBUG */  if(_turn < 150)  /* asm loc_D41C3: cmp _turn, 150; jl -> the 9 / 10 gold block first */
+            {
+                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
+                desired_gold = (resource_total * 9 / 10);  // gold = total * .9
+                SETMAX(desired_gold, MAX_GOLD_RESERVE);
+                desired_mana = (resource_total - desired_gold);
+                SETMAX(desired_mana, MAX_MANA_RESERVE);
+            }
+            else
+            {
+                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
+                desired_mana = (resource_total * 7 / 10);  // mana = total * .7
+                SETMAX(desired_mana, MAX_MANA_RESERVE);
+                desired_gold = (resource_total - desired_mana);
+                SETMAX(desired_gold, MAX_GOLD_RESERVE);
+            }
+            _players[player_idx].gold_reserve = desired_gold;
+            _players[player_idx].mana_reserve = desired_mana;
+        }
+        // else  /* "the retort path" */
+        /* CLAUDE */  else
         {
             if(_players[player_idx].mana_reserve == 0)
             {
@@ -1807,28 +1824,6 @@ void AI_Update_Gold_And_Mana_Reserves(int16_t player_idx)
                     }
                 }
             }
-        }
-        else  /* "the retort path" */
-        {
-            // want more gold or more mana
-            if(_turn >= 150)
-            {
-                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
-                desired_mana = (resource_total * 7 / 10);  // mana = total * .7
-                SETMAX(desired_mana, MAX_MANA_RESERVE);
-                desired_gold = (resource_total - desired_mana);
-                SETMAX(desired_gold, MAX_GOLD_RESERVE);
-            }
-            else
-            {
-                resource_total = (_players[player_idx].gold_reserve + _players[player_idx].mana_reserve);
-                desired_gold = (resource_total * 9 / 10);  // gold = total * .9
-                SETMAX(desired_gold, MAX_GOLD_RESERVE);
-                desired_mana = (resource_total - desired_gold);
-                SETMAX(desired_mana, MAX_MANA_RESERVE);
-            }
-            _players[player_idx].gold_reserve = desired_gold;
-            _players[player_idx].mana_reserve = desired_mana;
         }
     }
 }
@@ -2173,8 +2168,7 @@ void Build_Land_Linked_List(void)
      * return, captured BEFORE EMMDATAH_Map() remaps CONTXXX away (arrays fully built,
      * CONTXXX still mapped).  Diff vs 605 (same arrays read at AICWL) confirms the
      * builder is the source.  Fire once. */
-    { static int land_bld_gd_done = 0;
-      if(!land_bld_gd_done) { land_bld_gd_done = 1; gd_dump_ai_landmass_squares("315_Build_Land_Linked_List_Squares"); } }
+    STU_GD_ONCE("315_Build_Land_Linked_List_Squares", STU_GD_Dump_AI_Landmass_Squares("315_Build_Land_Linked_List_Squares"));  /* CLAUDE */
 
     EMMDATAH_Map();
 
@@ -2299,7 +2293,7 @@ What you are looking at is the classic "Trailing Pointer"
 (or "Previous Node") pattern for traversing an array-based linked list.
 1. The Problem with Array-Based Linked Lists
 In standard C, a linked list uses pointers (Node *next). But in this engine, the "pointers" are just integer indices pointing to a slot in the CONTX_LoadTChain array.
-To add a new coastal square to the end of the chain, the engine has to walk from the Head node all the way down to the Tail node. The Tail node is the one whose next pointer is e_ST_UNDEFINED (-1).
+To add a new coastal square to the end of the chain, the engine has to walk from the Head node all the way down to the Tail node. The Tail node is the one whose next pointer is ST_UNDEFINED (-1).
 If you just write a loop that says next_node_idx = next[next_node_idx] until next_node_idx == -1, you fall off the edge of the list. By the time the loop finishes, next_node_idx is -1, and you have completely forgotten the index of the actual Tail node, meaning you have nowhere to attach the new square!
 2. The "Trailing Pointer" Solution
 To prevent falling off the edge, the assembly uses previous_node_idx to follow exactly one step behind next_node_idx.
@@ -2335,8 +2329,7 @@ To prevent falling off the edge, the assembly uses previous_node_idx to follow e
     /* CLAUDE: GD point 316 -- _ai_landmass_dock_squares at Build_Dock_Linked_List
      * return, captured BEFORE EMMDATAH_Map() remaps CONTXXX away.  Diff vs 606 (dock
      * at AICWL).  Fire once. */
-    { static int dock_bld_gd_done = 0;
-      if(!dock_bld_gd_done) { dock_bld_gd_done = 1; gd_dump_ai_dock_squares("316_Build_Dock_Linked_List_Squares"); } }
+    STU_GD_ONCE("316_Build_Dock_Linked_List_Squares", STU_GD_Dump_AI_Dock_Squares("316_Build_Dock_Linked_List_Squares"));  /* CLAUDE */
 /* Safely remap the standard Data Handle before exiting */
     EMMDATAH_Map();  /* ¿ set EMM back to the default handle - EMMDATAH ? */
 

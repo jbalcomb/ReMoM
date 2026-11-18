@@ -25,7 +25,7 @@ Calculate_Dispel_Difficulty() is shared, not combat specific, so it belongs to t
 
 **Status: DONE-DONE (2026-08-17).** No findings open; one deviation. Three functions, 575 asm lines, every one walked against its listing.
 
-Two reconstruction errors were raised and both are fixed, along with one structural deviation. D1 stays on the record — the original calls `Get_Paragraph_Max_Height` with three arguments against a two-parameter callee, which C99 cannot express. `cmake --build --preset MSVC-debug` is clean: `STU.lib`, `MOX.lib`, `momlib.lib`, `Platform_Headless.lib`, `ReMoM.exe` and `HeMoM.exe` all build and link.
+Two reconstruction errors were raised and both are fixed, along with one structural deviation. D1 stays on the record — the original calls `Get_Paragraph_Max_Height` with three arguments against a two-parameter callee, which C99 cannot express. `cmake --build --preset MSVC-debug` is clean: `STU.lib`, `MOX.lib`, `momlib.lib`, `Platform_Headless.lib`, `ReMoM.exe` and `DeMoM.exe` all build and link.
 
 ## Scope
 

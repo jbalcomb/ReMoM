@@ -137,7 +137,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_odx, uint32_t enchantmnt, char *
 void Unit_Remove_Enchantment(int16_t unit_idx, uint32_t enchantment);
 
 // WZD o89p09
-// IDK_Drown_Units()
+void IDK_Drown_Units(int16_t unit_idx);
 
 // WZD o89p10
 void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t troops[]);

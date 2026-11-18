@@ -244,14 +244,12 @@ char *stu_itoa(int value, char *dst, int radix)
     int sign;
     unsigned int v;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=itoa rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_ENTER_NAMED("itoa");
 
     if(radix < 2 || radix > 36)
     {
         dst[0] = '\0';
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=itoa rng_call=%llu",
-                  (unsigned long long)g_random_call_count);
+        TRACE_EXIT_NAMED("itoa");
         return dst;
     }
 
@@ -283,8 +281,7 @@ char *stu_itoa(int value, char *dst, int radix)
     }
     *out = '\0';
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=itoa rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_EXIT_NAMED("itoa");
     return dst;
 }
 
@@ -505,8 +502,7 @@ void stu_debugbreak(void)
 FILE *stu_fopen(const char *filename, const char *mode)
 {
     FILE *result;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=fopen rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_ENTER_NAMED("fopen");
 #if STU_COMPILER_MSVC
     {
         FILE *fp = NULL;
@@ -516,8 +512,7 @@ FILE *stu_fopen(const char *filename, const char *mode)
 #else
     result = fopen(filename, mode);
 #endif
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_EXIT_NAMED("fopen");
     return result;
 }
 
@@ -527,11 +522,9 @@ FILE *stu_fopen(const char *filename, const char *mode)
 int stu_fclose(FILE *stream)
 {
     int result;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=fclose rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_ENTER_NAMED("fclose");
     result = fclose(stream);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fclose rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_EXIT_NAMED("fclose");
     return result;
 }
 
@@ -541,11 +534,9 @@ int stu_fclose(FILE *stream)
 size_t stu_fread(void *buffer, size_t element_size, size_t element_count, FILE *stream)
 {
     size_t result;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=fread rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_ENTER_NAMED("fread");
     result = fread(buffer, element_size, element_count, stream);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fread rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_EXIT_NAMED("fread");
     return result;
 }
 
@@ -591,13 +582,11 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
 #include <dirent.h>
 FILE *stu_fopen_ci(const char *filename, const char *mode)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=fopen rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_ENTER_NAMED("fopen");
     FILE *fp = fopen(filename, mode);
     if(fp != NULL)
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-                  (unsigned long long)g_random_call_count);
+        TRACE_EXIT_NAMED("fopen");
         return fp;
     }
 
@@ -610,8 +599,7 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
         size_t dir_len = (size_t)(last_slash - filename);
         if(dir_len >= sizeof(dir_path))
         {
-            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-                      (unsigned long long)g_random_call_count);
+            TRACE_EXIT_NAMED("fopen");
             return NULL;
         }
         memcpy(dir_path, filename, dir_len);
@@ -628,8 +616,7 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
     DIR *dir = opendir(dir_path);
     if(dir == NULL)
     {
-        LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-                  (unsigned long long)g_random_call_count);
+        TRACE_EXIT_NAMED("fopen");
         return NULL;
     }
 
@@ -643,20 +630,17 @@ FILE *stu_fopen_ci(const char *filename, const char *mode)
             closedir(dir);
             if(written < 0 || (size_t)written >= sizeof(matched_path))
             {
-                LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-                          (unsigned long long)g_random_call_count);
+                TRACE_EXIT_NAMED("fopen");
                 return NULL;
             }
             FILE *result = fopen(matched_path, mode);
-            LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-                      (unsigned long long)g_random_call_count);
+            TRACE_EXIT_NAMED("fopen");
             return result;
         }
     }
 
     closedir(dir);
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=fopen rng_call=%llu",
-              (unsigned long long)g_random_call_count);
+    TRACE_EXIT_NAMED("fopen");
     return NULL;
 }
 #endif

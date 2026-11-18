@@ -1,0 +1,8 @@
+module_num=375
+module=grabfp87
+source=0375-grabfp87.md
+range[0]=1:0x00153B6D linear=0x00163B6D size=49
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m375f001  1    -      0x00163B6D  1:0x00153B6D  code  __GrabFP87  __GrabFP87_  regions/07-object-1/001E8E54-001E9653.txt

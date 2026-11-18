@@ -1,0 +1,33 @@
+module_num=24
+module=D:\MOX\OTHERS\COMBAT.C
+source=0024-combat.c.md
+range[0]=1:0x0002FDAA linear=0x0003FDAA size=11332
+range[1]=2:0x00000D90 linear=0x00170D90 size=136
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                         SYMBOL                        CHUNK
+m024f001  1    -      0x0003FDAA  1:0x0002FDAA  code         Message_Box_Titled           Message_Box_Titled_           regions/07-object-1/000C4E54-000C5653.txt
+m024f002  2    -      0x0003FDB4  1:0x0002FDB4  code         QLoad_Combat_Antaran_Ship    QLoad_Combat_Antaran_Ship_    regions/07-object-1/000C4E54-000C5653.txt
+m024f003  3    -      0x0003FEF2  1:0x0002FEF2  code         QLoad_Antaran_Defense_Fleet  QLoad_Antaran_Defense_Fleet_  regions/07-object-1/000C4E54-000C5653.txt
+m024f004  4    -      0x00040034  1:0x00030034  code         Get_Leader_Combat_Bonuses    Get_Leader_Combat_Bonuses_    regions/07-object-1/000C5654-000C5E53.txt
+m024f005  5    -      0x00040148  1:0x00030148  code         Strategic_Combat             Strategic_Combat_             regions/07-object-1/000C5654-000C5E53.txt
+m024f006  6    -      0x00040C2A  1:0x00030C2A  code         Apply_Damage_To_Qship        Apply_Damage_To_Qship_        regions/07-object-1/000C5E54-000C6653.txt
+m024f007  7    -      0x00040CC3  1:0x00030CC3  code         Get_Non_Player_Name          Get_Non_Player_Name_          regions/07-object-1/000C5E54-000C6653.txt
+m024f008  8    -      0x00040D40  1:0x00030D40  code         Build_End_Of_Combat_Message  Build_End_Of_Combat_Message_  regions/07-object-1/000C5E54-000C6653.txt
+m024f009  9    -      0x000416CF  1:0x000316CF  code         Qload_Ships                  Qload_Ships_                  regions/07-object-1/000C6654-000C6E53.txt
+m024f010  10   -      0x00041E22  1:0x00031E22  code         QGet_Hits_Bonus              QGet_Hits_Bonus_              regions/07-object-1/000C6E54-000C7653.txt
+m024f011  11   -      0x00041E88  1:0x00031E88  code         QGet_Target                  QGet_Target_                  regions/07-object-1/000C6E54-000C7653.txt
+m024f012  12   -      0x00041F20  1:0x00031F20  code         QGet_Target_SC               QGet_Target_SC_               regions/07-object-1/000C6E54-000C7653.txt
+m024f013  13   -      0x00041F80  1:0x00031F80  code         Missile_Attack               Missile_Attack_               regions/07-object-1/000C6E54-000C7653.txt
+m024f014  14   -      0x000420C0  1:0x000320C0  code         Strat_Bomb_Attack            Strat_Bomb_Attack_            regions/07-object-1/000C7654-000C7E53.txt
+m024f015  15   -      0x0004213B  1:0x0003213B  code         Stellar_Converter_Attack     Stellar_Converter_Attack_     regions/07-object-1/000C7654-000C7E53.txt
+m024f016  16   -      0x0004215B  1:0x0003215B  code         Draw_Qcombat                 Draw_Qcombat_                 regions/07-object-1/000C7654-000C7E53.txt
+m024f017  17   -      0x0004215C  1:0x0003215C  code         Strat_Special_Attack         Strat_Special_Attack_         regions/07-object-1/000C7654-000C7E53.txt
+m024f018  18   -      0x0004221F  1:0x0003221F  code         Beam_Attack                  Beam_Attack_                  regions/07-object-1/000C7654-000C7E53.txt
+m024f019  19   -      0x0004234C  1:0x0003234C  code         Combat_Satelite_Check        Combat_Satelite_Check_        regions/07-object-1/000C7654-000C7E53.txt
+m024f020  20   -      0x00042371  1:0x00032371  code         Get_Colony_Hits              Get_Colony_Hits_              regions/07-object-1/000C7654-000C7E53.txt
+m024f021  21   -      0x000423F6  1:0x000323F6  code         Resolve_Strat_Colony_Damage  Resolve_Strat_Colony_Damage_  regions/07-object-1/000C7654-000C7E53.txt
+m024f022  22   -      0x0004257E  1:0x0003257E  code         Strategic_Bombardment        Strategic_Bombardment_        regions/07-object-1/000C7654-000C7E53.txt
+m024f023  23   -      0x0004267B  1:0x0003267B  code         Bombardment                  Bombardment_                  regions/07-object-1/000C7654-000C7E53.txt
+m024f024  24   -      0x00042744  1:0x00032744  static,code  qsort_ship_array_by_size     qsort_ship_array_by_size_     regions/07-object-1/000C7654-000C7E53.txt
+m024f025  25   -      0x00042781  1:0x00032781  code         Tactical_Bombardment         Tactical_Bombardment_         regions/07-object-1/000C7654-000C7E53.txt

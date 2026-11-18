@@ -1,0 +1,35 @@
+module_num=62
+module=D:\MOX\OTHERS\SHIPS.C
+source=0062-ships.c.md
+range[0]=1:0x00090305 linear=0x000A0305 size=6473
+range[1]=2:0x00001BE0 linear=0x00171BE0 size=60
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                    SYMBOL                                   CHUNK
+m062f001  1    -      0x000A0305  1:0x00090305  code         Build_Ship_Icons                        Build_Ship_Icons_                        regions/07-object-1/00125654-00125E53.txt
+m062f002  2    -      0x000A070F  1:0x0009070F  code         Draw_Ship_Icons                         Draw_Ship_Icons_                         regions/07-object-1/00125654-00125E53.txt
+m062f003  3    -      0x000A07C8  1:0x000907C8  code         Set_Ship_Icon_XYs                       Set_Ship_Icon_XYs_                       regions/07-object-1/00125654-00125E53.txt
+m062f004  4    -      0x000A080D  1:0x0009080D  code         Do_Ship_Destination_Lines               Do_Ship_Destination_Lines_               regions/07-object-1/00125E54-00126653.txt
+m062f005  5    -      0x000A09D8  1:0x000909D8  code         Add_Ship_Icon_Fields                    Add_Ship_Icon_Fields_                    regions/07-object-1/00125E54-00126653.txt
+m062f006  6    -      0x000A0A5C  1:0x00090A5C  code         Get_Ship_Icon_Coords                    Get_Ship_Icon_Coords_                    regions/07-object-1/00125E54-00126653.txt
+m062f007  7    -      0x000A0BB0  1:0x00090BB0  static,code  Get_XYs_For_Orbiting_Ships              Get_XYs_For_Orbiting_Ships_              regions/07-object-1/00125E54-00126653.txt
+m062f008  8    -      0x000A0CD5  1:0x00090CD5  code         Get_Ship_Icon_Coords_In_Space           Get_Ship_Icon_Coords_In_Space_           regions/07-object-1/00125E54-00126653.txt
+m062f009  9    -      0x000A0D78  1:0x00090D78  code         Get_Ship_Icon_Pict_Seg                  Get_Ship_Icon_Pict_Seg_                  regions/07-object-1/00125E54-00126653.txt
+m062f010  10   -      0x000A0F2A  1:0x00090F2A  code         Get_Stack_Orbiting_Star                 Get_Stack_Orbiting_Star_                 regions/07-object-1/00125E54-00126653.txt
+m062f011  11   -      0x000A0FA8  1:0x00090FA8  code         Overlapped_Ship_Icon_Button             Overlapped_Ship_Icon_Button_             regions/07-object-1/00125E54-00126653.txt
+m062f012  12   -      0x000A1157  1:0x00091157  code         Build_Ship_Id_List                      Build_Ship_Id_List_                      regions/07-object-1/00126654-00126E53.txt
+m062f013  13   -      0x000A11C0  1:0x000911C0  code         Draw_Directional_Multi_Colored_Line     Draw_Directional_Multi_Colored_Line_     regions/07-object-1/00126654-00126E53.txt
+m062f014  14   -      0x000A1299  1:0x00091299  code         Draw_Ship_Destination_Line              Draw_Ship_Destination_Line_              regions/07-object-1/00126654-00126E53.txt
+m062f015  15   -      0x000A1341  1:0x00091341  code         Enemy_Ship_Heading_Toward_Our_Colony    Enemy_Ship_Heading_Toward_Our_Colony_    regions/07-object-1/00126654-00126E53.txt
+m062f016  16   -      0x000A13B0  1:0x000913B0  code         Print_Eta_On_Ship_Icon                  Print_Eta_On_Ship_Icon_                  regions/07-object-1/00126654-00126E53.txt
+m062f017  17   -      0x000A1455  1:0x00091455  code         Load_Highlighted_Ship_Icon_Picture      Load_Highlighted_Ship_Icon_Picture_      regions/07-object-1/00126654-00126E53.txt
+m062f018  18   -      0x000A162D  1:0x0009162D  static,code  qsort_ship_icon                         qsort_ship_icon_                         regions/07-object-1/00126654-00126E53.txt
+m062f019  19   -      0x000A163A  1:0x0009163A  code         Kill_Ship                               Kill_Ship_                               regions/07-object-1/00126654-00126E53.txt
+m062f020  20   -      0x000A16BF  1:0x000916BF  code         Build_Nonplayer_Ship                    Build_Nonplayer_Ship_                    regions/07-object-1/00126654-00126E53.txt
+m062f021  21   -      0x000A1762  1:0x00091762  code         Set_Nonplayer_Ship_XY                   Set_Nonplayer_Ship_XY_                   regions/07-object-1/00126654-00126E53.txt
+m062f022  22   -      0x000A1A23  1:0x00091A23  code         Set_Nonplayer_Ship_Destination          Set_Nonplayer_Ship_Destination_          regions/07-object-1/00126E54-00127653.txt
+m062f023  23   -      0x000A1AFA  1:0x00091AFA  code         Deploy_Ships_To_Attack_Antares          Deploy_Ships_To_Attack_Antares_          regions/07-object-1/00126E54-00127653.txt
+m062f024  24   -      0x000A1B8E  1:0x00091B8E  code         Reset_Ships_Attacking_Antares           Reset_Ships_Attacking_Antares_           regions/07-object-1/00126E54-00127653.txt
+m062f025  25   -      0x000A1BC9  1:0x00091BC9  code         Get_Ship_Icon_Dimensions                Get_Ship_Icon_Dimensions_                regions/07-object-1/00126E54-00127653.txt
+m062f026  26   -      0x000A1BF4  1:0x00091BF4  code         Clear_Auto_Colonization_Flag            Clear_Auto_Colonization_Flag_            regions/07-object-1/00126E54-00127653.txt
+m062f027  27   -      0x000A1C0D  1:0x00091C0D  code         Clear_All_Ships_Auto_Colonization_Flag  Clear_All_Ships_Auto_Colonization_Flag_  regions/07-object-1/00126E54-00127653.txt

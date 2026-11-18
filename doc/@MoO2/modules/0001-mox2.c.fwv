@@ -1,0 +1,32 @@
+module_num=1
+module=L:\MOX\MOX2.C
+source=0001-mox2.c.md
+range[0]=1:0x0000001D linear=0x0001001D size=3224
+range[1]=2:0x00000090 linear=0x00170090 size=1492
+range[2]=2:0x00005894 linear=0x00175894 size=20
+range[3]=2:0x00021F3C linear=0x00191F3C size=208
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m001f001  1    -      0x00010057  1:0x00000057  code         main2                          main2_                          regions/07-object-1/00095654-00095E53.txt
+m001f002  2    -      0x0001049B  1:0x0000049B  code         Screen_Control                 Screen_Control_                 regions/07-object-1/00095654-00095E53.txt
+m001f003  3    -      0x0001077D  1:0x0000077D  code         _TOGGLE_PAGES                  _TOGGLE_PAGES_                  regions/07-object-1/00095654-00095E53.txt
+m001f004  4    -      0x00010787  1:0x00000787  code         Set_Refresh                    Set_Refresh_                    regions/07-object-1/00095654-00095E53.txt
+m001f005  5    -      0x000107AF  1:0x000007AF  code         Get_Auto_Function              Get_Auto_Function_              regions/07-object-1/00095654-00095E53.txt
+m001f006  6    -      0x000107BA  1:0x000007BA  code         Put_Auto_Function              Put_Auto_Function_              regions/07-object-1/00095654-00095E53.txt
+m001f007  7    -      0x000107C2  1:0x000007C2  code         Execute_Auto_Function          Execute_Auto_Function_          regions/07-object-1/00095654-00095E53.txt
+m001f008  8    -      0x000107CA  1:0x000007CA  code         Set_Game_Random_Seed           Set_Game_Random_Seed_           regions/07-object-1/00095654-00095E53.txt
+m001f009  9    -      0x000107E6  1:0x000007E6  code         Check_Command_Line_Parameters  Check_Command_Line_Parameters_  regions/07-object-1/00095654-00095E53.txt
+m001f010  10   -      0x00010A0E  1:0x00000A0E  static,code  Get_Value_From_String          Get_Value_From_String_          regions/07-object-1/00095E54-00096653.txt
+m001f011  11   -      0x00010A72  1:0x00000A72  code         Set_Mox_Alt_Path               Set_Mox_Alt_Path_               regions/07-object-1/00095E54-00096653.txt
+m001f012  12   -      0x00010C2F  1:0x00000C2F  code         Set_Mox_Language               Set_Mox_Language_               regions/07-object-1/00095E54-00096653.txt
+m001f013  13   -      0x00010CA6  1:0x00000CA6  code         Load_Mox_Global_Strings        Load_Mox_Global_Strings_        regions/07-object-1/00095E54-00096653.txt
+-         -    -      0x00175894  2:0x00005894  static,data  _game_lbx_file                 _game_lbx_file                  regions/08-object-2/001F3E54-001F4653.txt
+-         -    -      0x00175898  2:0x00005898  data         _language_ini                  _language_ini                   regions/08-object-2/001F3E54-001F4653.txt
+-         -    -      0x00191F3C  2:0x00021F3C  data         _leave_game_message            _leave_game_message             -
+-         -    -      0x00191FA0  2:0x00021FA0  data         _init_game_message1            _init_game_message1             -
+-         -    -      0x00192004  2:0x00022004  static,data  _skip_intro                    _skip_intro                     -
+-         -    -      0x00192005  2:0x00022005  data         _pan_main_menu_panel           _pan_main_menu_panel            -
+-         -    -      0x00192006  2:0x00022006  data         _user_wants_n_space_monsters   _user_wants_n_space_monsters    -
+-         -    -      0x00192007  2:0x00022007  static,data  _quick_start                   _quick_start                    -
+-         -    -      0x00192008  2:0x00022008  static,data  _draw_game_popup_to_back       _draw_game_popup_to_back        -

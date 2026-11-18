@@ -1,0 +1,12 @@
+module_num=233
+module=atexit
+source=0233-atexit.md
+range[0]=1:0x001348CB linear=0x001448CB size=119
+range[1]=2:0x0004BB7C linear=0x001BBB7C size=132
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME               SYMBOL              CHUNK
+m233f001  1    -      0x001448CB  1:0x001348CB  code  _Full_at_exit_rtn  _Full_at_exit_rtn_  regions/07-object-1/001C9E54-001CA653.txt
+m233f002  2    -      0x00144906  1:0x00134906  code  atexit             atexit_             regions/07-object-1/001C9E54-001CA653.txt
+-         -    -      0x001BBB7C  2:0x0004BB7C  data  __ExitList         __ExitList          -
+-         -    -      0x001BBBFC  2:0x0004BBFC  data  __ExitCount        __ExitCount         -

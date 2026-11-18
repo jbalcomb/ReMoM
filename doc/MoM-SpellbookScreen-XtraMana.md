@@ -44,8 +44,8 @@ xtramana_ok_button_seg
     Learn_Spell_Animation()
     SBK_DrawSpellDecode__STUB()
     Merchant_Popup_Load()
-    Spell_Target_Global_Enchantment_Screen_Load()
-    Spell_Target_Global_Enchantment_Bind__WIP()
+    Load_Global_Enchantment_Screen()
+    Global_Enchantment_Bind__WIP()
     OVL_LoadGlobalAnim()
     OVL_DrawGlobalAnim()
 
@@ -62,7 +62,7 @@ xtramana_ok_button_seg
     ITEM_CreateControls()
 
 ### xtramana_ok_button_seg
-    Spell_Target_Global_Enchantment_Screen_Load()
+    Load_Global_Enchantment_Screen()
         // SPELLSCR.LBX, 001  "OVERSBK2"    ""
     ...same code module
 

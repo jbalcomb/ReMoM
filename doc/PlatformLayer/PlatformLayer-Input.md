@@ -91,7 +91,7 @@ void Platform_Event_Handler(void)
     Win_Pump_Messages();                 // drain OS events -> WM_MOUSEMOVE/WM_LBUTTON etc.
                                          //   which call User_Mouse_Handler(),
                                          //   Platform_Keyboard_Buffer_Add_Key_Press(), ...
-    if (platform_frame_callback) platform_frame_callback();  // HeMoM synthetic input
+    if (platform_frame_callback) platform_frame_callback();  // DeMoM synthetic input
     if (Platform_Record_Active()) Replay_Capture_Frame();    // .RMR recorder
 }
 
@@ -105,7 +105,7 @@ What it does for callers:
 Refreshes pointer_x/pointer_y (via User_Mouse_Handler dispatched from pumped events)
 Fills the keyboard buffer
 Sets platform_frame_mouse_buttons edge-flags for this frame
-Feeds the HeMoM synthetic-input driver one frame of scripted input
+Feeds the DeMoM synthetic-input driver one frame of scripted input
 Snapshots a frame into the replay recorder (for --record)
 
 vs. Platform_Pump_Events() (at win_PFL.cpp:246): that's the lighter version used by the inner spin-wait of Release_Time(n) — it pumps messages and refreshes the cursor but does not reset per-frame button flags, invoke the synthetic callback, or capture replay frames. Those belong to real frame boundaries only.

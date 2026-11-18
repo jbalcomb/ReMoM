@@ -113,7 +113,7 @@ AI_Next_Turn()
 - Slot 8: `AI_Stacks_Init_Build_Target_Order`
 - Slot 10: `AI_Build_Target_List` (+ `AI_Add_Target`, `AI_Stacks_Assign_Target`)
 - Slot 11: `AI_Stacks_Move_Out_NonMilitary_Garrisoned`
-- Slot 12: `AI_Stacks_Survey_Expedition_Forces` (+ `_Stack`)
+- Slot 12: `AI_Survey_Expedition_Forces` (+ `_Stack`)
 - Slot 13: `AI_Stacks_Garrison_Sites`
 - Both per-plane post-passes: `AI_Stacks_Wartime_Ocean_Movement_And_Cleanup`, `AI_Stacks_Ocean_Landmass_Orders`
 - Continent helper: `AI_Reevaluate_Continent`

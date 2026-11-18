@@ -1,0 +1,24 @@
+module_num=13
+module=D:\MOX\DIPLODEF.C
+source=0013-diplodef.c.md
+range[0]=2:0x00008CCC linear=0x00178CCC size=256
+range[1]=2:0x000220E0 linear=0x001920E0 size=8
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                   SYMBOL                                 CHUNK
+-    -    -      0x00178CCC  2:0x00008CCC  data  _personality_relation_modifiers        _personality_relation_modifiers        regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178CDC  2:0x00008CDC  data  _personality_threat_modifiers          _personality_threat_modifiers          regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178CF0  2:0x00008CF0  data  _personality_max_threats               _personality_max_threats               regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D04  2:0x00008D04  data  _personality_sneak_attacks_modifiers   _personality_sneak_attacks_modifiers   regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D18  2:0x00008D18  data  _personality_sneak_attack_restictions  _personality_sneak_attack_restictions  regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D2C  2:0x00008D2C  data  _personality_npc_peace_modifiers       _personality_npc_peace_modifiers       regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D40  2:0x00008D40  data  _base_winning_peace_proposal_chance    _base_winning_peace_proposal_chance    regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D54  2:0x00008D54  data  _threat_demand_chance                  _threat_demand_chance                  regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D68  2:0x00008D68  data  _personality_demand_modifiers          _personality_demand_modifiers          regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D7C  2:0x00008D7C  data  _personality_expansion_chance          _personality_expansion_chance          regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178D90  2:0x00008D90  data  _personality_losing_ground_chance      _personality_losing_ground_chance      regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178DA4  2:0x00008DA4  data  _personality_reward_proposal_chance    _personality_reward_proposal_chance    regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x00178DB8  2:0x00008DB8  data  _personality_break_treaty_war          _personality_break_treaty_war          regions/08-object-2/001F6E54-001F7653.txt
+-    -    -      0x001920E0  2:0x000220E0  data  _council_winner                        _council_winner                        -
+-    -    -      0x001920E2  2:0x000220E2  data  _COUNCIL_FLAG                          _COUNCIL_FLAG                          -
+-    -    -      0x001920E4  2:0x000220E4  data  _next_council_meeting_turn             _next_council_meeting_turn             -

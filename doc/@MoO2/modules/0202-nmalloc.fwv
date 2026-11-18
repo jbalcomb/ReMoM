@@ -1,0 +1,13 @@
+module_num=202
+module=nmalloc
+source=0202-nmalloc.md
+range[0]=1:0x0012CB78 linear=0x0013CB78 size=227
+range[1]=2:0x0000C970 linear=0x0017C970 size=12
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                           SYMBOL                         CHUNK
+m202f001    1    1/2    0x0013CB78  1:0x0012CB78  code  _nmalloc                       _nmalloc_                      regions/07-object-1/001C1E54-001C2653.txt
+m202f001_2  1    2/2    0x0013CB78  1:0x0012CB78  code  malloc                         malloc_                        regions/07-object-1/001C1E54-001C2653.txt
+-           -    -      0x0017C970  2:0x0000C970  data  ___nheapbeg                    ___nheapbeg                    regions/08-object-2/001FAE54-001FB653.txt
+-           -    -      0x0017C974  2:0x0000C974  data  ___MiniHeapRover               ___MiniHeapRover               regions/08-object-2/001FAE54-001FB653.txt
+-           -    -      0x0017C978  2:0x0000C978  data  ___LargestSizeB4MiniHeapRover  ___LargestSizeB4MiniHeapRover  regions/08-object-2/001FAE54-001FB653.txt

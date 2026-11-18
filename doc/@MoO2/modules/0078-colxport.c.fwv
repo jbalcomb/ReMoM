@@ -1,0 +1,35 @@
+module_num=78
+module=D:\MOX\OTHERS\COLXPORT.C
+source=0078-colxport.c.md
+range[0]=1:0x000B5102 linear=0x000C5102 size=2434
+range[1]=2:0x0000B188 linear=0x0017B188 size=20
+range[2]=2:0x00028694 linear=0x00198694 size=608
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                            SYMBOL                           CHUNK
+m078f001  1    -      0x000C52F6  1:0x000B52F6  code         Load_Xport_Anims                Load_Xport_Anims_                regions/07-object-1/0014A654-0014AE53.txt
+m078f002  2    -      0x000C5349  1:0x000B5349  static,code  Update_Fields                   Update_Fields_                   regions/07-object-1/0014A654-0014AE53.txt
+m078f003  3    -      0x000C534E  1:0x000B534E  static,code  Add_Fields                      Add_Fields_                      regions/07-object-1/0014A654-0014AE53.txt
+m078f004  4    -      0x000C53B0  1:0x000B53B0  static,code  Clear_List_Col_Array            Clear_List_Col_Array_            regions/07-object-1/0014A654-0014AE53.txt
+m078f005  5    -      0x000C53C9  1:0x000B53C9  static,code  Draw_Info_Pop_For               Draw_Info_Pop_For_               regions/07-object-1/0014A654-0014AE53.txt
+m078f006  6    -      0x000C5426  1:0x000B5426  static,code  Draw_Colony_Summary_For_Colony  Draw_Colony_Summary_For_Colony_  regions/07-object-1/0014A654-0014AE53.txt
+m078f007  7    -      0x000C54DF  1:0x000B54DF  code         Cheezy_Col_Count_Hack           Cheezy_Col_Count_Hack_           regions/07-object-1/0014A654-0014AE53.txt
+m078f008  8    -      0x000C5512  1:0x000B5512  code         N_Colonies_And_Outposts         N_Colonies_And_Outposts_         regions/07-object-1/0014A654-0014AE53.txt
+m078f009  9    -      0x000C5560  1:0x000B5560  code         N_Colonies                      N_Colonies_                      regions/07-object-1/0014A654-0014AE53.txt
+m078f010  10   -      0x000C56BB  1:0x000B56BB  static,code  Draw_Bar_Indicator              Draw_Bar_Indicator_              regions/07-object-1/0014A654-0014AE53.txt
+m078f011  11   -      0x000C5800  1:0x000B5800  static,code  Draw_Xport_Popup                Draw_Xport_Popup_                regions/07-object-1/0014AE54-0014B653.txt
+m078f012  12   -      0x000C58D1  1:0x000B58D1  code         Build_Global_Colony_List        Build_Global_Colony_List_        regions/07-object-1/0014AE54-0014B653.txt
+m078f013  13   -      0x000C5934  1:0x000B5934  code         Xport_Popup                     Xport_Popup_                     regions/07-object-1/0014AE54-0014B653.txt
+-         -    -      0x0017B188  2:0x0000B188  static,data  _anims                          _anims                           regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B198  2:0x0000B198  static,data  _cheezy_hack_col_count_state    _cheezy_hack_col_count_state     regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x00198694  2:0x00028694  static,data  _cheezy_hack_col_count          _cheezy_hack_col_count           -
+-         -    -      0x001986A4  2:0x000286A4  static,data  _x_fields                       _x_fields                        -
+-         -    -      0x001986AC  2:0x000286AC  static,data  _list_col_pop_ref               _list_col_pop_ref                -
+-         -    -      0x001988A4  2:0x000288A4  static,data  _list_col_job_fields            _list_col_job_fields             -
+-         -    -      0x001988B0  2:0x000288B0  data         _g_colony_list_ptr              _g_colony_list_ptr               -
+-         -    -      0x001988B4  2:0x000288B4  static,data  _list_col_coord_vars            _list_col_coord_vars             -
+-         -    -      0x001988C0  2:0x000288C0  static,data  _list_col                       _list_col                        -
+-         -    -      0x001988CC  2:0x000288CC  static,data  _list_col_prod_fields           _list_col_prod_fields            -
+-         -    -      0x001988D8  2:0x000288D8  static,data  _list_col_pop_count             _list_col_pop_count              -
+-         -    -      0x001988E4  2:0x000288E4  static,data  _list_fields                    _list_fields                     -
+-         -    -      0x001988F0  2:0x000288F0  static,data  _saved_autofunction             _saved_autofunction              -

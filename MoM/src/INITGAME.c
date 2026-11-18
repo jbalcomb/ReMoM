@@ -13,6 +13,7 @@ Module: INITGAME
 #include "../../MoX/src/random.h"
 
 #include "../../STU/src/STU_LOG.h"  /* Init_Heroes Spells write trace */
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "NewGame.h"
 #include "Spellbook.h"
@@ -24,527 +25,8 @@ Module: INITGAME
 
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>  /* getenv, strtol (CI loader) */
 
-/* ==================================================================== *
- *  Capture/Inject (CI), ReMoM side -- see INITGAME.h.
- * ==================================================================== *
- *  Loads og-game-data-capture.fwv (extract-ci-stage0.py output) and hands
- *  OG's captured values to the call sites that inject them.  The file lives in
- *  the ReMoM build's working dir; ReMoM may run from assets/ or the build
- *  dir, so we try a few candidate paths (plus an OG_CI_FWV override) and log
- *  loudly rather than fail silently -- a missing file just means "no inject". */
 
-#define GD_CI_MAX_VALS  512   /* longest record is the 240-int16 world overrun */
-#define GD_CI_MAX_RECS   16
-
-typedef struct {
-    char key[32];
-    char site[24];
-    int  count;
-    long vals[GD_CI_MAX_VALS];
-} gd_ci_rec_t;
-
-static gd_ci_rec_t gd_ci_recs[GD_CI_MAX_RECS];
-static int gd_ci_nrecs  = 0;
-static int gd_ci_loaded = 0;   /* 0 = not tried, 1 = loaded, -1 = tried + failed */
-
-int gd_ci_load(void)
-{
-    const char* cands[3];
-    const char* env;
-    const char* used = 0;
-    FILE* f = 0;
-    char  line[8192];
-    int   nc = 0, i;
-
-    if(gd_ci_loaded != 0)
-    {
-        return (gd_ci_loaded == 1) ? gd_ci_nrecs : -1;
-    }
-
-    env = getenv("OG_CI_FWV");
-    if(env && *env) { cands[nc++] = env; }
-    cands[nc++] = "og-game-data-capture.fwv";   /* cwd (build dir, if run there) */
-    cands[nc++] = "/home/jbalcomb/STU/devel/ReMoM/out/build/clang-debug/bin/Debug/og-game-data-capture.fwv";
-
-    for (i = 0; i < nc; i++) {
-        f = fopen(cands[i], "r");
-        if(f)
-        {
-            used = cands[i];
-            break;
-        }
-    }
-    if(!f)
-    {
-        LOG_INFO(LOG_CAT_GENERAL, "[CI] load FAILED: og-game-data-capture.fwv not found (cwd or build dir). No injection.");
-        gd_ci_loaded = -1;
-        return -1;
-    }
-
-    gd_ci_nrecs = 0;
-    while(fgets(line, sizeof(line), f))
-    {
-        char  key[32], site[24];
-        int   count = 0, consumed = 0, n = 0;
-        char* p = line;
-        char* endp;
-        gd_ci_rec_t* r;
-
-        while(*p == ' ' || *p == '\t') { p++; }
-        if(*p == '#' || *p == '\n' || *p == '\r' || *p == 0) { continue; }
-        if(gd_ci_nrecs >= GD_CI_MAX_RECS)
-        {
-            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: >%d records; rest ignored.", GD_CI_MAX_RECS);
-            break;
-        }
-        /* sscanf widths kept in sync with r->key[32] / r->site[24] so the
-           subsequent copies can't possibly truncate (GCC -Wformat-truncation). */
-        if(sscanf(p, "%31s %23s %d%n", key, site, &count, &consumed) != 3)
-        {
-            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: malformed record skipped.");
-            continue;
-        }
-        r = &gd_ci_recs[gd_ci_nrecs];
-        snprintf(r->key,  sizeof(r->key),  "%s", key);
-        snprintf(r->site, sizeof(r->site), "%s", site);
-
-        p += consumed;
-        for (;;) {
-            long v = strtol(p, &endp, 10);
-            if(endp == p) { break; }       /* no more numbers on the line */
-            if(n < GD_CI_MAX_VALS) { r->vals[n] = v; }
-            n++;
-            p = endp;
-        }
-        if(n != count)
-        {
-            LOG_INFO(LOG_CAT_GENERAL, "[CI] WARNING: %s %s declared %d values but found %d.", r->key, r->site, count, n);
-        }
-        r->count = (n < GD_CI_MAX_VALS) ? n : GD_CI_MAX_VALS;
-        gd_ci_nrecs++;
-    }
-    fclose(f);
-
-    LOG_INFO(LOG_CAT_GENERAL, "[CI] loaded %d record(s) from %s", gd_ci_nrecs, used);
-    gd_ci_loaded = 1;
-    return gd_ci_nrecs;
-}
-
-int gd_ci_get(const char* key, const char* site, long* out, int max)
-{
-    int i, k, n;
-    if(gd_ci_loaded == 0) { gd_ci_load(); }
-    for (i = 0; i < gd_ci_nrecs; i++) {
-        if(strcmp(gd_ci_recs[i].key, key) == 0 &&
-           strcmp(gd_ci_recs[i].site, site) == 0)
-        {
-            n = gd_ci_recs[i].count;
-            if(n > max) { n = max; }
-            for (k = 0; k < n; k++) { out[k] = gd_ci_recs[i].vals[k]; }
-            return n;
-        }
-    }
-    return -1;
-}
-
-/* CLAUDE Phase 5a: the OOB-overrun byte injectors were removed here - the static
- * pool now backs those OG-faithful OOB reads directly, so no external OG-capture
- * injection is needed. The gd_ci_load / gd_ci_get subsystem above remains, used
- * only by its separate uninitialized-stack-auto consumers (centroid in AIMOVE.c,
- * `tries` in MAPGEN.c) -- a distinct fidelity concern, not OOB avoidance. */
-
-/* ---- Game-data capture (CaptureGameData PRD/PLAN, Phase 4, ReMoM side) ----
- * Dump _players in the SAME [GD] format as the OG-side STU-DOSBox probe,
- * driven by the SAME generated field map (gd_wizard_fields.h from
- * gen-fieldmap.py), so the two logs diff field-for-field. Decode mirrors the
- * OG gd_decode_record exactly. */
-enum { GD_U8 = 0, GD_I8, GD_U16, GD_I16, GD_U32, GD_I32, GD_STR, GD_BYTES };
-typedef struct { uint16_t off; uint8_t kind; uint16_t count; const char* name; } gd_field_t;
-#include "gd_wizard_fields.h"
-#include "gd_node_fields.h"
-#include "gd_tower_fields.h"
-#include "gd_lair_fields.h"
-#include "gd_city_fields.h"
-#include "gd_unit_fields.h"
-#include "gd_heroes_fields.h"
-#include "gd_item_fields.h"
-#include "gd_fortress_fields.h"
-
-static int gd_es(int kind) {
-    return (kind == GD_U16 || kind == GD_I16) ? 2
-         : (kind == GD_U32 || kind == GD_I32) ? 4 : 1;
-}
-static long gd_rd(const uint8_t* r, int kind) {
-    switch (kind) {
-        case GD_I8:  return (long)(int8_t)r[0];
-        case GD_U16: return (long)(uint16_t)(r[0] | (r[1] << 8));
-        case GD_I16: return (long)(int16_t)(uint16_t)(r[0] | (r[1] << 8));
-        case GD_U32: return (long)((uint32_t)r[0] | ((uint32_t)r[1] << 8) | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
-        case GD_I32: return (long)(int32_t)((uint32_t)r[0] | ((uint32_t)r[1] << 8) | ((uint32_t)r[2] << 16) | ((uint32_t)r[3] << 24));
-        default:     return (long)r[0];   /* U8 */
-    }
-}
-void gd_dump_players(const char* point) {
-    int p, i, k;
-    char val[1100];
-    for (p = 0; p < _num_players; p++) {
-        const uint8_t* base = (const uint8_t*)&_players[p];
-        for (i = 0; i < WIZARD_FIELD_COUNT; i++) {
-            const gd_field_t* f = &wizard_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR) {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            } else if(f->kind == GD_BYTES) {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            } else {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _players[%d].%s = %s", point, p, f->name, val);
-        }
-        /* gd_dump_players emits a large [GD] burst in a tight loop with no
-         * main-loop pump in between, which overruns the async logger's ring
-         * and drops messages.  Drain it per player so nothing is lost. */
-        STU_Log_Flush_All();
-    }
-}
-
-/* _NODES capture: mirror of gd_dump_players for the s_NODE array (node_fields).
- * Emits [GD] <point> _NODES[n].<field> = <value> for byte-compare vs OG. */
-void gd_dump_nodes(const char* point) {
-    int n, i, k;
-    char val[1100];
-    for (n = 0; n < NUM_NODES; n++) {
-        const uint8_t* base = (const uint8_t*)&_NODES[n];
-        for (i = 0; i < NODE_FIELD_COUNT; i++) {
-            const gd_field_t* f = &node_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR) {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            } else if(f->kind == GD_BYTES) {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            } else {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _NODES[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* _TOWERS capture: mirror of gd_dump_nodes for the s_TOWER array (tower_fields). */
-void gd_dump_towers(const char* point) {
-    int n, i, k;
-    char val[1100];
-    for (n = 0; n < NUM_TOWERS; n++) {
-        const uint8_t* base = (const uint8_t*)&_TOWERS[n];
-        for (i = 0; i < TOWER_FIELD_COUNT; i++) {
-            const gd_field_t* f = &tower_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR) {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            } else if(f->kind == GD_BYTES) {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            } else {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _TOWERS[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-void gd_dump_fortresses(const char* point) {
-    int n, i, k;
-    char val[1100];
-    for (n = 0; n < NUM_FORTRESSES; n++) {
-        const uint8_t* base = (const uint8_t*)&_FORTRESSES[n];
-        for (i = 0; i < FORTRESS_FIELD_COUNT; i++) {
-            const gd_field_t* f = &fortress_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR) {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            } else if(f->kind == GD_BYTES) {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            } else {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _FORTRESSES[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-void gd_dump_lairs(const char* point) {
-    int n, i, k;
-    char val[1100];
-    for (n = 0; n < NUM_LAIRS; n++) {
-        const uint8_t* base = (const uint8_t*)&_LAIRS[n];
-        for (i = 0; i < LAIR_FIELD_COUNT; i++) {
-            const gd_field_t* f = &lair_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR) {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            } else if(f->kind == GD_BYTES) {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            } else {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _LAIRS[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-void gd_dump_cities(const char* point) {
-    int n, i, k;
-    char val[1100];
-    /* placed-city count -> compare-gd masks _CITIES[n >= _cities] (unplaced tail). */
-    LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _cities = %d", point, (int)_cities);
-    for (n = 0; n < NUM_CITIES; n++) {
-        const uint8_t* base = (const uint8_t*)&_CITIES[n];
-        for (i = 0; i < CITY_FIELD_COUNT; i++) {
-            const gd_field_t* f = &city_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR)
-            {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            }
-            else if(f->kind == GD_BYTES)
-            {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            }
-            else
-            {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _CITIES[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* _HEROES2 capture: per-player heroes.  _HEROES2 is an array of NUM_PLAYERS
- * pointers (one per player) to a s_HEROES { s_HERO heroes[NUM_HERO_TYPES]; }, so
- * iterate players, dereference each pointer, and dump the flattened heroes_fields
- * (heroes[0..34].<field>).  One [GD] line per (player, field):
- *   "[GD] <point> _HEROES2[<player>].<field> = <value>". */
-void gd_dump_heroes(const char* point) {
-    int p, i, k;
-    char val[1100];
-    for (p = 0; p < NUM_PLAYERS; p++) {
-        const uint8_t* base = (const uint8_t*)_HEROES2[p];
-        if(!base) continue;   /* unallocated player slot */
-        for (i = 0; i < HEROES_FIELD_COUNT; i++) {
-            const gd_field_t* f = &heroes_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR)
-            {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            }
-            else if(f->kind == GD_BYTES)
-            {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            }
-            else
-            {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _HEROES2[%d].%s = %s", point, p, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* _UNITS capture: mirror of gd_dump_cities for the s_UNIT array (unit_fields).
- * Dumps the full NUM_UNITS array; slots past the active-unit count (_units) are
- * uninitialised, so the active count is emitted first for compare-gd to mask
- * the inactive tail (_UNITS[n >= _units]). */
-void gd_dump_units(const char* point) {
-    int n, i, k;
-    char val[1100];
-    /* active-unit count -> compare-gd masks _UNITS[n >= _units] (inactive tail). */
-    LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _units = %d", point, (int)_units);
-    for (n = 0; n < NUM_UNITS; n++) {
-        const uint8_t* base = (const uint8_t*)&_UNITS[n];
-        for (i = 0; i < UNIT_FIELD_COUNT; i++) {
-            const gd_field_t* f = &unit_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR)
-            {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            }
-            else if(f->kind == GD_BYTES)
-            {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            }
-            else
-            {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _UNITS[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-
-/* _ITEMS capture: mirror of gd_dump_cities for the s_ITEM array (item_fields).
- * _ITEMS is a single pointer to NUM_ITEMS contiguous s_ITEM records, all loaded
- * from ITEMDATA.LBX by Initialize_Items, so the whole array is compared -- no
- * placement-count tail to mask. */
-void gd_dump_items(const char* point) {
-    int n, i, k;
-    char val[1100];
-    for (n = 0; n < NUM_ITEMS; n++) {
-        const uint8_t* base = (const uint8_t*)&_ITEMS[n];
-        for (i = 0; i < ITEM_FIELD_COUNT; i++) {
-            const gd_field_t* f = &item_fields[i];
-            const uint8_t* fp = base + f->off;
-            int q = 0;
-            if(f->kind == GD_STR)
-            {
-                val[q++] = '"';
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 2; k++) {
-                    uint8_t c = fp[k];
-                    if(c == 0) break;
-                    val[q++] = (c >= 32 && c < 127) ? (char)c : '.';
-                }
-                val[q++] = '"'; val[q] = 0;
-            }
-            else if(f->kind == GD_BYTES)
-            {
-                for (k = 0; k < f->count && q < (int)sizeof(val) - 3; k++)
-                    q += snprintf(val + q, sizeof(val) - q, "%02X", fp[k]);
-                val[q] = 0;
-            }
-            else
-            {
-                int es = gd_es(f->kind);
-                for (k = 0; k < f->count; k++) {
-                    long v = gd_rd(fp + k * es, f->kind);
-                    q += snprintf(val + q, sizeof(val) - q, k ? ",%ld" : "%ld", v);
-                    if(q > (int)sizeof(val) - 16) break;
-                }
-            }
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] %s _ITEMS[%d].%s = %s", point, n, f->name, val);
-        }
-        STU_Log_Flush_All();
-    }
-}
-/* ---- end game-data capture ---- */
 
 
 
@@ -561,12 +43,12 @@ extern int16_t TBL_AI_Realm_OBJ[6][5];
 // MGC  dseg:35D0
 extern struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES];
 
-// ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171w ...
+// ...oops... MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_start_spells s_Init_Spells_Table <0>   ; DATA XREF: GAME_New_Screen_5+171vw ...
 // MGC  dseg:8A42 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+_player_start_spells s_Init_Base_Realms 6 dup(<0>)
 // ...needed by INITGAME.c, so defn in NewGame.h
 extern struct s_Init_Base_Realms _player_start_spells[PLAYER_COUNT_MAX];
 
-// o51p36
+// MGC o51p36
 void Draw_Building_The_Worlds(int16_t percent);
 
 
@@ -600,10 +82,10 @@ void Init_Computer_Players(void)
     int16_t itr_players = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     Init_Computer_Players_Wizard_Profile();
-    gd_dump_players("100_Wizard_Profile_P");
+    STU_GD_DO(STU_GD_Dump_Players("100_Wizard_Profile_P"));  /* CLAUDE */
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -659,13 +141,13 @@ void Init_Computer_Players(void)
     }
 
     Init_Computer_Players_Spell_Library();
-    gd_dump_players("101_Spell_Library_P");
+    STU_GD_DO(STU_GD_Dump_Players("101_Spell_Library_P"));  /* CLAUDE */
 
     _players[NEUTRAL_PLAYER_IDX].Defeated_Wizards = 0;
 
     _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Computer_Players rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -709,28 +191,28 @@ void Init_Runtime(void)
 {
     int16_t itr_players = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     Draw_Building_The_Worlds(100);
 
     Initialize_Items();
-    gd_dump_items("200_Initialize_Items_I");
+    STU_GD_DO(STU_GD_Dump_Items("200_Initialize_Items_I"));  /* CLAUDE */
 
     Init_Heroes();
-    gd_dump_players("201_Init_Heroes_P");
-    gd_dump_heroes("202_Init_Heroes_HE");
+    STU_GD_DO(STU_GD_Dump_Players("201_Init_Heroes_P"));  /* CLAUDE */
+    STU_GD_DO(STU_GD_Dump_Heroes("202_Init_Heroes_HE"));  /* CLAUDE */
 
     Init_Players();
-    gd_dump_players("203_Init_Players_P");
+    STU_GD_DO(STU_GD_Dump_Players("203_Init_Players_P"));  /* CLAUDE */
 
     Init_CP_Strategy();
-    gd_dump_players("204_Init_CP_Strategy_P");
+    STU_GD_DO(STU_GD_Dump_Players("204_Init_CP_Strategy_P"));  /* CLAUDE */
 
     Init_Magic_Personalities_Objectives();
-    gd_dump_players("205_Init_Magic_Pers_Obj_P");
+    STU_GD_DO(STU_GD_Dump_Players("205_Init_Magic_Pers_Obj_P"));  /* CLAUDE */
 
     Init_Summoning_Circle_And_Spell_Of_Mastery();
-    gd_dump_players("206_Init_Summoning_Circle_P");
+    STU_GD_DO(STU_GD_Dump_Players("206_Init_Summoning_Circle_P"));  /* CLAUDE */
 
     Initialize_Messages();
 
@@ -738,10 +220,10 @@ void Init_Runtime(void)
     {
         _players[itr_players].capital_race = _CITIES[itr_players].race;
     }
-    gd_dump_players("207_capital_race_P");  /* at-entry Init_Diplomatic_Relations() */
+    STU_GD_DO(STU_GD_Dump_Players("207_capital_race_P"));  /* CLAUDE */  /* at-entry Init_Diplomatic_Relations() */
 
     Init_Diplomatic_Relations();
-    gd_dump_players("208_Init_Diplomatic_Relations_P");
+    STU_GD_DO(STU_GD_Dump_Players("208_Init_Diplomatic_Relations_P"));  /* CLAUDE */
 
     _players[HUMAN_PLAYER_IDX].gold_reserve = ((5 - _difficulty) * 25);
     for(itr_players = 1; itr_players < _num_players; itr_players++)
@@ -749,9 +231,9 @@ void Init_Runtime(void)
         _players[itr_players].gold_reserve = 150;
         _ai_reevaluate_summoning_circle_countdown[itr_players] = (80 + Random(40));
     }
-    gd_dump_players("209_gold_reserve_P");  /* on-return Init_Runtime() */
+    STU_GD_DO(STU_GD_Dump_Players("209_gold_reserve_P"));  /* CLAUDE */  /* on-return Init_Runtime() */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -780,7 +262,7 @@ void Init_Diplomatic_Relations(void)
     int16_t score = 0;  /* player pair's initial diplomatic relation score */
     int16_t shared_ranks = 0;  // DNE in Dasm
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     grand_vizier = ST_FALSE;
 
@@ -858,7 +340,7 @@ void Init_Diplomatic_Relations(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -867,7 +349,7 @@ void Init_Diplomatic_Relations(void)
 void Initialize_Items(void)
 {
     int16_t itr = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     for(itr = 0; itr < NUM_ITEMS; itr++)
     {
         _ITEMS[itr].cost = 0;
@@ -876,7 +358,7 @@ void Initialize_Items(void)
     {
         _prefab_item_table[itr] = 0;
     }
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -894,7 +376,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 {
     int16_t itr_players = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -921,7 +403,7 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     
 }
 
@@ -979,7 +461,7 @@ void Init_Magic_Personalities_Objectives(void)
     int16_t itr = 0;
     int16_t itr_players = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* Phase 1 */
     /* Determine human player's primary and secondary realms */
@@ -993,6 +475,7 @@ void Init_Magic_Personalities_Objectives(void)
             spellranks = _players[HUMAN_PLAYER_IDX].spellranks[itr];
         }
     }
+    /* OGBUG  the secondary scan starts from Nature (0) with Nature's book count and takes only a realm with MORE books that is not the primary: with a Nature primary nothing can beat it, so Sec_Realm is always Nature too; a tie with Nature for second place also goes to Nature */
     Secondary_Realm = 0;
     spellranks = _players[HUMAN_PLAYER_IDX].spellranks[0];
     for(itr = 1; itr < NUM_MAGIC_TYPES; itr++)
@@ -1032,30 +515,37 @@ void Init_Magic_Personalities_Objectives(void)
 
         switch(Primary_Realm)
         {
+            /* CLAUDE */  /* spells_list[] is indexed by (spell_idx - 1): asm spells_list+8 / +30h / +53h / +80h / +0A5h are Sprites, Nagas, Hell Hounds, Guardian Spirit, Ghouls (the same bytes as before; the old names were one spell low) */
             case sbr_Nature:
             {
-                _players[itr_players].spells_list[spl_Water_Walking] = sls_Known;  /* OGBUG: spl_Sprites ? */
+                // _players[itr_players].spells_list[spl_Water_Walking] = sls_Known;
+                _players[itr_players].spells_list[(spl_Sprites - 1)] = sls_Known;
             } break;
             case sbr_Sorcery:
             {
-                _players[itr_players].spells_list[spl_Counter_Magic] = sls_Known;  /* OGBUG: spl_Nagas ? */
+                // _players[itr_players].spells_list[spl_Counter_Magic] = sls_Known;
+                _players[itr_players].spells_list[(spl_Nagas - 1)] = sls_Known;
             } break;
             case sbr_Chaos:
             {
-                _players[itr_players].spells_list[spl_Fire_Bolt] = sls_Known;  /* OGBUG: should be spl_Hell_Hounds ? */
+                // _players[itr_players].spells_list[spl_Fire_Bolt] = sls_Known;
+                _players[itr_players].spells_list[(spl_Hell_Hounds - 1)] = sls_Known;
             } break;
             case sbr_Life:
             {
-                _players[itr_players].spells_list[spl_True_Light] = sls_Known;  /* OGBUG: spl_Guardian_Spirit ? */
+                // _players[itr_players].spells_list[spl_True_Light] = sls_Known;
+                _players[itr_players].spells_list[(spl_Guardian_Spirit - 1)] = sls_Known;
             } break;
             case sbr_Death:
             {
-                _players[itr_players].spells_list[spl_Black_Sleep] = sls_Known;  /* OGBUG: spl_Ghouls ? */
+                // _players[itr_players].spells_list[spl_Black_Sleep] = sls_Known;
+                _players[itr_players].spells_list[(spl_Ghouls - 1)] = sls_Known;
             } break;
         }
 
         if(_difficulty >= god_Hard)
         {
+/* CLAUDE  original reconstruction: indexed spells_list[] by spell_idx, one byte high (asm spells_list+13h / +0Fh / +3Bh / +63h / +87h / +0B3h are (spell_idx - 1)); replaced below
             switch(Primary_Realm)
             {
                 case sbr_Nature:
@@ -1067,35 +557,76 @@ void Init_Magic_Personalities_Objectives(void)
                 } break;
                 case sbr_Sorcery:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Phantom_Beast, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)
                     {
                         _players[itr_players].spells_list[spl_Phantom_Beast] = sls_Knowable;
                     }
                 } break;
                 case sbr_Chaos:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Chimeras, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)
                     {
                         _players[itr_players].spells_list[spl_Chimeras] = sls_Knowable;
                     }
                 } break;
                 case sbr_Life:
                 {
-                    if(_players[itr_players].spells_list[spl_Path_Finding] == sls_Unknown)  /* OGBUG: should be spl_Unicorns, not spl_Path_Finding */
+                    if(_players[itr_players].spells_list[spl_Path_Finding] == sls_Unknown)
                     {
                         _players[itr_players].spells_list[spl_Unicorns] = sls_Knowable;
                     }
                 } break;
                 case sbr_Death:
                 {
-                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)  /* OGBUG: should be spl_Shadow_Demons, not spl_Basilisk */
+                    if(_players[itr_players].spells_list[spl_Basilisk] == sls_Unknown)
                     {
                         _players[itr_players].spells_list[spl_Shadow_Demons] = sls_Knowable;
                     }
                 } break;
             }
+*/
+            /* OGBUG  only Nature tests its own summon: Sorcery, Chaos and Death test Basilisk's byte and Life tests Path Finding's, so Phantom Beast / Chimeras / Shadow Demons / Unicorns is set to sls_Knowable whatever it held: a Known one goes back to Knowable */
+            switch(Primary_Realm)
+            {
+                case sbr_Nature:
+                {
+                    if(_players[itr_players].spells_list[(spl_Basilisk - 1)] == sls_Unknown)
+                    {
+                        _players[itr_players].spells_list[(spl_Basilisk - 1)] = sls_Knowable;
+                    }
+                } break;
+                case sbr_Sorcery:
+                {
+                    if(_players[itr_players].spells_list[(spl_Basilisk - 1)] == sls_Unknown)
+                    {
+                        _players[itr_players].spells_list[(spl_Phantom_Beast - 1)] = sls_Knowable;
+                    }
+                } break;
+                case sbr_Chaos:
+                {
+                    if(_players[itr_players].spells_list[(spl_Basilisk - 1)] == sls_Unknown)
+                    {
+                        _players[itr_players].spells_list[(spl_Chimeras - 1)] = sls_Knowable;
+                    }
+                } break;
+                case sbr_Life:
+                {
+                    if(_players[itr_players].spells_list[(spl_Path_Finding - 1)] == sls_Unknown)
+                    {
+                        _players[itr_players].spells_list[(spl_Unicorns - 1)] = sls_Knowable;
+                    }
+                } break;
+                case sbr_Death:
+                {
+                    if(_players[itr_players].spells_list[(spl_Basilisk - 1)] == sls_Unknown)
+                    {
+                        _players[itr_players].spells_list[(spl_Shadow_Demons - 1)] = sls_Knowable;
+                    }
+                } break;
+            }
         }
 
+        /* OGBUG  the secondary scan starts from Nature (0) with Nature's book count and takes only a realm with MORE books that is not the primary: with a Nature primary nothing can beat it, so Sec_Realm is always Nature too; a tie with Nature for second place also goes to Nature */
         Secondary_Realm = 0;
         spellranks = _players[itr_players].spellranks[0];
         for(itr = 1; itr < NUM_MAGIC_TYPES; itr++)
@@ -1234,7 +765,7 @@ void Init_Magic_Personalities_Objectives(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -1267,7 +798,7 @@ void Init_CP_Strategy(void)
     int16_t player_idx = 0;
     int16_t other_player_idx = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(player_idx = 0; player_idx < _num_players; player_idx++)
     {
@@ -1284,7 +815,7 @@ void Init_CP_Strategy(void)
         _players[player_idx].niu_cp_target_4 = ST_UNDEFINED;
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_CP_Strategy rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -1319,7 +850,7 @@ void Init_Players(void)
     int16_t itr_players = 0;
     int16_t spell_skill = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
@@ -1340,12 +871,12 @@ void Init_Players(void)
         spell_skill += spell_skill;
         _players[itr_players].Nominal_Skill = 0;
         _players[itr_players].spell_casting_skill = 0;
-        // The grow-until-reached loop lands spell_casting_skill at the smallest value where Player_Base_Casting_Skill__MGC returns spell_skill.
+        // The grow-until-reached loop lands spell_casting_skill at the smallest value where Player_Base_Casting_Skill returns spell_skill.
         // The inverse formula is N*(N-1)+1.
         while(_players[itr_players].Nominal_Skill < spell_skill)
         {
             _players[itr_players].spell_casting_skill += 1;
-            _players[itr_players].Nominal_Skill = Player_Base_Casting_Skill__MGC(itr_players);
+            _players[itr_players].Nominal_Skill = Player_Base_Casting_Skill(itr_players);
         }
         _players[itr_players].researching_spell_idx = spl_NONE;
         _players[itr_players].mana_reserve = 0;
@@ -1389,7 +920,7 @@ void Init_Players(void)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Init_Players rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
@@ -1415,7 +946,7 @@ void Init_Computer_Players_Wizard_Profile(void)
     int16_t itr1 = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* Phase 1: Initialize local banner tracking */
     for(itr1 = 0; itr1 < NUM_BANNER_SELECTIONS; itr1++)
@@ -1506,7 +1037,7 @@ BeginTopLevelPlayerLoop:
                     wsa_ptr = &_players[itr2].alchemy;
                     for(itr3 = 0; itr3 < NUM_WIZARD_SPECIAL_ABILITIES; itr3++)
                     {
-                        /* OGBUG: should use itr3, not itr1 */
+                        /* OGBUG  the 'clear the retorts' roll counts 18 slots in itr3 but stores at wsa_ptr[itr1], itr1 being the reduction counter: it clears only retort number itr1, so AI wizards practically never lose their preset's retort */
                         wsa_ptr[itr1] = ST_FALSE;
                     }
                 } break;
@@ -1877,7 +1408,7 @@ END:  ¿ jmp     @@BeginTopLevelPlayerLoop ?
 
     // @@Done
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -1921,7 +1452,7 @@ void Init_Computer_Players_Spell_Library(void)
     int16_t itr = 0;
     int16_t itr2 = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr = 0; itr < _num_players; itr++)
     {
@@ -2313,7 +1844,7 @@ END: Knowable - Very Rare
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2331,7 +1862,7 @@ END: Knowable - Very Rare
 */
 void Initialize_Events(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     events_table->last_event_turn = 50;
     events_table->Meteor_Status = 0;
     events_table->Gift_Status = 0;
@@ -2351,8 +1882,8 @@ void Initialize_Events(void)
     events_table->Conjunction_Nature_Status = 0;
     events_table->Conjunction_Sorcery_Status = 0;
     events_table->Mana_Short_Status = 0;
-    gd_dump_players("Initialize_Events");
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Events rng_call=%llu", (unsigned long long)g_random_call_count);
+    STU_GD_DO(STU_GD_Dump_Players("Initialize_Events"));  /* CLAUDE */
+    TRACE_EXIT();
 }
 
 // MGC o56p12
@@ -2393,7 +1924,7 @@ void Init_Heroes(void)
     int16_t itr_players = 0;
     int16_t warrior_picks = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     for(itr_players = 0; itr_players < (NUM_PLAYERS - 1); itr_players++)
     {
@@ -2506,10 +2037,11 @@ void Init_Heroes(void)
                     {
                         if(((abilities & HSA_CHARMED) == 0) && ((_unit_type_table[itr_hero_types].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)) { abilities |= HSA_CHARMED; warrior_picks--; mage_picks--; }
                     } break;
+                    /* OGBUG  case 11 (Lucky) has no break: every Lucky roll, a repeat one too, runs on into case 12 and also gives Agility / Super Agility while warrior picks remain, so a new Lucky can cost two picks */
                     case 11:  /* Lucky */
                     {
                         if((abilities & HSA_LUCKY) == 0) { abilities |= HSA_LUCKY; warrior_picks--; mage_picks--; }
-                    } /* OGBUG: missing `break;` */
+                    }
                     case 12:  /* Agility */
                     {
                         if(((abilities & HSA_AGILITY2) == 0) && (warrior_picks > 0)) { if((abilities & HSA_AGILITY) != 0) { abilities ^= HSA_AGILITY; abilities |= HSA_AGILITY2; } else { abilities |= HSA_AGILITY; } warrior_picks--; mage_picks--; }
@@ -2547,7 +2079,7 @@ void Init_Heroes(void)
 
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2563,7 +2095,7 @@ message types, clearing all event messages
 */
 void Initialize_Messages(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     msg_unit_lost_ctr = 0;
     MSG_UnitKilled_Count = 0;
     MSG_UEsLost_Count = 0;
@@ -2574,13 +2106,45 @@ void Initialize_Messages(void)
     MSG_BldLost_Count = 0;
     MSG_CityLost_Count = 0;
     MSG_CityGained_Count = 0;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=Initialize_Messages rng_call=%llu", (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
 // MGC o56p14
 // drake178: UU_ITEM_SetHeroSlots()
-// UU_ITEM_SetHeroSlots()
+/*
+OON XREF:  none - no caller in MAGIC.EXE
+MAGIC.EXE's twin of WIZARDS.EXE's Hero_Slot_Types();  same result, but here Archer and Warrior share the Armor/Misc stores
+*/
+void Hero_Slot_Types_MGC(int16_t unit_type_idx, int16_t item_slots[])
+{
+    if(_unit_type_table[unit_type_idx].hero_type == ht_Battlecaster)
+    {
+        item_slots[0] = ist_SwordStaff_Slot;
+        item_slots[1] = ist_Armor_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+    else if(_unit_type_table[unit_type_idx].hero_type == ht_Mage)
+    {
+        item_slots[0] = ist_Staff_Slot;
+        item_slots[1] = ist_Misc_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+    else
+    {
+        if(_unit_type_table[unit_type_idx].hero_type == ht_Archer)
+        {
+            item_slots[0] = ist_Bow_Slot;
+        }
+        else  /* ht_Warrior */
+        {
+            item_slots[0] = ist_Sword_Slot;
+        }
+        item_slots[1] = ist_Armor_Slot;
+        item_slots[2] = ist_Misc_Slot;
+    }
+}
+
 
 // MGC o56p15
 // drake178: WIZ_ConsolidateBooks()
@@ -2772,53 +2336,8 @@ void Consolidate_Spell_Book_Realms(int16_t player_idx)
 
 
 // MGC o56p16
-/*
-¿ ~ Player_Base_Casting_Skill() ?
-*/
-/**
- * @brief Converts stored casting-skill investment into nominal casting skill.
- *
- * @details
- * Interprets `_players[player_idx].spell_casting_skill` as an accumulated pool
- * of invested skill points and walks the game's triangular progression one
- * step at a time until the running threshold meets or exceeds that stored
- * investment. The resulting step count becomes the player's nominal casting
- * skill, with an additional +10 applied when the wizard has the Archmage
- * retort.
- *
- * This routine is used during player initialization to translate invested
- * casting points back into the displayed base skill value.
- *
- * @param player_idx Index of the player record in `_players[]`.
- *
- * @return The player's nominal casting skill, including the Archmage bonus
- *         when applicable.
- *
- * @note Uses the same progression as `Player_Base_Casting_Skill()` in
- *       [MoM/src/NEXTTURN.c](MoM/src/NEXTTURN.c).
- */
-int16_t Player_Base_Casting_Skill__MGC(int16_t player_idx)
-{
-    int32_t num = 0;
-    int16_t twos = 0;
-    int16_t casting_skill = 0;
-    twos = 0;
-    casting_skill = 0;
-    num = 0;
-    while(_players[player_idx].spell_casting_skill > num)
-    {
-        casting_skill += 1;
-        twos += 2;
-        num += twos;
-    }
-    if(_players[player_idx].archmage > 0)
-    {
-        casting_skill += 10;
-    }
-    return casting_skill;
-}
+// === // WZD o121p02  Player_Base_Casting_Skill()
 
 
 // MGC o56p17
-// drake178: RNG_WeightedPick16()
-// RNG_WeightedPick16()
+// === // WZD s01p07  int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count);

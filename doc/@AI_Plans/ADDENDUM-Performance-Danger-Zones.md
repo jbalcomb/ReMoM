@@ -60,7 +60,7 @@ Asset opens walk the search path and `fopen` per request.
 The loop's responsiveness is *defined by* logic completing within the tick. There is no frame-drop/decouple mechanism: overrunning logic directly stretches wall-clock frames.
 
 - **Risk:** late-game AI turns that exceed 55 ms cannot be "hidden" — they *are* the slowdown. The fix space (spread AI over frames, background it, optimize the algorithm) all touches reconstructed logic and pacing.
-- **Status:** this is the core perf question the system exists to quantify. Measure first (Mode A headless logic timing), then decide.
+- **Status:** this is the core perf question the system exists to quantify. Measure first (Mode A windowless logic timing), then decide.
 - **Fidelity:** any decoupling/spreading is a deliberate divergence from the DOS single-tick model — marked, justified, and likely opt-in.
 
 ## DZ-8 — Measurement observer effect (the meta danger)

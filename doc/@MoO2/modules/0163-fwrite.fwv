@@ -1,0 +1,8 @@
+module_num=163
+module=fwrite
+source=0163-fwrite.md
+range[0]=1:0x00119CAB linear=0x00129CAB size=448
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m163f001  1    -      0x00129CAB  1:0x00119CAB  code  fwrite  fwrite_  regions/07-object-1/001AEE54-001AF653.txt

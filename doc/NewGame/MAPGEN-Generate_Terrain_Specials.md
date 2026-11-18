@@ -30,7 +30,7 @@ Nightshade on swamp).
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:573-574](../../MoM/src/MAPGEN.c#L573-L574) | Called once per plane; followed by `gd_dump_terrain_specials("118_…")` and `gd_dump_world_map("119_…")` ([575-576](../../MoM/src/MAPGEN.c#L575-L576)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:422-423](../../MoM/src/MAPGEN.c#L422-L423) | Called once per plane; followed by `STU_GD_Dump_Terrain_Specials("118_…")` and `STU_GD_Dump_World_Map("119_…")` ([424-425](../../MoM/src/MAPGEN.c#L424-L425)). |
 
 ## RNG footprint (alignment-relevant)
 

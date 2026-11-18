@@ -1,0 +1,8 @@
+module_num=96
+module=D:\MOX\OTHERS\AISTAGE.C
+source=0096-aistage.c.md
+range[0]=1:0x000CBE84 linear=0x000DBE84 size=1028
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m096f001  1    -      0x000DBE84  1:0x000CBE84  code  Compute_Defensive_Stage_Points  Compute_Defensive_Stage_Points_  regions/07-object-1/00160E54-00161653.txt

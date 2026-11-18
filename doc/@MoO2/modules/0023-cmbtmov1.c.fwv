@@ -1,0 +1,21 @@
+module_num=23
+module=D:\MOX\OTHERS\CMBTMOV1.C
+source=0023-cmbtmov1.c.md
+range[0]=1:0x0002E563 linear=0x0003E563 size=6215
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                              SYMBOL                             CHUNK
+m023f001  1    -      0x0003E563  1:0x0002E563  code  Ship_Is_In_Stasis                 Ship_Is_In_Stasis_                 regions/07-object-1/000C3654-000C3E53.txt
+m023f002  2    -      0x0003E57C  1:0x0002E57C  code  Ship_In_Black_Hole                Ship_In_Black_Hole_                regions/07-object-1/000C3654-000C3E53.txt
+m023f003  3    -      0x0003E598  1:0x0002E598  code  Draw_Teleporting_Ship             Draw_Teleporting_Ship_             regions/07-object-1/000C3654-000C3E53.txt
+m023f004  4    -      0x0003E7A9  1:0x0002E7A9  code  Rotate_Ship_Until_Impact          Rotate_Ship_Until_Impact_          regions/07-object-1/000C3654-000C3E53.txt
+m023f005  5    -      0x0003EA09  1:0x0002EA09  code  Ship_In_Legal_Square              Ship_In_Legal_Square_              regions/07-object-1/000C3E54-000C4653.txt
+m023f006  6    -      0x0003EAA5  1:0x0002EAA5  code  Test_Move_Until_Impact            Test_Move_Until_Impact_            regions/07-object-1/000C3E54-000C4653.txt
+m023f007  7    -      0x0003EE0F  1:0x0002EE0F  code  Move_Ship                         Move_Ship_                         regions/07-object-1/000C3E54-000C4653.txt
+m023f008  8    -      0x0003F5F1  1:0x0002F5F1  code  Get_Facing                        Get_Facing_                        regions/07-object-1/000C4654-000C4E53.txt
+m023f009  9    -      0x0003F628  1:0x0002F628  code  Rotate_Ship                       Rotate_Ship_                       regions/07-object-1/000C4654-000C4E53.txt
+m023f010  10   -      0x0003F923  1:0x0002F923  code  Turn_Cost                         Turn_Cost_                         regions/07-object-1/000C4E54-000C5653.txt
+m023f011  11   -      0x0003F95F  1:0x0002F95F  code  Move_Cost                         Move_Cost_                         regions/07-object-1/000C4E54-000C5653.txt
+m023f012  12   -      0x0003FA61  1:0x0002FA61  code  Turn_To_Face                      Turn_To_Face_                      regions/07-object-1/000C4E54-000C5653.txt
+m023f013  13   -      0x0003FBFE  1:0x0002FBFE  code  Wait_Until_Net_Opponent_Finished  Wait_Until_Net_Opponent_Finished_  regions/07-object-1/000C4E54-000C5653.txt
+m023f014  14   -      0x0003FCD8  1:0x0002FCD8  code  Tactical_Combat_Receive_Message   Tactical_Combat_Receive_Message_   regions/07-object-1/000C4E54-000C5653.txt

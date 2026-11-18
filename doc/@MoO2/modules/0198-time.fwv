@@ -1,0 +1,8 @@
+module_num=198
+module=time
+source=0198-time.md
+range[0]=1:0x0012C905 linear=0x0013C905 size=47
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m198f001  1    -      0x0013C905  1:0x0012C905  code  time  time_   regions/07-object-1/001C1E54-001C2653.txt

@@ -1,0 +1,43 @@
+module_num=297
+module=C:\GCL520\C_386\FASTA386.C
+source=0297-fasta386.c.md
+range[0]=1:0x00142850 linear=0x00152850 size=5546
+range[1]=2:0x000117D8 linear=0x001817D8 size=136
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m297f001  1    -      0x00152850  1:0x00142850  static,code  _GetModemStatusGreenleafFast   _GetModemStatusGreenleafFast_   regions/07-object-1/001D7E54-001D8653.txt
+m297f002  2    -      0x00152894  1:0x00142894  static,code  _GetLineStatusGreenleafFast    _GetLineStatusGreenleafFast_    regions/07-object-1/001D7E54-001D8653.txt
+m297f003  3    -      0x00152934  1:0x00142934  static,code  _ClearLineStatusGreenleafFast  _ClearLineStatusGreenleafFast_  regions/07-object-1/001D7E54-001D8653.txt
+m297f004  4    -      0x001529B8  1:0x001429B8  static,code  _SendBreakGreenleafFast        _SendBreakGreenleafFast_        regions/07-object-1/001D7E54-001D8653.txt
+m297f005  5    -      0x00152A5C  1:0x00142A5C  static,code  _ReadBufferGreenleafFast       _ReadBufferGreenleafFast_       regions/07-object-1/001D7E54-001D8653.txt
+m297f006  6    -      0x00152BCC  1:0x00142BCC  static,code  _SetDTRGreenleafFast           _SetDTRGreenleafFast_           regions/07-object-1/001D7E54-001D8653.txt
+m297f007  7    -      0x00152C3C  1:0x00142C3C  static,code  _SetRTSGreenleafFast           _SetRTSGreenleafFast_           regions/07-object-1/001D7E54-001D8653.txt
+m297f008  8    -      0x00152CAC  1:0x00142CAC  static,code  _CloseGreenleafFast            _CloseGreenleafFast_            regions/07-object-1/001D7E54-001D8653.txt
+m297f009  9    -      0x00152EC0  1:0x00142EC0  static,code  _PortCloseGreenleafFast        _PortCloseGreenleafFast_        regions/07-object-1/001D7E54-001D8653.txt
+m297f010  10   -      0x00152F00  1:0x00142F00  static,code  _PutcGreenleafFast             _PutcGreenleafFast_             regions/07-object-1/001D7E54-001D8653.txt
+m297f011  11   -      0x00152FCC  1:0x00142FCC  static,code  _WriteBufferGreenleafFast      _WriteBufferGreenleafFast_      regions/07-object-1/001D7E54-001D8653.txt
+m297f012  12   -      0x00153118  1:0x00143118  static,code  _ClearTXBufferGreenleafFast    _ClearTXBufferGreenleafFast_    regions/07-object-1/001D8654-001D8E53.txt
+m297f013  13   -      0x001531B8  1:0x001431B8  static,code  _GetTXSpaceFreeGreenleafFast   _GetTXSpaceFreeGreenleafFast_   regions/07-object-1/001D8654-001D8E53.txt
+m297f014  14   -      0x0015325C  1:0x0014325C  static,code  _GetTXSpaceUsedGreenleafFast   _GetTXSpaceUsedGreenleafFast_   regions/07-object-1/001D8654-001D8E53.txt
+m297f015  15   -      0x00153300  1:0x00143300  static,code  _GetRXSpaceFreeGreenleafFast   _GetRXSpaceFreeGreenleafFast_   regions/07-object-1/001D8654-001D8E53.txt
+m297f016  16   -      0x00153348  1:0x00143348  static,code  _GetRXSpaceUsedGreenleafFast   _GetRXSpaceUsedGreenleafFast_   regions/07-object-1/001D8654-001D8E53.txt
+m297f017  17   -      0x00153388  1:0x00143388  static,code  _RtsCtsGreenleafFast           _RtsCtsGreenleafFast_           regions/07-object-1/001D8654-001D8E53.txt
+m297f018  18   -      0x00153420  1:0x00143420  static,code  _DtrDsrGreenleafFast           _DtrDsrGreenleafFast_           regions/07-object-1/001D8654-001D8E53.txt
+m297f019  19   -      0x001534B8  1:0x001434B8  static,code  _GetcGreenleafFast             _GetcGreenleafFast_             regions/07-object-1/001D8654-001D8E53.txt
+m297f020  20   -      0x00153598  1:0x00143598  static,code  _PeekcGreenleafFast            _PeekcGreenleafFast_            regions/07-object-1/001D8654-001D8E53.txt
+m297f021  21   -      0x00153610  1:0x00143610  static,code  _BlockGreenleafFast            _BlockGreenleafFast_            regions/07-object-1/001D8654-001D8E53.txt
+m297f022  22   -      0x001536B8  1:0x001436B8  static,code  _PortSetGreenleafFast          _PortSetGreenleafFast_          regions/07-object-1/001D8654-001D8E53.txt
+m297f023  23   -      0x00153800  1:0x00143800  static,code  LinkToInterrupt                LinkToInterrupt_                regions/07-object-1/001D8E54-001D9653.txt
+m297f024  24   -      0x0015396C  1:0x0014396C  static,code  _OpenGreenleafFast             _OpenGreenleafFast_             regions/07-object-1/001D8E54-001D9653.txt
+m297f025  25   -      0x00153BD8  1:0x00143BD8  code         PortOpenGreenleafFast          PortOpenGreenleafFast_          regions/07-object-1/001D8E54-001D9653.txt
+m297f026  26   -      0x00153D00  1:0x00143D00  code         FastSetPortHardware            FastSetPortHardware_            regions/07-object-1/001D8E54-001D9653.txt
+m297f027  27   -      0x00153D54  1:0x00143D54  code         FastGetPortHardware            FastGetPortHardware_            regions/07-object-1/001D8E54-001D9653.txt
+m297f028  28   -      0x00153DD0  1:0x00143DD0  code         FastSet16550TriggerLevel       FastSet16550TriggerLevel_       regions/07-object-1/001D8E54-001D9653.txt
+m297f029  29   -      0x00153DF4  1:0x00143DF4  code         FastSet16550UseTXFifos         FastSet16550UseTXFifos_         regions/07-object-1/001D8E54-001D9653.txt
+-         -    -      0x001817D8  2:0x000117D8  static,data  _isa_uart_addresses            _isa_uart_addresses             regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817F8  2:0x000117F8  static,data  _mca_uart_addresses            _mca_uart_addresses             regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181818  2:0x00011818  static,data  _isa_interrupt_numbers         _isa_interrupt_numbers          regions/08-object-2/001FFE54-00200653.txt
+-         -    -      0x00181838  2:0x00011838  static,data  _mca_interrupt_numbers         _mca_interrupt_numbers          regions/08-object-2/001FFE54-00200653.txt
+-         -    -      0x00181858  2:0x00011858  static,data  _DefaultFast16550TriggerLevel  _DefaultFast16550TriggerLevel   regions/08-object-2/001FFE54-00200653.txt
+-         -    -      0x0018185C  2:0x0001185C  static,data  _FastUse16550TXFifos           _FastUse16550TXFifos            regions/08-object-2/001FFE54-00200653.txt

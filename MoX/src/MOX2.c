@@ -4,7 +4,7 @@
     First migrated function: Check_Command_Line_Parameters_().  In MoO2 this
     handled all CLI flags for the whole game.  We're migrating MoM's flags
     into this incrementally; for now it parses --seed1/--seed2 and the remaining
-    target-specific flags stay in HeMoM.c / ReMoM.c.
+    target-specific flags stay in DeMoM.c / ReMoM.c.
 */
 
 #include <stdio.h>

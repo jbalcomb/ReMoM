@@ -1,0 +1,8 @@
+module_num=146
+module=strstr
+source=0146-strstr.md
+range[0]=1:0x00116521 linear=0x00126521 size=190
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m146f001  1    -      0x00126521  1:0x00116521  code  strstr  strstr_  regions/07-object-1/001AB654-001ABE53.txt

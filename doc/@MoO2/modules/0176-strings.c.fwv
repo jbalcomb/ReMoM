@@ -1,0 +1,143 @@
+module_num=176
+module=F:\WLIBS\memory\strings.c
+source=0176-strings.c.md
+range[0]=1:0x00122F5C linear=0x00132F5C size=731
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL             CHUNK
+m176f001  1    -      0x00132F5C  1:0x00122F5C  code  String_To_Upper   String_To_Upper_   regions/07-object-1/001B7E54-001B8653.txt
+m176f002  2    -      0x00132FCD  1:0x00122FCD  code  String_To_Lower   String_To_Lower_   regions/07-object-1/001B7E54-001B8653.txt
+m176f003  3    -      0x0013303E  1:0x0012303E  code  Trim              Trim_              regions/07-object-1/001B8654-001B8E53.txt
+m176f004  4    -      0x001330D2  1:0x001230D2  code  Swap              Swap_              regions/07-object-1/001B8654-001B8E53.txt
+m176f005  5    -      0x00133111  1:0x00123111  code  Swap_Short        Swap_Short_        regions/07-object-1/001B8654-001B8E53.txt
+m176f006  6    -      0x00133154  1:0x00123154  code  Swap_Char         Swap_Char_         regions/07-object-1/001B8654-001B8E53.txt
+m176f007  7    -      0x00133193  1:0x00123193  code  Swap_Long         Swap_Long_         regions/07-object-1/001B8654-001B8E53.txt
+m176f008  8    -      0x001331D2  1:0x001231D2  code  Delete_Structure  Delete_Structure_  regions/07-object-1/001B8654-001B8E53.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME              TYPE                              CHUNK
+m176f001  0x00132F5C  1:0x00122F5C  113   24        9         0x18     -    EAX              String_To_Upper   void (char *)                     regions/07-object-1/001B7E54-001B8653.txt
+m176f002  0x00132FCD  1:0x00122FCD  113   24        9         0x18     -    EAX              String_To_Lower   void (char *)                     regions/07-object-1/001B7E54-001B8653.txt
+m176f003  0x0013303E  1:0x0012303E  148   24        9         0x18     -    EAX              Trim              void (char *)                     regions/07-object-1/001B8654-001B8E53.txt
+m176f004  0x001330D2  1:0x001230D2  63    23        8         0x14     -    EAX,EDX          Swap              void (int *, int *)               regions/07-object-1/001B8654-001B8E53.txt
+m176f005  0x00133111  1:0x00123111  67    23        8         0x14     -    EAX,EDX          Swap_Short        void (short *, short *)           regions/07-object-1/001B8654-001B8E53.txt
+m176f006  0x00133154  1:0x00123154  63    23        8         0x14     -    EAX,EDX          Swap_Char         void (char *, char *)             regions/07-object-1/001B8654-001B8E53.txt
+m176f007  0x00133193  1:0x00123193  63    23        8         0x14     -    EAX,EDX          Swap_Long         void (long *, long *)             regions/07-object-1/001B8654-001B8E53.txt
+m176f008  0x001331D2  1:0x001231D2  101   21        6         0xC      -    EAX,EDX,EBX,ECX  Delete_Structure  void (short, char *, int, short)  regions/07-object-1/001B8654-001B8E53.txt
+
+[Locals]
+KEY       ROUTINE           BLOCK  LOCAL          LOCATION    TYPE
+m176f001  String_To_Upper   -      name           [EBP-0x8]   char *
+m176f001  String_To_Upper   -      i              [EBP-0x4]   int
+m176f002  String_To_Lower   -      name           [EBP-0x8]   char *
+m176f002  String_To_Lower   -      i              [EBP-0x4]   int
+m176f003  Trim              -      name           [EBP-0x10]  char *
+m176f003  Trim              -      i              [EBP-0xC]   int
+m176f003  Trim              -      start_pos      [EBP-0x8]   int
+m176f003  Trim              -      end_pos        [EBP-0x4]   int
+m176f004  Swap              -      value1         [EBP-0xC]   int *
+m176f004  Swap              -      value2         [EBP-0x8]   int *
+m176f004  Swap              -      temp           [EBP-0x4]   int
+m176f005  Swap_Short        -      value1         [EBP-0xC]   short *
+m176f005  Swap_Short        -      value2         [EBP-0x8]   short *
+m176f005  Swap_Short        -      temp           [EBP-0x4]   short
+m176f006  Swap_Char         -      value1         [EBP-0xC]   char *
+m176f006  Swap_Char         -      value2         [EBP-0x8]   char *
+m176f006  Swap_Char         -      temp           [EBP-0x4]   char
+m176f007  Swap_Long         -      value1         [EBP-0xC]   long *
+m176f007  Swap_Long         -      value2         [EBP-0x8]   long *
+m176f007  Swap_Long         -      temp           [EBP-0x4]   long
+m176f008  Delete_Structure  -      record_num     [EBP-0x8]   short
+m176f008  Delete_Structure  -      address        [EBP-0xC]   char *
+m176f008  Delete_Structure  -      struct_size    [EBP-0x10]  int
+m176f008  Delete_Structure  -      total_records  [EBP-0x4]   short
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   scalar     void            void 1 bytes
+31   procedure  -               near386; returns void (char *)
+32   pointer    -               near386; of int (#8)
+33   procedure  -               near386; returns void (int *, int *)
+34   pointer    -               near386; of short (#6)
+35   procedure  -               near386; returns void (short *, short *)
+36   procedure  -               near386; returns void (char *, char *)
+37   pointer    -               near386; of long (#16)
+38   procedure  -               near386; returns void (long *, long *)
+39   procedure  -               near386; returns void (short, char *, int, short)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m176f001  11    0x00132F5C  1:0x00122F5C  0x001B85B0
+m176f001  16    0x00132F77  1:0x00122F77  0x001B85CB
+m176f001  17    0x00132F93  1:0x00122F93  0x001B85E7
+m176f001  18    0x00132FC4  1:0x00122FC4  0x001B8618
+m176f002  27    0x00132FCD  1:0x00122FCD  0x001B8621
+m176f002  32    0x00132FE8  1:0x00122FE8  0x001B863C
+m176f002  33    0x00133004  1:0x00123004  0x001B8658
+m176f002  34    0x00133035  1:0x00123035  0x001B8689
+m176f003  43    0x0013303E  1:0x0012303E  0x001B8692
+m176f003  48    0x00133059  1:0x00123059  0x001B86AD
+m176f003  49    0x00133060  1:0x00123060  0x001B86B4
+m176f003  50    0x00133077  1:0x00123077  0x001B86CB
+m176f003  52    0x00133085  1:0x00123085  0x001B86D9
+m176f003  53    0x0013308C  1:0x0012308C  0x001B86E0
+m176f003  56    0x0013309C  1:0x0012309C  0x001B86F0
+m176f003  57    0x001330A0  1:0x001230A0  0x001B86F4
+m176f003  59    0x001330BA  1:0x001230BA  0x001B870E
+m176f003  60    0x001330C3  1:0x001230C3  0x001B8717
+m176f003  61    0x001330C7  1:0x001230C7  0x001B871B
+m176f003  63    0x001330C9  1:0x001230C9  0x001B871D
+m176f004  69    0x001330D2  1:0x001230D2  0x001B8726
+m176f004  73    0x001330EF  1:0x001230EF  0x001B8743
+m176f004  74    0x001330F7  1:0x001230F7  0x001B874B
+m176f004  75    0x00133101  1:0x00123101  0x001B8755
+m176f004  76    0x00133109  1:0x00123109  0x001B875D
+m176f005  81    0x00133111  1:0x00123111  0x001B8765
+m176f005  85    0x0013312E  1:0x0012312E  0x001B8782
+m176f005  86    0x00133137  1:0x00123137  0x001B878B
+m176f005  87    0x00133143  1:0x00123143  0x001B8797
+m176f005  88    0x0013314C  1:0x0012314C  0x001B87A0
+m176f006  93    0x00133154  1:0x00123154  0x001B87A8
+m176f006  97    0x00133171  1:0x00123171  0x001B87C5
+m176f006  98    0x00133179  1:0x00123179  0x001B87CD
+m176f006  99    0x00133183  1:0x00123183  0x001B87D7
+m176f006  100   0x0013318B  1:0x0012318B  0x001B87DF
+m176f007  106   0x00133193  1:0x00123193  0x001B87E7
+m176f007  110   0x001331B0  1:0x001231B0  0x001B8804
+m176f007  111   0x001331B8  1:0x001231B8  0x001B880C
+m176f007  112   0x001331C2  1:0x001231C2  0x001B8816
+m176f007  113   0x001331CA  1:0x001231CA  0x001B881E
+m176f008  119   0x001331D2  1:0x001231D2  0x001B8826
+m176f008  122   0x001331F3  1:0x001231F3  0x001B8847
+m176f008  124   0x00133200  1:0x00123200  0x001B8854
+m176f008  128   0x00133231  1:0x00123231  0x001B8885

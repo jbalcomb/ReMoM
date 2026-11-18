@@ -33,7 +33,7 @@ void Set_Terrain_Type_Grasslands(int16_t wx, int16_t wy, int16_t wp);
 void Set_Terrain_Type_Forest(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p05
-// RP_TILE_MakeDesert()
+// static void Set_Terrain_Type_Desert(int16_t wx, int16_t wy, int16_t wp)
 
 // WZD o143p06
 void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp);
@@ -42,28 +42,28 @@ void Set_Terrain_Type_Mountain(int16_t wx, int16_t wy, int16_t wp);
 void Set_Terrain_Type_Hills(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p08
-// TILE_AdjustMapFlow()
+void Adjust_Map_Flow(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p09
-// TILE_AdjacentFlow()
+void Adjacent_Flow(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p10
-// TILE_GetRoughType()
+int16_t Get_Rough_Type(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p11
-void TILE_GenerateOre__STUB(int16_t wx, int16_t wy, int16_t wp);
+int16_t Generate_Ore(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p12
 void Random_City_Name_By_Race(int16_t race, char * name);
 
 // WZD o143p13
-int16_t EVNT_TargetDepletion__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
+int16_t Depletion_Event(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
 
 // WZD o143p14
-int16_t EVNT_FindNewMineral__STUB(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
+int16_t New_Mineral_Event(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * terrain_special);
 
 // WZD o143p15
-void TILE_ReplaceMinerals__STUB(int16_t wx, int16_t wy, int16_t wp, int16_t terain_special);
+void Replace_Minerals(int16_t wx, int16_t wy, int16_t wp, int16_t terain_special);
 
 // WZD o143p16
 void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp);
@@ -72,7 +72,8 @@ void Clear_Terrain_Specials(int16_t wx, int16_t wy, int16_t wp);
 void Reset_City_Road_Connection_Bitfields(void);
 
 // WZD o143p18
-void TILE_ResetRoadConns(int16_t wx, int16_t wy, int16_t wp);
+// drake178: TILE_ResetRoadConns()
+void Reset_Landmass_Road_Connection_Bitfields(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o143p19
 int16_t OVL_GetRoadPath(int16_t src_wx, int16_t src_wy, int16_t dst_wx, int16_t dst_wy, int16_t wp, int8_t * path_string_x, int8_t * path_string_y);

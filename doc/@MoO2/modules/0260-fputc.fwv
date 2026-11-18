@@ -1,0 +1,8 @@
+module_num=260
+module=fputc
+source=0260-fputc.md
+range[0]=1:0x00138337 linear=0x00148337 size=164
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m260f001  1    -      0x00148337  1:0x00138337  code  fputc  fputc_  regions/07-object-1/001CD654-001CDE53.txt

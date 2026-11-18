@@ -9,11 +9,11 @@
 
 ## Problem Statement
 
-Players report intermittent frame-rate slowdowns and we cannot act: no way to **reproduce** deterministically, **quantify** (how slow, how often, how bad the tail), **localize** (logic vs. render; which call), or **prove** a change helped or hurt. The raw ingredients exist but are unconnected: a ms clock, a per-present `.fwv` recorder (`PFL_Input_Metrics`), a Debug per-frame counter (`DBG_Frame_Reset`), a hand-toggled `PHASE` timing macro in one file, a deterministic headless runner (HeMoM), and `.RMR` replay. There is no unified sink, no percentile report, no live readout, and no regression gate.
+Players report intermittent frame-rate slowdowns and we cannot act: no way to **reproduce** deterministically, **quantify** (how slow, how often, how bad the tail), **localize** (logic vs. render; which call), or **prove** a change helped or hurt. The raw ingredients exist but are unconnected: a ms clock, a per-present `.fwv` recorder (`PFL_Input_Metrics`), a Debug per-frame counter (`DBG_Frame_Reset`), a hand-toggled `PHASE` timing macro in one file, a deterministic windowless runner (DeMoM), and `.RMR` replay. There is no unified sink, no percentile report, no live readout, and no regression gate.
 
 ## Solution
 
-A small **in-house performance layer** — unified clock + a build-gated **zone** primitive (the graduated `PHASE`) + one **frame-time sink** with percentile reporting + **live readouts** + **deterministic perf tests** (headless-logic and windowed-render) + a **CTest regression gate** against reference-hardware baselines — that **interoperates with** external profilers for deep dives without depending on any. Measurement and guarding ship first; optimizations are separate, measurement-gated work (per BRA).
+A small **in-house performance layer** — unified clock + a build-gated **zone** primitive (the graduated `PHASE`) + one **frame-time sink** with percentile reporting + **live readouts** + **deterministic perf tests** (windowless-logic and windowed-render) + a **CTest regression gate** against reference-hardware baselines — that **interoperates with** external profilers for deep dives without depending on any. Measurement and guarding ship first; optimizations are separate, measurement-gated work (per BRA).
 
 All reports are **frame time in milliseconds, as p50/p95/p99/max distributions**, against the **55 ms tick budget** and a named baseline — never a mean, never a bare FPS.
 
@@ -24,7 +24,7 @@ All reports are **frame time in milliseconds, as p50/p95/p99/max distributions**
 3. As a dev, I want **frame-time percentiles (p50/p95/p99/max)** over a session, so the fat-tail hitches are visible where a mean would hide them.
 4. As a dev, I want a **live FPS/frame-time readout** (window title + Debug screen), so I get immediate feedback while reproducing a slow case.
 5. As a dev, I want to wrap a suspect call in a **zone** and see its time in the same report, **without hand-editing per-file `#define`s** and **with zero cost in Release**.
-6. As a dev, I want to run a **deterministic headless scenario** (fixed seed / save, N turns) and get per-stage logic ms, so I can profile the AI/turn sink in CI with no display.
+6. As a dev, I want to run a **deterministic windowless scenario** (fixed seed / save, N turns) and get per-stage logic ms, so I can profile the AI/turn sink in CI with no display.
 7. As a dev, I want a **deterministic windowed replay** that records frame-time and asserts p95/max against a **committed baseline**, so a render regression fails the build.
 8. As a dev, I want the perf test to **self-report its environment** (backend, CPU, build type, scale) into the report header, so numbers are only compared across like environments.
 9. As a dev doing a deep dive, I want a **recommended external profiler per platform** and a deterministic workload to point it at, so I'm not reinventing flame graphs.
@@ -40,7 +40,7 @@ All reports are **frame time in milliseconds, as p50/p95/p99/max distributions**
 3. **Single gate.** One runtime switch, `REMOM_PERF` (env) and/or `[Perf] enable` in `ReMoM.ini`, turns capture on. Unset/`0` costs one branch on the hot path and no I/O. Supersedes the ad-hoc `REMOM_INPUT_METRICS` gate (kept as an alias).
 4. **Percentile reporting.** A small reporter computes p50/p95/p99/max (and count over-budget, i.e. > 55 ms) from a `.fwv`, emitted at shutdown to log and optionally stdout. Never report a mean alone.
 5. **Logic vs render split.** Frame rows carry present/render time separately from a per-frame logic total, so the split in US2 is directly readable.
-5a. **Tick-aware frame accounting — intentional wait vs. overrun (the `dt_ms` trap).** A "frame" in MoM is a **55 ms logic tick**, and `Release_Time(N)` advances the clock by N ticks while holding the same image. The present-to-present interval (`dt_ms`, from the input metrics) **conflates** a legitimate `Release_Time(3)` hold (three idle on-budget ticks) with a single frame that overran — because `Release_Time` holds without presenting ([`Timer.c:76`](../../MoX/src/Timer.c#L76)), a multi-tick hold collapses into one long interval. *(Confirmed by the first real capture — 2026-07-28, SDL2 release: median frame exactly on budget (55 ms) but a fat tail, p95 = 111 ms / p99 = 166 ms / 47% of intervals > 55 ms, with **94% of frame time non-vsync work** — which this conflation inflates.)* The perf metric therefore accounts in **logical ticks, not present intervals**: `Release_Time` **reports its `N`** to the perf layer, a hold is recorded as N idle **on-budget** ticks, and **over-budget** means *a single tick's **work** exceeded 55 ms*, never *an interval was long*. This is the surgical fix (one marked hook call in `Release_Time`); it is **distinct from** actually re-presenting each tick (Option B — deferred, see Out of Scope). The clean logic number needs neither: Mode A headless has no `Release_Time` waits at all.
+5a. **Tick-aware frame accounting — intentional wait vs. overrun (the `dt_ms` trap).** A "frame" in MoM is a **55 ms logic tick**, and `Release_Time(N)` advances the clock by N ticks while holding the same image. The present-to-present interval (`dt_ms`, from the input metrics) **conflates** a legitimate `Release_Time(3)` hold (three idle on-budget ticks) with a single frame that overran — because `Release_Time` holds without presenting ([`Timer.c:76`](../../MoX/src/Timer.c#L76)), a multi-tick hold collapses into one long interval. *(Confirmed by the first real capture — 2026-07-28, SDL2 release: median frame exactly on budget (55 ms) but a fat tail, p95 = 111 ms / p99 = 166 ms / 47% of intervals > 55 ms, with **94% of frame time non-vsync work** — which this conflation inflates.)* The perf metric therefore accounts in **logical ticks, not present intervals**: `Release_Time` **reports its `N`** to the perf layer, a hold is recorded as N idle **on-budget** ticks, and **over-budget** means *a single tick's **work** exceeded 55 ms*, never *an interval was long*. This is the surgical fix (one marked hook call in `Release_Time`); it is **distinct from** actually re-presenting each tick (Option B — deferred, see Out of Scope). The clean logic number needs neither: Mode A windowless has no `Release_Time` waits at all.
 
 5b. **IMPLEMENTED 2026-07-29 — with one correction to FR5a as written above.** The hook reports **`N` *and* the measured elapsed wait**, not `N` alone, and the perf layer subtracts the **measured** value.
 
@@ -77,9 +77,9 @@ A ~20× difference, and it confirms the original "47 % over budget" was mostly p
 11. **Periodic summary log** — a time-based (~2 s) percentile line, extending `DBG_Frame_Reset`; always-on in Debug, gated in Release.
 
 ### Deterministic perf tests + CI gate
-12. **Headless logic perf (Mode A).** A deterministic HeMoM scenario (fixed seed / committed late-game save, N turns) times logic zones with **no rendering**; emits per-stage ms. This is the backbone (logic is the sink).
+12. **Windowless logic perf (Mode A).** A deterministic DeMoM scenario (fixed seed / committed late-game save, N turns) times logic zones with **no rendering**; emits per-stage ms. This is the backbone (logic is the sink).
 13. **Windowed render perf (Mode B).** A deterministic `.RMR` replay through a real backend with capture on; emits frame-time `.fwv`. Generalizes Layer 2 of the input plan.
-14. **Regression gate.** A CTest test asserts each mode's results are **not measurably worse than a committed baseline** on named reference hardware, non-zero exit on regression. Mode A runs anywhere (headless); Mode B runs where a display exists.
+14. **Regression gate.** A CTest test asserts each mode's results are **not measurably worse than a committed baseline** on named reference hardware, non-zero exit on regression. Mode A runs anywhere (windowless); Mode B runs where a display exists.
 
 14a. **REVISED 2026-07-29 — the p95/p99/max gate this requirement originally specified is not achievable, and the reason is measured, not suspected.** FR14 first read *"relative thresholds on p95/p99/max"*. Five captures of the **same** scenario (`assets/perf_modea_lategame.hms`, `SAVE6.GAM`, `--seed1 12345`, SDL2 Release, one machine, back to back) were taken specifically to calibrate those thresholds. They show a hard split:
 
@@ -106,7 +106,7 @@ A ~20× difference, and it confirms the original "47 % over budget" was mostly p
 15. **Baseline artifacts** are committed `.fwv`/summary files tagged with the reference machine and build; cross-machine comparison is explicitly invalid.
 
 ### External-tool interop
-16. **Documented external-profiler on-ramp** (see §"External tools" below): a recommended profiler per platform and the deterministic HeMoM workload to attach it to. No external tool is a build dependency.
+16. **Documented external-profiler on-ramp** (see §"External tools" below): a recommended profiler per platform and the deterministic DeMoM workload to attach it to. No external tool is a build dependency.
 17. **Optional Tracy emission** behind a separate build flag (`PERF_TRACY`): the same zones emit Tracy zones for interactive flame-graph sessions. Off by default; never in Release.
 
 ## Instrumentation ergonomics — the `PHASE`/zone clutter problem (called out explicitly)
@@ -134,8 +134,8 @@ The in-house layer is the system of record; these are for **deep dives** once it
 ### Recommended per platform (deep dive)
 - **Windows, interactive:** VS Performance Profiler (zero setup) → Superluminal or Tracy for frame-level flame graphs.
 - **Windows, system-wide stalls (I/O, scheduler):** WPR/WPA (ETW).
-- **Linux:** `perf record`/`perf report` + flame graph; **Callgrind** for deterministic call-graph on the HeMoM headless workload.
-- **Deterministic/CI-ish deep profile:** Callgrind on the Mode A HeMoM scenario — repeatable instruction counts, no timing noise.
+- **Linux:** `perf record`/`perf report` + flame graph; **Callgrind** for deterministic call-graph on the DeMoM windowless workload.
+- **Deterministic/CI-ish deep profile:** Callgrind on the Mode A DeMoM scenario — repeatable instruction counts, no timing noise.
 
 ### Industry standards adopted
 - **Think in frame-time budgets (ms), not FPS.** Our budget is 55 ms. (16.67 ms at 60 Hz is the general-industry figure; ours is the DOS tick.)
@@ -153,9 +153,9 @@ The in-house layer is the system of record; these are for **deep dives** once it
 - [ ] `REMOM_PERF=1` produces one `.fwv` with frame rows carrying separate render and logic time, and a shutdown percentile summary (p50/p95/p99/max, count > 55 ms).
 - [ ] A zone added with the new macro appears in the report and requires **no** per-file `#define` edit to enable/disable across Debug/Release.
 - [ ] The window title shows a live frame-time/FPS with a worst-frame figure; the Debug screen shows the percentile set.
-- [ ] Mode A (HeMoM headless, fixed seed/save, N turns) emits per-stage logic ms deterministically (same numbers ±noise on re-run).
+- [ ] Mode A (DeMoM windowless, fixed seed/save, N turns) emits per-stage logic ms deterministically (same numbers ±noise on re-run).
 - [ ] Mode B (windowed `.RMR` replay) emits a frame-time `.fwv`; a CTest test fails on regression versus the committed baseline. **Per FR14a the assertion is structure (exact) + a 2.0× `p50` ceiling on zones ≥ 1 ms with ≥ 12 samples — NOT p95/max, which measurement showed vary 0.12×..24.46× between identical runs.**
-- [ ] The docs name a recommended profiler per platform and the exact HeMoM workload to attach it to.
+- [ ] The docs name a recommended profiler per platform and the exact DeMoM workload to attach it to.
 - [ ] `NEXTTURN.c`'s stage breakdown is preserved after migrating off the hand-toggled `PHASE`.
 
 ## Out of Scope

@@ -1,0 +1,58 @@
+module_num=43
+module=D:\MOX\OTHERS\FLEETPOP.C
+source=0043-fleetpop.c.md
+range[0]=1:0x0005FD24 linear=0x0006FD24 size=10569
+range[1]=2:0x000012A4 linear=0x001712A4 size=24
+range[2]=2:0x00023EBC linear=0x00193EBC size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                  SYMBOL                                 CHUNK
+m043f001  1    -      0x0006FD24  1:0x0005FD24  static,code  Add_Added_Buttons                     Add_Added_Buttons_                     regions/07-object-1/000F4E54-000F5653.txt
+m043f002  2    -      0x0006FF08  1:0x0005FF08  code         Add_Fleet_Movement_Box_Fields         Add_Fleet_Movement_Box_Fields_         regions/07-object-1/000F4E54-000F5653.txt
+m043f003  3    -      0x0007020A  1:0x0006020A  code         At_Least_One_Ship_Of_Type_Selected    At_Least_One_Ship_Of_Type_Selected_    regions/07-object-1/000F5654-000F5E53.txt
+m043f004  4    -      0x0007022D  1:0x0006022D  static,code  Can_Build_Outpost                     Can_Build_Outpost_                     regions/07-object-1/000F5654-000F5E53.txt
+m043f005  5    -      0x00070269  1:0x00060269  static,code  Check_For_Attack_Antares_Button       Check_For_Attack_Antares_Button_       regions/07-object-1/000F5654-000F5E53.txt
+m043f006  6    -      0x00070279  1:0x00060279  static,code  Check_For_Build_Outpost_Button        Check_For_Build_Outpost_Button_        regions/07-object-1/000F5654-000F5E53.txt
+m043f007  7    -      0x0007028C  1:0x0006028C  static,code  Check_For_Colonization_Button         Check_For_Colonization_Button_         regions/07-object-1/000F5654-000F5E53.txt
+m043f008  8    -      0x0007029F  1:0x0006029F  static,code  Check_For_Engage_Enemy_Forces_Button  Check_For_Engage_Enemy_Forces_Button_  regions/07-object-1/000F5654-000F5E53.txt
+m043f009  9    -      0x000702B2  1:0x000602B2  static,code  Check_For_Transport_Troops_Button     Check_For_Transport_Troops_Button_     regions/07-object-1/000F5654-000F5E53.txt
+m043f010  10   -      0x000702C5  1:0x000602C5  code         Clear_Ship_Node_Selection_Flags       Clear_Ship_Node_Selection_Flags_       regions/07-object-1/000F5654-000F5E53.txt
+m043f011  11   -      0x000702E5  1:0x000602E5  code         Clear_Fleet_Selection_Status_Flags    Clear_Fleet_Selection_Status_Flags_    regions/07-object-1/000F5654-000F5E53.txt
+m043f012  12   -      0x000702EA  1:0x000602EA  code         Draw_Damage_Bars                      Draw_Damage_Bars_                      regions/07-object-1/000F5654-000F5E53.txt
+m043f013  13   -      0x000704A6  1:0x000604A6  static,code  Draw_Large_Fleet_Box_Frame            Draw_Large_Fleet_Box_Frame_            regions/07-object-1/000F5654-000F5E53.txt
+m043f014  14   -      0x00070602  1:0x00060602  static,code  Draw_Small_Fleet_Box_Frame            Draw_Small_Fleet_Box_Frame_            regions/07-object-1/000F5654-000F5E53.txt
+m043f015  15   -      0x0007078B  1:0x0006078B  code         Draw_Fltpop_Scroll_Bar                Draw_Fltpop_Scroll_Bar_                regions/07-object-1/000F5654-000F5E53.txt
+m043f016  16   -      0x00070875  1:0x00060875  code         Draw_Fleet_Movement_Box               Draw_Fleet_Movement_Box_               regions/07-object-1/000F5E54-000F6653.txt
+m043f017  17   -      0x00070F02  1:0x00060F02  static,code  Draw_Fleet_Pop_Added_Buttons          Draw_Fleet_Pop_Added_Buttons_          regions/07-object-1/000F5E54-000F6653.txt
+m043f018  18   -      0x0007109B  1:0x0006109B  code         First_Unselected_Icon                 First_Unselected_Icon_                 regions/07-object-1/000F6654-000F6E53.txt
+m043f019  19   -      0x00071198  1:0x00061198  static,code  Fleet_Box_Grid_Height                 Fleet_Box_Grid_Height_                 regions/07-object-1/000F6654-000F6E53.txt
+m043f020  20   -      0x000711E6  1:0x000611E6  code         Fleet_Box_Height                      Fleet_Box_Height_                      regions/07-object-1/000F6654-000F6E53.txt
+m043f021  21   -      0x000712D8  1:0x000612D8  code         Fleet_Box_Width                       Fleet_Box_Width_                       regions/07-object-1/000F6654-000F6E53.txt
+m043f022  22   -      0x000712E1  1:0x000612E1  code         Fleet_Buttons_Chosen                  Fleet_Buttons_Chosen_                  regions/07-object-1/000F6654-000F6E53.txt
+m043f023  23   -      0x00071315  1:0x00061315  static,code  Get_Absolute_Location_Scan_Info       Get_Absolute_Location_Scan_Info_       regions/07-object-1/000F6654-000F6E53.txt
+m043f024  24   -      0x0007139F  1:0x0006139F  code         Get_Fleet_Icon_Button_XY              Get_Fleet_Icon_Button_XY_              regions/07-object-1/000F6654-000F6E53.txt
+m043f025  25   -      0x000713CE  1:0x000613CE  code         Get_Fleetpop_Scanned_Ship_Info        Get_Fleetpop_Scanned_Ship_Info_        regions/07-object-1/000F6654-000F6E53.txt
+m043f026  26   -      0x00071465  1:0x00061465  code         N_Fleet_Icons                         N_Fleet_Icons_                         regions/07-object-1/000F6654-000F6E53.txt
+m043f027  27   -      0x000714A1  1:0x000614A1  static,code  Planet_Is_Colonizable                 Planet_Is_Colonizable_                 regions/07-object-1/000F6654-000F6E53.txt
+m043f028  28   -      0x00071506  1:0x00061506  static,code  Print_Fleet_Box_Info                  Print_Fleet_Box_Info_                  regions/07-object-1/000F6654-000F6E53.txt
+m043f029  29   -      0x00071A17  1:0x00061A17  code         Reload_Fleet_Box_Data                 Reload_Fleet_Box_Data_                 regions/07-object-1/000F6E54-000F7653.txt
+m043f030  30   -      0x00071A37  1:0x00061A37  code         Fleet_Box_Data                        Fleet_Box_Data_                        regions/07-object-1/000F6E54-000F7653.txt
+m043f031  31   -      0x00071B0E  1:0x00061B0E  code         Reload_Fleet_Box_Palette              Reload_Fleet_Box_Palette_              regions/07-object-1/000F6E54-000F7653.txt
+m043f032  32   -      0x00071B1C  1:0x00061B1C  code         Reload_Ship_Selection_Status          Reload_Ship_Selection_Status_          regions/07-object-1/000F6E54-000F7653.txt
+m043f033  33   -      0x00071B91  1:0x00061B91  code         Save_Ship_Selection_Status            Save_Ship_Selection_Status_            regions/07-object-1/000F6E54-000F7653.txt
+m043f034  34   -      0x00071C01  1:0x00061C01  static,code  Set_Added_Button_Stuff                Set_Added_Button_Stuff_                regions/07-object-1/000F6E54-000F7653.txt
+m043f035  35   -      0x00071CE7  1:0x00061CE7  static,code  Set_Attack_Antares_Button_Flag        Set_Attack_Antares_Button_Flag_        regions/07-object-1/000F6E54-000F7653.txt
+m043f036  36   -      0x00071DD8  1:0x00061DD8  static,code  Set_Build_Outpost_Button_Flag         Set_Build_Outpost_Button_Flag_         regions/07-object-1/000F6E54-000F7653.txt
+m043f037  37   -      0x00071F35  1:0x00061F35  static,code  Set_Colonize_Button_Flag              Set_Colonize_Button_Flag_              regions/07-object-1/000F6E54-000F7653.txt
+m043f038  38   -      0x0007209D  1:0x0006209D  static,code  Set_Engage_Enemy_Forces_Flag          Set_Engage_Enemy_Forces_Flag_          regions/07-object-1/000F7654-000F7E53.txt
+m043f039  39   -      0x000721EB  1:0x000621EB  static,code  Set_Fleet_Box_Data_Dimensions         Set_Fleet_Box_Data_Dimensions_         regions/07-object-1/000F7654-000F7E53.txt
+m043f040  40   -      0x0007226A  1:0x0006226A  code         Set_Fleet_Movement_Box_Dimensions     Set_Fleet_Movement_Box_Dimensions_     regions/07-object-1/000F7654-000F7E53.txt
+m043f041  41   -      0x0007229E  1:0x0006229E  code         Set_Fleet_Movement_Icon_Selections    Set_Fleet_Movement_Icon_Selections_    regions/07-object-1/000F7654-000F7E53.txt
+m043f042  42   -      0x00072346  1:0x00062346  static,code  Set_Transport_Troops_Flag             Set_Transport_Troops_Flag_             regions/07-object-1/000F7654-000F7E53.txt
+m043f043  43   -      0x000724CF  1:0x000624CF  static,code  Ship_Should_Be_Auto_Selected          Ship_Should_Be_Auto_Selected_          regions/07-object-1/000F7654-000F7E53.txt
+m043f044  44   -      0x000724E8  1:0x000624E8  static,code  Initialize_Scroll_Bar                 Initialize_Scroll_Bar_                 regions/07-object-1/000F7654-000F7E53.txt
+m043f045  45   -      0x0007252F  1:0x0006252F  code         Icon_Selection_Status                 Icon_Selection_Status_                 regions/07-object-1/000F7654-000F7E53.txt
+m043f046  46   -      0x00072590  1:0x00062590  static,code  Buffer_Reload_Fleetpop_Frame          Buffer_Reload_Fleetpop_Frame_          regions/07-object-1/000F7654-000F7E53.txt
+m043f047  47   -      0x00072617  1:0x00062617  code         Some_Icon_Selected                    Some_Icon_Selected_                    regions/07-object-1/000F7654-000F7E53.txt
+m043f048  48   -      0x00072651  1:0x00062651  code         Can_Select_Fleet_Box_Ship             Can_Select_Fleet_Box_Ship_             regions/07-object-1/000F7654-000F7E53.txt
+-         -    -      0x00193EBC  2:0x00023EBC  static,data  _n_added_buttons                      _n_added_buttons                       -

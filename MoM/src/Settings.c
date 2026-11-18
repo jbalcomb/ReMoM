@@ -295,9 +295,9 @@ void Settings_Screen(void)
 
     Clear_Fields();
 
-    hotkey_ESC = Add_Hot_Key(str_hotkey_ESC__ovr125[0]);
+    hotkey_ESC = Add_Hot_Key(str_hotkey_ESC__ovr125);
 
-    loadsave_ok_button = Add_Hidden_Field(265, 175, 306, 189, str_hotkey_O__ovr125[0], ST_UNDEFINED);
+    loadsave_ok_button = Add_Hidden_Field(265, 175, 306, 189, str_hotkey_O__ovr125, ST_UNDEFINED);
 
     for(itr = 0; itr < 8; itr++)
     {
@@ -307,14 +307,14 @@ void Settings_Screen(void)
         {
             row = 8;  // nothing at 7, skip to 8 for Raze City
         }
-        Option_Control_Indices[itr] = Add_Hidden_Field(31, Local_Settings_Tops[row], 175, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
+        Option_Control_Indices[itr] = Add_Hidden_Field(31, Local_Settings_Tops[row], 175, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125, ST_UNDEFINED);
     }
 
     // ¿ "Random Events" ?
-    Option_Control_Indices[8] = Add_Hidden_Field(31, Local_Settings_Tops[11], 175, (Local_Settings_Tops[11] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
+    Option_Control_Indices[8] = Add_Hidden_Field(31, Local_Settings_Tops[11], 175, (Local_Settings_Tops[11] + 9), str_empty_string__ovr125, ST_UNDEFINED);
 
     // ¿ "End Of Turn Wait" ?
-    Option_Control_Indices[9] = Add_Hidden_Field(31, Local_Settings_Tops[12], 175, (Local_Settings_Tops[12] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
+    Option_Control_Indices[9] = Add_Hidden_Field(31, Local_Settings_Tops[12], 175, (Local_Settings_Tops[12] + 9), str_empty_string__ovr125, ST_UNDEFINED);
 
     for(itr = 0; itr < 8; itr++)
     {
@@ -327,11 +327,11 @@ void Settings_Screen(void)
         {
             row += 1;  // nothing at 2 / skip Movement Animations
         }
-        Option_Control_Indices[(10 + itr)] = Add_Hidden_Field(192, Local_Settings_Tops[row], 310, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125[0], ST_UNDEFINED);
+        Option_Control_Indices[(10 + itr)] = Add_Hidden_Field(192, Local_Settings_Tops[row], 310, (Local_Settings_Tops[row] + 9), str_empty_string__ovr125, ST_UNDEFINED);
     }
 
     // Movement Animations
-    Option_Control_Indices[18] = Add_Hidden_Field(192, 74, 310, (9 + 74), str_empty_string__ovr125[0], ST_UNDEFINED);
+    Option_Control_Indices[18] = Add_Hidden_Field(192, 74, 310, (9 + 74), str_empty_string__ovr125, ST_UNDEFINED);
 
 
     leave_screen = ST_FALSE;
@@ -351,6 +351,7 @@ void Settings_Screen(void)
 
         Mark_Time();
 
+        /* OGBUG  Esc leaves without writing MAGIC.SET, but every toggle below was already applied to magic_set in memory, so the "cancelled" changes stay in effect for the rest of the session */
         if(input_field_idx == hotkey_ESC)
         {
             leave_screen = ST_TRUE;
@@ -581,7 +582,7 @@ void Load_MAGIC_SET(void)
     FILE * file_pointer = 0;
     int16_t itr = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     if(
         (STU_GRAF_User_DIR("MAGIC.SET", found_file) == ST_FAILURE)  /* CLAUDE: -> user-data */
@@ -620,7 +621,7 @@ void Load_MAGIC_SET(void)
     stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
     stu_fclose(file_pointer);
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
     
 }
 
@@ -684,83 +685,3 @@ void Set_Settings_Screen_Help_List(void)
     LBX_Load_Data_Static(hlpentry_lbx_file, 34, (SAMB_ptr)_help_entries, 0, 21, 10);
     Set_Help_List((char *)&_help_entries[0], 21);
 }
-
-
-#ifdef STU_DEBUG
-void DBG_Print_MAGIC_SET(const char * label)
-{
-    int16_t itr;
-    LOG_DEBUG(LOG_CAT_GENERAL, "===== MAGIC_SET [%s] =====", label);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  sound_effects:         %d", magic_set.sound_effects);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  background_music:      %d", magic_set.background_music);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  event_music:           %d", magic_set.event_music);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  city_spell_events:     %d", magic_set.city_spell_events);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  overland_spell_events: %d", magic_set.overland_spell_events);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  summoning_events:      %d", magic_set.summoning_events);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  end_of_turn_summary:   %d", magic_set.end_of_turn_summary);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  raze_city:             %d", magic_set.raze_city);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  random_events:         %d", magic_set.random_events);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  end_of_turn_wait:      %d", magic_set.end_of_turn_wait);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  strategic_combat_only: %d", magic_set.strategic_combat_only);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  auto_unit_information: %d", magic_set.auto_unit_information);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  enemy_moves:           %d", magic_set.enemy_moves);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  enemy_spells:          %d", magic_set.enemy_spells);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  spell_book_ordering:   %d", magic_set.spell_book_ordering);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  spell_animations:      %d", magic_set.spell_animations);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  show_node_owners:      %d", magic_set.show_node_owners);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  expanding_help:        %d", magic_set.expanding_help);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  sound_channels:        %d", magic_set.sound_channels);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  input_type:            %d", magic_set.input_type);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  Difficulty:            %d", magic_set.Difficulty);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  Opponents:             %d", magic_set.Opponents);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  LandSize:              %d", magic_set.LandSize);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  MagicPower:            %d", magic_set.MagicPower);
-    LOG_DEBUG(LOG_CAT_GENERAL, "  movement_animations:   %d", magic_set.movement_animations);
-    for(itr = 0; itr < NUM_SAVES; itr++)
-    {
-        LOG_DEBUG(LOG_CAT_GENERAL, "  Have_Save[%d]: %d  Save_Names[%d]: \"%s\"", itr, magic_set.Have_Save[itr], itr, magic_set.Save_Names[itr]);
-    }
-    LOG_DEBUG(LOG_CAT_GENERAL, "===== END MAGIC_SET [%s] =====", label);
-}
-
-
-void DBG_Compare_MAGIC_SET(const struct s_MAGIC_SET * before, const struct s_MAGIC_SET * after, const char * label)
-{
-    int16_t itr;
-    int16_t diff_count = 0;
-    LOG_DEBUG(LOG_CAT_GENERAL, "===== MAGIC_SET DIFF [%s] =====", label);
-    if(before->sound_effects != after->sound_effects) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED sound_effects:         %d -> %d", before->sound_effects, after->sound_effects); diff_count++; }
-    if(before->background_music != after->background_music) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED background_music:      %d -> %d", before->background_music, after->background_music); diff_count++; }
-    if(before->event_music != after->event_music) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED event_music:           %d -> %d", before->event_music, after->event_music); diff_count++; }
-    if(before->city_spell_events != after->city_spell_events) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED city_spell_events:     %d -> %d", before->city_spell_events, after->city_spell_events); diff_count++; }
-    if(before->overland_spell_events != after->overland_spell_events) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED overland_spell_events: %d -> %d", before->overland_spell_events, after->overland_spell_events); diff_count++; }
-    if(before->summoning_events != after->summoning_events) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED summoning_events:      %d -> %d", before->summoning_events, after->summoning_events); diff_count++; }
-    if(before->end_of_turn_summary != after->end_of_turn_summary) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED end_of_turn_summary:   %d -> %d", before->end_of_turn_summary, after->end_of_turn_summary); diff_count++; }
-    if(before->raze_city != after->raze_city) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED raze_city:             %d -> %d", before->raze_city, after->raze_city); diff_count++; }
-    if(before->random_events != after->random_events) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED random_events:         %d -> %d", before->random_events, after->random_events); diff_count++; }
-    if(before->end_of_turn_wait != after->end_of_turn_wait) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED end_of_turn_wait:      %d -> %d", before->end_of_turn_wait, after->end_of_turn_wait); diff_count++; }
-    if(before->strategic_combat_only != after->strategic_combat_only) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED strategic_combat_only: %d -> %d", before->strategic_combat_only, after->strategic_combat_only); diff_count++; }
-    if(before->auto_unit_information != after->auto_unit_information) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED auto_unit_information: %d -> %d", before->auto_unit_information, after->auto_unit_information); diff_count++; }
-    if(before->enemy_moves != after->enemy_moves) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED enemy_moves:           %d -> %d", before->enemy_moves, after->enemy_moves); diff_count++; }
-    if(before->enemy_spells != after->enemy_spells) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED enemy_spells:          %d -> %d", before->enemy_spells, after->enemy_spells); diff_count++; }
-    if(before->spell_book_ordering != after->spell_book_ordering) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED spell_book_ordering:   %d -> %d", before->spell_book_ordering, after->spell_book_ordering); diff_count++; }
-    if(before->spell_animations != after->spell_animations) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED spell_animations:      %d -> %d", before->spell_animations, after->spell_animations); diff_count++; }
-    if(before->show_node_owners != after->show_node_owners) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED show_node_owners:      %d -> %d", before->show_node_owners, after->show_node_owners); diff_count++; }
-    if(before->expanding_help != after->expanding_help) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED expanding_help:        %d -> %d", before->expanding_help, after->expanding_help); diff_count++; }
-    if(before->sound_channels != after->sound_channels) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED sound_channels:        %d -> %d", before->sound_channels, after->sound_channels); diff_count++; }
-    if(before->input_type != after->input_type) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED input_type:            %d -> %d", before->input_type, after->input_type); diff_count++; }
-    if(before->Difficulty != after->Difficulty) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED Difficulty:            %d -> %d", before->Difficulty, after->Difficulty); diff_count++; }
-    if(before->Opponents != after->Opponents) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED Opponents:             %d -> %d", before->Opponents, after->Opponents); diff_count++; }
-    if(before->LandSize != after->LandSize) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED LandSize:              %d -> %d", before->LandSize, after->LandSize); diff_count++; }
-    if(before->MagicPower != after->MagicPower) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED MagicPower:            %d -> %d", before->MagicPower, after->MagicPower); diff_count++; }
-    if(before->movement_animations != after->movement_animations) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED movement_animations:   %d -> %d", before->movement_animations, after->movement_animations); diff_count++; }
-    for(itr = 0; itr < NUM_SAVES; itr++)
-    {
-        if(before->Have_Save[itr] != after->Have_Save[itr]) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED Have_Save[%d]:          %d -> %d", itr, before->Have_Save[itr], after->Have_Save[itr]); diff_count++; }
-        if(stu_stricmp(before->Save_Names[itr], after->Save_Names[itr]) != 0) { LOG_DEBUG(LOG_CAT_GENERAL, "  CHANGED Save_Names[%d]:         \"%s\" -> \"%s\"", itr, before->Save_Names[itr], after->Save_Names[itr]); diff_count++; }
-    }
-    if(diff_count == 0) { LOG_DEBUG(LOG_CAT_GENERAL, "  (no changes)"); }
-    else { LOG_DEBUG(LOG_CAT_GENERAL, "  Total changes: %d", diff_count); }
-    LOG_DEBUG(LOG_CAT_GENERAL, "===== END MAGIC_SET DIFF [%s] =====", label);
-}
-#endif

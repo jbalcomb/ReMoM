@@ -27,11 +27,11 @@
 
 // MoO1 ORION dseg:5DDA                         BEGIN:  seg016 - Initialized Data
 // MoO1 ORION dseg:5DDA
-// MoO1 ORION dseg:5DDA 00 00                   fh_ERROR_LOG    dw 0                    ; DATA XREF: DBG_Open_ERROR_LOG+13w
-// MoO1 ORION dseg:5DDA                                                                 ; DBG_Open_ERROR_LOG+22r ...
-// MoO1 ORION dseg:5DDC 00 00                   fh2_ERROR_LOG   dw 0                    ; DATA XREF: DBG_Open_ERROR_LOG+1Dw
-// MoO1 ORION dseg:5DDC                                                                 ; DBG_Close_ERROR_LOG+1Cr ...
-// MoO1 ORION dseg:5DDE 45 52 52 4F 52 2E 4C 4F+str_ERROR_LOG      db 'ERROR.LOG',0        ; DATA XREF: DBG_Open_ERROR_LOG+Eo
+// MoO1 ORION dseg:5DDA 00 00                   fh_ERROR_LOG    dw 0                    ; DATA XREF: DBG_Open_ERROR_LOG+13^w
+// MoO1 ORION dseg:5DDA                                                                 ; DBG_Open_ERROR_LOG+22^r ...
+// MoO1 ORION dseg:5DDC 00 00                   fh2_ERROR_LOG   dw 0                    ; DATA XREF: DBG_Open_ERROR_LOG+1D^w
+// MoO1 ORION dseg:5DDC                                                                 ; DBG_Close_ERROR_LOG+1C^r ...
+// MoO1 ORION dseg:5DDE 45 52 52 4F 52 2E 4C 4F+str_ERROR_LOG      db 'ERROR.LOG',0        ; DATA XREF: DBG_Open_ERROR_LOG+E^o
 // MoO1 ORION dseg:5DDE 47 00
 // MoO1 ORION dseg:5DDE                         END:  seg016 - Initialized Data
 
@@ -53,7 +53,11 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 
 
 
-// s05p01
+/*
+    WIZARDS.EXE  seg005
+*/
+
+// WZD s05p01
 // TODO  void Exit_With_Size(void)
 // TODO  {
 // TODO      char temp_string[20];
@@ -174,6 +178,23 @@ void Reset_System(void)
     WIZARDS.EXE  seg006
 */
 
+/*
+    WIZARDS.EXE  seg006
+    MoO1  STARMAP.EXE  seg016
+*/
+
+// WZD s06p01
+// VGA_SetTextMode()
+
+// WZD s06p02
+// DOS_QuitWithMsg()
+
+// WZD s06p03
+// UU_DOS_PrintString2()
+
+// WZD s06p04
+// RAM_GetFreeBlockSize()
+
 // WZD s06p01
 // drake178: VGA_SetTextMode()
 /*
@@ -265,7 +286,7 @@ void Quit_With_Message(char * string)
     // _getch();  // 6031 Return value ignored
     // char ch = _getch();
     /* CLAUDE: only pause for a keypress at an interactive console.  Under a
-       headless / redirected-stdin run (HeMoM, CTest, CI) _getch() blocks
+       headless / redirected-stdin run (DeMoM, CTest, CI) _getch() blocks
        forever waiting for a key that never arrives, turning every fatal
        error into a hang instead of a clean exit-with-message. */
     if(_isatty(_fileno(stdin)))
@@ -300,10 +321,72 @@ void Quit_With_Message(char * string)
 // drake178: ¿ ?
 // AKA s06p05_Empty_pFxn()
 // MoO1 ORION seg006 STARMAP seg016
+/*
+XREF:
+    Init_Drivers()
+    UU_Legacy_Startup()
+*/
 void DBG_Open_ERROR_LOG__STUB(void)
 {
 
+/*
+MoM
+
+push    es
+push    ds
+push    si
+push    di
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+*/
+
+/*
+MoO1
+
+push    es
+push    ds
+push    si
+push    di
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+; ---------------------------------------------------------------------------
+mov     ah, 3Ch
+mov     cx, 0
+mov     dx, offset aError_log ; "ERROR.LOG"
+int     21h             ; DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)  ; CX = attributes for file  ; DS:DX -> ASCIZ filename (may include drive and path)
+mov     fh_ERROR_LOG, ax
+mov     ah, 45h
+mov     bx, 2
+int     21h             ; DOS - 2+ - CREATE DUPLICATE HANDLE (DUP)  ; BX = file handle to duplicate
+mov     fh2_ERROR_LOG, ax
+mov     ah, 46h
+mov     bx, fh_ERROR_LOG
+mov     cx, 2
+int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+*/
 }
+
+
+// WZD s06p06
+// AKA  s06p06_Empty_pFxn()
+/*
+XRE:
+    Exit_With_Message()
+    UU_Exit_With_Value()
+    UU_VGA_B800Dump()
+
+*/
 
 // WZD s06p06
 // drake178: ¿ ?
@@ -311,10 +394,58 @@ void DBG_Open_ERROR_LOG__STUB(void)
 // MoO1 ORION seg006 STARMAP seg016
 void DBG_Close_ERROR_LOG__STUB(void)
 {
+    
+/*
+MoM
 
+push    es
+push    ds
+push    si
+push    di
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+
+*/
+
+/*
+MoO1
+
+push    es
+push    ds
+push    si
+push    di
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+; ---------------------------------------------------------------------------
+mov     bx, fh_ERROR_LOG
+cmp     bx, 0
+jz      short loc_171ED
+mov     ah, 3Eh
+mov     bx, fh_ERROR_LOG
+int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
+mov     ah, 46h
+mov     bx, fh2_ERROR_LOG
+mov     cx, 2
+int     21h             ; DOS - 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)  ; BX = existing file handle, CX = new file handle
+mov     ah, 3Eh
+mov     bx, fh2_ERROR_LOG
+int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE  ; BX = file handle
+loc_171ED:
+pop     di
+pop     si
+pop     ds
+pop     es
+retf
+*/
 }
-// seg006:007A DBG_Open_ERROR_LOG proc far             ; CODE XREF: init_fonts_sound_mouse_etc+7P
-// seg006:007A                                         ; seg014:00AFP
+// seg006:007A DBG_Open_ERROR_LOG proc far             ; CODE XREF: init_fonts_sound_mouse_etc+7vP
+// seg006:007A                                         ; seg014:00AFvP
 // seg006:007A                 push    es
 // seg006:007B                 push    ds
 // seg006:007C                 push    si
@@ -353,7 +484,7 @@ void DBG_Close_ERROR_LOG__STUB(void)
 // seg006:00AA ; =============== S U B R O U T I N E =======================================
 // seg006:00AA
 // seg006:00AA
-// seg006:00AA DBG_Close_ERROR_LOG proc far            ; CODE XREF: Exit_With_Message+17P
+// seg006:00AA DBG_Close_ERROR_LOG proc far            ; CODE XREF: Exit_With_Message+17^P
 // seg006:00AA                 push    es
 // seg006:00AB                 push    ds
 // seg006:00AC                 push    si
@@ -381,7 +512,7 @@ void DBG_Close_ERROR_LOG__STUB(void)
 // seg006:00D5                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
 // seg006:00D5                                         ; BX = file handle
 // seg006:00D7
-// seg006:00D7 loc_4687:                               ; CODE XREF: DBG_Close_ERROR_LOG+10j
+// seg006:00D7 loc_4687:                               ; CODE XREF: DBG_Close_ERROR_LOG+10^j
 // seg006:00D7                 pop     di
 // seg006:00D8                 pop     si
 // seg006:00D9                 pop     ds

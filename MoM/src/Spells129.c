@@ -49,6 +49,8 @@
 
 #include "../../ext/stu_compat.h"
 
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage() */  /* CLAUDE */
+
 #include "Spells129.h"
 
 extern int16_t * _battlefield_holybonus;
@@ -236,8 +238,6 @@ void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx)
 ;  Active_Unit@ allocation
 ; BUG: allocates and clears a holy bonus array but then
 ;  fails to set and use it
-; BUG: if killing a hero, their item slots are set to
-;  0 instead of the empty marker -1
 */
 /*
 
@@ -245,7 +245,7 @@ void Cast_Attack_Spell_On_Enemy_Stack(int16_t unit_idx, int16_t spell_idx)
     Cast_Attack_Spell_On_Enemy_Stack()
     j_UNIT_ConvSpellATK__WIP()
         CTY_ChaosRift()     ...five lightning bolts (strength eight)
-        WIZ_MeteorStorm()   ...strength four magic fire attack
+        Apply_Meteor_Storm()   ...strength four magic fire attack
 
 */
 void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_t * item_count, int16_t item_list[], int16_t attack_strength_override)
@@ -255,7 +255,8 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
     int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
     int16_t itr2 = 0;
     int16_t itr1 = 0;
-    struct s_BATTLE_UNIT * bu_ptr;
+    // struct s_BATTLE_UNIT * bu_ptr;
+    /* CLAUDE */  /* REBUG */  /* asm: no bu_ptr; j_Load_Battle_Unit is passed [battle_units] (asm 69-72) */
 
 
     g_ai_recompute_needed = ST_TRUE;
@@ -286,15 +287,22 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
     }
 
-    bu_ptr = &battle_units[0];
-
-    Load_Battle_Unit(unit_idx, bu_ptr);
+    // bu_ptr = &battle_units[0];
+    // Load_Battle_Unit(unit_idx, bu_ptr);
+    Load_Battle_Unit(unit_idx, &battle_units[0]);  /* CLAUDE */  /* REBUG */  /* asm: push [battle_units+2] / push [battle_units] / push di / call j_Load_Battle_Unit */
 
     Compute_Battle_Unit_Damage_From_Spell(spell_idx, 0, &damage_types[0], attack_strength_override);
 
-    enchantments = (battle_units[0].enchantments | battle_units[0].item_enchantments | _UNITS[unit_idx].enchantments);
+    // enchantments = (battle_units[0].enchantments | battle_units[0].item_enchantments | _UNITS[unit_idx].enchantments);
+    enchantments = (battle_units[0].enchantments | _UNITS[unit_idx].enchantments | battle_units[0].item_enchantments);  /* CLAUDE */  /* REBUG */  /* asm: s_BATTLE_UNIT.enchantments / or s_UNIT.enchantments / or s_BATTLE_UNIT.item_enchantments */
 
-    if((enchantments & UE_REGENERATION) != 0)
+    // if((enchantments & UE_REGENERATION) != 0)
+    /* CLAUDE */  /* REBUG */  /* asm: UE_REGENERATION in the enchantments, or UA_REGENERATION in battle_units[0].Abilities */
+    if(
+        ((enchantments & UE_REGENERATION) != 0)
+        ||
+        ((battle_units[0].Abilities & UA_REGENERATION) != 0)
+    )
     {
 
         damage_types[0] = 0;
@@ -316,15 +324,17 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
     battle_units[0].front_figure_damage = (damage_total % battle_units[0].hits);
 
-    if(battle_units[0].figure_cnt > 0)
-    {
-
-        SETMIN(battle_units[0].front_figure_damage, 0);
-
-        _UNITS[unit_idx].Damage = (((battle_units[0].figure_max - battle_units[0].figure_cnt) * battle_units[0].hits) + battle_units[0].front_figure_damage);
-
-    }
-    else  /* DEAD / DIED */
+    // if(battle_units[0].figure_cnt > 0)
+    // {
+    //
+    //     SETMIN(battle_units[0].front_figure_damage, 0);
+    //
+    //     _UNITS[unit_idx].Damage = (((battle_units[0].figure_max - battle_units[0].figure_cnt) * battle_units[0].hits) + battle_units[0].front_figure_damage);
+    //
+    // }
+    // else  /* DEAD / DIED */
+    /* CLAUDE */  /* REBUG */  /* asm: cmp figure_cnt, 0 / jle loc_AD08F - the death block is the then-block, the damage write is the else-block (loc_AD195) */
+    if(battle_units[0].figure_cnt <= 0)  /* DEAD / DIED */
     {
 
         if(_UNITS[unit_idx].Hero_Slot > -1)
@@ -342,7 +352,7 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
 
                 }
 
-                // ; BUG: empty slots are -1, not 0
+                /* OGBUG  the killed hero's item slot is cleared to 0, a valid item index, not ST_UNDEFINED (-1, empty) */
                 _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr2] = 0;
 
             }
@@ -350,6 +360,15 @@ void Cast_Attack_Spell_On_Enemy_Unit(int16_t unit_idx, int16_t spell_idx, int16_
         }
 
         Kill_Unit(unit_idx, kt_Normal);
+
+    }
+    /* CLAUDE */  /* REBUG */  /* asm: loc_AD195 */
+    else
+    {
+
+        SETMIN(battle_units[0].front_figure_damage, 0);
+
+        _UNITS[unit_idx].Damage = (((battle_units[0].figure_max - battle_units[0].figure_cnt) * battle_units[0].hits) + battle_units[0].front_figure_damage);
 
     }
 
@@ -385,6 +404,9 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
         save_mod = -1;
 
     }
+
+    /* HACK */  /* CLAUDE */  /* stand-in for the stack garbage in unit_owner (bp-4), which only a matching unit overwrites (ReMoM's 0 initialiser would make it player 0) */
+    unit_owner = Stack_Garbage();
 
     for(unit_idx = 0; unit_idx < _units; unit_idx++)
     {
@@ -427,36 +449,42 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
 
             _UNITS[unit_idx].Damage += damage_types[0];
 
-        }
+    //     }
+    //
+    // }
+    /* CLAUDE */  /* REBUG */  /* asm: the death test is inside the unit loop, once per unit on the square (loc_AD35A .. loc_AD427) */
 
-    }
-
-    if(battle_units[0].status > bus_Active)
-    {
-
-        if(_UNITS[unit_idx].Hero_Slot > -1)
-        {
-
-            for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
+            if(battle_units[0].status > bus_Active)
             {
 
-                if(_players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                if(_UNITS[unit_idx].Hero_Slot > -1)
                 {
 
-                    item_list[item_count] = _players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr];
+                    for(itr = 0; itr < NUM_HERO_ITEM_SLOTS; itr++)
+                    {
 
-                    item_count += 1;
+                        if(_players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] > -1)
+                        {
+
+                            item_list[item_count] = _players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr];
+
+                            item_count += 1;
+
+                        }
+
+                        /* OGBUG  the killed hero's item slot is cleared to 0, a valid item index, not ST_UNDEFINED (-1, empty) */
+                        // _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = 0;
+                        _players[unit_owner].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = 0;  /* CLAUDE */  /* REBUG */  /* asm: [bp+unit_owner] */
+
+                    }
 
                 }
 
-                // ; BUG: empty slots are -1, not 0
-                _players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[itr] = 0;
+                Kill_Unit(unit_idx, kt_Normal);
 
             }
 
         }
-
-        Kill_Unit(unit_idx, kt_Normal);
 
     }
 
@@ -468,6 +496,7 @@ void Apply_Black_Wind(int16_t wx, int16_t wy, int16_t wp, int16_t spell_idx)
     m_item_wy = wy;
     m_item_wp = wp;
 
+    /* OGBUG  when no unit is on the square unit_owner (bp-4) was never written and the OG pushes stack garbage (see the stand-in above the unit loop); item_count is 0 then, so Player_Process_Item_Pool() does nothing with it */
     Player_Process_Item_Pool(unit_owner, item_count, &item_list[0]);
 
 }
@@ -554,8 +583,6 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
 ; Void spell cast on the target city
 ; returns the number of buildings destroyed
 ;
-; BUG: can corrupt the corner squares outside the
-;  catchment area
 ; inherits BUGs from UNIT_ConvSpellATK
 */
 /*
@@ -576,6 +603,7 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
     int16_t itr_population = 0;  // _SI_
     int16_t population_lost = 0;  // _DI_
 
+    /* OGBUG  full 5x5 square, with no corner skip: corrupts the 4 corner squares outside the city's catchment area */
     for(itr_wx = (_CITIES[city_idx].wx - 2); (_CITIES[city_idx].wx + 2) >= itr_wx; itr_wx++)
     {
 
@@ -588,6 +616,7 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
         else
         {
 
+            /* OGBUG  off-by-one at the map edge: itr_wx == WORLD_WIDTH is kept as 60, which is x 0 of the next row */
             if(itr_wx > WORLD_WIDTH)
             {
 
@@ -606,17 +635,20 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
         for(itr_wy = (_CITIES[city_idx].wy - 2); (_CITIES[city_idx].wy + 2) >= itr_wy; itr_wy++)
         {
 
+            /* OGBUG  off-by-one at the map edge: itr_wy == WORLD_HEIGHT (row 40) is accepted, which is past the plane */
             if(
                 (itr_wy >= WORLD_YMIN)
                 &&
-                (itr_wy <= WORLD_YMAX)
+                // (itr_wy <= WORLD_YMAX)
+                (itr_wy <= WORLD_HEIGHT)  /* CLAUDE */  /* REBUG */  /* asm: cmp di, e_WORLD_HEIGHT / jle loc_AD65C */
             )
             {
 
                 if(
                     (Random(2) == 1)
                     &&
-                    (Square_Is_Sailable(curr_wx, itr_wy, _CITIES[city_idx].wp) == ST_FALSE)
+                    // (Square_Is_Sailable(curr_wx, itr_wy, _CITIES[city_idx].wp) == ST_FALSE)
+                    (Square_Is_Sailable(curr_wx, itr_wy, _CITIES[city_idx].wp) != ST_TRUE)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax, e_ST_TRUE / jz loc_AD6F1 */
                 )
                 {
 
@@ -646,7 +678,10 @@ int16_t Apply_Call_The_Void(int16_t city_idx)
 
     }
 
-    for(itr_population = 0; itr_population < (_CITIES[city_idx].population - 1); itr_population++)
+    population_lost = 0;  /* CLAUDE */  /* REBUG */  /* asm: xor di, di (asm 178) */
+
+    // for(itr_population = 0; itr_population < (_CITIES[city_idx].population - 1); itr_population++)
+    for(itr_population = 0; (_CITIES[city_idx].population - 1) > itr_population; itr_population++)  /* CLAUDE */  /* REBUG */  /* asm: population / dec ax / cmp ax, si / jg loc_AD770 */
     {
 
         if(Random(2) == 1)
@@ -718,12 +753,12 @@ XREF:
     Cast_CallOfTheVoid()
     Cast_Stasis()
     j_CTY_CounterSpell__STUB()
-        Cast_DeathWish()
+        Cast_Death_Wish()
         IDK_Spell_GreatUnsummoning()
         Cast_BlackWind()
         Cast_RaiseVolcano()
         Cast_Corruption()
-        WIZ_MeteorStorm()
+        Apply_Meteor_Storm()
         Cast_Spell_Overland()
 
 "Having nightshade as a resource in your city (see Terrain Specials) and a building that can make use of this resource (religious institutions, see Buildings), significantly increases a city’s ability to resist enemy city enchantments."
@@ -1160,7 +1195,7 @@ int16_t Cast_Stasis(int16_t player_idx)
     if(player_idx != HUMAN_PLAYER_IDX)
     {
 
-        return_value = AITP_City_Enchantment(stt_Enemy_Group, &scsv1, spl_Stasis, player_idx);
+        return_value = Get_Map_Square_Target_For_Spell(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, spl_Stasis, player_idx);
 
     }
     else
@@ -1170,7 +1205,7 @@ int16_t Cast_Stasis(int16_t player_idx)
 
         return_value = ST_TRUE;
 
-        while((status == ST_FALSE) && (return_value == ST_TRUE))
+        while((return_value == ST_TRUE) && (status == ST_FALSE))
         {
 
             return_value = Spell_Casting_Screen__WIP(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_Stasis_2);
@@ -1189,31 +1224,26 @@ int16_t Cast_Stasis(int16_t player_idx)
                 else
                 {
 
-                    for(itr = 0; itr < _units; itr++)
+                    for(itr = 0; ((itr < _units) && (var_10 == ST_FALSE)); itr++)
                     {
 
-                        if(var_10 == ST_FALSE)
+                        if(
+                            (_UNITS[itr].wx == _UNITS[scsv1].wx)
+                            &&
+                            (_UNITS[itr].wy == _UNITS[scsv1].wy)
+                            &&
+                            (_UNITS[itr].wp == _UNITS[scsv1].wp)
+                        )
                         {
 
-                            if(
-                                (_UNITS[itr].wx == scsv1)
-                                &&
-                                (_UNITS[itr].wy == scsv2)
-                                &&
-                                (_UNITS[itr].wp == scsv3)
-                            )
+                            if((_UNITS[itr].mutations & (C_STASISINIT | C_STASISLINGER)) == 0)
                             {
 
-                                if((_UNITS[itr].mutations & (C_STASISINIT | C_STASISLINGER)) == 0)
-                                {
+                                status = ST_TRUE;
 
-                                    status = ST_TRUE;
-
-                                }
-
-                                var_10 = ST_TRUE;
-                                
                             }
+
+                            var_10 = ST_TRUE;
 
                         }
 
@@ -1223,20 +1253,11 @@ int16_t Cast_Stasis(int16_t player_idx)
 
             }
 
-            if(
-                (return_value != ST_TRUE)
-                ||
-                (status != ST_FALSE)
-            )
-            {
-
-                scsv2 = _UNITS[scsv1].wy;
-                scsv3 = _UNITS[scsv1].wp;
-                scsv1 = _UNITS[scsv1].wx;
-
-            }
-
         }
+
+        scsv2 = _UNITS[scsv1].wy;
+        scsv3 = _UNITS[scsv1].wp;
+        scsv1 = _UNITS[scsv1].wx;
 
     }
 
@@ -1246,21 +1267,16 @@ int16_t Cast_Stasis(int16_t player_idx)
         for(itr = 0; itr < _cities; itr++)
         {
 
-            if(var_10 == ST_FALSE)
+            if(
+                (_CITIES[itr].wx == scsv1)
+                &&
+                (_CITIES[itr].wy == scsv2)
+                &&
+                (_CITIES[itr].wp == scsv3)
+            )
             {
 
-                if(
-                    (_CITIES[itr].wx == scsv1)
-                    &&
-                    (_CITIES[itr].wy == scsv2)
-                    &&
-                    (_CITIES[itr].wp == scsv3)
-                )
-                {
-
-                    return_value = Apply_Automatic_Spell_Counters(spl_Stasis, itr, player_idx, ST_TRUE);
-
-                }
+                return_value = Apply_Automatic_Spell_Counters(spl_Stasis, itr, player_idx, ST_TRUE);
 
             }
 
@@ -1312,12 +1328,14 @@ int16_t Cast_Stasis(int16_t player_idx)
         }
 
 
+        /* OGBUG  AI cast: scsv1 is the target wx (Get_Map_Square_Target_For_Spell()), not a unit_idx, so the owner test reads _UNITS[wx] */
+        /* OGBUG  inverted: the animation is skipped when the AI's target square IS scouted, and played when it is not (Cast_Black_Wind() tests != 0) */
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
             (_UNITS[scsv1].owner_idx == HUMAN_PLAYER_IDX)  // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
             ||
-            (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+            (Check_Square_Scouted(scsv1, scsv2, scsv3) == ST_FALSE)
         )
         {
 
@@ -1349,9 +1367,9 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
     int16_t scsv1 = 0;
     int16_t unit_idx = 0;  // _SI_
 
-    Allocate_Reduced_Map();
+    // DNE  Allocate_Reduced_Map();
 
-    Mark_Block(_screen_seg);
+    // DNE  Mark_Block(_screen_seg);
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -1366,6 +1384,7 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
 
     }
 
+    /* OGBUG  AI cast: scsv1 is the target wx (AITP_Natures_Cures()), not a unit_idx, so the stack healed is the one on unit #wx's square */
     scsv2 = _UNITS[scsv1].wy;
     scsv3 = _UNITS[scsv1].wp;
     scsv1 = _UNITS[scsv1].wx;
@@ -1376,11 +1395,14 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
-            (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+            /* OGBUG  scsv1 is already the wx here: indexes _UNITS[] a second time */
+            (Check_Square_Scouted(_UNITS[scsv1].wx, _UNITS[scsv1].wy, _UNITS[scsv1].wp) != ST_FALSE)
         )
         {
 
             g_ai_recompute_needed = ST_TRUE;
+
+            Allocate_Reduced_Map();
 
             Mark_Block(_screen_seg);
 
@@ -1396,28 +1418,28 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
 
         }
 
-    }
-
-    for(unit_idx = 0; unit_idx < _units; unit_idx++)
-    {
-        
-        if(
-            (_UNITS[unit_idx].wx == scsv1)
-            &&
-            (_UNITS[unit_idx].wy == scsv2)
-            &&
-            (_UNITS[unit_idx].wp == scsv3)
-        )
+        for(unit_idx = 0; unit_idx < _units; unit_idx++)
         {
 
             if(
-                (_unit_type_table[_UNITS[unit_idx].type].race_type != rt_Death)
+                (_UNITS[unit_idx].wx == scsv1)
                 &&
-                ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
+                (_UNITS[unit_idx].wy == scsv2)
+                &&
+                (_UNITS[unit_idx].wp == scsv3)
             )
             {
 
-                _UNITS[unit_idx].Damage = 0;
+                if(
+                    (_unit_type_table[_UNITS[unit_idx].type].race_type != rt_Death)
+                    &&
+                    ((_UNITS[unit_idx].mutations & UM_UNDEAD) == 0)
+                )
+                {
+
+                    _UNITS[unit_idx].Damage = 0;
+
+                }
 
             }
 
@@ -1512,7 +1534,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
 
             g_ai_recompute_needed = ST_TRUE;
 
-            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Move_Fortress, player_idx);
+            City_Enchantment_Anim_1__WIP(city_idx, spl_Move_Fortress, player_idx);
 
         }
 
@@ -1554,7 +1576,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Move_Fortress, player_idx);
+            City_Enchantment_Anim_2__WIP(city_idx, spl_Move_Fortress, player_idx);
 
             Release_Block(_screen_seg);
 
@@ -1618,7 +1640,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
 
             Mark_Block(_screen_seg);
 
-            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Earthquake, player_idx);
+            City_Enchantment_Anim_1__WIP(city_idx, spl_Earthquake, player_idx);
 
         }
 
@@ -1647,7 +1669,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Earthquake, player_idx);
+            City_Enchantment_Anim_2__WIP(city_idx, spl_Earthquake, player_idx);
 
             Release_Block(_screen_seg);
 
@@ -1847,8 +1869,9 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
     int16_t itr2 = 0;  // _DI_
     int16_t some_var = 0;  // _SI_
     uint32_t sound_seg_size = 0;  // DNE in Dasm
-    int16_t hero_slot = 0;
-    int16_t item_idx = 0;
+    // int16_t hero_slot = 0;
+    // int16_t item_idx = 0;
+    /* CLAUDE */  /* REBUG */  /* asm: no hero_slot / item_idx - the Items element is addressed in place (asm 298-404) */
 
     g_ai_recompute_needed = ST_TRUE;
 
@@ -1864,14 +1887,15 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
 
     /* Build message */
     stu_strcpy(GUI_NearMsgString, aNatureSWrathSt); /* "Nature's Wrath strikes " */
-    if(player_idx == HUMAN_PLAYER_IDX)
-    {
-        stu_strcat(GUI_NearMsgString, aYou); /* "you" */
-    }
-    else
-    {
-        stu_strcat(GUI_NearMsgString, _players[player_idx].name);
-    }
+    // if(player_idx == HUMAN_PLAYER_IDX)
+    // {
+    //     stu_strcat(GUI_NearMsgString, aYou); /* "you" */
+    // }
+    // else
+    // {
+    //     stu_strcat(GUI_NearMsgString, _players[player_idx].name);
+    // }
+    stu_strcat(GUI_NearMsgString, ((player_idx == HUMAN_PLAYER_IDX) ? aYou : _players[player_idx].name));  /* CLAUDE */  /* REBUG */  /* asm: one strcat, its source picked by cmp [bp+player_idx], e_HUMAN_PLAYER_IDX (offset aYou / offset _players.name) */
 
     /* Prepare visual effects */
     Allocate_Reduced_Map();
@@ -1905,12 +1929,16 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
     Clear_Fields();
     
     /* Add a full-screen hidden field to allow clicking past animation */
-    some_var = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, 0, 0); 
+    // some_var = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", 0); 
+    some_var = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "", ST_UNDEFINED);  /* CLAUDE */  /* REBUG */  /* asm: mov ax, 0FFFFh / push ax (help) */
 
     /* Animation Loop (Screen Shaking) */
-    for(itr = 0; itr < 120; itr++)
+    // for(itr = 0; itr < 120; itr++)
+    // {
+    //     if(Get_Input() != 0) break;
+    /* CLAUDE */  /* REBUG */  /* asm: loc_AEFD1: cmp [bp+itr], 120 / jge loc_AEFE3 / call Get_Input / or ax, ax / jnz loc_AEFE3 - Get_Input() is in the loop test */
+    for(itr = 0; ((itr < 120) && (Get_Input() == 0)); itr++)
     {
-        if(Get_Input() != 0) break;
 
         if(itr < 16)
         {
@@ -1938,77 +1966,92 @@ void Call_Forth_The_Force_Of_Nature(int16_t player_idx)
         item_list_count = 0;
         
         /* Check city owner */
-        if(_CITIES[itr].owner_idx != (int8_t)player_idx)
+        // if(_CITIES[itr].owner_idx != (int8_t)player_idx)
+        // {
+        //     continue;
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm: cmp ax, [bp+player_idx] / jz loc_AF00B / jmp loc_AF23D - another wizard's city still reaches the item-pool hand-over (loc_AF23D), not the loop increment */
+        if(_CITIES[itr].owner_idx == player_idx)
         {
-            continue;
-        }
 
-        /* Check units at the city */
-        Army_At_City(itr, &troop_count, troops);
+            /* Check units at the city */
+            Army_At_City(itr, &troop_count, troops);
         
-        for(some_var = 0; some_var < troop_count; some_var++)
-        {
+            for(some_var = 0; some_var < troop_count; some_var++)
+            {
 
-            Load_Battle_Unit(troops[some_var], battle_units);
+                Load_Battle_Unit(troops[some_var], battle_units);
             
-            if(
-                ((battle_units[0].Move_Flags & MV_FLYING) != 0)
-                ||
-                ((battle_units[0].Abilities & UA_NONCORPOREAL) != 0)
-            )
-            {
-                continue;
-            }
-
-            /* 15% chance of destruction */
-            if(Random(100) > 15)
-            {
-                continue;
-            }
-
-            /* Check if Hero (Hero_Slot != 0xFF) */
-            if(_UNITS[troops[some_var]].Hero_Slot > -1)
-            {
-                /* Strip items from hero and pool them */
-                for(itr2 = 0; itr2 < 3; itr2++)
+                if(
+                    ((battle_units[0].Move_Flags & MV_FLYING) != 0)
+                    ||
+                    ((battle_units[0].Abilities & UA_NONCORPOREAL) != 0)
+                )
                 {
-                    hero_slot = _UNITS[troops[some_var]].Hero_Slot;
-                    item_idx = _players[player_idx].Heroes[hero_slot].Items[itr2];
-                    
-                    if(item_idx > -1)
+                    continue;
+                }
+
+                /* 15% chance of destruction */
+                if(Random(100) > 15)
+                {
+                    continue;
+                }
+
+                /* Check if Hero (Hero_Slot != 0xFF) */
+                if(_UNITS[troops[some_var]].Hero_Slot > -1)
+                {
+                    /* Strip items from hero and pool them */
+                    for(itr2 = 0; itr2 < 3; itr2++)
                     {
-                        item_list_array[item_list_count] = item_idx;
-                        item_list_count++;
+                        // hero_slot = _UNITS[troops[some_var]].Hero_Slot;
+                        // // item_idx = _players[player_idx].Heroes[hero_slot].Items[itr2];
+                        // item_idx = _players[_UNITS[troops[some_var]].owner_idx].Heroes[hero_slot].Items[itr2];  /* CLAUDE */  /* REBUG */  /* asm: _players[_UNITS[troops[]].owner_idx] */
+                        // 
+                        // if(item_idx > -1)
+                        // {
+                        //     item_list_array[item_list_count] = item_idx;
+                        //     item_list_count++;
+                        // }
+                        /* CLAUDE */  /* REBUG */  /* asm: no hero_slot / item_idx stores - the Items element is addressed through _UNITS[troops[]].owner_idx and _UNITS[troops[]].Hero_Slot for the test, the copy and the clear (asm 298-404) */
+                        if(_players[_UNITS[troops[some_var]].owner_idx].Heroes[_UNITS[troops[some_var]].Hero_Slot].Items[itr2] > -1)
+                        {
+                            item_list_array[item_list_count] = _players[_UNITS[troops[some_var]].owner_idx].Heroes[_UNITS[troops[some_var]].Hero_Slot].Items[itr2];
+                            item_list_count++;
+                        }
+                        /* Mark item slot as empty/deleted */
+                        /* OGBUG  the killed hero's item slot is cleared to 0, a valid item index, not ST_UNDEFINED (-1, empty) */
+                        // _players[player_idx].Heroes[hero_slot].Items[itr2] = 0;  /* OGBUG: empty slots are -1, not 0 */
+                        // _players[_UNITS[troops[some_var]].owner_idx].Heroes[hero_slot].Items[itr2] = 0;  /* CLAUDE */  /* REBUG */  /* asm: _players[_UNITS[troops[]].owner_idx] */
+                        _players[_UNITS[troops[some_var]].owner_idx].Heroes[_UNITS[troops[some_var]].Hero_Slot].Items[itr2] = 0;  /* CLAUDE */  /* REBUG */  /* asm: _players[_UNITS[troops[]].owner_idx].Heroes[_UNITS[troops[]].Hero_Slot] */
                     }
-                    /* Mark item slot as empty/deleted */
-                    _players[player_idx].Heroes[hero_slot].Items[itr2] = 0;  /* OGBUG: empty slots are -1, not 0 */
                 }
-            }
             
-            Kill_Unit(troops[some_var], 0);
-        }
+                Kill_Unit(troops[some_var], 0);
+            }
 
-        /* Damage Buildings in the city */
-        for(some_var = 0; some_var < NUM_BUILDINGS; some_var++)
-        {
-            bldg_list[some_var] = 0;
-        }
-        
-        /* Apply 5 points of damage to buildings */
-        Apply_Damage_To_City(itr, 0, 5, bldg_list);
-
-        /* Log lost buildings for summary screen */
-        if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
-        {
-            for(itr2 = 0; itr2 < NUM_BUILDINGS; itr2++)
+            /* Damage Buildings in the city */
+            for(some_var = 0; some_var < NUM_BUILDINGS; some_var++)
             {
-                if(bldg_list[itr2] > 0 && MSG_BldLost_Count < 20)
+                bldg_list[some_var] = 0;
+            }
+        
+            /* Apply 5 points of damage to buildings */
+            Apply_Damage_To_City(itr, 0, 5, bldg_list);
+
+            /* Log lost buildings for summary screen */
+            if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
+            {
+                for(itr2 = 0; itr2 < NUM_BUILDINGS; itr2++)
                 {
-                    MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)itr;
-                    MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[itr2];
-                    MSG_BldLost_Count++;
+                    if(bldg_list[itr2] > bs_Replaced && MSG_BldLost_Count < 20)
+                    {
+                        MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)itr;
+                        MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[itr2];
+                        MSG_BldLost_Count++;
+                    }
                 }
             }
+
         }
 
         /* Process any items recovered from killed heroes */

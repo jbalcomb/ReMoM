@@ -19,33 +19,6 @@ extern "C" {
         ovr056
 */
 
-/* CaptureGameData Phase 4 (ReMoM side): dump _players in [GD] format,
- * matching the OG STU-DOSBox probe. Defined in INITGAME.c. */
-void gd_dump_players(const char* point);
-void gd_dump_nodes(const char* point);
-void gd_dump_towers(const char* point);
-void gd_dump_lairs(const char* point);
-void gd_dump_cities(const char* point);
-void gd_dump_units(const char* point);
-void gd_dump_heroes(const char* point);
-void gd_dump_items(const char* point);
-void gd_dump_fortresses(const char* point);
-void gd_dump_world_map(const char* point);        /* defined in MAPGEN.c */
-void gd_dump_landmasses(const char* point);       /* defined in MAPGEN.c */
-void gd_dump_terrain_specials(const char* point); /* defined in MAPGEN.c */
-void gd_dump_map_square_flags(const char* point); /* defined in MAPGEN.c */
-void gd_dump_ai_continents(const char* point);    /* defined in AIMOVE.c */
-
-/* Capture/Inject (CI), ReMoM side.  Reads og-game-data-capture.fwv (produced by
- * extract-ci-stage0.py from the OG [CI] probe) and supplies OG's exact bytes for
- * values ReMoM cannot reproduce on its own -- OG's uninitialized stack autos
- * (e.g. Choose_Landmass_For_Settler centroid, Generate_Towers `tries`).
- * Distinct from the gd_dump_* [GD] capture (which compares).
- * Defined in INITGAME.c.  Loads lazily on first use; idempotent.
- * CLAUDE Phase 5a: the OOB-overrun byte injectors are gone - the static pool now
- * backs those OG-faithful OOB reads directly. */
-int  gd_ci_load(void);                                                  /* -> record count, or -1 on failure */
-int  gd_ci_get(const char* key, const char* site, long* out, int max);  /* -> values copied, or -1 if absent */
 
 // MGC o56p1
 void Init_Computer_Players(void);
@@ -87,14 +60,14 @@ void Init_Heroes(void);
 void Initialize_Messages(void);
 
 // MGC o56p14
-// UU_ITEM_SetHeroSlots()
+void Hero_Slot_Types_MGC(int16_t unit_type_idx, int16_t item_slots[]);
 
 // MGC o56p15
 // WIZ_ConsolidateBooks()
 void Consolidate_Spell_Book_Realms(int16_t player_idx);
 
 // MGC o56p16
-int16_t Player_Base_Casting_Skill__MGC(int16_t player_idx);
+int16_t Player_Base_Casting_Skill(int16_t player_idx);
 
 // MGC o56p17
 // RNG_WeightedPick16()

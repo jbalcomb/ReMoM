@@ -1,0 +1,8 @@
+module_num=287
+module=gtche
+source=0287-gtche.md
+range[0]=1:0x00141595 linear=0x00151595 size=29
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m287f001  1    -      0x00151595  1:0x00141595  code  getche  getche_  regions/07-object-1/001D6654-001D6E53.txt

@@ -83,13 +83,13 @@ int16_t DIR(char * match_string, char * found_file);
 // WZD s06p04
 // RAM_GetFreeBlockSize()
 
-// WZD s06p05
+// /* CLAUDE */  WZD s06p05  (not an id tag: DBG_Open_ERROR_LOG__STUB() is defined in EXIT.c, declared in EXIT.h)
 // s06p05_Empty_pFxn()
-void DBG_Open_ERROR_LOG(void);
+// void DBG_Open_ERROR_LOG(void);  /* CLAUDE: no definition; see EXIT.h DBG_Open_ERROR_LOG__STUB */
 
-// WZD s06p06
+// /* CLAUDE */  WZD s06p06  (not an id tag: DBG_Close_ERROR_LOG__STUB() is defined in EXIT.c, declared in EXIT.h)
 // s06p06_Empty_pFxn()
-void DBG_Close_ERROR_LOG(void);
+// void DBG_Close_ERROR_LOG(void);  /* CLAUDE: no definition; see EXIT.h DBG_Close_ERROR_LOG__STUB */
 
 
 

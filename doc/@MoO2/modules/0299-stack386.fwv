@@ -1,0 +1,8 @@
+module_num=299
+module=stack386
+source=0299-stack386.md
+range[0]=1:0x00143E1B linear=0x00153E1B size=9
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m299f001  1    -      0x00153E1B  1:0x00143E1B  code  stackavail  stackavail_  regions/07-object-1/001D8E54-001D9653.txt

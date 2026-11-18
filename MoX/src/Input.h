@@ -186,9 +186,6 @@ extern "C" {
 int16_t Interpret_Mouse_Input(void);
 
 
-// WZD s36p08
-void Set_Global_ESC(void);
-
 
 // WZD s36p12
 void Set_Help_List(void * help_pointer, int16_t count);
@@ -205,13 +202,30 @@ int16_t Check_Help_List(void);
 // UU_GUI_GetLastClickY                           seg036     00001266 0000000A R F . . B T .
 // UU_GUI_GetLastClickBtns                        seg036     00001270 0000000A R F . . B T .
 // Get_Mouse_Field                                seg036     0000127A 0000000A R F . . B T .
-// RP_GUI_KeyInputOnly                            seg036     00001284 00000675 R F . . B T .
-// Interpret_Keyboard_Input                       seg036     000018F9 000004AB R F . . B T .
-// GUI_GetNextControl                             seg036     00001DC5 00000DAC R F . . B T .
+
+// WZD s36p15
+int16_t UU_Get_Field_Width(int16_t field_idx);
+
+// WZD s36p16
+int16_t UU_Get_Field_Height(int16_t field_idx);
+
+// WZD s36p17
+int16_t UU_Get_Last_Click_X(void);
+
+// WZD s36p18
+int16_t UU_Get_Last_Click_Y(void);
+
+// WZD s36p19
+int16_t UU_Get_Last_Click_Buttons(void);
+
+// Keyboard.c  s36p21  RP_GUI_KeyInputOnly                            seg036     00001284 00000675 R F . . B T .
+// Keyboard.c  s36p22  Interpret_Keyboard_Input                       seg036     000018F9 000004AB R F . . B T .
+
+// WZD s36p23
+int16_t Get_Next_Field_In_Direction(int16_t x_direction, int16_t y_direction, int16_t current_field_idx, int16_t pointer_x, int16_t pointer_y);
 
 // WZD s36p24
-void UU_GUI_MouseEMUMoveTo(int16_t field_idx);
-
+void Center_Emulated_Pointer_On_Field(int16_t field_idx);
 
 // WZD s36p25
 int16_t Scan_Field(void);
@@ -229,7 +243,7 @@ void Reset_Wait_For_Input(void);
 int16_t Wait_For_Input(void);
 
 // WZD s36p30
-int16_t Process_Direction_Key__STUB(int16_t dir_key);
+int16_t Process_Direction_Key(int16_t dir_key);
 
 // WZD s36p31
 void Input_Box_Popup(int16_t field_num);
@@ -241,8 +255,13 @@ int16_t Setup_Input_Box_Popup(int16_t x_start, int16_t y_start, int16_t width, c
 void Draw_Input_Box_Popup(int16_t Editbox_Index, char * Local_String);
 
 // WZD s36p34
-// GUI_CreateEditBox()
+// Input.c  Add_Input_Field()
 
+// WZD s36p35
+//...
+// ...
+// ...
+// WZD s36p64
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 void Init_Mouse_Keyboard(int16_t input_type);
@@ -266,9 +285,6 @@ int16_t Get_Input_Delay(void);
 
 
 // WZD s36p85
-// drake178: GUI_SimplePageFlip()
-// AKA SCRN_SimplePageFlip()
-// MoO2  Module: video  Toggle_Pages()  &&  Module: MOX2  _TOGGLE_PAGES_
 void Toggle_Pages(void);
 
 

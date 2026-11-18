@@ -39,6 +39,12 @@ libstu_a_SOURCES = \
     STU/src/STU_SND.c \
     STU/src/STU_TST.c \
     STU/src/STU_UTIL.c \
+    STU/src/STU_GARB.c \
+    STU/src/STU_GD.c \
+    STU/src/STU_GD_MoM.c \
+    STU/src/STU_CLOG.c \
+    STU/src/STU_DBG_MoM.c \
+    STU/src/STU_CI.c \
     STU/src/STU_VLD.c \
     STU/src/STU_WAV.c \
     STU/src/STU_WRLD.c \
@@ -112,7 +118,7 @@ endif
 
 # -------------------------------------------------------------------------
 #  Platform_Headless — always built, no external dependencies.
-#  HeMoM links this regardless of the ReMoM backend choice.
+#  DeMoM links this regardless of the ReMoM backend choice.
 # -------------------------------------------------------------------------
 
 libplatform_headless_a_SOURCES = \
@@ -230,7 +236,6 @@ libmom_a_SOURCES = \
     MoM/src/MAPGEN.c \
     MoM/src/MGC_DATA.c \
     MoM/src/MOM_SCR.c \
-    MoM/src/MOM_DBG.c \
     MoM/src/MovePath.c \
     MoM/src/NewGame.c \
     MoM/src/NEXTTURN.c \
@@ -264,6 +269,7 @@ libmom_a_SOURCES = \
     MoM/src/UnitView.c \
     MoM/src/WIZVIEW.c \
     MoM/src/WZD_o059.c \
+    MoM/src/WZD_o108.c \
     MoM/src/WZD_o143.c \
     MoM/src/WZD_o146.c
 
@@ -281,7 +287,7 @@ libmom_a_CFLAGS = $(AM_CFLAGS) \
 ReMoM_SOURCES = \
     src/ReMoM.c \
     src/ReMoM_Init.c \
-    src/Artificial_Human_Player.c
+    src/Automation_Driver.c
 
 ReMoM_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \
@@ -310,18 +316,18 @@ endif
 ReMoM_LDADD += -lm
 
 # =========================================================================
-#  HeMoM — Headless Master of Magic (testing/CI/replay)
+#  DeMoM — Driven Master of Magic (windowless: testing/CI/replay)
 # =========================================================================
 
-bin_PROGRAMS += HeMoM
+bin_PROGRAMS += DeMoM
 
-HeMoM_SOURCES = \
-    src/HeMoM.c \
+DeMoM_SOURCES = \
+    src/DeMoM.c \
     src/ReMoM_Init.c \
     src/Game_Save_Dump.c \ 
-    src/Artificial_Human_Player.c
+    src/Automation_Driver.c
 
-HeMoM_CFLAGS = $(AM_CFLAGS) \
+DeMoM_CFLAGS = $(AM_CFLAGS) \
     -DNO_SOUND_LIBRARY \
     -I$(srcdir)/MoX/src \
     -I$(srcdir)/MoM/src \
@@ -331,9 +337,9 @@ HeMoM_CFLAGS = $(AM_CFLAGS) \
 
 # Export dynamic symbols so STU_BRAK's POSIX backtrace prints function names
 # instead of raw hex.  See ReMoM_LDFLAGS above.
-HeMoM_LDFLAGS = -rdynamic
+DeMoM_LDFLAGS = -rdynamic
 
-HeMoM_LDADD = \
+DeMoM_LDADD = \
     libmom.a \
     libmox.a \
     libplatform_headless.a \

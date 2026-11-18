@@ -41,6 +41,9 @@
  */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_Asset -- data-dir search path */
+#include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_CLOG.h"  /* CLAUDE: picture catalog -- STU_CLOG_Asset_Loaded() */
 
 #include "../../ext/stu_compat.h"
 
@@ -55,8 +58,7 @@
 #include <string.h>
 
 #include "LBX_Load.h"
-#include "../../STU/src/STU_LOG.h"
-#include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_Asset -- data-dir search path */
+
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 
@@ -374,6 +376,9 @@ SAMB_ptr LBX_Load_Entry(char * lbx_name, int16_t entry_num, SAMB_ptr SAMB_head, 
 Done:
 #endif
 
+#if STU_CLOG
+    STU_CLOG_Asset_Loaded(SAMB_data, lbx_name, entry_num);  /* CLAUDE: picture catalog -- which LBX entry this buffer now holds */
+#endif
     return SAMB_data;
 }
 
@@ -964,7 +969,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
     stu_strcat(buffer, buffer2);
     stu_strcat(buffer, str_error_handler[1]);
 
-    switch (error_num)
+    switch(error_num)
     {
         case le_not_found:
             stu_strcat(buffer, str_error_handler[2]);
@@ -976,7 +981,8 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             stu_strcpy(buffer, str_error_handler[4]);
             
 #pragma warning(suppress : 4996)
-            stu_itoa(640, buffer2, 10);
+            // stu_itoa(640, buffer2, 10);
+            stu_itoa(RAM_MinKbytes, buffer2, 10);  /* CLAUDE  asm seg010 Error_Handler jt_le_02: `push [RAM_MinKbytes]; call itoa` */
             stu_strcat(buffer, buffer2);
             stu_strcat(buffer, str_error_handler[5]);
             break;
@@ -991,6 +997,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             stu_strcat(buffer, str_error_handler[8]);
             break;
         case 6:
+            /* OGBUG  code 6 has no message: the jump table sends it straight to Exit_With_Message with only "<file>.LBX [entry N] " */
             break;
         case 7:
             stu_strcat(buffer, str_error_handler[9]);
@@ -1002,22 +1009,27 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             stu_strcat(buffer, str_error_handler[11]);
             break;
         case 10:
-            stu_strcat(buffer, str_error_handler[13]);
+            // stu_strcat(buffer, str_error_handler[13]);
+            stu_strcat(buffer, str_error_handler[12]);  /* CLAUDE  asm jt_le_09: cnst_LBX_ErrorA " exceeds number of defined records" */
             break;
         case 11:
             stu_strcpy(buffer, file_name);
             stu_strcat(buffer, ".LBX");
-            stu_strcat(buffer, str_error_handler[14]);
+            // stu_strcat(buffer, str_error_handler[14]);
+            stu_strcat(buffer, str_error_handler[13]);  /* CLAUDE  asm jt_le_10: cnst_LBX_ErrorB " cannot be reloaded into EMS w/o being first released." */
             break;
         case 12:
-            stu_strcat(buffer, str_error_handler[15]);
+            // stu_strcat(buffer, str_error_handler[15]);
+            stu_strcat(buffer, str_error_handler[14]);  /* CLAUDE  asm jt_le_11: cnst_LBX_ErrorC " EMM loading error. Insufficient EMM." */
             break;
         case 13:
-            stu_strcat(buffer, str_error_handler[16]);
+            // stu_strcat(buffer, str_error_handler[16]);
+            stu_strcat(buffer, str_error_handler[15]);  /* CLAUDE  asm jt_le_12: cnst_LBX_ErrorD " Only pictures may be loaded into reserved EMM" */
             break;
         case 14:
             stu_strcat(buffer, str_error_handler[14]);
             stu_strcat(buffer, str_error_handler[16]);
+            /* OGBUG  no break: code 14's " EMM loading error. Insufficient EMM. (Reserved EMM) " runs on into code 15's " LBX to EMM loading error. Insufficient EMM. (Reserved EMM) " */
         case 15:
             stu_strcat(buffer, str_error_handler[17]);
             stu_strcat(buffer, str_error_handler[14]);
@@ -1028,9 +1040,7 @@ void Error_Handler(char * file_name, int16_t error_num, int16_t entry_num, int16
             break;
     }
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d] Exit_With_Message(buffer): %s", __FILE__, __LINE__, buffer);
-#endif
 
     Exit_With_Message(buffer);
 
@@ -1059,7 +1069,7 @@ void File_Name_Base(char * file_name)
 // AKA  RAM_SetMinKB()
 void RAM_Set_Minimum(int16_t amount)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     RAM_MinKbytes = amount;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }

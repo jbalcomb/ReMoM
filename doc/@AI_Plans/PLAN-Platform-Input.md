@@ -29,7 +29,7 @@ Measure input responsiveness (latency) and smoothness (jitter) for the SDL2 back
 
 - **`.RMR` record/replay** ([`Replay.c`](../../platform/replay/Replay.c), [`Platform_Replay.h`](../../platform/include/Platform_Replay.h)): a **text CSV**, header `# idx,timestamp_ms,delta_ms,mouse_x,mouse_y,mouse_buttons,key_pressed,key_count,keys...` ([`Replay.c:172`](../../platform/replay/Replay.c#L172)). `--record FILE` / `--replay FILE` wired in [`ReMoM.c:441-459`](../../src/ReMoM.c#L441-L459). `Replay_Inject_Frame()` ([`Replay.c:572`](../../platform/replay/Replay.c#L572)) injects game-coordinate positions into engine globals — **bypassing the OS poll**, so a replay covers *engine→present* only.
 - **`PFL_Capture`** ([`PFL_Capture.c`](../../platform/capture/PFL_Capture.c), [`Platform_Capture.h`](../../platform/include/Platform_Capture.h)): `--capture DIR [--capture-fps N]` ([`ReMoM.c:415-440`](../../src/ReMoM.c#L415-L440)) writes `video_rgb24.raw` + `audio.wav` + `capture_info.txt` at fixed fps, backfilling gaps by duplicating the last presented frame. Fed from `Platform_Video_Update` ([`sdl2_Video.c:82-85`](../../platform/sdl2/sdl2_Video.c#L82-L85)). A freeze appears as duplicated frames — a usable smoothness signal.
-- **CTest fixture pattern** (`tests/CMakeLists.txt`): Setup → Run → Assertions chains, run via `ctest -R "HeMoM_"`. The precedent for wiring a new deterministic test.
+- **CTest fixture pattern** (`tests/CMakeLists.txt`): Setup → Run → Assertions chains, run via `ctest -R "DeMoM_"`. The precedent for wiring a new deterministic test.
 
 ## Decisions
 
@@ -98,7 +98,7 @@ Environment: SDL2 / X11 / 4× scale / 60 Hz. 1455 presents over 83.3 s, clean ex
 **Backends.**
 - **SDL2** ([`sdl2_MD.c`](../../platform/sdl2/sdl2_MD.c), [`sdl2_Init.c`](../../platform/sdl2/sdl2_Init.c), [`sdl2_PFL.c`](../../platform/sdl2/sdl2_PFL.c)) — **implemented, built, and visually confirmed.**
 - **SDL3** ([`sdl3_MD.c`](../../platform/sdl3/sdl3_MD.c), `sdl3_Init.c`, `sdl3_PFL.c`) — **ported** (SDL3 APIs: `SDL_CreateSurface`, `SDL_DestroySurface`/`SDL_DestroyCursor`, no-arg `SDL_ShowCursor()`/`SDL_HideCursor()`). **Compile-unverified** — SDL3 is not installed in the dev environment; needs a build on an SDL3 host before it can be trusted.
-- **Headless** ([`headless_PFL.c`](../../platform/headless/headless_PFL.c)) — stub (`Active()` returns 0); satisfies the interface `Mouse.c` now calls so HeMoM and the unit tests link.
+- **Windowless** ([`headless_PFL.c`](../../platform/headless/headless_PFL.c)) — stub (`Active()` returns 0); satisfies the interface `Mouse.c` now calls so DeMoM and the unit tests link.
 - **Win32** ([`win_MD.c`](../../platform/win32/win_MD.c), [`win_PFL.cpp`](../../platform/win32/win_PFL.cpp)) — **implemented, builds clean, runs.** `Platform_HW_Cursor_Active`/`Refresh` build an `HCURSOR` from the sprite via `CreateIconIndirect`; init shows the OS cursor, `WM_SETCURSOR` re-asserts it, `Platform_Maybe_Move_Mouse` skips the software path. Layer 1 metrics hooks also added, so a Windows `.fwv` baseline can be captured. Compile/run-verified on this box (`MSVC-win32-debug`); **cursor smoothness A/B is a pending visual check** (same as the SDL2 confirmation was). See *Win32 port* below.
 
 **Verification.** Visual A/B on the reporting hardware (SDL2/X11): with `REMOM_HW_CURSOR=1` the user reported it "felt a whole lot better" (2026-07-24). **Layer 1 metrics are unchanged by design** — the HW cursor bypasses the framebuffer present, so `dt_ms` still shows ~18 fps; smoothness here is verified visually (and, later, by Layer 3 camera), *not* by the `.fwv`. A metrics run with the flag on is still useful to confirm **no present-side regression**.
@@ -115,7 +115,7 @@ Environment: SDL2 / X11 / 4× scale / 60 Hz. 1455 presents over 83.3 s, clean ex
 
 ### The breakage it resolved (verified before/after)
 
-The shared suppression in `Mouse.c` (`Draw_Mouse_On_Page_`/`Draw_Mouse_Off_Page_`, [`MoX/src/Mouse.c:750,788`](../../MoX/src/Mouse.c#L750)) calls `Platform_HW_Cursor_Active()`. `Mouse.c` links into every backend's player exe, but before this port no `win32/` file defined that symbol (headless got a stub, Win32 did not). A clean `USE_WIN32` build failed at link:
+The shared suppression in `Mouse.c` (`Draw_Mouse_On_Page_`/`Draw_Mouse_Off_Page_`, [`MoX/src/Mouse.c:750,788`](../../MoX/src/Mouse.c#L750)) calls `Platform_HW_Cursor_Active()`. `Mouse.c` links into every backend's player exe, but before this port no `win32/` file defined that symbol (windowless got a stub, Win32 did not). A clean `USE_WIN32` build failed at link:
 
 ```
 MOX.lib(Mouse.obj) : error LNK2019: unresolved external symbol Platform_HW_Cursor_Active
@@ -164,7 +164,7 @@ Also: `Win_HW_Cursor_Apply()` (defined in `win_MD.c`, declared in `win_PFL.h`) e
 ## CTest & build wiring
 
 - Layer 2 becomes a windowed CTest test under the existing fixture chain: `Input_Metrics_Setup` (ensure `sweep.RMR` + a cursor-free reference frame) → `Input_Metrics_Run` (`--replay … --capture …`) → `Input_Metrics_Assert` (`analyze_capture.py` + threshold). Gated to run only where a display is available.
-- Layer 1's module is already listed in **both** [`platform/CMakeLists.txt`](../../platform/CMakeLists.txt) and [`Makefile.am`](../../Makefile.am) (windowed backend only; headless excluded). No compile flag — the gate is the `REMOM_INPUT_METRICS` env var at runtime, so no CMake/Autotools option is needed. Layer 2's `analyze_capture.py` is data-side.
+- Layer 1's module is already listed in **both** [`platform/CMakeLists.txt`](../../platform/CMakeLists.txt) and [`Makefile.am`](../../Makefile.am) (windowed backend only; windowless excluded). No compile flag — the gate is the `REMOM_INPUT_METRICS` env var at runtime, so no CMake/Autotools option is needed. Layer 2's `analyze_capture.py` is data-side.
 
 ## Build-out order
 

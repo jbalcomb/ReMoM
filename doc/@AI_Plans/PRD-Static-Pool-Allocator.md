@@ -130,12 +130,12 @@ deferred to Phase 2.
     pattern in the slack between sub-blocks is preserved across normal
     sub-block writes, so that accidental sub-block-boundary corruption can be
     detected.
-19. As a matchup-pipeline runner, I want an end-to-end HeMoM-scripted harness
+19. As a matchup-pipeline runner, I want an end-to-end DeMoM-scripted harness
     that drives a new game through Simtex_Autotiling at the wp=1/wy=39 OOB read
     site, asserts the process doesn't crash, and asserts that the OOB-influenced
     output is deterministic (pinned to a seed-stable baseline), so that the
     refactor's success criterion is empirically validated. (Realized in Phase 3
-    as `HeMoM_OOB_Autotiling`; a direct injected-byte comparison is a CI-only
+    as `DeMoM_OOB_Autotiling`; a direct injected-byte comparison is a CI-only
     concern, dropped once Phase 5 retires the inject.)
 20. As a ReMoM developer, I want existing `gd_dump_*` byte-compare points
     (e.g., `19_Simtex_Autotiling_W`, `20_River_Path_W`, `27_CRP_NEWG_CreatePathGrids_U`,
@@ -146,8 +146,8 @@ deferred to Phase 2.
     shrinking the pool below the known requirement cannot silently ship;
     genuine run-time over-capacity is caught loudly by `Pool_Carve`'s fatal
     `Allocation_Error`.
-22. As a HeMoM headless test runner, I want the same allocator behavior in
-    HeMoM as in ReMoM, so that headless and interactive runs do not
+22. As a DeMoM windowless test runner, I want the same allocator behavior in
+    DeMoM as in ReMoM, so that windowless and interactive runs do not
     diverge due to allocator differences.
 23. As a future-maintainer, I want each excluded `malloc()` call site to
     carry a brief comment explaining why that arena bypasses the pool (VGA
@@ -180,7 +180,7 @@ deferred to Phase 2.
   capture.
 - **Pool sizing (measured)**: the carvable capacity was set from the observed
   high-water mark, not a paper estimate. `Pool_Bytes_Peak` reports the peak
-  `Pool_Bytes_Used` across a process; the HeMoM Continue scenario (full-game
+  `Pool_Bytes_Used` across a process; the DeMoM Continue scenario (full-game
   entry — loads a save, enters the game, pulling in many one-time `sa_Single`
   LBX graphic buffers on top of the ~1.5 MB enumerated arenas) peaks at
   **~4.58 MB**. `POOL_ARENA_CAPACITY` is set to **16 MB** (~3.5× that peak) to
@@ -247,7 +247,7 @@ deferred to Phase 2.
 - **No public header changes** beyond adding the `Allocate_Pool` module's
   header. The SAMB struct, the paragraph constants, the sentinel values, and
   every existing sub-block layout stay identical.
-- **HeMoM and ReMoM both consume MoX/src/Allocate.c** and the new
+- **DeMoM and ReMoM both consume MoX/src/Allocate.c** and the new
   Allocate_Pool module identically; no per-target conditional behavior.
 
 ## Testing Decisions
@@ -267,11 +267,11 @@ visible effects.
   header; `Allocate_First_Block` and `Allocate_Next_Block` carve correctly
   inside a pool-backed arena; slack between sub-blocks remains at the
   sentinel pattern after normal sub-block writes.
-- **End-to-end OOB harness** (driven via HeMoM scenario script): start a
+- **End-to-end OOB harness** (driven via DeMoM scenario script): start a
   new game; let Simtex_Autotiling run; assert the process doesn't crash
   through the wp=1/wy=39 site; assert the OOB-influenced output (the plane-1
   last-row tiles) matches a seed-pinned baseline. Realized in Phase 3 as
-  `HeMoM_OOB_Autotiling` — it proves crash-free determinism; the injected-byte
+  `DeMoM_OOB_Autotiling` — it proves crash-free determinism; the injected-byte
   diff is a CI-only concern, retired with the inject in Phase 5.
 - **Existing dump regression**: re-run the matchup pipeline; assert all
   currently-green `gd_dump_*` comparison points stay green.
@@ -329,7 +329,7 @@ Prior art:
   (`__asan_poison_memory_region`) can be applied around each sub-block
   boundary without further restructuring. Sentinel slack, deterministic
   offsets, and a known pool base make instrumentation straightforward.
-- **HeMoM ↔ ReMoM parity**: both targets share MoX/src/Allocate.c and the
+- **DeMoM ↔ ReMoM parity**: both targets share MoX/src/Allocate.c and the
   new Allocate_Pool module, so the refactor is uniform across them. No
   per-target conditionals.
 - **CI baseline capture**: through Phase 4 the capture-and-inject pipeline for

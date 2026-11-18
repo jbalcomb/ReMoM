@@ -391,7 +391,7 @@ AI_Set_Unit_Orders(player_idx)
        ├─ for landmass_idx in [1, NUM_LANDMASSES):
        │    ├─ slot 1: AI_Stacks_Init_Build_Target_Order
        │    ├─ slot 2: AI_Stacks_Move_Out_NonMilitary_Garrisoned
-       │    ├─ slot 3: AI_Stacks_Survey_Expedition_Forces
+       │    ├─ slot 3: AI_Survey_Expedition_Forces
        │    ├─ slot 4: AI_Stacks_Do_Meld                                ◄── HERE
        │    │           └─ AI_Stacks_Order_Meld                         ◄── (on-node case)
        │    ├─ slot 5: AI_Stacks_Do_Settle

@@ -1,0 +1,547 @@
+module_num=159
+module=F:\WLIBS\graphics\graphics.c
+source=0159-graphics.c.md
+range[0]=1:0x00118AB6 linear=0x00128AB6 size=4538
+range[1]=2:0x0000C584 linear=0x0017C584 size=16
+range[2]=2:0x00044294 linear=0x001B4294 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                        SYMBOL                       CHUNK
+m159f001  1    -      0x00128AB6  1:0x00118AB6  code  Set_Window                  Set_Window_                  regions/07-object-1/001ADE54-001AE653.txt
+m159f002  2    -      0x00128B49  1:0x00118B49  code  Save_Window                 Save_Window_                 regions/07-object-1/001ADE54-001AE653.txt
+m159f003  3    -      0x00128B98  1:0x00118B98  code  Restore_Window              Restore_Window_              regions/07-object-1/001ADE54-001AE653.txt
+m159f004  4    -      0x00128BE7  1:0x00118BE7  code  Reset_Window                Reset_Window_                regions/07-object-1/001ADE54-001AE653.txt
+m159f005  5    -      0x00128C32  1:0x00118C32  code  Fill                        Fill_                        regions/07-object-1/001ADE54-001AE653.txt
+m159f006  6    -      0x00128EDE  1:0x00118EDE  code  Interlaced_Fill             Interlaced_Fill_             regions/07-object-1/001ADE54-001AE653.txt
+m159f007  7    -      0x00129130  1:0x00119130  code  Tri_Interlaced_Fill         Tri_Interlaced_Fill_         regions/07-object-1/001AE654-001AEE53.txt
+m159f008  8    -      0x00129399  1:0x00119399  code  Gray_Scale_Fill             Gray_Scale_Fill_             regions/07-object-1/001AE654-001AEE53.txt
+m159f009  9    -      0x00129514  1:0x00119514  code  Interlaced_Gray_Scale_Fill  Interlaced_Gray_Scale_Fill_  regions/07-object-1/001AE654-001AEE53.txt
+m159f010  10   -      0x0012972D  1:0x0011972D  code  Dot                         Dot_                         regions/07-object-1/001AE654-001AEE53.txt
+m159f011  11   -      0x001297C3  1:0x001197C3  code  Box                         Box_                         regions/07-object-1/001AE654-001AEE53.txt
+m159f012  12   -      0x001298DE  1:0x001198DE  code  Darken_Fill                 Darken_Fill_                 regions/07-object-1/001AEE54-001AF653.txt
+m159f013  13   -      0x0012991D  1:0x0011991D  code  Tint_Fill                   Tint_Fill_                   regions/07-object-1/001AEE54-001AF653.txt
+m159f014  14   -      0x00129B84  1:0x00119B84  code  Gradient_Fill               Gradient_Fill_               regions/07-object-1/001AEE54-001AF653.txt
+-         -    -      0x0017C584  2:0x0000C584  data  _fill_mask_data             _fill_mask_data              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001B4294  2:0x00044294  data  _old_screen_window_x1       _old_screen_window_x1        -
+-         -    -      0x001B4296  2:0x00044296  data  _old_screen_window_x2       _old_screen_window_x2        -
+-         -    -      0x001B4298  2:0x00044298  data  _old_screen_window_y1       _old_screen_window_y1        -
+-         -    -      0x001B429A  2:0x0004429A  data  _old_screen_window_y2       _old_screen_window_y2        -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                  TYPE
+0x0017C584  2:0x0000C584  fill_mask_data        unsigned int[4]
+0x001B4294  2:0x00044294  old_screen_window_x1  short
+0x001B4296  2:0x00044296  old_screen_window_x2  short
+0x001B4298  2:0x00044298  old_screen_window_y1  short
+0x001B429A  2:0x0004429A  old_screen_window_y2  short
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                        TYPE                                                             CHUNK
+m159f001  0x00128AB6  1:0x00118AB6  147   21        6         0xC      -    EAX,EDX,EBX,ECX  Set_Window                  void (short, short, short, short)                                regions/07-object-1/001ADE54-001AE653.txt
+m159f002  0x00128B49  1:0x00118B49  79    24        7         0x18     -    -                Save_Window                 void (void)                                                      regions/07-object-1/001ADE54-001AE653.txt
+m159f003  0x00128B98  1:0x00118B98  79    24        7         0x18     -    -                Restore_Window              void (void)                                                      regions/07-object-1/001ADE54-001AE653.txt
+m159f004  0x00128BE7  1:0x00118BE7  75    24        7         0x18     -    -                Reset_Window                void (void)                                                      regions/07-object-1/001ADE54-001AE653.txt
+m159f005  0x00128C32  1:0x00118C32  684   21        8         0xC      -    EAX,EDX,EBX,ECX  Fill                        void (short, short, short, short, short)                         regions/07-object-1/001ADE54-001AE653.txt
+m159f006  0x00128EDE  1:0x00118EDE  594   21        8         0xC      -    EAX,EDX,EBX,ECX  Interlaced_Fill             void (short, short, short, short, short, short)                  regions/07-object-1/001ADE54-001AE653.txt
+m159f007  0x00129130  1:0x00119130  617   21        8         0xC      -    EAX,EDX,EBX,ECX  Tri_Interlaced_Fill         void (short, short, short, short, short, short, short)           regions/07-object-1/001AE654-001AEE53.txt
+m159f008  0x00129399  1:0x00119399  379   21        8         0xC      -    EAX,EDX,EBX,ECX  Gray_Scale_Fill             void (short, short, short, short, char *, short, short)          regions/07-object-1/001AE654-001AEE53.txt
+m159f009  0x00129514  1:0x00119514  537   21        8         0xC      -    EAX,EDX,EBX,ECX  Interlaced_Gray_Scale_Fill  void (short, short, short, short, char *, char *, short, short)  regions/07-object-1/001AE654-001AEE53.txt
+m159f010  0x0012972D  1:0x0011972D  150   22        7         0x10     -    EAX,EDX,EBX      Dot                         void (short, short, short)                                       regions/07-object-1/001AE654-001AEE53.txt
+m159f011  0x001297C3  1:0x001197C3  283   21        8         0xC      -    EAX,EDX,EBX,ECX  Box                         void (short, short, short, short, short, short)                  regions/07-object-1/001AE654-001AEE53.txt
+m159f012  0x001298DE  1:0x001198DE  63    21        6         0xC      -    EAX,EDX,EBX,ECX  Darken_Fill                 void (short, short, short, short)                                regions/07-object-1/001AEE54-001AF653.txt
+m159f013  0x0012991D  1:0x0011991D  615   21        8         0xC      -    EAX,EDX,EBX,ECX  Tint_Fill                   void (short, short, short, short, short)                         regions/07-object-1/001AEE54-001AF653.txt
+m159f014  0x00129B84  1:0x00119B84  235   21        8         0xC      -    EAX,EDX,EBX,ECX  Gradient_Fill               void (int, int, int, int, int, char *, int, int, int)            regions/07-object-1/001AEE54-001AF653.txt
+
+[Locals]
+KEY       ROUTINE                     BLOCK  LOCAL                    LOCATION    TYPE
+m159f001  Set_Window                  -      x1                       [EBP-0x10]  short
+m159f001  Set_Window                  -      y1                       [EBP-0xC]   short
+m159f001  Set_Window                  -      x2                       [EBP-0x8]   short
+m159f001  Set_Window                  -      y2                       [EBP-0x4]   short
+m159f005  Fill                        -      x1                       [EBP-0xC]   short
+m159f005  Fill                        -      y1                       [EBP-0x10]  short
+m159f005  Fill                        -      x2                       [EBP-0x4]   short
+m159f005  Fill                        -      y2                       [EBP-0x8]   short
+m159f005  Fill                        -      color                    [EBP+0x10]  short
+m159f005  Fill                        -      y                        [EBP-0x4C]  int
+m159f005  Fill                        -      pos                      [EBP-0x48]  int
+m159f005  Fill                        -      line_add                 [EBP-0x44]  int
+m159f005  Fill                        -      center_columns           [EBP-0x40]  int
+m159f005  Fill                        -      start_x                  [EBP-0x3C]  int
+m159f005  Fill                        -      end_x                    [EBP-0x38]  int
+m159f005  Fill                        -      x                        [EBP-0x34]  int
+m159f005  Fill                        -      long_color               [EBP-0x60]  unsigned int
+m159f005  Fill                        -      start_mask               [EBP-0x5C]  unsigned int
+m159f005  Fill                        -      end_mask                 [EBP-0x58]  unsigned int
+m159f005  Fill                        -      start_color              [EBP-0x54]  unsigned int
+m159f005  Fill                        -      end_color                [EBP-0x50]  unsigned int
+m159f005  Fill                        -      column_mask              [EBP-0x1C]  unsigned int
+m159f005  Fill                        -      value                    [EBP-0x18]  unsigned int
+m159f005  Fill                        -      long_current_video_page  [EBP-0x30]  unsigned int *
+m159f005  Fill                        -      start_width              [EBP-0x2C]  int
+m159f005  Fill                        -      center_width             [EBP-0x28]  int
+m159f005  Fill                        -      end_width                [EBP-0x24]  int
+m159f005  Fill                        -      line_start               [EBP-0x20]  int
+m159f005  Fill                        -      column_height            [EBP-0x14]  int
+m159f006  Interlaced_Fill             -      x1                       [EBP-0x4]   short
+m159f006  Interlaced_Fill             -      y1                       [EBP-0x8]   short
+m159f006  Interlaced_Fill             -      x2                       [EBP-0x10]  short
+m159f006  Interlaced_Fill             -      y2                       [EBP-0xC]   short
+m159f006  Interlaced_Fill             -      color1                   [EBP+0x10]  short
+m159f006  Interlaced_Fill             -      color2                   [EBP+0x14]  short
+m159f006  Interlaced_Fill             -      y                        [EBP-0x4C]  int
+m159f006  Interlaced_Fill             -      pos                      [EBP-0x48]  int
+m159f006  Interlaced_Fill             -      line_add                 [EBP-0x44]  int
+m159f006  Interlaced_Fill             -      center_columns           [EBP-0x40]  int
+m159f006  Interlaced_Fill             -      start_x                  [EBP-0x3C]  int
+m159f006  Interlaced_Fill             -      end_x                    [EBP-0x38]  int
+m159f006  Interlaced_Fill             -      x                        [EBP-0x64]  int
+m159f006  Interlaced_Fill             -      long_color               [EBP-0x60]  unsigned int
+m159f006  Interlaced_Fill             -      start_mask               [EBP-0x5C]  unsigned int
+m159f006  Interlaced_Fill             -      end_mask                 [EBP-0x58]  unsigned int
+m159f006  Interlaced_Fill             -      start_color              [EBP-0x54]  unsigned int
+m159f006  Interlaced_Fill             -      end_color                [EBP-0x20]  unsigned int
+m159f006  Interlaced_Fill             -      column_mask              [EBP-0x50]  unsigned int
+m159f006  Interlaced_Fill             -      value                    [EBP-0x18]  unsigned int
+m159f006  Interlaced_Fill             -      long_current_video_page  [EBP-0x14]  unsigned int *
+m159f006  Interlaced_Fill             -      start_width              [EBP-0x30]  int
+m159f006  Interlaced_Fill             -      center_width             [EBP-0x2C]  int
+m159f006  Interlaced_Fill             -      end_width                [EBP-0x28]  int
+m159f006  Interlaced_Fill             -      line_start               [EBP-0x24]  int
+m159f006  Interlaced_Fill             -      column_height            [EBP-0x1C]  int
+m159f006  Interlaced_Fill             -      combined_color           [EBP-0x34]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      x1                       [EBP-0x4]   short
+m159f007  Tri_Interlaced_Fill         -      y1                       [EBP-0x8]   short
+m159f007  Tri_Interlaced_Fill         -      x2                       [EBP-0x10]  short
+m159f007  Tri_Interlaced_Fill         -      y2                       [EBP-0xC]   short
+m159f007  Tri_Interlaced_Fill         -      color1                   [EBP+0x10]  short
+m159f007  Tri_Interlaced_Fill         -      color2                   [EBP+0x14]  short
+m159f007  Tri_Interlaced_Fill         -      color3                   [EBP+0x18]  short
+m159f007  Tri_Interlaced_Fill         -      y                        [EBP-0x48]  int
+m159f007  Tri_Interlaced_Fill         -      pos                      [EBP-0x44]  int
+m159f007  Tri_Interlaced_Fill         -      line_add                 [EBP-0x40]  int
+m159f007  Tri_Interlaced_Fill         -      center_columns           [EBP-0x3C]  int
+m159f007  Tri_Interlaced_Fill         -      start_x                  [EBP-0x38]  int
+m159f007  Tri_Interlaced_Fill         -      end_x                    [EBP-0x64]  int
+m159f007  Tri_Interlaced_Fill         -      x                        [EBP-0x60]  int
+m159f007  Tri_Interlaced_Fill         -      long_color               [EBP-0x5C]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      start_mask               [EBP-0x58]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      end_mask                 [EBP-0x54]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      start_color              [EBP-0x20]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      end_color                [EBP-0x50]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      column_mask              [EBP-0x18]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      value                    [EBP-0x4C]  unsigned int
+m159f007  Tri_Interlaced_Fill         -      long_current_video_page  [EBP-0x30]  unsigned int *
+m159f007  Tri_Interlaced_Fill         -      start_width              [EBP-0x2C]  int
+m159f007  Tri_Interlaced_Fill         -      center_width             [EBP-0x28]  int
+m159f007  Tri_Interlaced_Fill         -      end_width                [EBP-0x24]  int
+m159f007  Tri_Interlaced_Fill         -      line_start               [EBP-0x14]  int
+m159f007  Tri_Interlaced_Fill         -      column_height            [EBP-0x1C]  int
+m159f007  Tri_Interlaced_Fill         -      combined_color           [EBP-0x34]  unsigned int
+m159f008  Gray_Scale_Fill             -      x1                       [EBP-0x4]   short
+m159f008  Gray_Scale_Fill             -      y1                       [EBP-0x8]   short
+m159f008  Gray_Scale_Fill             -      x2                       [EBP-0x10]  short
+m159f008  Gray_Scale_Fill             -      y2                       [EBP-0xC]   short
+m159f008  Gray_Scale_Fill             -      color_array              [EBP+0x10]  char *
+m159f008  Gray_Scale_Fill             -      color_count              [EBP+0x14]  short
+m159f008  Gray_Scale_Fill             -      inverse_flag             [EBP+0x18]  short
+m159f008  Gray_Scale_Fill             -      y                        [EBP-0x4C]  int
+m159f008  Gray_Scale_Fill             -      pos                      [EBP-0x48]  int
+m159f008  Gray_Scale_Fill             -      line_add                 [EBP-0x44]  int
+m159f008  Gray_Scale_Fill             -      center_columns           [EBP-0x40]  int
+m159f008  Gray_Scale_Fill             -      start_x                  [EBP-0x3C]  int
+m159f008  Gray_Scale_Fill             -      end_x                    [EBP-0x64]  int
+m159f008  Gray_Scale_Fill             -      x                        [EBP-0x60]  int
+m159f008  Gray_Scale_Fill             -      i                        [EBP-0x5C]  int
+m159f008  Gray_Scale_Fill             -      long_color               [EBP-0x58]  unsigned int
+m159f008  Gray_Scale_Fill             -      start_mask               [EBP-0x28]  unsigned int
+m159f008  Gray_Scale_Fill             -      end_mask                 [EBP-0x24]  unsigned int
+m159f008  Gray_Scale_Fill             -      start_color              [EBP-0x54]  unsigned int
+m159f008  Gray_Scale_Fill             -      end_color                [EBP-0x1C]  unsigned int
+m159f008  Gray_Scale_Fill             -      column_mask              [EBP-0x50]  unsigned int
+m159f008  Gray_Scale_Fill             -      value                    [EBP-0x34]  unsigned int
+m159f008  Gray_Scale_Fill             -      long_current_video_page  [EBP-0x30]  unsigned int *
+m159f008  Gray_Scale_Fill             -      start_width              [EBP-0x2C]  int
+m159f008  Gray_Scale_Fill             -      center_width             [EBP-0x18]  int
+m159f008  Gray_Scale_Fill             -      end_width                [EBP-0x14]  int
+m159f008  Gray_Scale_Fill             -      line_start               [EBP-0x20]  int
+m159f008  Gray_Scale_Fill             -      column_height            [EBP-0x38]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      x1                       [EBP-0x4]   short
+m159f009  Interlaced_Gray_Scale_Fill  -      y1                       [EBP-0xC]   short
+m159f009  Interlaced_Gray_Scale_Fill  -      x2                       [EBP-0x8]   short
+m159f009  Interlaced_Gray_Scale_Fill  -      y2                       [EBP-0x10]  short
+m159f009  Interlaced_Gray_Scale_Fill  -      color_array1             [EBP+0x10]  char *
+m159f009  Interlaced_Gray_Scale_Fill  -      color_array2             [EBP+0x14]  char *
+m159f009  Interlaced_Gray_Scale_Fill  -      color_count              [EBP+0x18]  short
+m159f009  Interlaced_Gray_Scale_Fill  -      inverse_flag             [EBP+0x1C]  short
+m159f009  Interlaced_Gray_Scale_Fill  -      y                        [EBP-0x64]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      pos                      [EBP-0x60]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      line_add                 [EBP-0x5C]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      center_columns           [EBP-0x58]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      start_x                  [EBP-0x54]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      end_x                    [EBP-0x50]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      x                        [EBP-0x4C]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      i                        [EBP-0x7C]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      long_color               [EBP-0x78]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      start_mask               [EBP-0x74]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      end_mask                 [EBP-0x70]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      start_color              [EBP-0x38]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      end_color                [EBP-0x34]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      column_mask              [EBP-0x30]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      value                    [EBP-0x2C]  unsigned int
+m159f009  Interlaced_Gray_Scale_Fill  -      long_current_video_page  [EBP-0x6C]  unsigned int *
+m159f009  Interlaced_Gray_Scale_Fill  -      start_width              [EBP-0x24]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      center_width             [EBP-0x68]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      end_width                [EBP-0x44]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      line_start               [EBP-0x40]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      column_height            [EBP-0x3C]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      frame_offset             [EBP-0x14]  char *
+m159f009  Interlaced_Gray_Scale_Fill  -      frame_offset_table       [EBP-0x20]  long *
+m159f009  Interlaced_Gray_Scale_Fill  -      source_start             [EBP-0x1C]  char *
+m159f009  Interlaced_Gray_Scale_Fill  -      target_start             [EBP-0x18]  char *
+m159f009  Interlaced_Gray_Scale_Fill  -      width                    [EBP-0x28]  int
+m159f009  Interlaced_Gray_Scale_Fill  -      height                   [EBP-0x48]  int
+m159f010  Dot                         -      x                        [EBP-0xC]   short
+m159f010  Dot                         -      y                        [EBP-0x8]   short
+m159f010  Dot                         -      color                    [EBP-0x4]   short
+m159f011  Box                         -      x                        [EBP-0xC]   short
+m159f011  Box                         -      y                        [EBP-0x8]   short
+m159f011  Box                         -      width                    [EBP-0x10]  short
+m159f011  Box                         -      height                   [EBP-0x4]   short
+m159f011  Box                         -      thickness                [EBP+0x10]  short
+m159f011  Box                         -      color                    [EBP+0x14]  short
+m159f011  Box                         -      i                        [EBP-0x14]  int
+m159f012  Darken_Fill                 -      x1                       [EBP-0x10]  short
+m159f012  Darken_Fill                 -      y1                       [EBP-0xC]   short
+m159f012  Darken_Fill                 -      x2                       [EBP-0x8]   short
+m159f012  Darken_Fill                 -      y2                       [EBP-0x4]   short
+m159f013  Tint_Fill                   -      x1                       [EBP-0xC]   short
+m159f013  Tint_Fill                   -      y1                       [EBP-0x10]  short
+m159f013  Tint_Fill                   -      x2                       [EBP-0x4]   short
+m159f013  Tint_Fill                   -      y2                       [EBP-0x8]   short
+m159f013  Tint_Fill                   -      color                    [EBP+0x10]  short
+m159f013  Tint_Fill                   -      y                        [EBP-0x4C]  int
+m159f013  Tint_Fill                   -      pos                      [EBP-0x48]  int
+m159f013  Tint_Fill                   -      line_add                 [EBP-0x44]  int
+m159f013  Tint_Fill                   -      center_columns           [EBP-0x40]  int
+m159f013  Tint_Fill                   -      start_x                  [EBP-0x3C]  int
+m159f013  Tint_Fill                   -      end_x                    [EBP-0x38]  int
+m159f013  Tint_Fill                   -      x                        [EBP-0x34]  int
+m159f013  Tint_Fill                   -      long_color               [EBP-0x60]  unsigned int
+m159f013  Tint_Fill                   -      start_mask               [EBP-0x5C]  unsigned int
+m159f013  Tint_Fill                   -      end_mask                 [EBP-0x58]  unsigned int
+m159f013  Tint_Fill                   -      start_color              [EBP-0x54]  unsigned int
+m159f013  Tint_Fill                   -      end_color                [EBP-0x50]  unsigned int
+m159f013  Tint_Fill                   -      column_mask              [EBP-0x1C]  unsigned int
+m159f013  Tint_Fill                   -      value                    [EBP-0x18]  unsigned int
+m159f013  Tint_Fill                   -      long_current_video_page  [EBP-0x30]  unsigned int *
+m159f013  Tint_Fill                   -      start_width              [EBP-0x2C]  int
+m159f013  Tint_Fill                   -      center_width             [EBP-0x28]  int
+m159f013  Tint_Fill                   -      end_width                [EBP-0x24]  int
+m159f013  Tint_Fill                   -      line_start               [EBP-0x20]  int
+m159f013  Tint_Fill                   -      column_height            [EBP-0x14]  int
+m159f014  Gradient_Fill               -      x1                       [EBP-0x10]  int
+m159f014  Gradient_Fill               -      y1                       [EBP-0xC]   int
+m159f014  Gradient_Fill               -      x2                       [EBP-0x8]   int
+m159f014  Gradient_Fill               -      y2                       [EBP-0x4]   int
+m159f014  Gradient_Fill               -      fill_type                [EBP+0x10]  int
+m159f014  Gradient_Fill               -      color_array              [EBP+0x14]  char *
+m159f014  Gradient_Fill               -      color_count              [EBP+0x18]  int
+m159f014  Gradient_Fill               -      ripple_count             [EBP+0x1C]  int
+m159f014  Gradient_Fill               -      seed                     [EBP+0x20]  int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    BYTE            name for unsigned char (#5)
+13   typedef    SBYTE           name for signed char (#4)
+14   typedef    UBYTE           name for unsigned char (#5)
+15   typedef    WORD            name for unsigned short (#7)
+16   typedef    SWORD           name for short (#6)
+17   typedef    UWORD           name for unsigned short (#7)
+18   typedef    DWORD           name for unsigned int (#9)
+19   typedef    SDWORD          name for int (#8)
+20   typedef    UDWORD          name for unsigned int (#9)
+21   typedef    BOOL            name for unsigned char (#5)
+22   typedef    SampleHandle    name for int (#8)
+23   array      -               0..3; of unsigned int (#9)
+24   scalar     void            void 1 bytes
+25   procedure  -               near386; returns void (short, short, short, short)
+26   procedure  -               near386; returns void ()
+27   procedure  -               near386; returns void (short, short, short, short, short)
+28   pointer    -               near386; of unsigned int (#9)
+29   procedure  -               near386; returns void (short, short, short, short, short, short)
+30   procedure  -               near386; returns void (short, short, short, short, short, short, short)
+31   pointer    -               near386; of char (#10)
+32   procedure  -               near386; returns void (short, short, short, short, char *, short, short)
+33   procedure  -               near386; returns void (short, short, short, short, char *, char *, short, short)
+34   scalar     long            int 4 bytes
+35   pointer    -               near386; of long (#34)
+36   procedure  -               near386; returns void (short, short, short)
+37   procedure  -               near386; returns void (int, int, int, int, int, char *, int, int, int)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m159f001  26    0x00128AB6  1:0x00118AB6  0x001AE10A
+m159f001  28    0x00128AD7  1:0x00118AD7  0x001AE12B
+m159f001  29    0x00128AE5  1:0x00118AE5  0x001AE139
+m159f001  30    0x00128AF3  1:0x00118AF3  0x001AE147
+m159f001  31    0x00128B09  1:0x00118B09  0x001AE15D
+m159f001  33    0x00128B1F  1:0x00118B1F  0x001AE173
+m159f001  34    0x00128B28  1:0x00118B28  0x001AE17C
+m159f001  35    0x00128B31  1:0x00118B31  0x001AE185
+m159f001  36    0x00128B3A  1:0x00118B3A  0x001AE18E
+m159f001  37    0x00128B43  1:0x00118B43  0x001AE197
+m159f002  39    0x00128B49  1:0x00118B49  0x001AE19D
+m159f002  41    0x00128B61  1:0x00118B61  0x001AE1B5
+m159f002  42    0x00128B6D  1:0x00118B6D  0x001AE1C1
+m159f002  43    0x00128B79  1:0x00118B79  0x001AE1CD
+m159f002  44    0x00128B85  1:0x00118B85  0x001AE1D9
+m159f002  45    0x00128B91  1:0x00118B91  0x001AE1E5
+m159f003  46    0x00128B98  1:0x00118B98  0x001AE1EC
+m159f003  48    0x00128BB0  1:0x00118BB0  0x001AE204
+m159f003  49    0x00128BBC  1:0x00118BBC  0x001AE210
+m159f003  50    0x00128BC8  1:0x00118BC8  0x001AE21C
+m159f003  51    0x00128BD4  1:0x00118BD4  0x001AE228
+m159f003  52    0x00128BE0  1:0x00118BE0  0x001AE234
+m159f004  55    0x00128BE7  1:0x00118BE7  0x001AE23B
+m159f004  57    0x00128BFF  1:0x00118BFF  0x001AE253
+m159f004  58    0x00128C08  1:0x00118C08  0x001AE25C
+m159f004  59    0x00128C11  1:0x00118C11  0x001AE265
+m159f004  60    0x00128C1E  1:0x00118C1E  0x001AE272
+m159f004  61    0x00128C2B  1:0x00118C2B  0x001AE27F
+m159f005  66    0x00128C32  1:0x00118C32  0x001AE286
+m159f005  73    0x00128C53  1:0x00118C53  0x001AE2A7
+m159f005  75    0x00128C5B  1:0x00118C5B  0x001AE2AF
+m159f005  76    0x00128C6F  1:0x00118C6F  0x001AE2C3
+m159f005  78    0x00128C83  1:0x00118C83  0x001AE2D7
+m159f005  80    0x00128C94  1:0x00118C94  0x001AE2E8
+m159f005  82    0x00128CAC  1:0x00118CAC  0x001AE300
+m159f005  84    0x00128CB1  1:0x00118CB1  0x001AE305
+m159f005  86    0x00128CC9  1:0x00118CC9  0x001AE31D
+m159f005  89    0x00128CCE  1:0x00118CCE  0x001AE322
+m159f005  90    0x00128CE3  1:0x00118CE3  0x001AE337
+m159f005  91    0x00128CF8  1:0x00118CF8  0x001AE34C
+m159f005  92    0x00128D0D  1:0x00118D0D  0x001AE361
+m159f005  95    0x00128D22  1:0x00118D22  0x001AE376
+m159f005  97    0x00128D40  1:0x00118D40  0x001AE394
+m159f005  98    0x00128D47  1:0x00118D47  0x001AE39B
+m159f005  99    0x00128D50  1:0x00118D50  0x001AE3A4
+m159f005  101   0x00128D59  1:0x00118D59  0x001AE3AD
+m159f005  102   0x00128D6D  1:0x00118D6D  0x001AE3C1
+m159f005  104   0x00128D81  1:0x00118D81  0x001AE3D5
+m159f005  106   0x00128D8D  1:0x00118D8D  0x001AE3E1
+m159f005  108   0x00128D97  1:0x00118D97  0x001AE3EB
+m159f005  109   0x00128DAA  1:0x00118DAA  0x001AE3FE
+m159f005  110   0x00128DB4  1:0x00118DB4  0x001AE408
+m159f005  112   0x00128DC1  1:0x00118DC1  0x001AE415
+m159f005  114   0x00128DC7  1:0x00118DC7  0x001AE41B
+m159f005  115   0x00128DCE  1:0x00118DCE  0x001AE422
+m159f005  118   0x00128DD1  1:0x00118DD1  0x001AE425
+m159f005  120   0x00128DD7  1:0x00118DD7  0x001AE42B
+m159f005  121   0x00128DDE  1:0x00118DDE  0x001AE432
+m159f005  124   0x00128DE1  1:0x00118DE1  0x001AE435
+m159f005  125   0x00128DF1  1:0x00118DF1  0x001AE445
+m159f005  127   0x00128DFF  1:0x00118DFF  0x001AE453
+m159f005  129   0x00128E05  1:0x00118E05  0x001AE459
+m159f005  130   0x00128E23  1:0x00118E23  0x001AE477
+m159f005  132   0x00128E46  1:0x00118E46  0x001AE49A
+m159f005  134   0x00128E48  1:0x00118E48  0x001AE49C
+m159f005  135   0x00128E4E  1:0x00118E4E  0x001AE4A2
+m159f005  138   0x00128E6D  1:0x00118E6D  0x001AE4C1
+m159f005  139   0x00128E73  1:0x00118E73  0x001AE4C7
+m159f005  141   0x00128E92  1:0x00118E92  0x001AE4E6
+m159f005  143   0x00128E94  1:0x00118E94  0x001AE4E8
+m159f005  145   0x00128EAA  1:0x00118EAA  0x001AE4FE
+m159f005  147   0x00128ED6  1:0x00118ED6  0x001AE52A
+m159f006  155   0x00128EDE  1:0x00118EDE  0x001AE532
+m159f006  164   0x00128EFF  1:0x00118EFF  0x001AE553
+m159f006  166   0x00128F0F  1:0x00118F0F  0x001AE563
+m159f006  169   0x00128F17  1:0x00118F17  0x001AE56B
+m159f006  171   0x00128F24  1:0x00118F24  0x001AE578
+m159f006  172   0x00128F39  1:0x00118F39  0x001AE58D
+m159f006  173   0x00128F4E  1:0x00118F4E  0x001AE5A2
+m159f006  174   0x00128F63  1:0x00118F63  0x001AE5B7
+m159f006  176   0x00128F78  1:0x00118F78  0x001AE5CC
+m159f006  178   0x00128F85  1:0x00118F85  0x001AE5D9
+m159f006  183   0x00128F92  1:0x00118F92  0x001AE5E6
+m159f006  189   0x00128FB0  1:0x00118FB0  0x001AE604
+m159f006  190   0x00128FC4  1:0x00118FC4  0x001AE618
+m159f006  192   0x00128FD8  1:0x00118FD8  0x001AE62C
+m159f006  194   0x00128FE4  1:0x00118FE4  0x001AE638
+m159f006  196   0x00128FEE  1:0x00118FEE  0x001AE642
+m159f006  197   0x00129001  1:0x00119001  0x001AE655
+m159f006  198   0x0012900B  1:0x0011900B  0x001AE65F
+m159f006  200   0x00129018  1:0x00119018  0x001AE66C
+m159f006  202   0x0012901E  1:0x0011901E  0x001AE672
+m159f006  203   0x00129025  1:0x00119025  0x001AE679
+m159f006  206   0x00129028  1:0x00119028  0x001AE67C
+m159f006  208   0x0012902E  1:0x0011902E  0x001AE682
+m159f006  209   0x00129035  1:0x00119035  0x001AE689
+m159f006  212   0x00129038  1:0x00119038  0x001AE68C
+m159f006  213   0x00129048  1:0x00119048  0x001AE69C
+m159f006  215   0x00129056  1:0x00119056  0x001AE6AA
+m159f006  217   0x0012905C  1:0x0011905C  0x001AE6B0
+m159f006  218   0x00129079  1:0x00119079  0x001AE6CD
+m159f006  220   0x0012909B  1:0x0011909B  0x001AE6EF
+m159f006  222   0x0012909D  1:0x0011909D  0x001AE6F1
+m159f006  223   0x001290A3  1:0x001190A3  0x001AE6F7
+m159f006  226   0x001290C1  1:0x001190C1  0x001AE715
+m159f006  227   0x001290C7  1:0x001190C7  0x001AE71B
+m159f006  229   0x001290E5  1:0x001190E5  0x001AE739
+m159f006  231   0x001290E7  1:0x001190E7  0x001AE73B
+m159f006  233   0x001290FD  1:0x001190FD  0x001AE751
+m159f006  235   0x00129128  1:0x00119128  0x001AE77C
+m159f007  244   0x00129130  1:0x00119130  0x001AE784
+m159f007  253   0x00129151  1:0x00119151  0x001AE7A5
+m159f007  255   0x0012916A  1:0x0011916A  0x001AE7BE
+m159f007  257   0x00129172  1:0x00119172  0x001AE7C6
+m159f007  258   0x00129186  1:0x00119186  0x001AE7DA
+m159f007  260   0x0012919A  1:0x0011919A  0x001AE7EE
+m159f007  262   0x001291A7  1:0x001191A7  0x001AE7FB
+m159f007  263   0x001291BC  1:0x001191BC  0x001AE810
+m159f007  264   0x001291D1  1:0x001191D1  0x001AE825
+m159f007  265   0x001291E6  1:0x001191E6  0x001AE83A
+m159f007  268   0x001291FB  1:0x001191FB  0x001AE84F
+m159f007  270   0x00129219  1:0x00119219  0x001AE86D
+m159f007  271   0x0012922D  1:0x0011922D  0x001AE881
+m159f007  273   0x00129241  1:0x00119241  0x001AE895
+m159f007  275   0x0012924D  1:0x0011924D  0x001AE8A1
+m159f007  277   0x00129257  1:0x00119257  0x001AE8AB
+m159f007  278   0x0012926A  1:0x0011926A  0x001AE8BE
+m159f007  279   0x00129274  1:0x00119274  0x001AE8C8
+m159f007  281   0x00129281  1:0x00119281  0x001AE8D5
+m159f007  283   0x00129287  1:0x00119287  0x001AE8DB
+m159f007  284   0x0012928E  1:0x0011928E  0x001AE8E2
+m159f007  287   0x00129291  1:0x00119291  0x001AE8E5
+m159f007  289   0x00129297  1:0x00119297  0x001AE8EB
+m159f007  290   0x0012929E  1:0x0011929E  0x001AE8F2
+m159f007  293   0x001292A1  1:0x001192A1  0x001AE8F5
+m159f007  294   0x001292B1  1:0x001192B1  0x001AE905
+m159f007  296   0x001292BF  1:0x001192BF  0x001AE913
+m159f007  298   0x001292C5  1:0x001192C5  0x001AE919
+m159f007  299   0x001292E2  1:0x001192E2  0x001AE936
+m159f007  301   0x00129304  1:0x00119304  0x001AE958
+m159f007  303   0x00129306  1:0x00119306  0x001AE95A
+m159f007  304   0x0012930C  1:0x0011930C  0x001AE960
+m159f007  307   0x0012932A  1:0x0011932A  0x001AE97E
+m159f007  308   0x00129330  1:0x00119330  0x001AE984
+m159f007  310   0x0012934E  1:0x0011934E  0x001AE9A2
+m159f007  312   0x00129350  1:0x00119350  0x001AE9A4
+m159f007  314   0x00129366  1:0x00119366  0x001AE9BA
+m159f007  316   0x00129391  1:0x00119391  0x001AE9E5
+m159f008  325   0x00129399  1:0x00119399  0x001AE9ED
+m159f008  333   0x001293BA  1:0x001193BA  0x001AEA0E
+m159f008  335   0x001293C2  1:0x001193C2  0x001AEA16
+m159f008  336   0x001293D6  1:0x001193D6  0x001AEA2A
+m159f008  338   0x001293EA  1:0x001193EA  0x001AEA3E
+m159f008  340   0x001293F7  1:0x001193F7  0x001AEA4B
+m159f008  341   0x0012940C  1:0x0011940C  0x001AEA60
+m159f008  342   0x00129421  1:0x00119421  0x001AEA75
+m159f008  343   0x00129436  1:0x00119436  0x001AEA8A
+m159f008  345   0x0012944B  1:0x0011944B  0x001AEA9F
+m159f008  346   0x00129469  1:0x00119469  0x001AEABD
+m159f008  349   0x00129473  1:0x00119473  0x001AEAC7
+m159f008  351   0x00129480  1:0x00119480  0x001AEAD4
+m159f008  353   0x00129495  1:0x00119495  0x001AEAE9
+m159f008  354   0x001294AF  1:0x001194AF  0x001AEB03
+m159f008  356   0x001294CC  1:0x001194CC  0x001AEB20
+m159f008  358   0x0012950C  1:0x0011950C  0x001AEB60
+m159f009  367   0x00129514  1:0x00119514  0x001AEB68
+m159f009  380   0x00129535  1:0x00119535  0x001AEB89
+m159f009  381   0x00129549  1:0x00119549  0x001AEB9D
+m159f009  383   0x0012955D  1:0x0011955D  0x001AEBB1
+m159f009  385   0x0012956A  1:0x0011956A  0x001AEBBE
+m159f009  386   0x0012957F  1:0x0011957F  0x001AEBD3
+m159f009  387   0x00129594  1:0x00119594  0x001AEBE8
+m159f009  388   0x001295A9  1:0x001195A9  0x001AEBFD
+m159f009  390   0x001295BE  1:0x001195BE  0x001AEC12
+m159f009  391   0x001295DC  1:0x001195DC  0x001AEC30
+m159f009  393   0x001295E6  1:0x001195E6  0x001AEC3A
+m159f009  395   0x001295F0  1:0x001195F0  0x001AEC44
+m159f009  397   0x001295FD  1:0x001195FD  0x001AEC51
+m159f009  398   0x0012960B  1:0x0011960B  0x001AEC5F
+m159f009  400   0x00129619  1:0x00119619  0x001AEC6D
+m159f009  402   0x0012962A  1:0x0011962A  0x001AEC7E
+m159f009  403   0x00129644  1:0x00119644  0x001AEC98
+m159f009  404   0x00129665  1:0x00119665  0x001AECB9
+m159f009  407   0x001296A4  1:0x001196A4  0x001AECF8
+m159f009  408   0x001296BE  1:0x001196BE  0x001AED12
+m159f009  409   0x001296DF  1:0x001196DF  0x001AED33
+m159f009  411   0x00129725  1:0x00119725  0x001AED79
+m159f010  423   0x0012972D  1:0x0011972D  0x001AED81
+m159f010  425   0x0012974C  1:0x0011974C  0x001AEDA0
+m159f010  427   0x00129759  1:0x00119759  0x001AEDAD
+m159f010  428   0x00129765  1:0x00119765  0x001AEDB9
+m159f010  429   0x00129771  1:0x00119771  0x001AEDC5
+m159f010  430   0x0012977D  1:0x0011977D  0x001AEDD1
+m159f010  432   0x00129789  1:0x00119789  0x001AEDDD
+m159f010  434   0x0012979F  1:0x0011979F  0x001AEDF3
+m159f010  435   0x001297BC  1:0x001197BC  0x001AEE10
+m159f011  441   0x001297C3  1:0x001197C3  0x001AEE17
+m159f011  445   0x001297E4  1:0x001197E4  0x001AEE38
+m159f011  447   0x00129801  1:0x00119801  0x001AEE55
+m159f011  448   0x00129831  1:0x00119831  0x001AEE85
+m159f011  450   0x00129861  1:0x00119861  0x001AEEB5
+m159f011  451   0x00129899  1:0x00119899  0x001AEEED
+m159f011  452   0x001298D1  1:0x001198D1  0x001AEF25
+m159f011  453   0x001298D6  1:0x001198D6  0x001AEF2A
+m159f012  455   0x001298DE  1:0x001198DE  0x001AEF32
+m159f012  457   0x001298FF  1:0x001198FF  0x001AEF53
+m159f012  458   0x00129917  1:0x00119917  0x001AEF6B
+m159f013  464   0x0012991D  1:0x0011991D  0x001AEF71
+m159f013  471   0x0012993E  1:0x0011993E  0x001AEF92
+m159f013  473   0x00129946  1:0x00119946  0x001AEF9A
+m159f013  474   0x0012995A  1:0x0011995A  0x001AEFAE
+m159f013  476   0x0012996E  1:0x0011996E  0x001AEFC2
+m159f013  478   0x0012997B  1:0x0011997B  0x001AEFCF
+m159f013  479   0x00129990  1:0x00119990  0x001AEFE4
+m159f013  480   0x001299A5  1:0x001199A5  0x001AEFF9
+m159f013  481   0x001299BA  1:0x001199BA  0x001AF00E
+m159f013  484   0x001299CF  1:0x001199CF  0x001AF023
+m159f013  486   0x001299ED  1:0x001199ED  0x001AF041
+m159f013  487   0x001299F4  1:0x001199F4  0x001AF048
+m159f013  488   0x001299FD  1:0x001199FD  0x001AF051
+m159f013  490   0x00129A06  1:0x00119A06  0x001AF05A
+m159f013  491   0x00129A1A  1:0x00119A1A  0x001AF06E
+m159f013  493   0x00129A2E  1:0x00119A2E  0x001AF082
+m159f013  495   0x00129A3A  1:0x00119A3A  0x001AF08E
+m159f013  497   0x00129A44  1:0x00119A44  0x001AF098
+m159f013  498   0x00129A57  1:0x00119A57  0x001AF0AB
+m159f013  499   0x00129A61  1:0x00119A61  0x001AF0B5
+m159f013  501   0x00129A6D  1:0x00119A6D  0x001AF0C1
+m159f013  502   0x00129A7D  1:0x00119A7D  0x001AF0D1
+m159f013  504   0x00129A8B  1:0x00119A8B  0x001AF0DF
+m159f013  506   0x00129A91  1:0x00119A91  0x001AF0E5
+m159f013  507   0x00129AAF  1:0x00119AAF  0x001AF103
+m159f013  509   0x00129AD3  1:0x00119AD3  0x001AF127
+m159f013  511   0x00129AD5  1:0x00119AD5  0x001AF129
+m159f013  512   0x00129ADB  1:0x00119ADB  0x001AF12F
+m159f013  514   0x00129B03  1:0x00119B03  0x001AF157
+m159f013  515   0x00129B09  1:0x00119B09  0x001AF15D
+m159f013  518   0x00129B30  1:0x00119B30  0x001AF184
+m159f013  520   0x00129B32  1:0x00119B32  0x001AF186
+m159f013  522   0x00129B46  1:0x00119B46  0x001AF19A
+m159f013  524   0x00129B7C  1:0x00119B7C  0x001AF1D0
+m159f014  532   0x00129B84  1:0x00119B84  0x001AF1D8
+m159f014  535   0x00129BA5  1:0x00119BA5  0x001AF1F9
+m159f014  537   0x00129BE7  1:0x00119BE7  0x001AF23B
+m159f014  539   0x00129BEC  1:0x00119BEC  0x001AF240
+m159f014  540   0x00129C0A  1:0x00119C0A  0x001AF25E
+m159f014  542   0x00129C0C  1:0x00119C0C  0x001AF260
+m159f014  543   0x00129C24  1:0x00119C24  0x001AF278
+m159f014  545   0x00129C26  1:0x00119C26  0x001AF27A
+m159f014  546   0x00129C44  1:0x00119C44  0x001AF298
+m159f014  581   0x00129C46  1:0x00119C46  0x001AF29A
+m159f014  587   0x00129C67  1:0x00119C67  0x001AF2BB

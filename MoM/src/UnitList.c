@@ -5,6 +5,8 @@
         ovr079
 */
 
+#include "../../STU/src/STU_GARB.h"  /* CLAUDE */  /* Stack_Garbage() */
+#include "../../MoX/src/GENDRAW.h"  /* Draw_Expanding_Box(); Redraw_Expanding_Box_Lines() */
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
@@ -36,8 +38,8 @@
 
 // dseg:BFF2                                                 ¿ BEGIN:  ovr056  Production Screen ?
 // ...
-// WZD dseg:C00E 00 00                                           m_ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20w ...
-// WZD dseg:C010 00 00                                           m_ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window+272r ...
+// WZD dseg:C00E 00 00                                           m_ulw_window_field dw 0                         ; DATA XREF: IDK_ULW_Add_Fields+20vw ...
+// WZD dseg:C010 00 00                                           m_ulw_full_screen_ESC_field dw 0               ; DATA XREF: Unit_List_Window+272vr ...
 
 int16_t _ulw_window_field;
 int16_t _ulw_full_screen_ESC_field;
@@ -218,6 +220,7 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
     Unit_List_Window_Draw();
 
     // TODO  HLP_NoResizeExpand__TODO(m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 238), (m_ulw_height + 5), x, y, (x + 19), (y + 16), 1);
+    Draw_Expanding_Box(m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 238), (m_ulw_height + 5), x, y, (x + 19), (y + 16), ST_TRUE);  /* CLAUDE */  /* asm: call j_HLP_NoResizeExpand__TODO - was a TODO comment */
 
     Deactivate_Auto_Function();
 
@@ -231,7 +234,9 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
 
     leave_screen = ST_FALSE;
 
-    screen_changed = ST_FALSE;  // DNE in Dasm
+    // screen_changed = ST_FALSE;  // DNE in Dasm
+    /* OGBUG  screen_changed (bp-6) is read by the first pass of the loop before it is ever written: a nonzero leftover skips the first frame's redraw */
+    /* HACK */  screen_changed = Stack_Garbage();  /* CLAUDE */  /* OG: uninitialised; only compared with e_ST_FALSE */
 
     while(leave_screen == ST_FALSE)
     {
@@ -242,7 +247,7 @@ int16_t Unit_List_Window(int16_t unit_idx, int16_t flag, int16_t x, int16_t y)
 
         Unit_List_Window_Add_Fields(flag);
 
-        hotkey_X = Add_Hot_Key(str_hotkey_X__ovr079[0]);
+        hotkey_X = Add_Hot_Key(str_hotkey_X__ovr079);
 
         input_field_idx = Get_Input();
 
@@ -336,6 +341,7 @@ void Unit_List_Window_Draw(void)
     Set_Page_Off();
 
     // TODO  G_USW_DrawEHLines();
+    Redraw_Expanding_Box_Lines();  /* CLAUDE */  /* asm: call j_G_USW_DrawEHLines - was a TODO comment */
 
     Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, m_ulw_height);
 
@@ -622,13 +628,13 @@ void Unit_List_Window_Add_Fields(int16_t flag)
 
         for(itr_troops = 0; itr_troops < m_ulw_troop_count; itr_troops++)
         {
-            ULW_stack_fields[itr_troops] = Add_Hidden_Field(x1, y1, (x1 + 222), (y1 + 18), str_emptystring__ovr079[0], ST_UNDEFINED);
+            ULW_stack_fields[itr_troops] = Add_Hidden_Field(x1, y1, (x1 + 222), (y1 + 18), str_emptystring__ovr079, ST_UNDEFINED);
             y1 += 19;
         }
 
-        _ulw_window_field = Add_Hidden_Field(m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 237), (m_ulw_height + 4), str_emptystring__ovr079[0], ST_UNDEFINED);
+        _ulw_window_field = Add_Hidden_Field(m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 237), (m_ulw_height + 4), str_emptystring__ovr079, ST_UNDEFINED);
     }
 
-    _ulw_full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr079[0], ST_UNDEFINED);
+    _ulw_full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr079, ST_UNDEFINED);
 
 }

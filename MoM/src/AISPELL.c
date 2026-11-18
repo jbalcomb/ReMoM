@@ -10,6 +10,7 @@ Module: AITECH
 
 #include "../../STU/src/AI_METRICS.h"
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/Allocate.h"
@@ -73,14 +74,240 @@ int16_t AI_NodeOpportunity;
 
 // WZD o156p01
 // ~ MoO2  Module: AITECH  AI_Tech_Select_()
-/* GEMINI */
+// /* GEMINI */
+// int16_t AI_Spell_Research_Select(int16_t player_idx)
+// {
+//     int16_t possessed_categories[92] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+//     int32_t weights_long[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+//     int16_t candidate_costs[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+//     int32_t highest_cost = 0;
+//     int32_t weights_long_total = 0;
+//     int16_t cnd_category = 0;
+//     int16_t skill_income = 0;
+//     int16_t mana_income = 0;
+//     int16_t research_income = 0;
+//     int16_t itr2 = 0;
+//     int16_t research_bonus = 0;
+//     int16_t candidate_count = 0;
+//     int16_t original_cost = 0;
+//     int16_t selection = 0;
+//     int16_t * spellranks = 0;
+//     uint16_t * research_spells = 0;
+//     int16_t itr = 0;
+//     unsigned int spell_idx = 0;
+//     unsigned int base_cost = 0;
+//     int16_t known_spell_idx = 0;
+//     int32_t w = 0;
+//
+//     research_spells = _players[player_idx].research_spells;
+//
+//     spellranks = &_players[player_idx].spellranks[0];
+//
+//     candidate_count = 0;
+//
+//     for(itr = 0; itr < 8; itr++) {
+//         if(research_spells[itr] != 0) {
+//             candidate_count++;
+//         }
+//     }
+//
+//     if(candidate_count == 0) {
+// #ifdef STU_DEBUG
+//         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidate_count=0, no spells to research", player_idx);
+// #endif
+//         _players[player_idx].researching_spell_idx = 0;
+//         _players[player_idx].research_ratio = 0;
+//         _players[player_idx].mana_ratio = 50;
+//         _players[player_idx].skill_ratio = 50;
+//         return 0;
+//     }
+//
+//     /* BUG #1: Setting this to index 1 (Earth to Mud) just to satisfy research trait logic */
+//     _players[player_idx].researching_spell_idx = 1; 
+//     _players[player_idx].reevaluate_magic_power_countdown = 0;
+//
+//     AI_Update_Magic_Power(player_idx);
+//     Player_Magic_Power_Income_Total(&mana_income, &research_income, &skill_income, player_idx);
+//
+//     /* Calculate adjusted research costs based on traits/bonuses */
+//     /* OGBUG: #3 research-related traits are now applied twice (if it wasn't for BUGs #1 & #2) */
+//     /* Gemini rearranged the logic here quite a bit */
+//     for(itr = 0; itr < candidate_count; itr++) {
+//         spell_idx = research_spells[itr];
+//
+//         if(spell_idx == spl_Spell_Of_Mastery) {
+//             base_cost = _players[player_idx].som_research_cost;
+//         } else {
+//             base_cost = spell_data_table[spell_idx].research_cost;
+//         }
+//         
+//         research_bonus = Player_Spell_Research_Bonus(player_idx, spell_data_table[spell_idx].magic_realm);
+//         
+//         /* Adjusted Cost = Cost * 100 / (Bonus + 100) */
+//         candidate_costs[itr] = (unsigned int)((long)base_cost * 100 / (long)(100 + research_bonus));
+//     }
+//
+//     /* Determine which spell categories (AI_Groups) the wizard already knows */
+//     /* NOTE: Dasm definitely shows <= 90 */
+//     for(itr = 0; itr <= 90; itr++) {
+//         possessed_categories[itr] = 0;
+//     }
+//
+//     for(itr = 0; itr < 6; itr++) { /* 6 Realms */
+//         for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++) {
+//             if(_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known) {
+//                 known_spell_idx = ((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2 + 1);
+//                 possessed_categories[spell_data_table[known_spell_idx].AI_Group] = ST_TRUE;
+//             }
+//         }
+//     }
+//
+// /*
+// adjust research priority of the candidates by
+// manipulating their research costs: reduce to improve
+// their odds of being picked for research, or increase
+// to lower the odds; store the highest of the results
+// */
+//     highest_cost = 0L;
+//
+//     /* Assign weights based on category possession and personality */
+//     for(itr = 0; itr < candidate_count; itr++) {
+//         spell_idx = research_spells[itr];
+//         cnd_category = spell_data_table[spell_idx].AI_Group;
+//         
+//         weights_long[itr] = candidate_costs[itr];
+//         original_cost = candidate_costs[itr];
+//
+//         /* If we already have a spell in this category, heavily penalize weight (by multiplying cost) */
+//         if(possessed_categories[cnd_category] == ST_TRUE) {
+//             weights_long[itr] *= 4;
+//         } 
+//         else {
+//             /* Prioritize first spell in specific combat/utility categories */
+//             if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+//                 weights_long[itr] /= 10;
+//             }
+//             
+//             /* Various priority categories (Combat, Summons, City Buffs) */
+//             if(cnd_category == SGRP_CombatHarm_1  || cnd_category == SGRP_CombatCurse || cnd_category == SGRP_CombatHarm_2 || cnd_category == SGRP_CombatHarm_3 ||
+//                 cnd_category == SGRP_CE_1 || cnd_category == SGRP_CE_2 || cnd_category == SGRP_CE_3 || cnd_category == SGRP_CE_4 ||
+//                 cnd_category == SGRP_Disrupt || cnd_category == SGRP_CombatMisc || cnd_category == SGRP_Haste || cnd_category == SGRP_AnimateDead ||
+//                 cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+//                 weights_long[itr] /= 5;
+//             }
+//         }
+//
+//         /* Militarist objective prioritizes specific combat categories */
+//         if(_players[player_idx].Objective == OBJ_Militarist) {
+//             if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+//                 weights_long[itr] /= 2;
+//             }
+//         }
+//
+//         /* Specific category prioritization for first-time acquisition */
+//         if(possessed_categories[cnd_category] == 0) {
+//             if(cnd_category == SGRP_CombatSummon_1) weights_long[itr] /= 10;
+//             if(cnd_category == SGRP_CombatSummon_2) weights_long[itr] /= 7;
+//             if(cnd_category == SGRP_CombatSummon_3) weights_long[itr] /= 5;
+//             if(cnd_category == SGRP_IDK) weights_long[itr] /= 3;
+//         }
+//
+//         /* Realm-specific counter-spell prioritization (Consecration, Spell Ward) */
+//         if(_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == sbr_Chaos) { /* Death or Chaos */
+//             if(spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
+//                 weights_long[itr] /= 2;
+//             }
+//         } else {
+//             if(spell_idx == spl_Spell_Ward) { /* Spell Ward */
+//                 weights_long[itr] /= 2;
+//             }
+//         }
+//
+//         /* Utility/Meta-magic prioritization */
+//         if(spell_idx == spl_Disenchant_Area)  weights_long[itr] /= 2;
+//         if(spell_idx == spl_Disjunction)      weights_long[itr] /= 2;
+//         if(spell_idx == spl_Disenchant_True)  weights_long[itr] /= 5;
+//         if(spell_idx == spl_Disjunction_True) weights_long[itr] /= 5;
+//         if(spell_idx == spl_Summon_Hero)      weights_long[itr] /= 5;
+//
+//         /* De-prioritize Summoning Circle */
+//         if(spell_idx == spl_Summoning_Circle) { 
+//             weights_long[itr] <<= 1;
+//         }
+//
+//         /* If we already have this category, de-prioritize more */
+//         if(possessed_categories[cnd_category] == 1) {
+//             weights_long[itr] *= 3;
+//         }
+//
+//         /* High cost vs current research income checks */
+//         if((candidate_costs[itr] / 20) > research_income) {
+//             weights_long[itr] *= 2;
+//         }
+//         if((candidate_costs[itr] / 50) > research_income) {
+//             weights_long[itr] *= 5;
+//         }
+//
+//         /* Minimum weight clamping */
+//         if(weights_long[itr] < 1L && original_cost > 0) {
+//             weights_long[itr] = 1L;
+//         }
+//
+//         /* Categories with group 0 are not researchable or invalid candidates */
+//         if(spell_data_table[spell_idx].AI_Group == 0) {
+//             weights_long[itr] = 0L;
+//         }
+//
+//         if(weights_long[itr] > highest_cost) {
+//             highest_cost = weights_long[itr];
+//         }
+//     }
+//
+//     /* Convert costs to selection weights: Weight = 52 - (AdjCost * 50 / Highest) */
+//     weights_long_total = 0L;
+//     for(itr = 0; itr < candidate_count; itr++) {
+//         if(weights_long[itr] != 0L) {
+//             w = 52L - (weights_long[itr] * 50L / highest_cost);
+//             weights_long[itr] = (w < 1L) ? 1L : w;
+//         }
+//         weights_long_total += weights_long[itr];
+//     }
+//
+// #ifdef STU_DEBUG
+//     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d", player_idx, candidate_count, highest_cost, research_income);
+//     for(itr = 0; itr < candidate_count; itr++) {
+//         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
+//     }
+//     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] weights_total=%d", player_idx, weights_long_total);
+// #endif
+//
+//     /* Perform weighted random roll */
+//     selection = Get_Weighted_Choice_Long(&weights_long[0], candidate_count);
+//
+//     _players[player_idx].researching_spell_idx = research_spells[selection];
+//
+// #ifdef STU_DEBUG
+//     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d", player_idx, selection, _players[player_idx].researching_spell_idx);
+// #endif
+//
+//     AI_Metrics_Emit_Decision(_turn, player_idx, "RESEARCH",
+//         player_idx,
+//         _players[player_idx].researching_spell_idx,
+//         spell_data_table[_players[player_idx].researching_spell_idx].name,
+//         (int16_t)weights_long[selection],
+//         (int16_t)candidate_count);
+//
+//     return _players[player_idx].researching_spell_idx;
+// }
+
+/* CLAUDE  1:1 reconstruction against ovr156 AI_Spell_Research_Select.asm (BQ #139); the GEMINI rearrangement above is kept, commented out, for reference */
 int16_t AI_Spell_Research_Select(int16_t player_idx)
 {
     int16_t possessed_categories[92] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int32_t weights_long[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t candidate_costs[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint16_t candidate_costs[NUM_RESEARCH_SPELLS] = { 0, 0, 0, 0, 0, 0, 0, 0 };  /* unsigned: the asm zero-extends these (xor cx, cx / mov [bx+2], 0) and uses div / jbe on them */
     int32_t highest_cost = 0;
-    int32_t weights_long_total = 0;
+    int32_t weight_long_total = 0;
     int16_t cnd_category = 0;
     int16_t skill_income = 0;
     int16_t mana_income = 0;
@@ -89,31 +316,28 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
     int16_t research_bonus = 0;
     int16_t candidate_count = 0;
     int16_t original_cost = 0;
-    int16_t selection = 0;
+    int16_t choice = 0;
     int16_t * spellranks = 0;
     uint16_t * research_spells = 0;
-    int16_t itr = 0;
-    unsigned int spell_idx = 0;
-    unsigned int base_cost = 0;
-    int16_t known_spell_idx = 0;
-    int32_t w = 0;
+    int16_t itr = 0;  // _DI_
 
-    research_spells = _players[player_idx].research_spells;
+    research_spells = &_players[player_idx].research_spells[0];
 
     spellranks = &_players[player_idx].spellranks[0];
 
     candidate_count = 0;
 
-    for(itr = 0; itr < 8; itr++) {
-        if(research_spells[itr] != 0) {
+    for(itr = 0; itr < NUM_RESEARCH_SPELLS; itr++)
+    {
+        if(research_spells[itr] != 0)
+        {
             candidate_count++;
         }
     }
 
-    if(candidate_count == 0) {
-#ifdef STU_DEBUG
+    if(candidate_count == 0)
+    {
         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidate_count=0, no spells to research", player_idx);
-#endif
         _players[player_idx].researching_spell_idx = 0;
         _players[player_idx].research_ratio = 0;
         _players[player_idx].mana_ratio = 50;
@@ -121,43 +345,44 @@ int16_t AI_Spell_Research_Select(int16_t player_idx)
         return 0;
     }
 
-    /* BUG #1: Setting this to index 1 (Earth to Mud) just to satisfy research trait logic */
-    _players[player_idx].researching_spell_idx = 1; 
+    _players[player_idx].researching_spell_idx = spl_Earth_To_Mud;
+
     _players[player_idx].reevaluate_magic_power_countdown = 0;
 
     AI_Update_Magic_Power(player_idx);
+
+    /* OGBUG  research_income comes back including the research bonus of the spell set just above (spl_Earth_To_Mud: Sage Master, Nature Mastery, Nature books), not of any candidate; the candidate_costs below are also divided by a research bonus, so the (cost / 20) and (cost / 50) vs research_income tests count a research bonus on both sides */
     Player_Magic_Power_Income_Total(&mana_income, &research_income, &skill_income, player_idx);
 
-    /* Calculate adjusted research costs based on traits/bonuses */
-    /* OGBUG: #3 research-related traits are now applied twice (if it wasn't for BUGs #1 & #2) */
-    /* Gemini rearranged the logic here quite a bit */
-    for(itr = 0; itr < candidate_count; itr++) {
-        spell_idx = research_spells[itr];
-
-        if(spell_idx == spl_Spell_Of_Mastery) {
-            base_cost = _players[player_idx].som_research_cost;
-        } else {
-            base_cost = spell_data_table[spell_idx].research_cost;
+    for(itr = 0; itr < candidate_count; itr++)
+    {
+        if(research_spells[itr] == spl_Spell_Of_Mastery)
+        {
+            candidate_costs[itr] = _players[player_idx].som_research_cost;
         }
-        
-        /* OGBUG: passes magic_realm instead of spell index */
-        research_bonus = Player_Spell_Research_Bonus(player_idx, spell_data_table[spell_idx].magic_realm);
-        
-        /* Adjusted Cost = Cost * 100 / (Bonus + 100) */
-        candidate_costs[itr] = (unsigned int)((long)base_cost * 100 / (long)(100 + research_bonus));
+        else
+        {
+            candidate_costs[itr] = spell_data_table[research_spells[itr]].research_cost;
+        }
+
+        /* OGBUG  passes the candidate's magic_realm (sbr_Nature 0 .. sbr_Arcane 5) where Player_Spell_Research_Bonus() takes a spell index, so each candidate gets the bonus of spell #<realm>: a Nature candidate gets spell 0 'None' (realm -1, so no realm bonus); a Sorcery / Chaos / Life / Death / Arcane candidate gets one of spells 1-5 (all Nature, none a summoning), so Nature Mastery and Nature books apply to it; the candidate's own Mastery / books / Runemaster and Conjurer never apply; only Sage Master is applied as intended */
+        research_bonus = Player_Spell_Research_Bonus(player_idx, spell_data_table[research_spells[itr]].magic_realm);
+
+        candidate_costs[itr] = (uint16_t)(((int32_t)candidate_costs[itr] * 100) / ((int32_t)research_bonus + 100));
     }
 
-    /* Determine which spell categories (AI_Groups) the wizard already knows */
-    /* NOTE: Dasm definitely shows <= 90 */
-    for(itr = 0; itr <= 90; itr++) {
-        possessed_categories[itr] = 0;
+    for(itr = 0; itr <= 90; itr++)
+    {
+        possessed_categories[itr] = ST_FALSE;
     }
 
-    for(itr = 0; itr < 6; itr++) { /* 6 Realms */
-        for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++) {
-            if(_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known) {
-                known_spell_idx = ((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2 + 1);
-                possessed_categories[spell_data_table[known_spell_idx].AI_Group] = ST_TRUE;
+    for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)
+    {
+        for(itr2 = 0; itr2 < NUM_SPELLS_PER_MAGIC_REALM; itr2++)
+        {
+            if(_players[player_idx].spells_list[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2)] == sls_Known)
+            {
+                possessed_categories[spell_data_table[((itr * NUM_SPELLS_PER_MAGIC_REALM) + itr2 + 1)].AI_Group] = ST_TRUE;
             }
         }
     }
@@ -168,135 +393,252 @@ manipulating their research costs: reduce to improve
 their odds of being picked for research, or increase
 to lower the odds; store the highest of the results
 */
-    highest_cost = 0L;
+    highest_cost = 0;
 
-    /* Assign weights based on category possession and personality */
-    for(itr = 0; itr < candidate_count; itr++) {
-        spell_idx = research_spells[itr];
-        cnd_category = spell_data_table[spell_idx].AI_Group;
-        
+    for(itr = 0; itr < candidate_count; itr++)
+    {
+        cnd_category = spell_data_table[research_spells[itr]].AI_Group;
+
         weights_long[itr] = candidate_costs[itr];
-        original_cost = candidate_costs[itr];
 
-        /* If we already have a spell in this category, heavily penalize weight (by multiplying cost) */
-        if(possessed_categories[cnd_category] == ST_TRUE) {
-            weights_long[itr] *= 4;
-        } 
-        else {
-            /* Prioritize first spell in specific combat/utility categories */
-            if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+        original_cost = (int16_t)weights_long[itr];
+
+        if(possessed_categories[cnd_category] == ST_TRUE)
+        {
+            weights_long[itr] <<= 2;
+        }
+        else
+        {
+            if(
+                (possessed_categories[cnd_category] == ST_FALSE)
+                &&
+                (
+                    (cnd_category == SGRP_CombatSummon_1)
+                    ||
+                    (cnd_category == SGRP_CombatSummon_2)
+                    ||
+                    (cnd_category == SGRP_CombatSummon_3)
+                    ||
+                    (cnd_category == SGRP_IDK)
+                )
+            )
+            {
                 weights_long[itr] /= 10;
             }
-            
-            /* Various priority categories (Combat, Summons, City Buffs) */
-            if(cnd_category == SGRP_CombatHarm_1  || cnd_category == SGRP_CombatCurse || cnd_category == SGRP_CombatHarm_2 || cnd_category == SGRP_CombatHarm_3 ||
-                cnd_category == SGRP_CE_1 || cnd_category == SGRP_CE_2 || cnd_category == SGRP_CE_3 || cnd_category == SGRP_CE_4 ||
-                cnd_category == SGRP_Disrupt || cnd_category == SGRP_CombatMisc || cnd_category == SGRP_Haste || cnd_category == SGRP_AnimateDead ||
-                cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
+
+            if(
+                (possessed_categories[cnd_category] == ST_FALSE)
+                &&
+                (
+                    (cnd_category == SGRP_CombatHarm_1)
+                    ||
+                    (cnd_category == SGRP_CombatCurse)
+                    ||
+                    (cnd_category == SGRP_CombatHarm_2)
+                    ||
+                    (cnd_category == SGRP_CombatHarm_3)
+                    ||
+                    (cnd_category == SGRP_CE_1)
+                    ||
+                    (cnd_category == SGRP_CE_2)
+                    ||
+                    (cnd_category == SGRP_CE_3)
+                    ||
+                    (cnd_category == SGRP_CE_4)
+                    ||
+                    (cnd_category == SGRP_Disrupt)
+                    ||
+                    (cnd_category == SGRP_CombatMisc)
+                    ||
+                    (cnd_category == SGRP_Haste)
+                    ||
+                    (cnd_category == SGRP_AnimateDead)
+                    ||
+                    (cnd_category == SGRP_CombatSummon_1)
+                    ||
+                    (cnd_category == SGRP_CombatSummon_2)
+                    ||
+                    (cnd_category == SGRP_CombatSummon_3)
+                    ||
+                    (cnd_category == SGRP_IDK)
+                )
+            )
+            {
                 weights_long[itr] /= 5;
             }
         }
 
-        /* Militarist objective prioritizes specific combat categories */
-        if(_players[player_idx].Objective == OBJ_Militarist) {
-            if(cnd_category == SGRP_CombatSummon_1 || cnd_category == SGRP_CombatSummon_2 || cnd_category == SGRP_CombatSummon_3 || cnd_category == SGRP_IDK) {
-                weights_long[itr] /= 2;
-            }
+        if(
+            (_players[player_idx].Objective == OBJ_Militarist)
+            &&
+            (
+                (cnd_category == SGRP_CombatSummon_1)
+                ||
+                (cnd_category == SGRP_CombatSummon_2)
+                ||
+                (cnd_category == SGRP_CombatSummon_3)
+                ||
+                (cnd_category == SGRP_IDK)
+            )
+        )
+        {
+            weights_long[itr] /= 2;
         }
 
-        /* Specific category prioritization for first-time acquisition */
-        if(possessed_categories[cnd_category] == 0) {
-            if(cnd_category == SGRP_CombatSummon_1) weights_long[itr] /= 10;
-            if(cnd_category == SGRP_CombatSummon_2) weights_long[itr] /= 7;
-            if(cnd_category == SGRP_CombatSummon_3) weights_long[itr] /= 5;
-            if(cnd_category == SGRP_IDK) weights_long[itr] /= 3;
+        if(
+            (possessed_categories[cnd_category] == ST_FALSE)
+            &&
+            (cnd_category == SGRP_CombatSummon_1)
+        )
+        {
+            weights_long[itr] /= 10;
         }
 
-        /* Realm-specific counter-spell prioritization (Consecration, Spell Ward) */
-        if(_players[player_idx].Prim_Realm == 1 || _players[player_idx].Prim_Realm == sbr_Chaos) { /* Death or Chaos */
-            if(spell_idx == spl_Consecration || spell_idx == spl_Spell_Ward) {
-                weights_long[itr] /= 2;
-            }
-        } else {
-            if(spell_idx == spl_Spell_Ward) { /* Spell Ward */
-                weights_long[itr] /= 2;
-            }
+        if(
+            (possessed_categories[cnd_category] == ST_FALSE)
+            &&
+            (cnd_category == SGRP_CombatSummon_2)
+        )
+        {
+            weights_long[itr] /= 7;
         }
 
-        /* Utility/Meta-magic prioritization */
-        if(spell_idx == spl_Disenchant_Area)  weights_long[itr] /= 2;
-        if(spell_idx == spl_Disjunction)      weights_long[itr] /= 2;
-        if(spell_idx == spl_Disenchant_True)  weights_long[itr] /= 5;
-        if(spell_idx == spl_Disjunction_True) weights_long[itr] /= 5;
-        if(spell_idx == spl_Summon_Hero)      weights_long[itr] /= 5;
+        if(
+            (possessed_categories[cnd_category] == ST_FALSE)
+            &&
+            (cnd_category == SGRP_CombatSummon_3)
+        )
+        {
+            weights_long[itr] /= 5;
+        }
 
-        /* De-prioritize Summoning Circle */
-        if(spell_idx == spl_Summoning_Circle) { 
+        if(
+            (possessed_categories[cnd_category] == ST_FALSE)
+            &&
+            (cnd_category == SGRP_IDK)
+        )
+        {
+            weights_long[itr] /= 3;
+        }
+
+        /* the asm reads Prim_Realm with no player index (cmp [_players.Prim_Realm], sbr_Death), so this is _players[0], the human player's primary realm */
+        if(
+            (
+                (
+                    (_players[HUMAN_PLAYER_IDX].Prim_Realm == sbr_Death)
+                    ||
+                    (_players[HUMAN_PLAYER_IDX].Prim_Realm == sbr_Chaos)
+                )
+                &&
+                (research_spells[itr] == spl_Consecration)
+            )
+            ||
+            (research_spells[itr] == spl_Spell_Ward)
+        )
+        {
+            weights_long[itr] /= 2;
+        }
+
+        if(research_spells[itr] == spl_Disenchant_Area)
+        {
+            weights_long[itr] /= 2;
+        }
+
+        if(research_spells[itr] == spl_Disjunction)
+        {
+            weights_long[itr] /= 2;
+        }
+
+        if(research_spells[itr] == spl_Disenchant_True)
+        {
+            weights_long[itr] /= 5;
+        }
+
+        if(research_spells[itr] == spl_Disjunction_True)
+        {
+            weights_long[itr] /= 5;
+        }
+
+        if(research_spells[itr] == spl_Summon_Hero)
+        {
+            weights_long[itr] /= 5;
+        }
+
+        if(research_spells[itr] == spl_Summoning_Circle)
+        {
             weights_long[itr] <<= 1;
         }
 
-        /* If we already have this category, de-prioritize more */
-        if(possessed_categories[cnd_category] == 1) {
+        if(possessed_categories[spell_data_table[research_spells[itr]].AI_Group] == ST_TRUE)
+        {
             weights_long[itr] *= 3;
         }
 
-        /* High cost vs current research income checks */
-        if((candidate_costs[itr] / 20) > research_income) {
+        if((candidate_costs[itr] / 20) > (uint16_t)research_income)
+        {
             weights_long[itr] *= 2;
         }
-        if((candidate_costs[itr] / 50) > research_income) {
+
+        if((candidate_costs[itr] / 50) > (uint16_t)research_income)
+        {
             weights_long[itr] *= 5;
         }
 
-        /* Minimum weight clamping */
-        if(weights_long[itr] < 1L && original_cost > 0) {
-            weights_long[itr] = 1L;
+        if(
+            (weights_long[itr] < 1)
+            &&
+            (original_cost > 0)
+        )
+        {
+            weights_long[itr] = 1;
         }
 
-        /* Categories with group 0 are not researchable or invalid candidates */
-        if(spell_data_table[spell_idx].AI_Group == 0) {
-            weights_long[itr] = 0L;
+        if(spell_data_table[research_spells[itr]].AI_Group == 0)
+        {
+            weights_long[itr] = 0;
         }
 
-        if(weights_long[itr] > highest_cost) {
+        if(weights_long[itr] > highest_cost)
+        {
             highest_cost = weights_long[itr];
         }
     }
 
-    /* Convert costs to selection weights: Weight = 52 - (AdjCost * 50 / Highest) */
-    weights_long_total = 0L;
-    for(itr = 0; itr < candidate_count; itr++) {
-        if(weights_long[itr] != 0L) {
-            w = 52L - (weights_long[itr] * 50L / highest_cost);
-            weights_long[itr] = (w < 1L) ? 1L : w;
+    weight_long_total = 0;
+
+    for(itr = 0; itr < candidate_count; itr++)
+    {
+        if(weights_long[itr] != 0)
+        {
+            weights_long[itr] = (52 - ((weights_long[itr] * 50) / highest_cost));
+
+            if(weights_long[itr] < 0)
+            {
+                weights_long[itr] = 1;
+            }
         }
-        weights_long_total += weights_long[itr];
+
+        weight_long_total += weights_long[itr];
     }
 
 #ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] candidates=%d highest_cost=%d research_income=%d", player_idx, candidate_count, highest_cost, research_income);
-    for(itr = 0; itr < candidate_count; itr++) {
+    for(itr = 0; itr < candidate_count; itr++)
+    {
         LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d]   [%d] spell=%3d cost=%4d adj_cost=%4d weight=%4ld category=%d %s", player_idx, itr, research_spells[itr], (research_spells[itr] == spl_Spell_Of_Mastery) ? _players[player_idx].som_research_cost : spell_data_table[research_spells[itr]].research_cost, candidate_costs[itr], weights_long[itr], spell_data_table[research_spells[itr]].AI_Group, possessed_categories[spell_data_table[research_spells[itr]].AI_Group] ? "(have)" : "");
     }
-    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] weights_total=%d", player_idx, weights_long_total);
+    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] weights_total=%d", player_idx, weight_long_total);
 #endif
 
-    /* Perform weighted random roll */
-    selection = Get_Weighted_Choice_Long(&weights_long[0], candidate_count);
+    choice = Get_Weighted_Choice_Long(&weights_long[0], candidate_count);
 
-    _players[player_idx].researching_spell_idx = research_spells[selection];
+    _players[player_idx].researching_spell_idx = research_spells[choice];
 
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d", player_idx, selection, _players[player_idx].researching_spell_idx);
-#endif
+    LOG_DEBUG(LOG_CAT_AIMOVE, "[AI_RESEARCH] player[%d] SELECTED [%d] spell=%d", player_idx, choice, _players[player_idx].researching_spell_idx);
 
-    AI_Metrics_Emit_Decision(_turn, player_idx, "RESEARCH",
-        player_idx,
-        _players[player_idx].researching_spell_idx,
-        spell_data_table[_players[player_idx].researching_spell_idx].name,
-        (int16_t)weights_long[selection],
-        (int16_t)candidate_count);
+    AI_Metrics_Emit_Decision(_turn, player_idx, "RESEARCH", player_idx, _players[player_idx].researching_spell_idx, spell_data_table[_players[player_idx].researching_spell_idx].name, (int16_t)weights_long[choice], (int16_t)candidate_count);
 
+    /* the asm has no return expression here; AX is left holding research_spells[choice] from the store above */
     return _players[player_idx].researching_spell_idx;
 }
 
@@ -378,7 +720,11 @@ void AI_Spell_Select(int16_t player_idx)
             spell_idx = spl_Spell_Of_Mastery;
             break;
         default:
-            spell_idx = 0;
+            // spell_idx = 0;
+            /* CLAUDE */  /* REBUG */  /* asm: cmp bx, 10 / ja loc_E3AEF - no store: spell_idx (DI) keeps the caller's DI */
+            /* OGBUG  a category outside 0..10 leaves spell_idx unassigned; Get_Weighted_Choice(..., 11) returns 0..10, so this is not reached */
+            /* HACK */  /* CLAUDE */  /* in-range stand-in for the caller's DI (it indexes spell_data_table below) */
+            spell_idx = Stack_Garbage_Range(0, spl_Spell_Of_Return);
             break;
     }
 
@@ -386,11 +732,15 @@ void AI_Spell_Select(int16_t player_idx)
     /* Turn-based cost check: If spell takes more than ~50 turns of "perceived" mana, cancel it */
     Player_Resource_Income_Total(player_idx, &gold_income, &food_income, &mana_income);
     mana_per_turn = ((_players[player_idx].mana_reserve / 10) + mana_income);
+    /* OGBUG  the only test on the picked spell: casting_cost / 50 against mana_per_turn; nothing here checks whether a picked global enchantment is already active for this wizard (see AI_Select_Spell_Group_Suppression()) */
     if((spell_data_table[spell_idx].casting_cost / 50) > mana_per_turn)
     {
         spell_idx = 0;
     }
 
+    /* OGBUG  spellbook_page_spell_index is never written (asm: only push [bp+spellbook_page_spell_index]): stack garbage; Cast_Spell_Overland_Do() reads it only for the human player */
+    /* HACK */  /* CLAUDE */  /* stand-in for the unwritten local (ReMoM's 0 initialiser would make it 0) */
+    spellbook_page_spell_index = Stack_Garbage();
     Cast_Spell_Overland_Do(player_idx, spell_idx, spellbook_page_spell_index);
 
 }
@@ -483,7 +833,9 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     }
 
     summon_wp = _players[player_idx].summon_wp;
+    /* OGBUG  dead store: the summoning-city landmass index is computed and never read */
     niu_summon_landmass_idx = _landmasses[summon_wp * 960 + _players[player_idx].summon_wy * WORLD_WIDTH + _players[player_idx].summon_wx];
+    /* OGBUG  dead store: summon_city_idx is set here and in the loop below and never read */
     summon_city_idx = 0;
 
     for(itr = 0; itr < _cities; itr++)
@@ -522,9 +874,11 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
         }
     }
 
-    if(Have_Spirit != ST_TRUE)
+    // if(Have_Spirit != ST_TRUE)
+    /* CLAUDE */  /* REBUG */  if(Have_Spirit == ST_FALSE)  /* asm: cmp [bp+Have_Spirit], 0 / jnz */
     {
-        for(itr = 0; itr < NUM_NODES; itr++)
+        // for(itr = 0; itr < NUM_NODES; itr++)
+        /* CLAUDE */  /* REBUG */  for(itr = 0; ((itr < NUM_NODES) && (AI_NodeOpportunity == ST_FALSE)); itr++)  /* asm: cmp itr, 30 / jge / cmp [AI_NodeOpportunity], 0 / jz loop */
         {
             if(_NODES[itr].wp == summon_wp && _NODES[itr].owner_idx != player_idx)
             {
@@ -537,6 +891,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
         }
     }
 
+    /* OGBUG  dead stores: Own_Army_Value and Hostile_Army_Value are summed here and never read */
     Own_Army_Value = 0;
     for(itr = 0; itr < _ai_all_own_stack_count; itr++)
     {
@@ -546,7 +901,8 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     Hostile_Army_Value = 0;
     for(itr = 0; itr < _ai_all_enemy_stack_count; itr++)
     {
-        Hostile_Army_Value += _ai_all_enemy_stacks[itr].value;
+        // Hostile_Army_Value += _ai_all_enemy_stacks[itr].value;
+        /* CLAUDE */  /* REBUG */  Hostile_Army_Value += (uint16_t)_ai_all_enemy_stacks[itr].value;  /* asm: add [Hostile_Army_Value], ax / adc [Hostile_Army_Value+2], 0 - zero-extended (the own sum above uses cwd) */
     }
 
     if(_players[player_idx].conjurer != 0 || _players[player_idx].channeler != 0)
@@ -571,7 +927,8 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
                 if(_CITIES[itr].enchantments[PESTILENCE] != 0) modifiers[4] += 40;
                 if(_CITIES[itr].enchantments[FAMINE] != 0) modifiers[4] += 40;
             }
-            else if(_CITIES[itr].owner_idx == 0)
+            // else if(_CITIES[itr].owner_idx == 0)
+            /* CLAUDE */  /* REBUG */  if(_CITIES[itr].owner_idx == 0)  /* asm loc_E3EB0: both branches fall into cmp [es:bx+s_CITY.owner_idx], 0 / jnz - a separate if, not an else */
             {
                 if(_CITIES[itr].enchantments[FLYING_FORTRESS] != 0) modifiers[4] += 300;
             }
@@ -581,7 +938,8 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
         {
             if(_NODES[itr].owner_idx == player_idx)
             {
-                if(_NODES[itr].flags & NF_WARPED) modifiers[4] += 100;
+                // if(_NODES[itr].flags & NF_WARPED) modifiers[4] += 100;
+                /* CLAUDE */  /* REBUG */  if((_NODES[itr].flags & NF_WARPED) > 0) modifiers[4] += 100;  /* asm: cbw / test ax, NF_WARPED / jle */
             }
         }
 
@@ -591,7 +949,8 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
         {
             if(_UNITS[itr].owner_idx == 0)
             {
-                if(((unsigned int *)&_UNITS[itr].enchantments)[0] != 0 || ((unsigned int *)&_UNITS[itr].enchantments)[1] != 0)
+                // if(((unsigned int *)&_UNITS[itr].enchantments)[0] != 0 || ((unsigned int *)&_UNITS[itr].enchantments)[1] != 0)
+                /* CLAUDE */  /* REBUG */  if(_UNITS[itr].enchantments != 0)  /* asm: mov ax, [word ptr s_UNIT.enchantments] / or ax, [word ptr s_UNIT.enchantments+2] / jz - the 32-bit field; the 32-bit unsigned int [1] read the 4 bytes past it */
                 {
                     if(_landmasses[_UNITS[itr].wp * 960 + _UNITS[itr].wy * WORLD_WIDTH + _UNITS[itr].wx] == fortress_landmass_idx)
                     {
@@ -698,6 +1057,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
         }
         for(itr = 0; itr < _cp_hostile_opponent_count; itr++)
         {
+            /* OGBUG  reads _players[player_idx].Dipl.Hidden_Rel[opponent], the row of the AI, where the diplomacy code keeps a wizard's hidden opinion of another in the other wizard's row (Diplomacy_Break_Treaty() reads _players[0].Hidden_Rel[partner] for the partner's opinion of the human): the hostile-spell target weight follows the opponent's hidden opinion of the AI, not the AI's of the opponent */
             Opponent_Weights[itr] = (
                 (100 - _players[player_idx].Dipl.Visible_Rel[_cp_hostile_opponents[itr]]) -
                 (_players[player_idx].Dipl.Hidden_Rel[_cp_hostile_opponents[itr]] * 2)
@@ -733,6 +1093,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
             g_ai_spell_group_flags[SGRP_Earthquake] == 1 ||
             g_ai_spell_group_flags[0x4A] == 1 ||
             g_ai_spell_group_flags[SGRP_TimeStop] == 1 ||
+            /* OGBUG  this term reads _players[player_idx].history[0x53] (Wizard +0x3B5, a Historian power-history byte), not g_ai_spell_group_flags[0x53]: spell group 0x53 is never checked, and the test passes whenever that history byte happens to be 1 */
             ((unsigned char *)&_players[player_idx].history)[0x53] == 1 ||
             g_ai_spell_group_flags[SGRP_DeathWish] == 1 ||
             g_ai_spell_group_flags[SGRP_HarmWizard] == 1) {
@@ -810,6 +1171,7 @@ int16_t AI_Select_Spell_Group(int16_t player_idx)
     if(players_spell_list[spl_Wind_Mastery] == sls_Known && _players[player_idx].Globals[WIND_MASTERY] == 0) modifiers[9] += 75;
     if(players_spell_list[spl_Awareness] == sls_Known && _players[player_idx].Globals[AWARENESS] == 0) modifiers[9] += 500;
     if(players_spell_list[spl_Aura_Of_Majesty] == sls_Known && _players[player_idx].Globals[AURA_OF_MAJESTY] == 0) modifiers[9] += 100;
+    /* OGBUG  Suppress Magic's weight goes into category 8 (AI_Select_Spell_Group_Suppression()), which only picks Nature's Wrath / Life Force / Tranquility / Evil Omens: the +100 raises the chance of one of those, never of Suppress Magic */
     if(players_spell_list[spl_Suppress_Magic] == sls_Known && _players[player_idx].Globals[SUPPRESS_MAGIC] == 0) modifiers[8] += 100;
     if(players_spell_list[spl_Spell_Binding] == sls_Known) modifiers[9] += 100;
     if(players_spell_list[spl_Great_Wasting] == sls_Known && _players[player_idx].Globals[GREAT_WASTING] == 0) modifiers[9] += 100;
@@ -960,6 +1322,7 @@ void AI_Compute_Spells_Info(int16_t player_idx)
             if(ai_spell_group == SGRP_SpellLock)      { continue; }
             if(ai_spell_group == SGRP_Scouting)       { continue; }
 
+            /* OGBUG  no bound test against the 50-byte block from Allocate_AI_Data(): from the 51st listed spell on, the writes run into the next Near_Allocate_Next() block, _ai_landmass_own_strengths[0] (inside near_buffer, as in the OG) */
             g_niu_ai_spell_info_list[g_niu_ai_spell_info_count] = (unsigned char)spell_idx;
 
             /* Mark this spell category as available for the AI */
@@ -1055,7 +1418,8 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
         AI_OVL_SplPriorities[9] = spell_data_table[spl_Great_Wyrm].casting_cost / 10;
     }
     if(players_spell_list[spl_Floating_Island] == sls_Known) {
-        if(ai_transport_count < 10 && (_turn / WORLD_WIDTH) > ai_transport_count) {
+        // if(ai_transport_count < 10 && (_turn / WORLD_WIDTH) > ai_transport_count) {
+        /* CLAUDE */  /* REBUG */  if(ai_transport_count < 10 && (_turn / 60) > ai_transport_count) {  /* asm loc_E4C16: _turn / 60 (a turn divisor, not the map width) */
             AI_OVL_SplPriorities[10] = spell_data_table[spl_Floating_Island].casting_cost / 5;
         }
     }
@@ -1141,6 +1505,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
     AI_OVL_SplPriorities[8] = AI_OVL_SplPriorities[8] * AI_OVL_SplPriorities[8];
     AI_OVL_SplPriorities[9] = AI_OVL_SplPriorities[9] * AI_OVL_SplPriorities[9];
     AI_OVL_SplPriorities[10] = AI_OVL_SplPriorities[10] * AI_OVL_SplPriorities[10];
+    /* OGBUG  Storm Giant (AI_OVL_SplPriorities[11], +16h) is never squared (the squaring run goes +14h -> +18h): it weighs casting_cost / 10 against the (casting_cost / 10) squared of every other creature summon, so the AI almost never summons it */
     /* Note: AI_OVL_SplPriorities[11] (Storm Giant) is NOT squared in the original disassembly */
     AI_OVL_SplPriorities[12] = AI_OVL_SplPriorities[12] * AI_OVL_SplPriorities[12];
     AI_OVL_SplPriorities[13] = AI_OVL_SplPriorities[13] * AI_OVL_SplPriorities[13];
@@ -1226,6 +1591,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
     have_the_chosen = ST_FALSE;
     for(unit_idx = 0; unit_idx < _units; unit_idx++)
     {
+        /* OGBUG  tests for unit type 39 (ut_BarbSpearmen), not 34 (ut_Chosen, Torin): have_the_chosen is set when the AI owns any Barbarian Spearmen */
         if(_UNITS[unit_idx].owner_idx == player_idx && _UNITS[unit_idx].type == ut_BarbSpearmen)  /* OGBUG: should be The Chosen, Barbarian Spearmen */
         {
             have_the_chosen = ST_TRUE;
@@ -1234,6 +1600,7 @@ int16_t AI_Select_Spell_Group_Summon(int16_t player_idx)
 
     if(Player_Hero_Count(player_idx) < NUM_HERO_SLOTS)
     {
+        /* OGBUG  inverted: Incarnation gets weight 500 only when have_the_chosen is set (the AI owns Barbarian Spearmen), and because of the else-if that also keeps Summon Champion and Summon Hero at 0 */
         /* OGBUG: test inverted, should be `have_the_chosen != ST_TRUE` */
         if(players_spell_list[spl_Incarnation] == sls_Known && have_the_chosen == ST_TRUE)
         {
@@ -1665,6 +2032,7 @@ int16_t AI_Select_Spell_Group_Suppression(int16_t player_idx)
         AI_OVL_SplPriorities[itr] = 0;
     }
 
+    /* OGBUG  each of the four globals is weighted when it is merely known (sls_Known); the AI's own Globals[] is never tested, so it can pick a global it already has active (AI_Spell_Select() only applies a cost check) */
     if(players_spell_list[spl_Natures_Wrath] == sls_Known)
     {
         AI_OVL_SplPriorities[1] = spell_data_table[spl_Natures_Wrath].casting_cost / 10;
@@ -1913,7 +2281,7 @@ int16_t AI_Select_Spell_Group_Global(int16_t player_idx)
 
     choice = Get_Weighted_Choice(AI_OVL_SplPriorities, 50);
 
-    switch (choice)
+    switch(choice)
     {
         case 1:
             return spl_Herb_Mastery;
@@ -2062,10 +2430,14 @@ int16_t AI_Select_Spell_Group_Attack(int16_t player_idx)
     }
 
     /* 5. Time Stop */
+    /* OGBUG  Time Stop is weighted whenever it is known and mana_reserve >= 3000, without testing the AI's own Globals[TIME_STOP]: the AI can pick Time Stop while its own Time Stop is running (the only own-global test in this picker is Raise Volcano's Armageddon) */
     if(players_spell_list[spl_Time_Stop] == sls_Known)
     {
+        /* CLAUDE */  // if(_players[player_idx].mana_reserve >= 3000)
+        /* CLAUDE */  /* REBUG */  // mana_reserve is uint16_t in ReMoM; the asm (ovr156/AI_OVL_PickCurse.asm 69-70 'cmp [_players.mana_reserve+bx], 3000 / jl') compares it signed
         if(_players[player_idx].mana_reserve >= 3000)
         {
+
             AI_OVL_SplPriorities[5] = spell_data_table[spl_Time_Stop].casting_cost / 10;
         }
     }
@@ -2338,6 +2710,7 @@ int16_t AI_Select_Spell_Group_City_Enchantment(int16_t player_idx)
     }
 
     if(players_spell_list[spl_Move_Fortress] == sls_Known) {
+        /* OGBUG  no test of the fortress record's active flag here or in AITP_Move_Fortress(): a banished wizard (no fortress) still gets Move Fortress weight _turn / 15 whenever AITP_Move_Fortress() returns a city */
         if(AITP_Move_Fortress(player_idx, &target_city_idx) == 1) {
             AI_OVL_SplPriorities[5] = _turn / 15;
         }
@@ -2859,6 +3232,7 @@ int16_t AITP_Transmute(int16_t player_idx, int16_t * targeted_wx, int16_t * targ
                             city_area_wx -= WORLD_WIDTH;
                         }
 
+                        /* OGBUG  mineral values are numbers, not bit flags: '& TS_COAL (2) || & TS_IRON (1) || & TS_SILVER (3)' accepts any value with bit 0 or 1 set, so besides iron and coal it also takes silver (3), gems (5), mithril (6), adamantium (7) and crysx (9) squares; only gold (4) and quork (8) are rejected */
                         if(
                             ((GET_TERRAIN_SPECIAL(city_area_wx, city_area_wy, city_wp) & TS_COAL) != 0) /* OGBUG: this is not a bitflag */
                             ||
@@ -3086,6 +3460,9 @@ int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
     int16_t target_city_idx = 0;
     int16_t itr_cities = 0;
 
+    /* OGBUG  the fortress record's active flag is never tested: for a banished wizard, a city now standing on the old fortress square (someone else's) becomes fortress_city and any own city with a stronger garrison is returned; with no city there, fortress_city (bp-6) is never written and is stack garbage: _ai_all_own_garrison_strengths[] is read at that garbage index and the `itr_cities == fortress_city` skip uses it */
+    /* HACK */  fortress_city = Stack_Garbage_Range(_cities, INT16_MAX);  /* CLAUDE */  /* OG: uninitialised; a stand-in that matches no city */
+
     /* Locate the player's fortress city */
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
@@ -3098,7 +3475,15 @@ int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
     }
 
     target_city_idx = ST_UNDEFINED;
-    garrison_strength = _ai_all_own_garrison_strengths[fortress_city];
+    // garrison_strength = _ai_all_own_garrison_strengths[fortress_city];
+    /* HACK */  if((fortress_city >= 0) && (fortress_city < NUM_CITIES))  /* CLAUDE */  /* the 100-entry Near_Allocate_Next() block */
+    /* HACK */  {
+    /* HACK */      garrison_strength = _ai_all_own_garrison_strengths[fortress_city];
+    /* HACK */  }
+    /* HACK */  else
+    /* HACK */  {
+    /* HACK */      garrison_strength = Stack_Garbage();  /* CLAUDE */  /* OG: reads near memory at the garbage index */
+    /* HACK */  }
 
     /* Find the player's city with the strongest garrison (excluding the fortress itself)
        that is stronger than the current fortress garrison. */
@@ -3133,8 +3518,8 @@ int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
 
 // WZD o156p21
 /**
- * @brief AI target picker for Flying Fortress — verifies if the fortress has the
- *        Flying Fortress enchantment and returns the fortress city if it does.
+ * @brief AI target picker for Flying Fortress — returns the fortress city only if it
+ *        already has the Flying Fortress enchantment (OGBUG: inverted test).
  *
  * @details
  * This function validates the fortress's eligibility for the Flying Fortress spell
@@ -3163,14 +3548,12 @@ int16_t AITP_Move_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
  *         and @p targeted_city_idx was populated; ST_FALSE if the fortress does not have
  *         the enchantment or if no fortress is found.
  *
- * @note Unlike most AITP_* targeting functions that select cities WITHOUT an enchantment,
- *       this function returns TRUE when the enchantment IS PRESENT. The logic is inverted
- *       from the standard enchantment-seeking functions.
+ * @note OGBUG: unlike the other AITP_* city-enchantment pickers, which select cities WITHOUT
+ *       the enchantment, this one returns TRUE only when the enchantment IS PRESENT, so the
+ *       AI never casts Flying Fortress fresh, only again on a fortress that already has it.
  * @note The fortress location is determined by coordinate matching (@c _FORTRESSES[])
  *       against @c _CITIES[]; this assumes the fortress is always at a city location.
  * @note Only the player's fortress is checked; other cities are not considered as targets.
- * @note This function validates the enchantment presence rather than selecting a target city;
- *       it may be used for validation or state-checking rather than spell casting.
  *
  * @see AI_Select_Spell_Group_City_Enchantment(), _FORTRESSES[]
  */
@@ -3182,21 +3565,27 @@ int16_t AITP_Flying_Fortress(int16_t player_idx, int16_t * targeted_city_idx)
 
     for(itr_cities = 0; itr_cities < _cities; itr_cities++)
     {
-        if(_CITIES[itr_cities].wx == _FORTRESSES[player_idx].wx &&
-            _CITIES[itr_cities].wy == _FORTRESSES[player_idx].wy &&
-            _CITIES[itr_cities].wp == _FORTRESSES[player_idx].wp)
+        if(
+            (_CITIES[itr_cities].wx == _FORTRESSES[player_idx].wx)
+            &&
+            (_CITIES[itr_cities].wy == _FORTRESSES[player_idx].wy)
+            &&
+            (_CITIES[itr_cities].wp == _FORTRESSES[player_idx].wp)
+        )
         {
             fortress_city_idx = itr_cities;
         }
     }
 
-    if(_CITIES[fortress_city_idx].enchantments[FLYING_FORTRESS] != ST_FALSE)
+    /* OGBUG  fortress_city_idx is never initialised in the asm: with no city on the fortress square, this reads stack garbage */
+    /* OGBUG  inverted: targets the fortress only if it ALREADY has Flying Fortress, so the AI never casts it fresh */
+    if(_CITIES[fortress_city_idx].enchantments[FLYING_FORTRESS] == ST_FALSE)
     {
-        target_city_idx = fortress_city_idx;
+        target_city_idx = ST_UNDEFINED;
     }
     else
     {
-        target_city_idx = ST_UNDEFINED;
+        target_city_idx = fortress_city_idx;
     }
 
     if(target_city_idx == ST_UNDEFINED)
@@ -4096,6 +4485,7 @@ void Cast_Spell_Target_Error(int16_t spell_idx)
 void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 {
 
+    /* OGBUG  the AI's spell pickers choose these globals on 'known' alone (AI_Select_Spell_Group_Suppression(): Nature's Wrath / Life Force / Tranquility / Evil Omens, no test of the caster's realms), but the tests below cancel the AI's own Eternal Night unless Death is a main realm, Evil Omens when Life / Nature is, Chaos Surge unless Chaos is, Tranquility when Chaos is, Life Force when Death is: e.g. a Life / Chaos wizard can spend a whole cast on Tranquility and lose it on the next pass */
     if(
         (_players[player_idx].Globals[ETERNAL_NIGHT] != 0)
         &&
@@ -4171,6 +4561,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
 
     }
 
+    /* OGBUG  a mana_reserve of exactly 0 cancels every global enchantment the AI holds, whatever their upkeep */
     if(_players[player_idx].mana_reserve == 0)
     {
 
@@ -4180,6 +4571,7 @@ void AI_Sanity_Check_Overland_Enchantments(int16_t player_idx)
         _players[player_idx].Globals[AURA_OF_MAJESTY] = 0;
         _players[player_idx].Globals[WIND_MASTERY] = 0;
         _players[player_idx].Globals[SUPPRESS_MAGIC] = 0;
+        /* OGBUG  clears the AI's Time Stop global but not g_timestop_player_num: Next_Turn_Calc() (which called AI_Next_Turn()) still runs this turn as a Time Stop turn, skipping income, upkeep and diplomacy, and only then clears g_timestop_player_num because 0 - 200 < 0 */
         _players[player_idx].Globals[TIME_STOP] = 0;
         _players[player_idx].Globals[NATURES_AWARENESS] = 0;
         _players[player_idx].Globals[NATURES_WRATH] = 0;
@@ -4243,10 +4635,11 @@ int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int
     else if(spell_target_type == stt_Enemy_City)
     {
 
+        /* OGBUG  Earthquake (a Nature spell) is grouped with Chaos Rift / Call the Void, so a city is skipped for it when it has CHAOS_WARD, and NATURE_WARD is never tested */
         if(
             (spell_idx == spl_Earthquake)
             ||
-            (spell_idx == spl_Chaos_Rift)  /* ¿ BUGBUG  Chaos Rift is also dispelled by Consecration ? */
+            (spell_idx == spl_Chaos_Rift)  /* ¿ BUGBUG  Chaos Rift is also dispelled by Consecration ? */  /* CLAUDE */  /* no: every city with CONSECRATION is skipped for all of these spells (asm loc_E7E24) */
             ||
             (spell_idx == spl_Call_The_Void)
         )
@@ -4273,6 +4666,10 @@ int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int
         {
 
             Cast_Spell_Target_Error(spell_idx);
+
+            /* OGBUG  in a release build Cast_Spell_Target_Error() returns and the city loop below reads consecration (bp-2), which this path never wrote: stack garbage (anything but 0 / 1 skips every city) */
+            /* HACK */  /* CLAUDE */  /* stand-in for the unwritten local (ReMoM's 0 initialiser would make it ST_FALSE) */
+            consecration = Stack_Garbage();
 
         }
 
@@ -4306,6 +4703,7 @@ int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int
                 )
                 {
 
+                    /* OGBUG  inverted: Evil Presence is only aimed at cities whose owner HAS Death spellbooks, the one realm Evil Presence has no effect on, so the AI casts it only where it is useless */
                     if(
                         (
                             (spell_idx != spl_Evil_Presence)
@@ -4313,7 +4711,8 @@ int16_t AITP_City_Enchantment(int16_t spell_target_type, int16_t * city_idx, int
                             (_players[_CITIES[itr_cities].owner_idx].spellranks[sbr_Death] != 0)
                         )
                         &&
-                        (Test_Bit_Field(player_idx, &_CITIES[itr_cities].contacts) == 0)
+                        // (Test_Bit_Field(player_idx, &_CITIES[itr_cities].contacts) == 0)
+                        /* CLAUDE */  /* REBUG */  (Test_Bit_Field(player_idx, &_CITIES[itr_cities].contacts) != 0)
                     )
                     {
 
@@ -4532,7 +4931,8 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
     for(itr_stacks = 0; itr_stacks < _ai_all_own_stack_count; itr_stacks++)
     {
         found_city_at_stack = ST_FALSE;
-        for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        // for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+        /* CLAUDE */  /* REBUG */  for(itr_cities = 0; ((itr_cities < _cities) && (found_city_at_stack == ST_FALSE)); itr_cities++)  /* asm loc_E84E9: the found test is in the loop condition */
         {
             if(
                 _ai_all_own_stacks[itr_stacks].wx == _CITIES[itr_cities].wx
@@ -4543,7 +4943,7 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             )
             {
                 found_city_at_stack = ST_TRUE;
-                break;
+                // break;
             }
         }
         if(found_city_at_stack == ST_FALSE)
@@ -4577,6 +4977,7 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
     max_score = 0;
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
+        /* OGBUG  with no stack outside a city and none on the fortress square, best_stack_idx is still ST_UNDEFINED and _ai_all_own_stacks[-1] is read: the last 10 bytes of _ai_all_enemy_garrison_strengths (the Near_Allocate_Next() block before it, as in the OG), taken as wx / wy / wp, so the units on that garbage square are scored */
         /* OGBUG: could OOB `_ai_all_own_stacks[-1]` */
         if(
             _UNITS[itr_units].wx != _ai_all_own_stacks[best_stack_idx].wx
@@ -4601,7 +5002,9 @@ int16_t Select_Unit_For_Enchantment(int16_t player_idx, int32_t unit_enchantment
             continue;
         }
         /* If the unit has Attribs_2 set (e.g. Ab_Summoned), it is skipped. */
-        if(_unit_type_table[_UNITS[itr_units].type].Attribs_2 != 0)
+        // if(_unit_type_table[_UNITS[itr_units].type].Attribs_2 != 0)
+        /* CLAUDE */  /* REBUG */  /* asm loc_E8683: cmp [byte ptr bx+1B0h], 0 is unit type +14h, Transport (Upkeep +0Ch is read at +1A8h), not Attribs_2 (+1Ch): transports are skipped */
+        /* CLAUDE */  if(_unit_type_table[_UNITS[itr_units].type].Transport != 0)
         {
             continue;
         }
@@ -4689,6 +5092,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
     }
     else
     {
+        /* OGBUG  Random(_cp_hostile_opponent_count) (1..count) is used directly as the wizard index, not as an entry of _cp_hostile_opponents[]: the target is wizard 1..count whether or not it is hostile, and can be the caster itself */
         target_owner_idx = Random(_cp_hostile_opponent_count);  /* OGBUG: should be `_cp_hostile_opponents[Random(count) - 1]`, as-is can selct self or non-hostile */
     }
 
@@ -4701,6 +5105,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
         {
             if(_NODES[node_idx].power > highest_power)
             {
+                /* OGBUG  inverted: only a node that is ALREADY warped (flags & NF_WARPED == 1) is accepted, so Warp Node is only aimed at nodes that are already warped */
                 if((_NODES[node_idx].flags & NF_WARPED) == NF_WARPED)  /* OGBUG: should be != == NF_WARPED */
                 {
                     highest_power = _NODES[node_idx].power;
@@ -4745,7 +5150,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
  *   - SUPPRESS_MAGIC: always 250 (highest fixed weight).
  *
  * Both branches share a common set of non-realm-sensitive scores (e.g., ZOMBIE_MASTERY = 50,
- * DOOM_MASTERY = 50, CHARM_OF_LIFE = WORLD_WIDTH, ARMAGEDDON = 40, METEOR_STORMS = 30).
+ * DOOM_MASTERY = 50, CHARM_OF_LIFE = 60, ARMAGEDDON = 40, METEOR_STORMS = 30).
  *
  * After scoring, the function finds the single (opponent, global) pair with the maximum score and writes
  * the results to the output pointers. If no opponent has any scoreable global active, the outputs are
@@ -4767,9 +5172,8 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
  *         is unrecognised.
  *
  * @note The internal scoring table `target_spell_scores[6][25]` uses @c int8_t.
- * @bug (OGBUG) `target_spell_scores` should be @c uint8_t rather than @c int8_t. No score currently
- *      reaches 128, so overflow does not occur in practice, but the type mismatch is present in the
- *      original disassembly.
+ * @bug (OGBUG) `target_spell_scores` is @c int8_t (read back with CBW), so the Disjunction scores of 200 (0xC8 = -56) and 250 (0xFA = -6)
+ *      are negative and never beat max_score 0: those globals are never picked.
  * @note The Spell Binding branch iterates up to NUM_PLAYERS (compile-time constant) when scanning for
  *       the maximum, but only fills scores for _num_players (runtime count); entries beyond the live
  *       player count remain zero and do not influence the result.
@@ -4778,7 +5182,7 @@ int16_t AITP_Node(int16_t * targeted_node_idx, int16_t spell_idx)
  */
 int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell_idx, int16_t spell_idx, int16_t player_idx)
 {
-    /* OGBUG: target_spell_scores should be uint8_t, not int8_t */
+    /* OGBUG  target_spell_scores is signed char: the Disjunction / Disjunction True scores of 200 (Eternal Night for a Life caster, Evil Omens for a Life / Nature caster, Nature's Wrath for a Death / Chaos caster, Tranquility / Life Force for a Chaos caster) and 250 (Suppress Magic) are stored as -56 / -6, never beat max_score 0, and so those globals are never targeted - the ones the AI most wants gone */
     int8_t target_spell_scores[6][25] = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -4801,6 +5205,8 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             target_spell_scores[itr][spell_itr] = 0;
         }
     }
+
+    /* CLAUDE */  itr_players = 0;
 
     if(spell_idx == spl_Spell_Binding)
     {
@@ -4956,7 +5362,8 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Charm of Life */
             if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
             {
-                target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
+                // target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
+                /* CLAUDE */  /* REBUG */  target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;  /* a score, not the map width */
             }
 
             /* Detect Magic */
@@ -4972,9 +5379,10 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             }
         }
 
-        max_score = 0;
+        // max_score = 0;
         target_spell_idx = ST_UNDEFINED;
         target_player_idx = ST_UNDEFINED;
+        /* CLAUDE */  max_score = 0;
 
         for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
         {
@@ -5191,7 +5599,8 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             /* Charm of Life */
             if(_players[itr_players].Globals[CHARM_OF_LIFE] != 0)
             {
-                target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
+                // target_spell_scores[itr_players][CHARM_OF_LIFE] = WORLD_WIDTH;
+                /* CLAUDE */  /* REBUG */  target_spell_scores[itr_players][CHARM_OF_LIFE] = 60;  /* a score, not the map width */
             }
 
             /* Detect Magic */
@@ -5207,9 +5616,10 @@ int16_t AITP_Disjunction(int16_t * targeted_player_idx, int16_t * targeted_spell
             }
         }
 
-        max_score = 0;
+        // max_score = 0;
         target_spell_idx = ST_UNDEFINED;
         target_player_idx = ST_UNDEFINED;
+        /* CLAUDE */  max_score = 0;
 
         for(itr_players = 0; itr_players < _num_players; itr_players++)
         {
@@ -5338,12 +5748,13 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
             enemy_stack_wy = _ai_all_enemy_stacks[itr_enemy_stack_count].wy;
             enemy_stack_wp = _ai_all_enemy_stacks[itr_enemy_stack_count].wp;
 
-            for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+            // for(itr_cities = 0; itr_cities < _cities; itr_cities++)
+            /* CLAUDE */  /* REBUG */  for(itr_cities = 0; ((itr_cities < _cities) && (stack_is_visible == ST_FALSE)); itr_cities++)
             {
-                if(stack_is_visible != ST_FALSE)
-                {
-                    break;
-                }
+                // if(stack_is_visible != ST_FALSE)
+                // {
+                //     break;
+                // }
 
                 if(_CITIES[itr_cities].owner_idx == player_idx)
                 {
@@ -5359,7 +5770,7 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
                             scouting_radious = 5;
                         }
 
-                        /* OGBUG: should use itr_cities, not itr_enemy_stack_count */
+                        /* OGBUG  uses the enemy-stack index (SI) as the city index, not itr_cities (DI): the distance is measured to city #<stack index> (for stack index >= _cities a record past the last city), so the 'near my city' test uses the wrong city */
                         if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _CITIES[itr_enemy_stack_count].wx, _CITIES[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
                         {
                             highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
@@ -5375,18 +5786,19 @@ int16_t AITP_Attack_Stack(int16_t player_idx, int16_t * targeted_wx, int16_t * t
             if(stack_is_visible == ST_FALSE)
             {
                 scouting_radious = 2;
-                for(itr_cities = 0; itr_cities < _units; itr_cities++)
+                // for(itr_cities = 0; itr_cities < _units; itr_cities++)
+                /* CLAUDE */  /* REBUG */  for(itr_cities = 0; ((itr_cities < _units) && (stack_is_visible == ST_FALSE)); itr_cities++)
                 {
-                    if(stack_is_visible != ST_FALSE)
-                    {
-                        break;
-                    }
+                    // if(stack_is_visible != ST_FALSE)
+                    // {
+                    //     break;
+                    // }
 
                     if(_UNITS[itr_cities].owner_idx == player_idx)
                     {
                         if(_UNITS[itr_cities].wp == enemy_stack_wp)
                         {
-                            /* OGBUG: should use itr_cities, not itr_enemy_stack_count */
+                            /* OGBUG  uses the enemy-stack index (SI) as the unit index, not itr_cities (DI): the distance is measured to unit #<stack index>, whoever owns it, so the 'near my unit' test uses the wrong unit */
                             if(Delta_XY_With_Wrap(enemy_stack_wx, enemy_stack_wy, _UNITS[itr_enemy_stack_count].wx, _UNITS[itr_enemy_stack_count].wy, WORLD_WIDTH) <= scouting_radious)
                             {
                                 highest_value = _ai_all_enemy_stacks[itr_enemy_stack_count].value;
@@ -5559,11 +5971,16 @@ int16_t AITP_Enchant_Road(int16_t player_idx, int16_t * targeted_wx, int16_t * t
             {
                 for(wx_offset = -2; wx_offset < 3; wx_offset++)
                 {
-                    if(wy_offset == 0 && wx_offset == 0)
+                    // if(wy_offset == 0 && wx_offset == 0)
+                    /* CLAUDE */  /* REBUG */  if(
+                    /* CLAUDE */      (wx_offset == 0)
+                    /* CLAUDE */      &&
+                    /* CLAUDE */      (wy_offset == 0)
+                    /* CLAUDE */  )
                     {
                         continue;
                     }
-                    /* OGBUG: doesn't add wy_offset and wx_offset, so it only checks city center square */
+                    /* OGBUG  never adds wx_offset / wy_offset: all 24 passes of the 5x5 loop test the city's own square, so a city counts as 'has a road, not enchanted' from its center square alone, and the 24 tests give the same answer */
                     if((GET_MAP_SQUARE_FLAG(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) & MSF_ROAD) != 0)
                     {
                         have_road = ST_TRUE;
@@ -5629,7 +6046,8 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
     {
         if(_NODES[itr].owner_idx == player_idx)
         {
-            if((_NODES[itr].flags & NF_WARPED) != 0)
+            // if((_NODES[itr].flags & NF_WARPED) != 0)
+            /* CLAUDE */  /* REBUG */  if((_NODES[itr].flags & NF_WARPED) > 0)
             {
                 if(_NODES[itr].power > highest_cost)
                 {
@@ -5681,7 +6099,7 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
         return ST_TRUE;
     }
 
-    /* OGBUG: checks landmass without plane */
+    /* OGBUG  compares landmass numbers only, never planes: _landmasses ids restart at 1 on each plane (Init_Landmasses()), so a human unit on the other plane on a landmass with the same number also counts as on the AI's home landmass */
     fortress_landmass_idx = _landmasses[_FORTRESSES[player_idx].wp * WORLD_SIZE + _FORTRESSES[player_idx].wy * WORLD_WIDTH + _FORTRESSES[player_idx].wx];
     highest_cost_unit_idx = ST_UNDEFINED;
     highest_cost = 0;
@@ -5706,12 +6124,14 @@ int16_t AITP_Disenchant(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
 
     if(highest_cost_unit_idx != ST_UNDEFINED)
     {
-        /* OGBUG: The original code uses target_city_idx instead of highest_cost_unit_idx here.
-         * Since target_city_idx is guaranteed to be ST_UNDEFINED if we reached this block,
-         * this results in an out-of-bounds read of _UNITS[ST_UNDEFINED]. */
-        *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
-        *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
-        *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        /* OGBUG  returns the x / y / plane of _UNITS[target_city_idx] (bp-6), not of highest_cost_unit_idx (bp-8): target_city_idx is always ST_UNDEFINED on this path, so it reads _UNITS[-1], the 32 bytes in front of the unit table, and Disenchant True / Area goes to a garbage square instead of the chosen enchanted human unit */
+        // *targeted_wx = _UNITS[target_city_idx].wx;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        // *targeted_wy = _UNITS[target_city_idx].wy;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        // *targeted_wp = _UNITS[target_city_idx].wp;  /* OGBUG: OOB AVWL  target_city_idx is ST_UNDEFINED */
+        /* HACK */  /* CLAUDE */  /* in-range stand-ins for the 32 stale bytes in front of the unit table (allocator paragraph / previous block in the OG), so ReMoM does not read before _UNITS */
+        *targeted_wx = Stack_Garbage_Range(0, (WORLD_WIDTH - 1));
+        *targeted_wy = Stack_Garbage_Range(0, (WORLD_HEIGHT - 1));
+        *targeted_wp = Stack_Garbage_Range(ARCANUS_PLANE, MYRROR_PLANE);
         return ST_TRUE;
     }
 
@@ -5788,13 +6208,19 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
                 reject = ST_FALSE;
             }
 
-            if(reject != ST_FALSE)
-            {
-                continue;
-            }
+            // if(reject != ST_FALSE)
+            // {
+            //     continue;
+            // }
 
             city_area_wx = _CITIES[itr_cities].wx + wx_offset;
             city_area_wy = _CITIES[itr_cities].wy + wy_offset;
+
+            /* CLAUDE */  /* asm loc_E9E4B: city_area_wx / wy are computed before the reject test */
+            /* CLAUDE */  if(reject != ST_FALSE)
+            /* CLAUDE */  {
+            /* CLAUDE */      continue;
+            /* CLAUDE */  }
 
             if(city_area_wx <= WORLD_XMIN || city_area_wx >= WORLD_WIDTH)
             {
@@ -5859,6 +6285,7 @@ int16_t AITP_Attack_Terrain(int16_t player_idx, int16_t * targeted_wx, int16_t *
     {
         *targeted_wx = target_wx;
         *targeted_wy = target_wy;
+        /* OGBUG  returns city_wp (bp-16h), the plane of the last city whose square search ran (a higher-valued contacted enemy city that then found no square in 25 tries), not target_wp (bp-14h) of the chosen city: if that city is on the other plane, the spell goes to target_wx / target_wy on the wrong plane */
         *targeted_wp = city_wp;  /* OGBUG: should return target_wp, not city_wp - last city_wp */
         return ST_TRUE;
     }
@@ -5929,7 +6356,9 @@ int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
         square_ctr = 0;
         found_target = 0;
 
-        while(square_ctr < 25 && found_target == 0)
+        // while(square_ctr < 25 && found_target == 0)
+        /* CLAUDE */  /* REBUG */  /* asm loc_EA197 / loc_EA19A: one inc square_ctr shared by every path, then the test */
+        /* CLAUDE */  for(; ((square_ctr < 25) && (found_target == 0)); square_ctr++)
         {
             wx_offset = Random(5) - 3;
             wy_offset = Random(5) - 3;
@@ -5957,55 +6386,55 @@ int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
 
             if(is_city_area_corner_square != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(city_area_wx <= 0 || city_area_wx >= WORLD_WIDTH)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(city_area_wy <= 0 || city_area_wy >= WORLD_HEIGHT)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Is_Land(city_area_wx, city_area_wy, city_wp) != ST_TRUE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Is_Volcano(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Has_Corruption(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Is_Hills(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Is_Mountain(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
             if(Square_Is_Node(city_area_wx, city_area_wy, city_wp) != ST_FALSE)
             {
-                square_ctr++;
+                // square_ctr++;
                 continue;
             }
 
@@ -6016,7 +6445,7 @@ int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
             target_wp = city_wp;
             found_target = ST_TRUE;
 
-            square_ctr++;
+            // square_ctr++;
         }
     }
 
@@ -6028,6 +6457,7 @@ int16_t AITP_Corruption(int16_t player_idx, int16_t * targeted_wx, int16_t * tar
     {
         *targeted_wx = target_wx;
         *targeted_wy = target_wy;
+        /* OGBUG  returns city_wp (bp-16h), the plane of the last city whose square search ran (a higher-valued contacted enemy city that then found no square in 25 tries), not target_wp (bp-14h) of the chosen city: if that city is on the other plane, the target square is on the wrong plane */
         *targeted_wp = city_wp;  /* OGBUG: should use target_wp, not city_wp */
         return 1;
     }
@@ -6172,6 +6602,7 @@ int16_t AITP_Attack_Wizard(int16_t * targeted_player_idx, int16_t spell_idx, int
             *targeted_player_idx = _cp_hostile_opponents[Random(_cp_hostile_opponent_count) - 1];
         }
 
+        /* OGBUG  the Spell Blast condition (target is casting, and the mana it has put into that spell <= the AI's mana_reserve - 50) is applied to Drain Power, Subversion and Cruel Unminding too, so those are cancelled unless a Spell Blast would also be valid */
         if(_players[*targeted_player_idx].casting_spell_idx == spl_NONE)
         {
             return ST_FALSE;
@@ -6222,11 +6653,17 @@ int16_t AITP_Spell_Ward_Wrapper(int16_t * city_idx, int16_t * magic_realm, int16
 int16_t AI_Has_More_Myrror_Cities(int16_t player_idx)
 {
     int16_t myrror_count = 0;
-    int16_t human_arcanus_count = 0;
-    int16_t human_myrror_count = 0;
+    // int16_t human_arcanus_count = 0;
+    // int16_t human_myrror_count = 0;
+    /* CLAUDE */  int16_t human_arcanus_count;
+    /* CLAUDE */  int16_t human_myrror_count;
     int16_t player_arcanus_count = 0;
     int16_t player_myrror_count = 0;
     int16_t city_idx = 0;
+
+    /* OGBUG  the human's counters (bp-2 Arcanus, bp-4 Myrror) are never initialised, so human_myrror_count is stack garbage plus the human's Myrror cities and the result is garbage */
+    /* HACK */  human_arcanus_count = Stack_Garbage();
+    /* HACK */  human_myrror_count = Stack_Garbage();
 
     player_arcanus_count = 0;
     player_myrror_count = 0;

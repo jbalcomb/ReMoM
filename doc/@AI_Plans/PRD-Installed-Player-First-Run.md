@@ -54,7 +54,7 @@ Two distinct resolution rules follow from this:
 - **Writable files go to `XDG_DATA_HOME`** via `SDL_GetPrefPath()`; the user's original MoM install is never modified.
 - **Fail-soft:** never crash solely because data is missing — show a visible, actionable dialog and exit non-zero.
 - **Compatibility:** verify the data files against a known-good **checksum manifest** (the project owner holds every MoM version and can author it authoritatively), sharing the installer PRD's manifest format.
-- **Logs → `XDG_STATE_HOME`** (player build only); HeMoM/tests/matchup keep CWD for both data and logs.
+- **Logs → `XDG_STATE_HOME`** (player build only); DeMoM/tests/matchup keep CWD for both data and logs.
 - **Env overrides:** `REMOM_DATA_DIR` (search path), `REMOM_LOG_DIR` (logs).
 
 ## Non-Goals
@@ -77,9 +77,9 @@ Two distinct resolution rules follow from this:
    5. **Auto-detected common install locations** (GOG/Steam/CD) — see note below.
    6. CWD (legacy/default).
 
-   > **Zero-config auto-detect (implemented, post-plan enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX` — a dev checkout (`./assets` and parents) first, then well-known installs (`~/GOG Games/Master of Magic`, Steam `…/steamapps/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). A standard install, or a dev running from the repo, boots with **no configuration at all**; this is the recommended, lowest-effort path in PLAYING.md, with `REMOM_DATA_DIR` / `[Paths] game_data` as fallbacks for non-standard locations. HEADLESS (HeMoM/tests/matchup) never probes.
+   > **Zero-config auto-detect (implemented, post-plan enhancement):** the PLAYER profile probes a built-in candidate list and adds the first dir containing the signature `FONTS.LBX` — a dev checkout (`./assets` and parents) first, then well-known installs (`~/GOG Games/Master of Magic`, Steam `…/steamapps/common/Master of Magic Classic`, `C:\MPS\MAGIC`, …). A standard install, or a dev running from the repo, boots with **no configuration at all**; this is the recommended, lowest-effort path in PLAYING.md, with `REMOM_DATA_DIR` / `[Paths] game_data` as fallbacks for non-standard locations. HEADLESS (DeMoM/tests/matchup) never probes.
 2. **Population API** in the support layer (`stu_data_path_reset()` / `stu_data_path_add(dir)`), called **once** by ReMoM at startup.
-3. **Default = CWD only** when unpopulated (HeMoM, tests, matchup) — `stu_fopen_ci` behaves exactly as today.
+3. **Default = CWD only** when unpopulated (DeMoM, tests, matchup) — `stu_fopen_ci` behaves exactly as today.
 4. **Bare filenames unchanged;** resolution happens entirely inside `stu_fopen_ci`. No `MoM/src` or `MoX/src` game-logic edits.
 
 ### Writable per-user files
@@ -100,7 +100,7 @@ Two distinct resolution rules follow from this:
 10. **Preflight** `STU_Preflight_Check_Game_Data(...)` verifies the required set (`FONTS.LBX`, `MAINSCRN.LBX`, … — aligned with the installer PRD) resolves via the search path. Home: the TODO at [STU/src/STU_INIT.c:87](../../STU/src/STU_INIT.c#L87).
 11. **Call site:** ReMoM `main()`, after `STU_Log_Startup()` ([src/ReMoM.c:225](../../src/ReMoM.c#L225)) and search-path population, before the first asset load.
 12. **On missing data:** log `ERROR`, call `Platform_Show_Error(...)`, return non-zero — no crash.
-13. **New platform API** `void Platform_Show_Error(const char * title, const char * message);` — `SDL_ShowSimpleMessageBox` (SDL2/SDL3, no window needed), `MessageBoxA` (Win32), `stderr` (headless). Safe to call before a window exists.
+13. **New platform API** `void Platform_Show_Error(const char * title, const char * message);` — `SDL_ShowSimpleMessageBox` (SDL2/SDL3, no window needed), `MessageBoxA` (Win32), `stderr` (windowless). Safe to call before a window exists.
 
 ### Log relocation (player build only)
 
@@ -116,9 +116,9 @@ Two distinct resolution rules follow from this:
 - [x] `MAGIC.SET` and a new save are written under `~/.local/share/ReMoM/` (or the OS `SDL_GetPrefPath` location), **not** into the user's read-only MoM install. *(P4 — via `STU_GRAF_Open_User` → `XDG_DATA_HOME/ReMoM`, resolved in STU (not SDL); mechanism unit-proven, save sites swapped; GUI save-cycle not run locally)*
 - [x] With a read-only game-data dir, saving still succeeds (writes go to the data dir, not the source). *(P4 — writes target the user-data dir, disjoint from the read-only source; unit-proven source-untouched)*
 - [x] On first run, `CONFIG.MOM` is copied into `XDG_DATA_HOME` and read from there on later runs; the original in the game-data dir is never modified. *(P4 — `STU_GRAF_Seed_User_File` unit-proven + wired at PLAYER startup)*
-- [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; HeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `HeMoM_Preflight_Missing_Data`)*
+- [x] No data discoverable anywhere → GUI dialog names the missing files + fix, exits non-zero, no crash; DeMoM prints the same to stderr. *(P2 — verified end-to-end on both builds; ctest `DeMoM_Preflight_Missing_Data`)*
 - [x] Data files whose checksums don't match any manifest entry → a non-blocking "unrecognized/……" warning (presence still passing). *(P5 — `STU_GRAF_Check_Data_Compat` over the **compiled-in** `g_lbx_manifest` on a verified SHA-256; unit-proven; silent until the manifest is authored via the `lbx_hashes` generator)*
-- [x] `HeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — end-to-end: HeMoM with `XDG_STATE_HOME` set still logged to CWD, 0 in the state dir; `STU_LOG` default (no `Set_Base_Dir`) = CWD, byte-identical)*
+- [x] `DeMoM`/`ctest`/matchup still resolve data from CWD and write `remom_log_*.txt` to CWD ([tools/log-tools/log_triage.py](../../tools/log-tools/log_triage.py), [tools/parity_check.py](../../tools/parity_check.py) unaffected). *(P1/P6 — end-to-end: DeMoM with `XDG_STATE_HOME` set still logged to CWD, 0 in the state dir; `STU_LOG` default (no `Set_Base_Dir`) = CWD, byte-identical)*
 - [x] Player-build logs land under `~/.local/state/ReMoM/`, not CWD. *(P6 — end-to-end: ReMoM `--headless` wrote its log under `XDG_STATE_HOME/ReMoM/`, 0 in its CWD; unit-tested)*
 - [x] No `MoM/src` / `MoX/src` game-logic file is modified for discovery. *(git-verified: only `MoX/src/LBX_Load.c` open-call plumbing changed)*
 
@@ -146,7 +146,7 @@ Recursive-mkdir helper; `getenv("XDG_STATE_HOME")` + `HOME + "/.local/state"` fa
 
 ### Player vs. dev/test
 
-Per-executable at runtime, not a build macro (shared `libstu`). ReMoM populates the data search path + data/log dirs; HeMoM does neither (defaults → CWD). Env overrides win.
+Per-executable at runtime, not a build macro (shared `libstu`). ReMoM populates the data search path + data/log dirs; DeMoM does neither (defaults → CWD). Env overrides win.
 
 ## Risks / Open Questions
 
@@ -156,7 +156,7 @@ Per-executable at runtime, not a build macro (shared `libstu`). ReMoM populates 
 - **`stu_fopen_ci` multi-dir scan cost** — amortized by LBX handle caching; confirm no re-open storms.
 - **Early `SDL_ShowSimpleMessageBox`** before video init — verify per backend; stderr fallback.
 - **AppImage exe-dir** points into the mounted squashfs (has the binary, not user data) — fine, lower-priority CWD/config still apply.
-- **`STU_Log_Startup` signature change** ripples to HeMoM + `STU_LOG` tests; a `Set_Base_Dir()` side-channel avoids it.
+- **`STU_Log_Startup` signature change** ripples to DeMoM + `STU_LOG` tests; a `Set_Base_Dir()` side-channel avoids it.
 
 ## Dependencies
 
@@ -171,8 +171,8 @@ Per-executable at runtime, not a build macro (shared `libstu`). ReMoM populates 
 - **Write family:** with a read-only game-data dir, `MAGIC.SET`/save writes land in the `XDG_DATA_HOME`-equivalent temp dir, not the source.
 - **Preflight/compat:** missing required file → blocking failure + list; mismatched checksum → non-blocking warning; good tree → pass.
 - **Log base-dir:** `REMOM_LOG_DIR` wins; explicit base honored; default CWD; rotation in resolved dir.
-- **`Platform_Show_Error` headless** asserts on stderr; GUI variants manual per backend.
-- **Regression guard:** a HeMoM CI run still resolves data from CWD and emits logs to CWD.
+- **`Platform_Show_Error` windowless** asserts on stderr; GUI variants manual per backend.
+- **Regression guard:** a DeMoM CI run still resolves data from CWD and emits logs to CWD.
 
 ## Out of Scope
 

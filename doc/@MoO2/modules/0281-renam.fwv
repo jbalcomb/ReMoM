@@ -1,0 +1,8 @@
+module_num=281
+module=renam
+source=0281-renam.md
+range[0]=1:0x001409F9 linear=0x001509F9 size=46
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m281f001  1    -      0x001509F9  1:0x001409F9  code  rename  rename_  regions/07-object-1/001D5E54-001D6653.txt

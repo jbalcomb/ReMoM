@@ -2,7 +2,6 @@
     AI - Data
 
     WIZARDS.EXE
-        ¿ ovr145 ?
         ¿ ovr164 ?
 */
 
@@ -14,14 +13,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-
-/*
-    WIZARDS.EXE  ovr145
-*/
-
-// WZD o145p0
 
 
 

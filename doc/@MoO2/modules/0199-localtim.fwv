@@ -1,0 +1,11 @@
+module_num=199
+module=localtim
+source=0199-localtim.md
+range[0]=1:0x0012C934 linear=0x0013C934 size=94
+range[1]=2:0x00047360 linear=0x001B7360 size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME        SYMBOL       CHUNK
+m199f001  1    -      0x0013C934  1:0x0012C934  code         _localtime  _localtime_  regions/07-object-1/001C1E54-001C2653.txt
+m199f002  2    -      0x0013C985  1:0x0012C985  code         localtime   localtime_   regions/07-object-1/001C1E54-001C2653.txt
+-         -    -      0x001B7360  2:0x00047360  static,data  _The_time   _The_time    -

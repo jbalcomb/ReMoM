@@ -1,6 +1,6 @@
 # test_l61_fresh.hms -- L61 baseline: the first game in a fresh process.
 #
-#   HeMoM --menu --seed1 12345 --scenario test_l61_fresh.hms --dump-save SAVE1.GAM
+#   DeMoM --menu --seed1 12345 --scenario test_l61_fresh.hms --dump-save SAVE1.GAM
 #
 # New Game through the UI, then save to slot 1 and quit.  Its SAVE1 dump is the expected state
 # for test_l61_second_game.hms, whose second game must come out identical.

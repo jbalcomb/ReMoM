@@ -150,7 +150,8 @@ int16_t Square_Is_Forest_NewGame(int16_t wx, int16_t wy, int16_t wp);
 int16_t Square_Is_River_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p44
-int16_t Square_Is_River_Mouth(int16_t wx, int16_t wy, int16_t wp);
+// int16_t Square_Is_River_Mouth(int16_t wx, int16_t wy, int16_t wp);
+/* CLAUDE */  int16_t Square_Is_River_Mouth_NewGame(int16_t wx, int16_t wy, int16_t wp);
 
 // MGC o51p45
 int16_t Square_Is_Shore_NewGame(int16_t wx, int16_t wy, int16_t wp);

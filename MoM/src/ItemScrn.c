@@ -32,6 +32,7 @@
 #include "WZD_o059.h"
 
 #include <assert.h>
+#include <stddef.h>  /* CLAUDE */  /* offsetof() */
 #include <stdlib.h>
 
 #include "../../ext/stu_compat.h"
@@ -44,7 +45,7 @@
 char cnst_HOTKEY_Esc9[] = "\x1B";
 // WZD dseg:36A1 00                                              
 // char cnst_ZeroString_27[] = "";
-char cnst_ZeroString_27 = 0;
+char cnst_ZeroString_27[] = "";
 
 // WZD dseg:36A2
 char cnst_ItemLoc_Same[] = "Same Location";
@@ -83,10 +84,10 @@ char cnst_ItemPort_Msg_2[] = " mana crystals\x01\x3F";  // sets normal colors an
 char cnst_ItemPort_Msg_3[] = "You do not have enough mana crystals to transfer this item.";
 
 // WZD dseg:378E
-char cnst_HOTKEY_A_3 = 'A';
+char cnst_HOTKEY_A_3[] = "A";
 
 // WZD dseg:3790
-char cnst_HOTKEY_O_8 = 'O';
+char cnst_HOTKEY_O_8[] = "O";
 
 // WZD dseg:3792
 char cnst_DrownWarn_Msg[] = "This unit will drown if the item is removed.";
@@ -242,6 +243,7 @@ void Item_Screen(void)
             }
             Assign_Auto_Function(Item_Screen_Draw_Do, 1);
             Item_Screen_Load();
+            continue;
         }
         
         Mark_Time();
@@ -250,7 +252,7 @@ void Item_Screen(void)
         Item_Screen_Add_Fields();
 
         // TODO  hotkey_idx_ESC = Add_Hot_Key(cnst_HOTKEY_Esc9);
-        hotkey_idx_ESC = Add_Hot_Key('\x1B');
+        hotkey_idx_ESC = Add_Hot_Key("\x1B");
         
         input_field_idx = Get_Input();
         UU_scanned_field = Scan_Input();
@@ -336,12 +338,13 @@ void Item_Screen(void)
                             Deactivate_Help_List();
                             Play_Left_Click__DUPE();
                             item_slot_x = (_item_window_start_x + 54 + (((itr_hero_slots % 2) * 136) + (itr_item_slots * 29)));
-                            item_slot_y = (_item_window_start_y + ((itr_hero_slots / 2) * 28));
+                            item_slot_y = (_item_window_start_y + ((itr_hero_slots / 2) * 47) + 28);
                             if(m_cursor_item_idx != ST_UNDEFINED)
                             {
                                 Set_Mouse_List(1, mouse_list_default);
                             }
                             Sandbox_Paragraph = Allocate_First_Block(_screen_seg, 1);
+                            /* OGBUG  the popup's item is read from _players[0].Heroes[] (no player index), the test above from _players[[_human_player_idx]]; the same wizard in 1.31, where the human is player 0 */
                             Item_View_Popup(_players[HUMAN_PLAYER_IDX].Heroes[itr_hero_slots].Items[itr_item_slots], (item_slot_x + 8), (item_slot_y + 8));
                             if(m_cursor_item_idx != ST_UNDEFINED)
                             {
@@ -351,6 +354,7 @@ void Item_Screen(void)
                             Item_Screen_Load();
                             Deactivate_Help_List();
                             Set_Items_Screen_Help_List();
+                            break;
                         }
                     }
                 }
@@ -375,6 +379,7 @@ void Item_Screen(void)
                             Set_Mouse_List(1, mouse_list_default);
                         }
                         Sandbox_Paragraph = Allocate_First_Block(_screen_seg, 1);
+                        /* OGBUG  as for the hero items: the popup reads _players[0].Vault_Items[] (no player index) */
                         Item_View_Popup(_players[HUMAN_PLAYER_IDX].Vault_Items[itr_vault_item_slots], (_item_window_start_x + 59 + (itr_vault_item_slots * 21)), (_item_window_start_y + 179));
                         if(m_cursor_item_idx != ST_UNDEFINED)
                         {
@@ -384,6 +389,7 @@ void Item_Screen(void)
                         Item_Screen_Load();
                         Deactivate_Help_List();
                         Set_Items_Screen_Help_List();
+                        break;
                     }
                 }
             }
@@ -405,6 +411,7 @@ void Item_Screen(void)
                         Assign_Auto_Function(Item_Screen_Draw_Do, 1);
                         Deactivate_Help_List();
                         Set_Items_Screen_Help_List();
+                        break;
                     }
                 }
             }
@@ -425,6 +432,7 @@ void Item_Screen(void)
                     Assign_Auto_Function(Item_Screen_Draw_Do, 1);
                     Deactivate_Help_List();
                     Set_Items_Screen_Help_List();
+                    break;
                 }
             }
         }
@@ -523,6 +531,7 @@ void Item_Screen_Draw(void)
 
         if(hero_ptr->unit_idx > -1)
         {
+            /* OGBUG  dead store: hero_unit_type is set here and never read */
             hero_unit_type = _UNITS[hero_ptr->unit_idx].type;
 
             Item_Window_Picture_Coords(itr_heroes, &portrait_x1, &portrait_y1, &portrait_x2, &portrait_y2);
@@ -552,50 +561,34 @@ void Item_Screen_Draw(void)
                 }
                 else
                 {
-                    // DEDU  Figure out what the [bx-2] means here  `push    item_slot_icons_seg@[bx-2]       ; picture`
+                    // `push item_slot_icons_seg[bx-2]` with bx = (Item_Slots[] * 2) is item_slot_icons_seg[(Item_Slots[] - 1)]
                     FLIC_Draw(
                         (portrait_x1 + 41 + (itr_hero_items * 29)), 
                         (portrait_y1 + 17), 
                         item_slot_icons_seg[(hero_ptr->Item_Slots[itr_hero_items] - 1)]
                     );
-
-                    // TODO  mov     ax, _DI_itr_hero_items
-                    // TODO  shl     ax, 1
-                    // TODO  mov     bx, [bp+hero_ptr]
-                    // TODO  add     bx, ax
-                    // TODO  mov     ax, [bx+s_OWNED_HERO.Item_Slots]
-                    // TODO  add     ax, HLP_SWORD_SLOT_2-1  ; 582
-                    // TODO  push    ax
-                    // TODO  mov     ax, _SI_itr_heroes
-                    // TODO  mov     dx, 3
-                    // TODO  imul    dx
-                    // TODO  add     ax, _DI_itr_hero_items
-                    // TODO  mov     dx, 10
-                    // TODO  imul    dx
-                    // TODO  mov     bx, ax
-                    // TODO  pop     ax
-                    // TODO  mov     [(_help_entries.help_idx+32h)+bx], ax
+                    _help_entries[(5 + ((itr_heroes * 3) + itr_hero_items))].help_idx = (hero_ptr->Item_Slots[itr_hero_items] + (HLP_SWORD_SLOT_2 - 1));
                 }
 
-                if(m_item_slot_idx > -1)
+            }
+
+            if(m_item_slot_idx > -1)
+            {
+                if(Check_Same_Location(m_item_slot_idx, itr_heroes) == ST_TRUE)
                 {
-                    if(Check_Same_Location(m_item_slot_idx, itr_heroes) == ST_TRUE)
-                    {
-                        colors[0] = 225;
-                        colors[1] = 157;
-                        Set_Font_Colors_15(1, colors);
-                        Set_Font_Style_Shadow_Down(1, 15, 0, 0);
-                        Set_Outline_Color(0);
-                        Print((portrait_x1 + 37), (portrait_y1 + 7), cnst_ItemLoc_Same);  /* "Same Location" */
-                    }
-                    else
-                    {
-                        Set_Font_Style_Shadow_Down(1, 2, 0, 0);
-                        Set_Alias_Color(225);
-                        Print((portrait_x1 + 37), (portrait_y1 + 7), cnst_ItemLoc_Diff);  /* "Item Teleport" */
-                    }
+                    colors[0] = 225;
+                    colors[1] = 157;
+                    Set_Font_Colors_15(1, colors);
+                    Set_Font_Style_Shadow_Down(1, 15, 0, 0);
+                    Set_Outline_Color(0);
+                    Print((portrait_x1 + 37), (portrait_y1 + 7), cnst_ItemLoc_Same);  /* "Same Location" */
                 }
-
+                else
+                {
+                    Set_Font_Style_Shadow_Down(1, 2, 0, 0);
+                    Set_Alias_Color(225);
+                    Print((portrait_x1 + 37), (portrait_y1 + 7), cnst_ItemLoc_Diff);  /* "Item Teleport" */
+                }
             }
 
         }
@@ -613,7 +606,6 @@ void Item_Screen_Draw(void)
         }
     }
 
-
     if(
         (_players[_current_player_idx].gold_reserve > 19999)
         ||
@@ -629,6 +621,7 @@ void Item_Screen_Draw(void)
 
     Set_Outline_Color(0);
     Set_Alias_Color(225);
+    /* OGBUG  the font is picked from _players[[_human_player_idx]]'s reserves, but the printed gold / mana are _players[0]'s (push [_players.gold_reserve], no player index); the same wizard in 1.31 */
     Print_Integer_Right((_item_window_start_x + 166), (_item_window_start_y + 164), _players[HUMAN_PLAYER_IDX].gold_reserve);
     Print_Integer_Right((_item_window_start_x + 200), (_item_window_start_y + 164), _players[HUMAN_PLAYER_IDX].mana_reserve);
 
@@ -652,6 +645,7 @@ void Item_Screen_Draw(void)
 
     Cycle_Item_Enchantment_Animation();
 }
+
 
 // WZD o75p04
 void Item_Screen_Load(void)
@@ -769,7 +763,7 @@ void Draw_Item_With_Name(int16_t x, int16_t y, int16_t item_idx)
 {
     Draw_Item_Icon_With_Enchantment_Outline(item_idx, m_item_icon_workarea);
     Draw_Picture_Windowed(x, y, m_item_icon_workarea);
-    // TODO  _fstrcpy(GUI_String_1, 0, _ITEMS[item_idx].name);
+    // TODO  String_Copy_Far(GUI_String_1, 0, _ITEMS[item_idx].name);
     stu_strcpy(GUI_String_1, _ITEMS[item_idx].name);
     // Clipped_Print_Centered((x + 12), (y + 19), GUI_String_1);
     Print_Centered((x + 12), (y + 19), GUI_String_1);
@@ -802,6 +796,7 @@ void Destroy_Item(void)
     Draw_Item_With_Name(start_x, start_y, m_cursor_item_idx);
     PageFlip_FX();
     Copy_On_To_Off_Page();
+    /* OGBUG  the anvil pays half the item's full value (s_ITEM.cost); Item_Make_Screen() takes the Artificer / Runemaster discount off the mana paid only and the forged item keeps its full cost, so with both retorts an item is paid 25% and smashed for 50% */
     item_cost_mana = (_ITEMS[m_cursor_item_idx].cost / 2);
     stu_strcpy(GUI_String_1, cnst_ItemDestroyMsg1);  // "Do you want to destroy your \x02"
     stu_strcpy(GUI_String_2, _ITEMS[m_cursor_item_idx].name);
@@ -827,6 +822,19 @@ void Destroy_Item(void)
 }
 
 
+/* CLAUDE */  /* HACK */
+/*
+    Move_Item() reads _players[player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] with hero_slot_idx up to 6 (the vault), one record past Heroes[NUM_HEROES].
+    The OG reads the bytes there (inside s_WIZARD.Dipl); this reads the same bytes of the packed s_WIZARD through a byte pointer, so ReMoM has no out-of-bounds array access.
+*/
+static int16_t Move_Item_Hero_Slot_Type(int16_t player_idx, int16_t hero_slot_idx, int16_t item_slot_idx)
+{
+    uint8_t * hero_bytes = (uint8_t *)&_players[player_idx].Heroes[0];
+    int16_t slot_type = 0;
+    memcpy(&slot_type, (hero_bytes + (hero_slot_idx * sizeof(struct s_OWNED_HERO)) + offsetof(struct s_OWNED_HERO, Item_Slots) + (item_slot_idx * sizeof(int16_t))), sizeof(int16_t));
+    return slot_type;
+}
+
 // WZD o75p08
 /*
     only called from Item_Screen()
@@ -847,9 +855,9 @@ item_slot_idx: {0,1,2} or {0,1,2,3}  Hero Item Slot Index or Vault Item Slot Ind
 */
 void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 {
-    int16_t Item_Pickup;
-    int16_t * item_slots_ptr;  // Item Slots
-    int16_t Can_Equip;
+    int16_t item_pickup = 0;
+    int16_t * item_slots_ptr = NULL;  // Item Slots
+    int16_t can_equip = 0;
 
     if(hero_slot_idx == VAULT_HERO_SLOT_IDX)
     {
@@ -865,12 +873,38 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
         YAY:  
         NAY:  
     */
-    if(m_cursor_item_idx != ST_UNDEFINED)
+    if(m_cursor_item_idx == ST_UNDEFINED)
+    {
+
+        if(item_slots_ptr[item_slot_idx] > ST_UNDEFINED)
+        {
+            item_pickup = ST_TRUE;
+            
+            if(hero_slot_idx != VAULT_HERO_SLOT_IDX)
+            {
+                if(Check_Wont_Drown(hero_slot_idx, item_slots_ptr[item_slot_idx]) == ST_FALSE)
+                {
+                    item_pickup = ST_FALSE;
+                }
+            }
+
+            if(item_pickup == ST_TRUE)
+            {
+                m_item_slot_idx = hero_slot_idx;
+                m_cursor_item_idx = item_slots_ptr[item_slot_idx];
+                item_slots_ptr[item_slot_idx] = ST_UNDEFINED;
+                Set_Mouse_List(1, mouse_list_none);
+            }
+
+        }
+
+    }
+    else
     {
         /*
-            BEGIN:  Can_Equip?
+            BEGIN:  can_equip?
         */
-        Can_Equip = ST_FALSE;
+        can_equip = ST_FALSE;
 
         // is item_idx, right? so, why 0 / why not -1?  ~== `== -1`?
         // DEDU  are these two code paths effectively, exactly the same?
@@ -878,12 +912,12 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 
         if(item_slots_ptr[item_slot_idx] < 0)
         {
-            // ; BUG: [hero_slot_idx] can be 6...
+            /* OGBUG  the hero slot types are read from _players[[_human_player_idx]] only here; the Bow and equality tests below, and all three in the occupied-slot branch, read _players[0] (no player index); and for the vault (hero_slot_idx 6) every one reads Heroes[6], one record past the table (s_WIZARD + 0x76 + 6 * 0x1C, inside Dipl) - reads only, the vault takes any item */
 
             // Item is "Weapon"
 
             if(
-                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
+                (Move_Item_Hero_Slot_Type(_current_player_idx, hero_slot_idx, item_slot_idx) == 3)
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -892,11 +926,11 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 )
             )
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
             if(
-                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
+                (Move_Item_Hero_Slot_Type(0, hero_slot_idx, item_slot_idx) == 2)
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -905,17 +939,17 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 )
             )
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
-            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
+            if(_ITEMS[m_cursor_item_idx].Slot_Type == Move_Item_Hero_Slot_Type(0, hero_slot_idx, item_slot_idx))
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
             if(hero_slot_idx == VAULT_HERO_SLOT_IDX)
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
         }
@@ -924,16 +958,16 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 
             if(hero_slot_idx == VAULT_HERO_SLOT_IDX)
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
-            if(_ITEMS[m_cursor_item_idx].Slot_Type == _players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx])
+            if(_ITEMS[m_cursor_item_idx].Slot_Type == _ITEMS[item_slots_ptr[item_slot_idx]].Slot_Type)
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
             if(
-                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 3) /* SwordStaff_Slot */
+                (Move_Item_Hero_Slot_Type(0, hero_slot_idx, item_slot_idx) == 3)
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -942,11 +976,11 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 )
             )
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
             if(
-                (_players[_current_player_idx].Heroes[hero_slot_idx].Item_Slots[item_slot_idx] == 2) /* Bow_Slot */
+                (Move_Item_Hero_Slot_Type(0, hero_slot_idx, item_slot_idx) == 2)
                 &&
                 (
                     (_ITEMS[m_cursor_item_idx].Slot_Type == 1) /* Sword_Slot */
@@ -955,20 +989,20 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                 )
             )
             {
-                Can_Equip = ST_TRUE;
+                can_equip = ST_TRUE;
             }
 
         }
         /*
-            END:  Can_Equip?
+            END:  can_equip?
         */
 
         // item type fits slot type
         // HERE: left-clicked, item on cursor, acceptible slotting
         // ¿ NEXT: is there also an item already in that slot that we will need to pick up (and exchange with the cursor) ?
-        if(Can_Equip == ST_TRUE)
+        if(can_equip == ST_TRUE)
         {
-            Item_Pickup = ST_TRUE;
+            item_pickup = ST_TRUE;
 
             if(
                 (hero_slot_idx != VAULT_HERO_SLOT_IDX)
@@ -978,33 +1012,23 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             {
                 if(Check_Wont_Drown(hero_slot_idx, item_slots_ptr[item_slot_idx]) == ST_FALSE)
                 {
-                    Item_Pickup = ST_FALSE;
-                    Can_Equip = ST_FALSE;
+                    item_pickup = ST_FALSE;
+                    can_equip = ST_FALSE;
                 }
             }
 
-            if(Item_Pickup == ST_TRUE)
+            if(item_pickup == ST_TRUE)
             {
 
                 // HERE:  left-clicked, item on cursor, acceptible slotting, wont drown
 
-                // src_hero_slot_idx, dst_hero_slot_idx
                 if(Check_Same_Location(m_item_slot_idx, hero_slot_idx) == ST_TRUE)
                 {
-                    Can_Equip = ST_TRUE;
+                    can_equip = ST_TRUE;
                 }
                 else
                 {
-                    if(_players[_current_player_idx].mana_reserve < 20)
-                    {
-                        Set_Mouse_List(1, mouse_list_default);
-                        Copy_On_To_Off_Page();
-                        PageFlip_FX();
-                        Warn1(cnst_ItemPort_Msg_3);  /* "You do not have enough mana crystals to transfer this item." */
-                        Set_Mouse_List(1, mouse_list_none);
-                        Can_Equip = ST_FALSE;
-                    }
-                    else
+                    if(_players[_current_player_idx].mana_reserve >= 20)
                     {
                         Set_Mouse_List(1, mouse_list_default);
                         PageFlip_FX();
@@ -1013,17 +1037,26 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
                         stu_strcat(GUI_String_1, GUI_String_2);
                         stu_strcat(GUI_String_1, cnst_ItemPort_Msg_2);  /* " mana crystals?" */
 
-                        Can_Equip = Confirmation_Box(GUI_String_1);
+                        can_equip = Confirmation_Box(GUI_String_1);
 
                         Set_Mouse_List(1, mouse_list_none);
 
-                        if(Can_Equip == ST_TRUE)
+                        if(can_equip == ST_TRUE)
                         {
                             _players[_current_player_idx].mana_reserve -= 20;
                         }
                     }
+                    else
+                    {
+                        Set_Mouse_List(1, mouse_list_default);
+                        Copy_On_To_Off_Page();
+                        PageFlip_FX();
+                        Warn1(cnst_ItemPort_Msg_3);  /* "You do not have enough mana crystals to transfer this item." */
+                        Set_Mouse_List(1, mouse_list_none);
+                        can_equip = ST_FALSE;
+                    }
                 }
-            }  /* if(Item_Pickup == ST_TRUE) */
+            }  /* if(item_pickup == ST_TRUE) */
 
 
             /*
@@ -1033,7 +1066,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             */
             if(item_slots_ptr[item_slot_idx] < 0)
             {
-                if(Can_Equip == ST_TRUE)
+                if(can_equip == ST_TRUE)
                 {
                     m_item_slot_idx = ST_UNDEFINED;
 
@@ -1046,7 +1079,7 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
             }
             else
             {
-                if(Can_Equip == ST_TRUE)
+                if(can_equip == ST_TRUE)
                 {
                     Set_Mouse_List(1, mouse_list_none);
 
@@ -1054,32 +1087,6 @@ void Move_Item(int16_t hero_slot_idx, int16_t item_slot_idx)
 
                     m_item_slot_idx = hero_slot_idx;
                 }
-            }
-
-        }
-
-    }
-    else  /* if(m_cursor_item_idx != ST_UNDEFINED) */
-    {
-
-        if(item_slots_ptr[item_slot_idx] > ST_UNDEFINED)
-        {
-            Item_Pickup = ST_TRUE;
-            
-            if(hero_slot_idx != VAULT_HERO_SLOT_IDX)
-            {
-                if(Check_Wont_Drown(hero_slot_idx, item_slots_ptr[item_slot_idx]) == ST_FALSE)
-                {
-                    Item_Pickup = ST_FALSE;
-                }
-            }
-
-            if(Item_Pickup == ST_TRUE)
-            {
-                m_item_slot_idx = hero_slot_idx;
-                m_cursor_item_idx = item_slots_ptr[item_slot_idx];
-                item_slots_ptr[item_slot_idx] = ST_UNDEFINED;
-                Set_Mouse_List(1, mouse_list_none);
             }
 
         }
@@ -1169,34 +1176,20 @@ e.g.,
 void Process_Item_Pool(int16_t item_count, int16_t item_list[])
 {
     int16_t itr_item_count;  // _SI_
-
+    /* OGBUG  only the first 6 items of item_list are queued; Item_Screen() never shows the 7th and later ones and nothing here hands them out or removes them from _ITEMS (the combat-loot collectors can pass up to 18) */
     SETMAX(item_count, 6);
-
-
     item_pool_active = ST_TRUE;
-
     item_pool_list_count = item_count;
-
     item_pool_list_index = 0;
-
-
-    for(itr_item_count = 0; itr_item_count < 6; itr_item_count++)
+    for(itr_item_count = 0; itr_item_count < item_count; itr_item_count++)
     {
         item_pool_list_array[itr_item_count] = item_list[itr_item_count];
     }
-
-
     Item_Screen();
-
-
-    _page_flip_effect = 0;
-
+    _page_flip_effect = pfe_Default;
     item_pool_item_idx = ST_UNDEFINED;
-
     Set_Mouse_List(1, mouse_list_default);
-
     item_pool_active = ST_FALSE;
-
 }
 
 
@@ -1257,21 +1250,27 @@ ITEM_CanRemove(hero_slot_idx, item_slots_ptr[item_slot_idx])
 oddly does not start from the question of whether the item has a power that would preclude this concern?
 
 
+CLAUDE: answers, from the asm (ovr075/Check_Wont_Drown.asm)
+    It does short-circuit: every block after Square_Is_Sailable() is gated on On_Water == ST_TRUE (now drown_risk), so off water it falls through to return ST_TRUE.
+    The two flags are different things: drown_risk = "this hero could drown" (sailable square, cleared by a transport in the stack or a flight / water walking item it keeps
+    or holds on the cursor); cant_remove = the answer, set ST_TRUE only once wind walking is ruled out, then cleared by the hero's own travel. drown_risk ST_FALSE does mean
+    cant_remove stays ST_FALSE.
+    The item's own powers are not tested first because a hero on water without them is already safe or already drowning - only the final travel tests decide.
 */
 int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
 {
-    int16_t troop_list[9];
-    int16_t Equipped_Item_Index;
-    uint32_t item_powers;
-    int16_t Local_0_2;
-    int16_t Wind_Walker;
-    int16_t Wind_Walker_In_Stack;
-    int16_t On_Water;
-    int16_t troop_count;
-    int16_t Cant_Remove;
-    int16_t hero_unit_idx;  // _SI_
-    int16_t itr_troops;  // _DI_
-    int16_t itr_items;  // _DI_
+    int16_t troop_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t equipped_item_idx = 0;
+    uint32_t item_powers = 0;
+    int16_t niu_local_0C = 0;  /* OGBUG  dead store: set to 0 and never read (bp-0Ch) */
+    int16_t hero_wind_walking = 0;
+    int16_t stack_wind_walking = 0;
+    int16_t drown_risk = 0;
+    int16_t troop_count = 0;
+    int16_t cant_remove = 0;
+    int16_t hero_unit_idx = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
+    int16_t itr_items = 0;  // _DI_
 
     hero_unit_idx = _players[_current_player_idx].Heroes[hero_slot_idx].unit_idx;
 
@@ -1280,26 +1279,26 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
         return ST_TRUE;
     }
 
-    Cant_Remove = ST_FALSE;
+    cant_remove = ST_FALSE;
 
-    Local_0_2 = 0;
+    niu_local_0C = 0;
 
-    On_Water = Square_Is_Sailable(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp);
+    drown_risk = Square_Is_Sailable(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp);
 
 
     /*
         BEGIN:  clear drown flag if stack has boat
     */
-    if(On_Water == ST_TRUE)
+    if(drown_risk == ST_TRUE)
     {
         Player_Army_At_Square(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, _UNITS[hero_unit_idx].owner_idx, &troop_count, &troop_list[0]);
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
             if(troop_list[itr_troops] != hero_unit_idx)
             {
-                if(_unit_type_table[_UNITS[itr_troops].type].Transport > 0)
+                if(_unit_type_table[_UNITS[troop_list[itr_troops]].type].Transport > 0)
                 {
-                    On_Water = ST_FALSE;
+                    drown_risk = ST_FALSE;
                 }
             }
         }
@@ -1312,28 +1311,26 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
     /*
         BEGIN:  clear drown flag if equipped item has water walking or flight
     */
-    // BUG: ignores Wraith Form
-    if(On_Water == ST_TRUE)
+    /* OGBUG  no Non-Corporeal / Wraith Form test anywhere in the asm (nor in Unit_Has_WaterTravel()): a hero that could cross water that way is still treated as at risk */
+    if(drown_risk == ST_TRUE)
     {
         for(itr_items = 0; itr_items < NUM_HERO_ITEMS; itr_items++)
         {
-            Equipped_Item_Index = _players[_current_player_idx].Heroes[hero_slot_idx].Items[itr_items];
+            equipped_item_idx = _players[_current_player_idx].Heroes[hero_slot_idx].Items[itr_items];
             if(
-                (Equipped_Item_Index > ST_UNDEFINED)
+                (equipped_item_idx > ST_UNDEFINED)
                 &&
-                (Equipped_Item_Index != item_idx)
+                (equipped_item_idx != item_idx)
             )
             {
-                // TODO  item_powers = _ITEMS[Equipped_Item_Index].Powers;
-                // item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[Equipped_Item_Index], 0x2E);
-                item_powers = GET_ITEM_POWERS(Equipped_Item_Index);
+                item_powers = _ITEMS[equipped_item_idx].powers;
                 if(
                     ((item_powers & IP_WATER_WALKING) != 0)
                     ||
                     ((item_powers & IP_FLIGHT) != 0)
                 )
                 {
-                    On_Water = ST_FALSE;
+                    drown_risk = ST_FALSE;
                 }
             }
         }
@@ -1342,24 +1339,24 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
         END:  clear drown flag if equipped item has water walking or flight
     */
 
-
     /*
         BEGIN:  clear drown flag if cursor item has water walking or flight
     */
-    if(On_Water == ST_TRUE)
+    if(drown_risk == ST_TRUE)
     {
         if(m_cursor_item_idx > ST_UNDEFINED)
         {
-            // item_powers = _ITEMS[m_cursor_item_idx].Powers;
+            // item_powers = _ITEMS[m_cursor_item_idx].powers;
             // item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[m_cursor_item_idx], 0x2E);
-            item_powers = GET_ITEM_POWERS(m_cursor_item_idx);
+            // item_powers = GET_ITEM_POWERS(m_cursor_item_idx);
+            item_powers = _ITEMS[m_cursor_item_idx].powers;
             if(
                 ((item_powers & IP_WATER_WALKING) != 0)
                 ||
                 ((item_powers & IP_FLIGHT) != 0)
             )
             {
-                On_Water = ST_FALSE;
+                drown_risk = ST_FALSE;
             }
         }
     }
@@ -1367,94 +1364,94 @@ int16_t Check_Wont_Drown(int16_t hero_slot_idx, int16_t item_idx)
         END:  clear drown flag if cursor item has water walking or flight
     */
 
-
-    if(On_Water == ST_TRUE)
+    if(drown_risk == ST_TRUE)
     {
         Player_Army_At_Square(_UNITS[hero_unit_idx].wx, _UNITS[hero_unit_idx].wy, _UNITS[hero_unit_idx].wp, _UNITS[hero_unit_idx].owner_idx, &troop_count, &troop_list[0]);
 
-        Wind_Walker = ST_FALSE;
+        hero_wind_walking = ST_FALSE;
+
+        /* OGBUG  the wind walking item test is o71p08 (Unit_Has_WindWalkingItem()), an empty function that returns 0: a wind walking item never counts, for the hero or the stack */
 
         if(
             (Unit_Has_WindWalking(hero_unit_idx) == ST_TRUE)
-            /* || unit has wind walking item (o71p08_Empty_pFxn(hero_unit_idx)) */
+            ||
+            (Unit_Has_WindWalkingItem(hero_unit_idx) == ST_TRUE)
         )
         {
-            Wind_Walker = ST_TRUE;
+            hero_wind_walking = ST_TRUE;
         }
 
-        Wind_Walker_In_Stack = ST_FALSE;
+        stack_wind_walking = ST_FALSE;
 
         for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
         {
             if(troop_list[itr_troops] != hero_unit_idx)
             {
                 if(
-                    (Unit_Has_WindWalking(itr_troops) == ST_TRUE)
-                    /* || unit has wind walking item (o71p08_Empty_pFxn(hero_unit_idx)) */
+                    (Unit_Has_WindWalking(troop_list[itr_troops]) == ST_TRUE)
+                    ||
+                    (Unit_Has_WindWalkingItem(troop_list[itr_troops]) == ST_TRUE)
                 )
                 {
-                    Wind_Walker_In_Stack = ST_TRUE;
+                    stack_wind_walking = ST_TRUE;
                 }
 
             }
         }
 
-        // ¿ BUG:  doesn't set Cant_Remove based on Wind_Walker_In_Stack ?
         if(
-            (Wind_Walker_In_Stack == ST_FALSE)
+            (stack_wind_walking == ST_FALSE)
             &&
-            (Wind_Walker == ST_FALSE)
+            (hero_wind_walking == ST_FALSE)
         )
         {
-            // item_powers = _ITEMS[item_idx].Powers;
-            // item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
-            item_powers = GET_ITEM_POWERS(item_idx);
+            item_powers = _ITEMS[item_idx].powers;
 
-            Cant_Remove = ST_TRUE;
+            cant_remove = ST_TRUE;
 
-            // ¿ BUG:  these should be grouped as water powers and air powers ?
-            if(
-                ((item_powers & IP_FLIGHT) != 0)
-                ||
-                (Unit_Has_WaterTravel(hero_unit_idx) == ST_TRUE)
-                ||
-                (Unit_Has_WaterTravel_Item(hero_unit_idx) == ST_TRUE)
-                ||
-                (Wind_Walker == ST_TRUE)
-            )
+            /* OGBUG  inside this block hero_wind_walking is ST_FALSE (the block's own test), so the two (hero_wind_walking == ST_TRUE) tests below never pass; the asm has both (cmp [bp+hero_wind_walking], e_ST_TRUE) */
+            if((item_powers & IP_FLIGHT) != 0)
             {
-                Cant_Remove = ST_FALSE;
+                if(
+                    (Unit_Has_WaterTravel(hero_unit_idx) == ST_TRUE)
+                    ||
+                    (Unit_Has_WaterTravel_Item(hero_unit_idx) == ST_TRUE)
+                    ||
+                    (hero_wind_walking == ST_TRUE)  /* OGBUG  inside this block hero_wind_walking is ST_FALSE (the block's own test), so the two (hero_wind_walking == ST_TRUE) tests below never pass; the asm has both (cmp [bp+hero_wind_walking], e_ST_TRUE) */
+                )
+                {
+                    cant_remove = ST_FALSE;
+                }
             }
 
-            // drake178: ; BUG: does not exclude the item being checked
-            if(
-                ((item_powers & IP_WATER_WALKING) != 0)
-                ||
-                (Unit_Has_AirTravel(hero_unit_idx) == ST_TRUE)
-                ||
-                (Unit_Has_AirTravel_Item(hero_unit_idx) == ST_TRUE)
-                ||
-                (Wind_Walker == ST_TRUE)
-            )
+            if((item_powers & IP_WATER_WALKING) != 0)
             {
-                Cant_Remove = ST_FALSE;
+                if(
+                    (Unit_Has_AirTravel(hero_unit_idx) == ST_TRUE)
+                    ||
+                    (Unit_Has_AirTravel_Item(hero_unit_idx) == ST_TRUE)
+                    ||
+                    (hero_wind_walking == ST_TRUE)  /* OGBUG  inside this block hero_wind_walking is ST_FALSE (the block's own test), so the two (hero_wind_walking == ST_TRUE) tests below never pass; the asm has both (cmp [bp+hero_wind_walking], e_ST_TRUE) */
+                )
+                {
+                    cant_remove = ST_FALSE;
+                }
             }
 
-            // BUG:  already checked ¿ overlapping macros ?
             if(
                 (Unit_Has_AirTravel(hero_unit_idx) == ST_TRUE)
                 ||
                 (Unit_Has_WaterTravel(hero_unit_idx) == ST_TRUE)
             )
             {
-                Cant_Remove = ST_FALSE;
+                cant_remove = ST_FALSE;
             }
 
         }
 
-    }  /* if(On_Water == ST_TRUE) */
+    }  /* if(drown_risk == ST_TRUE) */
 
-    if(Cant_Remove == ST_TRUE)
+    if(cant_remove == ST_TRUE)
     {
         Warn1(cnst_DrownWarn_Msg);  // "This unit will drown if the item is removed."
         return ST_FALSE;

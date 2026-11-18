@@ -143,11 +143,13 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 }
 
                 // BUG  Outpost_Screen(1, ST_UNDEFINED, ST_UNDEFINED);
+                /* CLAUDE */  /* REBUG */  /* asm: push -1 / push -1 / push 1 / call Outpost_Screen / add sp, 6 - the human sees the new outpost before naming it; Outpost_Screen() reads only its first argument */
+                Outpost_Screen(1);
                 Change_City_Name_Popup(_city_idx, outpost_owner);
 
                 Play_Background_Music();
 
-                Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 2);
+                Set_Square_Explored_Flags_Range(outpost_wx, outpost_wy, outpost_wp, 2);
 
             }
             else
@@ -161,7 +163,7 @@ int16_t Create_Outpost(int16_t outpost_wx, int16_t outpost_wy, int16_t outpost_w
                 {
                     if(itr_players == _current_player_idx)
                     {
-                        Set_Map_Square_Explored_Flags_XYP_Range(outpost_wx, outpost_wy, outpost_wp, 1);
+                        Set_Square_Explored_Flags_Range(outpost_wx, outpost_wy, outpost_wp, 1);
                     }
                     else
                     {
@@ -277,13 +279,13 @@ void Outpost_Screen(int16_t flag)
             for(itr = 0; itr < m_troop_count__ovr077; itr++)
             {
                 Outpost_Garrison_Picture_Coords(itr, &x1, &y1, &x2, &y2);
-                g_unit_window_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr077[0], ST_UNDEFINED);
+                g_unit_window_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, emptystring__ovr077, ST_UNDEFINED);
             }
         }
 
         City_Add_Fields_City_Enchantments((screen_start_x + 114), (screen_start_y + 54));
 
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_ESC__ovr077[0], ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_ESC__ovr077, ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -346,6 +348,7 @@ void Outpost_Screen(int16_t flag)
             city_enchantment_display_first -= 6;
             if(city_enchantment_display_first < 0)
             {
+                /* OGBUG  (count / 6) * 6 is one page past the end when the count is a multiple of 6 (12, 18, 24): City_Add_Fields_City_Enchantments then resets the empty page to 0, so 'previous' on the first page stays there; City_Screen() adds 'first >= count -> count - 6' */
                 city_enchantment_display_first = ((city_enchantment_list_count / 6) * 6);
             }
             screen_changed = ST_TRUE;
@@ -356,7 +359,8 @@ void Outpost_Screen(int16_t flag)
         {
             Play_Left_Click();
             city_enchantment_display_first += 6;
-            if(city_enchantment_display_first > city_enchantment_list_count)
+            // if(city_enchantment_display_first > city_enchantment_list_count)
+            if(city_enchantment_display_first >= city_enchantment_list_count)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax, [city_enchantment_list_count] / jl (keep) */
             {
                 city_enchantment_display_first = 0;
             }
@@ -490,7 +494,7 @@ void Outpost_Screen_Draw(void)
     }
     else
     {
-        // TODO  mov     [_help_entries.help_01.entry_idx], e_ST_UNDEFINED
+        // TODO  mov     [_help_entries.help_01.entry_idx], ST_UNDEFINED
     }
 
     for(itr = 0; itr < m_troop_count__ovr077; itr++)
@@ -604,7 +608,7 @@ void Change_City_Name_Popup(int16_t city_idx, int16_t player_idx)
     int16_t x_start = 0;
     int16_t input_box_result = 0;
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     colors[0] = 97;
     colors[1] = 97;
@@ -792,7 +796,7 @@ void Cast_Awareness(int16_t player_idx)
         if(player_idx == _current_player_idx)
         {
 
-            Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, 1);
+            Set_Square_Explored_Flags_Range(_CITIES[itr].wx, _CITIES[itr].wy, _CITIES[itr].wp, 1);
 
         }
         else

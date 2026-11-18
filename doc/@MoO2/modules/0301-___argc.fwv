@@ -1,0 +1,9 @@
+module_num=301
+module=___argc
+source=0301-___argc.md
+range[0]=2:0x000513F0 linear=0x001C13F0 size=8
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL    CHUNK
+-    -    -      0x001C13F0  2:0x000513F0  data  ____Argc  ____Argc  -
+-    -    -      0x001C13F4  2:0x000513F4  data  ____Argv  ____Argv  -

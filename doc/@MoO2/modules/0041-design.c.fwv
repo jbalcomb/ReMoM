@@ -1,0 +1,107 @@
+module_num=41
+module=D:\MOX\OTHERS\DESIGN.C
+source=0041-design.c.md
+range[0]=1:0x00059E62 linear=0x00069E62 size=21534
+range[1]=2:0x000011E0 linear=0x001711E0 size=196
+range[2]=2:0x0000975C linear=0x0017975C size=12
+range[3]=2:0x00023998 linear=0x00193998 size=36
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                               CHUNK
+m041f001  1    -      0x00069E62  1:0x00059E62  code         Add_Design_Buttons                  Add_Design_Buttons_                  regions/07-object-1/000EEE54-000EF653.txt
+m041f002  2    -      0x0006A3E5  1:0x0005A3E5  static,code  Add_Size_Button                     Add_Size_Button_                     regions/07-object-1/000EF654-000EFE53.txt
+m041f003  3    -      0x0006A3F3  1:0x0005A3F3  code         Assert_Template                     Assert_Template_                     regions/07-object-1/000EF654-000EFE53.txt
+m041f004  4    -      0x0006A406  1:0x0005A406  static,code  Bonus_For_Regular_Mods              Bonus_For_Regular_Mods_              regions/07-object-1/000EF654-000EFE53.txt
+m041f005  5    -      0x0006A636  1:0x0005A636  static,code  Bonus_For_Special_Mods              Bonus_For_Special_Mods_              regions/07-object-1/000EF654-000EFE53.txt
+m041f006  6    -      0x0006A680  1:0x0005A680  static,code  Bonus_For_Weapon_Arcs               Bonus_For_Weapon_Arcs_               regions/07-object-1/000EF654-000EFE53.txt
+m041f007  7    -      0x0006A6A1  1:0x0005A6A1  static,code  Build_Design_Template               Build_Design_Template_               regions/07-object-1/000EF654-000EFE53.txt
+m041f008  8    -      0x0006A7C8  1:0x0005A7C8  code         Build_Initial_Design_Template       Build_Initial_Design_Template_       regions/07-object-1/000EF654-000EFE53.txt
+m041f009  9    -      0x0006AB1B  1:0x0005AB1B  static,code  Update_N_Weapons_In_Design          Update_N_Weapons_In_Design_          regions/07-object-1/000EFE54-000F0653.txt
+m041f010  10   -      0x0006AB4E  1:0x0005AB4E  static,code  Update_N_Spec_Systems_In_Design     Update_N_Spec_Systems_In_Design_     regions/07-object-1/000EFE54-000F0653.txt
+m041f011  11   -      0x0006AB9A  1:0x0005AB9A  static,code  Check_For_Auto_Repeat               Check_For_Auto_Repeat_               regions/07-object-1/000EFE54-000F0653.txt
+m041f012  12   -      0x0006AD3E  1:0x0005AD3E  static,code  Has_Damper_Field                    Has_Damper_Field_                    regions/07-object-1/000EFE54-000F0653.txt
+m041f013  13   -      0x0006AD7C  1:0x0005AD7C  code         Check_Generic_Replacement_Fields    Check_Generic_Replacement_Fields_    regions/07-object-1/000EFE54-000F0653.txt
+m041f014  14   -      0x0006AE96  1:0x0005AE96  code         Check_Plus_Minus_Buttons            Check_Plus_Minus_Buttons_            regions/07-object-1/000EFE54-000F0653.txt
+m041f015  15   -      0x0006AF9B  1:0x0005AF9B  code         Check_Special_System_Fields         Check_Special_System_Fields_         regions/07-object-1/000EFE54-000F0653.txt
+m041f016  16   -      0x0006B0EF  1:0x0005B0EF  code         Check_Weapon_Fields                 Check_Weapon_Fields_                 regions/07-object-1/000F0654-000F0E53.txt
+m041f017  17   -      0x0006B247  1:0x0005B247  code         Clear_Design                        Clear_Design_                        regions/07-object-1/000F0654-000F0E53.txt
+m041f018  18   -      0x0006B342  1:0x0005B342  code         Clear_Design_For_Colony_Builds      Clear_Design_For_Colony_Builds_      regions/07-object-1/000F0654-000F0E53.txt
+m041f019  19   -      0x0006B3B4  1:0x0005B3B4  code         Clear_Special_System_Slot           Clear_Special_System_Slot_           regions/07-object-1/000F0654-000F0E53.txt
+m041f020  20   -      0x0006B428  1:0x0005B428  code         Clear_Weapon_Slot                   Clear_Weapon_Slot_                   regions/07-object-1/000F0654-000F0E53.txt
+m041f021  21   -      0x0006B4D7  1:0x0005B4D7  code         Computer_Cost                       Computer_Cost_                       regions/07-object-1/000F0654-000F0E53.txt
+m041f022  22   -      0x0006B519  1:0x0005B519  code         Cost_Given_M_Level                  Cost_Given_M_Level_                  regions/07-object-1/000F0654-000F0E53.txt
+m041f023  23   -      0x0006B577  1:0x0005B577  code         Cost_Of_Design                      Cost_Of_Design_                      regions/07-object-1/000F0654-000F0E53.txt
+m041f024  24   -      0x0006B77B  1:0x0005B77B  static,code  Current_Design_Armor_Absorption     Current_Design_Armor_Absorption_     regions/07-object-1/000F0654-000F0E53.txt
+m041f025  25   -      0x0006B7CF  1:0x0005B7CF  static,code  Current_Design_Combat_Speed         Current_Design_Combat_Speed_         regions/07-object-1/000F0654-000F0E53.txt
+m041f026  26   -      0x0006B7FF  1:0x0005B7FF  static,code  Current_Design_Has_Special_System   Current_Design_Has_Special_System_   regions/07-object-1/000F0654-000F0E53.txt
+m041f027  27   -      0x0006B82A  1:0x0005B82A  static,code  Current_Design_Min_Combat_Speed     Current_Design_Min_Combat_Speed_     regions/07-object-1/000F0E54-000F1653.txt
+m041f028  28   -      0x0006B84A  1:0x0005B84A  static,code  Current_Design_Max_Combat_Speed     Current_Design_Max_Combat_Speed_     regions/07-object-1/000F0E54-000F1653.txt
+m041f029  29   -      0x0006B86A  1:0x0005B86A  static,code  Current_Design_Base_Combat_Speed    Current_Design_Base_Combat_Speed_    regions/07-object-1/000F0E54-000F1653.txt
+m041f030  30   -      0x0006B8D2  1:0x0005B8D2  code         Current_Design_Shield               Current_Design_Shield_               regions/07-object-1/000F0E54-000F1653.txt
+m041f031  31   -      0x0006B8DB  1:0x0005B8DB  code         Current_Design_Shield_Cost          Current_Design_Shield_Cost_          regions/07-object-1/000F0E54-000F1653.txt
+m041f032  32   -      0x0006B8E5  1:0x0005B8E5  code         Current_Design_Shield_Space         Current_Design_Shield_Space_         regions/07-object-1/000F0E54-000F1653.txt
+m041f033  33   -      0x0006B8EF  1:0x0005B8EF  static,code  Current_Design_Shield_Absorption    Current_Design_Shield_Absorption_    regions/07-object-1/000F0E54-000F1653.txt
+m041f034  34   -      0x0006B91A  1:0x0005B91A  static,code  Current_Design_Structural_Points    Current_Design_Structural_Points_    regions/07-object-1/000F0E54-000F1653.txt
+m041f035  35   -      0x0006B949  1:0x0005B949  static,code  Printed_Design_Cost                 Printed_Design_Cost_                 regions/07-object-1/000F0E54-000F1653.txt
+m041f036  36   -      0x0006B99D  1:0x0005B99D  code         Design_Cost_For_Player              Design_Cost_For_Player_              regions/07-object-1/000F0E54-000F1653.txt
+m041f037  37   -      0x0006B9B2  1:0x0005B9B2  code         Design_Screen                       Design_Screen_                       regions/07-object-1/000F0E54-000F1653.txt
+m041f038  38   -      0x0006C087  1:0x0005C087  code         Design_Template_Costs               Design_Template_Costs_               regions/07-object-1/000F1654-000F1E53.txt
+m041f039  39   -      0x0006C287  1:0x0005C287  code         Design_Template_Space_Requirements  Design_Template_Space_Requirements_  regions/07-object-1/000F1654-000F1E53.txt
+m041f040  40   -      0x0006C47E  1:0x0005C47E  code         Design_Weapon_Damage_String         Design_Weapon_Damage_String_         regions/07-object-1/000F1654-000F1E53.txt
+m041f041  41   -      0x0006C6CD  1:0x0005C6CD  code         Draw_Design_Screen                  Draw_Design_Screen_                  regions/07-object-1/000F1654-000F1E53.txt
+m041f042  42   -      0x0006C704  1:0x0005C704  code         Draw_Down_Buttons                   Draw_Down_Buttons_                   regions/07-object-1/000F1654-000F1E53.txt
+m041f043  43   -      0x0006C871  1:0x0005C871  code         Get_Colony_Handle                   Get_Colony_Handle_                   regions/07-object-1/000F1E54-000F2653.txt
+m041f044  44   -      0x0006C897  1:0x0005C897  code         Get_Ship_Design_Name                Get_Ship_Design_Name_                regions/07-object-1/000F1E54-000F2653.txt
+m041f045  45   -      0x0006C8F9  1:0x0005C8F9  static,code  Get_Ship_Size_Button_Field_XY       Get_Ship_Size_Button_Field_XY_       regions/07-object-1/000F1E54-000F2653.txt
+m041f046  46   -      0x0006C98D  1:0x0005C98D  code         Load_Design_Screen_Pictures         Load_Design_Screen_Pictures_         regions/07-object-1/000F1E54-000F2653.txt
+m041f047  47   -      0x0006D02B  1:0x0005D02B  code         Max_Recharge_Rate                   Max_Recharge_Rate_                   regions/07-object-1/000F2654-000F2E53.txt
+m041f048  48   -      0x0006D048  1:0x0005D048  code         Miniaturization_Level               Miniaturization_Level_               regions/07-object-1/000F2654-000F2E53.txt
+m041f049  49   -      0x0006D0DE  1:0x0005D0DE  code         Modify_Weapon_By_Arcs               Modify_Weapon_By_Arcs_               regions/07-object-1/000F2654-000F2E53.txt
+m041f050  50   -      0x0006D10F  1:0x0005D10F  code         N_Weapon_Arcs                       N_Weapon_Arcs_                       regions/07-object-1/000F2654-000F2E53.txt
+m041f051  51   -      0x0006D132  1:0x0005D132  code         N_Replacements_For_Generic_Item     N_Replacements_For_Generic_Item_     regions/07-object-1/000F2654-000F2E53.txt
+m041f052  52   -      0x0006D167  1:0x0005D167  code         Number_Of_Special_Systems           Number_Of_Special_Systems_           regions/07-object-1/000F2654-000F2E53.txt
+m041f053  53   -      0x0006D191  1:0x0005D191  code         Number_Of_Weapons_Loaded            Number_Of_Weapons_Loaded_            regions/07-object-1/000F2654-000F2E53.txt
+m041f054  54   -      0x0006D1B4  1:0x0005D1B4  code         One_Weapon_Space_Without_M_Level    One_Weapon_Space_Without_M_Level_    regions/07-object-1/000F2654-000F2E53.txt
+m041f055  55   -      0x0006D29C  1:0x0005D29C  code         Print_Current_Design                Print_Current_Design_                regions/07-object-1/000F2654-000F2E53.txt
+m041f056  56   -      0x0006E091  1:0x0005E091  static,code  Print_Ship_Size_Error_Message       Print_Ship_Size_Error_Message_       regions/07-object-1/000F3654-000F3E53.txt
+m041f057  57   -      0x0006E1A0  1:0x0005E1A0  code         Cost_Reduction_For_Govt_Type        Cost_Reduction_For_Govt_Type_        regions/07-object-1/000F3654-000F3E53.txt
+m041f058  58   -      0x0006E1DC  1:0x0005E1DC  code         Replacement_Exists                  Replacement_Exists_                  regions/07-object-1/000F3654-000F3E53.txt
+m041f059  59   -      0x0006E240  1:0x0005E240  static,code  Set_Flashing_Colors                 Set_Flashing_Colors_                 regions/07-object-1/000F3654-000F3E53.txt
+m041f060  60   -      0x0006E2E8  1:0x0005E2E8  code         Shield_Cost                         Shield_Cost_                         regions/07-object-1/000F3654-000F3E53.txt
+m041f061  61   -      0x0006E316  1:0x0005E316  code         Shield_Cost_Given_M_Level           Shield_Cost_Given_M_Level_           regions/07-object-1/000F3654-000F3E53.txt
+m041f062  62   -      0x0006E369  1:0x0005E369  code         Shield_Space                        Shield_Space_                        regions/07-object-1/000F3654-000F3E53.txt
+m041f063  63   -      0x0006E38E  1:0x0005E38E  code         Shield_Space_Given_M_Level          Shield_Space_Given_M_Level_          regions/07-object-1/000F3654-000F3E53.txt
+m041f064  64   -      0x0006E3D3  1:0x0005E3D3  static,code  Shield_Strength                     Shield_Strength_                     regions/07-object-1/000F3654-000F3E53.txt
+m041f065  65   -      0x0006E42E  1:0x0005E42E  static,code  Space_For_System_Replacement        Space_For_System_Replacement_        regions/07-object-1/000F3654-000F3E53.txt
+m041f066  66   -      0x0006E571  1:0x0005E571  static,code  Space_For_Weapon_Replacement        Space_For_Weapon_Replacement_        regions/07-object-1/000F3654-000F3E53.txt
+m041f067  67   -      0x0006E60E  1:0x0005E60E  code         Space_Given_M_Level                 Space_Given_M_Level_                 regions/07-object-1/000F3654-000F3E53.txt
+m041f068  68   -      0x0006E69E  1:0x0005E69E  code         Tech_App_To_Tech_Id                 Tech_App_To_Tech_Id_                 regions/07-object-1/000F3654-000F3E53.txt
+m041f069  69   -      0x0006E70A  1:0x0005E70A  code         Tech_Level                          Tech_Level_                          regions/07-object-1/000F3654-000F3E53.txt
+m041f070  70   -      0x0006E777  1:0x0005E777  code         Total_Design_Cost                   Total_Design_Cost_                   regions/07-object-1/000F3654-000F3E53.txt
+m041f071  71   -      0x0006E81F  1:0x0005E81F  code         Total_Design_Space                  Total_Design_Space_                  regions/07-object-1/000F3E54-000F4653.txt
+m041f072  72   -      0x0006E862  1:0x0005E862  code         Total_Space_Used                    Total_Space_Used_                    regions/07-object-1/000F3E54-000F4653.txt
+m041f073  73   -      0x0006E8DA  1:0x0005E8DA  code         Update_Calculated_Design_Data       Update_Calculated_Design_Data_       regions/07-object-1/000F3E54-000F4653.txt
+m041f074  74   -      0x0006EA48  1:0x0005EA48  static,code  Update_Player_Design                Update_Player_Design_                regions/07-object-1/000F3E54-000F4653.txt
+m041f075  75   -      0x0006EC74  1:0x0005EC74  code         Weapon_Cost                         Weapon_Cost_                         regions/07-object-1/000F3E54-000F4653.txt
+m041f076  76   -      0x0006EDAE  1:0x0005EDAE  code         Weapon_Needs_Racks                  Weapon_Needs_Racks_                  regions/07-object-1/000F3E54-000F4653.txt
+m041f077  77   -      0x0006EDC6  1:0x0005EDC6  code         One_Weapon_Space                    One_Weapon_Space_                    regions/07-object-1/000F3E54-000F4653.txt
+m041f078  78   -      0x0006EE8E  1:0x0005EE8E  code         Weapon_Space                        Weapon_Space_                        regions/07-object-1/000F3E54-000F4653.txt
+m041f079  79   -      0x0006EFEB  1:0x0005EFEB  code         Weapon_Type                         Weapon_Type_                         regions/07-object-1/000F3E54-000F4653.txt
+m041f080  80   -      0x0006EFF8  1:0x0005EFF8  code         Weapon_Arc_String                   Weapon_Arc_String_                   regions/07-object-1/000F3E54-000F4653.txt
+m041f081  81   -      0x0006F07F  1:0x0005F07F  code         Weapon_Mod_String                   Weapon_Mod_String_                   regions/07-object-1/000F4654-000F4E53.txt
+m041f082  82   -      0x0006F11C  1:0x0005F11C  code         Miniaturization_Category            Miniaturization_Category_            regions/07-object-1/000F4654-000F4E53.txt
+m041f083  83   -      0x0006F1CC  1:0x0005F1CC  code         Weapon_Rack_Size_To_Value           Weapon_Rack_Size_To_Value_           regions/07-object-1/000F4654-000F4E53.txt
+m041f084  84   -      0x0006F23C  1:0x0005F23C  static,code  Get_Tech_Description_Lbx_Name       Get_Tech_Description_Lbx_Name_       regions/07-object-1/000F4654-000F4E53.txt
+-         -    -      0x0017975C  2:0x0000975C  static,data  _design_lbx_name                    _design_lbx_name                     regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00193998  2:0x00023998  static,data  _printed_cost                       _printed_cost                        -
+-         -    -      0x0019399C  2:0x0002399C  static,data  _dull_minus_button_seg              _dull_minus_button_seg               -
+-         -    -      0x001939A0  2:0x000239A0  static,data  _dark_build_design_button_seg       _dark_build_design_button_seg        -
+-         -    -      0x001939A4  2:0x000239A4  static,data  _printed_space_avail                _printed_space_avail                 -
+-         -    -      0x001939A8  2:0x000239A8  static,data  _dull_plus_button_seg               _dull_plus_button_seg                -
+-         -    -      0x001939AC  2:0x000239AC  static,data  _add_size_button_flag               _add_size_button_flag                -
+-         -    -      0x001939B2  2:0x000239B2  static,data  _design_computer_replacement_field  _design_computer_replacement_field   -
+-         -    -      0x001939B4  2:0x000239B4  static,data  _design_shield_replacement_field    _design_shield_replacement_field     -
+-         -    -      0x001939B6  2:0x000239B6  static,data  _design_size_field                  _design_size_field                   -
+-         -    -      0x001939B8  2:0x000239B8  static,data  _use_augmented_engines              _use_augmented_engines               -
+-         -    -      0x001939B9  2:0x000239B9  data         _replacement_wait_ctr               _replacement_wait_ctr                -
+-         -    -      0x001939BA  2:0x000239BA  static,data  _changed_design_name                _changed_design_name                 -

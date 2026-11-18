@@ -1,0 +1,10 @@
+module_num=248
+module=stinit
+source=0248-stinit.md
+range[0]=2:0x00012FFE linear=0x00182FFE size=6
+range[1]=2:0x00013010 linear=0x00183010 size=8
+range[2]=2:0x0004BC04 linear=0x001BBC04 size=4
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL          CHUNK
+-    -    -      0x001BBC04  2:0x0004BC04  data  ___OpenStreams  ___OpenStreams  -

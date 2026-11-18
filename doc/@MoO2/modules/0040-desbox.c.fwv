@@ -1,0 +1,88 @@
+module_num=40
+module=D:\MOX\OTHERS\DESBOX.C
+source=0040-desbox.c.md
+range[0]=1:0x000549D5 linear=0x000649D5 size=21645
+range[1]=2:0x000011B0 linear=0x001711B0 size=48
+range[2]=2:0x00009750 linear=0x00179750 size=12
+range[3]=2:0x00023964 linear=0x00193964 size=52
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                       SYMBOL                                      CHUNK
+m040f001  1    -      0x00064A02  1:0x00054A02  static,code  Add_Generic_Replacement_Fields             Add_Generic_Replacement_Fields_             regions/07-object-1/000E9E54-000EA653.txt
+m040f002  2    -      0x00064B94  1:0x00054B94  static,code  Add_Replacement_Weapon_Fields              Add_Replacement_Weapon_Fields_              regions/07-object-1/000E9E54-000EA653.txt
+m040f003  3    -      0x00065288  1:0x00055288  static,code  Add_Special_System_Fields                  Add_Special_System_Fields_                  regions/07-object-1/000EA654-000EAE53.txt
+m040f004  4    -      0x000654DD  1:0x000554DD  code         Application_Type                           Application_Type_                           regions/07-object-1/000EA654-000EAE53.txt
+m040f005  5    -      0x000654EA  1:0x000554EA  static,code  Clear_Weapon_Replacement_Fields            Clear_Weapon_Replacement_Fields_            regions/07-object-1/000EA654-000EAE53.txt
+m040f006  6    -      0x00065539  1:0x00055539  static,code  Draw_Darkened_Design_Screen                Draw_Darkened_Design_Screen_                regions/07-object-1/000EA654-000EAE53.txt
+m040f007  7    -      0x0006558C  1:0x0005558C  static,code  Draw_Generic_Replacement_Box_Help          Draw_Generic_Replacement_Box_Help_          regions/07-object-1/000EA654-000EAE53.txt
+m040f008  8    -      0x00065758  1:0x00055758  static,code  Draw_Generic_Replacement_Box               Draw_Generic_Replacement_Box_               regions/07-object-1/000EA654-000EAE53.txt
+m040f009  9    -      0x00065853  1:0x00055853  static,code  Draw_Special_Systems_Replacement_Box       Draw_Special_Systems_Replacement_Box_       regions/07-object-1/000EAE54-000EB653.txt
+m040f010  10   -      0x00065923  1:0x00055923  code         Draw_Special_Systems_Scroll_Bar            Draw_Special_Systems_Scroll_Bar_            regions/07-object-1/000EAE54-000EB653.txt
+m040f011  11   -      0x00065A2B  1:0x00055A2B  static,code  Draw_Weapons_Arc_Box                       Draw_Weapons_Arc_Box_                       regions/07-object-1/000EAE54-000EB653.txt
+m040f012  12   -      0x00065B25  1:0x00055B25  static,code  Draw_Weapons_Mod_Box                       Draw_Weapons_Mod_Box_                       regions/07-object-1/000EAE54-000EB653.txt
+m040f013  13   -      0x00065C32  1:0x00055C32  static,code  Draw_Weapons_Rack_Box                      Draw_Weapons_Rack_Box_                      regions/07-object-1/000EAE54-000EB653.txt
+m040f014  14   -      0x00065CFA  1:0x00055CFA  static,code  Draw_Weapons_Replacement_Box               Draw_Weapons_Replacement_Box_               regions/07-object-1/000EAE54-000EB653.txt
+m040f015  15   -      0x00065F33  1:0x00055F33  code         Draw_Weapons_Scroll_Bar                    Draw_Weapons_Scroll_Bar_                    regions/07-object-1/000EAE54-000EB653.txt
+m040f016  16   -      0x0006603E  1:0x0005603E  code         Generic_Replacement_Box                    Generic_Replacement_Box_                    regions/07-object-1/000EB654-000EBE53.txt
+m040f017  17   -      0x0006626E  1:0x0005626E  static,code  Generic_Replacement_Box_Choices            Generic_Replacement_Box_Choices_            regions/07-object-1/000EB654-000EBE53.txt
+m040f018  18   -      0x000663B8  1:0x000563B8  static,code  Generic_Replacement_Box_Dimensions         Generic_Replacement_Box_Dimensions_         regions/07-object-1/000EB654-000EBE53.txt
+m040f019  19   -      0x0006649D  1:0x0005649D  static,code  Get_Weapon_Mod_Field_XYs                   Get_Weapon_Mod_Field_XYs_                   regions/07-object-1/000EB654-000EBE53.txt
+m040f020  20   -      0x0006667C  1:0x0005667C  static,code  Get_Weapons_Box_Base_Dimensions            Get_Weapons_Box_Base_Dimensions_            regions/07-object-1/000EB654-000EBE53.txt
+m040f021  21   -      0x000666F5  1:0x000566F5  static,code  Have_Tractor_Beam_Weapon                   Have_Tractor_Beam_Weapon_                   regions/07-object-1/000EB654-000EBE53.txt
+m040f022  22   -      0x00066742  1:0x00056742  static,code  Items_Selected                             Items_Selected_                             regions/07-object-1/000EB654-000EBE53.txt
+m040f023  23   -      0x0006678C  1:0x0005678C  static,code  Mod_Allowed_On_Weapon_Type                 Mod_Allowed_On_Weapon_Type_                 regions/07-object-1/000EB654-000EBE53.txt
+m040f024  24   -      0x00066810  1:0x00056810  static,code  New_Arc_Space                              New_Arc_Space_                              regions/07-object-1/000EBE54-000EC653.txt
+m040f025  25   -      0x00066870  1:0x00056870  static,code  New_Mod_Space                              New_Mod_Space_                              regions/07-object-1/000EBE54-000EC653.txt
+m040f026  26   -      0x000668FD  1:0x000568FD  static,code  Print_Computer_Data                        Print_Computer_Data_                        regions/07-object-1/000EBE54-000EC653.txt
+m040f027  27   -      0x00066CEC  1:0x00056CEC  static,code  Print_Main_Weapon_Box                      Print_Main_Weapon_Box_                      regions/07-object-1/000EBE54-000EC653.txt
+m040f028  28   -      0x00067312  1:0x00057312  static,code  Print_Shield_Data                          Print_Shield_Data_                          regions/07-object-1/000EC654-000ECE53.txt
+m040f029  29   -      0x0006767F  1:0x0005767F  static,code  Print_Special_System_Data                  Print_Special_System_Data_                  regions/07-object-1/000EC654-000ECE53.txt
+m040f030  30   -      0x00067BC7  1:0x00057BC7  static,code  Print_Weapon_Mod_Help_Description          Print_Weapon_Mod_Help_Description_          regions/07-object-1/000ECE54-000ED653.txt
+m040f031  31   -      0x00067CCF  1:0x00057CCF  static,code  Print_Weapon_Modification_Message          Print_Weapon_Modification_Message_          regions/07-object-1/000ECE54-000ED653.txt
+m040f032  32   -      0x00067E50  1:0x00057E50  static,code  Redraw_Main_Design_Screen_To_Background    Redraw_Main_Design_Screen_To_Background_    regions/07-object-1/000ECE54-000ED653.txt
+m040f033  33   -      0x00067E9C  1:0x00057E9C  static,code  Scan_Replacement_Fields                    Scan_Replacement_Fields_                    regions/07-object-1/000ECE54-000ED653.txt
+m040f034  34   -      0x00067F5C  1:0x00057F5C  static,code  Set_New_Weapon_Modifications               Set_New_Weapon_Modifications_               regions/07-object-1/000ECE54-000ED653.txt
+m040f035  35   -      0x00067F9F  1:0x00057F9F  static,code  Set_Up_Special_System_Scroll_Bar           Set_Up_Special_System_Scroll_Bar_           regions/07-object-1/000ECE54-000ED653.txt
+m040f036  36   -      0x00067FFC  1:0x00057FFC  static,code  Set_Up_Weapon_Display                      Set_Up_Weapon_Display_                      regions/07-object-1/000ECE54-000ED653.txt
+m040f037  37   -      0x00068177  1:0x00058177  static,code  Set_Up_Weapon_Scroll_Bar                   Set_Up_Weapon_Scroll_Bar_                   regions/07-object-1/000ED654-000EDE53.txt
+m040f038  38   -      0x0006825F  1:0x0005825F  static,code  Should_Add_Mod                             Should_Add_Mod_                             regions/07-object-1/000ED654-000EDE53.txt
+m040f039  39   -      0x0006828D  1:0x0005828D  static,code  Space_With_Weapons                         Space_With_Weapons_                         regions/07-object-1/000ED654-000EDE53.txt
+m040f040  40   -      0x0006831F  1:0x0005831F  code         Space_With_Weapon                          Space_With_Weapon_                          regions/07-object-1/000ED654-000EDE53.txt
+m040f041  41   -      0x00068413  1:0x00058413  code         Special_System_Choices                     Special_System_Choices_                     regions/07-object-1/000ED654-000EDE53.txt
+m040f042  42   -      0x00068613  1:0x00058613  static,code  Special_System_Exclusion                   Special_System_Exclusion_                   regions/07-object-1/000ED654-000EDE53.txt
+m040f043  43   -      0x000686CB  1:0x000586CB  static,code  Special_System_Replacement_Box_Dimensions  Special_System_Replacement_Box_Dimensions_  regions/07-object-1/000ED654-000EDE53.txt
+m040f044  44   -      0x00068755  1:0x00058755  code         Special_Systems_Box                        Special_Systems_Box_                        regions/07-object-1/000ED654-000EDE53.txt
+m040f045  45   -      0x00068D3D  1:0x00058D3D  static,code  System_Added_Cost_And_Space                System_Added_Cost_And_Space_                regions/07-object-1/000EDE54-000EE653.txt
+m040f046  46   -      0x00068DE3  1:0x00058DE3  static,code  Update_Field_Item_Chosen                   Update_Field_Item_Chosen_                   regions/07-object-1/000EDE54-000EE653.txt
+m040f047  47   -      0x00068E40  1:0x00058E40  static,code  Update_Weapon_Modification_Data            Update_Weapon_Modification_Data_            regions/07-object-1/000EDE54-000EE653.txt
+m040f048  48   -      0x00068E78  1:0x00058E78  static,code  Update_Weapon_Replacement                  Update_Weapon_Replacement_                  regions/07-object-1/000EDE54-000EE653.txt
+m040f049  49   -      0x0006908A  1:0x0005908A  static,code  Valid_Modifications                        Valid_Modifications_                        regions/07-object-1/000EE654-000EEE53.txt
+m040f050  50   -      0x000691A3  1:0x000591A3  static,code  Weapon_Choice_Valid                        Weapon_Choice_Valid_                        regions/07-object-1/000EE654-000EEE53.txt
+m040f051  51   -      0x0006921B  1:0x0005921B  static,code  Weapon_Choices                             Weapon_Choices_                             regions/07-object-1/000EE654-000EEE53.txt
+m040f052  52   -      0x00069529  1:0x00059529  static,code  Weapon_Index                               Weapon_Index_                               regions/07-object-1/000EE654-000EEE53.txt
+m040f053  53   -      0x0006953B  1:0x0005953B  static,code  Weapon_Replacement_Help                    Weapon_Replacement_Help_                    regions/07-object-1/000EE654-000EEE53.txt
+m040f054  54   -      0x00069583  1:0x00059583  code         Weapons_Replacement_Box                    Weapons_Replacement_Box_                    regions/07-object-1/000EE654-000EEE53.txt
+m040f055  55   -      0x00069E2F  1:0x00059E2F  code         Window_Box                                 Window_Box_                                 regions/07-object-1/000EEE54-000EF653.txt
+m040f056  56   -      0x00069E59  1:0x00059E59  static,code  qsort_by_research_cost                     qsort_by_research_cost_                     regions/07-object-1/000EEE54-000EF653.txt
+-         -    -      0x00179750  2:0x00009750  static,data  _beam_filter_button_status                 _beam_filter_button_status                  regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179751  2:0x00009751  static,data  _missile_filter_button_status              _missile_filter_button_status               regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179752  2:0x00009752  static,data  _bomb_filter_button_status                 _bomb_filter_button_status                  regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179753  2:0x00009753  static,data  _special_filter_button_status              _special_filter_button_status               regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00193964  2:0x00023964  static,data  _replacement_scroll_field                  _replacement_scroll_field                   -
+-         -    -      0x00193966  2:0x00023966  static,data  _weapon_replacement_mods                   _weapon_replacement_mods                    -
+-         -    -      0x00193968  2:0x00023968  static,data  _replacement_scroll_up_button              _replacement_scroll_up_button               -
+-         -    -      0x0019396A  2:0x0002396A  static,data  _replacement_box_middle_height             _replacement_box_middle_height              -
+-         -    -      0x0019396C  2:0x0002396C  static,data  _replacement_box_base_x                    _replacement_box_base_x                     -
+-         -    -      0x0019396E  2:0x0002396E  static,data  _replacement_box_base_y                    _replacement_box_base_y                     -
+-         -    -      0x00193970  2:0x00023970  static,data  _replacement_scroll_dn_button              _replacement_scroll_dn_button               -
+-         -    -      0x00193972  2:0x00023972  static,data  _field_item_chosen                         _field_item_chosen                          -
+-         -    -      0x00193974  2:0x00023974  static,data  _replacement_box_width                     _replacement_box_width                      -
+-         -    -      0x00193976  2:0x00023976  static,data  _weapon_replacement_arcs                   _weapon_replacement_arcs                    -
+-         -    -      0x00193978  2:0x00023978  data         _weapon_replacement_rack                   _weapon_replacement_rack                    -
+-         -    -      0x0019397A  2:0x0002397A  static,data  _replacement_box_height                    _replacement_box_height                     -
+-         -    -      0x0019397C  2:0x0002397C  static,data  _field_item_scanned                        _field_item_scanned                         -
+-         -    -      0x0019397E  2:0x0002397E  static,data  _weapon_arc_rack_box_field                 _weapon_arc_rack_box_field                  -
+-         -    -      0x00193980  2:0x00023980  static,data  _valid_arcs_racks                          _valid_arcs_racks                           -
+-         -    -      0x00193985  2:0x00023985  static,data  _valid_mods                                _valid_mods                                 -
+-         -    -      0x00193994  2:0x00023994  static,data  _wait_ctr                                  _wait_ctr                                   -
+-         -    -      0x00193995  2:0x00023995  data         _incr_value                                _incr_value                                 -

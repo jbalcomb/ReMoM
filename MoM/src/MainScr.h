@@ -66,21 +66,25 @@ extern int64_t _main_map_grid_y;
 // WZD dseg:C03E                                                 BEGIN: Main_Screen
 
 // WZD dseg:C03E
-extern int16_t CRP_OverlandVar_2;
+extern int16_t niu_overland_var_2;
 // WZD dseg:C040
-extern int16_t CRP_OverlandVar_4;
+extern int16_t niu_overland_flag_4;
 // WZD dseg:C042
-extern int16_t OVL_MapVar3;
+extern int16_t _stack_selection_changed;
 // WZD dseg:C044
-extern int16_t CRP_OVL_Obstacle_Var1;
+extern int16_t _move_stack_hook_called;
 // WZD dseg:C046
-// CRP_OVL_UU_Control_1 dw 0
+extern int16_t niu_map_screen_field_1;
 // WZD dseg:C048
-// CRP_OVL_UU_Control_2 dw 0
+extern int16_t niu_map_screen_field_2;
 // WZD dseg:C04A
-// CRP_OVL_UU_Control_3 dw 0
+extern int16_t niu_map_screen_field_3;
 // WZD dseg:C04C
-// CRP_OVL_UU_Control_4 dw 0
+extern int16_t niu_map_screen_field_4;
+// WZD dseg:9746
+extern int16_t niu_map_window_y;
+// WZD dseg:9748
+extern int16_t niu_map_window_x;
 
 // WZD dseg:C04E
 extern int16_t special_action_flag;
@@ -92,7 +96,7 @@ extern int16_t special_action_flag;
 extern int16_t g_unit_window_fields[MAX_STACK];
 
 // WZD dseg:C064
-extern int16_t CRP_OverlandVar_3;
+extern int16_t niu_next_stack_has_goto;
 
 // WZD dseg:C066
 // int16_t _active_stack_path_length;
@@ -127,13 +131,13 @@ extern SAMB_ptr IMG_OVL_Nightshade;                // ; reserved EMM header poin
 // WZD dseg:CB66
 extern SAMB_ptr IMG_OVL_WildGame;                  // ; reserved EMM header pointer for a single image
 
-// WZD dseg:CB68 00 00                                           UU_IMG_OVL_Empty1@ dw 0                 ; DATA XREF: Terrain_Init:loc_46318w
+// WZD dseg:CB68 00 00                                           UU_IMG_OVL_Empty1@ dw 0                 ; DATA XREF: Terrain_Init:loc_46318vw
 // WZD dseg:CB68                                                                                         ; single-loaded image, called "mine" in the file
 
 // WZD dseg:CB6A
 extern SAMB_ptr IMG_OVL_Corruption;                        // ; reserved EMM header pointer for a single image
 
-// WZD dseg:CB6C 00 00                                           UU_IMG_OVL_Mud@ dw 0                    ; DATA XREF: Terrain_Init+1F6w
+// WZD dseg:CB6C 00 00                                           UU_IMG_OVL_Mud@ dw 0                    ; DATA XREF: Terrain_Init+1F6vw
 // WZD dseg:CB6C                                                                                         ; reserved EMM header pointer (unused in the game?)
 
 // WZD dseg:CB6E
@@ -152,7 +156,7 @@ extern SAMB_ptr node_auras_seg[5];               // ; array of 5 reserved EMM he
 
 // WZD dseg:CB8C 00                                              db    0
 // WZD dseg:CB8D 00                                              db    0
-// WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cw
+// WZD dseg:CB8E 00 00                                           UU_IMG_OVL_Empty2@ dw 0                 ; DATA XREF: Terrain_Init+22Cvw
 // WZD dseg:CB8E                                                                                         ; single-loaded image, called "lumber camp" in the file
 
 // WZD dseg:CB90
@@ -161,7 +165,7 @@ extern SAMB_ptr node_warp_scratchpad_seg;                // ; used to save and m
 // WZD dseg:CB92
 extern SAMB_ptr _unit_colored_backgrounds_seg[6];    // load in Terrain_Init() ovr052
 
-// WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init+F3w ...
+// WZD dseg:CB92                                                                                         ; DATA XREF: Terrain_Init+F3vw ...
 // WZD dseg:CB92                                                                                         ; array of 6 reserved EMM header pointers
 // WZD dseg:CB92                                                                                         ; (1 per banner color)
 // WZD dseg:CB9E 00                                              db    0
@@ -252,9 +256,9 @@ extern SAMB_ptr unexplored_mask_seg[15];
 // WZD dseg:CC1F 00                                              db    0
 // WZD dseg:CC20 00                                              db    0
 // WZD dseg:CC21 00                                              db    0
-// WZD dseg:CC22 00 00 00 00                                     terrain_lbx_001 dd 0                    ; DATA XREF: Terrain_Init+21w ...
-// WZD dseg:CC26 00 00                                           terrain_001_1 dw 0                      ; DATA XREF: Draw_Map_Terrain+C0w ...
-// WZD dseg:CC28 00 00                                           g_EmmHndl_TERRAIN dw 0                  ; DATA XREF: Terrain_Init:loc_4615Bw ...
+// WZD dseg:CC22 00 00 00 00                                     terrain_lbx_001 dd 0                    ; DATA XREF: Terrain_Init+21vw ...
+// WZD dseg:CC26 00 00                                           terrain_001_1 dw 0                      ; DATA XREF: Draw_Map_Terrain+C0vw ...
+// WZD dseg:CC28 00 00                                           g_EmmHndl_TERRAIN dw 0                  ; DATA XREF: Terrain_Init:loc_4615Bvw ...
 // WZD dseg:CC28                                                                                         ; EMM_Load_LBX handle
 // WZD dseg:CC2A 00                                              db    0
 // WZD dseg:CC2B 00                                              db    0
@@ -280,7 +284,7 @@ extern "C" {
 // WZD o67p01
 void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
 // WZD o67p02
-void IDK_CheckSet_MapDisplay_XY(void);
+void Clamp_Map_Window_Position(void);
 // WZD o67p05
 void Set_Draw_Active_Stack_Never(void);
 // WZD o67p08
@@ -390,7 +394,7 @@ void Set_Mouse_List_Default(void);
 void o58p03_empty_function(void);
 
 // WZD o58p04
-void Falsify_CRP_OVL_Obstacle_Var1(void);
+void Clear_Move_Stack_Hook_Called(void);
 
 // WZD o58p05
 void Increment_Background_Music(void);
@@ -425,10 +429,12 @@ void Sort_Unit_Stack(void);
 void Build_Unit_Stack(int16_t player_idx, int16_t world_plane, int16_t world_x, int16_t world_y);
 
 // WZD o62p05
-void OVL_BringIntoView(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_plane);
+// drake178: OVL_BringIntoView()
+void Bring_Square_Into_View(int16_t * map_x, int16_t * map_y, int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o62p06
-int16_t OVL_TileOffScrnEdge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
+// drake178: OVL_TileOffScrnEdge()
+int16_t Scroll_Map_If_Square_On_Edge(int16_t *map_x, int16_t *map_y, int16_t unit_x, int16_t unit_y, int16_t map_width, int16_t map_height);
 
 // WZD o62p07
 // DONT  int16_t o62p07_Empty_pFxn(int16_t troop_count, int16_t * troops);
@@ -547,7 +553,8 @@ int16_t Move_Units(int16_t player_idx, int16_t destination_x, int16_t destinatio
 void Move_Units_Draw(int16_t player_idx, int16_t map_p, int16_t movepath_length, int16_t * map_x, int16_t * map_y, int16_t unit_array[], int16_t unit_array_count);
 
 // WZD o95p03
-// AI_ContactWizards()
+// drake178: AI_ContactWizards()
+int16_t Contact_Players_In_Scouting_Range(int16_t player_idx, int16_t wx, int16_t wy, int16_t wp, int16_t scout_range);
 
 // WZD o95p04
 void Update_MovePathMap(int8_t * ptr_movepath_cost_map_moves2, int16_t boatrider_count, int16_t troop_count, int16_t wp, int16_t player_idx, int16_t dst_wx, int16_t dst_wy, int16_t src_wx, int16_t src_wy);
@@ -577,10 +584,10 @@ int16_t Square_Has_City(int16_t wx, int16_t wy, int16_t wp);
 int16_t Army_Moves2(int16_t troops[], int16_t troops_count);
 
 // WZD o97p05
-int16_t RP_CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
+int16_t Stack_Blocked_By_Spell_Ward(int16_t city_idx, int16_t * troop_count, int16_t * troops);
 
 // WZD o97p06
-int16_t CTY_CheckSpellWard__STUB(int16_t city_idx, int16_t * stack_size, int16_t * stack_array);
+int16_t City_Spell_Ward_Check(int16_t city_idx, int16_t * troop_count, int16_t troops[], int16_t * niu_troop_count, int16_t niu_troops[]);
 
 // WZD o97p07
 // OVL_SpellWardError()

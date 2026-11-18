@@ -295,7 +295,7 @@ Every `TODO` / `HACK` / `DNE` / `DEDU` / `BUGBUG` marker inside the eight review
 
 `Battle_Unit_Moves2`'s hero-item loop does not OR `_ITEMS[].enchantments` into its accumulator; `Unit_Moves2` does. That difference is real and will look wrong to anyone re-deriving this function. It loses nothing.
 
-`Unit_Moves2` ([NEXTTURN.c:1529](../../MoM/src/NEXTTURN.c#L1529)) ORs raw `_ITEMS[].Powers` at [1556](../../MoM/src/NEXTTURN.c#L1556) and then tests `UE_FLIGHT` at [1568](../../MoM/src/NEXTTURN.c#L1568) and `UE_ENDURANCE` at [1581](../../MoM/src/NEXTTURN.c#L1581). That is only sound because the `ip_` and `UE_` bit spaces coincide:
+`Unit_Moves2` ([NEXTTURN.c:1529](../../MoM/src/NEXTTURN.c#L1529)) ORs raw `_ITEMS[].powers` at [1556](../../MoM/src/NEXTTURN.c#L1556) and then tests `UE_FLIGHT` at [1568](../../MoM/src/NEXTTURN.c#L1568) and `UE_ENDURANCE` at [1581](../../MoM/src/NEXTTURN.c#L1581). That is only sound because the `ip_` and `UE_` bit spaces coincide:
 
 | power | `ip_` index | `1 << ip_` | `UE_` constant |
 | --- | --- | --- | --- |
@@ -304,10 +304,10 @@ Every `TODO` / `HACK` / `DNE` / `DEDU` / `BUGBUG` marker inside the eight review
 
 The two functions reach the same result by different routes, because they hold different data:
 
-- `Unit_Moves2` has only a `_UNITS[]` entry — no battle-unit record — so it must read `_ITEMS[].Powers` directly.
+- `Unit_Moves2` has only a `_UNITS[]` entry — no battle-unit record — so it must read `_ITEMS[].powers` directly.
 - `Battle_Unit_Moves2` has the battle-unit record, so it reads the pre-folded `battle_units[].item_enchantments`. `Battle_Unit_Item_Stats` ([Combat.c:14634](../../MoM/src/Combat.c#L14634)) fills that field by walking the *same* three hero slots ([14651-14655](../../MoM/src/Combat.c#L14651-L14655)) and mapping `ip_Endurance` → `UE_ENDURANCE` ([14765-14767](../../MoM/src/Combat.c#L14765-L14767)) and `ip_Flight` → `UE_FLIGHT` ([14773-14775](../../MoM/src/Combat.c#L14773-L14775)).
 
-`Battle_Unit_Moves2` consumes exactly those two bits from the union and both are mapped, so nothing is dropped. **Not an OGBUG.** ORing `_ITEMS[].Powers` in the loop would set the same bits a second time.
+`Battle_Unit_Moves2` consumes exactly those two bits from the union and both are mapped, so nothing is dropped. **Not an OGBUG.** ORing `_ITEMS[].powers` in the loop would set the same bits a second time.
 
 This is also what R7 was really about: until the `item_enchantments` term was restored to the union at [20385](../../MoM/src/Combat.c#L20385), item Flight and item Endurance genuinely never reached the function. The defect was in the union, not in the loop.
 

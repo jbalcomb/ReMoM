@@ -45,7 +45,7 @@ void Draw_Road_Build_Path_Line(void);
 
 // WZD o069p06
 // Road_Build_Path()
-void Road_Build_Path(int16_t x2, int16_t y2);
+int16_t Road_Build_Path(int16_t x2, int16_t y2);
 
 // WZD o069p07
 int16_t Road_Build_Moves2_Max(void);

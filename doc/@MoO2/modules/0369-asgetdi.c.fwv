@@ -1,0 +1,8 @@
+module_num=369
+module=C:\GCL520\C_DOS\ASGETDI.C
+source=0369-asgetdi.c.md
+range[0]=1:0x00153800 linear=0x00163800 size=150
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m369f001  1    -      0x00163800  1:0x00153800  code  _asgetdivisor  _asgetdivisor_  regions/07-object-1/001E8E54-001E9653.txt

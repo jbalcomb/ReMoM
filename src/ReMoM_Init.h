@@ -1,8 +1,8 @@
 /**
- * ReMoM_Init.h — Shared engine initialization for ReMoM and HeMoM.
+ * ReMoM_Init.h — Shared engine initialization for ReMoM and DeMoM.
  *
  * ReMoM_Init_Engine() performs the core initialization sequence needed by
- * both the full game (ReMoM) and the headless tool (HeMoM):
+ * both the full game (ReMoM) and the headless tool (DeMoM):
  *   - Load CONFIG.MOM and MAGIC.SET
  *   - Configure sound driver IDs
  *   - Validate save files
@@ -39,7 +39,7 @@ int ReMoM_Preflight_Game_Data(void);
  * MAGIC.SET, if the install ships one) from the discovered game-data dir into
  * the user-data dir the first time; thereafter the engine reads/writes those
  * copies and the originals are never modified.  A no-op under the HEADLESS
- * profile (HeMoM keeps CWD).  Call after ReMoM_Preflight_Game_Data() succeeds
+ * profile (DeMoM keeps CWD).  Call after ReMoM_Preflight_Game_Data() succeeds
  * and before ReMoM_Init_Engine().
  */
 void ReMoM_Seed_User_Files(void);

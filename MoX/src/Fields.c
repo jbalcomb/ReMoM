@@ -1,6 +1,6 @@
 
 #ifdef STU_DEBUG
-#include "../../STU/src/STU_DBG.h"    /* DLOG() */
+#include "../../STU/src/STU_DBG.h"
 #endif
 
 #include "../../ext/stu_compat.h"
@@ -16,6 +16,7 @@
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
 
 #include "../../STU/src/STU_LOG.h"  /* CALL_TRACE */
+#include "../../STU/src/STU_CLOG.h"  /* input-field catalog: Add_* call-site origins */
 #include "Video.h"
 #include "Util.h"
 #include "FLIC_Draw.h"
@@ -53,24 +54,24 @@
 dseg:E872                                                 ? BEGIN: fields, intput, ... ?
 dseg:E872
 dseg:E872                                                 ¿ BEGIN: Help - Uninitialized Data ?
-dseg:E872 00 00                                           help_struct_pointer dw 0                ; DATA XREF: Set_Help_List+6w ...
+dseg:E872 00 00                                           help_struct_pointer dw 0                ; DATA XREF: Set_Help_List+6^w ...
 dseg:E872                                                 ¿ END: Help - Uninitialized Data ?
-dseg:E874 00 00                                           GUI_Processed_Btns dw 0                 ; DATA XREF: Interpret_Mouse_Input+9E9w ...
+dseg:E874 00 00                                           GUI_Processed_Btns dw 0                 ; DATA XREF: Interpret_Mouse_Input+9E9^w ...
 dseg:E874                                                                                         ; can possibly be repurposed
-dseg:E876 00 00                                           GUI_Processed_LastY dw 0                ; DATA XREF: Interpret_Mouse_Input+9E3w ...
+dseg:E876 00 00                                           GUI_Processed_LastY dw 0                ; DATA XREF: Interpret_Mouse_Input+9E3^w ...
 dseg:E876                                                                                         ; can possibly be repurposed
-dseg:E878 00 00                                           GUI_Processed_LastX dw 0                ; DATA XREF: Interpret_Mouse_Input+9DDw ...
+dseg:E878 00 00                                           GUI_Processed_LastX dw 0                ; DATA XREF: Interpret_Mouse_Input+9DD^w ...
 dseg:E878                                                                                         ; can possibly be repurposed
-dseg:E87A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_EditString db 30 dup(0)             ; DATA XREF: Interpret_Mouse_Input+2E0o ...
-dseg:E898 00 00                                           input_delay dw 0                        ; DATA XREF: Init_Mouse_Keyboard+B1w ...
-dseg:E89A 00 00                                           MOUSE_Emu_Y dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+Er ...
-dseg:E89C 00 00                                           MOUSE_Emu_X dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+8r ...
-dseg:E89E 00 00                                           pointer_offset dw 0                      ; DATA XREF: Interpret_Mouse_Input+33w ...
-dseg:E8A0 00 00                                           temp_field_count dw 0               ; DATA XREF: G_GUI_PressAnyKey+13w ...
-dseg:E8A2 00 00                                           fields_count dw 0                       ; DATA XREF: Interpret_Mouse_Input:loc_26C37r ...
-dseg:E8A4 00 00 00 00                                     GUI_Prev_Redraw_Fn dd 0                 ; DATA XREF: GUI_SaveRedrawFn+Dw ...
-dseg:E8A8 00 00 00 00                                     GUI_Redraw_Function dd 0                ; DATA XREF: Set_Redraw_Function+Fw ...
-dseg:E8AC 00 00 00 00                                     p_fields dd 0                           ; DATA XREF: Interpret_Mouse_Input+11Dr ...
+dseg:E87A 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_EditString db 30 dup(0)             ; DATA XREF: Interpret_Mouse_Input+2E0^o ...
+dseg:E898 00 00                                           input_delay dw 0                        ; DATA XREF: Init_Mouse_Keyboard+B1^w ...
+dseg:E89A 00 00                                           emulated_pointer_Y dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+E^r ...
+dseg:E89C 00 00                                           emulated_pointer_X dw 0                        ; DATA XREF: RP_GUI_KeyInputOnly+8^r ...
+dseg:E89E 00 00                                           pointer_offset dw 0                      ; DATA XREF: Interpret_Mouse_Input+33^w ...
+dseg:E8A0 00 00                                           temp_field_count dw 0               ; DATA XREF: G_GUI_PressAnyKey+13^w ...
+dseg:E8A2 00 00                                           fields_count dw 0                       ; DATA XREF: Interpret_Mouse_Input:loc_26C37^r ...
+dseg:E8A4 00 00 00 00                                     GUI_Prev_Redraw_Fn dd 0                 ; DATA XREF: GUI_SaveRedrawFn+D^w ...
+dseg:E8A8 00 00 00 00                                     GUI_Redraw_Function dd 0                ; DATA XREF: Set_Redraw_Function+F^w ...
+dseg:E8AC 00 00 00 00                                     p_fields dd 0                           ; DATA XREF: Interpret_Mouse_Input+11D^r ...
 dseg:E8AC                                                                                         ; 165h LBX_Alloc_Space paragraphs (can hold 150)
 dseg:E8AC                                                 ? END: fields, input, ... ?
 */
@@ -80,94 +81,94 @@ dseg:78B8
 dseg:78B8
 dseg:78B8                                                 BEGIN: Mouse - Initialized Data
 dseg:78B8
-dseg:78B8 00 00                                           current_pointer_image_number dw 0       ; DATA XREF: Set_Mouse_List:loc_2583Aw ...
-dseg:78BA 00 00                                           previous_pointer_image_number dw 0      ; DATA XREF: Check_Mouse_Shape+Fw ...
-dseg:78BC 00 00                                           mouse_enabled dw 0                      ; DATA XREF: Init_Mouse_Driver+78w ...
-dseg:78BE 00 00                                           mouse_driver_installed dw 0             ; DATA XREF: Mouse_Button+7r ...
-dseg:78C0 00 00                                           MOUSE_Usable dw 0                       ; DATA XREF: RP_MOUSE_SetUsable+6w ...
-dseg:78C2 9E 00                                           mouse_x dw 158                          ; DATA XREF: Init_Mouse_Driver+40w ...
-dseg:78C4 64 00                                           mouse_y dw 100                          ; DATA XREF: Init_Mouse_Driver+44w ...
-dseg:78C6 01 00                                           current_mouse_list_count dw 1           ; DATA XREF: Set_Mouse_List+Cw ...
-dseg:78C8 00 00                                           current_pointer_offset dw 0             ; DATA XREF: Set_Mouse_List+39w ...
-dseg:78CA 00 00                                           mouse_buffer_flag dw 0                    ; DATA XREF: Init_Mouse_Driver+7Ew ...
-dseg:78CC 00 00                                           mouse_buffer_x dw 0                       ; DATA XREF: Mouse_Buffer_X+6r ...
-dseg:78CE 00 00                                           mouse_buffer_y dw 0                       ; DATA XREF: Mouse_Buffer_Y+6r ...
-dseg:78D0 00 00                                           mouse_buffer_button dw 0                    ; DATA XREF: Mouse_Buffer_Button+6r ...
-dseg:78D2 00 00                                           mouse_buffer_flag2 dw 0                    ; DATA XREF: Init_Mouse_Driver+84w ...
-dseg:78D4 00 00                                           MOUSE_INT_Process dw 0                  ; DATA XREF: Init_Mouse_Driver+32w ...
-dseg:78D6 00 00                                           mouse_save_flag dw 0                    ; DATA XREF: Save_Mouse_On_Page+16r ...
-dseg:78D8 9E 00                                           MOUSE_InitX dw 158                      ; DATA XREF: Init_Mouse_Driver+3Cr ...
-dseg:78DA 64 00                                           MOUSE_InitY dw 100                      ; DATA XREF: Init_Mouse_Driver+38r ...
-dseg:78DC 00 00                                           mouse_state dw 0                        ; DATA XREF: Save_Mouse_State+Bw ...
-dseg:78DE 00 00                                           current_mouse_list_0 dw 0               ; DATA XREF: Set_Mouse_List+15w ...
+dseg:78B8 00 00                                           current_pointer_image_number dw 0       ; DATA XREF: Set_Mouse_List:loc_2583A^w ...
+dseg:78BA 00 00                                           previous_pointer_image_number dw 0      ; DATA XREF: Check_Mouse_Shape+F^w ...
+dseg:78BC 00 00                                           mouse_enabled dw 0                      ; DATA XREF: Init_Mouse_Driver+78^w ...
+dseg:78BE 00 00                                           mouse_driver_installed dw 0             ; DATA XREF: Mouse_Button+7^r ...
+dseg:78C0 00 00                                           MOUSE_Usable dw 0                       ; DATA XREF: RP_MOUSE_SetUsable+6^w ...
+dseg:78C2 9E 00                                           mouse_x dw 158                          ; DATA XREF: Init_Mouse_Driver+40^w ...
+dseg:78C4 64 00                                           mouse_y dw 100                          ; DATA XREF: Init_Mouse_Driver+44^w ...
+dseg:78C6 01 00                                           current_mouse_list_count dw 1           ; DATA XREF: Set_Mouse_List+C^w ...
+dseg:78C8 00 00                                           current_pointer_offset dw 0             ; DATA XREF: Set_Mouse_List+39^w ...
+dseg:78CA 00 00                                           mouse_buffer_flag dw 0                    ; DATA XREF: Init_Mouse_Driver+7E^w ...
+dseg:78CC 00 00                                           mouse_buffer_x dw 0                       ; DATA XREF: Mouse_Buffer_X+6^r ...
+dseg:78CE 00 00                                           mouse_buffer_y dw 0                       ; DATA XREF: Mouse_Buffer_Y+6^r ...
+dseg:78D0 00 00                                           mouse_buffer_button dw 0                    ; DATA XREF: Mouse_Buffer_Button+6^r ...
+dseg:78D2 00 00                                           mouse_buffer_flag2 dw 0                    ; DATA XREF: Init_Mouse_Driver+84^w ...
+dseg:78D4 00 00                                           MOUSE_INT_Process dw 0                  ; DATA XREF: Init_Mouse_Driver+32^w ...
+dseg:78D6 00 00                                           mouse_save_flag dw 0                    ; DATA XREF: Save_Mouse_On_Page+16^r ...
+dseg:78D8 9E 00                                           MOUSE_InitX dw 158                      ; DATA XREF: Init_Mouse_Driver+3C^r ...
+dseg:78DA 64 00                                           MOUSE_InitY dw 100                      ; DATA XREF: Init_Mouse_Driver+38^r ...
+dseg:78DC 00 00                                           mouse_state dw 0                        ; DATA XREF: Save_Mouse_State+B^w ...
+dseg:78DE 00 00                                           current_mouse_list_0 dw 0               ; DATA XREF: Set_Mouse_List+15^w ...
 dseg:78E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mouse_background_buffer dw 600 dup(    0)
-dseg:78E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: Save_Mouse_On_Page+60w ...
-dseg:7D90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mouse_off_page_buffer dw 600 dup(    0) ; DATA XREF: Save_Mouse_Off_Page+6Bw ...
+dseg:78E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; DATA XREF: Save_Mouse_On_Page+60^w ...
+dseg:7D90 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+mouse_off_page_buffer dw 600 dup(    0) ; DATA XREF: Save_Mouse_Off_Page+6B^w ...
 dseg:8240                                                 ? BEGIN: Mouse Buffer - Initialized Data ?
-dseg:8240 00 00                                           UU_GUI_ClickBufferX dw 0                ; DATA XREF: UU_GUI_ClearClickBuffer+17w ...
+dseg:8240 00 00                                           UU_GUI_ClickBufferX dw 0                ; DATA XREF: UU_GUI_ClearClickBuffer+17^w ...
 dseg:8240                                                                                         ; can be reused
-dseg:8242 00 00                                           UU_GUI_ClickBuffNext dw 0               ; DATA XREF: UU_GUI_ClearClickBuffer+1Aw ...
+dseg:8242 00 00                                           UU_GUI_ClickBuffNext dw 0               ; DATA XREF: UU_GUI_ClearClickBuffer+1A^w ...
 dseg:8242                                                                                         ; can be reused
-dseg:8244 00 00                                           UU_GUI_ClickBuffVar1 dw 0               ; DATA XREF: UU_GUI_SetClickBuffVar1w ...
+dseg:8244 00 00                                           UU_GUI_ClickBuffVar1 dw 0               ; DATA XREF: UU_GUI_SetClickBuffVar1^w ...
 dseg:8244                                                                                         ; can be reused
-dseg:8246 00 00                                           UU_GUI_ClickBuffer@ dw 0                ; DATA XREF: UU_GUI_ClearClickBufferr ...
+dseg:8246 00 00                                           UU_GUI_ClickBuffer@ dw 0                ; DATA XREF: UU_GUI_ClearClickBuffer^r ...
 dseg:8246                                                                                         ; can be reused
-dseg:8248 00 00                                           UU_GUI_ClickBufCount dw 0               ; DATA XREF: UU_GUI_ClearClickBuffer+Br ...
+dseg:8248 00 00                                           UU_GUI_ClickBufCount dw 0               ; DATA XREF: UU_GUI_ClearClickBuffer+B^r ...
 dseg:8248                                                                                         ; can be reused
-dseg:824A 00 00                                           GUI_RedrawFn_Present dw 0               ; DATA XREF: Set_Redraw_Function+13w ...
-dseg:824C 00 00                                           KD_prev_field_idx dw 0                  ; DATA XREF: Interpret_Keyboard_Input+13r ...
-dseg:824E 00 00                                           mouse_installed dw 0                    ; DATA XREF: UU_GUI_MouseEMUMoveTo+Br ...
-dseg:8250 FF FF                                           down_mouse_button dw 0FFFFh             ; DATA XREF: Interpret_Mouse_Input+Dw ...
-dseg:8252 01 00                                           down_x dw 1                             ; DATA XREF: Set_Button_Down_Offsets+6w ...
+dseg:824A 00 00                                           GUI_RedrawFn_Present dw 0               ; DATA XREF: Set_Redraw_Function+13^w ...
+dseg:824C 00 00                                           KD_prev_field_idx dw 0                  ; DATA XREF: Interpret_Keyboard_Input+13^r ...
+dseg:824E 00 00                                           mouse_installed dw 0                    ; DATA XREF: UU_GUI_MouseEMUMoveTo+B^r ...
+dseg:8250 FF FF                                           down_mouse_button dw 0FFFFh             ; DATA XREF: Interpret_Mouse_Input+D^w ...
+dseg:8252 01 00                                           down_x dw 1                             ; DATA XREF: Set_Button_Down_Offsets+6^w ...
 dseg:8252                                                                                         ; offset added to 'down' button field text
-dseg:8254 FF FF                                           down_y dw -1                            ; DATA XREF: Set_Button_Down_Offsets+Cw ...
+dseg:8254 FF FF                                           down_y dw -1                            ; DATA XREF: Set_Button_Down_Offsets+C^w ...
 dseg:8254                                                 ? END: Mouse - Initialized Data ?       ; offset added to 'down' button field text
-dseg:8256 FF FF                                           GUI_EmptyTitleHelp dw 0FFFFh            ; DATA XREF: UU_GUI_ScrollableTxtDlg+1BEr ...
-dseg:8258 00 00                                           GUI_DialogDirections dw 0               ; DATA XREF: Interpret_Mouse_Input:loc_26BD8r ...
-dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: Draw_Input_Box_Popup+3D7r ...
+dseg:8256 FF FF                                           GUI_EmptyTitleHelp dw 0FFFFh            ; DATA XREF: UU_GUI_ScrollableTxtDlg+1BE^r ...
+dseg:8258 00 00                                           GUI_DialogDirections dw 0               ; DATA XREF: Interpret_Mouse_Input:loc_26BD8^r ...
+dseg:825A 02 00                                           GUI_Redraw_Timer dw 2                   ; DATA XREF: Draw_Input_Box_Popup+3D7^r ...
 dseg:825C                                                 ; #314 mouse_list_none_init
 dseg:825C 00 00 00 00 00 00 3F 01 C7 00 00 00             mouse_list_none_init s_MOUSE_LIST <0, 0, 0, 319, 199, 0>
-dseg:825C                                                                                         ; DATA XREF: Init_Mouse_Keyboard:loc_2D1C5o
-dseg:8268 00 00                                           GUI_MouseFocusCtrl dw 0                 ; DATA XREF: Interpret_Mouse_Input+18w ...
-dseg:826A 01 00                                           GUI_MouseHighlight dw 1                 ; DATA XREF: UU_GUI_ScrollableTxtDlg:loc_2C67Fr ...
-dseg:826C 00 00                                           GUI_NoDialogWrap dw 0                   ; DATA XREF: UU_GUI_ScrollableTxtDlg+11w ...
-dseg:826E 00 00                                           GUI_NoTxtSelectColor dw 0               ; DATA XREF: UU_GUI_NoSelectColor+Fw ...
-dseg:8270 00 00                                           GUI_OnLastDialogLine dw 0               ; DATA XREF: UU_GUI_ScrollableTxtDlg+17w ...
-dseg:8272 00 00                                           _global_esc dw 0                        ; DATA XREF: Interpret_Mouse_Input+C3r ...
-dseg:8274 00 00                                           GUI_ClickActivate dw 0                  ; DATA XREF: Interpret_Mouse_Input+2FCr ...
+dseg:825C                                                                                         ; DATA XREF: Init_Mouse_Keyboard:loc_2D1C5^o
+dseg:8268 00 00                                           GUI_MouseFocusCtrl dw 0                 ; DATA XREF: Interpret_Mouse_Input+18^w ...
+dseg:826A 01 00                                           GUI_MouseHighlight dw 1                 ; DATA XREF: UU_GUI_ScrollableTxtDlg:loc_2C67F^r ...
+dseg:826C 00 00                                           GUI_NoDialogWrap dw 0                   ; DATA XREF: UU_GUI_ScrollableTxtDlg+11^w ...
+dseg:826E 00 00                                           GUI_NoTxtSelectColor dw 0               ; DATA XREF: UU_GUI_NoSelectColor+F^w ...
+dseg:8270 00 00                                           GUI_OnLastDialogLine dw 0               ; DATA XREF: UU_GUI_ScrollableTxtDlg+17^w ...
+dseg:8272 00 00                                           _global_esc dw 0                        ; DATA XREF: Interpret_Mouse_Input+C3^r ...
+dseg:8274 00 00                                           GUI_ClickActivate dw 0                  ; DATA XREF: Interpret_Mouse_Input+2FC^r ...
 dseg:8276 4E 4F 54 20 49 4E 20 55 53 45 00                aNotInUse db 'NOT IN USE',0
 dseg:8281 00                                              db    0
-dseg:8282 00 00                                           GUI_Edit_Position dw 0                  ; DATA XREF: Input_Box_Popup:loc_29A23w ...
-dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
-dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
-dseg:8288 00 00                                           input_field_active dw 0                 ; DATA XREF: Interpret_Mouse_Input:loc_26941r ...
-dseg:828A 00 00                                           field_box_mode dw 0               ; DATA XREF: Interpret_Mouse_Input+DCr ...
-dseg:828C 00 00                                           help_box_mode dw 0                  ; DATA XREF: Interpret_Mouse_Input+100r ...
-dseg:828E FF FF                                           active_input_field_number dw 0FFFFh     ; DATA XREF: Interpret_Mouse_Input+2DCr ...
-dseg:8290 00 00                                           GUI_EditTimeOutType dw 0                ; DATA XREF: UU_GUI_SetTimeOutP+14w ...
-dseg:8292 00 00                                           UU_GUI_UUClickBufVar dw 0               ; DATA XREF: UU_GUI_SetClickBuffer+27w
-dseg:8294 00 00                                           UU_GUI_ClickBuffer dw 0                 ; DATA XREF: UU_GUI_SetTimeOutP+3r ...
+dseg:8282 00 00                                           GUI_Edit_Position dw 0                  ; DATA XREF: Input_Box_Popup:loc_29A23^w ...
+dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35A^w ...
+dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360^w ...
+dseg:8288 00 00                                           input_field_active dw 0                 ; DATA XREF: Interpret_Mouse_Input:loc_26941^r ...
+dseg:828A 00 00                                           field_box_mode dw 0               ; DATA XREF: Interpret_Mouse_Input+DC^r ...
+dseg:828C 00 00                                           help_box_mode dw 0                  ; DATA XREF: Interpret_Mouse_Input+100^r ...
+dseg:828E FF FF                                           active_input_field_number dw 0FFFFh     ; DATA XREF: Interpret_Mouse_Input+2DC^r ...
+dseg:8290 00 00                                           GUI_EditTimeOutType dw 0                ; DATA XREF: UU_GUI_SetTimeOutP+14^w ...
+dseg:8292 00 00                                           UU_GUI_UUClickBufVar dw 0               ; DATA XREF: UU_GUI_SetClickBuffer+27^w
+dseg:8294 00 00                                           UU_GUI_ClickBuffer dw 0                 ; DATA XREF: UU_GUI_SetTimeOutP+3^r ...
 dseg:8296                                                 ¿ BEGIN: Help - Initialized Data ?
-dseg:8296 00 00                                           help_list_active dw 0                   ; DATA XREF: Interpret_Mouse_Input+752r ...
-dseg:8298 00 00                                           help_list_count dw 0                    ; DATA XREF: Set_Help_List+12w ...
+dseg:8296 00 00                                           help_list_active dw 0                   ; DATA XREF: Interpret_Mouse_Input+752^r ...
+dseg:8298 00 00                                           help_list_count dw 0                    ; DATA XREF: Set_Help_List+12^w ...
 dseg:8298                                                 ¿ END: Help - Initialized Data ?
 dseg:829A                                                 ? BEGIN: Mouse Buffer ?
-dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9Br ...
-dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+Eo
-dseg:829E 00                                              str_empty_string__seg036 db 0                 ; DATA XREF: Setup_Input_Box_Popup+3Bo ...
-dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+Bo
+dseg:829A 00 00                                           multi_hotkey_active_field dw 0                ; DATA XREF: Interpret_Keyboard_Input:loc_27F9B^r ...
+dseg:829C 72 62                                           UU_cnst_RB7 db 'rb'                     ; DATA XREF: UU_GUI_LoadClickFile+E^o
+dseg:829E 00                                              str_empty_string__seg036 db 0                 ; DATA XREF: Setup_Input_Box_Popup+3B^o ...
+dseg:829F 77 62 00                                        UU_cnst_WB8 db 'wb',0                   ; DATA XREF: UU_GUI_SaveClickFile+B^o
 dseg:829F                                                 ? END: Mouse Buffer ?
-dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21Do ...
-dseg:82A4 06 00                                           UU_GUI_Down_Hotkey db 6, 0              ; DATA XREF: UU_GUI_ScrollableTxtDlg+240o ...
-dseg:82A6 5F 00                                           GUI_EditCursor db '_',0                 ; DATA XREF: Draw_Fields+117Do
+dseg:82A2 05 00                                           UU_GUI_Up_Hotkey db 5, 0                ; DATA XREF: UU_GUI_ScrollableTxtDlg+21D^o ...
+dseg:82A4 06 00                                           UU_GUI_Down_Hotkey db 6, 0              ; DATA XREF: UU_GUI_ScrollableTxtDlg+240^o ...
+dseg:82A6 5F 00                                           GUI_EditCursor db '_',0                 ; DATA XREF: Draw_Fields+117D^o
 dseg:82A6
 dseg:82A6                                                 END: seg036 - Uninitialized Data (Fields, Input, Mouse, Keyboard)
 */
 
 // WZD dseg:8282
 int16_t GUI_Edit_Position = 0;
-// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
-// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
+// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35A^w ...
+// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360^w ...
 
 // WZD dseg:8290
 int16_t GUI_EditTimeOutType = 0;
@@ -278,7 +279,15 @@ int16_t list_field_scan_flag = ST_TRUE;
 /*
 used as color2 for call to Set_Font_Style()
 */
+// WZD dseg:826C
+int16_t GUI_NoDialogWrap = 0;
 int16_t GUI_NoTxtSelectColor = 0;
+// WZD dseg:8270
+int16_t GUI_OnLastDialogLine = 0;
+// WZD dseg:82A2
+char str_hotkey_up__seg036[] = "\x05";  /* UU_GUI_Up_Hotkey */
+// WZD dseg:82A4
+char str_hotkey_down__seg036[] = "\x06";  /* UU_GUI_Down_Hotkey */
 
 // WZD dseg:8270 GUI_OnLastDialogLine dw 0               
 
@@ -384,9 +393,11 @@ char continuous_string[30];
 int16_t input_delay;
 
 // WZD dseg:E89A
-int16_t MOUSE_Emu_Y;
+// drake178: emulated_pointer_Y
+int16_t emulated_pointer_y;
 // WZD dseg:E89C
-int16_t MOUSE_Emu_X;
+// drake178: emulated_pointer_X
+int16_t emulated_pointer_x;
 
 // WZD dseg:E89E
 int16_t pointer_offset;
@@ -472,13 +483,13 @@ int16_t Auto_Input(void);
 // WZD s36p33
 // WZD s36p34
 int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, int16_t justification, int16_t cursor_type, uint8_t color_array[], char * select_char, int16_t help);
-#ifdef STU_DEBUG
-static void Dbg_Trace_Field_Added(int16_t idx, const char * origin);
+#if STU_CLOG
+static void Clog_Field_Added(int16_t idx, const char * origin);
 #endif
 // WZD s36p35
 int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);
 // WZD s36p36
-// UU_GUI_Ctrl_DecHeight();
+void Decrement_Field_Height__NIU(int16_t field_idx);
 // WZD s36p37
 static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry);
 // WZD s36p38
@@ -486,46 +497,53 @@ int16_t Add_Multi_Hot_Key_Field(char * string);
 // WZD s36p39
 int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 // WZD s36p40
-// UU_GUI_CreateWndImgLbl()
+int16_t Add_Clipped_Picture_Field__NIU(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 // WZD s36p41
 void Set_Button_Down_Offsets(int16_t x_offset, int16_t y_offset);
 // WZD s36p42
-void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 // WZD s36p43
-int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
-// UU_GUI_CreateToggleBtn
-// UU_GUI_CreateLockblBtn
-// UU_GUI_CreateMStateBtn
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help);
+// WZD s36p44
+int16_t Add_Toggle_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help);
+// WZD s36p45
+int16_t Add_Locked_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help);
+// WZD s36p46
+int16_t Add_Multi_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, int16_t state_count, char * hotkey, int16_t help);
 // WZD s36p47
-int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
-// UU_GUI_CreateWndLabel
+int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help);
+// WZD s36p48
+int16_t Add_Clipped_Hidden_Field__NIU(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help);
 // WZD s36p49
-int16_t Add_Hot_Key(int16_t select_char);
-// WZD s34p50
-// UU_GUI_CreateHelpLink
-// WZD s34p51
+int16_t Add_Hot_Key(char * select_char);
+// WZD s36p50
+int16_t Add_Click_Link_Field__NIU(int16_t parent_field_idx, int16_t * variable, int16_t link_number, int16_t x1, int16_t y1, int16_t x2, int16_t y2, char * hotkey, int16_t help);
+// WZD s36p51
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
-// WZD s34p52
-// WZD s34p53
-int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
-// WZD s34p54
+// WZD s36p52
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help);
+// WZD s36p53
+int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help);
+// WZD s36p54
 int16_t Find_Bar_Position(int16_t field_num);
-// WZD s34p55
+// WZD s36p55
 void Increment_Scroll_Bar(int16_t field_num);
-// WZD s34p56
+// WZD s36p56
 void Decrement_Scroll_Bar(int16_t field_num);
 // WZD s36p57
 void Clear_Fields(void);
 // WZD s36p58
-// UU_GUI_NoSelectColor();
+void Set_Unselectable_Text_Color__NIU(int16_t color_set);
 // WZD s36p59
-// UU_GUI_ScrollableTxtDlg();
+int16_t Get_Scrolling_List_Field__NIU(int16_t x1, int16_t y1, int16_t width, char * title_string, char * list_strings, int16_t string_size, int16_t * variable, int16_t * selectable, int16_t page_lines, int16_t up_x, int16_t up_y, SAMB_ptr up_pict, int16_t down_x, int16_t down_y, SAMB_ptr down_pict, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help);
 // WZD s36p60
 int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string[], int16_t string_width, int16_t * variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
 // WZD s36p61
-// UU_GUI_NoMouseHighlight();
+// drake178: UU_GUI_NoMouseHighlight()
+void Disable_List_Field_Mouse_Scan(void);
 // WZD s36p62
-int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction);
+// drake178: GUI_MoveDlgHighlight()
+int16_t Move_Dialog_Highlight(int16_t y_direction);
 // WZD s36p63
 void Clear_Fields_Above(int16_t field_num);
 // WZD s36p64
@@ -539,9 +557,11 @@ void Clear_Fields_Above(int16_t field_num);
 // WZD s36p68
 // UU_Get_Input_Delay();
 // WZD s36p69
-// UU_GUI_ClearSelectable();
+// drake178: UU_GUI_ClearSelectable()
+// INPUT  void Disable_String_List_Field(int16_t field_num);
 // WZD s36p70
-// UU_GUI_SetSelectable();
+// drake178: UU_GUI_SetSelectable()
+// INPUT  void Enable_String_List_Field(int16_t field_num);
 // WZD s36p71
 void Draw_Fields(void);
 // WZD s36p72
@@ -579,23 +599,23 @@ void UU_GUI_ExtClear(void);
 
 
 /*
-    WIZARDS.EXE     seg036
     MAGIC.EXE       seg034
+    WIZARDS.EXE     seg036
 */
 
 // WZD s36p08
-// TODO  void Set_Global_Esc(void);
-void Disable_Cancel(void)
+// AKA Set_Global_Esc()
+void Enable_Cancel(void)
 {
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
     mouse_cancel_disabled = ST_TRUE;
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 }
 
 
 // WZD s36p09
-// drake178: UU_GUI_ClearEscOverride
-void Enable_Cancel(void)
+// drake178: UU_GUI_ClearEscOverride()
+void Disable_Cancel(void)
 {
     mouse_cancel_disabled = ST_FALSE;
 }
@@ -690,8 +710,8 @@ int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string
     p_fields[fields_count].color_array = color_array;
     p_fields[fields_count].type = ft_Input;
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Input_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Input_Field");
 #endif
     return (fields_count - 1);
 }
@@ -735,14 +755,25 @@ int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t wi
     p_fields[fields_count].shadow = shadow;
     p_fields[fields_count].type = ft_ContinuousStringInput;
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Continuous_String_Input_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Continuous_String_Input_Field");
 #endif
     return (fields_count - 1);
 }
 
 // WZD s36p36
-// UU_GUI_Ctrl_DecHeight();
+// drake178: UU_GUI_Ctrl_DecHeight()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+moves the bottom edge of field field_idx up one pixel
+*/
+void Decrement_Field_Height__NIU(int16_t field_idx)
+{
+
+    p_fields[field_idx].y2 = (p_fields[field_idx].y2 - 1);
+
+}
+
 
 // WZD s36p37
 // drake178: GUI_CreateDialogLine();
@@ -781,7 +812,7 @@ static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char
 
     p_fields[fields_count].hotkey = hotkey[0];
 
-    p_fields[fields_count].Selectable = active_flag;
+    p_fields[fields_count].active_flag = active_flag;
 
     UPPERCASE(p_fields[fields_count].hotkey);
 
@@ -791,7 +822,7 @@ static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char
 
     p_fields[fields_count].variable1 = variable;
 
-    p_fields[fields_count].Rect_FX = fill_type;
+    p_fields[fields_count].fill_type = fill_type;
 
     p_fields[fields_count].fill_param1 = fill_param1;
 
@@ -805,8 +836,8 @@ static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char
 
     fields_count += 1;
 
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_String_List_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_String_List_Field");
 #endif
     return (fields_count - 1);
 
@@ -831,8 +862,8 @@ int16_t Add_Multi_Hot_Key_Field(char * string)
     p_fields[fields_count].hotkey = hotkey_string[0];  // TODO(JimBalcomb,20230612): fix hotkey - ? need char * ?
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Multi_Hot_Key_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Multi_Hot_Key_Field");
 #endif
     return (fields_count - 1);
 }
@@ -851,15 +882,85 @@ int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * 
     p_fields[fields_count].hotkey = hotkey[0];
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Picture_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Picture_Field");
 #endif
     return (fields_count - 1);
 }
 
 
 // WZD s36p40
-// UU_GUI_CreateWndImgLbl()
+// drake178: UU_GUI_CreateWndImgLbl()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+Add_Picture_Field() clipped to the current window: -10000 if the picture is entirely outside it
+*/
+int16_t Add_Clipped_Picture_Field__NIU(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help)
+{
+    int16_t ymax = 0;
+    int16_t xmax = 0;
+
+    xmax = (xmin + FLIC_Get_Width(pict_seg));
+
+    ymax = (ymin + FLIC_Get_Height(pict_seg));
+
+    if(
+        (xmax < screen_window_x1)
+        ||
+        (xmin > screen_window_x2)
+    )
+    {
+
+        return -10000;
+
+    }
+
+    if(
+        (ymax < screen_window_y1)
+        ||
+        (ymin > screen_window_y2)
+    )
+    {
+
+        return -10000;
+
+    }
+
+    if(xmin >= screen_window_x1)
+    {
+
+        p_fields[fields_count].x1 = xmin;
+
+    }
+    else
+    {
+
+        p_fields[fields_count].x1 = screen_window_x1;
+
+    }
+
+    p_fields[fields_count].x2 = ((xmax <= screen_window_x2) ? xmax : screen_window_x2);  /* asm: one store of the chosen value */
+
+    p_fields[fields_count].y1 = ((ymin >= screen_window_y1) ? ymin : screen_window_y1);  /* asm: one store of the chosen value */
+
+    p_fields[fields_count].y2 = ((ymax <= screen_window_y2) ? ymax : screen_window_y2);  /* asm: one store of the chosen value */
+
+    p_fields[fields_count].help = help;
+
+    p_fields[fields_count].pict_seg = pict_seg;
+
+    p_fields[fields_count].type = ft_Picture;
+
+    p_fields[fields_count].hotkey = hotkey[0];  /* asm: mov si, [bp+hotkey] / mov al, [si] */
+
+    UPPERCASE(p_fields[fields_count].hotkey);
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
 
 // WZD s36p41
 // MoO2  Module: fields  Set_Button_Down_Offsets()
@@ -870,77 +971,34 @@ void Set_Button_Down_Offsets(int16_t x, int16_t y)
 }
 
 /*
-    BEGIN: Fields - Runtime Catalog Instrumentation
-    g_dbg_fields_trace: set non-zero to log every Add_*Field via trc_prn (FIELDADD lines)
-    g_dbg_fields_screen_tag: short label for the current screen (e.g. "Main_Screen")
-    Dbg_Trace_Field_Added(): internal helper; call at end of each Add_* after fields_count++
-    Dump_Fields_CSV(): emit FIELDSNAPSHOT block for the currently-registered fields
+    BEGIN: Fields - Runtime Catalog Instrumentation  (STU_CLOG -- see STU/src/STU_CLOG.h)
+    Clog_Field_Added(): called at the end of each Add_* after fields_count++; records the field's call-site origin, and writes a FIELDADD row when
+                        g_clog_fields_trace is set
+    Dump_Fields_CSV():  write a FIELDSNAPSHOT block for the currently-registered fields
+    Rows go to remom_clog_fields.tsv (STU_CLOG_Fields_Row), tab-separated, in the format tools/fields_merge.py reads.
+    The origin table, its accessors and the trace knobs live in STU_CLOG; these two stay here because they read p_fields.
 */
-#ifdef STU_DEBUG
-int16_t g_dbg_fields_trace = 0;
-const char * g_dbg_fields_screen_tag = "";
-const char * g_dbg_fields_call_file = "";
-int32_t g_dbg_fields_call_line = 0;
-
-/* CLAUDE 2026-07-22: per-field-index origin shadow. Records the Add_* call site
-   (file + line, captured by DBG_FIELDS_LOC_SET) for each registered field, so the
-   record/replay field-hit log can stamp a click with the field's originating call
-   site. That basename:line is the join key into tools/fields/catalog.fwv and the
-   HMS alias table (tools/field_catalog/resolver.py). p_fields holds ~150 entries. */
-#define DBG_FIELD_ORIGIN_MAX 256
-static const char * g_dbg_field_origin_file[DBG_FIELD_ORIGIN_MAX];
-static int32_t      g_dbg_field_origin_line[DBG_FIELD_ORIGIN_MAX];
-
-static const char * Dbg_Basename(const char * path)
-{
-    const char * slash;
-    const char * p;
-    if(path == NULL) { return ""; }
-    slash = path;
-    for(p = path; *p != '\0'; p += 1)
-    {
-        if(*p == '/' || *p == '\\') { slash = p + 1; }
-    }
-    return slash;
-}
-
-static void Dbg_Trace_Field_Added(int16_t idx, const char * origin)
+#if STU_CLOG
+static void Clog_Field_Added(int16_t idx, const char * origin)
 {
     if(idx < 0) { return; }
-    /* Always record the origin (independent of the trace flag) — the record/replay
-       field-hit log needs it whenever recording, not only when tracing is on. */
-    if(idx < DBG_FIELD_ORIGIN_MAX)
-    {
-        g_dbg_field_origin_file[idx] = g_dbg_fields_call_file;
-        g_dbg_field_origin_line[idx] = g_dbg_fields_call_line;
-    }
-    if(g_dbg_fields_trace == 0) { return; }
-    // trc_prn("FIELDADD,%s,%d,%s,%s:%d,type=%d,x1=%d,y1=%d,x2=%d,y2=%d,hotkey=%d,help=%d\n", g_dbg_fields_screen_tag, (int)idx, origin, Dbg_Basename(g_dbg_fields_call_file), (int)g_dbg_fields_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
-}
-
-/* CLAUDE 2026-07-22: origin accessors for the record/replay field-hit log. */
-const char * Dbg_Field_Origin_File(int16_t idx)
-{
-    if(idx < 0 || idx >= DBG_FIELD_ORIGIN_MAX) { return ""; }
-    return Dbg_Basename(g_dbg_field_origin_file[idx]);
-}
-
-int32_t Dbg_Field_Origin_Line(int16_t idx)
-{
-    if(idx < 0 || idx >= DBG_FIELD_ORIGIN_MAX) { return 0; }
-    return g_dbg_field_origin_line[idx];
+    /* Always record the origin (independent of the trace flag) -- the record/replay field-hit log needs it whenever recording, not only when tracing is on. */
+    STU_CLOG_Field_Origin_Set(idx);
+    if(g_clog_fields_trace == 0) { return; }
+    STU_CLOG_Fields_Row("FIELDADD\t%s\t%d\t%s\t%s:%d\ttype=%d\tx1=%d\ty1=%d\tx2=%d\ty2=%d\thotkey=%d\thelp=%d", g_clog_fields_screen_tag, (int)idx, origin, STU_CLOG_Basename(g_clog_field_call_file), (int)g_clog_field_call_line, (int)p_fields[idx].type, (int)p_fields[idx].x1, (int)p_fields[idx].y1, (int)p_fields[idx].x2, (int)p_fields[idx].y2, (int)p_fields[idx].hotkey, (int)p_fields[idx].help);
 }
 
 void Dump_Fields_CSV(const char * screen_tag)
 {
     int16_t itr;
-    // trc_prn("FIELDSNAPSHOT_BEGIN,%s,count=%d\n", screen_tag, (int)fields_count);
-    // trc_prn("FIELDSNAPSHOT_HDR,screen,idx,type,x1,y1,x2,y2,hotkey,help,param1,param2\n");
+    if(g_clog_fields_trace == 0) { return; }
+    STU_CLOG_Fields_Row("FIELDSNAPSHOT_BEGIN\t%s\tcount=%d", screen_tag, (int)fields_count);
+    STU_CLOG_Fields_Row("FIELDSNAPSHOT_HDR\tscreen\tidx\ttype\tx1\ty1\tx2\ty2\thotkey\thelp\tparam1\tparam2");
     for(itr = 0; itr < fields_count; itr++)
     {
-        // trc_prn("FIELDSNAPSHOT,%s,%d,%d,%d,%d,%d,%d,%d,%d,%lld,%lld\n", screen_tag, (int)itr, (int)p_fields[itr].type, (int)p_fields[itr].x1, (int)p_fields[itr].y1, (int)p_fields[itr].x2, (int)p_fields[itr].y2, (int)p_fields[itr].hotkey, (int)p_fields[itr].help, (long long)p_fields[itr].Param1, (long long)p_fields[itr].Param2);
+        STU_CLOG_Fields_Row("FIELDSNAPSHOT\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%lld\t%lld", screen_tag, (int)itr, (int)p_fields[itr].type, (int)p_fields[itr].x1, (int)p_fields[itr].y1, (int)p_fields[itr].x2, (int)p_fields[itr].y2, (int)p_fields[itr].hotkey, (int)p_fields[itr].help, (long long)p_fields[itr].Param1, (long long)p_fields[itr].Param2);
     }
-    // trc_prn("FIELDSNAPSHOT_END,%s\n", screen_tag);
+    STU_CLOG_Fields_Row("FIELDSNAPSHOT_END\t%s", screen_tag);
 }
 #endif
 /*
@@ -949,59 +1007,108 @@ void Dump_Fields_CSV(const char * screen_tag)
 
 
 // WZD s36p42
-void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help)
 {
-
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
-
-    // p_fields[fields_count].Param0 = string;
     p_fields[fields_count].string = string;
-
     p_fields[fields_count].x2 = p_fields[fields_count].x1 + FLIC_Get_Width(pict_seg) - 1;
     p_fields[fields_count].y2 = p_fields[fields_count].y1 + FLIC_Get_Height(pict_seg) - 1;
-
     p_fields[fields_count].font_style_num = Get_Current_Font_Style();
     p_fields[fields_count].font_normal_color = Get_Current_Normal_Color();
-
     p_fields[fields_count].help = help;
-
-    // p_fields[fields_count].Param5 = pict_seg;
-    // p_fields[fields_count].Param5 = (uint16_t *)pict_seg;
     p_fields[fields_count].pict_seg = pict_seg;
-
     p_fields[fields_count].Param3 = Get_Full_Store_Flag(pict_seg);
-
-    // TODO(JimBalcomb,20230612): make hotkey make sense - looks like (char *)
-    // mov     si, [bp+select_char]
-    // mov     al, [si]
-    // mov     [byte ptr es:bx+s_Field.hotkey], al
-
-    p_fields[fields_count].hotkey = hotkey;
-
+    p_fields[fields_count].hotkey = hotkey[0];
     if((p_fields[fields_count].hotkey > 96) && (p_fields[fields_count].hotkey < 123) )
     {
         p_fields[fields_count].hotkey -= 32;
     }
-
 }
 
 
 // WZD s36p43
-int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help)
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help)
 {
     Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
     p_fields[fields_count].type = ft_Button;
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Button_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Button_Field");
 #endif
     return (fields_count - 1);
 }
 
+// WZD s36p44
+// drake178: UU_GUI_CreateToggleBtn
+/*
+NIU  nothing in WIZARDS.EXE calls it
+a button field (Add_Button_Info()) that toggles *state on each click
+*/
+int16_t Add_Toggle_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help)
+{
+
+    Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
+
+    p_fields[fields_count].type = ft_RadioButton;
+
+    p_fields[fields_count].state = state;
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
+
+// WZD s36p45
+// drake178: UU_GUI_CreateLockblBtn
+/*
+NIU  only Get_Scrolling_List_Field__NIU() calls it, and nothing calls that
+a button field (Add_Button_Info()) that sets *state to 1 on a click and then stays locked
+*/
+int16_t Add_Locked_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help)
+{
+
+    Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
+
+    p_fields[fields_count].type = ft_LockedButton;
+
+    p_fields[fields_count].state = state;
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
+
+// WZD s36p46
+// drake178: UU_GUI_CreateMStateBtn
+/*
+NIU  nothing in WIZARDS.EXE calls it
+a button field (Add_Button_Info()) with state_count states, *state the current one
+*/
+int16_t Add_Multi_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, int16_t state_count, char * hotkey, int16_t help)
+{
+
+    Add_Button_Info(xmin, ymin, string, pict_seg, hotkey, help);
+
+    p_fields[fields_count].type = ft_MultiButton;
+
+    p_fields[fields_count].state = state;
+
+    p_fields[fields_count].Param1 = state_count;
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
 
 // WZD s36p47
-int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help)
+int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help)
 {
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
@@ -1009,17 +1116,94 @@ int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax,
     p_fields[fields_count].y2 = ymax;
     p_fields[fields_count].type = ft_HotKey;
     p_fields[fields_count].help = help;
-    p_fields[fields_count].hotkey = hotkey;
+    p_fields[fields_count].hotkey = hotkey[0];
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Hidden_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Hidden_Field");
 #endif
     return (fields_count - 1);
 }
 
-// WZD s34p49
-int16_t Add_Hot_Key(int16_t select_char)
+
+// WZD s36p48
+// drake178: UU_GUI_CreateWndLabel
+/*
+NIU  nothing in WIZARDS.EXE calls it
+Add_Hidden_Field() clipped to the current window: -10000 if the rectangle is entirely outside it
+*/
+int16_t Add_Clipped_Hidden_Field__NIU(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help)
+{
+
+    if(
+        (xmax < screen_window_x1)
+        ||
+        (xmin > screen_window_x2)
+    )
+    {
+
+        return -10000;
+
+    }
+
+    if(
+        (ymax < screen_window_y1)
+        ||
+        (ymin > screen_window_y2)
+    )
+    {
+
+        return -10000;
+
+    }
+
+    if(xmin >= screen_window_x1)
+    {
+
+        p_fields[fields_count].x1 = xmin;
+
+    }
+    else
+    {
+
+        p_fields[fields_count].x1 = screen_window_x1;
+
+    }
+
+    p_fields[fields_count].x2 = ((xmax <= screen_window_x2) ? xmax : screen_window_x2);  /* asm: one store of the chosen value */
+
+    if(ymin >= screen_window_y1)
+    {
+
+        p_fields[fields_count].y1 = ymin;
+
+    }
+    else
+    {
+
+        p_fields[fields_count].y1 = screen_window_y1;
+
+    }
+
+    p_fields[fields_count].y2 = ((ymax <= screen_window_y2) ? ymax : screen_window_y2);  /* asm: one store of the chosen value */
+
+    p_fields[fields_count].type = ft_HotKey;
+
+    p_fields[fields_count].help = help;
+
+    p_fields[fields_count].hotkey = hotkey[0];  /* asm: mov si, [bp+Key@] / mov al, [si] */
+
+    UPPERCASE(p_fields[fields_count].hotkey);
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
+
+// WZD s36p49
+int16_t Add_Hot_Key(char * select_char)
 {
     p_fields[fields_count].x1 = OFF_SCREEN;
     p_fields[fields_count].y1 = OFF_SCREEN;
@@ -1027,16 +1211,57 @@ int16_t Add_Hot_Key(int16_t select_char)
     p_fields[fields_count].y2 = OFF_SCREEN;
     p_fields[fields_count].type = ft_HotKey;
     p_fields[fields_count].help = ST_UNDEFINED;
-    p_fields[fields_count].hotkey = select_char;
+    p_fields[fields_count].hotkey = select_char[0];
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Hot_Key");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Hot_Key");
 #endif
     return (fields_count - 1);
 }
 
-// WZD s34p51
+
+// WZD s36p50
+// drake178: UU_GUI_CreateHelpLink
+/*
+NIU  only Add_Paragraph_Link_Fields__NIU() calls it, and nothing calls that
+adds an ft_ClickLink field over (x1, y1, x2, y2): link link_number of the paragraph whose fields start at parent_field_idx; clicking it is meant to set *variable to link_number
+    the field handlers for ft_ClickLink are not reconstructed (// DONT in Interpret_Mouse_Input())
+returns the new field's index
+*/
+int16_t Add_Click_Link_Field__NIU(int16_t parent_field_idx, int16_t * variable, int16_t link_number, int16_t x1, int16_t y1, int16_t x2, int16_t y2, char * hotkey, int16_t help)
+{
+
+    p_fields[fields_count].x1 = x1;
+
+    p_fields[fields_count].y1 = y1;
+
+    p_fields[fields_count].x2 = x2;
+
+    p_fields[fields_count].y2 = y2;
+
+    p_fields[fields_count].help = help;
+
+    p_fields[fields_count].type = ft_ClickLink;
+
+    p_fields[fields_count].Param1 = link_number;
+
+    p_fields[fields_count].parent = parent_field_idx;
+
+    p_fields[fields_count].variable1 = variable;  /* asm: mov ax, [bp+State@] / mov [es:bx+s_Field.Param2], ax - the near pointer */
+
+    p_fields[fields_count].hotkey = hotkey[0];  /* asm: mov al, [di] - hotkey is a string */
+
+    UPPERCASE(p_fields[fields_count].hotkey);  /* asm: cmp 96 / jle / cmp 123 / jge / add al, 224 */
+
+    fields_count += 1;
+
+    return (fields_count - 1);
+
+}
+
+
+// WZD s36p51
 // DEDUCE: What happens with the xpos,ypos here? How does it get used? How does that work?
 // int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help)
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help)
@@ -1059,15 +1284,21 @@ int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t bo
     p_fields[fields_count].Param4 = (int64_t)ypos;  // NOTE: assigning address, not value
     UPPERCASE(p_fields[fields_count].hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Grid_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Grid_Field");
 #endif
     return (fields_count - 1);
 }
 
 
-// WZD s34p52
-// WZD s34p53
+// WZD s36p52
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help)
+{
+    return Add_Scroll_Field_Far(xmin, ymin, min_value, max_value, min_valid, max_valid, width, height, variable, hotkey, help);
+}
+
+
+// WZD s36p53
 // 1oom  uiobj.c  uiobj_add_slider_int() / uiobj_add_slider_func()
 // 1oom: int16_t uiobj_add_slider_func(uint16_t x0, uint16_t y0, uint16_t vmin, uint16_t vmax, uint16_t w, uint16_t h, int16_t *vptr, void (*cb)(void *ctx, uint8_t slideri, int16_t value), void *ctx, uint8_t slideri)
 // STARMAP.EXE: uiobj_add_slider_noseg(); uiobj_add_slider();
@@ -1098,7 +1329,7 @@ MoO2  Module: fields  Add_Scroll_Field()
 ;   Max_V  - maximum represented value
 ;   Pos@   - near pointer to the position state
 */
-int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help)
+int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help)
 {
     p_fields[fields_count].x1 = xmin;
     p_fields[fields_count].y1 = ymin;
@@ -1112,18 +1343,18 @@ int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t 
     p_fields[fields_count].orientation = (width > height) ? 0 : 1;  // Orientation: {Horizontal, Vertical}
     p_fields[fields_count].type = ft_Scroll;
     p_fields[fields_count].variable = variable;
-    p_fields[fields_count].hotkey = hotkey;
+    p_fields[fields_count].hotkey = hotkey[0];
     UPPERCASE(p_fields[fields_count].hotkey);
     // TODO  SET_HOTKEY(hotkey);
     fields_count += 1;
-#ifdef STU_DEBUG
-    Dbg_Trace_Field_Added(fields_count - 1, "Add_Scroll_Field");
+#if STU_CLOG
+    Clog_Field_Added(fields_count - 1, "Add_Scroll_Field");
 #endif
     return (fields_count - 1);
 }
 
 
-// WZD s34p54
+// WZD s36p54
 // GUI_SliderUpdate()
 // 1oom  uiobj_handle_t6_slider_input()
 /*
@@ -1179,8 +1410,10 @@ int16_t Find_Bar_Position(int16_t field_num)
         }
         else
         {
+            /* OGBUG  the vertical branch leaves out '+ min_value' (the horizontal one has it): harmless only while every vertical scroll field has min_value 0 */
             bar_value = value;
         }
+
     }
 
     SETMIN(bar_value, p_fields[field_num].Param0);
@@ -1191,7 +1424,7 @@ int16_t Find_Bar_Position(int16_t field_num)
     return bar_value;
 }
 
-// WZD s34p55
+// WZD s36p55
 // GUI_SlideUp();
 // uiobj_slider_plus()
 /*
@@ -1243,7 +1476,7 @@ void Increment_Scroll_Bar(int16_t field_num)
 
 }
 
-// WZD s34p56
+// WZD s36p56
 // GUI_SlideDown();
 // 1oom  uiobj_slider_minus()
 /*
@@ -1330,8 +1563,8 @@ void Clear_Fields(void)
     /* 0A */  p_fields[itr].help = 0;
     /* 0C */  p_fields[itr].font_style_num = 0;
     /* 0E */  p_fields[itr].font_normal_color = 0;
-    /* 10 */  p_fields[itr].Rect_FX = 0;
-    /* 12 */  p_fields[itr].Selectable = 0;
+    /* 10 */  p_fields[itr].fill_type = 0;
+    /* 12 */  p_fields[itr].active_flag = 0;
     /* 14 */  p_fields[itr].font_highlight_color = 0;
     /* 16 */  p_fields[itr].Param0 = 0;
     /* 18 */  p_fields[itr].Param1 = 0;
@@ -1342,12 +1575,9 @@ void Clear_Fields(void)
     /* 22 */  p_fields[itr].Param6 = 0;
     /* 24 */  p_fields[itr].hotkey = 0;
     }
-#ifdef STU_DEBUG
+#if STU_CLOG
     /* CLAUDE 2026-07-22: clear the origin shadow for the fields just cleared. */
-    for(itr = 0; itr < fields_count; itr++)
-    {
-        if(itr < DBG_FIELD_ORIGIN_MAX) { g_dbg_field_origin_file[itr] = NULL; g_dbg_field_origin_line[itr] = 0; }
-    }
+    STU_CLOG_Field_Origins_Clear(fields_count);
 #endif
     fields_count = 1;
     down_mouse_button = ST_UNDEFINED;
@@ -1358,10 +1588,931 @@ void Clear_Fields(void)
 }
 
 // WZD s36p58
-// UU_GUI_NoSelectColor();
+// drake178: UU_GUI_NoSelectColor();
+// JimBalcomb: NX_UU_GUI_NoSelectColor()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+sets GUI_NoTxtSelectColor, the color set that list fields pass to Set_Font_Style() for their text; 0 unless color_set is 1 .. 14
+*/
+void Set_Unselectable_Text_Color__NIU(int16_t color_set)
+{
+
+    if(
+        (color_set > 0)
+        &&
+        (color_set < 15)
+    )
+    {
+
+        GUI_NoTxtSelectColor = color_set;
+
+    }
+    else
+    {
+
+        GUI_NoTxtSelectColor = 0;
+
+    }
+
+}
+
 
 // WZD s36p59
-// UU_GUI_ScrollableTxtDlg();
+// drake178: UU_GUI_ScrollableTxtDlg()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+a list field of page_lines lines from list_strings (string_size bytes apart, ends at an empty string) under a title line, with up / down arrow buttons that page it
+    selectable[] (NULL = every line) marks the lines that can be picked; *variable is the picked line
+returns the picked line (input field - 1 + first line), or -1 (and *variable put back) when cancelled
+(the never-ending GUI_OnLastDialogLine loops are in the asm: OGBUG)
+*/
+int16_t Get_Scrolling_List_Field__NIU(int16_t x1, int16_t y1, int16_t width, char * title_string, char * list_strings, int16_t string_size, int16_t * variable, int16_t * selectable, int16_t page_lines, int16_t up_x, int16_t up_y, SAMB_ptr up_pict, int16_t down_x, int16_t down_y, SAMB_ptr down_pict, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help)
+{
+    uint8_t local_buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t scroll_down = 0;
+    int16_t scroll_up = 0;
+    int16_t line_count = 0;
+    int16_t initial_state = 0;
+    int16_t highlight_color = 0;
+    int16_t line_selectable = 0;
+    int16_t special_color = 0;
+    int16_t down_arrow_field = 0;
+    int16_t up_arrow_field = 0;
+    int16_t lines_created = 0;
+    int16_t unused_x2 = 0;
+    int16_t title_state = 0;
+    int16_t mouse_highlight = 0;
+    int16_t first_draw_done = 0;
+    int16_t selection_idx = 0;
+    char * line_text = 0;
+    int16_t title_field = 0;
+    int16_t first_line = 0;
+    int16_t line_y = 0;
+    int16_t font_height = 0;
+    int16_t line_height = 0;
+    int16_t total_lines = 0;
+    int16_t leave_list = 0;
+    int16_t itr_lines = 0;  // _SI_
+
+    list_field_on = ST_TRUE;
+
+    GUI_NoDialogWrap = ST_TRUE;
+
+    GUI_OnLastDialogLine = 0;
+
+    special_color = Get_Current_Special_Color();
+
+    highlight_color = Get_Current_Highlight_Color();
+
+    Set_Input_Delay(1);
+
+    Clear_Fields();
+
+    /* OGBUG  dead store - unused_x2 is never read */
+    unused_x2 = (x1 + width);
+
+    font_height = Get_Font_Height();
+
+    line_height = (font_height + Get_Font_Vertical_Spacing());
+
+    leave_list = ST_FALSE;
+
+    itr_lines = 0;
+
+    total_lines = 0;  /* used as a 'found the first selectable line' flag until the count is stored below */
+
+    line_text = list_strings;
+
+    line_y = (y1 + line_height);
+
+    selection_idx = 0;
+
+    lines_created = 0;
+
+    while(leave_list == ST_FALSE)
+    {
+
+        Copy_Memory_Near(&local_buffer[0], (uint8_t *)line_text, 2);
+
+        if(local_buffer[0] != 0)
+        {
+
+            if(total_lines == 0)
+            {
+
+                /* OGBUG  reads selectable[itr_lines] before the NULL test (asm: cmp [word ptr bx], 0 / jnz, then cmp [bp+Sel@], 0) - here and in every selectable test below */
+                if(
+                    (selectable[itr_lines] != 0)
+                    ||
+                    (selectable == NULL)
+                )
+                {
+
+                    selection_idx = itr_lines;
+
+                    total_lines = 1;
+
+                }
+
+            }
+
+            itr_lines++;
+
+        }
+        else
+        {
+
+            leave_list = ST_TRUE;
+
+        }
+
+        line_text += string_size;
+
+    }
+
+    total_lines = itr_lines;
+
+    itr_lines = 0;
+
+    if(
+        (*variable >= 0)
+        &&
+        (*variable < total_lines)
+    )
+    {
+
+        itr_lines = *variable;
+
+    }
+
+    if((itr_lines + page_lines) > total_lines)
+    {
+
+        itr_lines = (total_lines - page_lines);
+
+        if(itr_lines < 0)
+        {
+
+            itr_lines = 0;
+
+        }
+
+    }
+
+    first_line = itr_lines;
+
+    line_text = (list_strings + (itr_lines * string_size));
+
+    lines_created = 0;
+
+    while(
+        (itr_lines < total_lines)
+        &&
+        (lines_created < page_lines)
+    )
+    {
+
+        if(selectable == NULL)
+        {
+
+            line_selectable = ST_TRUE;
+
+        }
+        else
+        {
+
+            line_selectable = selectable[itr_lines];
+
+        }
+
+        Add_String_List_Field(x1, line_y, width, line_text, line_selectable, variable, itr_lines, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help);
+
+        line_y += line_height;
+
+        line_text += string_size;
+
+        itr_lines++;
+
+        lines_created++;
+
+    }
+
+    /* OGBUG  dead store - line_count is read only in the GUI_OnLastDialogLine == 1 branch, which sets it first */
+    line_count = lines_created;
+
+    if(
+        (*variable < 0)
+        ||
+        (*variable >= total_lines)
+    )
+    {
+
+        /* OGBUG  selection_idx is the first selectable line, but *variable is set to first_line; and a first selectable line of 0 fails the > 0 test */
+        if(
+            (selection_idx > 0)
+            &&
+            (selection_idx < total_lines)
+        )
+        {
+
+            *variable = first_line;
+
+        }
+        else
+        {
+
+            *variable = ST_UNDEFINED;
+
+        }
+
+    }
+
+    Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), special_color, ST_NULL);  /* asm: pushes three words; ReMoM's fourth (color set 3) is ST_NULL */
+
+    title_state = 0;
+
+    title_field = Add_String_List_Field(x1, y1, width, title_string, ST_FALSE, &title_state, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry);
+
+    if(first_line == 0)
+    {
+
+        scroll_up = ST_TRUE;
+
+    }
+    else
+    {
+
+        scroll_up = ST_FALSE;
+
+    }
+
+    if(itr_lines >= total_lines)
+    {
+
+        scroll_down = ST_TRUE;
+
+    }
+    else
+    {
+
+        scroll_down = ST_FALSE;
+
+    }
+
+    up_arrow_field = Add_Locked_Button_Field__NIU(up_x, up_y, str_empty_string__seg036, up_pict, &scroll_up, str_hotkey_up__seg036, ST_UNDEFINED);
+
+    down_arrow_field = Add_Locked_Button_Field__NIU(down_x, down_y, str_empty_string__seg036, down_pict, &scroll_down, str_hotkey_down__seg036, ST_UNDEFINED);
+
+    leave_list = ST_FALSE;
+
+    first_draw_done = ST_FALSE;
+
+    selection_idx = 0;
+
+    initial_state = *variable;
+
+    while(leave_list == ST_FALSE)
+    {
+
+        Mark_Time();
+
+        selection_idx = Get_Input();
+
+        if(
+            (selection_idx < 0)
+            ||
+            (
+                (selection_idx > 0)
+                &&
+                (selection_idx < up_arrow_field)
+            )
+        )
+        {
+
+            leave_list = ST_TRUE;
+
+        }
+
+        if(
+            (
+                (selection_idx > 0)
+                &&
+                (selection_idx < up_arrow_field)
+                &&
+                (p_fields[selection_idx].active_flag == ST_FALSE)
+            )
+            ||
+            (selection_idx == title_field)
+        )
+        {
+
+            leave_list = ST_FALSE;
+
+        }
+
+        if(selection_idx == up_arrow_field)
+        {
+
+            Clear_Fields();
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), highlight_color, ST_NULL);
+
+            itr_lines = (first_line - page_lines);
+
+            if(itr_lines < 0)
+            {
+
+                itr_lines = 0;
+
+            }
+
+            first_line = itr_lines;
+
+            *variable = ST_UNDEFINED;
+
+            if(
+                (selectable[itr_lines] != 0)
+                ||
+                (selectable == NULL)
+            )
+            {
+
+                *variable = first_line;
+
+            }
+            else
+            {
+
+                while((first_line + page_lines) > itr_lines)
+                {
+
+                    if(
+                        (selectable[itr_lines] != 0)
+                        ||
+                        (selectable == NULL)
+                    )
+                    {
+
+                        *variable = itr_lines;
+
+                        break;
+
+                    }
+
+                    itr_lines++;
+
+                }
+
+            }
+
+            itr_lines = first_line;
+
+            line_text = (list_strings + (itr_lines * string_size));
+
+            lines_created = 0;
+
+            line_y = (y1 + line_height);
+
+            while(
+                (itr_lines < total_lines)
+                &&
+                (lines_created < page_lines)
+            )
+            {
+
+                if(selectable == NULL)
+                {
+
+                    line_selectable = ST_TRUE;
+
+                }
+                else
+                {
+
+                    line_selectable = selectable[itr_lines];
+
+                }
+
+                Add_String_List_Field(x1, line_y, width, line_text, line_selectable, variable, itr_lines, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help);
+
+                line_y += line_height;
+
+                line_text += string_size;
+
+                itr_lines++;
+
+                lines_created++;
+
+            }
+
+            line_count = lines_created;
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), special_color, ST_NULL);
+
+            title_state = 0;
+
+            Add_String_List_Field(x1, y1, width, title_string, ST_FALSE, &title_state, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry);
+
+            if(first_line == 0)
+            {
+
+                scroll_up = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_up = ST_FALSE;
+
+            }
+
+            if(itr_lines >= total_lines)
+            {
+
+                scroll_down = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_down = ST_FALSE;
+
+            }
+
+            up_arrow_field = Add_Locked_Button_Field__NIU(up_x, up_y, str_empty_string__seg036, up_pict, &scroll_up, str_hotkey_up__seg036, ST_UNDEFINED);
+
+            down_arrow_field = Add_Locked_Button_Field__NIU(down_x, down_y, str_empty_string__seg036, down_pict, &scroll_down, str_hotkey_down__seg036, ST_UNDEFINED);
+
+        }
+        else if(selection_idx == down_arrow_field)
+        {
+
+            Clear_Fields();
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), highlight_color, ST_NULL);
+
+            itr_lines = (first_line + page_lines);
+
+            if((itr_lines + page_lines) > total_lines)
+            {
+
+                itr_lines = (total_lines - page_lines);
+
+                if(itr_lines < 0)
+                {
+
+                    itr_lines = 0;
+
+                }
+
+            }
+
+            if(itr_lines >= total_lines)
+            {
+
+                itr_lines = first_line;
+
+            }
+
+            first_line = itr_lines;
+
+            *variable = ST_UNDEFINED;
+
+            if(
+                (selectable[first_line] != 0)
+                ||
+                (selectable == NULL)
+            )
+            {
+
+                *variable = first_line;
+
+            }
+            else
+            {
+
+                while((first_line + page_lines) > itr_lines)
+                {
+
+                    if(
+                        (selectable[itr_lines] != 0)
+                        ||
+                        (selectable == NULL)
+                    )
+                    {
+
+                        *variable = itr_lines;
+
+                        break;
+
+                    }
+
+                    itr_lines++;
+
+                }
+
+            }
+
+            lines_created = 0;
+
+            itr_lines = first_line;
+
+            line_text = (list_strings + (itr_lines * string_size));
+
+            line_y = (y1 + line_height);
+
+            while(
+                (itr_lines < total_lines)
+                &&
+                (lines_created < page_lines)
+            )
+            {
+
+                if(selectable == NULL)
+                {
+
+                    line_selectable = ST_TRUE;
+
+                }
+                else
+                {
+
+                    line_selectable = selectable[itr_lines];
+
+                }
+
+                Add_String_List_Field(x1, line_y, width, line_text, line_selectable, variable, itr_lines, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help);
+
+                line_y += line_height;
+
+                line_text += string_size;
+
+                itr_lines++;
+
+                lines_created++;
+
+            }
+
+            line_count = lines_created;
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), special_color, ST_NULL);
+
+            title_state = 0;
+
+            Add_String_List_Field(x1, y1, width, title_string, ST_FALSE, &title_state, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry);
+
+            if(first_line == 0)
+            {
+
+                scroll_up = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_up = ST_FALSE;
+
+            }
+
+            if(itr_lines >= total_lines)
+            {
+
+                scroll_down = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_down = ST_FALSE;
+
+            }
+
+            up_arrow_field = Add_Locked_Button_Field__NIU(up_x, up_y, str_empty_string__seg036, up_pict, &scroll_up, str_hotkey_up__seg036, ST_UNDEFINED);
+
+            down_arrow_field = Add_Locked_Button_Field__NIU(down_x, down_y, str_empty_string__seg036, down_pict, &scroll_down, str_hotkey_down__seg036, ST_UNDEFINED);
+
+        }
+
+        if(list_field_scan_flag != ST_FALSE)
+        {
+
+            mouse_highlight = Scan_Input();
+
+            if(mouse_highlight > 0)
+            {
+
+                *variable = p_fields[mouse_highlight].Param1;
+
+            }
+
+        }
+
+        if(GUI_OnLastDialogLine == 1)
+        {
+
+            Clear_Fields();
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), highlight_color, ST_NULL);
+
+            itr_lines = (first_line + 1);
+
+            line_count = (first_line + page_lines);
+
+            /* OGBUG  never ends when selectable is NULL (asm: cmp [bp+Sel@], 0 / jz back to the increment) */
+            while(
+                (
+                    (selectable[line_count] == 0)
+                    &&
+                    (line_count < total_lines)
+                )
+                ||
+                (selectable == NULL)
+            )
+            {
+
+                itr_lines++;
+
+                line_count++;
+
+            }
+
+            if(line_count >= total_lines)
+            {
+
+                itr_lines = first_line;
+
+            }
+
+            if((itr_lines + page_lines) > total_lines)
+            {
+
+                itr_lines = (total_lines - page_lines);
+
+                if(itr_lines < 0)
+                {
+
+                    itr_lines = 0;
+
+                }
+
+            }
+
+            first_line = itr_lines;
+
+            line_text = (list_strings + (itr_lines * string_size));
+
+            lines_created = 0;
+
+            line_y = (y1 + line_height);
+
+            while(
+                (itr_lines < total_lines)
+                &&
+                (lines_created < page_lines)
+            )
+            {
+
+                if(selectable == NULL)
+                {
+
+                    line_selectable = ST_TRUE;
+
+                }
+                else
+                {
+
+                    line_selectable = selectable[itr_lines];
+
+                }
+
+                Add_String_List_Field(x1, line_y, width, line_text, line_selectable, variable, itr_lines, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help);
+
+                line_y += line_height;
+
+                line_text += string_size;
+
+                itr_lines++;
+
+                lines_created++;
+
+            }
+
+            line_count = lines_created;
+
+            if(
+                (selectable[(itr_lines - 1)] != 0)
+                ||
+                (selectable == NULL)
+            )
+            {
+
+                *p_fields[line_count].variable1 = p_fields[line_count].Param1;  /* asm: the last line's field (field line_count) */
+
+            }
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), special_color, ST_NULL);
+
+            title_state = 0;
+
+            Add_String_List_Field(x1, y1, width, title_string, ST_FALSE, &title_state, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry);  /* asm: mov ax, 829Eh - the same string, by its address */
+
+            if(first_line == 0)
+            {
+
+                scroll_up = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_up = ST_FALSE;
+
+            }
+
+            if(itr_lines >= total_lines)
+            {
+
+                scroll_down = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_down = ST_FALSE;
+
+            }
+
+            up_arrow_field = Add_Locked_Button_Field__NIU(up_x, up_y, str_empty_string__seg036, up_pict, &scroll_up, str_hotkey_up__seg036, ST_UNDEFINED);
+
+            down_arrow_field = Add_Locked_Button_Field__NIU(down_x, down_y, str_empty_string__seg036, down_pict, &scroll_down, str_hotkey_down__seg036, ST_UNDEFINED);
+
+        }
+
+        if(GUI_OnLastDialogLine == -1)
+        {
+
+            Clear_Fields();
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), highlight_color, ST_NULL);
+
+            itr_lines = (first_line - 1);
+
+            if(itr_lines < 0)
+            {
+
+                itr_lines = 0;
+
+            }
+
+            /* OGBUG  never ends when selectable is NULL (asm: cmp [bp+Sel@], 0 / jz back to the decrement) */
+            while(
+                (
+                    (selectable[itr_lines] == 0)
+                    &&
+                    (itr_lines > 0)
+                )
+                ||
+                (selectable == NULL)
+            )
+            {
+
+                itr_lines--;
+
+            }
+
+            first_line = itr_lines;
+
+            line_text = (list_strings + (itr_lines * string_size));
+
+            lines_created = 0;
+
+            line_y = (y1 + line_height);
+
+            while(
+                (itr_lines < total_lines)
+                &&
+                (lines_created < page_lines)
+            )
+            {
+
+                if(selectable == NULL)
+                {
+
+                    line_selectable = ST_TRUE;
+
+                }
+                else
+                {
+
+                    line_selectable = selectable[itr_lines];
+
+                }
+
+                Add_String_List_Field(x1, line_y, width, line_text, line_selectable, variable, itr_lines, select_fill_type, sfill1, sfill2, sfill3, sfill4, str_empty_string__seg036, help);
+
+                line_y += line_height;
+
+                line_text += string_size;
+
+                itr_lines++;
+
+                lines_created++;
+
+            }
+
+            line_count = lines_created;
+
+            *variable = p_fields[1].Param1;  /* asm: mov ax, es:[bx+s_Field.Param1+26h] - field 1, the first line */
+
+            Set_Font_Style(Get_Current_Font_Style(), Get_Current_Normal_Color(), special_color, ST_NULL);
+
+            title_state = 0;
+
+            Add_String_List_Field(x1, y1, width, title_string, ST_FALSE, &title_state, 1, 0, 0, 0, 0, 0, str_empty_string__seg036, default_help_entry);
+
+            if(first_line == 0)
+            {
+
+                scroll_up = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_up = ST_FALSE;
+
+            }
+
+            if(itr_lines >= total_lines)
+            {
+
+                scroll_down = ST_TRUE;
+
+            }
+            else
+            {
+
+                scroll_down = ST_FALSE;
+
+            }
+
+            up_arrow_field = Add_Locked_Button_Field__NIU(up_x, up_y, str_empty_string__seg036, up_pict, &scroll_up, str_hotkey_up__seg036, ST_UNDEFINED);
+
+            down_arrow_field = Add_Locked_Button_Field__NIU(down_x, down_y, str_empty_string__seg036, down_pict, &scroll_down, str_hotkey_down__seg036, ST_UNDEFINED);
+
+        }
+
+        GUI_OnLastDialogLine = 0;
+
+        Invoke_Auto_Function();
+
+        Apply_Palette();
+
+        Toggle_Pages();
+
+        if(first_draw_done == ST_FALSE)
+        {
+
+            Copy_On_To_Off_Page();
+
+            first_draw_done = ST_TRUE;
+
+        }
+
+        Release_Time(auto_function_delay);
+
+    }
+
+    Clear_Fields();
+
+    list_field_on = ST_FALSE;
+
+    list_field_scan_flag = ST_TRUE;
+
+    GUI_NoDialogWrap = ST_FALSE;
+
+    Mouse_Buffer();
+
+    Mouse_Buffer2();
+
+    if(selection_idx < 0)
+    {
+
+        *variable = initial_state;
+
+        return ST_UNDEFINED;
+
+    }
+    else
+    {
+
+        return ((selection_idx + first_line) - 1);
+
+    }
+
+}
+
+
 
 // WZD s36p60
 // MoO2  Module: fields  Get_List_Field()
@@ -1437,8 +2588,11 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         {
             
             /* NOTE:  active_flags can be NULL, so these conditions can't be as seen in the Dasm */
+            /* OGBUG  the OG reads active_flag[itr] BEFORE testing active_flag for NULL ('cmp [word ptr bx], e_ST_FALSE / jnz' then 'cmp [bp+active_flag], e_ST_NULL'): with a NULL list it reads DS:itr*2 and the result is ignored */
+            /* HACK */  /* the NULL test is moved first so ReMoM never dereferences NULL; the outcome is the OG's */
             if(
                 (total_items == 0)
+
                 &&
                 (
                     (active_flag == ST_NULL)
@@ -1569,9 +2723,12 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
         {
 
             /* NOTE:  active_flags can be NULL, so these conditions can't be as seen in the Dasm */
+            /* OGBUG  as above: the OG reads active_flag[choice - 1] before the NULL test; with a NULL list the result is ignored */
+            /* HACK */  /* NULL test first so ReMoM never dereferences NULL; the outcome is the OG's */
             if(
                 (
                     (active_flag != ST_NULL)
+
                     &&
                     (active_flag[(choice - 1)] == ST_FALSE)
                 )
@@ -1640,27 +2797,253 @@ int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, c
 
 
 // WZD s36p61
-// UU_GUI_NoMouseHighlight();
+// drake178: UU_GUI_NoMouseHighlight()
+/*
+    turns off the list fields' mouse tracking: with list_field_scan_flag ST_FALSE, Get_Scrolling_List_Field__NIU() and Get_List_Field() do not
+    Scan_Input() for the item under the pointer (Get_List_Field() sets it back to ST_TRUE); no caller in WIZARDS or MAGIC
+*/
+void Disable_List_Field_Mouse_Scan(void)
+{
+    list_field_scan_flag = ST_FALSE;
+}
+
 
 // WZD s36p62
+// drake178: GUI_MoveDlgHighlight()
+// AKA GUI_MoveDlgHighlight__STUB()
 /*
 ; moves the currently selected dialog option up or down
 ; if possible, along with the mouse pointer, and sets
 ; the control state variable accordingly
 */
-int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction)
+/*
+    y_direction 1 is down, anything else is up. With a field under the pointer the highlight steps to the next / previous selectable ft_StringList
+    field, wrapping round the list unless GUI_NoDialogWrap is set, when it stays and GUI_OnLastDialogLine is set to 1 (past the end) or -1 (past the
+    start) for the scrollable text dialog; with no field under the pointer it starts from the list's current line (*p_fields[1].variable1 + 1), or the
+    first selectable field. It then centres the pointer on the new field and stores the field's set_value in *variable1 (Param1 / Param2). Returns the new field index, 0 for none.
+    CLAUDE: BCC 3.1 -mm -a -d compiles this body to the asm's instruction stream (377 instructions; the two field_idx++ of each down-step merge into its single inc si)
+*/
+int16_t Move_Dialog_Highlight(int16_t y_direction)
 {
-    int16_t itr_fields_count = 0;
-    int16_t field_idx = 0;  // _SI_
     int16_t scanned_field = 0;  // _DI_
+    int16_t field_idx = 0;  // _SI_
+    int16_t itr_fields = 0;
 
     scanned_field = Scan_Input();
 
     field_idx = scanned_field;
 
+    if(scanned_field != 0)
+    {
+        if(y_direction == 1)
+        {
+            field_idx++;
+            while(((fields_count - 1) > field_idx) && (p_fields[field_idx].type == ft_StringList))
+            {
+                if(p_fields[field_idx].active_flag != ST_FALSE)
+                {
+                    break;
+                }
+                field_idx++;
+            }
+            if(((fields_count - 1) <= field_idx) || (p_fields[field_idx].type != ft_StringList))
+            {
+                if(GUI_NoDialogWrap == ST_FALSE)
+                {
+                    field_idx = 1;
+                    while((p_fields[field_idx].active_flag == ST_FALSE) && ((fields_count - 1) > field_idx))
+                    {
+                        field_idx++;
+                    }
+                    if((fields_count - 1) <= field_idx)
+                    {
+                        field_idx = scanned_field;
+                    }
+                }
+                else
+                {
+                    field_idx = scanned_field;
+                    GUI_OnLastDialogLine = 1;
+                }
+            }
+        }
+        else
+        {
+            if((GUI_NoDialogWrap != ST_FALSE) && (field_idx == 1))
+            {
+                GUI_OnLastDialogLine = -1;
+                field_idx = 1;
+            }
+            else
+            {
+                if(field_idx > 1)
+                {
+                    field_idx--;
+                }
+                else
+                {
+                    field_idx = (fields_count - 2);
+                }
+                while((p_fields[field_idx].type != ft_StringList) && (field_idx > 0))
+                {
+                    field_idx--;
+                }
+                while(field_idx > 0)
+                {
+                    if(p_fields[field_idx].active_flag != ST_FALSE)
+                    {
+                        break;
+                    }
+                    field_idx--;
+                }
+                if(field_idx <= 0)
+                {
+                    if(GUI_NoDialogWrap != ST_FALSE)
+                    {
+                        GUI_OnLastDialogLine = -1;
+                        field_idx = 1;
+                    }
+                    else
+                    {
+                        field_idx = (fields_count - 2);
+                        while((p_fields[field_idx].type != ft_StringList) && (field_idx > 0))
+                        {
+                            field_idx--;
+                        }
+                        while((p_fields[field_idx].active_flag == ST_FALSE) && (field_idx > 0))
+                        {
+                            field_idx--;
+                        }
+                        if(field_idx == 0)
+                        {
+                            field_idx = scanned_field;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if(*p_fields[1].variable1 >= 0)
+        {
+            scanned_field = (*p_fields[1].variable1 + 1);
+            if((scanned_field < 0) || ((fields_count - 1) < scanned_field))
+            {
+                scanned_field = 0;
+            }
+            field_idx = scanned_field;
+            if(y_direction == 1)
+            {
+                field_idx++;
+                while(((fields_count - 1) > field_idx) && (p_fields[field_idx].type == ft_StringList))
+                {
+                    if(p_fields[field_idx].active_flag != ST_FALSE)
+                    {
+                        break;
+                    }
+                    field_idx++;
+                }
+                /* OGBUG  unlike the pointer-on-a-field branch above, a step that ends on a field that is not a list line (field_idx < fields_count - 1) only wraps when
+                          GUI_NoDialogWrap is set; otherwise the highlight and the pointer land on that non-list field */
+                if(((field_idx >= fields_count) || (p_fields[field_idx].type != ft_StringList)) && (GUI_NoDialogWrap != ST_FALSE))
+                {
+                    GUI_OnLastDialogLine = 1;
+                }
+                else if((fields_count - 1) <= field_idx)
+                {
+                    field_idx = 1;
+                    while((p_fields[field_idx].active_flag == ST_FALSE) && ((fields_count - 1) > field_idx))
+                    {
+                        field_idx++;
+                    }
+                    if((fields_count - 1) <= field_idx)
+                    {
+                        field_idx = scanned_field;
+                    }
+                }
+            }
+            else
+            {
+                if((field_idx == 1) && (GUI_NoDialogWrap != ST_FALSE))
+                {
+                    GUI_OnLastDialogLine = -1;
+                }
+                else
+                {
+                    if(field_idx > 1)
+                    {
+                        field_idx--;
+                    }
+                    else
+                    {
+                        field_idx = (fields_count - 2);
+                    }
+                    /* OGBUG  no ft_StringList test on the up-step here (the pointer-on-a-field branch above has one): the highlight can stop on any selectable field */
+                    while(field_idx > 0)
+                    {
+                        if(p_fields[field_idx].active_flag != ST_FALSE)
+                        {
+                            break;
+                        }
+                        field_idx--;
+                    }
+                    if(field_idx == 0)
+                    {
+                        field_idx = (fields_count - 2);
+                        while((p_fields[field_idx].active_flag == ST_FALSE) && (field_idx > 0))
+                        {
+                            field_idx--;
+                        }
+                        if(field_idx == 0)
+                        {
+                            field_idx = scanned_field;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            for(itr_fields = 1; itr_fields < fields_count; itr_fields++)
+            {
+                if(p_fields[itr_fields].active_flag != ST_FALSE)
+                {
+                    field_idx = itr_fields;
+                    break;
+                }
+            }
+            if(itr_fields >= fields_count)
+            {
+                field_idx = 0;
+            }
+        }
+    }
 
+    if((field_idx < 0) || ((fields_count - 1) < field_idx))
+    {
+        field_idx = 0;
+    }
 
-
+    if(field_idx > 0)
+    {
+        emulated_pointer_x = (p_fields[field_idx].x1 + ((p_fields[field_idx].x2 - p_fields[field_idx].x1) / 2));
+        emulated_pointer_y = (p_fields[field_idx].y1 + ((p_fields[field_idx].y2 - p_fields[field_idx].y1) / 2));
+        if((Pointer_X() != emulated_pointer_x) || (Pointer_Y() != emulated_pointer_y))
+        {
+            Save_Mouse_State();
+            Check_Mouse_Shape(emulated_pointer_x, emulated_pointer_y);
+            pointer_offset = Get_Pointer_Offset();
+            emulated_pointer_x = (emulated_pointer_x - pointer_offset);
+            emulated_pointer_y = (emulated_pointer_y - pointer_offset);
+            Restore_Mouse_On_Page();
+            Save_Mouse_On_Page(emulated_pointer_x, emulated_pointer_y);
+            Draw_Mouse_On_Page(emulated_pointer_x, emulated_pointer_y);
+            Set_Pointer_Position(emulated_pointer_x, emulated_pointer_y);
+            *p_fields[field_idx].variable1 = p_fields[field_idx].set_value;
+            Restore_Mouse_State();
+        }
+    }
 
     return field_idx;
 }
@@ -1685,16 +3068,9 @@ int16_t Get_Field_Counter(void)
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 // INPUT  void Init_Mouse_Keyboard(int16_t input_type);
 
-// WZD s36p68
-// UU_Get_Input_Delay();
 
-// WZD s36p69
-// UU_GUI_ClearSelectable();
-
-// WZD s36p70
-// UU_GUI_SetSelectable();
-
-
+// WZD s36p71
+// MoO2: Draw_Visible_Fields()
 /*
 Moo2
 function (0 bytes) Draw_Visible_Fields
@@ -1715,8 +3091,6 @@ signed integer (2 bytes) old_window_x2
 signed integer (2 bytes) old_window_y1
 signed integer (2 bytes) old_window_y2
 */
-// MoO2: Draw_Visible_Fields()
-
 void Draw_Fields()
 {
     int16_t old_windows_x1 = 0;
@@ -1826,7 +3200,7 @@ void Draw_Fields()
                 } break;
                 case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
                 {
-
+                    /* asm: field_type_05_07_08_09 - shares the empty branch of ft_Picture / ft_HotKey / ft_MultiHotKey */
                 } break;
                 case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
                 {
@@ -1852,7 +3226,7 @@ void Draw_Fields()
                             (p_fields[itr_fields_count].y1 + Half_V_Spacing + 1), 
                             p_fields[itr_fields_count].x2, 
                             (p_fields[itr_fields_count].y1 + Half_Font_Height + 1), 
-                            p_fields[itr_fields_count].Rect_FX, 
+                            p_fields[itr_fields_count].fill_type, 
                             p_fields[itr_fields_count].fill_param1, 
                             p_fields[itr_fields_count].fill_param2, 
                             p_fields[itr_fields_count].fill_param3, 
@@ -1865,7 +3239,7 @@ void Draw_Fields()
                     else
                     {
 
-                        if(p_fields[itr_fields_count].Selectable == ST_FALSE)
+                        if(p_fields[itr_fields_count].active_flag == ST_FALSE)
                         {
 
                             Set_Font_Style(p_fields[itr_fields_count].font_style_num, p_fields[itr_fields_count].font_highlight_color, GUI_NoTxtSelectColor, ST_NULL);
@@ -2042,7 +3416,8 @@ void Draw_Fields()
 
 }
 
-// WZD s36p71
+
+// WZD s36p72
 /*
 MoO2
 function (0 bytes) Draw_Field
@@ -2061,14 +3436,9 @@ signed integer (2 bytes) var_segment
 signed integer (2 bytes) var_offset
 signed integer (2 bytes) temp_value
 */
-
 // ¿ Is the code here for `case ft_Grid` the same as in Scan_Input() ?
-
-// WZD s36p72
 /*
-
 up_down_flag    {0: Up, 1: Down}  ~== Down: {F,T}
-
 */
 void Draw_Field(int16_t field_num, int16_t up_down_flag)
 {
@@ -2160,6 +3530,13 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
         case ft_ClickLink:              /*  9  0x09 */  // drake178: ClickLink       DNE/NIU in MoO2
         {
 
+            if(up_down_flag == 1)  /* CLAUDE */  /* asm: FieldType_09 - was empty */
+            {
+
+                *p_fields[field_num].variable1 = p_fields[field_num].Param1;
+
+            }
+
         } break;
         case ft_StringList:             /* 10  0x0A */  // drake178: DialogLine
         {
@@ -2173,7 +3550,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             else
             {
 
-                if(p_fields[field_num].Selectable != ST_FALSE)
+                if(p_fields[field_num].active_flag != ST_FALSE)
                 {
 
                     *p_fields[field_num].variable1 = p_fields[field_num].set_value;
@@ -2203,7 +3580,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
                     (p_fields[field_num].y1 + Half_V_Spacing + 1), 
                     p_fields[field_num].x2, 
                     (p_fields[field_num].y1 + Half_Font_Height + 1), 
-                    p_fields[field_num].Rect_FX, 
+                    p_fields[field_num].fill_type, 
                     p_fields[field_num].fill_param1, 
                     p_fields[field_num].fill_param2, 
                     p_fields[field_num].fill_param3, 
@@ -2216,7 +3593,7 @@ void Draw_Field(int16_t field_num, int16_t up_down_flag)
             else
             {
 
-                if(p_fields[field_num].Selectable != ST_FALSE)
+                if(p_fields[field_num].active_flag != ST_FALSE)
                 {
 
                     Print(p_fields[field_num].x1, p_fields[field_num].y1, p_fields[field_num].string);
@@ -2293,7 +3670,7 @@ void Push_Field_Down(int16_t field_num, int16_t l_mx, int16_t l_my)
                         if(
                             (p_fields[down_mouse_button].type != ft_StringList)
                             ||
-                            ( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].Selectable != ST_FALSE) )
+                            ( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].active_flag != ST_FALSE) )
                         )
                         {
                             Draw_Field(down_mouse_button, 0);

@@ -1,0 +1,13 @@
+module_num=149
+module=fopen
+source=0149-fopen.md
+range[0]=1:0x0011668F linear=0x0012668F size=642
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME          SYMBOL         CHUNK
+m149f001  1    -      0x0012668F  1:0x0011668F  code         __open_flags  __open_flags_  regions/07-object-1/001AB654-001ABE53.txt
+m149f002  2    -      0x00126760  1:0x00116760  static,code  __doopen      __doopen_      regions/07-object-1/001AB654-001ABE53.txt
+m149f003  3    -      0x00126824  1:0x00116824  code         _fsopen       _fsopen_       regions/07-object-1/001ABE54-001AC653.txt
+m149f004  4    -      0x0012685D  1:0x0011685D  code         fopen         fopen_         regions/07-object-1/001ABE54-001AC653.txt
+m149f005  5    -      0x00126867  1:0x00116867  static,code  close_file    close_file_    regions/07-object-1/001ABE54-001AC653.txt
+m149f006  6    -      0x001268CF  1:0x001168CF  code         freopen       freopen_       regions/07-object-1/001ABE54-001AC653.txt

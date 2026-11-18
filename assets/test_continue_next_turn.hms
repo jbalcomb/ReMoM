@@ -8,7 +8,7 @@
 #
 # Usage:
 #   ReMoM --continue --scenario test_continue_next_turn.hms
-#   HeMoM    --continue --scenario test_continue_next_turn.hms --dump-save SAVE1.GAM
+#   DeMoM    --continue --scenario test_continue_next_turn.hms --dump-save SAVE1.GAM
 #
 # Expected state changes beyond test_continue_save.hms:
 #   - game.turn advances from 0 to 1

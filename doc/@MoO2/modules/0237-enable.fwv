@@ -1,0 +1,8 @@
+module_num=237
+module=enable
+source=0237-enable.md
+range[0]=1:0x00134A48 linear=0x00144A48 size=2
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m237f001  1    -      0x00144A48  1:0x00134A48  code  _enable  _enable_  regions/07-object-1/001C9E54-001CA653.txt

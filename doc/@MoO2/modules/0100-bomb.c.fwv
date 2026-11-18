@@ -1,0 +1,12 @@
+module_num=100
+module=D:\MOX\OTHERS\BOMB.C
+source=0100-bomb.c.md
+range[0]=1:0x000CCCCC linear=0x000DCCCC size=1669
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                          SYMBOL                         CHUNK
+m100f001  1    -      0x000DCCCC  1:0x000CCCCC  code  Handle_Leader_At_Lost_Colony  Handle_Leader_At_Lost_Colony_  regions/07-object-1/00161E54-00162653.txt
+m100f002  2    -      0x000DCDAC  1:0x000CCDAC  code  Destroy_Colony                Destroy_Colony_                regions/07-object-1/00161E54-00162653.txt
+m100f003  3    -      0x000DCEBD  1:0x000CCEBD  code  Resolve_Bomb_Hit              Resolve_Bomb_Hit_              regions/07-object-1/00161E54-00162653.txt
+m100f004  4    -      0x000DD13E  1:0x000CD13E  code  Resolve_Biological_Hit        Resolve_Biological_Hit_        regions/07-object-1/00162654-00162E53.txt
+m100f005  5    -      0x000DD2F2  1:0x000CD2F2  code  Apply_Bomb_Hits               Apply_Bomb_Hits_               regions/07-object-1/00162654-00162E53.txt

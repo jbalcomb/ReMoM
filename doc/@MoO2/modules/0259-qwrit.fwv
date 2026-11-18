@@ -1,0 +1,8 @@
+module_num=259
+module=qwrit
+source=0259-qwrit.md
+range[0]=1:0x001382C3 linear=0x001482C3 size=116
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m259f001  1    -      0x001482C3  1:0x001382C3  code  __qwrite  __qwrite_  regions/07-object-1/001CD654-001CDE53.txt

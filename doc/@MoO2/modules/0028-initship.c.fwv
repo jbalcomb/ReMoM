@@ -1,0 +1,76 @@
+module_num=28
+module=D:\MOX\OTHERS\INITSHIP.C
+source=0028-initship.c.md
+range[0]=1:0x00044D80 linear=0x00054D80 size=14404
+range[1]=2:0x00000EA0 linear=0x00170EA0 size=56
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                      SYMBOL                                     CHUNK
+m028f001  1    -      0x00054D80  1:0x00044D80  code  Get_Design_Combat_Bonuses                 Get_Design_Combat_Bonuses_                 regions/07-object-1/000D9E54-000DA653.txt
+m028f002  2    -      0x00054E5B  1:0x00044E5B  code  Get_Ship_Combat_Bonuses                   Get_Ship_Combat_Bonuses_                   regions/07-object-1/000D9E54-000DA653.txt
+m028f003  3    -      0x00054FBF  1:0x00044FBF  code  Init_Ship_Designs                         Init_Ship_Designs_                         regions/07-object-1/000D9E54-000DA653.txt
+m028f004  4    -      0x0005514C  1:0x0004514C  code  Load_Antaran_Ship_Design                  Load_Antaran_Ship_Design_                  regions/07-object-1/000DA654-000DAE53.txt
+m028f005  5    -      0x00055161  1:0x00045161  code  Load_Small_Antaran_Combat_Ship            Load_Small_Antaran_Combat_Ship_            regions/07-object-1/000DA654-000DAE53.txt
+m028f006  6    -      0x00055364  1:0x00045364  code  Load_Small_Antaran_Design                 Load_Small_Antaran_Design_                 regions/07-object-1/000DA654-000DAE53.txt
+m028f007  7    -      0x0005542C  1:0x0004542C  code  Load_Medium_Antaran_Combat_Ship           Load_Medium_Antaran_Combat_Ship_           regions/07-object-1/000DA654-000DAE53.txt
+m028f008  8    -      0x0005565D  1:0x0004565D  code  Load_Medium_Antaran_Design                Load_Medium_Antaran_Design_                regions/07-object-1/000DA654-000DAE53.txt
+m028f009  9    -      0x00055738  1:0x00045738  code  Load_Large_Antaran_Combat_Ship            Load_Large_Antaran_Combat_Ship_            regions/07-object-1/000DA654-000DAE53.txt
+m028f010  10   -      0x000559DC  1:0x000459DC  code  Load_Large_Antaran_Design                 Load_Large_Antaran_Design_                 regions/07-object-1/000DAE54-000DB653.txt
+m028f011  11   -      0x00055B12  1:0x00045B12  code  Load_Huge_Antaran_Combat_Ship             Load_Huge_Antaran_Combat_Ship_             regions/07-object-1/000DAE54-000DB653.txt
+m028f012  12   -      0x00055E16  1:0x00045E16  code  Load_Huge_Antaran_Design                  Load_Huge_Antaran_Design_                  regions/07-object-1/000DAE54-000DB653.txt
+m028f013  13   -      0x00055F67  1:0x00045F67  code  Load_Titan_Antaran_Combat_Ship            Load_Titan_Antaran_Combat_Ship_            regions/07-object-1/000DAE54-000DB653.txt
+m028f014  14   -      0x000562D6  1:0x000462D6  code  Load_Titan_Antaran_Design                 Load_Titan_Antaran_Design_                 regions/07-object-1/000DB654-000DBE53.txt
+m028f015  15   -      0x00056460  1:0x00046460  code  Load_Doom_Star_Ship_Design                Load_Doom_Star_Ship_Design_                regions/07-object-1/000DB654-000DBE53.txt
+m028f016  16   -      0x00056484  1:0x00046484  code  Update_Ship_Names_To_New_Language         Update_Ship_Names_To_New_Language_         regions/07-object-1/000DB654-000DBE53.txt
+m028f017  17   -      0x000564CD  1:0x000464CD  code  Load_Colony_Ship_Design                   Load_Colony_Ship_Design_                   regions/07-object-1/000DB654-000DBE53.txt
+m028f018  18   -      0x00056586  1:0x00046586  code  Load_Outpost_Ship_Design                  Load_Outpost_Ship_Design_                  regions/07-object-1/000DB654-000DBE53.txt
+m028f019  19   -      0x0005663E  1:0x0004663E  code  Load_Transport_Ship_Design                Load_Transport_Ship_Design_                regions/07-object-1/000DB654-000DBE53.txt
+m028f020  20   -      0x00056726  1:0x00046726  code  Best_Warp_Drive                           Best_Warp_Drive_                           regions/07-object-1/000DB654-000DBE53.txt
+m028f021  21   -      0x0005679E  1:0x0004679E  code  Best_Ship_Shield                          Best_Ship_Shield_                          regions/07-object-1/000DB654-000DBE53.txt
+m028f022  22   -      0x0005680D  1:0x0004680D  code  Best_Computer                             Best_Computer_                             regions/07-object-1/000DBE54-000DC653.txt
+m028f023  23   -      0x0005685F  1:0x0004685F  code  Best_Armor                                Best_Armor_                                regions/07-object-1/000DBE54-000DC653.txt
+m028f024  24   -      0x000568EB  1:0x000468EB  code  Best_Beam_Weapon                          Best_Beam_Weapon_                          regions/07-object-1/000DBE54-000DC653.txt
+m028f025  25   -      0x0005699C  1:0x0004699C  code  Best_Point_Defense_Weapon                 Best_Point_Defense_Weapon_                 regions/07-object-1/000DBE54-000DC653.txt
+m028f026  26   -      0x00056A3A  1:0x00046A3A  code  Point_Defense_Damage_Per_Space            Point_Defense_Damage_Per_Space_            regions/07-object-1/000DBE54-000DC653.txt
+m028f027  27   -      0x00056A78  1:0x00046A78  code  Best_Point_Defense_Weapon_By_Size         Best_Point_Defense_Weapon_By_Size_         regions/07-object-1/000DBE54-000DC653.txt
+m028f028  28   -      0x00056B26  1:0x00046B26  code  Best_Missile_Weapon                       Best_Missile_Weapon_                       regions/07-object-1/000DBE54-000DC653.txt
+m028f029  29   -      0x00056BFA  1:0x00046BFA  code  Best_Missile_Weapon_NT                    Best_Missile_Weapon_NT_                    regions/07-object-1/000DBE54-000DC653.txt
+m028f030  30   -      0x00056CA2  1:0x00046CA2  code  Best_Bomb_Weapon                          Best_Bomb_Weapon_                          regions/07-object-1/000DBE54-000DC653.txt
+m028f031  31   -      0x00056D3A  1:0x00046D3A  code  Best_Strat_Special_Weapon                 Best_Strat_Special_Weapon_                 regions/07-object-1/000DBE54-000DC653.txt
+m028f032  32   -      0x00056E04  1:0x00046E04  code  Best_Beam_To_Hit_Special                  Best_Beam_To_Hit_Special_                  regions/07-object-1/000DBE54-000DC653.txt
+m028f033  33   -      0x00056E72  1:0x00046E72  code  Best_Beam_Damage_Special                  Best_Beam_Damage_Special_                  regions/07-object-1/000DBE54-000DC653.txt
+m028f034  34   -      0x00056EF0  1:0x00046EF0  code  Best_Beam_Defense_Special                 Best_Beam_Defense_Special_                 regions/07-object-1/000DBE54-000DC653.txt
+m028f035  35   -      0x00056F6E  1:0x00046F6E  code  Best_Missile_Defense_Special              Best_Missile_Defense_Special_              regions/07-object-1/000DBE54-000DC653.txt
+m028f036  36   -      0x00056FEC  1:0x00046FEC  code  Best_Missile_Damage_Special               Best_Missile_Damage_Special_               regions/07-object-1/000DBE54-000DC653.txt
+m028f037  37   -      0x00057072  1:0x00047072  code  Best_Shield_Special                       Best_Shield_Special_                       regions/07-object-1/000DC654-000DCE53.txt
+m028f038  38   -      0x0005709F  1:0x0004709F  code  Best_Ship_Fuel                            Best_Ship_Fuel_                            regions/07-object-1/000DC654-000DCE53.txt
+m028f039  39   -      0x00057112  1:0x00047112  code  Update_Player_Ship_Designs                Update_Player_Ship_Designs_                regions/07-object-1/000DC654-000DCE53.txt
+m028f040  40   -      0x00057197  1:0x00047197  code  Update_Equipment_On_Ships_Being_Built     Update_Equipment_On_Ships_Being_Built_     regions/07-object-1/000DC654-000DCE53.txt
+m028f041  41   -      0x000572AB  1:0x000472AB  code  Update_Automatic_Design_Equipment         Update_Automatic_Design_Equipment_         regions/07-object-1/000DC654-000DCE53.txt
+m028f042  42   -      0x000573C7  1:0x000473C7  code  Update_Strategic_Ship_Designs             Update_Strategic_Ship_Designs_             regions/07-object-1/000DC654-000DCE53.txt
+m028f043  43   -      0x000574A1  1:0x000474A1  code  Update_Player_Strategic_Ship_Designs      Update_Player_Strategic_Ship_Designs_      regions/07-object-1/000DC654-000DCE53.txt
+m028f044  44   -      0x00057566  1:0x00047566  code  Cost_Of_Strategic_Design                  Cost_Of_Strategic_Design_                  regions/07-object-1/000DC654-000DCE53.txt
+m028f045  45   -      0x00057597  1:0x00047597  code  Calc_Player_FTL_Speed                     Calc_Player_FTL_Speed_                     regions/07-object-1/000DC654-000DCE53.txt
+m028f046  46   -      0x000575D6  1:0x000475D6  code  Get_FTL_Speed                             Get_FTL_Speed_                             regions/07-object-1/000DC654-000DCE53.txt
+m028f047  47   -      0x00057617  1:0x00047617  code  Strat_Beam_Weapon_Count                   Strat_Beam_Weapon_Count_                   regions/07-object-1/000DC654-000DCE53.txt
+m028f048  48   -      0x00057651  1:0x00047651  code  Strat_Missile_Weapon_Count                Strat_Missile_Weapon_Count_                regions/07-object-1/000DC654-000DCE53.txt
+m028f049  49   -      0x0005765D  1:0x0004765D  code  Strat_Special_Weapon_Count                Strat_Special_Weapon_Count_                regions/07-object-1/000DC654-000DCE53.txt
+m028f050  50   -      0x00057669  1:0x00047669  code  Strat_Bomb_Weapon_Count                   Strat_Bomb_Weapon_Count_                   regions/07-object-1/000DC654-000DCE53.txt
+m028f051  51   -      0x00057675  1:0x00047675  code  Update_Strategic_Design_Weapons_Specials  Update_Strategic_Design_Weapons_Specials_  regions/07-object-1/000DC654-000DCE53.txt
+m028f052  52   -      0x00057871  1:0x00047871  code  Auto_Strategic_Design_Ship                Auto_Strategic_Design_Ship_                regions/07-object-1/000DCE54-000DD653.txt
+m028f053  53   -      0x0005794B  1:0x0004794B  code  Update_Strategic_Ship                     Update_Strategic_Ship_                     regions/07-object-1/000DCE54-000DD653.txt
+m028f054  54   -      0x00057A02  1:0x00047A02  code  Load_Dragon_Ship_Design                   Load_Dragon_Ship_Design_                   regions/07-object-1/000DCE54-000DD653.txt
+m028f055  55   -      0x00057B1C  1:0x00047B1C  code  Load_Hydra_Ship_Design                    Load_Hydra_Ship_Design_                    regions/07-object-1/000DCE54-000DD653.txt
+m028f056  56   -      0x00057C0B  1:0x00047C0B  code  Load_Amoeba_Ship_Design                   Load_Amoeba_Ship_Design_                   regions/07-object-1/000DCE54-000DD653.txt
+m028f057  57   -      0x00057D14  1:0x00047D14  code  Load_Eel_Ship_Design                      Load_Eel_Ship_Design_                      regions/07-object-1/000DCE54-000DD653.txt
+m028f058  58   -      0x00057E1B  1:0x00047E1B  code  Load_Crystal_Ship_Design                  Load_Crystal_Ship_Design_                  regions/07-object-1/000DCE54-000DD653.txt
+m028f059  59   -      0x00057F2C  1:0x00047F2C  code  Load_Guardian_Ship_Design                 Load_Guardian_Ship_Design_                 regions/07-object-1/000DCE54-000DD653.txt
+m028f060  60   -      0x00058088  1:0x00048088  code  Check_For_Auto_Refit                      Check_For_Auto_Refit_                      regions/07-object-1/000DD654-000DDE53.txt
+m028f061  61   -      0x000580F5  1:0x000480F5  code  Repair_Ships_At_Colonies                  Repair_Ships_At_Colonies_                  regions/07-object-1/000DD654-000DDE53.txt
+m028f062  62   -      0x000581F3  1:0x000481F3  code  Repair_Ship_Full                          Repair_Ship_Full_                          regions/07-object-1/000DD654-000DDE53.txt
+m028f063  63   -      0x00058270  1:0x00048270  code  Ship_Has_Weapon                           Ship_Has_Weapon_                           regions/07-object-1/000DD654-000DDE53.txt
+m028f064  64   -      0x000582BF  1:0x000482BF  code  Get_Design_Structure                      Get_Design_Structure_                      regions/07-object-1/000DD654-000DDE53.txt
+m028f065  65   -      0x00058330  1:0x00048330  code  Get_Structure                             Get_Structure_                             regions/07-object-1/000DD654-000DDE53.txt
+m028f066  66   -      0x00058387  1:0x00048387  code  Get_Ship_Structure                        Get_Ship_Structure_                        regions/07-object-1/000DD654-000DDE53.txt
+m028f067  67   -      0x00058425  1:0x00048425  code  Get_Ship_Armor_Hits                       Get_Ship_Armor_Hits_                       regions/07-object-1/000DD654-000DDE53.txt
+m028f068  68   -      0x00058487  1:0x00048487  code  Load_Loknar_Ship_Design                   Load_Loknar_Ship_Design_                   regions/07-object-1/000DD654-000DDE53.txt

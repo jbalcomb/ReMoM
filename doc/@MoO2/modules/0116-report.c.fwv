@@ -1,0 +1,49 @@
+module_num=116
+module=D:\MOX\OTHERS\REPORT.C
+source=0116-report.c.md
+range[0]=1:0x000ED5EE linear=0x000FD5EE size=4815
+range[1]=2:0x00033124 linear=0x001A3124 size=1004
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                            CHUNK
+m116f001  1    -      0x000FD5EE  1:0x000ED5EE  code         Load_Report_Strings               Load_Report_Strings_              regions/07-object-1/00182654-00182E53.txt
+m116f002  2    -      0x000FD69F  1:0x000ED69F  code         sprintf_report                    sprintf_report_                   regions/07-object-1/00182654-00182E53.txt
+m116f003  3    -      0x000FD7EA  1:0x000ED7EA  code         Client_Initialize_Reports         Client_Initialize_Reports_        regions/07-object-1/00182654-00182E53.txt
+m116f004  4    -      0x000FD81C  1:0x000ED81C  code         Initialize_Reports                Initialize_Reports_               regions/07-object-1/00182E54-00183653.txt
+m116f005  5    -      0x000FD846  1:0x000ED846  code         Add_Report                        Add_Report_                       regions/07-object-1/00182E54-00183653.txt
+m116f006  6    -      0x000FD875  1:0x000ED875  code         Draw_Special                      Draw_Special_                     regions/07-object-1/00182E54-00183653.txt
+m116f007  7    -      0x000FD8ED  1:0x000ED8ED  static,code  Star_Has_Special_For_Player       Star_Has_Special_For_Player_      regions/07-object-1/00182E54-00183653.txt
+m116f008  8    -      0x000FD911  1:0x000ED911  static,code  Set_Initial_Tech                  Set_Initial_Tech_                 regions/07-object-1/00182E54-00183653.txt
+m116f009  9    -      0x000FD95A  1:0x000ED95A  static,code  Explored_New_Star                 Explored_New_Star_                regions/07-object-1/00182E54-00183653.txt
+m116f010  10   -      0x000FDA3F  1:0x000EDA3F  code         Player_Colony_Base_At_Star        Player_Colony_Base_At_Star_       regions/07-object-1/00182E54-00183653.txt
+m116f011  11   -      0x000FDAA7  1:0x000EDAA7  code         Player_Ship_Type_At_Star          Player_Ship_Type_At_Star_         regions/07-object-1/00182E54-00183653.txt
+m116f012  12   -      0x000FDB01  1:0x000EDB01  static,code  Colonization                      Colonization_                     regions/07-object-1/00182E54-00183653.txt
+m116f013  13   -      0x000FDF93  1:0x000EDF93  static,code  Empty_Colony_Queue                Empty_Colony_Queue_               regions/07-object-1/00182E54-00183653.txt
+m116f014  14   -      0x000FE02C  1:0x000EE02C  static,code  Need_To_Set_Occupation_Policy     Need_To_Set_Occupation_Policy_    regions/07-object-1/00183654-00183E53.txt
+m116f015  15   -      0x000FE0EA  1:0x000EE0EA  static,code  Has_Msg                           Has_Msg_                          regions/07-object-1/00183654-00183E53.txt
+m116f016  16   -      0x000FE251  1:0x000EE251  static,code  Has_Officer_For_Hire              Has_Officer_For_Hire_             regions/07-object-1/00183654-00183E53.txt
+m116f017  17   -      0x000FE2E8  1:0x000EE2E8  static,code  Has_Research_Breakthrough         Has_Research_Breakthrough_        regions/07-object-1/00183654-00183E53.txt
+m116f018  18   -      0x000FE31F  1:0x000EE31F  static,code  Has_Evolutionary_Upgrade          Has_Evolutionary_Upgrade_         regions/07-object-1/00183654-00183E53.txt
+m116f019  19   -      0x000FE359  1:0x000EE359  static,code  Has_Report                        Has_Report_                       regions/07-object-1/00183654-00183E53.txt
+m116f020  20   -      0x000FE408  1:0x000EE408  static,code  Has_Diplomacy_Messages            Has_Diplomacy_Messages_           regions/07-object-1/00183654-00183E53.txt
+m116f021  21   -      0x000FE514  1:0x000EE514  static,code  Has_GNN                           Has_GNN_                          regions/07-object-1/00183654-00183E53.txt
+m116f022  22   -      0x000FE552  1:0x000EE552  static,code  Antarans                          Antarans_                         regions/07-object-1/00183654-00183E53.txt
+m116f023  23   -      0x000FE63E  1:0x000EE63E  code         Display_Report_Aux                Display_Report_Aux_               regions/07-object-1/00183654-00183E53.txt
+m116f024  24   -      0x000FE785  1:0x000EE785  code         Display_Report                    Display_Report_                   regions/07-object-1/00183654-00183E53.txt
+m116f025  25   -      0x000FE793  1:0x000EE793  static,code  Redirect_Newly_Built_Ships        Redirect_Newly_Built_Ships_       regions/07-object-1/00183654-00183E53.txt
+m116f026  26   -      0x000FE86B  1:0x000EE86B  code         Must_Display_Reports              Must_Display_Reports_             regions/07-object-1/00183E54-00184653.txt
+-         -    -      0x001A3124  2:0x00033124  data         _something_interesting_happened   _something_interesting_happened   -
+-         -    -      0x001A312C  2:0x0003312C  static,data  _your_spy_steals_fmt              _your_spy_steals_fmt              -
+-         -    -      0x001A3130  2:0x00033130  static,data  _enemy_spy_destroys_fmt           _enemy_spy_destroys_fmt           -
+-         -    -      0x001A3134  2:0x00033134  static,data  _really_trash_colony_base_fmt     _really_trash_colony_base_fmt     -
+-         -    -      0x001A3138  2:0x00033138  static,data  _colonize_preselected_planet_fmt  _colonize_preselected_planet_fmt  -
+-         -    -      0x001A313C  2:0x0003313C  static,data  _enemy_spy_steals_fmt             _enemy_spy_steals_fmt             -
+-         -    -      0x001A3140  2:0x00033140  static,data  _outpost_preselected_planet_fmt   _outpost_preselected_planet_fmt   -
+-         -    -      0x001A3144  2:0x00033144  static,data  _your_spy_destroys_fmt            _your_spy_destroys_fmt            -
+-         -    -      0x001A3148  2:0x00033148  static,data  _you_framed_fmt                   _you_framed_fmt                   -
+-         -    -      0x001A314C  2:0x0003314C  data         _reports                          _reports                          -
+-         -    -      0x001A3502  2:0x00033502  data         _n_reports                        _n_reports                        -
+-         -    -      0x001A3504  2:0x00033504  data         _done_colonize_check              _done_colonize_check              -
+-         -    -      0x001A350D  2:0x0003350D  data         _done_player_reports              _done_player_reports              -
+-         -    -      0x001A350E  2:0x0003350E  data         _displayed_gnn                    _displayed_gnn                    -
+-         -    -      0x001A350F  2:0x0003350F  data         _displayed_msgs                   _displayed_msgs                   -

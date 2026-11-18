@@ -1,0 +1,174 @@
+MASTER OF MAGIC 1.31 - BUGS NO COMMUNITY SOURCE WE CHECKED KNOWS (tools/community_unknown.py, 2026-11-07)
+
+From our ledger (masterofmagic131/BUGS_AND_QUIRKS.txt, 492 entries): 164 not known to the 1.60 community
+patch, the MoM wiki or ReMoM as far as our cross-checks reach; 288 are known there; 40 are not bugs
+(quirks, withdrawn, merged). "Not known" = no patch, wiki or ReMoM note matches - not proof nobody noticed.
+Conservative: an entry that only MENTIONS a related community patch counts as known, so a few real
+unknowns may be missing from this list; none here is a community-known bug.
+Status: GAME = seen in a running game; SRC / CHECKED = read in the code / assembly; READ+asm = found in
+the assembly; LATENT = real but cannot trigger in 1.31 as shipped.
+
+#2    GAME      City_Remove fall-through (c3f5:157a): after an outpost is removed the loop does not "continue", so the next city in that slot can be turned into population 1 / size 1 and skips its growth that turn.
+#4    GAME      Grand Vizier "population < 5 -> Housing x2" test reads the wrong city (eab0:100a).
+#5    GAME      Outposts_Grow mineral loop indexes tiles by the city index (c751:2150): checks one tile repeatedly, reads past the 25-entry arrays for city index >= 25.
+#21   SRC       Strength-table index mix-ups in AI_Build_Strength_Tables (d208 chunks; uses DI before set at d208:1009; Myrran race test 0xE instead of 0xD).
+#22   GAME      Life Drain cast by a wizard adds 3x the drain to casting SKILL points (b66a:0616) - intended?
+#26   SRC       The AI's settler site evaluation reads the HUMAN's exploration map (City_Site_Evaluate, c751:2bb6): a square the human has not explored adds nothing (no food, production or minerals), and the AI's settler loop ignores...
+#28   SRC       Stack_Blink_Draw looks up the unit grid with pixel coordinates (59bd:032a) - steady-mode test reads garbage.
+#30   SRC       Road plans truncated by the 120-turn cap may still target the full clicked tile (5b8b:0834).
+#32   SRC       Neutral lair-monster "re-pick if not on the human's plane" loop does nothing (f978:01a2).
+#35   GAME      Call the Void, Enchant Road and Consecration's purification off-by-one at the map edge (x = 60 / y = 40 accepted: the next row's tile x 0, or row 40 = past the plane) (acd6:08c3, af2c:2154, af2c:25f9 City_Consecration...
+#41   GAME      Evil Omens raises the cost of Nature/Life spells for every wizard including the caster (a0ec:054c); casting-cost reduction has no cap.
+#42   SRC       After Alchemy the magic screen recomputes the per-turn cap without the fortress hero bonus (6080:0000).
+#45   SRC       The "not enough population to support new construction" branch of the production screen is unreachable.
+#50   GAME      Threat army term keeps only the low 16 bits of 100 x H / P (6ea7:107e, 10ba): outnumbering the AI more than ~328:1 (unit cost on his home continent) wraps negative -> he declares war; the reverse capitulates.
+#51   GAME      Having NO units on his continent counts -100, a token force -50 - 100 x P/H (far worse) (6ea7:1053).
+#54   GAME      Spell trade values are stored as BYTES: research costs compared mod 256 (7057:15b9; Exchange Spells and AI spell-offer thresholds).
+#58   READ+asm  Make Peace adds +40 to the relation as an 8-bit value before the cap: 88..100 would wrap negative (7057:0978); normally unreachable at war.
+#59   GAME      Make Peace's curse removal also clears City +0x5c (cached Nightshade count) when it equals the other wizard's index + 1 (7057:2053, loops all 26 slots).
+#60   GAME      Two-player games: diplomacy text variant = Random(n) - 2 (min 0): the last variant never appears, variant 0 is twice as likely (7269:0c8e).
+#63   GAME      Offer Tribute gold choices are sized by the AI's treasury (an AI with < 25 gold offers no gold option); affordability is tested on current_player, the gold deducted from wizards[0] (7057:1620).
+#68   CHECKED   Random items: Item_Create_Random tests the item TYPE before rolling it (94df:2407 reads [bp-2], type rolled at 242f): whether a random treasure/merchant item gets 3 or 4 powers depends on leftover stack data.
+#69   READ+asm  Forge: clicking Spell Charges a second time unpicks it but leaves the spell + charges on the design (94df:12a9); cost and name ignore them, the finished staff/wand keeps them for free (combat use of the charges = read...
+#70   GAME      Merging needs 22 Nature books in ITEMPOW, so the forge can never offer it (prefabs still carry it).
+#71   SRC       Long auto-names are cut: ItemForge_Auto_Name (94df:0930) builds the name in a 30-byte stack buffer, and a '+N' name over 26 characters has its first 3 characters ('+N ') deleted inside those 30 bytes only (Array_Delet...
+#73   READ+asm  Treasure spells: a realm with nothing left is marked eligible again (aba4:0492 writes 0, not 1), so a realm that still has spells can become unreachable and the treasure spell fails.
+#76   GAME      Treasure retorts: Infernal / Divine Power and Famous go through the "expensive" branch, which has no Life / Death book check and no +10 fame (those checks sit in the cheap branch - dead code) (6d36:142b).
+#79   GAME      Destroyed / sold prefab items never return: p_items_in_game is set on creation and never cleared.
+#81   CHECKED   Unit view: the Trireme (type 0x23) pays 1 food (real upkeep counts type > 0x22, 9ef8:08a3) but its view shows no food (5e1f:18bc type > 0x23).
+#82   READ+asm  Unit view hotkeys: X is registered with an empty handler (5e1f:0463); the down arrow uses "D" like Dismiss (PROVISIONAL: D may alternate between paging and the dismiss prompt).
+#90   SRC       Famous: every hero shows 0 upkeep on the unit view but is still charged - among heroes only Noble ones and the Chosen are free (Unit_Gold_Upkeep 9ef8:0653), while Hero_Ability_Bonus zeroes the shown upkeep for Noble O...
+#91   GAME      Resistance is not clamped at 0 in combat (melee / ranged / defence are, 9748:2339): Mind Storm (-5), Black Prayer (-2), Darkness / True Light (-1) and Mind Twist (-1) can leave it negative.
+#92   GAME      Hero abilities scale with the stored level: Might / Agility / Blademaster / Arcane Power (Hero_Ability_Bonus 9748:1f72) read Unit.level, which includes an overland Heroism (Unit_Calc_Level), but a Heroism cast in comb...
+#94   READ+asm  Historian: the first point of each line reads power_history[0] instead of [start] (64e7:0d6f): after 24 years the left edge spikes; after turn 288 the newest sample (slot 287) is never drawn (64e7:0a0b); after scrolli...
+#97   SRC       Cartographer: dead "plane == 2" city test (64e7:1be3); neutral units never shown; clicking the map deselects the active stack.
+#98   GAME      Opening the Cities list switches every own city/outpost producing "None" (0) to Housing (5767:0e40, producing +0x1c == 0 -> 2).
+#100  SRC       Cities list: right-clicking the TOP row matches the exit test (5767:024c cmp di,-1 with right-click = -(id), first row = id 1, UI_Clear_Controls starts the ids at 1): an outpost in the top row shows its outpost screen...
+#101  SRC       Lists: after a unit is dismissed while scrolled to the bottom the last row can show a stale stack (585e:12e7); Cities scroll up 5 rows but down 1 when < 15 remain (5767:02bc); minimap dot read from an empty list (585e...
+#105  CHECKED   Load_Game clears the hero-names block for a short (old-format) save with 0x221 bytes, but the block is 0x230 (35 x 16): the last 15 bytes keep stale data (4558:07bf).
+#106  GAME      Settings: Esc leaves without writing MAGIC.SET, but every toggle was already applied to game_config in memory (a8fc:0303-032c), so "cancelled" changes stay in effect until the game is restarted.
+#107  CHECKED   The random number generator is reseeded from the timer on every load (Game_Init_State 45d6:01d2), so reloading a save does not repeat the same rolls (not a bug - matters for save-scumming and for an AI harness).
+#108  SRC       Conquest scream: sound 0x22 for portraits 2/9/11/13 (Sharee, Freya, Ariel, Kali), 0x23 for the rest; the table index is portrait - 2 (78ba:0b78), so Raven (portrait 1) gets 0x23 - if 0x22 is the female scream, Raven s...
+#109  CHECKED   Final score turn bonus 2000 - 2 x turn has no floor (86ea:03e1): after turn 1000 it subtracts from the score.
+#110  CHECKED   AI area-damage targeting (Ice Storm / Fire Storm / Black Wind / Stasis): AI_Target_Area_Damage e318:6284 measures the enemy stack distance from city / unit number <stack index> instead of the loop city / unit (e318:63...
+#111  CHECKED   AI Enchant Road targeting: AI_Target_Enchant_Road e318:6684 loops over the 5x5 area but never adds the loop offsets (e318:66d3-6724) - it tests the city tile itself 24 times.
+#118  GAME      AI target list (AI_Collect_Landmass_Targets ebda:2270): an enemy fortress's defence is read from the threat map BEFORE its x/y are loaded (ebda:22bf-2330), i.e.
+#119  GAME      Same function, city loop: the human x5/4 defence factor is applied when the CITY index is 0, not when the city belongs to the human (copy of the fortress loop, where the index is the player).
+#124  READ+asm  Same function: both its loops skip map row 0 (c751:2ca1 or di,di / jg; c751:318f jle) where every other city-area loop accepts y >= 0: for a site at y <= 2 the top-row tiles are left out of the Surveyor / AI estimate ...
+#129  SRC       City_Collateral_Damage (4a3f:1292) rolls every building with state > 0, which includes state 2 (already removed this turn, cleared only by Turn_Finalize_Sold_Buildings at the turn end): a second Earthquake / Chaos Rif...
+#136  GAME      Spell Blast cost differs by caster: the human pays the target's invested mana casting_cost_initial - casting_cost_left (Screen_Wizard_Target be86:17a1), the AI pays the target spell's BASE cost - casting_cost_left (Ov...
+#137  GAME      AI strength tables count dead units as enemies: AI_Build_Strength_Tables (d208:0cd7) puts every unit not owned by the AI into the enemy stack list / city threat (d208:1ae6, no owner test), including units killed or di...
+#138  SRC       Path cache: Path_Cache_Invalidate (d592:0bc6) only clears path_cache_index when it is > 0, so cache record 0 (the first AI path stored) is never invalidated by Stack_Continue_GoTo - a stack whose cached path sits in r...
+#146  READ+asm  AI_Stack_Embark (ebda:1ea4): the 'no own boat next to the stack' fallback that should give the units status 11 (AI_Order_Seek_Transport, ebda:2225-2268) loops only while the free boat capacity [bp-0x16] > 0 - but that...
+#147  GAME      AI_Unit_Dispatch (ebda:0000) calls AI_Release_Goto_Near_Weak_City(plane, player) with the plane argument [bp-2] pushed at ebda:0082 BEFORE it is set (ebda:008c, where it becomes the plane loop counter): the 'release s...
+#148  GAME      AI_Disband_For_Upkeep (ebda:358e), mana loop: the weakest summoned unit is found with AI_Unit_Strength(unit TYPE) (ebda:380d push of Unit +5) where a unit index is expected, so the 'weakest' fantastic unit is chosen b...
+#151  SRC       AI_Engineer_Orders (ebda:4c28): (a) the 'stack can cross water' test reads p_ai_own_stacks[stack] +3 & 8 with the index of the per-landmass ai_stack table (a different table), so whether the nearest city must be on th...
+#152  READ+asm  AI landmass re-plan (AI_Landmass_Plan f48f:2b22, every 27-45 turns): the step that releases units whose destination is no longer threatened reads p_threat_maps[DI] with DI = 2 left over from the preceding plane loop (...
+#153  READ+asm  AI expansion target: AI_Landmass_Plan (f48f:2b22) picks the expansion landmass point as the zero-threat tile of an unsettled (status 3) landmass with the smallest Map_Distance(tile, [bp-0xe], [bp-0x10]) + Random(20) (...
+#170  SRC       Dispelling your own Flight or Water Walking over water ignores the unit's NATIVE movement: Unit_Dispel_Enchant_Confirm (7504:05b0; unit view, clicking an enchantment) on a water tile without a transport or Wind Walker...
+#175  LATENT    Planar Travel into a warded city checks the wards against garbage: Planar_Travel_Dest_Check (51b2:0d2e, asm-checked) calls Path_Ward_Blocked(city, &count, list) with its local count (bp-2) and list (bp-0x1c) never set...
+#178  GAME      Plague can GROW a size-1 town: Events_Process (6ad6:0947) ends a running Plague as soon as the town's population is below 2 and then sets it to 2.
+#181  GAME      Auto-resolve battles can end with an undefined winner: Combat_Strategic (888b:00c9, the strategic combat used for every battle without the human or with tactical combat off) only assigns its winner variable (bp-2, nev...
+#183  SRC       Dead units fight again in auto-resolve: Combat_Strategic (888b:00c9) takes every unit on the target tile whose owner differs from the attacker's - dead ones too (owner 0xff, turned into battle owner 6) - and adds them...
+#190  SRC       Shooting at a city wall uses different ammo rules from shooting at a unit: Combat_Unit_Attack (a22c:1da4) charges 3 spell points for a magical ranged attack by a hero OR a caster when the target is a unit (ranged disa...
+#194  LATENT    Raise Dead and Animate Dead can hang the battle: both (Raise_Dead b1af:1f5d for an AI caster, Animate_Dead b1af:2384 always) place the returning unit on a random square of the caster's 3 x 3 deployment block (attacker...
+#206  READ+asm  Random(n) (1d4d:00d8) draws only 9 bits per call (9 LFSR steps into a 0..511 value) and returns value % n + 1: results above 512 are impossible, and every roll has modulo bias - Random(100) gives 1..12 with 6/512 and ...
+#335  LATENT    Two slips in the EMS-cached LBX loaders, harmless with the shipped data: (1) in append mode (2) EMS_LBX_Load_Entry (16d5:087b), EMS_LBX_Load_Entry_Data (16d5:0b19) and EMS_LBX_Load_Records (16d5:0d1a) call Heap_Block_...
+#337  SRC       City enchantment list: the 'previous page' arrow does not wrap to the last page when the number of enchantments is a multiple of 6 (cosmetic).
+#338  READ+asm  Two slips in the no-mouse input loop UI_Poll_Input_Keyboard (2666:1284).
+#340  READ+asm  Str_Trim (19b4:135a) removes only ONE trailing space (cosmetic).
+#341  LATENT    Paragraph_Print_To_Pic (1b9d:0bb9) passes the wrong bitmap for right / centre alignment.
+#343  READ+asm  Combat sprite list: the overflow check is one too late, and the overflow ends the game.
+#346  READ+asm  Sound setup errors lose their explanation (cosmetic).
+#352  GAME      MAGIC.EXE world generator: the Towers of Wizardry spacing rule relaxes from the first try, and has no floor.
+#355  GAME      MAGIC.EXE world generator: the mineral sites ignore the map edge, so some land OFF the map.
+#356  GAME      MAGIC.EXE world generator: Myrror's city squares never get the enchanted-road bit, and ONE unrelated square does.
+#358  GAME      MAGIC.EXE world generator: too many Sorcery nodes are 'balanced' into a fixed 4 / 6 / 6 split, not trimmed.
+#359  GAME      MAGIC.EXE world generator: the 'High Elf AI capitals need a forest' rule tests the wrong square, and its retry writes extra fortress records past the 6.
+#360  GAME      MAGIC.EXE world generator: the land added next to a node / tower in open water only grows east, south and south-west.
+#361  LATENT    MAGIC.EXE: its own copy of Unit_Create (4358:95d5) checks the Fighters' Guild / War College of an UNINITIALISED city index - the local [bp-2] is reserved (sub sp,2) and only read (asm 4358:97c7, 9802), never set from ...
+#362  READ+asm  MAGIC.EXE game start: the Hard / Impossible AI's extra summon is guarded by the wrong spell, and can take a KNOWN spell back to 'researchable'.
+#363  GAME      MAGIC.EXE game start: AI wizards practically never lose their preset's retort - the 'clear the retorts' roll clears one byte.
+#364  GAME      MAGIC.EXE game start: a hero's random 'Lucky' roll also rolls Agility - a missing break.
+#365  GAME      MAGIC.EXE world generator: the third tundra picture (terrain 0xb6) is never placed.
+#366  GAME      MAGIC.EXE world generator: the ocean-variety pass runs one row and one column past the 40 x 60 map.
+#367  LATENT    MAGIC.EXE world generator: the block map's east-edge pre-check tests the wrong columns - in data nothing uses.
+#368  CHECKED   Overland pathfinding: the search window's bottom row is never clamped to the map, so Path_Find writes past its 40-row cost grid.
+#369  CHECKED   Tile_Make_Grassland (cbdf:018a; Change Terrain, Gaia's Blessing) never makes the third grassland picture 0xad.
+#370  GAME      MAGIC.EXE game start: a wizard whose primary realm is Nature always gets Nature as the secondary realm too.
+#372  CHECKED   The city breakdown screen sets its redraw callback without the frame rate.
+#373  CHECKED   The save-game name fields of the game menu get a garbage caret color table.
+#374  LATENT    EMS_Cache_LBX_Range_Core (16d5:0654, dead code - only dead wrappers call it) calls EMS_Named_Handle (pages, name, reserved) with two arguments (16d5:07c9: push name, push pages, pop cx, pop cx): 'reserved' would be a ...
+#375  CHECKED   The deserted-outpost name list has room for 14 names but accepts 20.
+#376  READ+asm  The AI's attack-landmass distance uses a stale value for threatened coast tiles.
+#377  SRC       QUIRK (cosmetic): the window zoom draws two of its three color pairs.
+#378  SRC       QUIRK (cosmetic): the warped-picture draw drops a whole frame when a corner is above the screen.
+#379  SRC       QUIRK (no effect): Nightshade's building test checks the Shrine twice.
+#380  SRC       QUIRK (no effect): the move-type icon draw clears 9 words of a 6-word list, and relies on it.
+#381  READ+asm  BUG (fatal-error path only): the "Near Allocation too large by N bytes" message never gets " bytes".
+#413  GAME      MAGIC.EXE world generator: the Myrror nodes test Arcanus' land.
+#414  SRC       MAGIC.EXE world generator: a node aura's terrain counts are overwritten and never used.
+#415  SRC       MAGIC.EXE world generator: the neighbour-variant pass reads row 40, off the map.
+#416  SRC       MAGIC.EXE neutral towns: a terrain prerequisite would index past the building list (latent).
+#417  SRC       The AI's known-spell buffer holds 50 entries with no bound test.
+#418  GAME      AI threat map: dead units not yet compacted add threat and write through index -1.
+#419  SRC       AI spell categories: Suppress Magic is weighted into a category with no slot for it.
+#421  SRC       AI unit enchantments: with no stack anywhere the picker reads p_ai_own_stacks[-1].
+#422  SRC       AI Corruption / Raise Volcano targets: the square offset is Random(5) - 3 (-3 ..
+#423  SRC       AI Corruption / Raise Volcano targets: the plane returned is the last city examined.
+#424  GAME      AI_More_Myrror_Cities_Than_Human: the count is wrong.
+#425  SRC       AI stacks: a released stack's ordered slots write p_units[-1].order.
+#426  SRC       AI tower crossing value: the city's plane is not tested.
+#427  SRC       AI landmass re-plan: the cost sums are not reset.
+#429  SRC       Attack_At_Unit_Unused passes the target's owner where a unit index is read (dead code).
+#432  SRC       Production list: unsigned prerequisite bytes are compared with -1.
+#433  SRC       City_Terrain_Prereq: the break of the 110 search leaves only the column loop.
+#434  SRC       Building pictures: a frame's height is compared with the best width.
+#435  SRC       AI combat spell scores: figures_alive > figures is never true.
+#436  SRC       Unit casters: battle unit 19 is tested as < 19, not < CASTER_WIZARD (20).
+#437  SRC       Combat enchantment icons: the page step leaves icons 12 ..
+#438  SRC       Unit_Ranged_Icon covers only some ranged types.
+#439  SRC       AI attack value: a melee strength of 0 makes the whole value 0.
+#440  SRC       Combat AI targeting has no city-enchantment case: the AI never casts Wall of Fire / Darkness in combat.
+#441  SRC       The combat Spell button lights at 3 spell points; the cheapest combat spells cost 5.
+#442  SRC       p_combat_bldgs_lost keeps a pointer to Combat_End's local list.
+#443  SRC       Combat_End: the population shift reuses j.
+#444  SRC       Combat results scroll: the human's lost city attack text.
+#445  SRC       Combat figure pictures: the facing is forced to 7.
+#446  SRC       Combat pathfinding: the sweep covers rows 0 ..
+#447  SRC       Attacking a wall square: magic shots stop below 5 spell points, the hit shown is uninitialised.
+#448  SRC       Combat spell choice: the target tests ignore the unit's state.
+#450  SRC       Combat_Draw_Battlefield reads entries 4 ..
+#451  SRC       AI_Unit_Execute: the search for an enemy in the gate never runs.
+#452  SRC       AI_Unit_Execute has no case for AI_ACTION_HEALING.
+#453  SRC       AI_Choose_Target: an ally without a target reads p_battle_units[-1].
+#454  SRC       AI_Move_Path: without a target (-1) the attack test reads a bad unit.
+#455  SRC       Combat spell target picker: a wall pick leaves the unit unset; the vortex value.
+#456  SRC       Unit pushed off a square: at the top row the 3 x 3 is shifted down.
+#459  SRC       EMS_Cache_LBX_File: the handle is not set when EMS is missing.
+#460  SRC       EMS_LBX_Uncache: the table compaction starts at the wrong entry (dead code).
+#461  SRC       EMS_LBX_Reload_Into_Handle opens the name as given, not the .LBX path it measured.
+#462  SRC       Game menu help: 27 entries installed where the screen has 6.
+#463  SRC       ItemForge_Auto_Name returns its own stack buffer.
+#464  SRC       The items screens read wizard 0's heroes and reserves.
+#466  GAME      A hero created at the fortress can push a unit out of the capital.
+#467  SRC       Minimap highlight: a y bound applied to x.
+#469  SRC       Road building: the path length is set per unit, the last unit decides.
+#470  SRC       Window_Zoom_Open saves a rectangle short of its size.
+#474  SRC       Palette_Cycle_Step: the turn test when to < from.
+#475  SRC       Screen_Spell_Learned: (spell - 2) / 40 is not the spell's realm.
+#476  SRC       Combat spellbook budget overflows above 16383 mana at the 0.5x range multiplier (own fortress).
+#477  SRC       Spellbook casting screen: the right page's help test reads the left page.
+#478  GAME      Call Lightning bolts take their damage from spell 3's record (Wall of Stone).
+#479  SRC       Vortices: the bounds test lets column / row BATTLEFIELD_W / _H through.
+#480  SRC       Stack popup: rebuild is read before it is first set.
+#481  SRC       Surveyor: the bottom 2 pixel rows of a square read the row above.
+#482  GAME      Nightshade: a city that stops qualifying keeps its count.
+#483  SRC       Tile_Water_Bonus_Unused overwrites its own values (dead code).
+#485  SRC       UI_Text_List_Select_Scrolling: a loop that never ends.
+#486  SRC       Unit type ability lines read strengths from the last unit's statistics.
+#487  GAME      Stack_Movement_Modes mixes && and || in the Wraith Form test.
+#488  SRC       Wizard info: help slots 14 ..
+#489  GAME      Nightshade dispels its own count.
+#490  SRC       The plain desert square gives no production bonus.
+#491  GAME      Inside a diplomacy audience the landmass map holds music.

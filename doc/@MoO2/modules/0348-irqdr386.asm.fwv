@@ -1,0 +1,25 @@
+module_num=348
+module=..\ASM_386\IRQDR386.ASM
+source=0348-irqdr386.asm.md
+range[0]=1:0x00158130 linear=0x00168130 size=1040
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                    SYMBOL                  CHUNK
+m348f001  1    -      0x00168130  1:0x00158130  code  __SegmentStartRR16      __SegmentStartRR16      regions/07-object-1/001ED654-001EDE53.txt
+m348f002  2    -      0x00168131  1:0x00158131  code  __IrqDataArrayRR16      __IrqDataArrayRR16      regions/07-object-1/001ED654-001EDE53.txt
+m348f003  3    -      0x0016839D  1:0x0015839D  code  __VideoBasePD16         __VideoBasePD16         regions/07-object-1/001ED654-001EDE53.txt
+m348f004  4    -      0x00168459  1:0x00158459  code  __asi_kill_time_real    __asi_kill_time_real    regions/07-object-1/001ED654-001EDE53.txt
+m348f005  5    -      0x0016845A  1:0x0015845A  code  __GreenleafFastRealIsr  __GreenleafFastRealIsr  regions/07-object-1/001ED654-001EDE53.txt
+m348f006  6    -      0x001684C2  1:0x001584C2  code  __irq_real_stub_0_RR16  __irq_real_stub_0_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f007  7    -      0x001684C8  1:0x001584C8  code  __irq_real_stub_1_RR16  __irq_real_stub_1_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f008  8    -      0x001684CE  1:0x001584CE  code  __irq_real_stub_2_RR16  __irq_real_stub_2_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f009  9    -      0x001684D4  1:0x001584D4  code  __irq_real_stub_3_RR16  __irq_real_stub_3_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f010  10   -      0x001684DA  1:0x001584DA  code  __irq_real_stub_4_RR16  __irq_real_stub_4_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f011  11   -      0x001684E0  1:0x001584E0  code  __irq_real_stub_5_RR16  __irq_real_stub_5_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f012  12   -      0x001684E6  1:0x001584E6  code  __irq_real_stub_6_RR16  __irq_real_stub_6_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f013  13   -      0x001684EC  1:0x001584EC  code  __irq_real_stub_7_RR16  __irq_real_stub_7_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f014  14   -      0x001684F2  1:0x001584F2  code  __irq_real_stub_8_RR16  __irq_real_stub_8_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f015  15   -      0x001684F8  1:0x001584F8  code  __irq_real_stub_9_RR16  __irq_real_stub_9_RR16  regions/07-object-1/001ED654-001EDE53.txt
+m348f016  16   -      0x001684FE  1:0x001584FE  code  __RealDispatcherRR16    __RealDispatcherRR16    regions/07-object-1/001ED654-001EDE53.txt
+m348f017  17   -      0x0016853B  1:0x0015853B  code  __RealIret              __RealIret              regions/07-object-1/001ED654-001EDE53.txt
+m348f018  18   -      0x0016853C  1:0x0015853C  code  __SegmentEndRR16        __SegmentEndRR16        regions/07-object-1/001ED654-001EDE53.txt

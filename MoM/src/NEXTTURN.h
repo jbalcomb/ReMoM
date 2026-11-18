@@ -151,19 +151,24 @@ int16_t WIZ_MatchManaUpkeep__WIP(int16_t player_idx, int16_t mana_upkeep);
 int16_t WIZ_DisbandSummons(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p11
-// WIZ_RemoveCEs()
+// drake178: WIZ_RemoveCEs()
+int16_t Remove_City_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p12
-// WIZ_RemoveGEs()
+// drake178: WIZ_RemoveGEs()
+int16_t Remove_Overland_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p13
-// WIZ_RemoveUEs()
+// drake178: WIZ_RemoveUEs()
+int16_t Remove_Unit_Enchantments_For_Upkeep(int16_t player_idx, int16_t mana_upkeep);
 
 // WZD o140p14
 // sub_C538E()
+int16_t Human_Gold_Upkeep_Shortfall__NIU(void);
 
 // WZD o140p15
 // sub_C53FA()
+int16_t Human_Mana_Upkeep_Shortfall__NIU(void);
 
 // WZD o140p16
 void Apply_City_Changes(void);

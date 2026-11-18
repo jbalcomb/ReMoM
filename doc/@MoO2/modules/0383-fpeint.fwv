@@ -1,0 +1,12 @@
+module_num=383
+module=fpeint
+source=0383-fpeint.md
+range[0]=2:0x00012FD4 linear=0x00182FD4 size=8
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL      CHUNK
+-    -    -      0x00182FD4  2:0x00012FD4  data  ___FPE_int  ___FPE_int  regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182FD5  2:0x00012FD5  data  ___IRQ_num  ___IRQ_num  regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182FD6  2:0x00012FD6  data  ___IRQ_int  ___IRQ_int  regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182FD7  2:0x00012FD7  data  ___MST_pic  ___MST_pic  regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182FD8  2:0x00012FD8  data  ___SLV_pic  ___SLV_pic  regions/08-object-2/00200E54-00201653.txt

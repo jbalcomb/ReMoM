@@ -75,7 +75,9 @@ static const Demo_Effect * const g_effects[] =
         &effect_vanish,
         &effect_somlose,
         &effect_somwin,
-        &effect_conquest};
+        &effect_conquest,
+        &effect_expand,
+        &effect_scast};
 #define DEMO_EFFECT_COUNT  ((int)(sizeof(g_effects) / sizeof(g_effects[0])))
 
 

@@ -1,5 +1,5 @@
 /**
- * ReMoM_Init.c — Shared engine initialization for ReMoM and HeMoM.
+ * ReMoM_Init.c — Shared engine initialization for ReMoM and DeMoM.
  *
  * Extracted from MOM_main() in ReMoM.c. This is the core init sequence
  * that both the full game and the headless tool need:
@@ -28,6 +28,7 @@
 #include "../MoM/src/Init.h"
 #include "../MoM/src/LOADER.h"
 #include "../MoM/src/Settings.h"
+#include "../STU/src/STU_DBG_MoM.h"  /* DBG_Print_MAGIC_SET() */
 
 #include <stdio.h>
 

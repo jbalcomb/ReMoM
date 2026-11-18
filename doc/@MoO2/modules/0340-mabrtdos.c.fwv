@@ -1,0 +1,11 @@
+module_num=340
+module=C:\GCL520\C_DOS\MABRTDOS.C
+source=0340-mabrtdos.c.md
+range[0]=1:0x0014E2F0 linear=0x0015E2F0 size=64
+range[1]=2:0x00012CD4 linear=0x00182CD4 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m340f001  1    -      0x0015E2F0  1:0x0014E2F0  static,code  _DOSDefaultAbortModemFunction  _DOSDefaultAbortModemFunction_  regions/07-object-1/001E3654-001E3E53.txt
+m340f002  2    -      0x0015E324  1:0x0014E324  code         SetAbortModemFunctionPtr       SetAbortModemFunctionPtr_       regions/07-object-1/001E3654-001E3E53.txt
+-         -    -      0x00182CD4  2:0x00012CD4  data         __AbortModemFunctionPtr        __AbortModemFunctionPtr         regions/08-object-2/00200E54-00201653.txt

@@ -22,6 +22,7 @@ MoO2  Module: LOADSAVE
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 #include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_User_DIR -- save-game scan resolves to user-data */
 #include "../../STU/src/STU_TST.h"
 #include "../../STU/src/STU_VLD.h"
@@ -46,7 +47,7 @@ MoO2  Module: LOADSAVE
 #include "CITYCALC.h"
 #include "Combat.h"
 #include "Explore.h"
-#include "INITGAME.h"  /* gd_dump_* -- 400-series save-entry GD capture */
+#include "INITGAME.h"  /* Player_Base_Casting_Skill() */
 #include "LOADER.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
@@ -95,10 +96,10 @@ char cnst_SAVE3[] = "SAVE";
 // WZD dseg:713A
 char cnst_SAVE_ext3[] = ".GAM";
 // WZD dseg:713F
-char cnst_HOTKEY_Esc22 = '\x1B';
+char cnst_HOTKEY_Esc22[] = "\x1B";
 
-// WZD dseg:7141 4D 41 47 49 43 2E 45 58 45 00                   cnst_MAGIC_EXE_File3 db 'MAGIC.EXE',0   ; DATA XREF: Load_Screen+3D1o
-// WZD dseg:714B 4A 45 4E 4E 59 00                               cnst_MAGICEXE_arg0_3 db 'JENNY',0       ; DATA XREF: Load_Screen+3CDo
+// WZD dseg:7141 4D 41 47 49 43 2E 45 58 45 00                   cnst_MAGIC_EXE_File3 db 'MAGIC.EXE',0   ; DATA XREF: Load_Screen+3D1vo
+// WZD dseg:714B 4A 45 4E 4E 59 00                               cnst_MAGICEXE_arg0_3 db 'JENNY',0       ; DATA XREF: Load_Screen+3CDvo
 
 // WZD dseg:7151
 char load_screen_copyright[] = "Copyright  Simtex Software, 1995   V1.31";
@@ -123,16 +124,16 @@ int16_t loadsave_settings_button;
 // WZD dseg:C983 00                                              db    0
 // WZD dseg:C984 00                                              db    0
 // WZD dseg:C985 00                                              db    0
-// WZD dseg:C986 00 00 00 00                                     RP_IMG_GUI_ChkBoxDn@ dw 2 dup(     0)   ; DATA XREF: Settings_Screen+B6w
+// WZD dseg:C986 00 00 00 00                                     RP_IMG_GUI_ChkBoxDn@ dw 2 dup(     0)   ; DATA XREF: Settings_Screen+B6vw
 // WZD dseg:C986                                                                                         ; array of 2 unused images appended into the sandbox
 // WZD dseg:C98A 00                                              db    0
 // WZD dseg:C98B 00                                              db    0
-// WZD dseg:C98C 00 00 00 00 00 00                               IMG_GUI_ChkBoxNo@ dw 3 dup(     0)      ; DATA XREF: Settings_Screen+8Ew ...
+// WZD dseg:C98C 00 00 00 00 00 00                               IMG_GUI_ChkBoxNo@ dw 3 dup(     0)      ; DATA XREF: Settings_Screen+8Evw ...
 // WZD dseg:C98C                                                                                         ; array of 3 images appended into the sandbox
 // WZD dseg:C992                                                 ; unsigned int IMG_GUI_ChkBoxYes
-// WZD dseg:C992 00 00 00 00 00 00                               IMG_GUI_ChkBoxYes@ dw 3 dup(     0)     ; DATA XREF: Settings_Screen+66w ...
+// WZD dseg:C992 00 00 00 00 00 00                               IMG_GUI_ChkBoxYes@ dw 3 dup(     0)     ; DATA XREF: Settings_Screen+66vw ...
 // WZD dseg:C992                                                                                         ; array of 3 images appended into the sandbox
-// WZD dseg:C998 00 00                                           magic_set_ptr dw 0                ; DATA XREF: Settings_Screen:loc_A90CCw ...
+// WZD dseg:C998 00 00                                           magic_set_ptr dw 0                ; DATA XREF: Settings_Screen:loc_A90CCvw ...
 
 // WZD dseg:C99A
 SAMB_ptr save_inactive;
@@ -155,10 +156,10 @@ int16_t loadsave_quit_button;
 /*
 New Game Screen vs Load Screen
 MGC vs WZD
-MGC  ovr50   dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8w ...
-WZD  ovr160  dseg:C9B2 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+1E4w ...
+MGC  ovr50   dseg:8E98 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+2D8vw ...
+WZD  ovr160  dseg:C9B2 00 00                                           selected_load_game_slot_idx dw 0        ; DATA XREF: Load_Screen+1E4vw ...
 
-     w Load_Screen+2D8                mov     [selected_load_game_slot_idx], e_ST_UNDEFINED          
+     w Load_Screen+2D8                mov     [selected_load_game_slot_idx], ST_UNDEFINED          
 Down w Load_Screen+32F                mov     [selected_load_game_slot_idx], _SI_itr_save_slot_fields
 Down r Load_Screen+367                cmp     [selected_load_game_slot_idx], 0                       
 Down r Load_Screen+373                push    [selected_load_game_slot_idx]     ; save_gam_idx       
@@ -168,9 +169,9 @@ Down r Newgame_Screen_4_Draw__WIP+31D mov     ax, [selected_load_game_slot_idx]
 Down w Newgame_Screen_4_Draw__WIP+344 mov     [selected_load_game_slot_idx], ax                      
 Down w Newgame_Screen_4__WIP+161      mov     [selected_load_game_slot_idx], 0                       
 
-Up   w Load_Screen+1E4      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
-     w Load_Screen+32D      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
-Down w Load_Screen+379      mov     [selected_load_game_slot_idx], e_ST_UNDEFINED   
+Up   w Load_Screen+1E4      mov     [selected_load_game_slot_idx], ST_UNDEFINED   
+     w Load_Screen+32D      mov     [selected_load_game_slot_idx], ST_UNDEFINED   
+Down w Load_Screen+379      mov     [selected_load_game_slot_idx], ST_UNDEFINED   
 Down w Load_Screen+391      mov     [selected_load_game_slot_idx], itr              
 Down r Load_Screen+407      cmp     [selected_load_game_slot_idx], 0                
 Down r Load_Screen+419      push    [selected_load_game_slot_idx]   ; SaveGame_Index
@@ -219,17 +220,17 @@ SAMB_ptr loadsave_background;
 /*
                                             ¿ END: ovr160 - Uninitialized Data  LOADSAVE ?
 */
-// WZD dseg:C9CC 00 00                                           IMG_GUI_ScrollDnArr@ dw 0               ; DATA XREF: sub_A9A30+31r ...
+// WZD dseg:C9CC 00 00                                           IMG_GUI_ScrollDnArr@ dw 0               ; DATA XREF: sub_A9A30+31vr ...
 
 
 
-// dseg:D494 00 00                                           GUI_Help_NearAlloc dw 0                 ; DATA XREF: Draw_Help_Entry_+BBw ...
+// dseg:D494 00 00                                           GUI_Help_NearAlloc dw 0                 ; DATA XREF: Draw_Help_Entry_+BBvw ...
 // dseg:D494                                                                                         ; 1048 bytes of LBX_NearAlloc_First space
 
 // dseg:D496
 SAMB_ptr save_active;
 
-// dseg:D498 00 00                                           LBX_NearBuf_Mark dw 0                   ; DATA XREF: LBX_NearAlloc_Mark:loc_150B1w ...
+// dseg:D498 00 00                                           LBX_NearBuf_Mark dw 0                   ; DATA XREF: LBX_NearAlloc_Mark:loc_150B1^w ...
 
 
 
@@ -288,11 +289,9 @@ void Load_Screen(void)
     int16_t itr = 0;  // _SI_
     int16_t itr_save_slot_input_field_array = 0;  // _SI_
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: BEGIN: Load_Screen()", __FILE__, __LINE__);
-#endif
 
     loaded_game_flag = ST_FALSE;
 
@@ -313,7 +312,12 @@ void Load_Screen(void)
     }
     else
     {
-        loadsave_settings_flag = ST_UNDEFINED;
+        // loadsave_settings_flag = ST_UNDEFINED;
+        /* CLAUDE */  /* REBUG */  /* asm @@Yay_Flag_3: cmp [loadsave_settings_flag], 3 / jz loc_F29B9 / mov [loadsave_settings_flag], -1 -- reached only when the flag is 3, so the reset never runs and the flag stays 3 (no Fade_In on the first draw) */
+        /* CLAUDE */  if(loadsave_settings_flag != 3)
+        /* CLAUDE */  {
+        /* CLAUDE */      loadsave_settings_flag = ST_UNDEFINED;
+        /* CLAUDE */  }
     }
 
     // LOAD.LBX, 000  LOADSAVE    Load & Save back
@@ -385,16 +389,17 @@ void Load_Screen(void)
 
     hotkey_ESC = Add_Hot_Key(cnst_HOTKEY_Esc22);
 
-    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
-    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), str_empty_string__ovr160[0], ST_UNDEFINED);
+    loadsave_quit_button      = Add_Hidden_Field( x_start       , y_start, (x_start +  39), (y_start + 13), str_empty_string__ovr160, ST_UNDEFINED);
+    loadsave_load_button      = Add_Hidden_Field((x_start +  40), y_start, (x_start +  78), (y_start + 13), str_empty_string__ovr160, ST_UNDEFINED);
+    loadsave_save_button      = Add_Hidden_Field(     122       , y_start,      159       , (y_start + 13), str_empty_string__ovr160, ST_UNDEFINED);
+    loadsave_ok_button        = Add_Hidden_Field(     231       , y_start,      270       , (y_start + 13), str_empty_string__ovr160, ST_UNDEFINED);
+    loadsave_settings_button  = Add_Hidden_Field(     172       , y_start,      229       , (y_start + 13), str_empty_string__ovr160, ST_UNDEFINED);
 
     Set_Font_Style(3, 1, 3, ST_NULL);
 
     for(itr_save_slot_fields = 0; itr_save_slot_fields < NUM_SAVE_SLOTS; itr_save_slot_fields++)
     {
+        /* OGBUG  the OG pushes 8 arguments (asm add sp, 10h): there is no shadow argument, so Add_Continuous_String_Input_Field() stores the next stack word - Load_Screen's saved DI, the caller's DI - as the field's shadow mode, which Draw_Fields() reads as -1 shadow down / 1 shadow up / anything else plain; ReMoM passes ST_NULL (plain) */
         save_slot_fields[itr_save_slot_fields] = Add_Continuous_String_Input_Field(x_start, (47 + (itr_save_slot_fields * 15)), 260, magic_set.Save_Names[itr_save_slot_fields], (LEN_SAVE_DESCRIPTION - 1), ST_TRANSPARENT, selection_marker, ST_UNDEFINED, ST_NULL);
     }
 
@@ -500,39 +505,39 @@ void Load_Screen(void)
              * gated on save_gam_idx==0. */
             if(selected_save_game_slot_idx == 0)
             {
-                gd_dump_heroes          ("401_Save_Heroes_H");
-                gd_dump_players         ("402_Save_Players_P");
-                gd_dump_world_map       ("403_Save_World_Maps_W");
-                gd_dump_landmasses      ("404_Save_Landmasses_L");
-                gd_dump_nodes           ("405_Save_Nodes_N");
-                gd_dump_fortresses      ("406_Save_Fortresses_F");
-                gd_dump_towers          ("407_Save_Towers_T");
-                gd_dump_lairs           ("408_Save_Lairs_L");
-                gd_dump_items           ("409_Save_Items_I");
-                gd_dump_cities          ("410_Save_Cities_C");
-                gd_dump_units           ("411_Save_Units_U");
-                gd_dump_terrain_specials("412_Save_Terrain_Specials_T");
-                gd_dump_map_square_flags("413_Save_Map_Flags_M");
+                STU_GD_DO(STU_GD_Dump_Heroes("401_Save_Heroes_H"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Players("402_Save_Players_P"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_World_Map("403_Save_World_Maps_W"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Landmasses("404_Save_Landmasses_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Nodes("405_Save_Nodes_N"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Fortresses("406_Save_Fortresses_F"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Towers("407_Save_Towers_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Lairs("408_Save_Lairs_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Items("409_Save_Items_I"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Cities("410_Save_Cities_C"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Units("411_Save_Units_U"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Terrain_Specials("412_Save_Terrain_Specials_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Map_Square_Flags("413_Save_Map_Flags_M"));  /* CLAUDE */
             }
-            /* 500-series: same snapshot at Stage 2's slot-5 save
+            /* 900-series: same snapshot at Stage 2's slot-5 save
              * (selected_save_game_slot_idx 4 -> SAVE5.GAM) -- the post-Next-Turn
              * state.  Matches OG's stub050:j_Save_SAVE_GAM trigger gated on
              * save_gam_idx==4. */
             if(selected_save_game_slot_idx == 4)
             {
-                gd_dump_heroes          ("901_Save_Heroes_H");
-                gd_dump_players         ("902_Save_Players_P");
-                gd_dump_world_map       ("903_Save_World_Maps_W");
-                gd_dump_landmasses      ("904_Save_Landmasses_L");
-                gd_dump_nodes           ("905_Save_Nodes_N");
-                gd_dump_fortresses      ("906_Save_Fortresses_F");
-                gd_dump_towers          ("907_Save_Towers_T");
-                gd_dump_lairs           ("908_Save_Lairs_L");
-                gd_dump_items           ("909_Save_Items_I");
-                gd_dump_cities          ("910_Save_Cities_C");
-                gd_dump_units           ("911_Save_Units_U");
-                gd_dump_terrain_specials("912_Save_Terrain_Specials_T");
-                gd_dump_map_square_flags("913_Save_Map_Flags_M");
+                STU_GD_DO(STU_GD_Dump_Heroes("901_Save_Heroes_H"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Players("902_Save_Players_P"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_World_Map("903_Save_World_Maps_W"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Landmasses("904_Save_Landmasses_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Nodes("905_Save_Nodes_N"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Fortresses("906_Save_Fortresses_F"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Towers("907_Save_Towers_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Lairs("908_Save_Lairs_L"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Items("909_Save_Items_I"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Cities("910_Save_Cities_C"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Units("911_Save_Units_U"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Terrain_Specials("912_Save_Terrain_Specials_T"));  /* CLAUDE */
+                STU_GD_DO(STU_GD_Dump_Map_Square_Flags("913_Save_Map_Flags_M"));  /* CLAUDE */
             }
             Save_SAVE_GAM(selected_save_game_slot_idx);
             leave_screen_flag = ST_TRUE;
@@ -611,11 +616,9 @@ void Load_Screen(void)
         Loaded_Game_Update();
     }
 
-#ifdef STU_DEBUG
-    LOG_INFO(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
+    LOG_DEBUG(LOG_CAT_LOADSCR, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
     LOG_DEBUG(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
     LOG_TRACE(LOG_CAT_GENERAL, "DEBUG: [%s, %d]: END: Load_Screen()", __FILE__, __LINE__);
-#endif
 
 }
 
@@ -761,7 +764,8 @@ void Load_Screen_Draw(void)
 void Set_Load_Screen_Help_List(void)
 {
     LBX_Load_Data_Static(hlpentry_lbx_file__ovr160, 27, (SAMB_ptr)_help_entries, 0, 6, 10);
-    Set_Help_List((char *)&_help_entries[0], 27);  // ¿ BUGBUG - someone put entry_num instead of help_count ?
+    /* OGBUG  27 is the HLPENTRY.LBX entry number, not the count: 6 entries are loaded, but Set_Help_List() is given 27, so help entries 6..26 keep whatever the previous screen left in _help_entries and stay active on the load / save screen */
+    Set_Help_List((char *)&_help_entries[0], 27);
 }
 
 // WZD o160p04
@@ -776,13 +780,13 @@ void Loaded_Game_Update(void)
     int16_t itr = 0;
     int16_t itr_players = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* seg001 */ destroy_combat_city = ST_FALSE;
 
     _current_player_idx = HUMAN_PLAYER_IDX;
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
     Reset_City_Area_Bitfields();
 
@@ -793,6 +797,7 @@ void Loaded_Game_Update(void)
     // DONT  o142p04  NOOP_Current_Player_All_City_Areas() |-> empty_fxn_o142p03()
 
     // DONT  o142p19  LD_MAP_TFUnk40_Eval()
+    Record_Unknown_40H_Squares();  /* CLAUDE */  /* asm: call j_LD_MAP_TFUnk40_Eval (Loaded_Game_Update__ovr160.asm 13) - was a DONT comment */
 
     All_Colony_Calculations();
 
@@ -852,12 +857,10 @@ void Loaded_Game_Update(void)
     */
 
         // TST_Validate_GameData();
-#ifdef STU_DEBUG
         // if(Validate_All_Lairs() != ST_TRUE)
         // {
         //     Generate_Lairs();
         // }
-#endif
 #ifdef STU_DEBUG
         if(Validate_All_Neutral_Cities() != ST_TRUE)
         {
@@ -881,20 +884,9 @@ void Loaded_Game_Update(void)
      * Loaded_Game_Update return (the AI_Evaluate_Continents throttle, initialized
      * at load).  ReMoM stores it as int16_t[]; the OG probe reads uint8_t[] @ 0x8FAA
      * -- the sign/width mismatch is a suspect for the throttle divergence.  Fire once. */
-    {
-        static int lgu_cd_gd_done = 0;
-        if(!lgu_cd_gd_done) {
-            static char cbuf[256];
-            int ci, cq = 0;
-            lgu_cd_gd_done = 1;
-            cbuf[0] = 0;
-            for(ci = 0; ci < NUM_PLAYERS; ci++)
-                cq += snprintf(cbuf + cq, sizeof(cbuf) - cq, ci ? ",%d" : "%d", (int)_ai_reevaluate_continents_countdown[ci]);
-            LOG_TRACE(LOG_CAT_GENERAL, "[GD] 317_Loaded_Game_Update_Countdown _ai_reevaluate_continents_countdown = %s", cbuf);
-        }
-    }
+    STU_GD_ONCE("317_Loaded_Game_Update_Countdown", STU_GD_Dump_Csv("317_Loaded_Game_Update_Countdown", "_ai_reevaluate_continents_countdown", _ai_reevaluate_continents_countdown, GD_I16, NUM_PLAYERS));  /* CLAUDE */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -914,7 +906,7 @@ void Init_Overland(void)
     int16_t itr_cities = 0;  // _SI_
     int16_t itr_units = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     PreInit_Overland();
@@ -955,6 +947,8 @@ void Init_Overland(void)
 
     // NIU?  CRP_OVL_MapWindowX = 0;
     // NIU?  CRP_OVL_MapWindowY = 0;
+    niu_map_window_x = 0;  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowX], 0 - see the OGBUG on niu_map_window_x */
+    niu_map_window_y = 0;  /* CLAUDE */  /* asm: mov [CRP_OVL_MapWindowY], 0 */
     _prev_world_x = 0;
     _prev_world_y = 0;
     _map_x = 0;
@@ -999,7 +993,7 @@ void Init_Overland(void)
         Set_Random_Seed(10039);  // 0x2737
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -1020,7 +1014,7 @@ void PreInit_Overland(void)
     int16_t itr_cities = 0;
     int16_t itr_players = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 /*
 MoO2
@@ -1036,6 +1030,7 @@ MoO2
         loc_101BC:
         ...
 */
+    /* NOTE  not a bug: the OG re-seeds from the timer on every load (Randomize()), so reloading a save does not repeat the same rolls.  The fixed seed 1000 is set only when Check_Release_Version() is false, and in ReMoM it never is -- ReMoM_Init_Engine() calls Release_Version(). */
     // Randomize();
     // debug_random_seed = 1000;
     // if(!Check_Release_Version())
@@ -1045,12 +1040,33 @@ MoO2
     /* CLAUDE: matches MoO2's pattern (see disassembly comment above) -- honour
        a CLI-provided seed when non-zero, otherwise fall back to the original
        Randomize() behaviour.  This is the minimum-divergence way to make
-       --continue runs deterministic when the test harness passes --seed.
+       --continue runs deterministic when the test harness passes --seed1 / --seed2.
 
        PreInit_Overland is the SECOND reseed point: OG re-Randomize()s here off
        the system clock, producing a value independent of Init_Drivers' seed.
-       So prefer _cmd_line_seed2 (OG's captured second seed_set) here; fall back
-       to _cmd_line_seed, then Randomize().  See MOX2.h / OG seed_set #2. */
+       So prefer _cmd_line_seed2 (--seed2, OG's captured second seed_set) here; fall back
+       to _cmd_line_seed (--seed1), then Randomize().  See MOX2.h / OG seed_set #2. */
+    // /* CLAUDE */  if(_cmd_line_seed2 != 0)
+    // /* CLAUDE */  {
+    // /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed2);
+    // /* CLAUDE */  }
+    // /* CLAUDE */  else if(_cmd_line_seed != 0)
+    // /* CLAUDE */  {
+    // /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
+    // /* CLAUDE */  }
+    // /* CLAUDE */  else
+    // /* CLAUDE */  {
+    // /* CLAUDE */      Randomize();
+    // /* CLAUDE */  }
+    /* CLAUDE */  /* REBUG */  /* asm: call Randomize; debug_random_seed = 1000; call Check_Release_Version / or ax, ax / jnz skip; call Set_Random_Seed -- always, not only when no CLI seed */
+    Randomize();
+    debug_random_seed = 1000;
+    if(Check_Release_Version() == ST_FALSE)
+    {
+        Set_Random_Seed(debug_random_seed);
+    }
+    /* CLAUDE: the CLI seed is layered AFTER the OG seeding, so it overrides it without replacing it: --seed2 (_cmd_line_seed2, OG's captured second
+       seed_set) first, else --seed1 (_cmd_line_seed).  With neither, the OG Randomize() above stands. */
     /* CLAUDE */  if(_cmd_line_seed2 != 0)
     /* CLAUDE */  {
     /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed2);
@@ -1058,10 +1074,6 @@ MoO2
     /* CLAUDE */  else if(_cmd_line_seed != 0)
     /* CLAUDE */  {
     /* CLAUDE */      Set_Random_Seed((uint32_t)_cmd_line_seed);
-    /* CLAUDE */  }
-    /* CLAUDE */  else
-    /* CLAUDE */  {
-    /* CLAUDE */      Randomize();
     /* CLAUDE */  }
 
 
@@ -1087,6 +1099,6 @@ MoO2
         Player_Research_Spells(itr_players);
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }

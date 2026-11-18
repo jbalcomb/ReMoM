@@ -25,7 +25,7 @@ Each map tile carries a 4-bit "explored" byte — one bit per **sub-tile corner*
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:643](../../MoM/src/MAPGEN.c#L643) | Late in new-game setup; followed by `gd_dump_square_explored("28_Init_Square_Explored_E")` ([644](../../MoM/src/MAPGEN.c#L644)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:491](../../MoM/src/MAPGEN.c#L491) | Late in new-game setup; followed by `STU_GD_Dump_Square_Explored("129_Init_Square_Explored_E")` ([492](../../MoM/src/MAPGEN.c#L492)). |
 
 ## How it works
 

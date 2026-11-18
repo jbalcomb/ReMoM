@@ -201,171 +201,7 @@ Generate_Combat_Map()
 /* CLAUDE  INF / IS_INF moved to the shared MOX_TYPE.h (already included by Combat.h) so all three shortest-path solvers share one sentinel. */
 
 
-/*
-    reduce the loops over the adjacent cells to a single macro
-    iter 0-8 or iter 0-4 & 4-8
-
-NEW_PATH_COST()
-...the the portion inside each iteration, because that just needs itr_adjacent
-
-NEW_PATH_COST_0()
-NEW_PATH_COST_1()
-NEW_PATH_COST_2()
-...treats the three adjacent cell offsets array as one array - adjacent_offsets[(({0,1,2} * 8) + itr_adjacent)]
-
-NEW_PATH_COST_ANY()
-...takes a parameter, which just reduces NEW_PATH_COST_0(), NEW_PATH_COST_1(), and NEW_PATH_COST_2()
-
-what I want is all of this...
-            move_cost = _cmbt_movepath_cost_map[ctr];  // moves2 cost of cell, given terrain and movement mode
-            if(!IS_INF(move_cost))
-            {
-                current_origin = _cmbt_path_data[ctr];
-                for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++)
-                {
-                    adjacent_idx = adjacent_offsets[1][itr_adjacent];
-                    NEW_PATH_COST()
-                }
-                for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++)
-                {
-                    adjacent_idx = adjacent_offsets[1][itr_adjacent];
-                    NEW_PATH_COST()
-                }
-            }
-            ctr++;
-
-NEW_PATH_COST_ALL()
-...uses NEW_PATH_COST_ANY()
-
-
-*/
-#define NEW_PATH_COST() {                                               \
-    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
-    {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
-        if(adjacent_path_cost != 255)                                   \
-        {                                                               \
-            potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
-            {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                    \
-                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != current_origin)              \
-                {                                                       \
-                    a_cost_was_updated = ST_TRUE;                       \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-}
-
-
-#define NEW_PATH_COST_0() {                                             \
-    adjacent_idx = adjacent_offsets[((0 * 8) + itr_adjacent)];          \
-    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
-    {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
-        if(adjacent_path_cost != 255)                                   \
-        {                                                               \
-            potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
-            {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                    \
-                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != current_origin)              \
-                {                                                       \
-                    a_cost_was_updated = ST_TRUE;                       \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-}
-
-#define NEW_PATH_COST_1() {                                             \
-    adjacent_idx = adjacent_offsets[((1 * 8) + itr_adjacent)];          \
-    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
-    {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
-        if(adjacent_path_cost != 255)                                   \
-        {                                                               \
-            potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
-            {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                    \
-                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != current_origin)              \
-                {                                                       \
-                    a_cost_was_updated = ST_TRUE;                       \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-}
-
-#define NEW_PATH_COST_2() {                                             \
-    adjacent_idx = adjacent_offsets[((2 * 8) + itr_adjacent)];          \
-    if((adjacent_idx >= 0) && (adjacent_idx < COMBAT_GRID_CELL_COUNT))  \
-    {                                                                   \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];               \
-        if(adjacent_path_cost != 255)                                   \
-        {                                                               \
-            potential_path_cost = adjacent_path_cost + move_cost;       \
-            if(_cmbt_mvpth_c[ctr] > potential_path_cost)                \
-            {                                                           \
-                _cmbt_path_data[ctr] = adjacent_idx;                    \
-                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;      \
-                if(_cmbt_path_data[ctr] != current_origin)              \
-                {                                                       \
-                    a_cost_was_updated = ST_TRUE;                       \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-}
-
-#define NEW_PATH_COST_ANY(_value_) {                                            \
-    adjacent_idx = (ctr + adjacent_offsets[(((_value_) * 8) + itr_adjacent)]);  \
-    if(adjacent_idx == ((DBG_cgy * COMBAT_GRID_WIDTH) + DBG_cgx))               \
-    {                                                                           \
-        STU_DEBUG_BREAK();                                                      \
-    }                                                                           \
-    if(GTELT(adjacent_idx, 0, COMBAT_GRID_CELL_COUNT))                          \
-    {                                                                           \
-        adjacent_path_cost = _cmbt_mvpth_c[adjacent_idx];                       \
-        if(!IS_INF(adjacent_path_cost))                                         \
-        {                                                                       \
-            potential_path_cost = adjacent_path_cost + move_cost;               \
-            existing_path_cost = _cmbt_mvpth_c[ctr];                            \
-            if(existing_path_cost > potential_path_cost)                        \
-            {                                                                   \
-                _cmbt_path_data[ctr] = adjacent_idx;                            \
-                _cmbt_mvpth_c[ctr] = (uint8_t)potential_path_cost;              \
-                new_next_cell_index = _cmbt_path_data[ctr];                     \
-                if(new_next_cell_index != current_origin)                       \
-                {                                                               \
-                    unstable = ST_TRUE;                                         \
-                }                                                               \
-            }                                                                   \
-        }                                                                       \
-    }                                                                           \
-}
-
-#define NEW_PATH_COST_ALL(_value_) {                            \
-    move_cost = _cmbt_movepath_cost_map[ctr];                   \
-    if(!IS_INF(move_cost))                                      \
-    {                                                           \
-        current_origin = _cmbt_path_data[ctr];                  \
-        for(itr_adjacent = 0; itr_adjacent < 4; itr_adjacent++) \
-        {                                                       \
-            NEW_PATH_COST_ANY(itr_adjacent)                     \
-        }                                                       \
-        for(itr_adjacent = 4; itr_adjacent < 8; itr_adjacent++) \
-        {                                                       \
-            NEW_PATH_COST_ANY(itr_adjacent)                     \
-        }                                                       \
-    }                                                           \
-    ctr++;                                                      \
-}
+/* CLAUDE  The path-cost macro experiments (NEW_PATH_COST*) and their design notes moved to STU/src/STU_DBG_Combat_Move_Path.h: none is used. */
 
 
 
@@ -1316,7 +1152,7 @@ extern int16_t * dispel_enchantment_bits;
 // WZD dseg:C972
 extern int16_t _combat_winner;
 
-/* CLAUDE: test-support -- exposes the per-battle turn counter (defined Combat.c) for HeMoM's combat results dump. */
+/* CLAUDE: test-support -- exposes the per-battle turn counter (defined Combat.c) for DeMoM's combat results dump. */
 extern int16_t _combat_turn;
 
 // WZD dseg:C974
@@ -1489,7 +1325,7 @@ extern "C" {
     WIZARDS.EXE  ovr090
 */
 
-// WZD s90p01
+// WZD o090p01
 int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defender_player_idx, int16_t troops[], int16_t troop_count, int16_t wx, int16_t wy, int16_t wp, int16_t * item_count, int16_t item_list[]);
 
 
@@ -1498,34 +1334,34 @@ int16_t Combat_Screen(int16_t combat_attacker_player_idx, int16_t combat_defende
     WIZARDS.EXE  ovr091
 */
 
-// WZD s91p01
+// WZD o091p01
 void NIU_Battle_Unit_Load_Figure_Pictures(int16_t battle_unit_idx);
 
-// WZD s91p02
+// WZD o091p02
 void Begin_Combat_Turn(void);
 
-// WZD s91p03
+// WZD o091p03
 void Set_Movement_Cost_Map(int16_t battle_unit_idx);
 
-// WZD s91p04
+// WZD o091p04
 void Move_Battle_Unit(int16_t battle_unit_idx, int16_t target_cgx, int16_t target_cgy);
 
-// WZD s91p05
+// WZD o091p05
 void Switch_Active_Battle_Unit(int16_t battle_unit_idx);
 
-// WZD s91p06
+// WZD o091p06
 void Battle_Unit_Action(int16_t acting_battle_unit_idx, int16_t cgx, int16_t cgy);
 
-// WZD s91p07
+// WZD o091p07
 void Assign_Combat_Grids(void);
 
-// WZD s91p08
+// WZD o091p08
 int16_t Target_Is_Visible(int16_t battle_unit_idx);
 
-// WZD s91p09
+// WZD o091p09
 void Add_City_Damage_From_Battle_Units_Within(void);
 
-// WZD s91p10
+// WZD o091p10
 int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
 
 
@@ -1534,22 +1370,22 @@ int16_t Battle_Unit_Instant_Movement_Mode(int16_t battle_unit_idx);
     WIZARDS.EXE  ovr096
 */
 
-// WZD s96p01
+// WZD o096p01
 int16_t Combat(int16_t attacker_player_idx, int16_t defender_player_idx, int16_t troop_count, int16_t troops[]);
 
-// WZD s96p02
+// WZD o096p02
 void Lair_Make_Guardians(int16_t lair_idx);
 
-// WZD s96p03
+// WZD o096p03
 int16_t Lair_Combat_Do(int16_t lair_idx, int16_t player_idx);
 
-// WZD s96p04
+// WZD o096p04
 void NIU_Enemy_Stack_Combat(int16_t defender_unit_idx, int16_t attacker_unit_idx, int16_t plane);
 
-// WZD s96p05
+// WZD o096p05
 void Update_Defender_Hostility(int16_t attacker_player_idx, int16_t defender_player_idx);
 
-// WZD s96p06
+// WZD o096p06
 void NIU_Combat_Redraw_Main_Screen(void);
 
 
@@ -1575,7 +1411,7 @@ void Auto_Cast_Spell_And_Do_Combat_Turn(int16_t player_idx);
 void Combat_Next_Turn(void);
 
 // WZD o98p06
-void Retreat_From_Combat(int16_t player_idx);
+int16_t Retreat_From_Combat(int16_t player_idx);
 
 // WZD o98p07
 int16_t Player_City_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_idx);
@@ -1658,46 +1494,46 @@ void Draw_Active_Unit_Damage_Bar(int16_t battle_unit_idx, int16_t x, int16_t y);
     WIZARDS.EXE  ovr103
 */
 
-// WZD s103p01
+// WZD o103p01
 void Combat_Information_Window(void);
 
-// WZD s103p02
+// WZD o103p02
 void Combat_Information_Window_Draw(void);
 
-// WZD s103p03
+// WZD o103p03
 void Combat_Info_Effects(void);
 
-// WZD s103p04
+// WZD o103p04
 void Combat_Info_Effects_Base(void);
 
-// WZD s103p05
+// WZD o103p05
 int16_t Combat_Info_Effects_Count(void);
 
-// WZD s103p06
+// WZD o103p06
 void Combat_Node_Type(void);
 
-// WZD s103p07
+// WZD o103p07
 void Battle_Unit_Compose_Bitmap(int16_t battle_unit_idx);
 
-// WZD s103p08
+// WZD o103p08
 void Next_Battle_Unit(int16_t player_idx);
 
-// WZD s103p09
+// WZD o103p09
 int16_t Next_Battle_Unit_Nearest_Available(int16_t player_idx);
 
-// WZD s103p10
+// WZD o103p10
 void Combat_Cast_Spell_Error(int16_t type);
 
-// WZD s103p11
+// WZD o103p11
 void Move_Confused(int16_t battle_unit_idx);
 
-// WZD s103p12
+// WZD o103p12
 void Combat_Screen_Load_Resources(void);
 
-// WZD s103p13
+// WZD o103p13
 void Allocate_Combat_Near_Buffers(void);
 
-// WZD s103p14
+// WZD o103p14
 void Combat_Cast_Spell_With_Caster(int16_t caster_id);
 
 
@@ -1719,16 +1555,16 @@ void Combat_Figure_Active_Red_Outline(int16_t battle_unit_idx);
 void Combat_Figure_Effect(int16_t figure_effect);
 
 // WZD o105p05
-void Combat_Unit_Enchantment_Outline_Set(int16_t battle_unit_idx);
+void Set_Combat_Enchantment_Outline(int16_t battle_unit_idx);
 
 // WZD o105p06
-void Combat_Unit_Enchantment_Outline_Draw(int16_t enchantment_magic_realm);
+void Draw_Combat_Enchantment_Outline(int16_t enchantment_magic_realm);
 
 // WZD o105p07
 void Update_Sees_Illusions(void);
 
 // WZD o105p08
- void Battle_Unit_Set_Invisibility_Effect(int16_t battle_unit_idx);
+void Battle_Unit_Set_Invisibility_Effect(int16_t battle_unit_idx);
 
 // WZD o105p09
 int16_t Battle_Unit_Curse_Effects(int16_t battle_unit_idx);
@@ -1921,10 +1757,10 @@ void End_Of_Combat(int16_t winner_player_idx, int16_t * item_count, int16_t item
 // WZD o123p02
 int16_t Find_Undead_Creator_Type(int16_t player_idx);
 
-// WZD o123p03
+// WZD o123p04
 void Combat_Results_Scroll(void);
 
-// WZD o123p04
+// WZD o123p03
 void Combat_Results_Scroll_Draw(void);
 
 // WZD o123p05
@@ -2151,7 +1987,9 @@ void Merge_Dirt_Patches(void);
 void Remove_Rough_Terrain(int16_t combat_location_type);
 
 // WZD ovr154p09
-void Set_Terrain_Tile_Types(void);
+// void Set_Terrain_Tile_Types(void);
+/* CLAUDE */  /* REBUG */  /* asm: the caller pushes the terrain set */
+void Set_Terrain_Tile_Types(int16_t niu_combat_terrain_set);
 
 // WZD ovr154p10
 void Set_Movement_Cost_Maps(int16_t location_type, int16_t city_walls);

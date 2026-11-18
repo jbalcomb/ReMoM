@@ -1,0 +1,18 @@
+module_num=115
+module=D:\MOX\OTHERS\NEWTECH.C
+source=0115-newtech.c.md
+range[0]=1:0x000EC734 linear=0x000FC734 size=3770
+range[1]=2:0x0000B60C linear=0x0017B60C size=120
+range[2]=2:0x0003310C linear=0x001A310C size=24
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                               SYMBOL                              CHUNK
+m115f001  1    -      0x000FC734  1:0x000EC734  static,code  Choose_Hyper_Advanced_Tech         Choose_Hyper_Advanced_Tech_         regions/07-object-1/00181654-00181E53.txt
+m115f002  2    -      0x000FC7AC  1:0x000EC7AC  static,code  Get_Competition_Player_Tech_Value  Get_Competition_Player_Tech_Value_  regions/07-object-1/00181654-00181E53.txt
+m115f003  3    -      0x000FC845  1:0x000EC845  code         Calc_Tech_Value                    Calc_Tech_Value_                    regions/07-object-1/00181E54-00182653.txt
+m115f004  4    -      0x000FD199  1:0x000ED199  static,code  Get_Competition_Tech_Values        Get_Competition_Tech_Values_        regions/07-object-1/00182654-00182E53.txt
+m115f005  5    -      0x000FD219  1:0x000ED219  code         Set_Competition_Tech_Values        Set_Competition_Tech_Values_        regions/07-object-1/00182654-00182E53.txt
+m115f006  6    -      0x000FD2F9  1:0x000ED2F9  code         All_Gray_Boxes_Researched          All_Gray_Boxes_Researched_          regions/07-object-1/00182654-00182E53.txt
+m115f007  7    -      0x000FD335  1:0x000ED335  code         Choose_Tech_Application            Choose_Tech_Application_            regions/07-object-1/00182654-00182E53.txt
+-         -    -      0x0017B60C  2:0x0000B60C  data         _tech_research_level_values        _tech_research_level_values         regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x001A310C  2:0x0003310C  data         _best_category                     _best_category                      -

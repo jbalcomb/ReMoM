@@ -89,17 +89,17 @@ enum e_Field_Type
 // #pragma pack(2)
 struct s_Field
 {
-    /* 00 */ int16_t x1;         // 
-    /* 02 */ int16_t y1;         // 
-    /* 04 */ int16_t x2;         // 
-    /* 06 */ int16_t y2;         // 
-    /* 08 */ int16_t type;       // enum e_Field_Type
-    /* 0A */ int16_t help;       // ¿ Help Array/Table Index ?
-    /* 0C */ int16_t font_style_num;        // "style_num"
-    /* 0E */ int16_t font_normal_color;     // ¿ normal colors ?
-    /* 10 */ int16_t Rect_FX;    // 
-    /* 12 */ int16_t Selectable; // 
-    /* 14 */ int16_t font_highlight_color;  // ¿ highlight colors ?
+    /* 00 */ int16_t x1;
+    /* 02 */ int16_t y1;
+    /* 04 */ int16_t x2;
+    /* 06 */ int16_t y2;
+    /* 08 */ int16_t type;                  /* enum e_Field_Type */
+    /* 0A */ int16_t help;                  /* ¿ Help Array/Table Index ? */
+    /* 0C */ int16_t font_style_num;        /* "style_num" */
+    /* 0E */ int16_t font_normal_color;     /* ¿ normal colors ? */
+    /* 10 */ int16_t fill_type;             /*  */ 
+    /* 12 */ int16_t active_flag;           /* 'selectable' is *wrong* ¿ actionable ? */ /* asm: Selectable */
+    /* 14 */ int16_t font_highlight_color;  /* ¿ highlight colors ? */
     union {
         int16_t Param0;
         char * string;              //  4  ft_input         10  ft_StringList11  ft_ContinuousStringInput
@@ -115,7 +115,7 @@ struct s_Field
     };
     union {
         int16_t Param2;
-        int16_t state;              //  1  ft_RadioButton    2  ft_LockedButton
+        int16_t * state;            //  1  ft_RadioButton    2  ft_LockedButton
         int16_t fill_color;         //  4  ft_input         11  ft_ContinuousStringInput  DEDU should be uint8_t?
         // uint16_t var_segment;  //  6  ft_Scroll  ... MoO2 Draw_Visible_Fields_Back()
         int16_t string_len;         //  8  ft_MultiHotKey
@@ -149,212 +149,10 @@ struct s_Field
         int16_t shadow;             // 11  ft_ContinuousStringInput
         int16_t fill_param4;        // 10 ft_StringList
     };
-
     /* 24 */ int16_t hotkey;     // ASCII Character *Code*
 };
 
-struct s_Field2
-{
-    /* 00 */ int16_t x1;            // 
-    /* 02 */ int16_t y1;            // 
-    /* 04 */ int16_t x2;            // 
-    /* 06 */ int16_t y2;            // 
-    /* 08 */ int16_t type;          // 
-    /* 0A */ int16_t help;          // 
-    /* 0C */ int16_t Font_Index;    // "style_num"
-    /* 0E */ int16_t ColorSet1;     // ¿ normal colors ?
-    /* 10 */ int16_t Rect_FX;       // 
-    /* 12 */ int16_t Selectable;    // 
-    /* 14 */ int16_t ColorSet2;     // ¿ highlight colors ?
 
-    union {
-        int16_t Param0;
-        int16_t min_valid;          // ft_Scroll
-        char * string;
-    };
-    union {
-        int16_t Param1;
-        int16_t max_valid;          // ft_Scroll
-    };
-    union {
-        int16_t Param2;
-        int16_t * sgmt_variable;    // ft_Scroll
-    };
-    union {
-        int64_t Param3;
-        int16_t min_value;          // ft_Scroll
-    };
-    union {
-        int64_t Param4;
-        int16_t max_value;          // ft_Scroll
-    };
-    union {
-        int16_t Param5;
-        SAMB_ptr pict_seg;          // ft_Button
-        int16_t MaxLen;             // ft_EditBox, ft_EditSelect
-        int16_t orientation;        // ft_Scroll
-    };
-    union {
-        int16_t Param6;
-        int16_t * ofst_variable;    // ft_Scroll
-    };
-
-    /* 24 */ int16_t hotkey;        // ASCII Character *Code*
-};
-
-struct s_Field3
-{
-    /* 00 */ int16_t x1;         // 
-    /* 02 */ int16_t y1;         // 
-    /* 04 */ int16_t x2;         // 
-    /* 06 */ int16_t y2;         // 
-    /* 08 */ int16_t type;       // 
-    /* 0A */ int16_t help;       // 
-    /* 0C */ int16_t Font_Index; // "style_num"
-    /* 0E */ int16_t ColorSet1;  // ¿ normal colors ?
-    /* 10 */ int16_t Rect_FX;    // 
-    /* 12 */ int16_t Selectable; // 
-    /* 14 */ int16_t ColorSet2;  // ¿ highlight colors ?
-
-    union
-    {
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        };
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_Button;
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_RadioButton;
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_LockedButton;
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_MultiButton;
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_Input;
-        struct
-        {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_Picture;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_Scroll;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_HotKey;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_MultiHotKey;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_ClickLink;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_StringList;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_ContinuousStringInput;
-        struct {
-            /* 16 */ int16_t Param0;
-            /* 18 */ int16_t Param1;
-            /* 1A */ int16_t Param2;
-            /* 1C */ int16_t Param3;
-            /* 1E */ int16_t Param4;
-            /* 20 */ int16_t Param5;
-            /* 22 */ int16_t Param6;
-        } ft_Grid;
-    };
-
-    /* 24 */ int16_t hotkey;     // ASCII Character *Code*
-};
 
 
 
@@ -497,8 +295,8 @@ extern int16_t active_input_field_number;
 
 // WZD dseg:8282
 extern int16_t GUI_Edit_Position;
-// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35Aw ...
-// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360w ...
+// WZD dseg:8284 00 00                                           GUI_EditAnimStage dw 0                  ; DATA XREF: Interpret_Mouse_Input+35A^w ...
+// WZD dseg:8286 00 00                                           GUI_EditCursorOn dw 0                   ; DATA XREF: Interpret_Mouse_Input+360^w ...
 
 // WZD dseg:8290
 extern int16_t GUI_EditTimeOutType;
@@ -534,9 +332,11 @@ extern char continuous_string[];
 extern int16_t input_delay;
 
 // WZD dseg:E89A
-extern int16_t MOUSE_Emu_Y;
+// drake178: MOUSE_Emu_Y
+extern int16_t emulated_pointer_y;
 // WZD dseg:E89C
-extern int16_t MOUSE_Emu_X;
+// drake178: MOUSE_Emu_X
+extern int16_t emulated_pointer_x;
 
 // WZD dseg:E89E
 extern int16_t pointer_offset;
@@ -594,12 +394,10 @@ extern struct s_Field * p_fields;  // "p_fields dd 0" ? Far Pointer?
 // INPUT  int16_t Interpret_Mouse_Input(void);
 
 // WZD s36p08
-// TODO  void Set_Global_Esc(void);
-void Disable_Cancel(void);
+void Enable_Cancel(void);
 
 // WZD s36p09
-// drake178: UU_GUI_ClearEscOverride
-void Enable_Cancel(void);
+void Disable_Cancel(void);
 
 // WZD s36p10
 // Disable_Mouse_Wait()
@@ -654,7 +452,7 @@ int16_t Add_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string
 int16_t Add_Continuous_String_Input_Field(int16_t xmin, int16_t ymin, int16_t width, char * string, int16_t max_characters, int16_t fill_color, SAMB_ptr marker_picture, int16_t help, int16_t shadow);
 
 // WZD s36p36
-// UU_GUI_Ctrl_DecHeight();
+void Decrement_Field_Height__NIU(int16_t field_idx);
 
 // WZD s36p37
 // static int16_t Add_String_List_Field(int16_t x1, int16_t y1, int16_t width, char * string, int16_t active_flag, int16_t * variable, int16_t set_value, int16_t fill_type, int16_t fill_param1, int16_t fill_param2, int16_t fill_param3, int16_t fill_param4, char * hotkey, int16_t help_entry);
@@ -666,72 +464,82 @@ int16_t Add_Multi_Hot_Key_Field(char * string);
 int16_t Add_Picture_Field(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 
 // WZD s36p40
-// UU_GUI_CreateWndImgLbl()
+int16_t Add_Clipped_Picture_Field__NIU(int16_t xmin, int16_t ymin, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 
 // WZD s36p41
 void Set_Button_Down_Offsets(int16_t x_offset, int16_t y_offset);
 
 // WZD s36p42
-void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+void Add_Button_Info(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 
 // WZD s36p43
-int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t hotkey, int16_t help);
+int16_t Add_Button_Field(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, char * hotkey, int16_t help);
 
-// UU_GUI_CreateToggleBtn                         seg036     00004B58 00000054 R F . . B T .
-// UU_GUI_CreateLockblBtn                         seg036     00004BAC 00000054 R F . . B T .
-// UU_GUI_CreateMStateBtn                         seg036     00004C00 00000069 R F . . B T .
+// WZD s36p44
+int16_t Add_Toggle_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help);
+
+// WZD s36p45
+int16_t Add_Locked_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, char * hotkey, int16_t help);
+
+// WZD s36p46
+int16_t Add_Multi_Button_Field__NIU(int16_t xmin, int16_t ymin, char * string, SAMB_ptr pict_seg, int16_t * state, int16_t state_count, char * hotkey, int16_t help);
 
 // WZD s36p47
-int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, int16_t hotkey, int16_t help);
+int16_t Add_Hidden_Field(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help);
 
-// UU_GUI_CreateWndLabel                          seg036     00004D64 00000193 R F . . B T .
+// WZD s36p48
+int16_t Add_Clipped_Hidden_Field__NIU(int16_t xmin, int16_t ymin, int16_t xmax, int16_t ymax, char * hotkey, int16_t help);
 
 // WZD s36p49
-int16_t Add_Hot_Key(int16_t select_char);
+int16_t Add_Hot_Key(char * select_char);
 
-// WZD s34p50
-// UU_GUI_CreateHelpLink                          seg036     00004FED 0000013A R F . . B T .
+// WZD s36p50
+int16_t Add_Click_Link_Field__NIU(int16_t parent_field_idx, int16_t * variable, int16_t link_number, int16_t x1, int16_t y1, int16_t x2, int16_t y2, char * hotkey, int16_t help);
 
-// WZD s34p51
-// int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int16_t *xpos, int16_t *ypos, int16_t help);
+// WZD s36p51
 int16_t Add_Grid_Field(int16_t xmin, int16_t ymin, int16_t box_width, int16_t box_height, int16_t horizontal_count, int16_t vertical_count, int64_t *xpos, int64_t *ypos, int16_t help);
 
-// WZD s34p52
-// WZD s34p53
-int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, int16_t hotkey, int16_t help);
+// WZD s36p52
+int16_t Add_Scroll_Field(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help);
 
-// WZD s34p54
+// WZD s36p53
+int16_t Add_Scroll_Field_Far(int16_t xmin, int16_t ymin, int16_t min_value, int16_t max_value, int16_t min_valid, int16_t max_valid, int16_t width, int16_t height, int16_t * variable, char * hotkey, int16_t help);
+
+// WZD s36p54
 int16_t Find_Bar_Position(int16_t field_num);
 
-// WZD s34p55
+// WZD s36p55
 void Increment_Scroll_Bar(int16_t field_num);
 
-// WZD s34p56
+// WZD s36p56
 void Decrement_Scroll_Bar(int16_t field_num);
 
 // WZD s36p57
 void Clear_Fields(void);
 
 // WZD s36p58
-// UU_GUI_NoSelectColor();
+void Set_Unselectable_Text_Color__NIU(int16_t color_set);
 
 // WZD s36p59
-// UU_GUI_ScrollableTxtDlg();
+int16_t Get_Scrolling_List_Field__NIU(int16_t x1, int16_t y1, int16_t width, char * title_string, char * list_strings, int16_t string_size, int16_t * variable, int16_t * selectable, int16_t page_lines, int16_t up_x, int16_t up_y, SAMB_ptr up_pict, int16_t down_x, int16_t down_y, SAMB_ptr down_pict, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help);
 
 // WZD s36p60
 int16_t Get_List_Field(int16_t title_x1, int16_t title_y1, int16_t fill_width, char * title_string, char * text_string[], int16_t string_width, int16_t * variable, int16_t * active_flag, int16_t select_fill_type, int16_t sfill1, int16_t sfill2, int16_t sfill3, int16_t sfill4, int16_t help_entry);
 
 // WZD s36p61
-// UU_GUI_NoMouseHighlight();
+// drake178: UU_GUI_NoMouseHighlight()
+void Disable_List_Field_Mouse_Scan(void);
 
 // WZD s36p62
-int16_t GUI_MoveDlgHighlight__STUB(int16_t Y_Direction);
+// drake178: GUI_MoveDlgHighlight()
+int16_t Move_Dialog_Highlight(int16_t y_direction);
 
 // WZD s36p63
 void Clear_Fields_Above(int16_t field_num);
 
 // WZD s36p64
 // GUI_GetControlCount();
+int16_t Get_Field_Counter(void);
 
 // WZD s36p65  AKA GUI_Init()  AKA IN_Init()
 // INPUT  void Init_Mouse_Keyboard(int16_t input_type);
@@ -743,15 +551,17 @@ void Clear_Fields_Above(int16_t field_num);
 // INPUT  void Set_Input_Delay(int16_t input_delay);
 
 // WZD s36p68
-// UU_Get_Input_Delay();
+// void UU_Get_Input_Delay();
+/* CLAUDE */  // INPUT  int16_t Get_Input_Delay(void);
 
 // WZD s36p69
-// UU_GUI_ClearSelectable();
+// drake178: UU_GUI_ClearSelectable()
+void Disable_String_List_Field(int16_t field_num);
 
 // WZD s36p70
-// UU_GUI_SetSelectable();
+// drake178: UU_GUI_SetSelectable()
+void Enable_String_List_Field(int16_t field_num);
 
-// MoO2: Draw_Visible_Fields()
 // WZD s36p71
 void Draw_Fields(void);
 
@@ -825,26 +635,21 @@ void Call_Auto_Function(void);
 // drake178: UU_GUI_ExtClear()
 void UU_GUI_ExtClear(void);
 
-// WZD s36p85
+// /* CLAUDE */  WZD s36p85  (not an id tag: Toggle_Pages() is defined in Input.c, declared in Input.h)
 // INPUT  void Toggle_Pages(void);
 
 
 
 /*
     BEGIN: Fields - Runtime Catalog (for Record & Replay / AI input simulator)
-    When g_dbg_fields_trace is non-zero, every Add_*Field call emits a FIELDADD line via trc_prn().
-    Dump_Fields_CSV() emits a FIELDSNAPSHOT block for the currently-registered fields.
+    STU_CLOG (STU/src/STU_CLOG.h).  When g_clog_fields_trace is non-zero, every Add_*Field call is meant to emit a FIELDADD line, and Dump_Fields_CSV() a FIELDSNAPSHOT block for the
+    currently-registered fields.  Both trc_prn() emits are commented out (90606d0d), so neither currently logs anything.
     See also: tools/fields_extract.py (static extractor) and tools/fields_merge.py (static+runtime merge).
 */
-#ifdef STU_DEBUG
-extern int16_t g_dbg_fields_trace;
-extern const char * g_dbg_fields_screen_tag;
-extern const char * g_dbg_fields_call_file;
-extern int32_t g_dbg_fields_call_line;
+#include "../../STU/src/STU_CLOG.h"
+#if STU_CLOG
 void Dump_Fields_CSV(const char * screen_tag);
-/* CLAUDE 2026-07-22: origin of the field at index idx (basename / line of its Add_* call site). */
-const char * Dbg_Field_Origin_File(int16_t idx);
-int32_t Dbg_Field_Origin_Line(int16_t idx);
+/* the origin of the field at index idx (basename / line of its Add_* call site): STU_CLOG_Field_Origin_File() / STU_CLOG_Field_Origin_Line() */
 
 /*
     Macro wrappers capture __FILE__/__LINE__ at each call site without requiring
@@ -852,16 +657,15 @@ int32_t Dbg_Field_Origin_Line(int16_t idx);
     so the real definitions compile.
 */
 #ifndef FIELDS_C_IMPL
-#define DBG_FIELDS_LOC_SET() (g_dbg_fields_call_file = __FILE__, g_dbg_fields_call_line = __LINE__)
-#define Add_Button_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Button_Field(__VA_ARGS__))
-#define Add_Hidden_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Hidden_Field(__VA_ARGS__))
-#define Add_Hot_Key(...)                      (DBG_FIELDS_LOC_SET(), Add_Hot_Key(__VA_ARGS__))
-#define Add_Multi_Hot_Key_Field(...)          (DBG_FIELDS_LOC_SET(), Add_Multi_Hot_Key_Field(__VA_ARGS__))
-#define Add_Grid_Field(...)                   (DBG_FIELDS_LOC_SET(), Add_Grid_Field(__VA_ARGS__))
-#define Add_Scroll_Field(...)                 (DBG_FIELDS_LOC_SET(), Add_Scroll_Field(__VA_ARGS__))
-#define Add_Input_Field(...)                  (DBG_FIELDS_LOC_SET(), Add_Input_Field(__VA_ARGS__))
-#define Add_Continuous_String_Input_Field(...) (DBG_FIELDS_LOC_SET(), Add_Continuous_String_Input_Field(__VA_ARGS__))
-#define Add_Picture_Field(...)                (DBG_FIELDS_LOC_SET(), Add_Picture_Field(__VA_ARGS__))
+#define Add_Button_Field(...)                 (STU_CLOG_FIELD_CALL_SITE(), Add_Button_Field(__VA_ARGS__))
+#define Add_Hidden_Field(...)                 (STU_CLOG_FIELD_CALL_SITE(), Add_Hidden_Field(__VA_ARGS__))
+#define Add_Hot_Key(...)                      (STU_CLOG_FIELD_CALL_SITE(), Add_Hot_Key(__VA_ARGS__))
+#define Add_Multi_Hot_Key_Field(...)          (STU_CLOG_FIELD_CALL_SITE(), Add_Multi_Hot_Key_Field(__VA_ARGS__))
+#define Add_Grid_Field(...)                   (STU_CLOG_FIELD_CALL_SITE(), Add_Grid_Field(__VA_ARGS__))
+#define Add_Scroll_Field(...)                 (STU_CLOG_FIELD_CALL_SITE(), Add_Scroll_Field(__VA_ARGS__))
+#define Add_Input_Field(...)                  (STU_CLOG_FIELD_CALL_SITE(), Add_Input_Field(__VA_ARGS__))
+#define Add_Continuous_String_Input_Field(...) (STU_CLOG_FIELD_CALL_SITE(), Add_Continuous_String_Input_Field(__VA_ARGS__))
+#define Add_Picture_Field(...)                (STU_CLOG_FIELD_CALL_SITE(), Add_Picture_Field(__VA_ARGS__))
 #endif
 #endif
 

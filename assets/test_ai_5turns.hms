@@ -4,7 +4,7 @@
 # picker that fires on turn 1 (deterministic seed from test_worldgen.ini).
 #
 # Usage:
-#   HeMoM --continue --scenario test_ai_5turns.hms --ai-metrics --dump-save SAVE1.GAM
+#   DeMoM --continue --scenario test_ai_5turns.hms --ai-metrics --dump-save SAVE1.GAM
 
 # === Home city naming popup ===
 wait 500ms
@@ -50,6 +50,6 @@ wait 1s
 # === Save and quit ===
 # Use the shared save-and-quit tail which navigates through
 # Game menu -> Save -> Quit button -> Main Menu -> Q to DOS.
-# The `end` in the tail stops the artificial human player, so we rely
+# The `end` in the tail stops the Automation Driver, so we rely
 # on the Q key hitting scr_Quit_To_DOS to exit Screen_Control.
 include scenario_tail_save_and_quit.hms

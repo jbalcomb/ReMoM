@@ -5,8 +5,8 @@ SEEALSO:  C:\STU\devel\ReMoM\doc\ComputerPlayer\AIMOVE-AI_Stacks_Init_Build_Targ
 
 includes a subset:
     SEEALSO: AIMOVE-AI_Stacks_Stage_Expedition_Forces.md
-    AI_Stacks_Survey_Expedition_Forces()
-    AI_Stacks_Survey_Expedition_Forces_Stack()
+    AI_Survey_Expedition_Forces()
+    AI_Survey_Expedition_Stack()
     AI_Stacks_Stage_Expedition_Forces()
     AI_Stacks_Garrison_Sites()
 
@@ -18,20 +18,20 @@ includes a subset:
         * AI_Stacks_Garrison_Sites()
 * G_Seafaring_Lowest_Value
     * XREF:
-        * AI_Stacks_Survey_Expedition_Forces()
-        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Survey_Expedition_Forces()
+        * AI_Survey_Expedition_Stack()
 * G_Pushout_Lowest_Value
     * XREF:
-        * AI_Stacks_Survey_Expedition_Forces()
-        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Survey_Expedition_Forces()
+        * AI_Survey_Expedition_Stack()
 * G_Seafaring_Count
     * XREF:
-        * AI_Stacks_Survey_Expedition_Forces()
-        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Survey_Expedition_Forces()
+        * AI_Survey_Expedition_Stack()
 * cp_drafted_unit_count
     * XREF:
-        * AI_Stacks_Survey_Expedition_Forces()
-        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Survey_Expedition_Forces()
+        * AI_Survey_Expedition_Stack()
         * AI_Stacks_Stage_Expedition_Forces()
 * G_Seafaring_Values
     * XREF:
@@ -49,7 +49,7 @@ includes a subset:
     * XREF:
 * G_Pushout_Unit_Indices
     * XREF:
-        * AI_Stacks_Survey_Expedition_Forces_Stack()
+        * AI_Survey_Expedition_Stack()
         * AI_Stacks_Stage_Expedition_Forces()
 * cp_staged_unit_count
     * XREF:
@@ -213,7 +213,7 @@ The cached `Unit_Indices[i]` is redundant with the `unit_list[CX][UL]` dereferen
 
 ### Producer
 
-[`AI_Stacks_Survey_Expedition_Forces_Stack`](../../MoM/src/AIMOVE.c#L3942) (called from `AI_Stacks_Survey_Expedition_Forces`, dispatch slot 3). The producer scans every `_ai_own_stack_*` entry, scores "excess" combat units, and maintains a top-9 ranked pool with cached lowest-value for fast displacement decisions. After the producer, a bubble-sort pass orders the entries by value descending.
+[`AI_Survey_Expedition_Stack`](../../MoM/src/AIMOVE.c#L3942) (called from `AI_Survey_Expedition_Forces`, dispatch slot 3). The producer scans every `_ai_own_stack_*` entry, scores "excess" combat units, and maintains a top-9 ranked pool with cached lowest-value for fast displacement decisions. After the producer, a bubble-sort pass orders the entries by value descending.
 
 **OGBUG — pool ranking is meaningless** ([AIMOVE.c:4034-4042](../../MoM/src/AIMOVE.c#L4034-L4042)). The "value" assigned to each candidate is NOT a real strength score. The OG passed the wrong argument (or called the wrong function) and got back garbage; the production reconstruction emulates this with `((Random(256) << 8) | Random(256))` — two random bytes concatenated into a pseudo-random 16-bit value. The intended computation, per the inline comment, was `Effective_Unit_Strength(unit_type) / 10`.
 

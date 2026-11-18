@@ -1,0 +1,8 @@
+module_num=238
+module=intx386
+source=0238-intx386.md
+range[0]=1:0x00134A4A linear=0x00144A4A size=26
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m238f001  1    -      0x00144A4A  1:0x00134A4A  code  int386x  int386x_  regions/07-object-1/001C9E54-001CA653.txt

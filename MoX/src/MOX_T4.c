@@ -145,14 +145,17 @@ only used twice, from 'Main Screen'
 
 PageFlip_FX()
     PageFlipEffect == 4
-    RP_VGA_GrowOutFlip(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + 400));
+    RP_VGA_GrowOutFlip(_page_flip_grow_out_x, _page_flip_grow_out_y, _page_flip_grow_out_frames, (_screen_seg + 400));
 */
 // WZD dseg:9992
-int16_t GrowOutFrames;
+// drake178: GrowOutFrames
+int16_t _page_flip_grow_out_frames;
 // WZD dseg:9994
-int16_t GrowOutTop;
+// drake178: GrowOutTop
+int16_t _page_flip_grow_out_y;
 // WZD dseg:9996
-int16_t GrowOutLeft;
+// drake178: GrowOutLeft
+int16_t _page_flip_grow_out_x;
 
 
 
@@ -164,25 +167,25 @@ int16_t _page_flip_effect;
 
 // MGC dseg:27FF                                                 BEGIN: seg001 - Initialized Data  (main)
 
-// MGC dseg:27FF 43 4F 4E 46 49 47 2E 4D 4F 4D 00                CONFIG_MOM db 'CONFIG.MOM',0            ; DATA XREF: _main+12o ...
+// MGC dseg:27FF 43 4F 4E 46 49 47 2E 4D 4F 4D 00                CONFIG_MOM db 'CONFIG.MOM',0            ; DATA XREF: _main+12^o ...
 // MGC dseg:280A 52 75 6E 20 49 4E 53 54 41 4C 4C 20 74 6F 20 63+cnst_ConfigErr db 'Run INSTALL to configure MASTER OF MAGIC.',0Ah
 // MGC dseg:280A 4F 46 20 4D 41 47 49 43 2E 0A 0A 00             db 0Ah,0
-// MGC dseg:2836 72 62 00                                        cnst_ReadBinary db 'rb',0               ; DATA XREF: _main:@@Found_ConfigMomo ...
+// MGC dseg:2836 72 62 00                                        cnst_ReadBinary db 'rb',0               ; DATA XREF: _main:@@Found_ConfigMom^o ...
 // MGC dseg:2836                                                                                         ; "read binary" open mode constant
 
 // MGC dseg:2839
 // drake178: cnst_MIDI_Init
 // MOM_Data  char str_Initializing_Roland_Drivers[] = "Initializing Roland Drivers...$";
 
-// MGC dseg:2859 53 41 56 45 00                                  cnst_SAVE db 'SAVE',0                   ; DATA XREF: _main+1D9o ...
-// MGC dseg:285E 2E 47 41 4D 00                                  cnst_SAVE_ext db '.GAM',0               ; DATA XREF: _main+1F7o ...
-// MGC dseg:2863 4D 41 47 49 43 2E 53 45 54 00                   cnst_Set_File db 'MAGIC.SET',0          ; DATA XREF: _main+241o
-// MGC dseg:286D 77 62 00                                        cnst_WB db 'wb',0                       ; DATA XREF: _main+23Do
-// MGC dseg:2870 46 4F 4E 54 53 2E 4C 42 58 00                   fonts_lbx_file__main db 'FONTS.LBX',0   ; DATA XREF: _main+2AFo
+// MGC dseg:2859 53 41 56 45 00                                  cnst_SAVE db 'SAVE',0                   ; DATA XREF: _main+1D9^o ...
+// MGC dseg:285E 2E 47 41 4D 00                                  cnst_SAVE_ext db '.GAM',0               ; DATA XREF: _main+1F7^o ...
+// MGC dseg:2863 4D 41 47 49 43 2E 53 45 54 00                   cnst_Set_File db 'MAGIC.SET',0          ; DATA XREF: _main+241^o
+// MGC dseg:286D 77 62 00                                        cnst_WB db 'wb',0                       ; DATA XREF: _main+23D^o
+// MGC dseg:2870 46 4F 4E 54 53 2E 4C 42 58 00                   fonts_lbx_file__main db 'FONTS.LBX',0   ; DATA XREF: _main+2AF^o
 // MGC dseg:287A
 char music_lbx__main[] = "music";
 // MGC dseg:2880 54 68 61 6E 6B 20 79 6F 75 20 66 6F 72 20 70 6C+str_quit_message__main db 'Thank you for playing Master of Magic!',0
-// MGC dseg:2880 61 79 69 6E 67 20 4D 61 73 74 65 72 20 6F 66 20+                                        ; DATA XREF: Menu_Screen_Control+D1o
+// MGC dseg:2880 61 79 69 6E 67 20 4D 61 73 74 65 72 20 6F 66 20+                                        ; DATA XREF: Menu_Screen_Control+D1^o
 
 // MGC dseg:2880                                                 END: seg001 - Initialized Data  (main)
 
@@ -194,6 +197,7 @@ char music_lbx__main[] = "music";
 
 // WZD s01p01
 // WZD s01p02
+
 
 // WZD s01p03
 // ; executes a VGA page flip using a special effect for
@@ -221,17 +225,11 @@ switches on (_page_flip_effect - 1)
 */
 void PageFlip_FX(void)
 {
-
     switch(_page_flip_effect)
     {
-//         case pfe_None:
-//         {
-//             Apply_Palette();
-//             Toggle_Pages();  // |-> Page_Flip()
-//         } break;
-        case pfe_VGA_CutRight:
+        case pfe_WipeRight:
         {
-            // TODO  RP_VGA_CutRight();
+            PageFlip_Wipe_Right();
         } break;
         case pfe_TogglePagesFadeIn:
         {
@@ -242,29 +240,28 @@ void PageFlip_FX(void)
         {
             Apply_Palette();
             PageFlip_Dissolve();  // s026p01;  |-> Toggle_Pages_No_Draw_Fields() |-> Page_Flip()
-            Toggle_Pages();  // |-> Page_Flip()
-        } break;
-        case pfe_GrowOut:
-        {
-            Draw_Expanding_Bitmap(GrowOutLeft, GrowOutTop, GrowOutFrames, (_screen_seg + (20 * SCREEN_WIDTH)));
         } break;
         case pfe_Palette:
         {
             Apply_Palette();
         } break;
-        default:
+        case pfe_GrowOut:
+        {
+            Draw_Expanding_Bitmap(_page_flip_grow_out_x, _page_flip_grow_out_y, _page_flip_grow_out_frames, (_screen_seg + (20 * SCREEN_WIDTH)));
+        } break;
+        default:  /* pfe_Default */
         {
             Apply_Palette();
             Toggle_Pages();  // |-> Page_Flip()
         } break;
     }
 
-    _page_flip_effect = pfe_None;
+    _page_flip_effect = pfe_Default;
 
 }
 
 
-
+// MGC o050p26
 // WZD s01p04
 void Fade_Out(void)
 {
@@ -281,6 +278,7 @@ void Fade_Out(void)
 }
 
 
+// MGC o050p27
 // WZD s01p05
 void Fade_In(void)
 {
@@ -307,11 +305,14 @@ void Fade_In(void)
 // WZD s01p09
 // random.c  Get_Weighted_Best_Choice()
 // WZD s01p10
-// random.c  Get_Weighted_Best_Choice_Long()
+// random.c  Get_Weighted_Choice_Best_Long()
 
 
 // WZD s01p11
 // drake178: RP_Empty_Dialog_Fn1()
+/*
+duped in MGC as s01p11_empty_function_MGC()
+*/
 void s01p11_empty_function(void)
 {
 // push    bp
@@ -323,6 +324,9 @@ void s01p11_empty_function(void)
 
 // WZD s01p12
 // drake178: RP_Empty_Dialog_Fn2
+/*
+duped in MGC as s01p12_empty_function_MGC()
+*/
 void s01p12_empty_function(void)
 {
 // push    bp
@@ -353,8 +357,26 @@ void Play_Left_Click(void)
 }
 
 
+// MGC s001p02
 // WZD s01p14
 // drake178: SND_PlayClickSound()
+// BinAlgo: Play_Message_Sound
+/*
+...in MAGIC.EXE...
+// SND_Empty_Fn()
+// ; used in place of WIZARDS.EXE's SND_PlayClickSound
+void SND_Empty_Fn(void)
+{
+/ *
+proc SND_Empty_Fn far
+push    bp
+mov     bp, sp
+pop     bp
+retf
+endp SND_Empty_Fn
+* /
+}
+*/
 /*
 ; if sound effects are enabled, plays the standard mouse click sound
 */
@@ -447,7 +469,7 @@ int16_t lbx_read_sgmt(SAMB_ptr dst, uint16_t nbytes, FILE * file_handle)
 // void String_Copy_Far(uint16_t dst_ofst, char * dst_sgmt, uint16_t src_ofst, char * src_sgmt)
 /*
 Two things to note. IDA typed the parameters dword ptr, and the pointers load in one instruction each. lds/les is what those instructions exist for, and Borland reaches for them: 34 sites across the seg* listings load a parameter that way.
-_fstrcpy does neither
+String_Copy_Far does neither
 dst_ofst= word ptr  6
 dst_sgmt= word ptr  8
 src_ofst= word ptr  0Ah
@@ -462,14 +484,20 @@ mov     ds, ax
 Four word ptr slots, four separate loads, segments bounced through AX. Same task, same register targets, same DS save/restore — and completely different codegen from the control. There's no reason for the compiler to decline lds/les if it held far pointers; it uses them 34 times elsewhere.
 That's the real evidence, and it's usage-based rather than layout-based, which is why it survives where the frame comparison didn't. (IDA's dword ptr vs word ptr split is downstream of the same usage, so it's corroboration, not a second witness.)
 The write-back is suggestive, not conclusive
-_fstrcpy asm:15-16 and asm:20-21 write only the segment word:
+String_Copy_Far asm:15-16 and asm:20-21 write only the segment word:
 mov     ax, ds
 mov     [bp+dst_sgmt], ax
 ...
-IMHO, SimTex's _fstrcpy() took known near and far pointers, and it took four parameters, and its calls used FP_SEG() and FP_OFF().
+IMHO, SimTex's String_Copy_Far() took known near and far pointers, and it took four parameters, and its calls used FP_SEG() and FP_OFF().
+...
+NOTE(ClaudeOpus55,202611120751):
+String_Copy_Far is not Borland's either. Three checks:
+Different code. Borland's __fstrcpy from CM.LIB (module FSTRCPY) does repne scasb to find the length, then rep movsb, and returns the destination in DX:AX. The WIZARDS routine (WIZARDS.asm:15675) pushes ES and DS, swaps in DS wherever a segment argument is 0, copies with a lodsb/stosb loop, and returns nothing.
+Borland's bytes aren't in the EXE. A byte search of /c/STU/DBWD/MoM131/WIZARDS.EXE finds no copy of Borland's __fstrcpy. The WIZARDS routine sits in seg009, right before LBX_Load in seg010, among SimTex's code rather than the Borland RTL.
+The callers use SimTex's convention. Call sites (WIZARDS.asm:26572-26577) push offset near_buffer with a segment of 0, meaning "use DS". Borland's _fstrcpy would treat that as the address 0000:near_buffer and write into the interrupt vector table. So this is a hand-written SimTex asm routine taking (dst offset, dst segment, src offset, src segment), and String_Copy_Far is a label someone assigned. MoO2's symbols have only strcpy_ (DebugExtract.md:4951), which makes sense: MoO2 is 32-bit flat and has no far copy.
 */
-// void _fstrcpy(dst_sgmt, dst_ofst, src_sgmt, src_ofst)
-void _fstrcpy(char * dst, char * src)
+// void String_Copy_Far(dst_sgmt, dst_ofst, src_sgmt, src_ofst)
+void String_Copy_Far(char * dst, char * src)
 {
     char character;
     // if(FP_SEG(dst) == 0) dst = MK_FP(_DS, FP_OFF(dst)); expresses exactly the same thing with far-pointer parameters.

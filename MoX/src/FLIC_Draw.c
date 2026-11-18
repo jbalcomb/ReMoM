@@ -28,6 +28,8 @@ MoO2 Module: shear
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 #include "Util.h"  /* Swap_Short() */
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage() */
+#include "../../STU/src/STU_CLOG.h"  /* CLAUDE: drawing catalog -- STU_CLOG_Draw(), STU_CLOG_Palette_Loaded() */
 
 #include <assert.h>
 #include <string.h>
@@ -72,19 +74,22 @@ int16_t file_animation_entry_num;
 // ¿ vs. MoO2  Draw_Palette() ?
 void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 {
-    SAMB_ptr p_FLIC_File;
-    int16_t start;
-    int16_t count;
-    byte_ptr flic_palette_data;
-    int16_t itr;
-    uint16_t DBG_flic_palette_header_frame_palettes;
-    uint16_t DBG_frame_palette_data_offset;
-    uint16_t DBG_flic_palette_data_offset;
-
-    p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]
-
-    DBG_flic_palette_header_frame_palettes = FLIC_GET_FRAME_PALETTES(p_FLIC_File);
-    if((frame_index == 0) || (FLIC_GET_FRAME_PALETTES(p_FLIC_File) == 0))
+    SAMB_ptr p_FLIC_File = 0;
+    int16_t start = 0;
+    int16_t count = 0;
+    byte_ptr flic_palette_data = 0;
+    int16_t itr = 0;
+    /* OGBUG  (#386) for an EMS picture the asm maps EMM_Logical_Page_Number to physical page 0 AND to physical page 1 (the second int 67h / 4401h reloads the same number, no inc): a palette block crossing 16 KB past the page start would be read from the wrong page */
+    /* PLATFORM */  p_FLIC_File = (p_FLIC_Header + 0);  // ~== p_FLIC_File = &p_FLIC_Header[0]  /* asm: when emm_handle_number != 0, maps EMS pages 0 and 1 (int 67h / 4400h, 4401h) and reads from EMS_PFBA + EMM_Logical_Page_Offset */
+    /* CLAUDE */  /* REBUG */  /* asm: @@HaveEmmHndlNbr - an EMS picture's palette is read from the EMS copy of the file, not from the 16-byte header copy (a file animation's
+                                  file_animation_header is only that, so every offset read past it); through the EMS emulation, as Draw_File_Animation_Frame_ASM() does.
+                                  HACK: the only EMS picture is the file animation, so its handle is _VGAFILEH_seg (Open_File_Animation() stores 1 as a stand-in) */
+    if(FLIC_GET_EMM_HANDLE_NUMBER(p_FLIC_Header) != 0)
+    {
+        EMM_MapFourPages(FLIC_GET_EMM_LOGICAL_PAGE_NUMBER(p_FLIC_Header), _VGAFILEH_seg);
+        p_FLIC_File = (EMM_GetPageFrame() + FLIC_GET_EMM_LOGICAL_PAGE_OFFSET(p_FLIC_Header));
+    }
+    if((frame_index == 0) || (GET_1B_OFS(p_FLIC_File, (FLIC_GET_PALETTE_HEADER_OFFSET(p_FLIC_File) + FLIC_PAL_HDR_POS_FRAME_PALETTES)) == 0))
     {
         start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
         count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
@@ -92,34 +97,24 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
     }
     else
     {
-        DBG_frame_palette_data_offset = FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File, frame_index);
-        DBG_flic_palette_data_offset = FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File);
         flic_palette_data = (p_FLIC_File + FLIC_GET_FRAME_PALETTE_DATA_OFFSET(p_FLIC_File,frame_index));
         start = FLIC_GET_FRAME_PALETTE_COLOR_INDEX(p_FLIC_File,frame_index);
         count = FLIC_GET_FRAME_PALETTE_COLOR_COUNT(p_FLIC_File,frame_index);
-        flic_palette_data = (p_FLIC_File + FLIC_GET_PALETTE_DATA_OFFSET(p_FLIC_File));
-        start = FLIC_GET_PALETTE_COLOR_START(p_FLIC_File);
-        count = FLIC_GET_PALETTE_COLOR_COUNT(p_FLIC_File);
+        if(count == 0)
+        {
+            return;
+        }
     }
-
-    // // for(itr = start; itr < count; itr++)
-    // for(itr = start; itr < (start + count); itr++)
-    // {
-    //     *(current_palette + itr) = *(flic_palette_data + itr);
-    //     *(current_palette + 768 + itr) = 1;
-    // }
+#if STU_CLOG
+    STU_CLOG_Palette_Loaded(STU_CLOG_Asset_Name(p_FLIC_Header), frame_index, start, count);  /* CLAUDE: drawing catalog -- a picture's own palette */
+#endif
     for(itr = 0; itr < count; itr++)
     {
-
-        // DASM: MOVSW; MOVSB;
-        // ¿ ~== ? SET_2B, SET_1B ... rvr++;
         *(current_palette + (start * 3) + (itr * 3) + 0) = *(flic_palette_data + (itr * 3) + 0);
         *(current_palette + (start * 3) + (itr * 3) + 1) = *(flic_palette_data + (itr * 3) + 1);
         *(current_palette + (start * 3) + (itr * 3) + 2) = *(flic_palette_data + (itr * 3) + 2);
-
         *(current_palette + 768 + start + itr) = ST_TRUE;  // TODO  review, remaster, add manifest-constant for palette change flags offset
     }
-
 }
 
 
@@ -129,10 +124,10 @@ void FLIC_Load_Palette(SAMB_ptr p_FLIC_Header, int16_t frame_index)
 */
 
 /* CLAUDE: Screen_Picture_Capture and Capture_Screen_Block moved to capture.c */
-// WZD s24p08
+// WZD s24p07
 // Screen_Picture_Capture()  — see capture.c
 
-// WZD s24p09
+// WZD s24p08
 // Capture_Screen_Block()  — see capture.c
 
 
@@ -993,6 +988,9 @@ void FLIC_Draw(int16_t x_start, int16_t y_start, SAMB_ptr picture)
     DBG_height = FLIC_GET_HEIGHT(picture);
     assert(DBG_width <= SCREEN_WIDTH);
     assert(DBG_height <= SCREEN_HEIGHT);
+#if STU_CLOG
+    STU_CLOG_Draw(x_start, y_start, FLIC_GET_WIDTH(picture), FLIC_GET_HEIGHT(picture), picture);  /* CLAUDE: drawing catalog */
+#endif
     assert((x_start + (DBG_width - 1)) <= SCREEN_XMAX);
     assert((y_start + (DBG_height - 1)) <= SCREEN_YMAX);
 
@@ -1331,271 +1329,792 @@ int16_t FLIC_Get_Height(SAMB_ptr p_FLIC_Header)
 
 
 // WZD s30p20
+// drake178: VGA_WndDrawRotateImg()
 // MoO2  Module: bitmap  Draw_Bitmap_Rotated()
+/*
+    BCC 3.1 codegen test (-mm -a -d): matches the asm (SI = pict_seg, DI = height) apart from link-time and -S artifacts (push cs / call near ptr vs call far ptr, retf vs ret)
+    height must be declared before width: declared after it, BCC 3.1 puts width in DI instead
+*/
 void Draw_Bitmap_Rotated(int16_t x, int16_t y, int16_t angle, SAMB_ptr pict_seg)
 {
-    int16_t tr_x = 0;
-    int16_t tr_y = 0;
-    int16_t br_x = 0;
-    int16_t br_y = 0;
-    int16_t bl_x = 0;
-    int16_t bl_y = 0;
-    int16_t width = 0;
-    int16_t height = 0;
+    int16_t tr_x;
+    int16_t tr_y;
+    int16_t br_x;
+    int16_t br_y;
+    int16_t bl_x;
+    int16_t bl_y;
+    int16_t height;  // _DI_
+    int16_t width;
+
     width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
     height = GET_2B_OFS(pict_seg, FLIC_HDR_POS_HEIGHT);
-    /* Execute matrix math to populate the output corners (TR, BR, BL) based on the angle */
+
     Get_Rotated_Pixels(angle, width, height, &x, &y, &tr_x, &tr_y, &br_x, &br_y, &bl_x, &bl_y);
-    /* Forward the fully computed quadrilateral into the linear, refactored frame buffer pipeline */
+
     Draw_Bitmap_Animation_Block(x, y, tr_x, tr_y, br_x, br_y, bl_x, bl_y, pict_seg, height, width);
 }
 
 
 // WZD s30p21
+// drake178: VGA_WndDrawImageRect()
 // MoO2  Module: bitmap  Draw_Bitmap_Animation_Block()
-/**
- * High-level coordinate transformation and clipping pipeline.
- */
-void Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width)
+/*
+High-level coordinate transformation and clipping pipeline.
+    OGBUG: max_y / min_y seeds are backwards and the compares are unsigned; min_y never moves, a negative corner y becomes max_y and fails the window test
+    OGBUG: MinOff / MaxOff are built from screen_window_x1 / screen_window_x2, not screen_window_y1 / screen_window_y2
+    OGBUG: col1_hgt is read before it is ever written (y[1] < y[0] branch)
+*/
+int16_t Draw_Bitmap_Animation_Block(int16_t tl_x, int16_t tl_y, int16_t tr_x, int16_t tr_y, int16_t br_x, int16_t br_y, int16_t bl_x, int16_t bl_y, SAMB_ptr pict_seg, uint16_t height, uint16_t width)
 {
-    /* Local stack mirrors mapping to internal assembly workspace stack frames */
-    int16_t x[5], y[5];
-    int16_t left_corner, corner_2, corner_3, right_corner;
-    int16_t min_y, max_y;
-    int loop_x, loop_y;
-    int16_t replacement_colors = 0; /* Extracted via conceptual farpeekb */
-    int16_t draw_left, draw_top, draw_width, draw_height;
-    int16_t col1_hgt, col_height_incr, skip_width;
-    int16_t next_draw_line, up_slope, nl_constant;
-    int16_t horizontal_read_skip, vertical_read_skip;
-    int16_t horizontal_x_slope, horizontal_left_pixel, horizontal_down_pixel;
-    int16_t vertical_x_slope, vertical_y_slope, vertical_left_pixel, vertical_down_pixel;
-    int read_offset;
-    int di_fractional;
-    uint8_t* vga_frame_buffer;
-    const uint8_t* texture_data;
-    const uint8_t* remap_palettes;
-    col1_hgt = 0;  /* OGBUG: uninitialized variable */
-    /* Populate geometric workspace arrays */
-    x[1] = tl_x; x[2] = tr_x; x[3] = br_x; x[4] = bl_x;
-    y[1] = tl_y; y[2] = tr_y; y[3] = br_y; y[4] = bl_y;
-    left_corner = 1; corner_2 = 2; corner_3 = 3; right_corner = 4;
-    max_y = 10000; min_y = 0;
-    /* Execute sorting pass to establish geometric structure */
-    for(loop_y = 0; loop_y < 4; loop_y++) {
-        if(y[loop_y + 1] < min_y) min_y = y[loop_y + 1];
-        if(y[loop_y + 1] > max_y) max_y = y[loop_y + 1];
-        for(loop_x = 0; loop_x < 3; loop_x++) {
-            if(x[loop_x + 1] > x[loop_x + 2]) {
-                Swap_Short(&x[loop_x + 1], &x[loop_x + 2]);
-                Swap_Short(&y[loop_x + 1], &y[loop_x + 2]);
-                /* Replicate internal hardware corner tracking flag swaps */
-                if(loop_x == 0) Swap_Short(&left_corner, &corner_2);
-                if(loop_x == 1) Swap_Short(&corner_2, &corner_3);
-                if(loop_x == 2) Swap_Short(&corner_3, &right_corner);
+    int16_t horizontal_left_slope;  // _DI_
+    int16_t loop_var_y;
+    int16_t loop_var_x;
+    uint16_t x[4];
+    uint16_t y[4];
+    int16_t corner[4];  // Left_Corner, Corner_2, Corner_3, Right_Corner
+    uint16_t draw_left;
+    uint16_t draw_top;
+    int16_t col_height_incr;
+    int16_t nl_constant;
+    int16_t min_y;
+    int16_t max_y;
+    int16_t up_slope;
+    int16_t next_draw_line;
+    int16_t horizontal_read_skip;
+    int16_t horizontal_left_pixel;
+    int16_t horizontal_x_slope;
+    int16_t horizontal_down_pixel;
+    int16_t vertical_read_skip;
+    int16_t vertical_y_slope;
+    int16_t vertical_down_pixel;
+    int16_t vertical_x_slope;
+    int16_t vertical_left_pixel;
+    int16_t draw_width;
+    int16_t y_left;
+    int16_t y_down;
+    int16_t replacement_colors;
+    int16_t skip_width;
+    uint16_t draw_height;
+    // uint16_t col1_hgt;
+    // uint16_t col1_hgt = 0;  /* CLAUDE */  // OGBUG: uninitialized; MSVC Debug /RTCu traps the read
+    /* OGBUG  col1_hgt is read uninitialised by the y[1] < y[0] draw_height branch (cmp [bp+Col1_Hgt], 1), and the col1_hgt = 1 that read can lead to is overwritten by the unconditional col1_hgt = 1 that follows, before col1_hgt is used */
+    /* HACK */  uint16_t col1_hgt = Stack_Garbage();  /* CLAUDE */  /* OG: uninitialised stack word */
+    int16_t read_offset;
+
+    // replacement_colors = farpeekb(pict_seg, s_FLIC_HDR.loop_frame);
+    replacement_colors = GET_1B_OFS(pict_seg, FLIC_HDR_POS_LOOP_FRAME);  /* CLAUDE */
+
+    x[0] = tl_x;
+    x[1] = tr_x;
+    x[2] = br_x;
+    x[3] = bl_x;
+
+    y[0] = tl_y;
+    y[1] = tr_y;
+    y[2] = br_y;
+    y[3] = bl_y;
+
+    corner[0] = 1;
+    corner[1] = 2;
+    corner[2] = 3;
+    corner[3] = 4;
+
+    max_y = 10000;
+    min_y = 0;
+
+    /* OGBUG  the min/max test reads y[loop_var_y] while the same loop bubble-sorts x / y / corner, so it can read one corner twice and never read another: x = 1, 3, 2, 0 (corners 1-4) reads corners 1, 3, 3, 2 and never reads corner 4. A corner above the screen only makes max_y negative (and the frame get rejected) if it is one of the corners that gets read */
+    for(loop_var_y = 0; loop_var_y < 4; loop_var_y++)
+    {
+        // if(y[loop_var_y] < min_y)
+        if(y[loop_var_y] < (uint16_t)min_y)  /* CLAUDE */  // Borland: unsigned < signed is an unsigned compare (jnb); modern C promotes both to int
+        {
+            min_y = y[loop_var_y];
+        }
+        // if(y[loop_var_y] > max_y)
+        if(y[loop_var_y] > (uint16_t)max_y)  /* CLAUDE */  // Borland: unsigned compare (jbe); signed int here lets a later positive y replace a negative max_y
+        {
+            max_y = y[loop_var_y];
+        }
+        for(loop_var_x = 0; loop_var_x < 3; loop_var_x++)
+        {
+            if(x[loop_var_x] > x[(loop_var_x + 1)])
+            {
+                // Swap_Short(&x[loop_var_x], &x[(loop_var_x + 1)]);
+                Swap_Short((int16_t *)&x[loop_var_x], (int16_t *)&x[(loop_var_x + 1)]);  /* CLAUDE */
+                // Swap_Short(&y[loop_var_x], &y[(loop_var_x + 1)]);
+                Swap_Short((int16_t *)&y[loop_var_x], (int16_t *)&y[(loop_var_x + 1)]);  /* CLAUDE */
+                Swap_Short(&corner[loop_var_x], &corner[(loop_var_x + 1)]);
             }
         }
     }
-    /* Out of bounds window clipping guard checks */
-    if(x[1] > screen_window_x2 || x[4] < screen_window_x1 || 
-        min_y > screen_window_y2 || max_y < screen_window_y1) {
-        return;
+
+    if(
+        (x[0] > screen_window_x2)
+        ||
+        (x[3] < screen_window_x1)
+        ||
+        (min_y > screen_window_y2)
+        ||
+        (max_y < screen_window_y1)
+    )
+    {
+        return 0;
     }
-    /* Route execution depending on if drawing a standard uniform rect or transformed quad */
-    /* [Standard Uniform Bounding Path - Reference Context Part 1] */
-    if(x[1] == x[2]) {
-        /* Standard Axis-Aligned bounding path implementation */
-        if(y[1] > y[2]) {
-            Swap_Short(&x[1], &x[2]);
-            Swap_Short(&y[1], &y[2]);
-            Swap_Short(&left_corner, &corner_2);
+
+    if(x[0] == x[1])
+    {
+        if(y[0] > y[1])
+        {
+            // Swap_Short(&x[0], &x[1]);
+            Swap_Short((int16_t *)&x[0], (int16_t *)&x[1]);  /* CLAUDE */
+            // Swap_Short(&y[0], &y[1]);
+            Swap_Short((int16_t *)&y[0], (int16_t *)&y[1]);  /* CLAUDE */
+            Swap_Short(&corner[0], &corner[1]);
         }
-        draw_left = x[1];
-        draw_top = y[1];
-        col1_hgt = y[2] - y[1] + 1;
+
+        draw_left = x[0];
+        draw_top = y[0];
+        col1_hgt = (y[1] - y[0] + 1);
         col_height_incr = 0;
-        draw_width = x[3] - x[1] + 1;
-        nl_constant = 0; up_slope = 0; next_draw_line = 0;
-        /* Calculate source index parameters depending on rotation state index flags */
-        read_offset = 0;
-        horizontal_x_slope = ((int32_t)width << 8) / (x[3] - x[1] + 1);
-        vertical_y_slope = ((int32_t)height << 8) / (y[2] - y[1] + 1);
-        vertical_x_slope = 0;
-        di_fractional = 0;
+        draw_width = (x[2] - x[0] + 1);
+        nl_constant = 0;
+        up_slope = 0;
+        next_draw_line = 0;
+
+        switch(corner[0])
+        {
+            case 1:
+            {
+                read_offset = 0;
+                y_down = 1;
+                y_left = height;
+                horizontal_left_slope = 0;
+                horizontal_x_slope = (((int32_t)width << 8) / (x[2] - x[0] + 1));
+                vertical_y_slope = (((int32_t)height << 8) / (y[1] - y[0] + 1));
+                vertical_x_slope = 0;
+            } break;
+            case 2:
+            {
+                read_offset = ((width - 1) * height);
+                y_down = -height;
+                y_left = 1;
+                horizontal_x_slope = (((int32_t)height << 8) / (x[2] - x[0] + 1));
+                horizontal_left_slope = 0;
+                vertical_x_slope = 0;
+                vertical_y_slope = (((int32_t)width << 8) / (y[1] - y[0] + 1));
+            } break;
+            case 3:
+            {
+                read_offset = ((width * height) - 1);
+                y_down = -1;
+                y_left = -height;
+                horizontal_x_slope = (((int32_t)width << 8) / (x[2] - x[0] + 1));
+                horizontal_left_slope = 0;
+                vertical_x_slope = 0;
+                vertical_y_slope = (((int32_t)height << 8) / (y[1] - y[0] + 1));
+            } break;
+            case 4:
+            {
+                read_offset = (height - 1);
+                y_down = height;
+                y_left = -1;
+                horizontal_left_slope = 0;
+                horizontal_x_slope = (((int32_t)height << 8) / (x[2] - x[0] + 1));
+                vertical_y_slope = (((int32_t)width << 8) / (y[1] - y[0] + 1));
+                vertical_x_slope = 0;
+            } break;
+        }
+
         horizontal_read_skip = 0;
+        if(horizontal_left_slope >= 256)
+        {
+            horizontal_read_skip = ((horizontal_left_slope / 256) * y_down);
+            horizontal_left_slope = (horizontal_left_slope % 256);
+        }
+        if(horizontal_x_slope >= 256)
+        {
+            horizontal_read_skip += ((horizontal_x_slope / 256) * y_left);
+            horizontal_x_slope = (horizontal_x_slope % 256);
+        }
+
         vertical_read_skip = 0;
-        /* Execute window bounds clip adjustments */
-        if(x[3] >= screen_window_x1 && x[1] <= screen_window_x2) {
-            skip_width = screen_window_x1 - x[1] - 1;
-            if(screen_window_x2 < x[3]) {
-                draw_width = screen_window_x2 - x[1] + 1;
+        if(vertical_y_slope >= 256)
+        {
+            vertical_read_skip = ((vertical_y_slope / 256) * y_down);
+            vertical_y_slope = (vertical_y_slope % 256);
+        }
+        if(vertical_x_slope >= 256)
+        {
+            vertical_read_skip += ((vertical_x_slope / 256) * y_left);
+            vertical_x_slope = (vertical_x_slope % 256);
+        }
+
+        if(
+            (x[2] >= screen_window_x1)
+            &&
+            (x[0] <= screen_window_x2)
+        )
+        {
+            skip_width = (screen_window_x1 - x[0] - 1);
+            if(screen_window_x2 < x[2])
+            {
+                draw_width = (screen_window_x2 - x[0] + 1);
             }
-            /* Initialize parameter structure package fields */
-            TextureRenderParams p;
-            p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
-            p.ch_slope = col_height_incr; p.ch_incr = horizontal_x_slope; p.up_slope = up_slope; p.nl = nl_constant;
-            p.read_off = read_offset + di_fractional;
-            p.pict_data = &pict_seg[16];  // data, no header
-            p.h_rskip = horizontal_read_skip; p.x_vslope = vertical_x_slope; p.x_down = 0;
-            p.x_hslope = horizontal_x_slope; p.x_left = 0; p.v_rskip = vertical_read_skip;
-            p.y_vslope = vertical_y_slope; p.y_down = 0; p.y_hslope = 0; p.y_left = 0;
-            p.skip_width = skip_width; 
-            p.min_off = screen_window_y1 * SCREEN_WIDTH;
-            p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
-            if(replacement_colors == 0) {
-                VGA_DrawTexture(&p);
-            } else {
-                VGA_DrawTexture_R(&p);
-            }
-        }
-    } else {
-        /* Transformed perspective polygon rendering path... */
-        /* Assembly lines 21942 to 22512 process full quad rendering by breaking down gradients */
-        /* To preserve readability, parameters are derived step-by-step per sub-strip here */
-        /* loc_21942: Transformed Perspective Multi-Strip Pipeline */
-draw_left = x[1];
-        draw_top = y[1];
-        draw_width = x[2] - x[1] + 1;
-        if(y[2] < y[1]) {
-            int32_t delta_y = (int32_t)(y[3] - y[1]) * (x[2] - x[1]);
-            draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[1] - y[2] + 1;
-            /* OGBUG: uninitialized variable */
-            if(col1_hgt < 1) col1_hgt = 1;
-        } else {
-            int32_t delta_y = (int32_t)(y[1] - y[3]) * (x[2] - x[1]);
-            draw_height = (int16_t)(delta_y / (x[3] - x[1])) + y[2] - y[1] + 1;
-        }
-        col1_hgt = 1;
-        col_height_incr = ((int32_t)(draw_height - col1_hgt) << 8) / (draw_width - 1);
-        next_draw_line = -SCREEN_WIDTH;
-        if(y[2] < y[3]) {
-            up_slope = ((int32_t)(y[1] - y[2]) << 8) / (x[2] - x[1]);
-        } else {
-            up_slope = ((int32_t)(y[1] - y[3]) << 8) / (x[3] - x[1]);
-        }
-        if(up_slope < 0x100) {
-            nl_constant = 0;
-        } else {
-            // nl_constant = (up_slope / 0x100) * -80;
-            nl_constant = (up_slope / 0x100) * -SCREEN_WIDTH;
-            up_slope %= 0x100;
-        }
-        /* Set sampling directions based on sorted index positions */
-        if(left_corner == 1 || left_corner == 3) {
-            if(y[2] < y[3]) {
-                vertical_x_slope = ((int32_t)(width - 1) << 8) / (draw_height - 1);
-                int32_t term = ((int32_t)(y[2] - y[1]) * (x[2] - x[1])) / (x[3] - x[1]);
-                vertical_y_slope = ((int32_t)(height - 1) << 8) / term;
-            } else {
-                int32_t term = ((int32_t)(y[3] - y[1]) * (x[2] - x[1])) / (x[3] - x[1]);
-                vertical_x_slope = ((int32_t)(width - 1) << 8) / term;
-                vertical_y_slope = ((int32_t)(height - 1) << 8) / (draw_height - 1);
-            }
-        } else {
-            /* Alternating shear interpolation fallback maps */
-            vertical_x_slope = ((int32_t)(width - 1) << 8) / (draw_height - 1);
-            vertical_y_slope = ((int32_t)(height - 1) << 8) / (draw_height - 1);
-        }
-        /* Strip Pipeline Step Execution Dispatcher */
-        if(x[2] >= screen_window_x1 && x[1] <= screen_window_x2) {
-            skip_width = screen_window_x1 - x[1] - 1;
-            if(screen_window_x2 < x[2]) {
-                draw_width = screen_window_x2 - x[1] + 1;
-            }
-            TextureRenderParams p;
-            p.start_x = draw_left; p.start_y = draw_top; p.width = draw_width; p.col1_hgt = col1_hgt;
-            p.ch_slope = col_height_incr; p.ch_incr = up_slope; p.up_slope = up_slope; p.nl = nl_constant;
-            p.read_off = 0;
-            p.pict_data = &pict_seg[16];  // data, no header
-            p.h_rskip = 0; p.x_vslope = vertical_x_slope; p.x_down = 0;
-            p.x_hslope = 0; p.x_left = 0; p.v_rskip = 0;
-            p.y_vslope = vertical_y_slope; p.y_down = 0; p.y_hslope = 0; p.y_left = 0;
-            p.skip_width = skip_width;
-            p.min_off = screen_window_y1 * SCREEN_WIDTH;
-            p.max_off = (screen_window_y2 + 1) * SCREEN_WIDTH;
             if(replacement_colors == 0)
             {
-                VGA_DrawTexture(&p);
+                // Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, y_down, horizontal_x_slope, y_left, vertical_read_skip, vertical_y_slope, y_down, vertical_x_slope, y_left, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, y_down, horizontal_x_slope, y_left, vertical_read_skip, vertical_y_slope, y_down, vertical_x_slope, y_left, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
             }
             else
             {
-                VGA_DrawTexture_R(&p);
+                // Remap_Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, y_down, horizontal_x_slope, y_left, vertical_read_skip, vertical_y_slope, y_down, vertical_x_slope, y_left, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Remap_Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, y_down, horizontal_x_slope, y_left, vertical_read_skip, vertical_y_slope, y_down, vertical_x_slope, y_left, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
             }
         }
     }
+    else
+    {
+        draw_left = x[0];
+        draw_top = y[0];
+        draw_width = (x[1] - x[0] + 1);
+
+        if(y[1] < y[0])
+        {
+            // draw_height = ((((y[2] - y[0]) * (x[1] - x[0])) / (x[2] - x[0])) + y[0] - y[1] + 1);
+            draw_height = (((uint16_t)((uint32_t)(y[2] - y[0]) * (uint32_t)(x[1] - x[0])) / (uint16_t)(x[2] - x[0])) + y[0] - y[1] + 1);  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+            if(col1_hgt < 1)
+            {
+                col1_hgt = 1;
+            }
+        }
+        else
+        {
+            // draw_height = ((((y[0] - y[2]) * (x[1] - x[0])) / (x[2] - x[0])) + y[1] - y[0] + 1);
+            draw_height = (((uint16_t)((uint32_t)(y[0] - y[2]) * (uint32_t)(x[1] - x[0])) / (uint16_t)(x[2] - x[0])) + y[1] - y[0] + 1);  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        }
+
+        col1_hgt = 1;
+        // col_height_incr = (((draw_height - col1_hgt) << 8) / (draw_width - 1));
+        col_height_incr = ((uint16_t)((uint16_t)(draw_height - col1_hgt) << 8) / (uint16_t)(draw_width - 1));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        next_draw_line = -80;
+
+        if(y[1] < y[2])
+        {
+            // up_slope = (((y[0] - y[1]) << 8) / (x[1] - x[0]));
+            up_slope = ((uint16_t)((uint16_t)(y[0] - y[1]) << 8) / (uint16_t)(x[1] - x[0]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        }
+        else
+        {
+            // up_slope = (((y[0] - y[2]) << 8) / (x[2] - x[0]));
+            up_slope = ((uint16_t)((uint16_t)(y[0] - y[2]) << 8) / (uint16_t)(x[2] - x[0]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        }
+
+        if(up_slope < 256)
+        {
+            nl_constant = 0;
+        }
+        else
+        {
+            nl_constant = ((up_slope / 256) * -80);
+            up_slope = (up_slope % 256);
+        }
+
+        if(
+            (corner[0] == 1)
+            ||
+            (corner[0] == 3)
+        )
+        {
+            if(y[1] < y[2])
+            {
+                vertical_x_slope = (((int32_t)(width - 1) << 8) / (draw_height - 1));
+                vertical_y_slope = ((int16_t)((((int32_t)(height - 1) << 8) * (x[1] - x[0])) / (draw_height - 1)) / (int32_t)(x[2] - x[0]));
+            }
+            else
+            {
+                vertical_x_slope = ((int16_t)((((int32_t)(width - 1) << 8) * (x[1] - x[0])) / (draw_height - 1)) / (int32_t)(x[2] - x[0]));
+                vertical_y_slope = (((int32_t)(height - 1) << 8) / (draw_height - 1));
+            }
+        }
+        else
+        {
+            if(y[1] < y[2])
+            {
+                vertical_x_slope = ((int16_t)((((int32_t)(width - 1) << 8) * (x[3] - x[2])) / (draw_height - 1)) / (int32_t)(x[3] - x[1]));
+                vertical_y_slope = (((int32_t)(height - 1) << 8) / (draw_height - 1));
+            }
+            else
+            {
+                vertical_x_slope = (((int32_t)(width - 1) << 8) / (draw_height - 1));
+                vertical_y_slope = ((int16_t)((((int32_t)(height - 1) << 8) * (x[1] - x[0])) / (draw_height - 1)) / (int32_t)(x[2] - x[0]));
+            }
+        }
+
+        switch(corner[0])
+        {
+            case 1:
+            {
+                read_offset = 0;
+                horizontal_left_pixel = 1;
+                horizontal_down_pixel = height;
+                vertical_down_pixel = 1;
+                vertical_left_pixel = -height;
+                horizontal_left_slope = 0;
+                if(y[1] < y[2])
+                {
+                    horizontal_x_slope = (((int32_t)(width - 1) << 8) / (x[1] - x[0]));
+                }
+                else
+                {
+                    horizontal_x_slope = (((int32_t)(width - 1) << 8) / (x[2] - x[0]));
+                }
+            } break;
+            case 2:
+            {
+                read_offset = ((width - 1) * height);
+                horizontal_left_pixel = 1;
+                horizontal_down_pixel = -height;
+                vertical_down_pixel = -1;
+                vertical_left_pixel = -height;
+                horizontal_x_slope = 0;
+                if(y[1] < y[2])
+                {
+                    horizontal_left_slope = (((int32_t)(height - 1) << 8) / (x[1] - x[0]));
+                }
+                else
+                {
+                    horizontal_left_slope = (((int32_t)(height - 1) << 8) / (x[2] - x[0]));
+                }
+            } break;
+            case 3:
+            {
+                read_offset = ((width * height) - 1);
+                horizontal_left_pixel = -1;
+                horizontal_down_pixel = -height;
+                vertical_down_pixel = -1;
+                vertical_left_pixel = height;
+                horizontal_left_slope = 0;
+                if(y[1] < y[2])
+                {
+                    horizontal_x_slope = (((int32_t)(width - 1) << 8) / (x[1] - x[0]));
+                }
+                else
+                {
+                    horizontal_x_slope = (((int32_t)(width - 1) << 8) / (x[2] - x[0]));
+                }
+            } break;
+            case 4:
+            {
+                read_offset = (height - 1);
+                horizontal_left_pixel = -1;
+                horizontal_down_pixel = height;
+                vertical_down_pixel = 1;
+                vertical_left_pixel = height;
+                horizontal_x_slope = 0;
+                if(y[1] < y[2])
+                {
+                    horizontal_left_slope = (((int32_t)(height - 1) << 8) / (x[1] - x[0]));
+                }
+                else
+                {
+                    horizontal_left_slope = (((int32_t)(height - 1) << 8) / (x[2] - x[0]));
+                }
+            } break;
+        }
+
+        horizontal_read_skip = 0;
+        if(horizontal_left_slope >= 256)
+        {
+            horizontal_read_skip = ((horizontal_left_slope / 256) * horizontal_left_pixel);
+            horizontal_left_slope = (horizontal_left_slope % 256);
+        }
+        if(horizontal_x_slope >= 256)
+        {
+            horizontal_read_skip += ((horizontal_x_slope / 256) * horizontal_down_pixel);
+            horizontal_x_slope = (horizontal_x_slope % 256);
+        }
+
+        vertical_read_skip = 0;
+        if(vertical_y_slope >= 256)
+        {
+            vertical_read_skip = ((vertical_y_slope / 256) * vertical_down_pixel);
+            vertical_y_slope = (vertical_y_slope % 256);
+        }
+        if(vertical_x_slope >= 256)
+        {
+            vertical_read_skip += ((vertical_x_slope / 256) * vertical_left_pixel);
+            vertical_x_slope = (vertical_x_slope % 256);
+        }
+
+        if(
+            (x[1] >= screen_window_x1)
+            &&
+            (x[0] <= screen_window_x2)
+        )
+        {
+            skip_width = (screen_window_x1 - x[0] - 1);
+            if(screen_window_x2 < x[1])
+            {
+                draw_width = (screen_window_x2 - x[0] + 1);
+            }
+            if(replacement_colors == 0)
+            {
+                // Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+            else
+            {
+                // Remap_Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Remap_Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+        }
+
+        draw_left = x[1];
+        draw_width = (x[2] - x[1] + 1);
+        col1_hgt = draw_height;
+        col_height_incr = 0;
+
+        if(y[1] < y[2])
+        {
+            draw_top = y[1];
+            next_draw_line = 80;
+            // up_slope = (((y[3] - y[1]) << 8) / (x[3] - x[1]));
+            up_slope = ((uint16_t)((uint16_t)(y[3] - y[1]) << 8) / (uint16_t)(x[3] - x[1]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+            if(up_slope < 256)
+            {
+                nl_constant = 0;
+            }
+            else
+            {
+                nl_constant = ((up_slope / 256) * 80);
+                up_slope = (up_slope % 256);
+            }
+        }
+        else
+        {
+            // draw_top = (y[0] - (((y[0] - y[2]) * (x[1] - x[0])) / (x[2] - x[0])));
+            draw_top = (y[0] - ((uint16_t)((uint32_t)(y[0] - y[2]) * (uint32_t)(x[1] - x[0])) / (uint16_t)(x[2] - x[0])));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        }
+
+        switch(corner[0])
+        {
+            case 1:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = ((width - 1) * height);
+                    horizontal_x_slope = 0;
+                    // horizontal_left_slope = (((height - 1) << 8) / (x[3] - x[1]));
+                    horizontal_left_slope = ((uint16_t)((uint16_t)(height - 1) << 8) / (uint16_t)(x[3] - x[1]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                }
+                else
+                {
+                    read_offset = ((int16_t)(((int32_t)(width - 1) * (x[1] - x[0])) / (x[2] - x[0])) * height);
+                }
+            } break;
+            case 2:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = ((width * height) - 1);
+                    // horizontal_x_slope = (((width - 1) << 8) / (x[3] - x[1]));
+                    horizontal_x_slope = ((uint16_t)((uint16_t)(width - 1) << 8) / (uint16_t)(x[3] - x[1]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                    horizontal_left_slope = 0;
+                }
+                else
+                {
+                    read_offset = (((width - 1) * height) + (int16_t)(((int32_t)(height - 1) * (x[1] - x[0])) / (x[2] - x[0])));
+                }
+            } break;
+            case 3:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = (height - 1);
+                    horizontal_x_slope = 0;
+                    // horizontal_left_slope = (((height - 1) << 8) / (x[3] - x[1]));
+                    horizontal_left_slope = ((uint16_t)((uint16_t)(height - 1) << 8) / (uint16_t)(x[3] - x[1]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                }
+                else
+                {
+                    read_offset = (((width * height) - 1) - ((int16_t)(((int32_t)(width - 1) * (x[1] - x[0])) / (x[2] - x[0])) * height));
+                }
+            } break;
+            case 4:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = 0;
+                    // horizontal_x_slope = (((width - 1) << 8) / (x[3] - x[1]));
+                    horizontal_x_slope = ((uint16_t)((uint16_t)(width - 1) << 8) / (uint16_t)(x[3] - x[1]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                    horizontal_left_slope = 0;
+                }
+                else
+                {
+                    read_offset = ((height - 1) - (int16_t)(((int32_t)(height - 1) * (x[1] - x[0])) / (x[2] - x[0])));
+                }
+            } break;
+        }
+
+        if(y[1] < y[2])
+        {
+            horizontal_read_skip = 0;
+            if(horizontal_left_slope >= 256)
+            {
+                horizontal_read_skip = ((horizontal_left_slope / 256) * horizontal_left_pixel);
+                horizontal_left_slope = (horizontal_left_slope % 256);
+            }
+            if(horizontal_x_slope >= 256)
+            {
+                horizontal_read_skip += ((horizontal_x_slope / 256) * horizontal_down_pixel);
+                horizontal_x_slope = (horizontal_x_slope % 256);
+            }
+        }
+
+        if(
+            (x[2] >= screen_window_x1)
+            &&
+            (x[1] <= screen_window_x2)
+        )
+        {
+            skip_width = (screen_window_x1 - x[1] - 1);
+            if(screen_window_x2 < x[2])
+            {
+                draw_width = (screen_window_x2 - x[1] + 1);
+            }
+            if(replacement_colors == 0)
+            {
+                // Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+            else
+            {
+                // Remap_Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Remap_Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+        }
+
+        draw_left = x[2];
+        draw_width = (x[3] - x[2] + 1);
+        // col_height_incr = -(((draw_height - 1) << 8) / (draw_width - 1));
+        col_height_incr = -((uint16_t)((uint16_t)(draw_height - 1) << 8) / (uint16_t)(draw_width - 1));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+
+        if(y[1] < y[2])
+        {
+            // draw_top = (y[3] - (((y[3] - y[1]) * (x[3] - x[2])) / (x[3] - x[1])));
+            draw_top = (y[3] - ((uint16_t)((uint32_t)(y[3] - y[1]) * (uint32_t)(x[3] - x[2])) / (uint16_t)(x[3] - x[1])));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+        }
+        else
+        {
+            draw_top = y[2];
+            next_draw_line = 80;
+            // up_slope = (((y[3] - y[2]) << 8) / (x[3] - x[2]));
+            up_slope = ((uint16_t)((uint16_t)(y[3] - y[2]) << 8) / (uint16_t)(x[3] - x[2]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+            if(up_slope < 256)
+            {
+                nl_constant = 0;
+            }
+            else
+            {
+                nl_constant = ((up_slope / 256) * 80);
+                up_slope = (up_slope % 256);
+            }
+        }
+
+        switch(corner[0])
+        {
+            case 1:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = ((int16_t)(((int32_t)(height - 1) * (x[2] - x[1])) / (x[3] - x[1])) + ((width - 1) * height));
+                }
+                else
+                {
+                    read_offset = ((width - 1) * height);
+                    horizontal_x_slope = 0;
+                    // horizontal_left_slope = (((height - 1) << 8) / (x[3] - x[2]));
+                    horizontal_left_slope = ((uint16_t)((uint16_t)(height - 1) << 8) / (uint16_t)(x[3] - x[2]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                }
+            } break;
+            case 2:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = (((width * height) - 1) - ((int16_t)(((int32_t)(width - 1) * (x[2] - x[1])) / (x[3] - x[1])) * height));
+                }
+                else
+                {
+                    read_offset = ((width * height) - 1);
+                    // horizontal_x_slope = (((width - 1) << 8) / (x[3] - x[2]));
+                    horizontal_x_slope = ((uint16_t)((uint16_t)(width - 1) << 8) / (uint16_t)(x[3] - x[2]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                    horizontal_left_slope = 0;
+                }
+            } break;
+            case 3:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = ((height - 1) - (int16_t)(((int32_t)(height - 1) * (x[2] - x[1])) / (x[3] - x[1])));
+                }
+                else
+                {
+                    read_offset = (height - 1);
+                    horizontal_x_slope = 0;
+                    // horizontal_left_slope = (((height - 1) << 8) / (x[3] - x[2]));
+                    horizontal_left_slope = ((uint16_t)((uint16_t)(height - 1) << 8) / (uint16_t)(x[3] - x[2]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                }
+            } break;
+            case 4:
+            {
+                if(y[1] < y[2])
+                {
+                    read_offset = ((int16_t)(((int32_t)(width - 1) * (x[2] - x[1])) / (x[3] - x[1])) * height);
+                }
+                else
+                {
+                    read_offset = 0;
+                    // horizontal_x_slope = (((width - 1) << 8) / (x[3] - x[2]));
+                    horizontal_x_slope = ((uint16_t)((uint16_t)(width - 1) << 8) / (uint16_t)(x[3] - x[2]));  /* CLAUDE */  // Borland: 16-bit unsigned (product keeps its low word, << 8 is a 16-bit shl, xor dx,dx / div); MSVC would promote the uint16_t operands to signed int
+                    horizontal_left_slope = 0;
+                }
+            } break;
+        }
+
+        if(y[1] >= y[2])
+        {
+            horizontal_read_skip = 0;
+            if(horizontal_left_slope >= 256)
+            {
+                horizontal_read_skip = ((horizontal_left_slope / 256) * horizontal_left_pixel);
+                horizontal_left_slope = (horizontal_left_slope % 256);
+            }
+            if(horizontal_x_slope >= 256)
+            {
+                horizontal_read_skip += ((horizontal_x_slope / 256) * horizontal_down_pixel);
+                horizontal_x_slope = (horizontal_x_slope % 256);
+            }
+        }
+
+        if(
+            (x[3] >= screen_window_x1)
+            &&
+            (x[2] <= screen_window_x2)
+        )
+        {
+            skip_width = (screen_window_x1 - x[2] - 1);
+            if(screen_window_x2 < x[3])
+            {
+                draw_width = (screen_window_x2 - x[2] + 1);
+            }
+            if(replacement_colors == 0)
+            {
+                // Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+            else
+            {
+                // Remap_Texture_Map_Block(draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 1), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80));
+                Remap_Texture_Map_Block(&(TextureRenderParams){ draw_left, draw_top, draw_width, col1_hgt, col_height_incr, nl_constant, up_slope, next_draw_line, read_offset, (pict_seg + 16), horizontal_read_skip, horizontal_left_slope, horizontal_left_pixel, horizontal_x_slope, horizontal_down_pixel, vertical_read_skip, vertical_y_slope, vertical_down_pixel, vertical_x_slope, vertical_left_pixel, skip_width, (screen_window_x1 * 80), ((screen_window_x2 + 1) * 80) });  /* CLAUDE */
+            }
+        }
+    }
+    /* HACK */  return 0;  // DNE in the asm: no return at the end (BCC 3.0 warns "Function should return a value"); MSVC C4715 under /WX needs one
 }
 
 
 // WZD s30p22
-/* GEMINI */
+// drake178: UU_VGA_WndDrawTransform()
+/*
+    Draws the picture as a band of its own height along the line from (lm_x, lm_y) to (rm_x, rm_y).
+    uu_replacement_colors is read and never used; Draw_Bitmap_Animation_Block() reads the remap flag itself.
+    BCC 3.1 codegen test (-mm -a -d): matches the asm (DI = lm_x, SI = height) apart from link-time and -S artifacts
+*/
 void UU_VGA_WndDrawTransform(int16_t lm_x, int16_t lm_y, int16_t rm_x, int16_t rm_y, SAMB_ptr pict_seg)
 {
-    int16_t BR_X;
-    int16_t BR_Y;
-    int16_t BL_X;
-    int16_t BL_Y;
-    int16_t Y_Dist;
-    int16_t X_Dist;
-    int16_t Width;
+    int16_t br_x;
+    int16_t br_y;
+    int16_t bl_x;
+    int16_t bl_y;
+    int16_t y_dist;
+    int16_t x_dist;
+    int16_t width;
     int16_t angle;
-    int16_t UU_Replacement_Colors;
-    int16_t Transform_Angle;
-    int16_t Half_Height_Cos;
-    int16_t Half_Height_Sin;
-    int16_t height;
-    Width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
+    int16_t uu_replacement_colors;
+    int16_t transform_angle;
+    int16_t half_height_cos;
+    int16_t half_height_sin;
+    int16_t height;  // _SI_
+
+    width = GET_2B_OFS(pict_seg, FLIC_HDR_POS_WIDTH);
     height = GET_2B_OFS(pict_seg, FLIC_HDR_POS_HEIGHT);
-    UU_Replacement_Colors = GET_2B_OFS(pict_seg, FLIC_HDR_POS_LOOP_FRAME);
-    X_Dist = rm_x - lm_x;
-    Y_Dist = rm_y - lm_y;
-    angle = Get_Angle(X_Dist, Y_Dist);
-    Transform_Angle = 90 - angle;
-    if(Transform_Angle < 0)
+    uu_replacement_colors = GET_2B_OFS(pict_seg, FLIC_HDR_POS_LOOP_FRAME);
+
+    x_dist = rm_x - lm_x;
+    y_dist = rm_y - lm_y;
+
+    angle = Get_Angle(x_dist, y_dist);
+
+    transform_angle = 90 - angle;
+    if(transform_angle < 0)
     {
-        Transform_Angle += 360;
+        transform_angle += 360;
     }
-    Half_Height_Cos = Cos(Transform_Angle, height) / 2;
-    Half_Height_Sin = Sin(Transform_Angle, height) / 2;
-    lm_x += Half_Height_Cos;
-    lm_y -= Half_Height_Sin;
-    rm_x += Half_Height_Cos;
-    rm_y -= Half_Height_Sin;
-    BR_X = rm_x - (Sin(angle, height * 12) / 10);
-    BR_Y = rm_y + Cos(angle, height);
-    BL_X = lm_x - (Sin(angle, height * 12) / 10);
-    BL_Y = lm_y + Cos(angle, height);
-    Draw_Bitmap_Animation_Block(lm_x, lm_y, rm_x, rm_y, BR_X, BR_Y, BL_X, BL_Y, pict_seg, height, Width);
+
+    half_height_cos = Cos(transform_angle, height) / 2;
+    half_height_sin = Sin(transform_angle, height) / 2;
+
+    lm_x += half_height_cos;
+    lm_y -= half_height_sin;
+    rm_x += half_height_cos;
+    rm_y -= half_height_sin;
+
+    br_x = rm_x - (Sin(angle, (height * 12)) / 10);
+    br_y = rm_y + Cos(angle, height);
+    bl_x = lm_x - (Sin(angle, (height * 12)) / 10);
+    bl_y = lm_y + Cos(angle, height);
+
+    Draw_Bitmap_Animation_Block(lm_x, lm_y, rm_x, rm_y, br_x, br_y, bl_x, bl_y, pict_seg, height, width);
 }
 
 
 // WZD s30p23
+// drake178: VGA_RotateRect()
 // MoO2  Module: bitmap  Get_Rotated_Pixels()
-/* GEMINI */
-void Get_Rotated_Pixels(int16_t angle, int16_t Width, int16_t Height, int16_t * TL_X_ptr, int16_t * TL_Y_ptr, int16_t * TR_X_ptr, int16_t * TR_Y_ptr, int16_t * BR_X_ptr, int16_t * BR_Y_ptr, int16_t * BL_X_ptr, int16_t * BL_Y_ptr)
+/*
+    BCC 3.1 codegen test (-mm -a -d): matches the asm exactly (apart from the -S artifact retf vs ret)
+*/
+void Get_Rotated_Pixels(int16_t angle, int16_t width, int16_t height, int16_t * tl_x_ptr, int16_t * tl_y_ptr, int16_t * tr_x_ptr, int16_t * tr_y_ptr, int16_t * br_x_ptr, int16_t * br_y_ptr, int16_t * bl_x_ptr, int16_t * bl_y_ptr)
 {
-    int16_t Center_X;
-    int16_t Center_Y;
-    int16_t Original_X;
-    Center_X = *TL_X_ptr + Width / 2;
-    Center_Y = *TL_Y_ptr + Height / 2;
-    *TR_X_ptr = *TL_X_ptr + Width - 1;
-    *TR_Y_ptr = *TL_Y_ptr;
-    *BR_X_ptr = *TL_X_ptr + Width - 1;
-    *BR_Y_ptr = *TL_Y_ptr + Height - 1;
-    *BL_X_ptr = *TL_X_ptr;
-    *BL_Y_ptr = *TL_Y_ptr + Height - 1;
-    Original_X = *TL_X_ptr;
-    *TL_X_ptr = Center_X + Cos(angle, *TL_X_ptr - Center_X) - (Sin(angle, (*TL_Y_ptr - Center_Y) * 12) / 10);
-    *TL_Y_ptr = Center_Y + Cos(angle, *TL_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
-    Original_X = *TR_X_ptr;
-    *TR_X_ptr = Center_X + Cos(angle, *TR_X_ptr - Center_X) - (Sin(angle, (*TR_Y_ptr - Center_Y) * 12) / 10);
-    *TR_Y_ptr = Center_Y + Cos(angle, *TR_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
-    Original_X = *BR_X_ptr;
-    *BR_X_ptr = Center_X + Cos(angle, *BR_X_ptr - Center_X) - (Sin(angle, (*BR_Y_ptr - Center_Y) * 12) / 10);
-    *BR_Y_ptr = Center_Y + Cos(angle, *BR_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
-    Original_X = *BL_X_ptr;
-    *BL_X_ptr = Center_X + Cos(angle, *BL_X_ptr - Center_X) - (Sin(angle, (*BL_Y_ptr - Center_Y) * 12) / 10);
-    *BL_Y_ptr = Center_Y + Cos(angle, *BL_Y_ptr - Center_Y) + (Sin(angle, (Original_X - Center_X) * 22) / 25);
+    int16_t center_x;
+    int16_t center_y;
+    int16_t original_x;
+
+    center_x = *tl_x_ptr + (width / 2);
+    center_y = *tl_y_ptr + (height / 2);
+
+    *tr_x_ptr = *tl_x_ptr + width - 1;
+    *tr_y_ptr = *tl_y_ptr;
+    *br_x_ptr = *tl_x_ptr + width - 1;
+    *br_y_ptr = *tl_y_ptr + height - 1;
+    *bl_x_ptr = *tl_x_ptr;
+    *bl_y_ptr = *tl_y_ptr + height - 1;
+
+    original_x = *tl_x_ptr;
+    *tl_x_ptr = center_x + Cos(angle, (*tl_x_ptr - center_x)) - (Sin(angle, ((*tl_y_ptr - center_y) * 12)) / 10);
+    *tl_y_ptr = center_y + Cos(angle, (*tl_y_ptr - center_y)) + (Sin(angle, ((original_x - center_x) * 22)) / 25);
+
+    original_x = *tr_x_ptr;
+    *tr_x_ptr = center_x + Cos(angle, (*tr_x_ptr - center_x)) - (Sin(angle, ((*tr_y_ptr - center_y) * 12)) / 10);
+    *tr_y_ptr = center_y + Cos(angle, (*tr_y_ptr - center_y)) + (Sin(angle, ((original_x - center_x) * 22)) / 25);
+
+    original_x = *br_x_ptr;
+    *br_x_ptr = center_x + Cos(angle, (*br_x_ptr - center_x)) - (Sin(angle, ((*br_y_ptr - center_y) * 12)) / 10);
+    *br_y_ptr = center_y + Cos(angle, (*br_y_ptr - center_y)) + (Sin(angle, ((original_x - center_x) * 22)) / 25);
+
+    original_x = *bl_x_ptr;
+    *bl_x_ptr = center_x + Cos(angle, (*bl_x_ptr - center_x)) - (Sin(angle, ((*bl_y_ptr - center_y) * 12)) / 10);
+    *bl_y_ptr = center_y + Cos(angle, (*bl_y_ptr - center_y)) + (Sin(angle, ((original_x - center_x) * 22)) / 25);
 }
 
 
@@ -2328,7 +2847,7 @@ XREF:
 */
 void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_page)
 {
-    char file_name[LEN_FILE_NAME] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char file_name[LEN_FILE_NAME] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  /* HACK  the OG never writes this 20-byte local (bp-26h); an empty string stands in for its unterminated stack garbage */
     int32_t entry_start = 0;
     int32_t entry_length = 0;
     int32_t total_bytes_left = 0;
@@ -2351,7 +2870,7 @@ void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_pag
     entry_length -= offset;
     if(entry_length <= 0L)
     {
-        /* OGBUG  file_name is uninitialized on the stack here in the original binary */
+        /* OGBUG  reports the error under the never-written local file_name (stack garbage), not file_animation_file_name, so the message shows garbage instead of the LBX name */
         Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
     }
     if(size < entry_length)
@@ -2361,6 +2880,7 @@ void Load_File_Animation_Frame(int32_t offset, int32_t size, int16_t logical_pag
     // if(lbx_seek(entry_start, lbx_fptr) == 0)
     if(fseek(lbx_fptr, entry_start, SEEK_SET) != 0)
     {
+        /* OGBUG  same as above: the seek error is reported under the never-written local file_name, not file_animation_file_name */
         Error_Handler(file_name, le_corrupted, file_animation_entry_num, ST_NULL);
     }
     page_count = (int16_t)(entry_length / 16384L);
@@ -3565,7 +4085,6 @@ void Remap_Draw_Picture_ASM(int16_t x_start, int16_t y_start, int16_t ofst, byte
 doesn't copy transparent pixels
 Mask_Bitmap_Pixels() vs. Mask_Bitmap_Pixels_Inverse()
 ...inverse only copies transparent pixels
-
 */
 void Mask_Bitmap_Pixels(byte_ptr dst, byte_ptr src, int16_t dst_skip_y, int16_t src_skip_y, int16_t width, int16_t height)
 {
@@ -3658,6 +4177,11 @@ void Replace_Color(SAMB_ptr pict_seg, uint8_t color_to_replace, uint8_t replacem
 
 // WZD s33p10
 // UU_LBX_IMG_GetIntensity()
+void UU_LBX_IMG_GetIntensity(void)
+{
+    // TODO
+}
+
 
 // WZD s33p11
 // drake178: LBX_IMG_PartialCopy()
@@ -3851,13 +4375,15 @@ void Enlarge_Bitmap(SAMB_ptr bitmap, int16_t scale_x, int16_t scale_y)
 
 
 
-// WZD s33p15
-// MoO2  Module: bitmap  Vanish_Bitmap()
-// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
+/* CLAUDE */  /* moved here from between the WZD s33p15 id tag and Vanish_Bitmap(), so the tag sits on its function */
 // WZD seg033:06E3
 static uint16_t m_vanish_bitmap_dither_seed = 0;
 // WZD seg033:06E5
 uint8_t m_dither_threshold_matrix[] = {42,68,35,1,70,25,79,59,63,65,6,46,82,28,62,92,96,43,28,37,92,5,3,54,93,83,22,17,19,96,48,27,72,39,70,13,68,100,36,95,4,12,23,34,74,65,42,12,54,69,48,45,63,58,38,60,24,42,30,79,17,36,91,43,89,7,41,43,65,49,47,6,91,30,71,51,7,2,94,49,30,24,85,55,57,41,67,77,32,9,45,40,27,24,38,39,19,83,30,42,34,16,40,59,5,31,78,7,74,87,22,46,25,73,71,30,78,74,98,13,87,91,62,37,56,68,56,75,32,53,51,51,42,25,67,31,8,92,8,38,58,88,54,84,46,10,10,59,22,89,23,47,7,31,14,69,1,92,63,56,11,60,25,38,49,84,96,42,3,51,92,37,75,21,97,22,49,100,69,85,82,35,54,100,19,39,1,89,28,68,29,94,49,84,8,22,11,18,14,15,10,17,36,52,1,50,20,57,99,4,25,9,45,10,90,3,96,86,94,44,24,88,15,4,49,1,59,19,81,97,99,82,90,99,10,58,73,23,39,93,39,80,91,58,59,92,16,89,57,12,3,35,73,56,29,47};
+
+// WZD s33p15
+// MoO2  Module: bitmap  Vanish_Bitmap()
+// MoO2  Moudle: shear   Vanish_Bitmap_Pixels_()
 // WZD 2459:07E5
 // proc Vanish_Bitmap far
 /*
@@ -3870,7 +4396,7 @@ XREF:
     Battle_Unit_Teleport()
     Battle_Unit_Tunnel()
     Battle_Unit_Summon_Animation()
-    Spell_Target_Global_Enchantment_Disjunct__WIP()
+    Global_Enchantment_Disjunct__WIP()
     Spell_Of_Mastery_Lose_Draw()
     Cityscape_Draw_Buildings()
     Draw_Map_Nodes()
@@ -4094,9 +4620,11 @@ void DUPE_Inverse_Gray_Scale_Bitmap(byte_ptr bitmap, int16_t color_index)
 }
 
 
-// WZD s33p19
+/* CLAUDE */  /* moved here from between the WZD s33p19 id tag and Vanish_Bitmap_Dither_Seed(), so the tag sits on its function */
 // WZD 2459:09E3
 static uint32_t m_dither_random_seed = 0x0A2893UL;
+
+// WZD s33p19
 // WZD 2459:09E7
 // proc Vanish_Bitmap_Dither_Seed far
 /**

@@ -1,0 +1,8 @@
+module_num=148
+module=atol
+source=0148-atol.md
+range[0]=1:0x00116622 linear=0x00126622 size=109
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m148f001  1    -      0x00126622  1:0x00116622  code  atol  atol_   regions/07-object-1/001AB654-001ABE53.txt

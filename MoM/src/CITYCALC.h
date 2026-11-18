@@ -26,6 +26,9 @@ enum e_KILL_TYPE
     kt_Disappeared  = 2     // disappear - killed by damage[2] (doom/chaos damage); banish, cracks call, disintegrate, dispel evil, holy word, petrify, unsummon
 };
 
+/* the Resource Breakdown buffer: 15 2-byte lines (City_ovr55.c Resource_Breakdown() allocates and clears this many; every CTY_*_Breakdown() zeroes this many) */
+#define RESOURCE_BREAKDOWN_LINES  15
+
 //  ; (sizeof=0x10, standard type)
 struct s_FOOD_BREAKDOWN
 {
@@ -34,9 +37,9 @@ struct s_FOOD_BREAKDOWN
     /* 0x04 */  int16_t Granary;
     /* 0x06 */  int16_t Farmers_Market;
     /* 0x08 */  int16_t Foresters_Guild;
-    /* 0x0A */  int16_t Wild_Games;
+    /* 0x0A */  int16_t Wild_Game;
     /* 0x0C */  int16_t Gaias_Blessing;
-    /* 0x0E */  int16_t Famine_POS;
+    /* 0x0E */  int16_t Famine;  /* the reduction, stored as a positive amount */
     /* 0x10 */
 };
 
@@ -64,12 +67,12 @@ struct s_PRODUCTION_BREAKDOWN
     /* 0x02 */  int16_t Farmers;
     /* 0x04 */  int16_t Terrain;
     /* 0x06 */  int16_t Sawmill;
-    /* 0x08 */  int16_t Foresters_Gld;
+    /* 0x08 */  int16_t Foresters_Guild;
     /* 0x0A */  int16_t Miners_Guild;
-    /* 0x0C */  int16_t Mechanicians;
+    /* 0x0C */  int16_t Mechanicians_Guild;
     /* 0x0E */  int16_t Gaias_Blessing;
     /* 0x10 */  int16_t Inspirations;
-    /* 0x12 */  int16_t CursedLnds_POS;
+    /* 0x12 */  int16_t Cursed_Lands;  /* the reduction, stored as a positive amount */
     /* 0x14 */
 };
 
@@ -82,7 +85,7 @@ struct s_POWER_BREAKDOWN
     /* 0x06 */  int16_t Temple;
     /* 0x08 */  int16_t Parthenon;
     /* 0x0A */  int16_t Cathedral;
-    /* 0x0C */  int16_t Alchemists_Gld;
+    /* 0x0C */  int16_t Alchemists_Guild;
     /* 0x0E */  int16_t Wizards_Guild;
     /* 0x10 */  int16_t Mithril;
     /* 0x12 */  int16_t Adamantium;
@@ -90,7 +93,7 @@ struct s_POWER_BREAKDOWN
     /* 0x16 */  int16_t Crysx;
     /* 0x18 */  int16_t Miners_Guild;
     /* 0x1A */  int16_t Dark_Rituals;
-    /* 0x1C */  int16_t Evil_Prs_POS;
+    /* 0x1C */  int16_t Evil_Presence;  /* the reduction, stored as a positive amount */
     /* 0x1E */
 };
 
@@ -253,7 +256,7 @@ int16_t City_Current_Product_Cost(int16_t city_idx);
 void Generate_Mercenaries(int16_t player_idx, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * amount, int16_t * type, int16_t * cost, int16_t * level);
 
 // WZD o142p19
-// LD_MAP_TFUnk40_Eval()
+void Record_Unknown_40H_Squares(void);
 
 // WZD o142p20
 int16_t City_Minimum_Farmers(int16_t city_idx);
@@ -292,19 +295,19 @@ int16_t City_Area_Square_Is_Shared(int16_t city_area_square_wx, int16_t city_are
 void City_Remove_Road(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o142p32
-void CTY_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * Retn_Struct);
+int16_t City_Food_Breakdown(int16_t city_idx, struct s_FOOD_BREAKDOWN * breakdown);
 
 // WZD o142p33
-// CTY_Gold_Breakdown()
+int16_t City_Gold_Breakdown(int16_t city_idx, struct s_GOLD_BREAKDOWN * breakdown);
 
 // WZD o142p34
-// CTY_Prod_Breakdown()
+int16_t City_Production_Breakdown(int16_t city_idx, struct s_PRODUCTION_BREAKDOWN * breakdown);
 
 // WZD o142p35
-// CTY_Rsrc_Breakdown()
+int16_t City_Research_Breakdown(int16_t city_idx, int16_t * breakdown);
 
 // WZD o142p36
-// CTY_Pwr_Breakdown()
+int16_t City_Power_Breakdown(int16_t city_idx, struct s_POWER_BREAKDOWN * breakdown);
 
 
 

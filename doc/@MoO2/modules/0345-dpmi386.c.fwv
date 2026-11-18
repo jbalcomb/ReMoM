@@ -1,0 +1,17 @@
+module_num=345
+module=C:\GCL520\C_386\DPMI386.C
+source=0345-dpmi386.c.md
+range[0]=1:0x0014E990 linear=0x0015E990 size=1264
+range[1]=2:0x00012CE4 linear=0x00182CE4 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                SYMBOL               CHUNK
+m345f001  1    -      0x0015E990  1:0x0014E990  code  _GetCSAlias         _GetCSAlias_         regions/07-object-1/001E3E54-001E4653.txt
+m345f002  2    -      0x0015EA74  1:0x0014EA74  code  _AllocateDosMemory  _AllocateDosMemory_  regions/07-object-1/001E3E54-001E4653.txt
+m345f003  3    -      0x0015EB04  1:0x0014EB04  code  _FreeDosMemory      _FreeDosMemory_      regions/07-object-1/001E3E54-001E4653.txt
+m345f004  4    -      0x0015EB44  1:0x0014EB44  code  _GetDosSelector     _GetDosSelector_     regions/07-object-1/001E3E54-001E4653.txt
+m345f005  5    -      0x0015EBF0  1:0x0014EBF0  code  _GetRealAddress     _GetRealAddress_     regions/07-object-1/001E3E54-001E4653.txt
+m345f006  6    -      0x0015EC70  1:0x0014EC70  code  _GetOldProtHandler  _GetOldProtHandler_  regions/07-object-1/001E3E54-001E4653.txt
+m345f007  7    -      0x0015ECC8  1:0x0014ECC8  code  _GetOldRealHandler  _GetOldRealHandler_  regions/07-object-1/001E3E54-001E4653.txt
+m345f008  8    -      0x0015ED18  1:0x0014ED18  code  _SetHandlers        _SetHandlers_        regions/07-object-1/001E3E54-001E4653.txt
+m345f009  9    -      0x0015EDB4  1:0x0014EDB4  code  _LockRegion         _LockRegion_         regions/07-object-1/001E3E54-001E4653.txt

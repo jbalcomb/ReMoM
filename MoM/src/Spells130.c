@@ -38,6 +38,10 @@
 #include "NEXTTURN.h"
 #include "Spellbook.h"
 #include "SPLMASTR.h"
+#include "Items.h"  /* Player_Process_Item_Pool() */
+#include "Combat.h"  /* Combat_Resistance_Check() */
+#include "COMBINIT.h"  /* Load_Battle_Unit() */
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage() */
 #include "Spells137.h"
 #include "TerrType.h"
 #include "Terrain.h"
@@ -108,10 +112,10 @@ char aSelectASpellWa[] = "Select a Spell Ward To Cast";
 
 XREF:
     j_UNIT_SetEquipSlots()
-        WIZ_HireHero()
+        Hire_Hero()
 
 e.g.,
-WIZ_HireHero()
+Hire_Hero()
     |-> Hero_Slot_Types(unit_type_idx, _players[player_idx].Heroes[hero_slot_idx].Item_Slots)
 
 Page 28  (PDF Page 33)
@@ -121,7 +125,7 @@ the hero’s type; some heroes are mages, others are warriors, etc.
 void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 {
 
-    if(_unit_type_table[unit_type_idx].hero_type == ht_IDK2)
+    if(_unit_type_table[unit_type_idx].hero_type == ht_Battlecaster)
     {
         item_slots[0] = ist_SwordStaff_Slot;
         item_slots[1] = ist_Armor_Slot;
@@ -133,7 +137,7 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
         item_slots[1] = ist_Misc_Slot;
         item_slots[2] = ist_Misc_Slot;
     }
-    else if(_unit_type_table[unit_type_idx].hero_type == ht_IDK1)
+    else if(_unit_type_table[unit_type_idx].hero_type == ht_Archer)
     {
         item_slots[0] = ist_Bow_Slot;
         item_slots[1] = ist_Armor_Slot;
@@ -150,19 +154,261 @@ void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[])
 
 
 // WZD o130p02
-int16_t Cast_DeathWish(int16_t player_idx)
+/*
+Death Wish: every non-fantastic unit not controlled by the caster, and not in a city whose counters stop the spell, must resist (Death, +0) or die
+a dying hero's items go to its owner's item pool (Player_Process_Item_Pool())
+*/
+int16_t Cast_Death_Wish(int16_t player_idx)
 {
+    byte_ptr unit_is_target = NULL;
+    int16_t troop_count = 0;
+    int16_t spell_reaches_city = 0;
+    int16_t owner_idx = 0;
+    int16_t item_count = 0;
+    int16_t item_list[NUM_HERO_ITEMS] = { 0, 0, 0 };
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
 
-    return ST_FALSE;
+    WIZ_GlobalSpellAnim(player_idx, spl_Death_Wish);
+
+    unit_is_target = Near_Allocate_First(_units);
+
+    for(itr_troops = 0; itr_troops < _units; itr_troops++)
+    {
+
+        unit_is_target[itr_troops] = ST_TRUE;
+
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        spell_reaches_city = Apply_Automatic_Spell_Counters(spl_Death_Wish, itr, player_idx, ST_FALSE);
+
+        if(spell_reaches_city == ST_FALSE)
+        {
+
+            Army_At_City(itr, &troop_count, &troops[0]);
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+
+                unit_is_target[troops[itr_troops]] = ST_FALSE;
+
+            }
+
+        }
+
+    }
+
+    for(itr = 0; itr < _units; itr++)
+    {
+
+        if(unit_is_target[itr] != ST_TRUE)
+        {
+
+            continue;
+
+        }
+
+        Load_Battle_Unit(itr, global_battle_unit);
+
+        if(global_battle_unit->controller_idx == player_idx)
+        {
+
+            continue;
+
+        }
+
+        if((global_battle_unit->Abilities & UA_FANTASTIC) != 0)
+        {
+
+            continue;
+
+        }
+
+        item_count = 0;
+
+        owner_idx = _UNITS[itr].owner_idx;
+
+        if(Combat_Resistance_Check(*global_battle_unit, 0, sbr_Death) <= 0)
+        {
+
+            continue;
+
+        }
+
+        if(_UNITS[itr].Hero_Slot > ST_UNDEFINED)
+        {
+
+            for(itr_troops = 0; itr_troops < NUM_HERO_ITEMS; itr_troops++)
+            {
+
+                if(_players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops] > ST_UNDEFINED)
+                {
+
+                    item_list[item_count] = _players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops];
+
+                    item_count++;
+
+                }
+
+                /* OGBUG  empties the slot with 0, a real item index, not ST_UNDEFINED: for The Chosen (ut_Chosen), Kill_Unit() takes its dismissed branch, which calls Remove_Item() on every slot > -1 - so item #0 is freed (cost 0) while someone may still carry it */
+                _players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops] = 0;
+
+            }
+
+        }
+
+        item_pool_in_process = ST_TRUE;
+
+        m_item_wx = _UNITS[itr].wx;
+
+        m_item_wy = _UNITS[itr].wy;
+
+        m_item_wp = _UNITS[itr].wp;
+
+        Kill_Unit(itr, kt_Normal);
+
+        Player_Process_Item_Pool(owner_idx, item_count, &item_list[0]);
+
+    }
+
+    /* OGBUG  no return value: Cast_Spell_Overland() stores AX in Cast_Successful, and its closing Nature's Wrath test (cmp Cast_Successful, e_ST_TRUE) reads it */
+    /* HACK */  return Stack_Garbage();
 
 }
 
 
 // WZD o130p03
-int16_t Cast_GreatUnsummoning(int16_t player_idx)
+/*
+Great Unsummoning: every fantastic unit (any owner, the caster's too) without Spell Lock, and not in a city whose counters stop the spell, must resist (Sorcery, -3) or die
+a dying hero's items go to its owner's item pool (Player_Process_Item_Pool())
+*/
+int16_t Cast_Great_Unsummoning(int16_t player_idx)
 {
+    byte_ptr unit_is_target = NULL;
+    int16_t troop_count = 0;
+    int16_t spell_reaches_city = 0;
+    int16_t item_count = 0;
+    int16_t item_list[NUM_HERO_ITEMS] = { 0, 0, 0 };
+    int16_t owner_idx = 0;
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
+    int16_t itr_troops = 0;  // _DI_
 
-    return ST_FALSE;
+    WIZ_GlobalSpellAnim(player_idx, spl_Great_Unsummoning);
+
+    unit_is_target = Near_Allocate_First(_units);
+
+    for(itr_troops = 0; itr_troops < _units; itr_troops++)
+    {
+
+        unit_is_target[itr_troops] = ST_TRUE;
+
+    }
+
+    for(itr = 0; itr < _cities; itr++)
+    {
+
+        spell_reaches_city = Apply_Automatic_Spell_Counters(spl_Great_Unsummoning, itr, player_idx, ST_FALSE);
+
+        if(spell_reaches_city == ST_FALSE)
+        {
+
+            Army_At_City(itr, &troop_count, &troops[0]);
+
+            for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+            {
+
+                unit_is_target[troops[itr_troops]] = ST_FALSE;
+
+            }
+
+        }
+
+    }
+
+    for(itr = 0; itr < _units; itr++)
+    {
+
+        if(unit_is_target[itr] != ST_TRUE)
+        {
+
+            continue;
+
+        }
+
+        Load_Battle_Unit(itr, global_battle_unit);
+
+        if((global_battle_unit->Abilities & UA_FANTASTIC) == 0)
+        {
+
+            continue;
+
+        }
+
+        if((_UNITS[itr].enchantments & UE_SPELL_LOCK) != 0)
+        {
+
+            continue;
+
+        }
+
+        item_count = 0;
+
+        owner_idx = _UNITS[itr].owner_idx;
+
+        if(Combat_Resistance_Check(*global_battle_unit, -3, sbr_Sorcery) <= 0)
+        {
+
+            continue;
+
+        }
+
+        if(_UNITS[itr].Hero_Slot > ST_UNDEFINED)
+        {
+
+            for(itr_troops = 0; itr_troops < NUM_HERO_ITEMS; itr_troops++)
+            {
+
+                if(_players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops] > ST_UNDEFINED)
+                {
+
+                    item_list[item_count] = _players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops];
+
+                    item_count++;
+
+                }
+
+                _players[owner_idx].Heroes[_UNITS[itr].Hero_Slot].Items[itr_troops] = 0;
+
+            }
+
+            if(item_count > 0)
+            {
+
+                item_pool_in_process = ST_TRUE;
+
+                m_item_wx = _UNITS[itr].wx;
+
+                m_item_wy = _UNITS[itr].wy;
+
+                m_item_wp = _UNITS[itr].wp;
+
+                Player_Process_Item_Pool(owner_idx, item_count, &item_list[0]);
+
+            }
+
+        }
+
+        Kill_Unit(itr, kt_Normal);
+
+    }
+
+    /* OGBUG  no return value: Cast_Spell_Overland() stores AX in Cast_Successful, and its closing Nature's Wrath test (cmp Cast_Successful, e_ST_TRUE) reads it */
+    /* HACK */  return Stack_Garbage();
 
 }
 
@@ -178,9 +424,9 @@ int16_t Cast_Black_Wind(int16_t player_idx)
     int16_t scsv1 = 0;
     int16_t itr = 0;  // _SI_
 
-    Allocate_Reduced_Map();
+    // DNE  Allocate_Reduced_Map();
 
-    Mark_Block(_screen_seg);
+    // DNE  Mark_Block(_screen_seg);
 
     if(player_idx == HUMAN_PLAYER_IDX)
     {
@@ -195,7 +441,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
     else
     {
 
-        return_value = AITP_Unit_Enchantment(stt_Enemy_Group, &scsv1, spl_Black_Wind, player_idx);
+        return_value = Get_Map_Square_Target_For_Spell(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, spl_Black_Wind, player_idx);
 
     }
 
@@ -240,10 +486,11 @@ int16_t Cast_Black_Wind(int16_t player_idx)
     if(return_value == ST_TRUE)
     {
 
+        /* OGBUG  AI cast: scsv1 is the target wx (Get_Map_Square_Target_For_Spell()), not a unit_idx, so the owner test reads _UNITS[wx] */
         if(
             (player_idx == HUMAN_PLAYER_IDX)
             ||
-            (_UNITS[scsv1].owner_idx == HUMAN_PLAYER_IDX)  // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
+            (_UNITS[scsv1].owner_idx == HUMAN_PLAYER_IDX)  // BUGBUGscsv1 is wx here, not unit_idx ...c&p error
             ||
             (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
         )
@@ -271,6 +518,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
 
         // BUGBUG  scsv1 is wx here, not unit_idx ...c&p error
         // BUGBUG  should pass spl_Black_Wind, not scsv1 (which is wx) ...c&p error
+        /* OGBUG  both paths: scsv1 is the wx by now, so the relation hit goes to the owner of unit #wx */
         Change_Relations(-3, player_idx, _UNITS[scsv1].owner_idx, 8, 0, scsv1);
 
     }
@@ -291,28 +539,19 @@ int16_t Apply_Drain_Power(int16_t player_idx)
 {
     int16_t itr = 0;
     int16_t return_value = 0;  // _SI_
-
     return_value = 0;
-
+    /* OGBUG  10 x Random(20) = 10..200 (the wiki says 50..150) */
     for(itr = 0; itr < 10; itr++)
     {
-
         // 10 * Random(20) = {10, ..., 200}
         return_value += Random(20);
-
     }
-
     if(_players[player_idx].mana_reserve < return_value)
     {
-
-        _players[player_idx].mana_reserve = return_value;
-
+        return_value = _players[player_idx].mana_reserve;
     }
-
     _players[player_idx].mana_reserve -= return_value;
-
     return return_value;
-
 }
 
 
@@ -408,7 +647,7 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
                     if(itr_wy < WORLD_HEIGHT)
                     {
 
-                        Set_Map_Square_Explored_Flags_XYP(curr_wx, itr_wy, scsv3);
+                        Set_Square_Explored_Flags(curr_wx, itr_wy, scsv3);
 
                         // DONT  j_empty_fxn_o142p03(curr_wx, itr_wy, scsv3);
 
@@ -452,7 +691,7 @@ void Cast_Spell_Binding(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        Spell_Target_Global_Enchantment_Screen(spl_Spell_Binding, player_idx);
+        Global_Enchantment_Screen(spl_Spell_Binding, player_idx);
 
     }
     else
@@ -463,6 +702,7 @@ void Cast_Spell_Binding(int16_t player_idx)
         if(var_A == 1)
         {
 
+            /* OGBUG  AITP_Disjunction() returns the Globals[] slot (0 .. 24) in spell_idx, not a spell index: the dispel cost and realm are read from spell_data_table[slot], and the Globals[] byte cleared on the target and set on the caster is at spell_data_table[slot].oe_idx, a field of an unrelated spell, which can land in another wizard's record or past _players, while the enchantment itself stays */
             threshold = (_players[player_idx].casting_cost_original + Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, target_player_idx, spell_data_table[spell_idx].magic_realm));
 
             threshold = ((_players[player_idx].casting_cost_original * 250) / threshold);
@@ -472,11 +712,19 @@ void Cast_Spell_Binding(int16_t player_idx)
 
                 ptr_enchantments = &_players[target_player_idx].Globals[0];
 
-                ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
+                // ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
+                /* HACK */  if((((int32_t)((uint8_t *)ptr_enchantments - (uint8_t *)&_players[0]) + spell_data_table[spell_idx].oe_idx) >= 0) && (((int32_t)((uint8_t *)ptr_enchantments - (uint8_t *)&_players[0]) + spell_data_table[spell_idx].oe_idx) < (int32_t)sizeof(_players)))  /* CLAUDE */  /* OG: the byte at DS:(Globals + oe_idx) is written wherever it is; ReMoM writes it only while it is inside _players */
+                {
+                    ptr_enchantments[spell_data_table[spell_idx].oe_idx] = 0;
+                }
 
                 ptr_enchantments = &_players[player_idx].Globals[0];
 
-                ptr_enchantments[spell_data_table[spell_idx].oe_idx] = (player_idx + 1);  // player_num
+                // ptr_enchantments[spell_data_table[spell_idx].oe_idx] = (player_idx + 1);  // player_num
+                /* HACK */  if((((int32_t)((uint8_t *)ptr_enchantments - (uint8_t *)&_players[0]) + spell_data_table[spell_idx].oe_idx) >= 0) && (((int32_t)((uint8_t *)ptr_enchantments - (uint8_t *)&_players[0]) + spell_data_table[spell_idx].oe_idx) < (int32_t)sizeof(_players)))  /* CLAUDE */  /* OG: as above */
+                {
+                    ptr_enchantments[spell_data_table[spell_idx].oe_idx] = (player_idx + 1);  // player_num
+                }
 
             }
 
@@ -627,7 +875,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
 
             SETMAX(frame_count, 12);
 
-            OVL_BringIntoView(&_map_x, &_map_y, scsv1, scsv2, scsv3);
+            Bring_Square_Into_View(&_map_x, &_map_y, scsv1, scsv2, scsv3);
 
             _map_plane = scsv3;
 
@@ -768,7 +1016,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
         _map_y = saved_map_y;
         _map_plane = saved_map_plane;
 
-        OVL_BringIntoView(&_map_x, &_map_y, _map_x, _map_y, _map_plane);
+        Bring_Square_Into_View(&_map_x, &_map_y, _map_x, _map_y, _map_plane);
 
         Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
@@ -815,12 +1063,12 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
+            status = ST_TRUE;
+
             return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aRaiseVolcano);
 
             if(return_value == ST_TRUE)
             {
-
-                status = ST_TRUE;
 
                 if(Square_Is_Sailable(scsv1, scsv2, scsv3) != ST_FALSE)
                 {
@@ -832,7 +1080,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                         Warn0(GUI_NearMsgString);
 
                 }
-                else if(Square_Is_Mountain(scsv1, scsv2, scsv3) != ST_FALSE)
+                if(Square_Is_Mountain(scsv1, scsv2, scsv3) != ST_FALSE)
                 {
 
                         status = ST_FALSE;
@@ -842,7 +1090,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                         Warn0(GUI_NearMsgString);
 
                 }
-                else if(Square_Is_Hills(scsv1, scsv2, scsv3) != ST_FALSE)
+                if(Square_Is_Hills(scsv1, scsv2, scsv3) != ST_FALSE)
                 {
 
                         status = ST_FALSE;
@@ -852,7 +1100,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                         Warn0(GUI_NearMsgString);
 
                 }
-                else if(Square_Is_River(scsv1, scsv2, scsv3) != ST_FALSE)
+                if(Square_Is_River(scsv1, scsv2, scsv3) != ST_FALSE)
                 {
 
                         status = ST_FALSE;
@@ -862,27 +1110,22 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                         Warn0(GUI_NearMsgString);
 
                 }
-                else
+                terrain_type = TERRAIN_TYPE(scsv1, scsv2, scsv3);
+
+                if(
+                    (terrain_type == tt_ChaosNode)
+                    ||
+                    (terrain_type == tt_SorceryNode)
+                    ||
+                    (terrain_type == tt_NatureNode)
+                )
                 {
 
-                    terrain_type = TERRAIN_TYPE(scsv1, scsv2, scsv3);
+                    status = ST_FALSE;
 
-                    if(
-                        (terrain_type == tt_ChaosNode)
-                        ||
-                        (terrain_type == tt_SorceryNode)
-                        ||
-                        (terrain_type = tt_NatureNode)
-                    )
-                    {
+                    LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 39, 1, 150);
 
-                        status = ST_FALSE;
-
-                        LBX_Load_Data_Static(message_lbx_file__ovr130, 0, (SAMB_ptr)&GUI_NearMsgString[0], 39, 1, 150);
-
-                        Warn0(GUI_NearMsgString);
-
-                    }
+                    Warn0(GUI_NearMsgString);
 
                 }
 
@@ -895,8 +1138,9 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
     if(return_value == ST_TRUE)
     {
 
-        target_is_human = ST_FALSE;
+        ctr = 0;
 
+        /* OGBUG  the loop stops at the first nearby human city, so a later city on the target square is never countered or damaged */
         for(city_idx = 0; ((city_idx < _cities) && (target_is_human == ST_FALSE)); city_idx++)
         {
 
@@ -906,14 +1150,16 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
                     ||
                     (abs((_CITIES[city_idx].wx - scsv1)) >= 58)
                 )
-                &
+                &&
                 (abs((_CITIES[city_idx].wy - scsv2)) <= 2)
                 &&
                 (_CITIES[city_idx].wp == scsv3)
             )
             {
 
-                list[ctr] = city_idx;
+                /* OGBUG  list[] has 2 slots: a 3rd nearby city writes list[2], which in the OG frame is target_is_human, so the loop also stops after that city */
+                // list[ctr] = city_idx;
+                /* HACK */  if(ctr < 2) { list[ctr] = city_idx; } else { target_is_human = city_idx; }
 
                 if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                 {
@@ -922,44 +1168,41 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
 
                 }
 
-                city_idx++;
+                ctr++;
 
             }
 
-        }
-
-
-        if(
-            (_CITIES[city_idx].wx == scsv1)
-            &&
-            (_CITIES[city_idx].wy == scsv2)
-            &&
-            (_CITIES[city_idx].wp == scsv3)
-        )
-        {
-
             if(
-                (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
-                ||
-                (player_idx == HUMAN_PLAYER_IDX)
+                (_CITIES[city_idx].wx == scsv1)
+                &&
+                (_CITIES[city_idx].wy == scsv2)
+                &&
+                (_CITIES[city_idx].wp == scsv3)
             )
             {
 
-                Apply_Damage_To_City(city_idx, 0, 15, &bldg_list[0]);
+                return_value = Apply_Automatic_Spell_Counters(spl_Raise_Volcano, city_idx, player_idx, ((_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX) || (player_idx == HUMAN_PLAYER_IDX)));
 
-                if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+                if(return_value == ST_TRUE)
                 {
 
-                    for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
+                    Apply_Damage_To_City(city_idx, 0, 15, &bldg_list[0]);
+
+                    if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
                     {
 
-                        if(MSG_BldLost_Count < 20)
+                        for(bldg_idx = 0; bldg_idx < NUM_BUILDINGS; bldg_idx++)
                         {
 
-                            if(bldg_list[bldg_idx] > bs_Replaced)
+                            if(
+                                (bldg_list[bldg_idx] > bs_Replaced)
+                                &&
+                                (MSG_BldLost_Count < 20)
+                            )
                             {
 
-                                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)scsv1;  // BUGBUG  should be city_idx, not wx
+                                /* OGBUG  stores the target square's wx as the city index, so the buildings-lost message names the wrong city */
+                                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)scsv1;
 
                                 MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = bldg_list[bldg_idx];
 
@@ -977,45 +1220,49 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
 
         }
 
-        if(return_value == ST_TRUE)
+    }
+
+    if(return_value == ST_TRUE)
+    {
+
+        if(
+            (player_idx == HUMAN_PLAYER_IDX)
+            ||
+            (target_is_human == ST_TRUE)
+            ||
+            (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
+        )
         {
 
-            if(
-                (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
-                ||
-                (player_idx == HUMAN_PLAYER_IDX)
-                ||
-                (SQUARE_EXPLORED(scsv1, scsv2, scsv3) != ST_FALSE)
-            )
+            g_ai_recompute_needed = ST_TRUE;
+
+            Allocate_Reduced_Map();
+
+            Spell_Animation_Load_Sound_Effect__WIP(spl_Raise_Volcano);
+
+            Spell_Animation_Load_Graphics(spl_Raise_Volcano);
+
+            Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
+
+        }
+
+        Set_Terrain_Type_Volcano_With_Owner(scsv1, scsv2, scsv3, player_idx);
+
+        Full_Draw_Main_Screen();
+
+        _players[player_idx].volcanoes++;
+
+        Volcano_Counts();
+
+        if(ctr > 0)
+        {
+
+            Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[0]);
+
+            if(ctr > 1)
             {
 
-                g_ai_recompute_needed = ST_TRUE;
-
-                Allocate_Reduced_Map();
-
-                Spell_Animation_Load_Sound_Effect__WIP(spl_Raise_Volcano);
-
-                Spell_Animation_Load_Graphics(spl_Raise_Volcano);
-
-                Spell_Animation_Screen__WIP(scsv1, scsv2, scsv3);
-
-            }
-
-            Set_Terrain_Type_Volcano_With_Owner(scsv1, scsv2, scsv3, player_idx);
-
-            Full_Draw_Main_Screen();
-
-            if(ctr > 0)
-            {
-
-                Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[0]);
-
-                if(ctr > 1)
-                {
-
-                    Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[1]);
-
-                }
+                Change_Relations_For_Bad_City_Spell(player_idx, spl_Raise_Volcano, list[1]);
 
             }
 
@@ -1269,9 +1516,9 @@ int16_t Cast_Corruption(int16_t player_idx)
 
     Mark_Block(_screen_seg);
 
+    saved_map_plane = _map_plane;
     saved_map_x = _map_x;
     saved_map_y = _map_y;
-    saved_map_plane = _map_plane;
 
     if(player_idx != HUMAN_PLAYER_IDX)
     {
@@ -1354,13 +1601,15 @@ int16_t Cast_Corruption(int16_t player_idx)
                 ||
                 (abs((_CITIES[itr].wx - scsv1)) >= 58)
             )
-            &
+            &&
             (abs((_CITIES[itr].wy - scsv2)) <= 2)
             &&
             (_CITIES[itr].wp == scsv3)
         )
         {
-            list[ctr] = itr;
+            /* OGBUG  list[] has 2 slots: a 3rd, 4th, 5th nearby city writes list[2], [3], [4], which in the OG frame are saved_map_y, saved_map_x, saved_map_plane, so the map view is restored to a city index */
+            // list[ctr] = itr;
+            /* HACK */  if(ctr < 2) { list[ctr] = itr; }
 
             if(_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
             {
@@ -1382,22 +1631,7 @@ int16_t Cast_Corruption(int16_t player_idx)
         )
         {
 
-            if(
-                (_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX)
-                ||
-                (player_idx == HUMAN_PLAYER_IDX)
-            )
-            {
-
-                return_value = Apply_Automatic_Spell_Counters(spl_Corruption, itr, player_idx, ST_TRUE);
-
-            }
-            else
-            {
-
-                return_value = Apply_Automatic_Spell_Counters(spl_Corruption, itr, player_idx, ST_FALSE);
-
-            }
+            return_value = Apply_Automatic_Spell_Counters(spl_Corruption, itr, player_idx, ((_CITIES[itr].owner_idx == HUMAN_PLAYER_IDX) || (player_idx == HUMAN_PLAYER_IDX)));
 
         }
 
@@ -1440,13 +1674,13 @@ int16_t Cast_Corruption(int16_t player_idx)
 
             frame_count = FLIC_Get_FrameCount(spell_animation_seg);
 
-            SETMAX(frame_count, 12);
+            SETMIN(frame_count, 12);
 
-            OVL_BringIntoView(&_map_x, &_map_y, scsv1, scsv2, scsv3);
+            Bring_Square_Into_View(&_map_x, &_map_y, scsv1, scsv2, scsv3);
 
             _map_plane = scsv3;
 
-            Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+            // DNE  Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
             scsv4 = scsv1;
             scsv5 = scsv2;
@@ -1481,11 +1715,12 @@ int16_t Cast_Corruption(int16_t player_idx)
 
             }
 
-            Full_Draw_Main_Screen();
+            // DNE  Full_Draw_Main_Screen();
 
-            Release_Block(_screen_seg);
+            // DNE  Release_Block(_screen_seg);
 
         }
+        else
         {
 
             SET_MAP_SQUARE_FLAG(scsv1, scsv2, scsv3, MSF_CORRUPTION);
@@ -1549,6 +1784,7 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
     else
     {
 
+        /* OGBUG  spl_Word_Of_Recall is not in AITP_Unit_Enchantment()'s spell table, so it calls Cast_Spell_Target_Error() and returns ST_FALSE: an AI Word of Recall never finds a target (the dedicated picker, AITP_Word_Of_Recall(), has no caller) */
         return_value = AITP_Unit_Enchantment(stt_Friendly_Unit, &scsv1, spl_Word_Of_Recall, player_idx);
 
     }
@@ -1608,9 +1844,13 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
     int16_t itr_wx = 0;  // _SI_
     int16_t itr_wy = 0;  // _DI_
 
+    // saved_map_x = _map_x;
+    // saved_map_y = _map_y;
+    // saved_map_plane = _map_plane;
+    /* CLAUDE */  /* REBUG */  /* asm: _map_plane, then _map_x, then _map_y */
+    saved_map_plane = _map_plane;
     saved_map_x = _map_x;
     saved_map_y = _map_y;
-    saved_map_plane = _map_plane;
 
     Allocate_Reduced_Map();
 
@@ -1684,48 +1924,52 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
             }
 
 
-            Play_Sound(SND_SpellCast, SND_SpellCast_size);
+            // Play_Sound(SND_SpellCast, SND_SpellCast_size);
+            Play_Sound(soundfx_seg, soundfx_seg_size);  /* CLAUDE */  /* REBUG */  /* asm: push [bp+soundfx_seg] / call Play_Sound (SOUNDFX.LBX 106, loaded above) */
 
-            for(itr_wx = (scsv1 - 2); (scsv1 + 2) >= itr_wx; itr_wx++)
+        }
+
+        /* CLAUDE */  /* REBUG */  /* asm: the visibility test's skip target is loc_B13FC, the road loop - the roads are enchanted on every successful cast, seen or not; ReMoM had the loops inside the visibility block */
+        for(itr_wx = (scsv1 - 2); (scsv1 + 2) >= itr_wx; itr_wx++)
+        {
+
+            if(itr_wx < 0)
             {
 
-                if(itr_wx < 0)
+                curr_wx = (itr_wx + WORLD_WIDTH);
+
+            }
+            /* OGBUG  off-by-one at the map edge: itr_wx == WORLD_WIDTH is kept as 60, which is x 0 of the next row */
+            else if(itr_wx > WORLD_WIDTH)
+            {
+
+                curr_wx = (itr_wx - WORLD_WIDTH);
+
+            }
+            else
+            {
+
+                curr_wx = itr_wx;
+
+            }
+
+            for(itr_wy = (scsv2 - 2); (scsv2 + 2) >= itr_wy; itr_wy++)
+            {
+
+                /* OGBUG  off-by-one at the map edge: itr_wy == WORLD_HEIGHT (row 40) is accepted, which is past the plane */
+                if(
+                    (itr_wy >= 0)
+                    &&
+                    (itr_wy <= WORLD_HEIGHT)
+                )
                 {
 
-                    curr_wx = (itr_wx + WORLD_WIDTH);
-
-                }
-                else if(itr_wx > WORLD_WIDTH)
-                {
-
-                    curr_wx = (itr_wx - WORLD_WIDTH);
-
-                }
-                else
-                {
-
-                    curr_wx = itr_wx;
-
-                }
-
-                for(itr_wy = (scsv2 - 2); (scsv2 + 2) >= itr_wy; itr_wy++)
-                {
-
-                    if(
-                        (itr_wy >= 0)
-                        &&
-                        (itr_wy <= WORLD_HEIGHT)
-                    )
-                    {
-
-                        Make_Road_Enchanted(curr_wx, itr_wy, scsv3);
-
-                    }
+                    Make_Road_Enchanted(curr_wx, itr_wy, scsv3);
 
                 }
 
             }
-            
+
         }
 
     }
@@ -1742,9 +1986,13 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
 
     Release_Block(_screen_seg);
 
+    // _map_x = saved_map_x;
+    // _map_y = saved_map_y;
+    // _map_plane = saved_map_plane;
+    /* CLAUDE */  /* REBUG */  /* asm: _map_plane, then _map_x, then _map_y */
+    _map_plane = saved_map_plane;
     _map_x = saved_map_x;
     _map_y = saved_map_y;
-    _map_plane = saved_map_plane;
 
     return return_value;
 
@@ -1928,7 +2176,7 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Spell_Ward, player_idx);
+            City_Enchantment_Anim_1__WIP(city_idx, spl_Spell_Ward, player_idx);
 
         }
 
@@ -1951,7 +2199,7 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Earthquake, player_idx);
+            City_Enchantment_Anim_2__WIP(city_idx, spl_Earthquake, player_idx);
 
             Release_Block(_screen_seg);
 
@@ -1993,17 +2241,7 @@ void Cast_Holy_Arms(int16_t player_idx)
 
 
 // WZD o130p16
-// drake178: CTY_Consecration()
 /*
-; processes the effect of Consecration - removes all
-; negative city enchantments and all corruption from
-; within a 2-square radius of the city
-;
-; BUG: will cleanse the corner squares that are outside
-; the catchment area
-*/
-/*
-
 Consecration:
 Life. City Enchantment. Casting Cost: 400 mana;
 Upkeep: 8 mana/turn. Very Rare.
@@ -2023,17 +2261,22 @@ void Apply_Consecration(int16_t city_idx)
     _CITIES[city_idx].enchantments[CURSED_LANDS] = 0;
     _CITIES[city_idx].enchantments[FAMINE] = 0;
     _CITIES[city_idx].enchantments[PESTILENCE] = 0;
-    _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
+    // _CITIES[city_idx].enchantments[CHAOS_RIFT] = 0;
+    /* CLAUDE */  /* REBUG */  /* asm: five stores only (CHAOS_RIFT, EVIL_PRESENCE, CURSED_LANDS, FAMINE, PESTILENCE; asm 15-44) - no second CHAOS_RIFT clear */
 
     city_wp = _CITIES[city_idx].wp;
 
-    for(itr_wx = (_CITIES[city_idx].wx - 2); itr_wx < (_CITIES[city_idx].wx + 2); itr_wx++)
+    /* OGBUG  full 5x5 square, with no corner skip: cleanses the 4 corner squares outside the city's catchment area */
+    // for(itr_wx = (_CITIES[city_idx].wx - 2); itr_wx < (_CITIES[city_idx].wx + 2); itr_wx++)
+    /* CLAUDE */  /* REBUG */  /* asm: wx + 2 / cmp ax, di / jl @@Done (asm 125-135) */
+    for(itr_wx = (_CITIES[city_idx].wx - 2); (_CITIES[city_idx].wx + 2) >= itr_wx; itr_wx++)
     {
 
         if(itr_wx < 0)
         {
             cur_wx = (itr_wx + WORLD_WIDTH);
         }
+        /* OGBUG  off-by-one at the map edge: itr_wx == WORLD_WIDTH is kept as 60, which is x 0 of the next row */
         else if(itr_wx > WORLD_WIDTH)
         {
             cur_wx = (itr_wx - WORLD_WIDTH);
@@ -2043,9 +2286,12 @@ void Apply_Consecration(int16_t city_idx)
             cur_wx = itr_wx;
         }
 
-        for(itr_wy = (_CITIES[city_idx].wy - 2); itr_wy < (_CITIES[city_idx].wy + 2); itr_wy++)
+        // for(itr_wy = (_CITIES[city_idx].wy - 2); itr_wy < (_CITIES[city_idx].wy + 2); itr_wy++)
+        /* CLAUDE */  /* REBUG */  /* asm: wy + 2 / cmp ax, [bp+itr_wy] / jge loc_B1987 (asm 113-122) */
+        for(itr_wy = (_CITIES[city_idx].wy - 2); (_CITIES[city_idx].wy + 2) >= itr_wy; itr_wy++)
         {
 
+            /* OGBUG  off-by-one at the map edge: itr_wy == WORLD_HEIGHT (row 40) is accepted, which is past the plane */
             if(
                 (itr_wy >= 0)
                 &&
@@ -2072,59 +2318,41 @@ void Apply_Consecration(int16_t city_idx)
 // WZD o130p17
 void Apply_Subversion(int16_t player_idx)
 {
-    int16_t itr = 0;  // _CX_
-
+    int16_t itr = 0;
     for(itr = 0; itr < _num_players; itr++)
     {
-
         if(itr == 0)
         {
             continue;
         }
-
+        /* OGBUG  skips only the human and the target, so an AI caster also lowers its own relation with the target */
         if(itr != player_idx)
         {
-
             if(_players[itr].Dipl.Contacted[player_idx] == ST_TRUE)
             {
-
                 _players[itr].Dipl.Visible_Rel[player_idx] -= 25;
-
                 if(_players[itr].Dipl.Visible_Rel[player_idx] < -100)
                 {
-
                     _players[itr].Dipl.Visible_Rel[player_idx] = -100;
-
                 }
-
-                _players[itr].Dipl.Visible_Rel[player_idx] = _players[player_idx].Dipl.Visible_Rel[itr];
-
+                _players[player_idx].Dipl.Visible_Rel[itr] = _players[itr].Dipl.Visible_Rel[player_idx];
                 _players[player_idx].peace_duration[itr] = 0;
-
                 _players[itr].peace_duration[player_idx] = 0;
-
             }
-
         }
-
     }
-
 }
 
 
 // WZD o130p18
 // drake178: sub_B1ABE()
-void Cast_NaturesAwareness(int16_t player_idx)
+void Cast_Natures_Awareness(int16_t player_idx)
 {
-
     if(player_idx == HUMAN_PLAYER_IDX)
     {
-
         Allocate_Reduced_Map();
         Cheat_Reveal();
         All_AI_Players_Contacted();
         Release_Block(_screen_seg);
-
     }
-
 }

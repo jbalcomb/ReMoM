@@ -1,0 +1,9 @@
+module_num=331
+module=assert
+source=0331-assert.md
+range[0]=1:0x0014DF24 linear=0x0015DF24 size=31
+range[1]=2:0x00004878 linear=0x00174878 size=44
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m331f001  1    -      0x0015DF24  1:0x0014DF24  code  __assert  __assert_  regions/07-object-1/001E2E54-001E3653.txt

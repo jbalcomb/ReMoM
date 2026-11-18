@@ -374,7 +374,7 @@ TEST(STU_GRAF, SeedMissingOriginalReturnsZero)
     unset_env("XDG_DATA_HOME");
 }
 
-// HEADLESS profile must keep the user-family CWD-relative (HeMoM / matchup
+// HEADLESS profile must keep the user-family CWD-relative (DeMoM / matchup
 // determinism): a swapped open/DIR under HEADLESS behaves like the original
 // stu_fopen_ci, regardless of XDG_DATA_HOME.
 TEST(STU_GRAF, HeadlessUserFamilyUsesCwd)

@@ -10,6 +10,7 @@
 #include "../../STU/src/AI_METRICS.h"
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 
 #include "../../MoX/src/MOM_DAT.h"
 #include "../../MoX/src/MOM_DEF.h"
@@ -31,6 +32,9 @@
 #include "WZD_o143.h"   /* OVL_GetRoadPath() */
 
 #include "SETTLE.h"
+
+
+
 
 
 
@@ -115,26 +119,21 @@ Game-Data:
  *       `_map_plane` to their saved pre-processing values before exiting the
  *       normal path.
  */
-void gd_dump_units(const char* point);   /* CLAUDE: GD capture (defined in INITGAME.c) */
-
 void AI_Execute_Orders(int16_t player_idx)
 {
     int16_t l_map_plane = 0;
     int16_t l_map_y = 0;
     int16_t l_map_x = 0;
     int16_t unit_idx = 0;
-    static int gd614_done = 0, gd615_done = 0;   /* CLAUDE: 614/615 fire-once gates */
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* CLAUDE: GD point 614 -- _UNITS BEFORE AI_Execute_Orders, the per-AI-player order
      * EXECUTION pass (dispatches each unit by Status: move/goto/road/meld/settle/ferry
      * via AI_Unit_Army_Do_*; this is where dst/Status actually get applied).  Pairs with
      * 615 to isolate this call's effect on _UNITS (the 911 movement divergence).
      * player_idx scalar records WHICH player.  Fire once (first AI player). */
-    if(!gd614_done) { gd614_done = 1;
-        LOG_TRACE(LOG_CAT_GENERAL, "[GD] 614_AI_Execute_Orders_Entry_U player_idx = %d", (int)player_idx);
-        gd_dump_units("614_AI_Execute_Orders_Entry_U"); }
+    STU_GD_ONCE("614_AI_Execute_Orders_Entry_U", STU_GD_WRITE("[GD] 614_AI_Execute_Orders_Entry_U player_idx = %d", (int)player_idx); STU_GD_Dump_Units("614_AI_Execute_Orders_Entry_U"));  /* CLAUDE */
 
     /* Store current map state to restore later */
     l_map_x = _map_x;
@@ -151,8 +150,8 @@ void AI_Execute_Orders(int16_t player_idx)
         {
             /* CLAUDE: GD 615 on the Time-Stop early-return path too -- OG's far-return
              * fires regardless of the internal path, so both sides dump here.  Shared
-             * gd615_done gate -> fires once total (this OR the normal exit). */
-            if(!gd615_done) { gd615_done = 1; gd_dump_units("615_AI_Execute_Orders_Return_U"); }
+             * STU_GD_ONCE point -> fires once total (this OR the normal exit). */
+            STU_GD_ONCE("615_AI_Execute_Orders_Return_U", STU_GD_Dump_Units("615_AI_Execute_Orders_Return_U"));  /* CLAUDE */
             return;
         }
     }
@@ -232,11 +231,11 @@ void AI_Execute_Orders(int16_t player_idx)
     _prev_world_y = _map_y;
     _map_plane = l_map_plane;
  
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     /* CLAUDE: GD point 615 -- _UNITS AFTER AI_Execute_Orders (normal exit).  Shared
-     * gd615_done gate with the Time-Stop early-return path.  Fire once. */
-    if(!gd615_done) { gd615_done = 1; gd_dump_units("615_AI_Execute_Orders_Return_U"); }
+     * STU_GD_ONCE point with the Time-Stop early-return path.  Fire once. */
+    STU_GD_ONCE("615_AI_Execute_Orders_Return_U", STU_GD_Dump_Units("615_AI_Execute_Orders_Return_U"));  /* CLAUDE */
 
 }
 
@@ -529,14 +528,16 @@ void Evict_Unit(int16_t unit_idx)
     unit_wp = _UNITS[unit_idx].wp;
     unit_owner_idx = _UNITS[unit_idx].owner_idx;
     wy_start = (unit_wy - 1);
+    /* OGBUG  at the top row (wy 0) wy_start is clamped to 0 instead of skipping the row, so rows 0 .. 2 are tried and the unit can be pushed 2 rows away (x wraps correctly) */
     if(wy_start < 0)
     {
-        wy_start = 0;  /* OGBUG: drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
+        wy_start = 0;
     }
     wx_start = (unit_wx - 1);
     if(wx_start < 0)
     {
         wx_start += WORLD_WIDTH;  /* OGBUG: drake178: BUG: range checking must be performed on the test coordinates, doing it here shifts the rectangle */
+        /* CLAUDE */  /* not a bug for x: wx_start wraps to 59 and the loop maps 59..61 to 59, 0, 1 (ovr100/Evict_Unit.asm 66-90), the 3x3 around column 0; the shift is the y clamp above (wy_start floored at 0) */
     }
     range = 3;
     found_square = ST_FALSE;
@@ -674,6 +675,7 @@ int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_
 
         if(is_legal_move == ST_FALSE)
         {
+            /* OGBUG  no Non-Corporeal (unit type) or Wraith Form test, which overland movement treats as water-capable: a Non-Corporeal unit is never placed on a water square */
             if(
                 (Unit_Has_AirTravel(unit_idx) == ST_TRUE) ||
                 (Unit_Has_WaterTravel(unit_idx) == ST_TRUE)
@@ -687,13 +689,22 @@ int16_t Unit_Space_At_Square(int16_t wx, int16_t wy, int16_t wp, int16_t player_
     {
         if((_unit_type_table[_UNITS[unit_idx].type].Move_Flags & MV_SAILING) != 0)
         {
-            if(Unit_Has_AirTravel(unit_idx) != ST_TRUE)
+            // if(Unit_Has_AirTravel(unit_idx) != ST_TRUE)
+            // {
+            //     is_legal_move = ST_FALSE;
+            // }
+            // else
+            // {
+            //     is_legal_move = ST_TRUE;
+            // }
+            /* CLAUDE */  /* REBUG */  /* asm: cmp ax, e_ST_TRUE / jnz loc_82763 (FALSE) */
+            if(Unit_Has_AirTravel(unit_idx) == ST_TRUE)
             {
-                is_legal_move = ST_FALSE;
+                is_legal_move = ST_TRUE;
             }
             else
             {
-                is_legal_move = ST_TRUE;
+                is_legal_move = ST_FALSE;
             }
         }
         else
@@ -840,6 +851,7 @@ void AI_Unit_Army_Do_Road(int16_t unit_idx)
             _UNITS[troops[itr_troops]].Status = us_GOTO;
 
             /* Calculate base turns/points required for the next segment in the path */
+            /* OGBUG  OVL_GetRoadPath() returns the path without its start square, so this is the NEXT square's road time, not that of the square the road is built on first (the unit's own, as Set_Army_Road_Building() uses); and the result is not raised to at least 1 */
             _UNITS[troops[itr_troops]].Rd_Constr_Left = Turns_To_Build_Road((int)movepath_x_array[2], (int)movepath_y_array[2], unit_wp);
 
             /* Divide total required points by stack's construction capacity */
@@ -903,6 +915,7 @@ int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp)
     Stack_Owner = _UNITS[troops[0]].owner_idx;
 
 
+/* CLAUDE  original reconstruction, from here to the end of the function; replaced below to match the asm (ovr100/Map_Square_Troops_Can_Plane_Shift.asm)
     if(
         (troop_count > 1)
         &&
@@ -972,7 +985,7 @@ int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp)
             if(
                 ((_unit_type_table[_UNITS[troops[itr_troops]].type].Move_Flags & MV_SAILING) == 0)
                 ||
-                (Unit_Has_AirTravel(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal
+                (Unit_Has_AirTravel(troops[itr_troops]) != ST_TRUE)
             )
             {
 
@@ -1046,9 +1059,9 @@ int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp)
                         ||
                         (Unit_Has_AirTravel_Item(troops[itr_troops]) != ST_TRUE)
                         ||
-                        (Unit_Has_Swimming(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal
+                        (Unit_Has_Swimming(troops[itr_troops]) != ST_TRUE)
                         ||
-                        (Unit_Has_WaterTravel_Item(troops[itr_troops]) != ST_TRUE)  // ; BUG: ignores Non-Corporeal (Wraithform item)
+                        (Unit_Has_WaterTravel_Item(troops[itr_troops]) != ST_TRUE)
                     )
                     {
 
@@ -1066,6 +1079,146 @@ int16_t Map_Square_Troops_Can_Plane_Shift(int16_t wx, int16_t wy, int16_t wp)
 
             }
 
+        }
+
+    }
+
+*/
+
+    /* CLAUDE */  /* asm: cmp [bp+troop_count], 0 / jle ... cmp [bp+troop_count], e_MAX_STACK / jl */
+    if(troop_count > 0)
+    {
+        if(_UNITS[troops[0]].owner_idx != Stack_Owner)
+        {
+            return ST_FALSE;
+        }
+        /* OGBUG  '>= MAX_STACK': a stack of exactly 9 units can never plane shift, though the destination test below allows 9 combined */
+        if(troop_count >= MAX_STACK)
+        {
+            return ST_FALSE;
+        }
+    }
+
+    wp2 = (1 - wp);
+
+    Army_At_Square_3(wx, wy, wp2, &troop_count2, &troops2[0]);
+
+    /* CLAUDE */  /* asm: the destination tests read troops2[0] and troop_count2 */
+    if(troop_count2 > 0)
+    {
+        if(_UNITS[troops2[0]].owner_idx != Stack_Owner)
+        {
+            return ST_FALSE;
+        }
+        if(troop_count2 > MAX_STACK)
+        {
+            return ST_FALSE;
+        }
+        if((troop_count2 + troop_count) > MAX_STACK)
+        {
+            return ST_FALSE;
+        }
+    }
+
+// ; BUG: prevents shifting into the player's own cities,
+// ; and yet doesn't prevent shifting into enemy cities
+
+    if(Square_Has_Lair(wx, wy, wp2) != ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+
+    if(Player_City_At_Square(wx, wy, wp2, Stack_Owner) != ST_UNDEFINED)
+    {
+        return ST_FALSE;
+    }
+
+    can_do = 0;
+
+    UU_Local_0 = 0;
+
+    /* OGBUG  neither branch tests Non-Corporeal (unit type) or Wraith Form, which overland movement lets cross water: a Non-Corporeal stack cannot shift onto water */
+    if(Square_Is_Sailable(wx, wy, wp2) == ST_TRUE)
+    {
+
+        Have_Windwalker = ST_FALSE;
+
+        for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+        {
+            if(Unit_Has_WindWalking(troops[itr_troops]) == ST_TRUE)
+            {
+                can_do = ST_TRUE;
+                Have_Windwalker = ST_TRUE;
+            }
+        }
+
+        if(Have_Windwalker == ST_FALSE)
+        {
+
+            Have_Windwalker = ST_FALSE;
+
+            for(itr_troops = 0; ((itr_troops < troop_count2) && (Have_Windwalker == ST_FALSE)); itr_troops++)
+            {
+                unit_dx = troops2[itr_troops];
+                // ; conflicting condition - will never jump
+                if(unit_dx != ST_UNDEFINED)
+                {
+                    if(Unit_Has_WindWalking(unit_dx) == ST_TRUE)
+                    {
+                        can_do = ST_TRUE;
+                        Have_Windwalker = ST_TRUE;
+                    }
+                }
+            }
+
+            if(Have_Windwalker == ST_FALSE)
+            {
+                for(itr_troops = 0; itr_troops < troop_count; itr_troops++)
+                {
+                    if(
+                        (Unit_Has_AirTravel(troops[itr_troops]) == ST_TRUE)
+                        ||
+                        (Unit_Has_AirTravel_Item(troops[itr_troops]) == ST_TRUE)
+                        ||
+                        (Unit_Has_Swimming(troops[itr_troops]) == ST_TRUE)
+                        ||
+                        (Unit_Has_WaterTravel_Item(troops[itr_troops]) == ST_TRUE)
+                    )
+                    {
+                        can_do = ST_TRUE;
+                    }
+                    else
+                    {
+                        return ST_FALSE;
+                    }
+                }
+            }
+
+        }
+
+    }
+    else
+    {
+
+        can_do = ST_TRUE;
+
+        for(itr_troops = 0; ((itr_troops < troop_count) && (can_do == ST_TRUE)); itr_troops++)
+        {
+            if((_unit_type_table[_UNITS[troops[itr_troops]].type].Move_Flags & MV_SAILING) != 0)
+            {
+                if(Unit_Has_AirTravel(troops[itr_troops]) == ST_TRUE)
+                {
+                    can_do = ST_TRUE;
+                }
+                else
+                {
+                    can_do = ST_FALSE;
+                }
+            }
+            else
+            {
+                can_do = ST_TRUE;
+            }
         }
 
     }

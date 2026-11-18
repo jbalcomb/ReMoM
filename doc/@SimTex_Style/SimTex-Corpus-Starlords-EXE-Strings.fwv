@@ -1,0 +1,1575 @@
+exe       order  ds_off  chars  case   refs                                          text
+START         0  0A9E      118  Mixed                                                STARFLEET DIRECTIVE TO FALCON SQUADRON: Intercept and destroy eight Klackon vessels approaching the Rigel star system.
+START         1  0D28      512  UPPER                                                SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+START         2  2110        8  UPPER  c14:1                                         EMMXXXX0
+START         3  213C       13  UPPER  c17:3                                         _C_FILE_INFO=
+START         4  2337        6  none                                                 ``````
+START         5  2386        3  lower  c17:1                                         /c
+START         6  2398        7  UPPER  c17:1                                         COMSPEC
+START         7  23A0        4  lower                                                .bat
+START         8  23A5        4  lower                                                .exe
+START         9  23AA        4  lower                                                .com
+START        10  23DC       68  Mixed  c01:1                                         You do not have enough RAM to run Starlords. 565K free is required.\n
+START        11  2421       74  Mixed  c01:1                                         You must free up at least %ld bytes of memory by removing removing TSR's.\n
+START        12  246C       12  UPPER  c01:1                                         STARLORD.CFG
+START        13  2479       53  Mixed  c01:1                                         You are missing the STARLORD.CFG configuration file.\n
+START        14  24AF       49  Mixed  c01:1                                         Run SETUP.EXE to recreate the configuration file\n
+START        15  24E1       40  Title  c01:1                                         Expanded memory detected and utilized...
+START        16  250A        9  Mixed  c01:1                                         Sound.LBX
+START        17  251E       12  UPPER  c01:1                                         STARLORD.CFG
+START        18  252B       10  UPPER  c01:1                                         IFONTS.LBX
+START        19  2539       12  UPPER  c01:1                                         STARLORD.CFG
+START        20  2546        9  UPPER  c01:1                                         CODES.LBX
+START        21  2550        9  UPPER  c01:1                                         CODES.LBX
+START        22  255A       11  UPPER  c01:1                                         PALETTE.LBX
+START        23  2566       11  UPPER  c01:1                                         PALETTE.LBX
+START        24  2572       11  UPPER  c01:1                                         PALETTE.LBX
+START        25  257E       11  UPPER  c01:1                                         PALETTE.LBX
+START        26  258A        8  UPPER  c01:1                                         WARP.LBX
+START        27  2593        9  UPPER  c01:1                                         ORBIT.LBX
+START        28  25A0       12  UPPER  c01:1                                         STARLORD.CFG
+START        29  25AF       10  lower  c01:1                                         vortex.exe
+START        30  25BA       10  lower  c01:1                                         vortex.exe
+START        31  25C5       44  Mixed  c01:1                                         The VORTEX.EXE program could not be found\n\n\n
+START        32  25F2        7  UPPER  c01:1                                         PLANETS
+START        33  25FA        5  UPPER  c01:1                                         SHIPS
+START        34  2600        5  UPPER  c01:1                                         SOUND
+START        35  2606        5  UPPER  c01:1                                         FONTS
+START        36  260C        5  UPPER  c01:1                                         SPACE
+START        37  2612        7  UPPER  c01:1                                         MISSILE
+START        38  261A        5  UPPER  c01:1                                         RACES
+START        39  2620        7  UPPER  c01:1 c11:1                                   SHIPPOS
+START        40  2628        7  UPPER  c01:1                                         DESIGNS
+START        41  2630        8  UPPER  c01:1                                         DIPLOMAC
+START        42  2639        8  UPPER  c01:1                                         RESEARCH
+START        43  2642        7  UPPER  c01:1                                         NEBULAS
+START        44  264A        7  UPPER  c01:1                                         STARMAP
+START        45  2652        6  UPPER  c01:1                                         TECHNO
+START        46  2659        5  UPPER  c01:1                                         SPIES
+START        47  265F        8  UPPER  c01:1                                         STARVIEW
+START        48  2668        3  UPPER  c01:1                                         WIN
+START        49  266C        4  UPPER  c01:1                                         LOSE
+START        50  2682       29  Title  c02:1                                         Error - wrong sound file type
+START        51  26B6        4  UPPER  c15:1                                         .LBX
+START        52  26BB        4  UPPER  c15:1                                         .LBX
+START        53  26C0        4  UPPER  c15:1                                         .LBX
+START        54  26C5       11  UPPER  c15:1                                         SPACE ALLOC
+START        55  26D1       12  Mixed  c15:1                                         Data Free:
+START        56  26DE       27  Mixed  c15:1                                          bytes       Memory Free:
+START        57  26FA       19  Mixed  c15:1                                         k     Worst Free:
+START        58  2710       12  Mixed  c15:1                                         .LBX [entry
+START        59  2720       33  Mixed  c15:1                                          could not be found. Game halted!
+START        60  2742       33  Mixed  c15:1                                          has been corrupted. Game halted!
+START        61  2764       73  Mixed  c15:1                                         Insufficient memory. You need at least 560K free. Try removing all TSR's.
+START        62  27AE       50  lower  c15:1                                          was not properly allocated or has been corrupted.
+START        63  27E1       43  Mixed  c15:1                                          failed to reload. Allocation too small by
+START        64  280D        6  lower  c15:1                                          pages
+START        65  2814        4  UPPER  c16:1                                         .LBX
+START        66  2821        4  UPPER  c16:1                                         .LBX
+START        67  2826        8  UPPER                                                <<NMSG>>
+START        68  2830       25  Title                                                R6000\r\n- stack overflow\r\n
+START        69  284C       30  Title                                                R6003\r\n- integer divide by 0\r\n
+START        70  286D       43  Title                                                R6009\r\n- not enough space for environment\r\n
+START        71  28A0       15  lower                                                run-time error
+START        72  28B2       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+START        73  28E1       34  Title                                                R6001\r\n- null pointer assignment\r\n
+START        74  2906       54  Mixed                                                \r\nrun-time error R6005\r\n- not enough memory on exec\r\n$
+START        75  293F       51  Mixed                                                \r\nrun-time error R6006\r\n- invalid format on exec\r\n$
+START        76  2975       56  Mixed                                                \r\nrun-time error R6007\r\n- invalid environment on exec\r\n$
+VORTEX        0  004A        6  Title                                                Humans
+VORTEX        1  0056        7  Title  c02:5                                         Felines
+VORTEX        2  0062        9  Title  c02:2 c05:1                                   Silicoids
+VORTEX        3  006E        8  Title  c01:2                                         Saurians
+VORTEX        4  007A        7  Title                                                Mentats
+VORTEX        5  0086        6  Title  c10:1                                         Avians
+VORTEX        6  0092        8  Title                                                Klackons
+VORTEX        7  009E        7  Title  c05:1 c11:7                                   Ursoids
+VORTEX        8  00AA        7  Title  c01:2                                         Meklars
+VORTEX        9  00B6        8  Title                                                Nazguuls
+VORTEX       10  00C2       14  UPPER  c01:2                                         BOZO THE CLOWN
+VORTEX       11  0248      512  UPPER                                                SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+VORTEX       12  169A        8  UPPER  c15:1                                         EMMXXXX0
+VORTEX       13  16C6       13  UPPER  c18:3                                         _C_FILE_INFO=
+VORTEX       14  18C1        6  none                                                 ``````
+VORTEX       15  1910        3  lower  c18:1                                         /c
+VORTEX       16  1922        7  UPPER  c18:1                                         COMSPEC
+VORTEX       17  192A        4  lower                                                .bat
+VORTEX       18  192F        4  lower                                                .exe
+VORTEX       19  1934        4  lower                                                .com
+VORTEX       20  1966       24  Mixed  c01:1                                         You must run START.EXE.\n
+VORTEX       21  197F       29  Mixed  c01:1                                         Thanks for playing Starlords.
+VORTEX       22  19AC       13  Mixed  c01:1                                         Continue Game
+VORTEX       23  19BA        9  Mixed  c01:1                                         Load Game
+VORTEX       24  19C4        8  Mixed  c01:1                                         New Game
+VORTEX       25  19CD        7  Title  c01:1                                         Options
+VORTEX       26  19D5       11  Mixed  c01:1                                         Quit To DOS
+VORTEX       27  19E4       12  UPPER  c01:1                                         STARLORD.CFG
+VORTEX       28  1A04       12  UPPER  c01:1                                         STARLORD.CFG
+VORTEX       29  1A11       13  Mixed  c01:1                                         Continue Game
+VORTEX       30  1A1F        9  Mixed  c01:1                                         Load Game
+VORTEX       31  1A29        8  Mixed  c01:1                                         New Game
+VORTEX       32  1A32        7  Title  c01:1                                         Options
+VORTEX       33  1A3A       11  Mixed  c01:1                                         Quit To DOS
+VORTEX       34  1A46       16  Title  c01:1                                         Load saved game.
+VORTEX       35  1A67       10  UPPER  c01:1                                         NOT IN USE
+VORTEX       36  1A72        4  UPPER  c01:1                                         SAVE
+VORTEX       37  1A77        4  UPPER  c01:1                                         .GAM
+VORTEX       38  1A7C       12  lower  c01:1                                         starlord.exe
+VORTEX       39  1A89       12  lower  c01:1                                         starlord.exe
+VORTEX       40  1A96       43  Mixed  c01:1                                         The STARLORD.EXE program could not be found
+VORTEX       41  1AC6        9  lower  c01:1                                         files.exe
+VORTEX       42  1AD0        9  lower  c01:1                                         files.exe
+VORTEX       43  1ADA       40  Mixed  c01:1                                         The FILES.EXE program could not be found
+VORTEX       44  1B03       11  UPPER  c01:1                                         PALETTE.LBX
+VORTEX       45  1B0F       11  UPPER  c01:1                                         PALETTE.LBX
+VORTEX       46  1B1B       11  UPPER  c01:1                                         PALETTE.LBX
+VORTEX       47  1B27       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       48  1B32       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       49  1B3D       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       50  1B48       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       51  1B53       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       52  1B5E       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       53  1B69       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       54  1B74       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       55  1B7F       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       56  1B8A       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       57  1B95       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       58  1BA0       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       59  1BAB       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       60  1BB6       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       61  1BC1       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       62  1BCC       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       63  1BD7       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       64  1BE2       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       65  1BED       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       66  1BF8       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       67  1C03       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       68  1C0E       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       69  1C19       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       70  1C24       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       71  1C2F       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       72  1C3A       10  UPPER  c01:1                                         VORTEX.LBX
+VORTEX       73  1C45        9  UPPER  c01:1                                         SOUND.LBX
+VORTEX       74  1C52       12  UPPER  c01:1                                         STARLORD.CFG
+VORTEX       75  1C5F        4  UPPER  c01:1                                         SAVE
+VORTEX       76  1C64        4  UPPER  c01:1                                         .GAM
+VORTEX       77  1C6D       12  UPPER  c01:1                                         STARLORD.CFG
+VORTEX       78  1C7A       10  UPPER  c01:1                                         VFONTS.LBX
+VORTEX       79  1C85        4  UPPER  c01:1                                         SAVE
+VORTEX       80  1C8A        4  UPPER  c01:1                                         .GAM
+VORTEX       81  1C8F        8  UPPER  c01:1                                         GAME.TMP
+VORTEX       82  1C9E       12  UPPER  c01:1                                         STARLORD.CFG
+VORTEX       83  1CAB        4  UPPER  c01:1                                         SAVE
+VORTEX       84  1CB0        4  UPPER  c01:1                                         .GAM
+VORTEX       85  1CB5        8  UPPER  c01:1                                         GAME.TMP
+VORTEX       86  1CC1        8  UPPER  c01:1                                         GAME.TMP
+VORTEX       87  1CCA       24  Mixed  c01:1                                         You must run START.EXE!\n
+VORTEX       88  1CF4       14  Mixed  c02:1                                         Please Wait...
+VORTEX       89  1D14       29  Title  c03:1                                         Error - wrong sound file type
+VORTEX       90  1D48        4  UPPER  c16:1                                         .LBX
+VORTEX       91  1D4D        4  UPPER  c16:1                                         .LBX
+VORTEX       92  1D52        4  UPPER  c16:1                                         .LBX
+VORTEX       93  1D57       11  UPPER  c16:1                                         SPACE ALLOC
+VORTEX       94  1D63       12  Mixed  c16:1                                         Data Free:
+VORTEX       95  1D70       27  Mixed  c16:1                                          bytes       Memory Free:
+VORTEX       96  1D8C       19  Mixed  c16:1                                         k     Worst Free:
+VORTEX       97  1DA2       12  Mixed  c16:1                                         .LBX [entry
+VORTEX       98  1DB2       33  Mixed  c16:1                                          could not be found. Game halted!
+VORTEX       99  1DD4       33  Mixed  c16:1                                          has been corrupted. Game halted!
+VORTEX      100  1DF6       73  Mixed  c16:1                                         Insufficient memory. You need at least 560K free. Try removing all TSR's.
+VORTEX      101  1E40       50  lower  c16:1                                          was not properly allocated or has been corrupted.
+VORTEX      102  1E73       43  Mixed  c16:1                                          failed to reload. Allocation too small by
+VORTEX      103  1E9F        6  lower  c16:1                                          pages
+VORTEX      104  1EA6        4  UPPER  c17:1                                         .LBX
+VORTEX      105  1EB3        4  UPPER  c17:1                                         .LBX
+VORTEX      106  1EB8        8  UPPER                                                <<NMSG>>
+VORTEX      107  1EC2       25  Title                                                R6000\r\n- stack overflow\r\n
+VORTEX      108  1EDE       30  Title                                                R6003\r\n- integer divide by 0\r\n
+VORTEX      109  1EFF       43  Title                                                R6009\r\n- not enough space for environment\r\n
+VORTEX      110  1F32       15  lower                                                run-time error
+VORTEX      111  1F44       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+VORTEX      112  1F73       34  Title                                                R6001\r\n- null pointer assignment\r\n
+VORTEX      113  1F98       54  Mixed                                                \r\nrun-time error R6005\r\n- not enough memory on exec\r\n$
+VORTEX      114  1FD1       51  Mixed                                                \r\nrun-time error R6006\r\n- invalid format on exec\r\n$
+VORTEX      115  2007       56  Mixed                                                \r\nrun-time error R6007\r\n- invalid environment on exec\r\n$
+STARLORD      0  004A        6  Title  c01:18 c02:2 c04:11 c06:8 c07:11 c08:3 c25:4  Humans
+STARLORD      1  0056        7  Title  c01:3 c02:3 c03:5 c24:1 c25:1                 Felines
+STARLORD      2  0062        9  Title  c01:5 c02:1 c03:2 c04:11 c06:2 c08:3 c23:1    Silicoids
+STARLORD      3  006E        8  Title  c01:4 c02:1 c04:2 c06:14 c07:1                Saurians
+STARLORD      4  007A        7  Title  c01:20 c04:4 c06:2 c08:3                      Mentats
+STARLORD      5  0086        6  Title  c01:1 c04:4 c08:712 c10:1                     Avians
+STARLORD      6  0092        8  Title  c01:7 c04:1                                   Klackons
+STARLORD      7  009E        7  Title  c01:2 c04:3 c08:1 c11:7 c23:1                 Ursoids
+STARLORD      8  00AA        7  Title  c01:1 c02:8 c04:1 c06:2 c08:3                 Meklars
+STARLORD      9  00B6        8  Title  c01:15 c04:3 c07:6                            Nazguuls
+STARLORD     10  0363        3  UPPER                                                III
+STARLORD     11  037F        3  UPPER                                                VII
+STARLORD     12  0386        4  UPPER                                                VIII
+STARLORD     13  03A2        3  UPPER                                                XII
+STARLORD     14  03A9        4  UPPER                                                XIII
+STARLORD     15  03B0        3  UPPER  c23:1                                         XIV
+STARLORD     16  03BE        3  UPPER                                                XVI
+STARLORD     17  03C5        4  UPPER  c14:2 c15:13                                  XVII
+STARLORD     18  03CC        5  UPPER  c23:1                                         XVIII
+STARLORD     19  03D3        3  UPPER                                                XIX
+STARLORD     20  03E1        3  UPPER                                                XXI
+STARLORD     21  03E8        4  UPPER  c01:1 c02:4 c04:2 c05:1 c06:5 c08:3 c24:1     XXII
+STARLORD     22  03EF        5  UPPER                                                XXIII
+STARLORD     23  03F6        4  UPPER                                                XXIV
+STARLORD     24  03FD        3  UPPER                                                XXV
+STARLORD     25  0404        4  UPPER  c01:9                                         XXVI
+STARLORD     26  040B        5  UPPER                                                XXVII
+STARLORD     27  0412        6  UPPER                                                XXVIII
+STARLORD     28  0419        4  UPPER                                                XXIX
+STARLORD     29  0420        3  UPPER                                                XXX
+STARLORD     30  047C       10  UPPER  c06:1                                         NO PLANETS
+STARLORD     31  0488        8  UPPER                                                RADIATED
+STARLORD     32  0494        5  UPPER                                                TOXIC
+STARLORD     33  04A0        7  UPPER                                                INFERNO
+STARLORD     34  04AC        4  UPPER                                                DEAD
+STARLORD     35  04B8        6  UPPER                                                TUNDRA
+STARLORD     36  04C4        6  UPPER                                                BARREN
+STARLORD     37  04D0        7  UPPER                                                MINIMAL
+STARLORD     38  04DC        6  UPPER                                                DESERT
+STARLORD     39  04E8        6  UPPER                                                STEPPE
+STARLORD     40  04F4        4  UPPER                                                ARID
+STARLORD     41  0500        5  UPPER                                                OCEAN
+STARLORD     42  050C        6  UPPER                                                JUNGLE
+STARLORD     43  0518        6  UPPER                                                TERRAN
+STARLORD     44  0524        4  UPPER                                                GAIA
+STARLORD     45  0530       10  UPPER  c01:1 c06:1                                   ULTRA POOR
+STARLORD     46  053C        4  UPPER                                                POOR
+STARLORD     47  0554        9  UPPER                                                ARTIFACTS
+STARLORD     48  0560        4  UPPER                                                RICH
+STARLORD     49  056C       10  UPPER                                                ULTRA RICH
+STARLORD     50  0578        7  UPPER  c06:1                                         HOSTILE
+STARLORD     51  058C        4  UPPER                                                GAIA
+STARLORD     52  0596       80  Title  c01:1                                         Yellow stars offer the best chance of discovering terran and sub-terran planets.
+STARLORD     53  05F5       62  Title                                                Red stars are old, dull stars that commonly have poor planets.
+STARLORD     54  0654       74  Title                                                White stars burn incrediably hot and have a wide range of planetary types.
+STARLORD     55  06B3       73  Title                                                Blue stars are relatively young stars with mineral rich lifeless planets.
+STARLORD     56  0712       77  Title                                                Neutron stars are rare and offer the greatest chance of finding rich planets.
+STARLORD     57  0782        4  UPPER  c01:1 c04:6                                   FEUD
+STARLORD     58  078E        3  UPPER                                                WAR
+STARLORD     59  079A        7  UPPER                                                DISCORD
+STARLORD     60  07A6        8  UPPER                                                TROUBLED
+STARLORD     61  07B2        5  UPPER  c23:1                                         TENSE
+STARLORD     62  07BE        8  UPPER                                                RESTLESS
+STARLORD     63  07CA        4  UPPER                                                WARY
+STARLORD     64  07D6        6  UPPER                                                UNEASE
+STARLORD     65  07E2        7  UPPER                                                NEUTRAL
+STARLORD     66  07EE        4  UPPER                                                CALM
+STARLORD     67  07FA        7  UPPER                                                AMIABLE
+STARLORD     68  0806        7  UPPER                                                RELAXED
+STARLORD     69  0812        6  UPPER                                                ACCORD
+STARLORD     70  081E        8  UPPER                                                PEACEFUL
+STARLORD     71  082A        8  UPPER                                                FRIENDLY
+STARLORD     72  0836        4  UPPER                                                ALLY
+STARLORD     73  0842        9  UPPER                                                HARMONIUS
+STARLORD     74  084E       10  UPPER  c04:2 c08:2                                   NO SPECIAL
+STARLORD     75  085B        9  UPPER                                                REFUELING
+STARLORD     76  0868        6  UPPER                                                BATTLE
+STARLORD     77  0875        8  UPPER                                                REPULSOR
+STARLORD     78  0882        4  UPPER                                                WARP
+STARLORD     79  088F       12  UPPER                                                ANTI-MISSILE
+STARLORD     80  089C        8  UPPER                                                INERTIAL
+STARLORD     81  08A9        4  UPPER                                                ZYRO
+STARLORD     82  08B6        9  UPPER                                                AUTOMATED
+STARLORD     83  08C3        6  UPPER                                                STASIS
+STARLORD     84  08D0        8  UPPER                                                CLOAKING
+STARLORD     85  08DD       11  UPPER                                                HIGH ENERGY
+STARLORD     86  08EA       11  UPPER                                                ENVIRONMENT
+STARLORD     87  08F7       12  UPPER                                                DISPLACEMENT
+STARLORD     88  0904        9  UPPER  c01:2                                         LIGHTNING
+STARLORD     89  0911       10  UPPER                                                ADV DAMAGE
+STARLORD     90  091E       10  UPPER                                                TECHNOLOGY
+STARLORD     91  092B        8  UPPER                                                INERTIAL
+STARLORD     92  0938        7  UPPER  c04:2 c08:2                                   DEVICES
+STARLORD     93  0947        5  UPPER                                                TANKS
+STARLORD     94  0956        8  UPPER                                                SCANNERS
+STARLORD     95  0965        4  UPPER                                                BEAM
+STARLORD     96  0974       10  UPPER                                                DISSIPATOR
+STARLORD     97  0983        7  UPPER                                                ROCKETS
+STARLORD     98  0992       10  UPPER                                                STABILIZER
+STARLORD     99  09A1        6  UPPER                                                SHIELD
+STARLORD    100  09B0        6  UPPER                                                REPAIR
+STARLORD    101  09BF        5  UPPER                                                FIELD
+STARLORD    102  09CE        6  UPPER                                                DEVICE
+STARLORD    103  09DD        5  UPPER                                                FOCUS
+STARLORD    104  09EC       10  UPPER                                                TERMINATOR
+STARLORD    105  09FB        6  UPPER                                                DEVICE
+STARLORD    106  0A0A        6  UPPER                                                SHIELD
+STARLORD    107  0A19        7  UPPER                                                CONTROL
+STARLORD    108  0A28        9  UPPER                                                NULLIFIER
+STARLORD    109  0A37        9  UPPER                                                NULLIFIER
+STARLORD    110  0A46        8  Title  c04:3 c06:1                                   Computer
+STARLORD    111  0A54       12  Title  c25:1                                         Construction
+STARLORD    112  0A62       11  Mixed                                                Force Field
+STARLORD    113  0A70       11  Title                                                Planetology
+STARLORD    114  0A7E       10  Title                                                Propulsion
+STARLORD    115  0A8C        7  Title                                                Weapons
+STARLORD    116  0D96        5  UPPER                                                LASER
+STARLORD    117  0DFE       11  UPPER                                                HEAVY LASER
+STARLORD    118  0E66       15  UPPER                                                NUCLEAR MISSILE
+STARLORD    119  0E84        7  UPPER                                                2 SHOTS
+STARLORD    120  0ECE       15  UPPER                                                NUCLEAR MISSILE
+STARLORD    121  0EEC        7  UPPER                                                5 SHOTS
+STARLORD    122  0F36       12  UPPER                                                NUCLEAR BOMB
+STARLORD    123  0F54       19  UPPER                                                GROUND ATTACKS ONLY
+STARLORD    124  0F9E       18  UPPER                                                NEUTRON PELLET GUN
+STARLORD    125  1006       14  UPPER                                                HYPER-V ROCKET
+STARLORD    126  1024        7  UPPER                                                2 SHOTS
+STARLORD    127  106E       14  UPPER                                                HYPER-V ROCKET
+STARLORD    128  108C        7  UPPER                                                5 SHOTS
+STARLORD    129  10D6       13  UPPER                                                GATLING LASER
+STARLORD    130  10F4       19  UPPER                                                FIRES 4 TIMES/TURN
+STARLORD    131  113E       11  UPPER                                                MASS DRIVER
+STARLORD    132  11A6       14  UPPER                                                HYPER-X ROCKET
+STARLORD    133  11C4       18  UPPER                                                2 SHOTS, +1 TO HIT
+STARLORD    134  120E       14  UPPER                                                HYPER-X ROCKET
+STARLORD    135  122C       18  UPPER                                                5 SHOTS, +1 TO HIT
+STARLORD    136  1276       11  UPPER                                                FUSION BOMB
+STARLORD    137  1294       20  UPPER                                                GROUND ATTACKS ONLY
+STARLORD    138  12DE       10  UPPER                                                ION CANNON
+STARLORD    139  1346       16  UPPER                                                HEAVY ION CANNON
+STARLORD    140  13AE       12  UPPER                                                DEATH SPORES
+STARLORD    141  13CC       17  UPPER                                                BIOLOGICAL WEAPON
+STARLORD    142  1416       15  UPPER                                                NEUTRON BLASTER
+STARLORD    143  147E       18  UPPER                                                HEAVY BLAST CANNON
+STARLORD    144  14E6       17  UPPER                                                MERCULITE MISSILE
+STARLORD    145  1504       18  UPPER  c01:3                                         2 SHOTS, +2 TO HIT
+STARLORD    146  154E       17  UPPER                                                MERCULITE MISSILE
+STARLORD    147  156C       18  UPPER                                                5 SHOTS, +2 TO HIT
+STARLORD    148  15B6       13  UPPER                                                PARTICLE BEAM
+STARLORD    149  161E       16  UPPER                                                ANTI-MATTER BOMB
+STARLORD    150  163C       19  UPPER                                                GROUND ATTACKS ONLY
+STARLORD    151  1686       14  UPPER                                                STINGER MISSLE
+STARLORD    152  16A4       18  UPPER                                                2 SHOTS, +3 TO HIT
+STARLORD    153  16EE       14  UPPER                                                STINGER MISSLE
+STARLORD    154  170C       18  UPPER                                                5 SHOTS, +3 TO HIT
+STARLORD    155  1756       15  UPPER                                                GAUSS AUTOCANON
+STARLORD    156  1774       17  UPPER                                                FIRES 4 TIME/TURN
+STARLORD    157  17BE        9  UPPER                                                HARD BEAM
+STARLORD    158  17DC       17  UPPER                                                HALVES SHIELD STR
+STARLORD    159  1826       11  UPPER                                                FUSION BEAM
+STARLORD    160  188E       17  UPPER                                                HEAVY FUSION BEAM
+STARLORD    161  18F6       12  UPPER                                                OMEGA-V BOMB
+STARLORD    162  1914       20  UPPER                                                GROUND ATTACKS ONLY
+STARLORD    163  195E       16  UPPER                                                ANTI-MATTER TORP
+STARLORD    164  197C       21  UPPER                                                FIRES ONE PER 2 TURNS
+STARLORD    165  19C6       15  UPPER                                                MEGABOLT CANNON
+STARLORD    166  19E4       16  UPPER                                                +3 LEVELS TO HIT
+STARLORD    167  1A2E        6  UPPER                                                PHASOR
+STARLORD    168  1A96       12  UPPER                                                HEAVY PHASOR
+STARLORD    169  1AFE       10  UPPER                                                DOOM VIRUS
+STARLORD    170  1B1C       17  UPPER                                                BIOLOGICAL WEAPON
+STARLORD    171  1B66       13  UPPER                                                PULSON MISSLE
+STARLORD    172  1B84       18  UPPER                                                2 SHOTS, +4 TO HIT
+STARLORD    173  1BCE       13  UPPER                                                PULSON MISSLE
+STARLORD    174  1BEC       18  UPPER                                                5 SHOTS, +4 TO HIT
+STARLORD    175  1C36       12  UPPER                                                AUTO BLASTER
+STARLORD    176  1C54       18  UPPER                                                FIRES 3 TIMES/TURN
+STARLORD    177  1C9E       13  UPPER                                                GRAVITON BEAM
+STARLORD    178  1CBC       17  UPPER                                                HALVES SHIELD STR
+STARLORD    179  1D06       15  UPPER                                                HERCULAR MISSLE
+STARLORD    180  1D24       18  UPPER                                                2 SHOTS, +5 TO HIT
+STARLORD    181  1D6E       15  UPPER                                                HERCULAR MISSLE
+STARLORD    182  1D8C       18  UPPER                                                5 SHOTS, +5 TO HIT
+STARLORD    183  1DD6       13  UPPER                                                PLASMA CANNON
+STARLORD    184  1E3E       14  UPPER                                                BIO TERMINATOR
+STARLORD    185  1E5C       17  UPPER                                                BIOLOGICAL WEAPON
+STARLORD    186  1EA6        9  UPPER                                                DISRUPTOR
+STARLORD    187  1F0E       15  UPPER                                                NEUTRONIUM BOMB
+STARLORD    188  1F2C       19  UPPER                                                GROUND ATTACKS ONLY
+STARLORD    189  1F76       16  UPPER                                                HELLFIRE TORPEDO
+STARLORD    190  1F94       21  UPPER                                                HITS ALL FOUR SHIELDS
+STARLORD    191  1FDE       11  UPPER                                                ZEON MISSLE
+STARLORD    192  1FFC       20  UPPER                                                2 SHOTS, AREA EFFECT
+STARLORD    193  2046       11  UPPER                                                ZEON MISSLE
+STARLORD    194  2064       20  UPPER                                                5 SHOTS, AREA EFFECT
+STARLORD    195  20AE       14  UPPER                                                PROTON TORPEDO
+STARLORD    196  20CC       21  UPPER                                                FIRES ONE PER 2 TURNS
+STARLORD    197  2116       12  UPPER                                                PULSE PHASOR
+STARLORD    198  2134       18  UPPER                                                FIRES 3 TIMES/TURN
+STARLORD    199  217E       16  UPPER                                                TRI-FOCUS PLASMA
+STARLORD    200  21E6       17  UPPER                                                STELLAR CONVERTER
+STARLORD    201  2204       21  UPPER                                                HITS ALL FOUR SHIELDS
+STARLORD    202  224E       12  UPPER                                                IONIC PULSAR
+STARLORD    203  226C       11  UPPER                                                AREA EFFECT
+STARLORD    204  22B6       13  UPPER                                                MAULER DEVICE
+STARLORD    205  22D4       19  UPPER                                                CRUEL BRUTAL DAMAGE
+STARLORD    206  231E       14  UPPER                                                PLASMA TORPEDO
+STARLORD    207  233C       19  UPPER                                                LOSES 30 DAMAGE/HEX
+STARLORD    208  2386       11  UPPER                                                CRYSTAL RAY
+STARLORD    209  23EE        9  UPPER                                                DEATH RAY
+STARLORD    210  2456       13  UPPER                                                PLASMA STREAM
+STARLORD    211  25BE        6  UPPER                                                MARK I
+STARLORD    212  25EE        7  UPPER                                                MARK II
+STARLORD    213  261E        8  UPPER                                                MARK III
+STARLORD    214  264E        7  UPPER                                                MARK IV
+STARLORD    215  267E        6  UPPER                                                MARK V
+STARLORD    216  26AE        7  UPPER                                                MARK VI
+STARLORD    217  26DE        8  UPPER                                                MARK VII
+STARLORD    218  270E        9  UPPER                                                MARK VIII
+STARLORD    219  2738        3  none                                                 4!#
+STARLORD    220  273E        7  UPPER                                                MARK IX
+STARLORD    221  2768        3  none                                                 (#(
+STARLORD    222  276E        6  UPPER                                                MARK X
+STARLORD    223  279E        7  UPPER                                                MARK XI
+STARLORD    224  27CE        6  UPPER  c02:24                                        RETROS
+STARLORD    225  27EE        7  UPPER                                                NUCLEAR
+STARLORD    226  280E        9  UPPER                                                SUB-LIGHT
+STARLORD    227  282E        6  UPPER                                                FUSION
+STARLORD    228  284E        7  UPPER                                                IMPULSE
+STARLORD    229  286E        3  UPPER                                                ION
+STARLORD    230  288E       11  UPPER                                                ANTI-MATTER
+STARLORD    231  28AE       11  UPPER                                                INTERPHASED
+STARLORD    232  28CE       11  UPPER                                                HYPERTHRUST
+STARLORD    233  28EE        8  UPPER  c02:19                                        TITANIUM
+STARLORD    234  2916       11  UPPER                                                TITANIUM II
+STARLORD    235  293E        8  UPPER                                                DURALLOY
+STARLORD    236  2966       11  UPPER                                                DURALLOY II
+STARLORD    237  298E        8  UPPER                                                ZORTRIUM
+STARLORD    238  29B6       11  UPPER                                                ZORTRIUM II
+STARLORD    239  29DE        7  UPPER                                                ANDRIUM
+STARLORD    240  2A06       10  UPPER                                                ANDRIUM II
+STARLORD    241  2A2E        9  UPPER                                                TRITANIUM
+STARLORD    242  2A56       12  UPPER                                                TRITANIUM II
+STARLORD    243  2A6F        4  UPPER                                                \n\D\n
+STARLORD    244  2A7E       10  UPPER                                                ADAMANTIUM
+STARLORD    245  2AA6       13  UPPER                                                ADAMANTIUM II
+STARLORD    246  2ACE       10  UPPER                                                NEUTRONIUM
+STARLORD    247  2AF6       13  UPPER                                                NEUTRONIUM II
+STARLORD    248  2B4E        7  UPPER                                                CLASS I
+STARLORD    249  2B7E        8  UPPER                                                CLASS II
+STARLORD    250  2BAE        7  UPPER                                                CLASS V
+STARLORD    251  2BDE        9  UPPER                                                CLASS VII
+STARLORD    252  2C0E        7  UPPER                                                CLASS X
+STARLORD    253  2C3E        9  UPPER                                                CLASS XII
+STARLORD    254  2C6E        8  UPPER                                                CLASS XV
+STARLORD    255  2C9E       10  UPPER                                                CLASS XVII
+STARLORD    256  2CCE        8  UPPER                                                CLASS XX
+STARLORD    257  2CFE       10  UPPER                                                CLASS XXII
+STARLORD    258  2D2E        9  UPPER                                                CLASS XXV
+STARLORD    259  2D5E        9  UPPER                                                CLASS XXX
+STARLORD    260  2D8E       10  UPPER                                                CLASS XXXX
+STARLORD    261  2DEE        8  UPPER                                                JAMMER I
+STARLORD    262  2E1E        9  UPPER                                                JAMMER II
+STARLORD    263  2E4E       10  UPPER                                                JAMMER III
+STARLORD    264  2E7E        9  UPPER                                                JAMMER IV
+STARLORD    265  2EAE        8  UPPER                                                JAMMER V
+STARLORD    266  2EDE        9  UPPER                                                JAMMER VI
+STARLORD    267  2F0E       10  UPPER                                                JAMMER VII
+STARLORD    268  2F3E       11  UPPER                                                JAMMER VIII
+STARLORD    269  2F6E        9  UPPER                                                JAMMER IX
+STARLORD    270  2F9E        8  UPPER                                                JAMMER X
+STARLORD    271  2FC8        3  lower                                                c./
+STARLORD    272  3044       15  UPPER                                                REFUELING TANKS
+STARLORD    273  305E       27  UPPER                                                EXTENDS OTHER SHIP'S RANGES
+STARLORD    274  30BA       14  UPPER                                                BATTLE SCANNER
+STARLORD    275  30D4       25  UPPER                                                DISPLAYS ENEMY SHIP STATS
+STARLORD    276  3130       13  UPPER                                                REPULSOR BEAM
+STARLORD    277  314A       28  UPPER                                                MOVES ENEMY SHIPS BACK 1 HEX
+STARLORD    278  31A6       15  UPPER                                                WARP DISSIPATOR
+STARLORD    279  31C0       28  UPPER                                                REDUCES SPEED OF ENEMY SHIPS
+STARLORD    280  321C       20  UPPER                                                ANTI-MISSILE ROCKETS
+STARLORD    281  3236       29  UPPER                                                35% CHANCE MISSILES DESTROYED
+STARLORD    282  3292       19  UPPER                                                INERTIAL STABILIZER
+STARLORD    283  32AC       30  UPPER                                                ADDS +2 TO BEAM/MISSLE DEFENSE
+STARLORD    284  3308       11  UPPER                                                ZYRO SHIELD
+STARLORD    285  3322       29  UPPER                                                75% CHANCE MISSILES DESTROYED
+STARLORD    286  337E       16  UPPER                                                AUTOMATED REPAIR
+STARLORD    287  3398       31  UPPER                                                HEALS 25% OF SHIP'S HITS A TURN
+STARLORD    288  33F4       12  UPPER                                                STASIS FIELD
+STARLORD    289  340E       23  UPPER                                                ENEMY FROZEN FOR 1 TURN
+STARLORD    290  346A       15  UPPER                                                CLOAKING DEVICE
+STARLORD    291  3484       22  UPPER                                                RENDERS SHIP INVISIBLE
+STARLORD    292  34E0       17  UPPER                                                HIGH ENERGY FOCUS
+STARLORD    293  34FA       32  UPPER                                                INCREASES WEAPON RANGES BY 1 HEX
+STARLORD    294  3556       24  UPPER                                                ENVIRONMENTAL TERMINATOR
+STARLORD    295  3570       28  UPPER                                                KILLS 25%-75% OF ENEMY SHIPS
+STARLORD    296  35CC       19  UPPER                                                DISPLACEMENT DEVICE
+STARLORD    297  35E6       24  UPPER                                                TELEPORTS SHIP IN COMBAT
+STARLORD    298  3642       16  UPPER                                                LIGHTNING SHIELD
+STARLORD    299  365C       30  UPPER                                                100% CHANCE MISSILES DESTROYED
+STARLORD    300  36B8       18  UPPER                                                ADV DAMAGE CONTROL
+STARLORD    301  36D2       32  UPPER                                                HEALS HALF SHIP'S HITS EACH TURN
+STARLORD    302  372E       20  UPPER                                                TECHNOLOGY NULLIFIER
+STARLORD    303  3748       24  UPPER                                                DESTROYS ENEMY COMPUTERS
+STARLORD    304  37A4       18  UPPER                                                INERTIAL NULLIFIER
+STARLORD    305  37BE       30  UPPER                                                ADDS +4 TO BEAM/MISSLE DEFENSE
+STARLORD    306  381A        5  UPPER  c02:34                                        SMALL
+STARLORD    307  3832        6  UPPER                                                MEDIUM
+STARLORD    308  384A        5  UPPER                                                LARGE
+STARLORD    309  3862        4  UPPER                                                HUGE
+STARLORD    310  39A6        8  lower  c04:1                                         diplomat
+STARLORD    311  39B5       10  lower                                                militarist
+STARLORD    312  39C4       12  lower                                                expansionist
+STARLORD    313  39D3       12  lower                                                technologist
+STARLORD    314  39E2       13  lower                                                industrialist
+STARLORD    315  39F1        9  lower                                                ecologist
+STARLORD    316  3A00        8  lower  c04:1                                         ruthless
+STARLORD    317  3A0C        9  lower                                                psychotic
+STARLORD    318  3A18       10  lower                                                aggressive
+STARLORD    319  3A24       10  lower                                                pacifistic
+STARLORD    320  3A30        9  lower                                                honorable
+STARLORD    321  3A3C       10  lower                                                xenophobic
+STARLORD    322  3CE4        8  UPPER  c06:1                                         RUTHLESS
+STARLORD    323  3CF6        9  UPPER                                                PSYCHOTIC
+STARLORD    324  3D08       10  UPPER                                                AGGRESSIVE
+STARLORD    325  3D1A       10  UPPER                                                PACIFISTIC
+STARLORD    326  3D2C        9  UPPER                                                HONORABLE
+STARLORD    327  3D3E       10  UPPER                                                XENOPHOBIC
+STARLORD    328  3D74        8  UPPER  c06:1                                         DIPLOMAT
+STARLORD    329  3D86       10  UPPER                                                MILITARIST
+STARLORD    330  3D98       12  UPPER  c01:1 c06:1                                   EXPANSIONIST
+STARLORD    331  3DAA       12  UPPER                                                TECHNOLOGIST
+STARLORD    332  3DBC       13  UPPER                                                INDUSTRIALIST
+STARLORD    333  3DCE        9  UPPER                                                ECOLOGIST
+STARLORD    334  3EC0       12  UPPER  c09:2                                         DIPLOMAC.LBX
+STARLORD    335  3ECD       12  UPPER  c09:1                                         RESEARCH.LBX
+STARLORD    336  3EDA       12  UPPER                                                PICTCAPT.TMP
+STARLORD    337  4EA2        8  UPPER  c19:1                                         EMMXXXX0
+STARLORD    338  4EB0      512  UPPER                                                SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+STARLORD    339  536A       13  UPPER  c24:3                                         _C_FILE_INFO=
+STARLORD    340  5565        6  none                                                 ``````
+STARLORD    341  56B6        3  lower  c24:1                                         /c
+STARLORD    342  56C8        7  UPPER  c24:1                                         COMSPEC
+STARLORD    343  56D0        4  lower                                                .bat
+STARLORD    344  56D5        4  lower                                                .exe
+STARLORD    345  56DA        4  lower                                                .com
+STARLORD    346  5718        5  UPPER                                                1#IND
+STARLORD    347  5745        5  UPPER                                                1#IND
+STARLORD    348  5753        6  Title                                                Ce+000
+STARLORD    349  579D        5  Title                                                M61xx
+STARLORD    350  57F0        8  UPPER  c01:1                                         GAME.TMP
+STARLORD    351  57F9        9  UPPER  c01:1                                         RACES.LBX
+STARLORD    352  5803       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    353  580F       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    354  581B       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    355  5829       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    356  5835       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    357  5841       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    358  584F       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    359  585B       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    360  5867       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    361  5873       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    362  587F       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    363  5894        9  UPPER  c01:1                                         STAR GATE
+STARLORD    364  589E        4  UPPER  c01:1                                         NONE
+STARLORD    365  58A7        4  UPPER  c01:1                                         NONE
+STARLORD    366  58AC        6  UPPER  c01:1                                         UPGRDE
+STARLORD    367  58B3        6  UPPER  c01:1                                         SHIELD
+STARLORD    368  58BD        3  UPPER  c01:1                                         MAX
+STARLORD    369  58C1        4  UPPER  c01:1                                         NONE
+STARLORD    370  58C6        5  UPPER  c01:1                                         WASTE
+STARLORD    371  58CC        5  UPPER  c01:1                                         ATMOS
+STARLORD    372  58D2        4  UPPER  c01:1                                         SOIL
+STARLORD    373  58D7        6  UPPER  c01:1                                         T-FORM
+STARLORD    374  58DE        5  UPPER  c01:1                                         CLEAN
+STARLORD    375  58E6        3  UPPER  c01:1                                         POP
+STARLORD    376  58EA        5  UPPER  c01:1                                         CLEAN
+STARLORD    377  5904       11  Mixed  c01:1                                         No Colonies
+STARLORD    378  5910       12  UPPER  c01:1                                         POPULATION:
+STARLORD    379  591D       11  UPPER  c01:1                                         FACTORIES:
+STARLORD    380  5929        8  UPPER  c01:1                                         REBELS:
+STARLORD    381  5938       12  Mixed  c01:1                                         Moving Ships
+STARLORD    382  594B       10  Title  c01:1                                         Relocation
+STARLORD    383  5956       87  Title  c01:1                                           Ships newly created can automatically be sent to other star systems that you control.
+STARLORD    384  59AE        6  UPPER  c01:1                                         DELAY
+STARLORD    385  59B5        5  UPPER  c01:1                                          TURN
+STARLORD    386  59BF      114  Mixed  c01:1                                           Ships newly created can automatically be sent to other star systems that you control.    Choose new star system.
+STARLORD    387  5A34       39  UPPER  c01:1                                          CHOOSE DESTINATION AND NUMBER TO SEND.
+STARLORD    388  5A5C       11  Mixed  c01:1                                         No Colonies
+STARLORD    389  5A68       12  UPPER  c01:1                                         POPULATION:
+STARLORD    390  5A75       10  UPPER  c01:1                                         INDUSTRY:
+STARLORD    391  5A80       87  UPPER  c01:1                                         TRANSPORTS ARE USED TO MOVE POPULATIONS, ASSAULT ENEMY WORLDS, OR COLONIZE NEW PLANETS.
+STARLORD    392  5AD8        9  UPPER  c01:1                                         STAR GATE
+STARLORD    393  5AE2        4  UPPER  c01:1                                         ETA
+STARLORD    394  5AE7        5  UPPER  c01:1                                          TURN
+STARLORD    395  5AEF       90  UPPER  c01:1                                           YOUR PEOPLE ARE INFECTED WITH A PLAGUE. SENDING OUT TRANSPORTS WOULD SPREAD THE DISEASE.
+STARLORD    396  5B4A       60  UPPER  c01:1                                           YOU MUST FIRST EXPLORE A SYSTEM BEFORE COLONISTS CAN LAND.
+STARLORD    397  5B87       75  UPPER  c01:1                                           YOU DO NOT HAVE THE REQUIRED LEVEL OF PLANETOLOGY TO LAND ON THIS PLANET.
+STARLORD    398  5BD3       67  UPPER  c01:1                                           YOU DO NOT HAVE THE REQUIRED SHIP RANGE TO REACH THE STAR SYSTEM.
+STARLORD    399  5C1D        9  UPPER  c01:1                                         STAR GATE
+STARLORD    400  5C27        4  UPPER  c01:1                                         ETA
+STARLORD    401  5C2C        5  UPPER  c01:1                                          TURN
+STARLORD    402  5C34       66  UPPER  c01:1                                          YOU DO NOT HAVE THE REQUIRED SHIP RANGE TO REACH THE STAR SYSTEM.
+STARLORD    403  5C77       52  UPPER  c01:1                                         CHOOSE THE STAR DESTINATION AND NUMBER OF STARSHIPS.
+STARLORD    404  5CB5       10  Mixed  c01:1                                         No Contact
+STARLORD    405  5CC0        4  UPPER  c01:1                                         NONE
+STARLORD    406  5CC5        4  UPPER  c01:1                                         NONE
+STARLORD    407  5CCD        4  UPPER  c01:1                                         NONE
+STARLORD    408  5CED       20  UPPER  c01:1                                          ONLY 6 SHIPS MAY BE
+STARLORD    409  5D02       20  UPPER  c01:1                                         COMMISIONED AT ONCE.
+STARLORD    410  5D17       19  UPPER  c01:1                                         CHOOSE WHICH DESIGN
+STARLORD    411  5D2B       20  UPPER  c01:1                                         TO DISCONTINUE. HALF
+STARLORD    412  5D40       20  UPPER  c01:1                                         THE COST CAN BE USED
+STARLORD    413  5D55       19  UPPER  c01:1                                         TO BUILD NEW SHIPS.
+STARLORD    414  5D6E        6  Title  c01:1                                          Fleet
+STARLORD    415  5D75        3  Title  c01:1                                         To
+STARLORD    416  5D79        5  UPPER  c01:1                                         ETA
+STARLORD    417  5D7F        6  UPPER  c01:1                                          TURNS
+STARLORD    418  5D86       10  Title  c01:1                                         Transports
+STARLORD    419  5D91        3  Title  c01:1                                         To
+STARLORD    420  5D95        7  Title  c01:1                                          Colony
+STARLORD    421  5D9D        9  Title  c01:1                                          Colonies
+STARLORD    422  5DB3        6  UPPER  c01:1                                         PLAGUE
+STARLORD    423  5DBA       10  UPPER  c01:1                                         SUPER NOVA
+STARLORD    424  5DC5        5  UPPER  c01:1                                         COMET
+STARLORD    425  5DCB        7  UPPER  c01:1                                         PIRATES
+STARLORD    426  5DD3        9  UPPER  c01:1                                         REBELLION
+STARLORD    427  5DE6       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    428  5DF2       11  UPPER  c01:1                                         NEBULAS.LBX
+STARLORD    429  5DFE        9  UPPER  c01:1                                         RACES.LBX
+STARLORD    430  5E08       11  UPPER  c01:1                                         PLANETS.LBX
+STARLORD    431  5E14        9  UPPER  c01:1                                         SHIPS.LBX
+STARLORD    432  5E1E        4  UPPER  c01:1                                         SAVE
+STARLORD    433  5E23        4  UPPER  c01:1                                         .GAM
+STARLORD    434  5E28        8  UPPER  c01:1                                         GAME.TMP
+STARLORD    435  5E37       12  UPPER  c01:1                                         STARLORD.CFG
+STARLORD    436  5E44        4  UPPER  c01:1                                         SAVE
+STARLORD    437  5E49        4  UPPER  c01:1                                         .GAM
+STARLORD    438  5E4E        8  UPPER  c01:1                                         GAME.TMP
+STARLORD    439  5E5A        8  UPPER  c01:1                                         GAME.TMP
+STARLORD    440  5E63       24  Mixed  c01:1                                         You must run START.EXE!\n
+STARLORD    441  5E7C       11  UPPER  c01:1                                         NEBULAS.LBX
+STARLORD    442  5E88       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    443  5E94       11  UPPER  c01:1                                         NEBULAS.LBX
+STARLORD    444  5EA0       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    445  5EAD       13  Title  c01:1                                         Choose target
+STARLORD    446  5EBB       12  lower  c01:1                                         for sabotage
+STARLORD    447  5EC8       13  Title  c01:1                                         Choose target
+STARLORD    448  5ED6       12  lower  c01:1                                         for sabotage
+STARLORD    449  5EE3       11  UPPER  c01:1                                         FACTORIES:
+STARLORD    450  5EEF        7  UPPER  c01:1                                         MISSILE
+STARLORD    451  5EF7        6  UPPER  c01:1                                         BASES:
+STARLORD    452  5EFE       12  UPPER  c01:1                                         HUGE  SHIPS:
+STARLORD    453  5F0B       12  UPPER  c01:1                                         LARGE SHIPS:
+STARLORD    454  5F18       12  UPPER  c01:1                                         MED   SHIPS:
+STARLORD    455  5F25       12  UPPER  c01:1                                         SMALL SHIPS:
+STARLORD    456  5F36       10  Title  c01:1                                         Your spies
+STARLORD    457  5F41        9  lower  c01:1                                         failed to
+STARLORD    458  5F4B       11  lower  c01:1                                         destroy any
+STARLORD    459  5F57       13  lower  c01:1                                         missile bases
+STARLORD    460  5F65       13  Title  c01:1                                         Unknown spies
+STARLORD    461  5F73        6  lower  c01:1                                          spies
+STARLORD    462  5F7A        9  lower  c01:1                                         failed to
+STARLORD    463  5F84       11  lower  c01:1                                         destroy any
+STARLORD    464  5F90        7  lower  c01:1                                         of your
+STARLORD    465  5F98       13  lower  c01:1                                         missile bases
+STARLORD    466  5FA6       10  Title  c01:1                                         Your spies
+STARLORD    467  5FB1       13  Title  c01:1                                         Unknown spies
+STARLORD    468  5FBF        6  lower  c01:1                                          spies
+STARLORD    469  5FC6       10  lower  c01:1                                         destroyed
+STARLORD    470  5FD1       12  lower  c01:1                                         missile base
+STARLORD    471  5FE0        8  lower  c01:1                                         of yours
+STARLORD    472  5FEB       10  Title  c01:1                                         Your spies
+STARLORD    473  5FF6        9  lower  c01:1                                         failed to
+STARLORD    474  6000       11  lower  c01:1                                         destroy any
+STARLORD    475  600C        9  lower  c01:1                                         factories
+STARLORD    476  6016       13  Title  c01:1                                         Unknown spies
+STARLORD    477  6024        6  lower  c01:1                                          spies
+STARLORD    478  602B        9  lower  c01:1                                         failed to
+STARLORD    479  6035       11  lower  c01:1                                         destroy any
+STARLORD    480  6041        7  lower  c01:1                                         of your
+STARLORD    481  6049        9  lower  c01:1                                         factories
+STARLORD    482  6053       10  Title  c01:1                                         Your spies
+STARLORD    483  605E       13  Title  c01:1                                         Unknown spies
+STARLORD    484  606C        6  lower  c01:1                                          spies
+STARLORD    485  6073       10  lower  c01:1                                         destroyed
+STARLORD    486  607E        9  lower  c01:1                                         factories
+STARLORD    487  6088        7  lower  c01:1                                         factory
+STARLORD    488  6090        8  lower  c01:1                                         of yours
+STARLORD    489  609B       11  UPPER  c01:1                                         NEBULAS.LBX
+STARLORD    490  60AF       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    491  60BB       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    492  60C7       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    493  60D3       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    494  60DF       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    495  60EB       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    496  60F7       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    497  6103       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    498  610F       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    499  611B       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    500  6127       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    501  6133       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    502  613F       11  UPPER  c01:1                                         STARMAP.LBX
+STARLORD    503  614B        9  UPPER  c01:1                                         SOUND.LBX
+STARLORD    504  6155        9  UPPER  c01:1                                         SOUND.LBX
+STARLORD    505  615F        8  UPPER  c01:1                                         DEMO.LBX
+STARLORD    506  6168        8  UPPER  c01:1                                         DEMO.LBX
+STARLORD    507  6172       13  Mixed  c01:1                                         Space Crystal
+STARLORD    508  6180       12  Mixed  c01:1                                         Space Amoeba
+STARLORD    509  618D       12  Mixed  c01:1                                         Planet Eater
+STARLORD    510  619A        9  Title  c01:1                                         Kills all
+STARLORD    511  61A4       13  lower  c01:1                                         forms of life
+STARLORD    512  61B2       14  Title  c01:1                                         Digests planet
+STARLORD    513  61C1        8  lower  c01:1                                         surfaces
+STARLORD    514  61CA       10  Title  c01:1                                         Completely
+STARLORD    515  61D5       16  lower  c01:1                                         destroys planets
+STARLORD    516  61FA       11  UPPER  c02:1                                         DESIGNS.LBX
+STARLORD    517  6226       10  UPPER  c02:1                                         HIT POINTS
+STARLORD    518  6231       12  UPPER  c02:1                                         ENGINE UNITS
+STARLORD    519  623E        4  UPPER  c02:1                                         WARP
+STARLORD    520  6243        3  UPPER  c02:1                                         DEF
+STARLORD    521  6247        8  UPPER  c02:1                                         ABSORBS
+STARLORD    522  6250        4  UPPER  c02:1                                          HIT
+STARLORD    523  6255        5  UPPER  c02:1                                          HITS
+STARLORD    524  625B       14  UPPER  c02:1                                         MISSLE DEFENSE
+STARLORD    525  626A       12  UPPER  c02:1                                         ATTACK LEVEL
+STARLORD    526  6294       14  Mixed  c03:1                                         Please Wait...
+STARLORD    527  62B4        5  UPPER  c04:1                                         PRESS
+STARLORD    528  62BA        6  UPPER  c04:1                                         PLANET
+STARLORD    529  62C1        7  UPPER  c04:1                                         TO VIEW
+STARLORD    530  62C9       11  Title  c04:1                                         Scout ships
+STARLORD    531  62D5       11  lower  c04:1                                         explore the
+STARLORD    532  62E1       11  lower  c04:1                                         star system
+STARLORD    533  62ED       10  Title  c04:1                                         All colony
+STARLORD    534  62F8       10  lower  c04:1                                         transports
+STARLORD    535  6303       13  lower  c04:1                                         attempting to
+STARLORD    536  6311        9  lower  c04:1                                         land were
+STARLORD    537  631B       12  lower  c04:1                                         destroyed by
+STARLORD    538  6328       12  lower  c04:1                                         enemy ships.
+STARLORD    539  6335       13  lower  c04:1                                         enemy missile
+STARLORD    540  6343        6  lower  c04:1                                         bases.
+STARLORD    541  634A       11  lower  c04:1                                         enemy ships
+STARLORD    542  6356       11  lower  c04:1                                         and missile
+STARLORD    543  6362        6  lower  c04:1                                         bases.
+STARLORD    544  6369        8  lower  c04:1                                          out of
+STARLORD    545  6372       10  lower  c04:1                                         transports
+STARLORD    546  637D        9  lower  c04:1                                         penetrate
+STARLORD    547  6387       14  lower  c04:1                                         enemy defenses
+STARLORD    548  6396        8  lower  c04:1                                         and land
+STARLORD    549  639F       13  lower  c04:1                                         successfully.
+STARLORD    550  63AD       10  lower  c04:1                                          colonists
+STARLORD    551  63B8       13  lower  c04:1                                         land and form
+STARLORD    552  63C6       13  lower  c04:1                                         a new colony.
+STARLORD    553  63D4       13  Mixed  c04:1                                         Ground Battle
+STARLORD    554  63E2       12  Mixed  c04:1                                         Rebel Battle
+STARLORD    555  63EF        6  Title  c04:1                                         Losses
+STARLORD    556  63F6        6  Title  c04:1                                         Rebels
+STARLORD    557  63FD        6  Title  c04:1                                         Rebels
+STARLORD    558  6404        4  lower  c04:1                                          win
+STARLORD    559  6409       11  UPPER  c04:1                                         STARMAP.LBX
+STARLORD    560  6415        9  UPPER  c04:1                                         SOUND.LBX
+STARLORD    561  641F       11  UPPER  c04:1                                         STARMAP.LBX
+STARLORD    562  642B       11  Title  c04:1                                          Ambassador
+STARLORD    563  6438        5  lower  c04:1                                         bases
+STARLORD    564  643E        9  lower  c04:1                                         factories
+STARLORD    565  6448       15  UPPER  c04:1                                         SPENDING RATIOS
+STARLORD    566  6458        9  UPPER  c04:1                                         PLANETARY
+STARLORD    567  6462       11  UPPER  c04:1                                         MAINTENANCE
+STARLORD    568  646E        9  UPPER  c04:1                                         RELATIONS
+STARLORD    569  647E       14  Title  c04:1                                         An unknown spy
+STARLORD    570  648D       12  lower  c04:1                                         attempted to
+STARLORD    571  649A       12  lower  c04:1                                         destroy your
+STARLORD    572  64A7       14  lower  c04:1                                         missile bases,
+STARLORD    573  64B6       11  lower  c04:1                                         but failed.
+STARLORD    574  64C2       31  UPPER  c04:1                                         BATTLE COMPUTERS, ECM, INDUSTRY
+STARLORD    575  64E2       30  UPPER  c04:1 c07:1                                   ARMOR, INDUSTRY, SHIP BUILDING
+STARLORD    576  6501       36  UPPER  c04:1                                         DEFLECTOR SHIELDS, PLANETARY SHIELDS
+STARLORD    577  6526       36  UPPER  c04:1                                         ECOLOGICAL RESTORATION, TERRAFORMING
+STARLORD    578  654B       33  UPPER  c04:1                                         STAR DRIVES, SHIP MANEUVERABILITY
+STARLORD    579  656D       31  UPPER  c04:1                                         MISSILE AND BEAM WEAPON SYSTEMS
+STARLORD    580  6594       10  lower  c04:1                                         vortex.exe
+STARLORD    581  659F       10  lower  c04:1                                         vortex.exe
+STARLORD    582  65AA       44  Mixed  c04:1                                         The VORTEX.EXE program could not be found\n\n\n
+STARLORD    583  65D7       28  UPPER  c04:1                                         REVIEW OF CURRENT TECHNOLOGY
+STARLORD    584  65F4       13  UPPER  c04:1                                         FACTORY COST:
+STARLORD    585  6602       17  UPPER  c04:1                                         ROBOTIC CONTROLS:
+STARLORD    586  6614       14  UPPER  c04:1                                         FACTORY WASTE:
+STARLORD    587  6623       13  UPPER  c04:1                                         TERRAFORMING:
+STARLORD    588  6631       18  UPPER  c04:1                                         WASTE RESTORATION:
+STARLORD    589  6644       14  UPPER  c04:1                                         SPACE SCANNER:
+STARLORD    590  6653       15  UPPER  c04:1                                         MAX SHIP RANGE:
+STARLORD    591  6663       14  UPPER  c04:1                                         BASE MISSILES:
+STARLORD    592  6672       18  UPPER  c04:1                                         MISSILE BASE COST:
+STARLORD    593  6685       15  UPPER  c04:1                                         PLANET SHIELDS:
+STARLORD    594  6697        4  UPPER  c04:1                                          BCR
+STARLORD    595  669C        4  UPPER  c04:1                                         /POP
+STARLORD    596  66A5        4  UPPER  c04:1                                          POP
+STARLORD    597  66AA        4  UPPER  c04:1                                         NONE
+STARLORD    598  66AF        4  UPPER  c04:1                                         /BCR
+STARLORD    599  66B4        8  UPPER  c04:1                                          PARSECS
+STARLORD    600  66BD        8  UPPER  c04:1                                          PARSECS
+STARLORD    601  66C6        4  UPPER  c04:1                                          BCR
+STARLORD    602  66CB        6  UPPER  c04:1                                         CLASS
+STARLORD    603  66D2        4  UPPER  c04:1                                         NONE
+STARLORD    604  66D7        9  UPPER  c04:1                                         COMPUTERS
+STARLORD    605  66E1       12  UPPER  c04:1                                         CONSTRUCTION
+STARLORD    606  66EE       12  UPPER  c04:1                                         FORCE FIELDS
+STARLORD    607  66FB       11  UPPER  c04:1                                         PLANETOLOGY
+STARLORD    608  6707       10  UPPER  c04:1                                         PROPULSION
+STARLORD    609  6712        7  UPPER  c04:1                                         WEAPONS
+STARLORD    610  6729       12  UPPER  c04:1                                         STARLORD.CFG
+STARLORD    611  6736        9  UPPER  c04:1                                         FONTS.LBX
+STARLORD    612  6740        9  UPPER  c04:1                                         SOUND.LBX
+STARLORD    613  674C        9  UPPER  c04:1                                         SOUND.LBX
+STARLORD    614  6756        9  UPPER  c04:1                                         SPIES.LBX
+STARLORD    615  6760       10  UPPER  c04:1                                         TECHNO.LBX
+STARLORD    616  676B        9  UPPER  c04:1                                         SPIES.LBX
+STARLORD    617  6775       22  Mixed  c04:1                                          Scientists Achieve A
+STARLORD    618  678C       13  Title  c04:1                                          Breakthrough
+STARLORD    619  679A       41  Mixed  c04:1                                          Spies Infiltrate The Research Center At
+STARLORD    620  67C4       25  Mixed  c04:1                                         Troopers At The Ruins Of
+STARLORD    621  67DE        9  Title  c04:1                                          Discover
+STARLORD    622  67EB       27  Title  c04:1                                         Your spies managed to frame
+STARLORD    623  6807       27  lower  c04:1                                         another race for the theft.
+STARLORD    624  6823       27  Title  c04:1                                         Your spies managed to frame
+STARLORD    625  683F       27  lower  c04:1                                         another race for the theft.
+STARLORD    626  685B       23  UPPER  c04:1                                         CHOOSE THE VICTIM RACE:
+STARLORD    627  6873       23  UPPER  c04:1                                         CHOOSE THE VICTIM RACE:
+STARLORD    628  688B       27  Title  c04:1                                         Your spies managed to frame
+STARLORD    629  68A7       30  lower  c04:1                                         another race for the sabotage.
+STARLORD    630  68C6       23  UPPER  c04:1                                         CHOOSE THE VICTIM RACE:
+STARLORD    631  68E1        6  Title  c04:1                                         Year:
+STARLORD    632  68E8       16  Mixed  c04:1                                         Fleet Production
+STARLORD    633  68FB        5  Title  c04:1                                         Trade
+STARLORD    634  6904        5  Title  c04:1                                         Trade
+STARLORD    635  690D        5  Title  c04:1                                         Trade
+STARLORD    636  6917        7  Title  c04:1                                          Revolt
+STARLORD    637  691F       39  Title  c04:1                                           A new leader emerges from within the
+STARLORD    638  6947       46  Mixed  c04:1                                          empire. Rumors indicate the new emperor is a
+STARLORD    639  6978      110  Title  c04:1                                         .  Diplomatic relations between your empires have shifted toward neutral and trade routes have been disrupted.
+STARLORD    640  69E8        9  UPPER  c04:1                                         SOUND.LBX
+STARLORD    641  69F2       10  Title  c04:1                                          Espionage
+STARLORD    642  69FD       26  UPPER  c04:1                                          SPIES STEAL THE PLANS FOR
+STARLORD    643  6A19       17  UPPER  c04:1                                         CONTACT WITH THE
+STARLORD    644  6A2D       16  UPPER  c04:1                                         HAS BEEN BROKEN.
+STARLORD    645  6A43        5  none   c04:1                                         -----
+STARLORD    646  6A49        5  none   c04:1                                         -----
+STARLORD    647  6A4F        5  none   c04:1                                         -----
+STARLORD    648  6A55        9  lower  c04:1                                         files.exe
+STARLORD    649  6A5F        9  lower  c04:1                                         files.exe
+STARLORD    650  6A69       46  Mixed  c04:1                                         The FILES.EXE program could not be found %d\n\n\n
+STARLORD    651  6A99       10  UPPER  c04:1                                         VORTEX.LBX
+STARLORD    652  6AB5       12  UPPER  c04:1                                         STARLORD.CFG
+STARLORD    653  6AC2       11  UPPER  c04:1                                         STARMAP.LBX
+STARLORD    654  6ACE       16  Title  c04:1                                         Load saved game.
+STARLORD    655  6AEF       10  UPPER  c04:1                                         NOT IN USE
+STARLORD    656  6AFA       11  UPPER  c04:1                                         STARMAP.LBX
+STARLORD    657  6B07       28  Title  c04:1                                         Choose file number and name.
+STARLORD    658  6B36       10  UPPER  c04:1                                         NOT IN USE
+STARLORD    659  6B43       12  lower  c04:1                                         starlord.exe
+STARLORD    660  6B50       12  lower  c04:1                                         starlord.exe
+STARLORD    661  6B5D       43  Mixed  c04:1                                         The STARLORD.EXE program could not be found
+STARLORD    662  6B89       30  UPPER  c04:1                                         YOUR SPIES HAVE INFILTRATED A
+STARLORD    663  6BA8        5  UPPER  c04:1                                          BASE
+STARLORD    664  6BAE       38  Title  c04:1                                         Choose the type of techonlogy to steal
+STARLORD    665  6BE6       29  Title  c05:1                                         Error - wrong sound file type
+STARLORD    666  6C14       12  UPPER  c06:1                                         STARVIEW.LBX
+STARLORD    667  6C21       12  UPPER  c06:1                                         STARVIEW.LBX
+STARLORD    668  6C2E       12  UPPER  c06:1                                         STARVIEW.LBX
+STARLORD    669  6C3B       12  UPPER  c06:1                                         STARVIEW.LBX
+STARLORD    670  6C48       11  Mixed  c06:1                                         Star System
+STARLORD    671  6C54       11  UPPER  c06:1                                         NEBULAS.LBX
+STARLORD    672  6C60       37  Title  c06:1                                         Development points from industry are
+STARLORD    673  6C86       44  Title  c06:1                                         Technology points from research are doubled.
+STARLORD    674  6CB3       11  Mixed  c06:1                                         Ultra Poor:
+STARLORD    675  6CBF       17  lower  c06:1                                         cut to one-third.
+STARLORD    676  6CD1       13  Mixed  c06:1                                         Mineral Poor:
+STARLORD    677  6CDF        7  lower  c06:1                                         halved.
+STARLORD    678  6CE7       10  Title  c06:1                                         Artifacts:
+STARLORD    679  6CF2       13  Mixed  c06:1                                         Mineral Rich:
+STARLORD    680  6D00        8  lower  c06:1                                         doubled.
+STARLORD    681  6D09       11  Mixed  c06:1                                         Ultra Rich:
+STARLORD    682  6D15        8  lower  c06:1                                         tripled.
+STARLORD    683  6D1E        8  Title  c06:1                                         Hostile:
+STARLORD    684  6D27       28  Title  c06:1                                         Population growth is halved.
+STARLORD    685  6D44        5  Title  c06:1                                         Gaia:
+STARLORD    686  6D4A       29  Title  c06:1                                         Population growth is doubled.
+STARLORD    687  6D68        6  UPPER  c06:1                                         CLASS
+STARLORD    688  6D79        7  UPPER  c06:1                                          SHIELD
+STARLORD    689  6D81       10  UPPER  c06:1                                         BASE SIZE:
+STARLORD    690  6D8C       10  UPPER  c06:1                                         FACTORIES:
+STARLORD    691  6D97        6  UPPER  c06:1                                         WASTE:
+STARLORD    692  6D9E       11  UPPER  c06:1                                         POPULATION:
+STARLORD    693  6DAA        7  UPPER  c06:1                                         GROWTH:
+STARLORD    694  6DB6       11  UPPER  c06:1                                         NEBULAS.LBX
+STARLORD    695  6DC3       12  UPPER  c06:1                                         NO HABITABLE
+STARLORD    696  6DD0        7  UPPER  c06:1                                         PLANETS
+STARLORD    697  6DD8        6  Title  c06:1                                         Plague
+STARLORD    698  6DDF        4  Title  c06:1                                         Nova
+STARLORD    699  6DE4        5  Title  c06:1                                         Comet
+STARLORD    700  6DEA        7  Title  c06:1                                         Pirates
+STARLORD    701  6DF2        9  Title  c06:1                                         Rebellion
+STARLORD    702  6DFC       10  UPPER  c06:1                                         UNEXPLORED
+STARLORD    703  6E07        7  Title  c06:1                                         Hostile
+STARLORD    704  6E0F       10  Title  c06:1                                         Enviroment
+STARLORD    705  6E1A       10  Title  c06:1                                         Ecological
+STARLORD    706  6E25        4  Title  c06:1                                         Gaia
+STARLORD    707  6E2A       17  UPPER  c06:1                                         POPULATION GROWTH
+STARLORD    708  6E3C       10  UPPER  c06:1                                         IS HALVED.
+STARLORD    709  6E47       11  UPPER  c06:1                                         IS DOUBLED.
+STARLORD    710  6E53       10  Mixed  c06:1                                         Ultra Poor
+STARLORD    711  6E5E       12  Mixed  c06:1                                         Mineral Poor
+STARLORD    712  6E6B        9  Title  c06:1                                         Artifacts
+STARLORD    713  6E75       12  Mixed  c06:1                                         Mineral Rich
+STARLORD    714  6E82       10  Mixed  c06:1                                         Ultra Rich
+STARLORD    715  6E8D       18  UPPER  c06:1                                         DEVELOPMENT POINTS
+STARLORD    716  6EA0       17  UPPER  c06:1                                         FROM INDUSTRY ARE
+STARLORD    717  6EB2       17  UPPER  c06:1                                         CUT TO ONE-THIRD.
+STARLORD    718  6EC4        7  UPPER  c06:1                                         HALVED.
+STARLORD    719  6ECC        8  UPPER  c06:1                                         DOUBLED.
+STARLORD    720  6ED5        8  UPPER  c06:1                                         TRIPLED.
+STARLORD    721  6EDE       17  UPPER  c06:1                                         TECHNOLOGY POINTS
+STARLORD    722  6EF0       13  UPPER  c06:1                                         FROM RESEARCH
+STARLORD    723  6EFE       12  UPPER  c06:1                                         ARE DOUBLED.
+STARLORD    724  6F0B       11  UPPER  c06:1                                         NEBULAS.LBX
+STARLORD    725  6F17        9  UPPER  c06:1                                         REPORT ON
+STARLORD    726  6F21       10  UPPER  c06:1                                         ENEMY TECH
+STARLORD    727  6F2C       10  UPPER  c06:1                                         IS CURRENT
+STARLORD    728  6F37        9  UPPER  c06:1                                         REPORT ON
+STARLORD    729  6F41       13  UPPER  c06:1                                         ENEMY TECH IS
+STARLORD    730  6F4F        9  UPPER  c06:1                                          YEAR OLD
+STARLORD    731  6F59       10  UPPER  c06:1                                          YEARS OLD
+STARLORD    732  6F64       18  UPPER  c06:1                                         RECEIVING:      BC
+STARLORD    733  6F79        7  UPPER  c06:1                                         YOU ARE
+STARLORD    734  6F81       18  UPPER  c06:1                                         RECEIVING:      BC
+STARLORD    735  6F97        9  UPPER  c06:1                                         SOUND.LBX
+STARLORD    736  6FA1       11  UPPER  c06:1                                         STARMAP.LBX
+STARLORD    737  6FAD       11  UPPER  c06:1                                         STARMAP.LBX
+STARLORD    738  6FB9       11  UPPER  c06:1                                         STARMAP.LBX
+STARLORD    739  6FC5       11  UPPER  c06:1                                         PLANETS.LBX
+STARLORD    740  6FD1       10  UPPER  c06:1                                         CRISES.LBX
+STARLORD    741  6FDC        9  UPPER  c06:1                                         SOUND.LBX
+STARLORD    742  6FE6        9  UPPER  c06:1                                         SOUND.LBX
+STARLORD    743  6FF3       24  Title  c06:1                                         Virulent plague strikes
+STARLORD    744  700C       24  Title  c06:1                                         The plague continues on
+STARLORD    745  7028       35  lower  c06:1                                          million colonists died last year.
+STARLORD    746  704C       40  Title  c06:1                                         Scientists need research to find a cure.
+STARLORD    747  7075       33  Title  c06:1                                         Scientists believe that they are
+STARLORD    748  7097       23  Mixed  c06:1                                          R.P. away from a cure.
+STARLORD    749  70AF       49  Title  c06:1                                         Scientists have found the cure for the plague on
+STARLORD    750  70E1       35  Title  c06:1                                         . The pestilence has finally ended.
+STARLORD    751  7105       48  Title  c06:1                                         A violent earthquake hits the largest colony on
+STARLORD    752  7136        9  lower  c06:1                                          killing
+STARLORD    753  7140       34  lower  c06:1                                          million colonists and destroying
+STARLORD    754  7163       11  lower  c06:1                                          factories.
+STARLORD    755  716F       14  Title  c06:1                                         Scientists on
+STARLORD    756  717E       93  lower  c06:1                                          have developed a solar rejuvenator that has ended the threat of their star going super nova.
+STARLORD    757  71DC       12  Title  c06:1                                         The star in
+STARLORD    758  71E9       73  lower  c06:1                                          has gone super nova, destroying most of the planet and killing millions.
+STARLORD    759  7233       43  Title  c06:1                                         Scientists anticipate that the star in the
+STARLORD    760  725F       27  lower  c06:1                                          system will go super nova
+STARLORD    761  727B       11  lower  c06:1                                         next year.
+STARLORD    762  7287        4  lower  c06:1                                          in
+STARLORD    763  728C        8  lower  c06:1                                          years.
+STARLORD    764  7295       36  Mixed  c06:1                                          R.P. are needed to find a solution.
+STARLORD    765  72BA       31  Title  c06:1                                         A major industrial accident on
+STARLORD    766  72DA       81  lower  c06:1                                          has polluted the entire planet and threatens to kill millions unless cleaned up.
+STARLORD    767  732C       39  Title  c06:1                                         Without sanction the ambassador to the
+STARLORD    768  7354      129  Mixed  c06:1                                          empire attempted to assassinate their emperor and failed. His motives are unclear, but personnel revenge may have been involved.
+STARLORD    769  73D6       44  Title  c06:1                                         An insidious computer virus struck the main
+STARLORD    770  7403       29  lower  c06:1                                          research network destroying
+STARLORD    771  7421       61  Mixed  c06:1                                          research points. It may take years to recover from the loss.
+STARLORD    772  745F       68  Title  c06:1                                         Our glorious star fleet has destroyed the comet that threatened the
+STARLORD    773  74A4        8  lower  c06:1                                          system.
+STARLORD    774  74AD       44  Title  c06:1                                         The dreaded comet has utterly destroyed the
+STARLORD    775  74DA        8  lower  c06:1                                          colony.
+STARLORD    776  74E3       70  Title  c06:1                                         Astronomers have spotted a comet that will collide with the colony on
+STARLORD    777  752A       12  lower  c06:1                                          next year.
+STARLORD    778  7537        4  lower  c06:1                                          in
+STARLORD    779  753C        8  lower  c06:1                                          years.
+STARLORD    780  7545       39  Title  c06:1                                          Our star fleet has managed to destroy
+STARLORD    781  756D       24  lower  c06:1                                         % of the comet thus far.
+STARLORD    782  7586       23  Title  c06:1                                         Pirate activity in the
+STARLORD    783  759E       33  lower  c06:1                                          star system has been eliminated.
+STARLORD    784  75C0       21  Title  c06:1                                         Pirates based in the
+STARLORD    785  75D6       76  lower  c06:1                                          star system have disrupted trade routes, reducing annual trade revenues by
+STARLORD    786  7623       51  Mixed  c06:1                                          percent. More ships are needed to patrol the area.
+STARLORD    787  7657       92  lower  c06:1                                          scouts discovered an ancient derelict from which their scientists uncovered the secrets of
+STARLORD    788  76B4        6  Title  c06:1                                         S and
+STARLORD    789  76BB        9  UPPER  c06:1                                          SHIELDS.
+STARLORD    790  76C5       20  Title  c06:1                                         The rebel forces on
+STARLORD    791  76DA       50  lower  c06:1                                          have been defeated by our glorious ground forces.
+STARLORD    792  770D       64  Mixed  c06:1                                          has rebelled and refuses to contribute to the empire. At least
+STARLORD    793  774E       78  Mixed  c06:1                                          million rebels control the colony. Troops must be sent to quell the uprising.
+STARLORD    794  779D       33  Title  c06:1                                         For some inexplicable reason the
+STARLORD    795  77BF       13  Mixed  c06:1                                         Space Crystal
+STARLORD    796  77CD       12  Mixed  c06:1                                         Space Amoeba
+STARLORD    797  77DA       12  Mixed  c06:1                                         Planet Eater
+STARLORD    798  77E7       34  lower  c06:1                                          has mysteriously left our galaxy.
+STARLORD    799  780A        4  Title  c06:1                                         The
+STARLORD    800  780F       50  Mixed  c06:1                                         Space Crystal has killed millions of colonists on
+STARLORD    801  7842       87  Title  c06:1                                         . The colony structures have remained intact but all of the colonists have disappeared.
+STARLORD    802  789A       54  Mixed  c06:1                                         Space Amoeba has attacked and destroyed the colony on
+STARLORD    803  78D1       33  lower  c06:1                                         , leaving behind a lifeless word.
+STARLORD    804  78F3       44  Mixed  c06:1                                         Planet Eater has completely obliterated the
+STARLORD    805  7920       57  Mixed  c06:1                                          star system. Nothing remains but a scattered dust cloud.
+STARLORD    806  795A       35  lower  c06:1                                         space monster has just entered the
+STARLORD    807  797E       13  lower  c06:1                                          star system.
+STARLORD    808  799C       13  UPPER  c07:1                                         SPACE CRYSTAL
+STARLORD    809  79AA       12  UPPER  c07:1                                         SPACE AMOEBA
+STARLORD    810  79B7       12  UPPER  c07:1                                         PLANET EATER
+STARLORD    811  79C4       11  UPPER  c07:1                                         STARMAP.LBX
+STARLORD    812  79D0       12  Mixed  c07:1                                         Space Combat
+STARLORD    813  79DD       13  Mixed  c07:1                                         Space Crystal
+STARLORD    814  79EB       12  Mixed  c07:1                                         Space Amoeba
+STARLORD    815  79F8       12  Mixed  c07:1                                         Planet Eater
+STARLORD    816  7A05        7  lower  c07:1                                         attacks
+STARLORD    817  7A0D        6  lower  c07:1                                         attack
+STARLORD    818  7A16       11  UPPER  c07:1                                         STARMAP.LBX
+STARLORD    819  7A22       12  Mixed  c07:1                                         Space Combat
+STARLORD    820  7A2F        4  lower  c07:1                                         meet
+STARLORD    821  7A34       13  Title  c07:1                                         Do you attack
+STARLORD    822  7A42       10  lower  c07:1 c24:2                                   your ally?
+STARLORD    823  7A51       11  UPPER  c07:1                                         STARMAP.LBX
+STARLORD    824  7A5D        7  Title  c07:1                                         Orbital
+STARLORD    825  7A65       11  Title  c07:1                                         Bombardment
+STARLORD    826  7A71       10  Title  c07:1                                         Biological
+STARLORD    827  7A7C        6  Title  c07:1                                         Attack
+STARLORD    828  7A83        4  lower  c07:1                                         bomb
+STARLORD    829  7A88        6  lower  c07:1                                         attack
+STARLORD    830  7A8F        4  lower  c07:1                                         bomb
+STARLORD    831  7A94        6  lower  c07:1                                         attack
+STARLORD    832  7A9B       14  lower  c07:1                                         colony totally
+STARLORD    833  7AAA        9  lower  c07:1                                         destroyed
+STARLORD    834  7AB4        8  lower  c07:1                                          million
+STARLORD    835  7ABD       16  lower  c07:1                                         colonists killed
+STARLORD    836  7AD0        7  Title  c07:1                                         Orbital
+STARLORD    837  7AD8       11  Title  c07:1                                         Bombardment
+STARLORD    838  7AE4       14  Title  c07:1                                         Do you want to
+STARLORD    839  7AF3       11  lower  c07:1                                         to bomb the
+STARLORD    840  7B16        9  UPPER  c08:1                                         SPACE.LBX
+STARLORD    841  7B20       11  UPPER  c08:1                                         SHIPPOS.LBX
+STARLORD    842  7B2C        9  UPPER  c08:1                                         SPACE.LBX
+STARLORD    843  7B36       11  UPPER  c08:1                                         NEBULAS.LBX
+STARLORD    844  7B42       11  UPPER  c08:1                                         NEBULAS.LBX
+STARLORD    845  7B4E       11  Mixed  c08:1                                         missile.LBX
+STARLORD    846  7B5A       11  Mixed  c08:1                                         missile.LBX
+STARLORD    847  7B66       11  UPPER  c08:1                                         STARMAP.LBX
+STARLORD    848  7B72       11  UPPER  c08:1                                         STARMAP.LBX
+STARLORD    849  7B7E        7  Title  c08:1                                         Admiral
+STARLORD    850  7B86        9  Mixed  c08:1                                         Great One
+STARLORD    851  7B90       14  Mixed  c08:1                                         Bright Crystal
+STARLORD    852  7B9F        4  Title  c08:1                                         Duke
+STARLORD    853  7BA4        9  Mixed  c08:1                                         Most Wise
+STARLORD    854  7BAE       13  Mixed  c08:1                                         Flight Leader
+STARLORD    855  7BBC        5  Title  c08:1                                         Queen
+STARLORD    856  7BC2       12  Mixed  c08:1                                         High Warrior
+STARLORD    857  7BCF       12  Mixed  c08:1                                         Fleet Primus
+STARLORD    858  7BDC        8  Mixed  c08:1                                         Dark One
+STARLORD    859  7BE5        6  lower  c08:1                                         humans
+STARLORD    860  7BEC        7  lower  c08:1                                         felines
+STARLORD    861  7BF4        9  lower  c08:1                                         silicoids
+STARLORD    862  7BFE        8  lower  c08:1                                         saurians
+STARLORD    863  7C07        7  lower  c08:1                                         mentats
+STARLORD    864  7C0F        6  lower  c08:1                                         avians
+STARLORD    865  7C16        8  lower  c08:1                                         klackons
+STARLORD    866  7C1F        7  lower  c08:1                                         ursoids
+STARLORD    867  7C27        6  lower  c08:1                                         meklar
+STARLORD    868  7C2E        7  lower  c08:1                                         nazguul
+STARLORD    869  7C36       11  lower  c08:1                                         monkey boys
+STARLORD    870  7C42        7  lower  c08:1                                         kitties
+STARLORD    871  7C4A        5  lower  c08:1                                         rocks
+STARLORD    872  7C50        7  lower  c08:1                                         lizards
+STARLORD    873  7C58        9  lower  c08:1                                         coneheads
+STARLORD    874  7C62        8  lower  c08:1                                         chickens
+STARLORD    875  7C6B        4  lower  c08:1                                         bugs
+STARLORD    876  7C70        7  lower  c08:1                                         fuzzies
+STARLORD    877  7C78        7  lower  c08:1                                         mechies
+STARLORD    878  7C80        8  lower  c08:1                                         shifters
+STARLORD    879  7C89       15  lower  c08:1                                         , the cowardly
+STARLORD    880  7C99       27  lower  c08:1 c11:2                                    are preparing to warp out!
+STARLORD    881  7CB5       63  lower  c08:1                                         , sensors detect that the enemy are engaging their warp drives.
+STARLORD    882  7CF5       27  Title  c08:1                                         !  We have them on the run!
+STARLORD    883  7D11       24  Mixed  c08:1                                         They are beaten.  Those
+STARLORD    884  7D2A       25  lower  c08:1                                          just can't take anymore.
+STARLORD    885  7D44       11  Title  c08:1                                         Those damn
+STARLORD    886  7D50       75  Mixed  c08:1                                          just can't take it. Sensors indicate that they are preparing to disengage.
+STARLORD    887  7D9E        3  UPPER  c08:1                                         DMG
+STARLORD    888  7DBF       10  UPPER  c08:1                                         POPULATION
+STARLORD    889  7DCA        8  UPPER  c08:1                                         INDUSTRY
+STARLORD    890  7DD7        6  UPPER  c08:1                                         SHIELD
+STARLORD    891  7DF6        4  UPPER  c20:1                                         .LBX
+STARLORD    892  7DFB        4  UPPER  c20:1                                         .LBX
+STARLORD    893  7E00        4  UPPER  c20:1                                         .LBX
+STARLORD    894  7E05       11  UPPER  c20:1                                         SPACE ALLOC
+STARLORD    895  7E11       12  Mixed  c20:1                                         Data Free:
+STARLORD    896  7E1E       27  Mixed  c20:1                                          bytes       Memory Free:
+STARLORD    897  7E3A       19  Mixed  c20:1                                         k     Worst Free:
+STARLORD    898  7E50       12  Mixed  c20:1                                         .LBX [entry
+STARLORD    899  7E60       33  Mixed  c20:1                                          could not be found. Game halted!
+STARLORD    900  7E82       33  Mixed  c20:1                                          has been corrupted. Game halted!
+STARLORD    901  7EA4       73  Mixed  c20:1                                         Insufficient memory. You need at least 560K free. Try removing all TSR's.
+STARLORD    902  7EEE       50  lower  c20:1                                          was not properly allocated or has been corrupted.
+STARLORD    903  7F21       43  Mixed  c20:1                                          failed to reload. Allocation too small by
+STARLORD    904  7F4D        6  lower  c20:1                                          pages
+STARLORD    905  7F54        4  UPPER  c21:1                                         .LBX
+STARLORD    906  7F61        4  UPPER  c21:1                                         .LBX
+STARLORD    907  7F6E        8  UPPER                                                <<NMSG>>
+STARLORD    908  7F78       25  Title                                                R6000\r\n- stack overflow\r\n
+STARLORD    909  7F94       30  Title                                                R6003\r\n- integer divide by 0\r\n
+STARLORD    910  7FB5       43  Title                                                R6009\r\n- not enough space for environment\r\n
+STARLORD    911  7FE8       15  lower                                                run-time error
+STARLORD    912  7FFA       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+STARLORD    913  8029       34  Title                                                R6001\r\n- null pointer assignment\r\n
+STARLORD    914  804E       54  Mixed                                                \r\nrun-time error R6005\r\n- not enough memory on exec\r\n$
+STARLORD    915  8087       51  Mixed                                                \r\nrun-time error R6006\r\n- invalid format on exec\r\n$
+STARLORD    916  80BD       56  Mixed                                                \r\nrun-time error R6007\r\n- invalid environment on exec\r\n$
+STARLORD    917  80F8       32  Mixed                                                : MATH\r\n- floating-point error:
+STARLORD    918  811B        9  lower                                                invalid\r\n
+STARLORD    919  8127       10  lower                                                denormal\r\n
+STARLORD    920  8134       13  lower                                                divide by 0\r\n
+STARLORD    921  8144       10  lower                                                overflow\r\n
+STARLORD    922  8151       11  lower                                                underflow\r\n
+STARLORD    923  815F        9  lower                                                inexact\r\n
+STARLORD    924  816B       12  lower                                                unemulated\r\n
+STARLORD    925  817A       13  lower                                                square root\r\n
+STARLORD    926  818F       16  lower                                                stack overflow\r\n
+STARLORD    927  81A2       17  lower                                                stack underflow\r\n
+STARLORD    928  81B6       22  lower                                                explicitly generated\r\n
+FILES         0  004A        6  Title  c01:8                                         Humans
+FILES         1  0056        7  Title  c02:5                                         Felines
+FILES         2  0062        9  Title  c02:2 c06:1                                   Silicoids
+FILES         3  006E        8  Title  c01:7                                         Saurians
+FILES         4  007A        7  Title  c01:1                                         Mentats
+FILES         5  0086        6  Title  c01:1 c07:1                                   Avians
+FILES         6  0092        8  Title                                                Klackons
+FILES         7  009E        7  Title  c06:1 c08:7                                   Ursoids
+FILES         8  00AA        7  Title  c01:5                                         Meklars
+FILES         9  00B6        8  Title  c01:5                                         Nazguuls
+FILES        10  00C2        5  Title  c01:2                                         Human
+FILES        11  00CE        6  Title  c01:2                                         Feline
+FILES        12  00DA        8  Title                                                Silicoid
+FILES        13  00E6        7  Title                                                Saurian
+FILES        14  00F2        6  Title                                                Mentat
+FILES        15  00FE        5  Title                                                Avian
+FILES        16  010A        7  Title  c01:5                                         Klackon
+FILES        17  0116        6  Title  c08:1                                         Ursoid
+FILES        18  0122        6  Title  c01:1                                         Meklar
+FILES        19  012E        7  Title  c06:1                                         Nazguul
+FILES        20  016E       14  UPPER  c01:9                                         BOZO THE CLOWN
+FILES        21  0198        7  Title  c01:1                                         Antares
+FILES        22  01A4        8  Title  c19:1                                         Draconis
+FILES        23  01B0        6  Title                                                Zoctan
+FILES        24  01BC        5  Title                                                Rigel
+FILES        25  01C8        5  Title                                                Orion
+FILES        26  01D4        4  Title                                                Moro
+FILES        27  01E0        6  Title                                                Quayal
+FILES        28  01EC        8  Title                                                Neptunus
+FILES        29  01F8        5  Title                                                Jinga
+FILES        30  0204        5  Title                                                Argus
+FILES        31  0210        5  Title                                                Berel
+FILES        32  021C        8  Title                                                Collassa
+FILES        33  0228        6  Title                                                Whynil
+FILES        34  0234        6  Title                                                Nordia
+FILES        35  0240        9  Mixed                                                Tau Cygni
+FILES        36  024C        5  Title                                                Phyco
+FILES        37  0258        5  Title  c01:2 c04:1 c12:1                             Firma
+FILES        38  0264        5  Title                                                Keeta
+FILES        39  0270        7  Title                                                Arietis
+FILES        40  027C        6  Title                                                Rhilus
+FILES        41  0288        6  Title  c01:1                                         Willow
+FILES        42  0294        9  Mixed                                                Mu Delphi
+FILES        43  02A0        6  Title                                                Stalaz
+FILES        44  02AC        5  Title                                                Gorra
+FILES        45  02B8        9  Mixed                                                Beta Ceti
+FILES        46  02C4        5  Title                                                Spica
+FILES        47  02D0        7  Title                                                Omicron
+FILES        48  02DC        3  Title                                                Rha
+FILES        49  02E8        6  Title                                                Kailis
+FILES        50  02F4        6  Title                                                Vulcan
+FILES        51  0300        8  Title  c01:1                                         Centauri
+FILES        52  030C        8  Title                                                Herculis
+FILES        53  0318        7  Title                                                Endoria
+FILES        54  0324        7  Title                                                Kulthos
+FILES        55  0330        7  Title                                                Hyboria
+FILES        56  033C        7  Title                                                Zhardan
+FILES        57  0348        6  Title                                                Yarrow
+FILES        58  0354        8  Title                                                Incedius
+FILES        59  0360        7  Title                                                Paladia
+FILES        60  036C        7  Title                                                Romulas
+FILES        61  0378        5  Title                                                Galos
+FILES        62  0384        5  Title                                                Uxmai
+FILES        63  0390        5  Title                                                Thrax
+FILES        64  039C        4  Title                                                Laan
+FILES        65  03F0        3  Title  c01:4                                         Sol
+FILES        66  03FC        7  Title                                                Fierias
+FILES        67  0408        7  Title                                                Cryslon
+FILES        68  0414        5  Title                                                Sssla
+FILES        69  0420        6  Title                                                Mentar
+FILES        70  042C        6  Title                                                Altair
+FILES        71  0438        7  Title                                                Kholdan
+FILES        72  0444        4  Title                                                Ursa
+FILES        73  0450        6  Title                                                Meklon
+FILES        74  045C        5  Title                                                Nazin
+FILES        75  0480       14  UPPER  c01:4                                         EXPERT TRADERS
+FILES        76  0499       16  UPPER                                                SUPERIOR GUNNERS
+FILES        77  04B2        9  UPPER                                                IMMUNE TO
+FILES        78  04CB        9  UPPER                                                INCREASED
+FILES        79  04E4        8  UPPER                                                SUPERIOR
+FILES        80  04FD       15  UPPER                                                SUPERIOR PILOTS
+FILES        81  0516        9  UPPER                                                INCREASED
+FILES        82  052F       15  UPPER                                                TERRIFIC GROUND
+FILES        83  0548        8  UPPER                                                ENHANCED
+FILES        84  0561       13  UPPER                                                SUPREME SPIES
+FILES        85  057A       15  UPPER  c01:4                                         AND MAGNIFICENT
+FILES        86  05AC       14  UPPER                                                HOSTILE PLANET
+FILES        87  05C5       10  UPPER                                                POPULATION
+FILES        88  05DE        8  UPPER                                                RESEARCH
+FILES        89  0610        6  UPPER                                                WORKER
+FILES        90  0629        8  UPPER                                                FIGHTERS
+FILES        91  0642        7  UPPER  c06:1                                         FACTORY
+FILES        92  0674        9  UPPER  c01:4                                         DIPLOMATS
+FILES        93  06A6       11  UPPER                                                ENVIROMENTS
+FILES        94  06BF        6  UPPER                                                GROWTH
+FILES        95  06D8       10  UPPER                                                TECHNIQUES
+FILES        96  070A       11  UPPER                                                PRODUCTION
+FILES        97  073C        8  UPPER                                                CONTROLS
+FILES        98  076E        8  UPPER  c01:4                                         DIPLOMAT
+FILES        99  0780       10  UPPER                                                MILITARIST
+FILES       100  0792       12  UPPER                                                EXPANSIONIST
+FILES       101  07A4       12  UPPER                                                TECHNOLOGIST
+FILES       102  07B6       13  UPPER                                                INDUSTRIALIST
+FILES       103  07C8        9  UPPER                                                ECOLOGIST
+FILES       104  08EE        8  UPPER  c01:4                                         RUTHLESS
+FILES       105  0900        9  UPPER  c19:4                                         PSYCHOTIC
+FILES       106  0912       10  UPPER                                                AGGRESSIVE
+FILES       107  0924       10  UPPER                                                PACIFISTIC
+FILES       108  0936        9  UPPER                                                HONORABLE
+FILES       109  0948       10  UPPER                                                XENOPHOBIC
+FILES       110  0E92        7  UPPER  c01:1                                         FIGHTER
+FILES       111  0E9E        7  UPPER                                                GUNBOAT
+FILES       112  0EAA        7  UPPER                                                COURIER
+FILES       113  0EB6        7  UPPER                                                FRIGATE
+FILES       114  0EC2        9  UPPER                                                DESTROYER
+FILES       115  0ECE        8  UPPER                                                CORVETTE
+FILES       116  0EDA        7  UPPER                                                CRUISER
+FILES       117  0EE6        6  UPPER                                                ESCORT
+FILES       118  0EF2        7  UPPER                                                WARSHIP
+FILES       119  0EFE       11  UPPER                                                DREADNOUGHT
+FILES       120  0F0A       10  UPPER                                                BATTLESHIP
+FILES       121  0F16        9  UPPER                                                DREADSTAR
+FILES       122  0F22        9  UPPER                                                WOLVERINE
+FILES       123  0F2E        7  UPPER                                                GRIFFIN
+FILES       124  0F3A        6  UPPER                                                FERRET
+FILES       125  0F46        4  UPPER                                                LYNX
+FILES       126  0F52        7  UPPER                                                CHEETAH
+FILES       127  0F5E        6  UPPER                                                BOBCAT
+FILES       128  0F6A        7  UPPER                                                PANTHER
+FILES       129  0F76        7  UPPER                                                LEOPARD
+FILES       130  0F82        6  UPPER                                                WARCAT
+FILES       131  0F8E       10  UPPER                                                SABRETOOTH
+FILES       132  0F9A        4  UPPER                                                PUMA
+FILES       133  0FA6        5  UPPER                                                TIGER
+FILES       134  0FB2        7  UPPER                                                PIRANHA
+FILES       135  0FBE        8  UPPER                                                STINGRAY
+FILES       136  0FCA        6  UPPER                                                MINNOW
+FILES       137  0FD6        5  UPPER                                                MANTA
+FILES       138  0FE2        9  UPPER                                                BARRACUDA
+FILES       139  0FEE        5  UPPER                                                MOREY
+FILES       140  0FFA        5  UPPER                                                SHARK
+FILES       141  1006        4  UPPER                                                MAKO
+FILES       142  1012        5  UPPER  c12:2                                         WHALE
+FILES       143  101E        6  UPPER                                                KRAKEN
+FILES       144  102A        7  UPPER                                                MONITOR
+FILES       145  1036        7  UPPER                                                POLARIS
+FILES       146  1042        6  UPPER                                                GOBLIN
+FILES       147  104E        7  UPPER                                                CYCLOPS
+FILES       148  105A        6  UPPER                                                DAEMON
+FILES       149  1066        7  UPPER                                                BANSHEE
+FILES       150  1072        7  UPPER                                                SPECTRE
+FILES       151  107E        6  UPPER                                                SPIRIT
+FILES       152  108A       10  UPPER                                                JUGGERNAUT
+FILES       153  1096        8  UPPER                                                VALKYRIE
+FILES       154  10A2        5  UPPER                                                HYDRA
+FILES       155  10AE        5  UPPER                                                TITAN
+FILES       156  10BA        8  UPPER                                                COLOSSUS
+FILES       157  10C6        6  UPPER                                                DRAGON
+FILES       158  10D2       11  UPPER                                                STARFIGHTER
+FILES       159  10DE        5  UPPER                                                COMET
+FILES       160  10EA        6  UPPER                                                SEEKER
+FILES       161  10F6        9  UPPER                                                STAR WING
+FILES       162  1102       11  UPPER                                                STAR BLAZER
+FILES       163  110E       11  UPPER                                                STAR STREAK
+FILES       164  111A       10  UPPER                                                STAR BLADE
+FILES       165  1126        9  UPPER                                                DARK STAR
+FILES       166  1132        7  UPPER                                                CORAONA
+FILES       167  113E        8  UPPER                                                SUN FIRE
+FILES       168  114A        9  UPPER                                                STAR FURY
+FILES       169  1156        4  UPPER                                                NOVA
+FILES       170  1162        6  UPPER                                                FOXBAT
+FILES       171  116E       11  UPPER                                                SPARROWHAWK
+FILES       172  117A        7  UPPER  c12:1                                         PELICAN
+FILES       173  1186        6  UPPER                                                FALCON
+FILES       174  1192        8  UPPER                                                SKY HAWK
+FILES       175  119E       10  UPPER                                                SPACE GULL
+FILES       176  11AA        7  UPPER                                                WARBIRD
+FILES       177  11B6        7  UPPER                                                WARHAWK
+FILES       178  11C2        8  UPPER                                                WAREAGLE
+FILES       179  11CE        6  UPPER                                                CONDOR
+FILES       180  11DA        9  UPPER                                                DREADWING
+FILES       181  11E6       10  UPPER                                                SKY MASTER
+FILES       182  11F2        5  UPPER                                                SABRE
+FILES       183  11FE        7  UPPER                                                CUTLASS
+FILES       184  120A        6  UPPER                                                DAGGER
+FILES       185  1216        6  UPPER                                                LANCER
+FILES       186  1222        7  UPPER                                                PEGASUS
+FILES       187  122E        8  UPPER                                                HORSEMAN
+FILES       188  123A        6  UPPER                                                RANGER
+FILES       189  1246        6  UPPER                                                KNIGHT
+FILES       190  1252        7  UPPER                                                AVENGER
+FILES       191  125E        7  UPPER                                                DRAGOON
+FILES       192  126A        7  UPPER                                                PALADIN
+FILES       193  1276        9  UPPER                                                EXCALIBER
+FILES       194  1282        3  UPPER                                                PAW
+FILES       195  128E        5  UPPER                                                PANDA
+FILES       196  129A        6  UPPER                                                PATROL
+FILES       197  12A6        6  UPPER                                                HUNTER
+FILES       198  12B2        9  UPPER                                                GLADIATOR
+FILES       199  12BE        8  UPPER                                                SENTINEL
+FILES       200  12CA        4  UPPER                                                CLAW
+FILES       201  12D6        5  UPPER                                                TOOTH
+FILES       202  12E2        7  UPPER                                                WARBEAR
+FILES       203  12EE        7  UPPER                                                GRIZZLY
+FILES       204  12FA        8  UPPER  c15:1                                         PUNISHER
+FILES       205  1306        5  UPPER                                                RHINO
+FILES       206  1312        8  UPPER                                                MARAUDER
+FILES       207  131E        8  UPPER                                                HYPERION
+FILES       208  132A        7  UPPER                                                DRACHMA
+FILES       209  1336        8  UPPER                                                INTRUDER
+FILES       210  1342       10  UPPER                                                PENETRATOR
+FILES       211  134E        9  UPPER                                                TORMENTER
+FILES       212  135A        4  UPPER                                                AJAX
+FILES       213  1366        7  UPPER                                                TORNADO
+FILES       214  1372        5  UPPER                                                NEXUS
+FILES       215  137E        7  UPPER                                                NEMESIS
+FILES       216  138A       10  UPPER                                                DEVASTATOR
+FILES       217  1396       11  UPPER                                                ANNIHILATOR
+FILES       218  13A2        6  UPPER                                                SPIDER
+FILES       219  13AE        9  UPPER                                                BUMBLEBEE
+FILES       220  13BA        6  UPPER                                                NEEDLE
+FILES       221  13C6        6  UPPER                                                HORNET
+FILES       222  13D2        8  UPPER                                                SCORPION
+FILES       223  13DE        5  UPPER                                                VENOM
+FILES       224  13EA        9  UPPER                                                TARANTULA
+FILES       225  13F6        5  UPPER                                                VIPER
+FILES       226  1402        5  UPPER                                                COBRA
+FILES       227  140E       10  UPPER                                                KING COBRA
+FILES       228  141A       11  UPPER                                                BLACK WIDOW
+FILES       229  1426        9  UPPER                                                DEATH WYN
+FILES       230  16D2       12  UPPER  c04:2                                         DIPLOMAC.LBX
+FILES       231  16DF       12  UPPER  c04:1                                         RESEARCH.LBX
+FILES       232  16EC       12  UPPER                                                PICTCAPT.TMP
+FILES       233  171E      512  UPPER                                                SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+FILES       234  2B50        8  UPPER  c16:1                                         EMMXXXX0
+FILES       235  2B7C       13  UPPER  c19:3                                         _C_FILE_INFO=
+FILES       236  2D77        6  none                                                 ``````
+FILES       237  2DC6        3  lower  c19:1                                         /c
+FILES       238  2DD8        7  UPPER  c19:1                                         COMSPEC
+FILES       239  2DE0        4  lower                                                .bat
+FILES       240  2DE5        4  lower                                                .exe
+FILES       241  2DEA        4  lower                                                .com
+FILES       242  2E1C       24  Mixed  c01:1                                         You must run START.EXE.\n
+FILES       243  2E35       26  Title  c01:1                                         The title of your emperor:
+FILES       244  2E56       11  UPPER  c01:1                                         NEBULAS.LBX
+FILES       245  2E63       18  Title  c01:1                                         So mighty emperor
+FILES       246  2E76      105  Mixed  c01:1                                         , your incompetence has forced me to take power myself.  I pave the way for the new order.  All hail the
+FILES       247  2EE2       11  UPPER  c01:1                                         NEBULAS.LBX
+FILES       248  2EF0       29  Title  c01:1                                         Oh most glorious leader, the
+FILES       249  2F0E       34  lower  c01:1                                          bow to the superior might of the
+FILES       250  2F31       27  Mixed  c01:1                                          empire. Long live emperor
+FILES       251  2F4F       17  Title  c01:1                                         All hail emporer
+FILES       252  2F61        6  Title  c01:1                                         ! The
+FILES       253  2F68       45  lower  c01:1                                          pledge their undying loyalty to you and the
+FILES       254  2F96        8  lower  c01:1                                          empire.
+FILES       255  2F9F       18  Title  c01:1                                         Greetings emperor
+FILES       256  2FB2       23  lower  c01:1                                          from the ruler of the
+FILES       257  2FCA       64  Title  c01:1                                         . We affirm our eternal loyalty in spite of our past disharmony.
+FILES       258  300B       11  UPPER  c01:1                                         NEBULAS.LBX
+FILES       259  3018       12  lower  c01:1                                         starlord.exe
+FILES       260  3025       12  lower  c01:1                                         starlord.exe
+FILES       261  3032       43  Mixed  c01:1                                         The STARLORD.EXE program could not be found
+FILES       262  305E       16  Title  c01:1                                         Load saved game.
+FILES       263  3081       10  UPPER  c01:1                                         NOT IN USE
+FILES       264  308C       30  Mixed  c01:1                                         Thanks for playing Star Lords.
+FILES       265  30AB       11  UPPER  c01:1                                         PALETTE.LBX
+FILES       266  30B7       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       267  30C3       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       268  30CF       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       269  30DB       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       270  30E7       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       271  30F3       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       272  30FF       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       273  310B       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       274  3117       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       275  3123       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       276  312F       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       277  313B       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       278  3147       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       279  3153       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       280  315F       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       281  316B       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       282  3177       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       283  3183       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       284  318F       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       285  319B       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       286  31A7       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       287  31B3       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       288  31BF       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       289  31CB       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       290  31D7       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       291  31E3       11  UPPER  c01:1                                         STARMAP.LBX
+FILES       292  31EF        9  UPPER  c01:1                                         RACES.LBX
+FILES       293  31F9        9  UPPER  c01:1                                         RACES.LBX
+FILES       294  3203       11  UPPER  c01:1                                         NEBULAS.LBX
+FILES       295  320F        8  UPPER  c01:1                                         LOSE.LBX
+FILES       296  3218        7  UPPER  c01:1                                         WIN.LBX
+FILES       297  3223       12  UPPER  c01:1                                         STARLORD.CFG
+FILES       298  3230        4  UPPER  c01:1                                         SAVE
+FILES       299  3235        4  UPPER  c01:1                                         .GAM
+FILES       300  323E       12  UPPER  c01:1                                         STARLORD.CFG
+FILES       301  324B        9  UPPER  c01:1                                         FONTS.LBX
+FILES       302  3255        5  UPPER  c01:1                                         SCOUT
+FILES       303  3263        3  none   c01:1                                         774
+FILES       304  3267       10  lower  c01:1                                         vortex.exe
+FILES       305  3272       10  lower  c01:1                                         vortex.exe
+FILES       306  327D       41  Mixed  c01:1                                         The VORTEX.EXE program could not be found
+FILES       307  32A7       28  Title  c01:1                                         Choose file number and name.
+FILES       308  32D6       10  UPPER  c01:1                                         NOT IN USE
+FILES       309  32E1        9  UPPER  c01:1                                         SOUND.LBX
+FILES       310  32EB        9  UPPER  c01:1                                         SOUND.LBX
+FILES       311  32F5        9  UPPER  c01:1                                         SOUND.LBX
+FILES       312  32FF        9  UPPER  c01:1                                         SOUND.LBX
+FILES       313  3309        9  UPPER  c01:1                                         SOUND.LBX
+FILES       314  3313        9  UPPER  c01:1                                         SOUND.LBX
+FILES       315  331D        4  UPPER  c01:1                                         SAVE
+FILES       316  3322        4  UPPER  c01:1                                         .GAM
+FILES       317  3327        8  UPPER  c01:1                                         GAME.TMP
+FILES       318  3336       12  UPPER  c01:1                                         STARLORD.CFG
+FILES       319  3343        4  UPPER  c01:1                                         SAVE
+FILES       320  3348        4  UPPER  c01:1                                         .GAM
+FILES       321  334D        8  UPPER  c01:1                                         GAME.TMP
+FILES       322  3359        8  UPPER  c01:1                                         GAME.TMP
+FILES       323  3362       24  Mixed  c01:1                                         You must run START.EXE!\n
+FILES       324  338C       14  Mixed  c02:1                                         Please Wait...
+FILES       325  33AC       29  Title  c03:1                                         Error - wrong sound file type
+FILES       326  33E0        4  UPPER  c17:1                                         .LBX
+FILES       327  33E5        4  UPPER  c17:1                                         .LBX
+FILES       328  33EA        4  UPPER  c17:1                                         .LBX
+FILES       329  33EF       11  UPPER  c17:1                                         SPACE ALLOC
+FILES       330  33FB       12  Mixed  c17:1                                         Data Free:
+FILES       331  3408       27  Mixed  c17:1                                          bytes       Memory Free:
+FILES       332  3424       19  Mixed  c17:1                                         k     Worst Free:
+FILES       333  343A       12  Mixed  c17:1                                         .LBX [entry
+FILES       334  344A       33  Mixed  c17:1                                          could not be found. Game halted!
+FILES       335  346C       33  Mixed  c17:1                                          has been corrupted. Game halted!
+FILES       336  348E       73  Mixed  c17:1                                         Insufficient memory. You need at least 560K free. Try removing all TSR's.
+FILES       337  34D8       50  lower  c17:1                                          was not properly allocated or has been corrupted.
+FILES       338  350B       43  Mixed  c17:1                                          failed to reload. Allocation too small by
+FILES       339  3537        6  lower  c17:1                                          pages
+FILES       340  353E        4  UPPER  c18:1                                         .LBX
+FILES       341  354B        4  UPPER  c18:1                                         .LBX
+FILES       342  3550        8  UPPER                                                <<NMSG>>
+FILES       343  355A       25  Title                                                R6000\r\n- stack overflow\r\n
+FILES       344  3576       30  Title                                                R6003\r\n- integer divide by 0\r\n
+FILES       345  3597       43  Title                                                R6009\r\n- not enough space for environment\r\n
+FILES       346  35CA       15  lower                                                run-time error
+FILES       347  35DC       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+FILES       348  360B       34  Title                                                R6001\r\n- null pointer assignment\r\n
+FILES       349  3630       54  Mixed                                                \r\nrun-time error R6005\r\n- not enough memory on exec\r\n$
+FILES       350  3669       51  Mixed                                                \r\nrun-time error R6006\r\n- invalid format on exec\r\n$
+FILES       351  369F       56  Mixed                                                \r\nrun-time error R6007\r\n- invalid environment on exec\r\n$
+SETUP         0  0042       42  UPPER  c01:3 c02:1                                            STARLORDS SETUP PROGRAM
+SETUP         1  0120        8  UPPER                                                TEMP.BUF
+SETUP         2  0192        8  UPPER                                                STARLORD
+SETUP         3  0210       13  UPPER  c02:2                                         _C_FILE_INFO=
+SETUP         4  040B        6  none                                                 ``````
+SETUP         5  0543       12  UPPER  c01:1                                         STARLORD.CFG
+SETUP         6  0550       80  none   c01:1
+SETUP         7  05A1       43  none   c01:1
+SETUP         8  05CF       43  none   c01:1
+SETUP         9  0629       61  Title  c01:1                                           Use this setup program to alter your compter configuration.
+SETUP        10  0667       63  Mixed  c01:1                                         Run this program after installing STARLORDS to your hard drive.
+SETUP        11  06A7       79  Mixed  c01:1                                            -to change type       -exit to DOS       -previous option       -next option
+SETUP        12  06FB        3  Title  c01:1                                         Esc
+SETUP        13  06FF        4  Mixed  c01:1                                         PgUp
+SETUP        14  0704        4  Mixed  c01:1                                         PgDn
+SETUP        15  0709       23  Title  c01:1                                         Exit without installing
+SETUP        16  0721       12  Mixed  c01:1                                         Input: Mouse
+SETUP        17  072E       15  Mixed  c01:1                                         Input: Keyboard
+SETUP        18  073E       11  Title  c01:1                                         Sound: none
+SETUP        19  074A        9  Mixed  c01:1                                         Sound: PC
+SETUP        20  0754       12  Mixed  c01:1                                         Sound: AdLib
+SETUP        21  0761       19  Mixed  c01:1                                         Store Configuration
+SETUP        22  0775       43  Mixed  c01:1                                                      Input Device Type
+SETUP        23  07A1       43  Title  c01:1                                          Choose the input device for your computer:
+SETUP        24  07CD       43  Mixed  c01:1                                             Press Enter to select input device.
+SETUP        25  07F9        3  lower  c01:1                                         (x)
+SETUP        26  07FD       11  Title  c01:1                                         Mouse
+SETUP        27  0809        3  none   c01:1                                         ( )
+SETUP        28  080D       11  Title  c01:1                                         Mouse
+SETUP        29  0819        3  lower  c01:1                                         (x)
+SETUP        30  081D       11  Title  c01:1                                         Keyboard
+SETUP        31  0829        3  none   c01:1                                         ( )
+SETUP        32  082D       11  Title  c01:1                                         Keyboard
+SETUP        33  0839       43  none   c01:1
+SETUP        34  0865       43  none   c01:1
+SETUP        35  0891       16  none   c01:1
+SETUP        36  08A2       16  none   c01:1
+SETUP        37  08B7       10  none   c01:1
+SETUP        38  08C2       10  none   c01:1
+SETUP        39  08CD       43  Mixed  c01:1                                                       Sound Card Type
+SETUP        40  08F9       43  Title  c01:1                                          Choose the sound card for your computer:
+SETUP        41  0925       43  Mixed  c01:1                                           Press Enter to select sound card type.
+SETUP        42  0951        3  lower  c01:1                                         (x)
+SETUP        43  0955       13  Title  c01:1                                         None
+SETUP        44  0963        3  none   c01:1                                         ( )
+SETUP        45  0967       13  Title  c01:1                                         None
+SETUP        46  0975        3  lower  c01:1                                         (x)
+SETUP        47  0979       13  Mixed  c01:1                                         PC Speaker
+SETUP        48  0987        3  none   c01:1                                         ( )
+SETUP        49  098B       13  Mixed  c01:1                                         PC Speaker
+SETUP        50  0999        3  lower  c01:1                                         (x)
+SETUP        51  099D       13  Mixed  c01:1                                         Adlib Card
+SETUP        52  09AB        3  none   c01:1                                         ( )
+SETUP        53  09AF       13  Mixed  c01:1                                         Adlib Card
+SETUP        54  09BD       43  none   c01:1
+SETUP        55  09E9       43  Mixed  c01:1                                                   Store New Configuration
+SETUP        56  0A15       43  Mixed  c01:1                                            Save specified setup and exit to DOS
+SETUP        57  0A41       43  Mixed  c01:1                                             Press Enter to save setup and exit.
+SETUP        58  0A6D       43  none   c01:1
+SETUP        59  0A99       43  none   c01:1
+SETUP        60  0AC5       43  none   c01:1
+SETUP        61  0AF1       43  none   c01:1
+SETUP        62  0B1D       43  Mixed  c01:1                                                   Store New Configuration
+SETUP        63  0B49       43  none   c01:1
+SETUP        64  0B8D       12  UPPER  c01:1                                         STARLORD.CFG
+SETUP        65  0B9A       29  Mixed  c01:1                                         Type start to begin Starlords
+SETUP        66  0BCF        9  UPPER                                                C<<NMSG>>
+SETUP        67  0BDA       25  Title                                                R6000\r\n- stack overflow\r\n
+SETUP        68  0BF6       30  Title                                                R6003\r\n- integer divide by 0\r\n
+SETUP        69  0C17       43  Title                                                R6009\r\n- not enough space for environment\r\n
+SETUP        70  0C4A       15  lower                                                run-time error
+SETUP        71  0C5C       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+SETUP        72  0C8B       34  Title                                                R6001\r\n- null pointer assignment\r\n
+TEST          0  0F45        9  UPPER                                                /KL([K	@H
+TEST          1  0FAE        8  UPPER  c09:1                                         EMMXXXX0
+TEST          2  0FDA       13  UPPER  c12:2                                         _C_FILE_INFO=
+TEST          3  1088        9  UPPER  c01:1 c12:10                                  FONTS.LBX
+TEST          4  10A2        4  UPPER  c10:1                                         .LBX
+TEST          5  10A7        4  UPPER  c10:1                                         .LBX
+TEST          6  10AC        4  UPPER  c10:1                                         .LBX
+TEST          7  10B1       11  UPPER  c10:1                                         SPACE ALLOC
+TEST          8  10BD       12  Mixed  c10:1                                         Data Free:
+TEST          9  10CA       27  Mixed  c10:1                                          bytes       Memory Free:
+TEST         10  10E6       19  Mixed  c10:1                                         k     Worst Free:
+TEST         11  10FC       12  Mixed  c10:1                                         .LBX [entry
+TEST         12  110C       33  Mixed  c10:1                                          could not be found. Game halted!
+TEST         13  112E       33  Mixed  c10:1                                          has been corrupted. Game halted!
+TEST         14  1150       73  Mixed  c10:1                                         Insufficient memory. You need at least 560K free. Try removing all TSR's.
+TEST         15  119A       50  lower  c10:1                                          was not properly allocated or has been corrupted.
+TEST         16  11CD       43  Mixed  c10:1                                          failed to reload. Allocation too small by
+TEST         17  11F9        6  lower  c10:1                                          pages
+TEST         18  1200        4  UPPER  c11:1                                         .LBX
+TEST         19  120D        4  UPPER  c11:1                                         .LBX
+TEST         20  1212        8  UPPER                                                <<NMSG>>
+TEST         21  121C       25  Title                                                R6000\r\n- stack overflow\r\n
+TEST         22  1238       30  Title                                                R6003\r\n- integer divide by 0\r\n
+TEST         23  1259       43  Title                                                R6009\r\n- not enough space for environment\r\n
+TEST         24  128C       15  lower                                                run-time error
+TEST         25  129E       44  Title                                                R6002\r\n- floating-point support not loaded\r\n
+TEST         26  12CD       34  Title                                                R6001\r\n- null pointer assignment\r\n

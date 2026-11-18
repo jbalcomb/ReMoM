@@ -37,8 +37,8 @@ if [ ! -d "${REPO_ROOT}/out/build/${PRESET}" ]; then
     exit 1
 fi
 
-echo "=== Step 1/3: build HeMoM (${PRESET}) ==="
-cmake --build "${REPO_ROOT}/out/build/${PRESET}" --config Release --target HeMoM > /dev/null
+echo "=== Step 1/3: build DeMoM (${PRESET}) ==="
+cmake --build "${REPO_ROOT}/out/build/${PRESET}" --config Release --target DeMoM > /dev/null
 echo "  built"
 
 echo
@@ -47,8 +47,8 @@ cd "${RUN_DIR}"
 rm -f run_*.txt SAVE1.GAM SAVE1.txt SAVE9.GAM SAVE9.txt
 DUMPS=""
 for i in $(seq 1 "${N}"); do
-    ./HeMoM.exe --newgame "${ASSETS}/test_worldgen.ini" > /dev/null 2>&1
-    ./HeMoM.exe --continue --scenario "${ASSETS}/test_continue_next_turn.hms" --dump-save SAVE1.GAM > /dev/null 2>&1
+    ./DeMoM.exe --newgame "${ASSETS}/test_worldgen.ini" > /dev/null 2>&1
+    ./DeMoM.exe --continue --scenario "${ASSETS}/test_continue_next_turn.hms" --dump-save SAVE1.GAM > /dev/null 2>&1
     cp SAVE1.txt "run_${i}.txt"
     DUMPS="${DUMPS}${DUMPS:+,}${RUN_DIR}/run_${i}.txt"
     echo "  run ${i}: $(stat -c '%s' "run_${i}.txt") bytes"

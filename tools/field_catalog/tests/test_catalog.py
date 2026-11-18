@@ -86,6 +86,14 @@ def test_hotkeys_decode():
     assert decode_hotkey("hotkey_GameButton[0]", FOLDER)[2] is True        # string index -> unresolved
 
 
+def test_hotkeys_decode_strings():
+    # Add_*_Field() hotkeys are strings (asm: mov al, [si]); the key is the first char
+    assert decode_hotkey('"Q"', FOLDER) == (81, "Q", False)
+    assert decode_hotkey('"\\x1B"', FOLDER) == (27, "ESCAPE", False)
+    assert decode_hotkey('""', FOLDER) == (None, "", False)                 # empty string -> no key
+    assert decode_hotkey("str_hotkey_ESC__ovr149", FOLDER) == (None, "(str)", True)   # string by name -> unresolved
+
+
 def _main():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0

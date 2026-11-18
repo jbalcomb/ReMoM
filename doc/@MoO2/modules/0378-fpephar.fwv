@@ -1,0 +1,9 @@
+module_num=378
+module=fpephar
+source=0378-fpephar.md
+range[0]=1:0x00153EB8 linear=0x00163EB8 size=240
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL             CHUNK
+m378f001  1    -      0x00163EB8  1:0x00153EB8  code  __Phar_hook_init  __Phar_hook_init_  regions/07-object-1/001E8E54-001E9653.txt
+m378f002  2    -      0x00163F7B  1:0x00153F7B  code  __Phar_hook_fini  __Phar_hook_fini_  regions/07-object-1/001E8E54-001E9653.txt

@@ -59,7 +59,7 @@ Enemy_City_Screen_Draw()
     |-> Cityscape_Draw__WIP(_city_idx, (x_start + 4), (y_start + 101), 0, ST_UNDEFINED);
     |-> Cityscape_Draw_Scanned_Building_Name(_CITIES[_city_idx].owner_idx, x_start, city_screen_scanned_field);
 
-Cast_Spell_City_Enchantment_Animation_Draw()
+Draw_City_Enchantment_Anim()
     |-> Cityscape_Draw__WIP(_osc_city_idx, (x_start + 5),(y_start + 27), _ce_bldg_idx, _ce_bldg_idx);
 
 
@@ -259,11 +259,11 @@ set in Cityscape_Draw__WIP(), from the parameter bldg_idx_2
 
 Down P City_Screen_Draw__WIP+231   call    j_Cityscape_Draw__WIP
 Down P Enemy_City_Screen_Draw+3AC  call    j_Cityscape_Draw__WIP
-Down P Cast_Spell_City_Enchantment_Animation_Draw+30 call    j_Cityscape_Draw__WIP
+Down P Draw_City_Enchantment_Anim+30 call    j_Cityscape_Draw__WIP
 
 City_Screen_Draw__WIP(..., cityscreen_city_built_bldg_idx)
 Enemy_City_Screen_Draw(..., ST_UNDEFINED)
-Cast_Spell_City_Enchantment_Animation_Draw(..., _ce_bldg_idx)
+Draw_City_Enchantment_Anim(..., _ce_bldg_idx)
 
 cityscreen_city_built_bldg_idx
     City_Built_Building_Message()
@@ -316,8 +316,8 @@ XREF:
     IDK_Spell_Cityscape_1:loc_BF0C2       mov     [_ce_bldg_idx], 104               ; case 0x1C
     IDK_Spell_Cityscape_1:loc_BF0EA       mov     [_ce_bldg_idx], 105               ; case 0xA3
     IDK_Spell_Cityscape_1:loc_BF0F2       mov     [_ce_bldg_idx], 106               ; case 0x92
-    Cast_Spell_City_Enchantment_Animation_Draw+16           push    [_ce_bldg_idx]                               
-    Cast_Spell_City_Enchantment_Animation_Draw+1A           push    [_ce_bldg_idx]                               
+    Draw_City_Enchantment_Anim+16           push    [_ce_bldg_idx]                               
+    Draw_City_Enchantment_Anim+1A           push    [_ce_bldg_idx]                               
 
 
 
@@ -494,8 +494,8 @@ XREF:
     IDK_Spell_DisjunctOrBind__1+210       mov     [_ce_bldg_idx], 1                            
     IDK_Spell_DisjunctOrBind__1+2EF       mov     [_ce_bldg_idx], 1                            
     IDK_Spell_DisjunctOrBind__2:loc_BE84C mov     [_ce_bldg_idx], 1                            
-    Cast_Spell_City_Enchantment_Animation_Draw+16           push    [_ce_bldg_idx]                               
-    Cast_Spell_City_Enchantment_Animation_Draw+1A           push    [_ce_bldg_idx]                               
+    Draw_City_Enchantment_Anim+16           push    [_ce_bldg_idx]                               
+    Draw_City_Enchantment_Anim+1A           push    [_ce_bldg_idx]                               
     IDK_Spell_Cityscape_1:loc_BF0C2       mov     [_ce_bldg_idx], 104               ; case 0x1C
     IDK_Spell_Cityscape_1:loc_BF0CA       mov     [_ce_bldg_idx], 101               ; case 0x25
     IDK_Spell_Cityscape_1:loc_BF0D2       mov     [_ce_bldg_idx], 102               ; case 0x94

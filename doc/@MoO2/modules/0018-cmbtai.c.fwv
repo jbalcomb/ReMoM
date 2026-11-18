@@ -1,0 +1,51 @@
+module_num=18
+module=D:\MOX\OTHERS\CMBTAI.C
+source=0018-cmbtai.c.md
+range[0]=1:0x00017F26 linear=0x00027F26 size=17959
+range[1]=2:0x00023540 linear=0x00193540 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                               SYMBOL                              CHUNK
+m018f001  1    -      0x00027F26  1:0x00017F26  code         Does_Ship_Have_Missiles_Incoming   Does_Ship_Have_Missiles_Incoming_   regions/07-object-1/000ACE54-000AD653.txt
+m018f002  2    -      0x00027F9F  1:0x00017F9F  code         Safe_To_Fire_Sphere_Weapon         Safe_To_Fire_Sphere_Weapon_         regions/07-object-1/000ACE54-000AD653.txt
+m018f003  3    -      0x00028168  1:0x00018168  code         Ai_Self_Destruct_Check             Ai_Self_Destruct_Check_             regions/07-object-1/000AD654-000ADE53.txt
+m018f004  4    -      0x000285C6  1:0x000185C6  code         Release_Smallest_Ship_From_Stasis  Release_Smallest_Ship_From_Stasis_  regions/07-object-1/000AD654-000ADE53.txt
+m018f005  5    -      0x0002864A  1:0x0001864A  code         Ai_Stasis_Check                    Ai_Stasis_Check_                    regions/07-object-1/000AD654-000ADE53.txt
+m018f006  6    -      0x000286E8  1:0x000186E8  code         Range_To_XY                        Range_To_XY_                        regions/07-object-1/000AD654-000ADE53.txt
+m018f007  7    -      0x00028836  1:0x00018836  code         Range_To_Missile                   Range_To_Missile_                   regions/07-object-1/000ADE54-000AE653.txt
+m018f008  8    -      0x0002885A  1:0x0001885A  code         Range_To_Ship                      Range_To_Ship_                      regions/07-object-1/000ADE54-000AE653.txt
+m018f009  9    -      0x000289C4  1:0x000189C4  code         Expected_Weapon_Damage             Expected_Weapon_Damage_             regions/07-object-1/000ADE54-000AE653.txt
+m018f010  10   -      0x00028EAE  1:0x00018EAE  code         Expected_Missile_Damage            Expected_Missile_Damage_            regions/07-object-1/000ADE54-000AE653.txt
+m018f011  11   -      0x000290DA  1:0x000190DA  code         Expected_Beam_Bomb_Damage          Expected_Beam_Bomb_Damage_          regions/07-object-1/000AE654-000AEE53.txt
+m018f012  12   -      0x000293D8  1:0x000193D8  code         Missile_Overkill_Check             Missile_Overkill_Check_             regions/07-object-1/000AE654-000AEE53.txt
+m018f013  13   -      0x00029480  1:0x00019480  code         Check_For_Launched_Fighters        Check_For_Launched_Fighters_        regions/07-object-1/000AE654-000AEE53.txt
+m018f014  14   -      0x000294DF  1:0x000194DF  code         Is_Ship_Out_Of_Ammo                Is_Ship_Out_Of_Ammo_                regions/07-object-1/000AE654-000AEE53.txt
+m018f015  15   -      0x000295D0  1:0x000195D0  code         Is_Ship_Targeted_By_Missile        Is_Ship_Targeted_By_Missile_        regions/07-object-1/000AE654-000AEE53.txt
+m018f016  16   -      0x00029616  1:0x00019616  code         Toggle_Auto_Combat_Flags           Toggle_Auto_Combat_Flags_           regions/07-object-1/000AE654-000AEE53.txt
+m018f017  17   -      0x00029790  1:0x00019790  code         Crystal_Control                    Crystal_Control_                    regions/07-object-1/000AE654-000AEE53.txt
+m018f018  18   -      0x00029837  1:0x00019837  code         Do_Auto_Ship_Turn                  Do_Auto_Ship_Turn_                  regions/07-object-1/000AEE54-000AF653.txt
+m018f019  19   -      0x00029F1B  1:0x00019F1B  code         Target_Missile_Value               Target_Missile_Value_               regions/07-object-1/000AEE54-000AF653.txt
+m018f020  20   -      0x0002A145  1:0x0001A145  code         Select_Missile_To_Target           Select_Missile_To_Target_           regions/07-object-1/000AF654-000AFE53.txt
+m018f021  21   -      0x0002A239  1:0x0001A239  code         Target_Ship_Value                  Target_Ship_Value_                  regions/07-object-1/000AF654-000AFE53.txt
+m018f022  22   -      0x0002A46A  1:0x0001A46A  code         Select_Ship_To_Target              Select_Ship_To_Target_              regions/07-object-1/000AF654-000AFE53.txt
+m018f023  23   -      0x0002A4E8  1:0x0001A4E8  code         Choose_Target                      Choose_Target_                      regions/07-object-1/000AF654-000AFE53.txt
+m018f024  24   -      0x0002A545  1:0x0001A545  code         Combat_Ship_Class                  Combat_Ship_Class_                  regions/07-object-1/000AF654-000AFE53.txt
+m018f025  25   -      0x0002A77D  1:0x0001A77D  code         Evaluate_Possible_Move             Evaluate_Possible_Move_             regions/07-object-1/000AF654-000AFE53.txt
+m018f026  26   -      0x0002A810  1:0x0001A810  code         Bring_Weapons_To_Bear              Bring_Weapons_To_Bear_              regions/07-object-1/000AFE54-000B0653.txt
+m018f027  27   -      0x0002A9A5  1:0x0001A9A5  code         Auto_Move_Ship                     Auto_Move_Ship_                     regions/07-object-1/000AFE54-000B0653.txt
+m018f028  28   -      0x0002ACF9  1:0x0001ACF9  code         Get_Current_Ship_Target            Get_Current_Ship_Target_            regions/07-object-1/000AFE54-000B0653.txt
+m018f029  29   -      0x0002AED2  1:0x0001AED2  code         Will_Missile_Do_Damage             Will_Missile_Do_Damage_             regions/07-object-1/000AFE54-000B0653.txt
+m018f030  30   -      0x0002AFA9  1:0x0001AFA9  code         Get_Current_Missile_Target         Get_Current_Missile_Target_         regions/07-object-1/000AFE54-000B0653.txt
+m018f031  31   -      0x0002B09E  1:0x0001B09E  code         Get_Current_Target                 Get_Current_Target_                 regions/07-object-1/000B0654-000B0E53.txt
+m018f032  32   -      0x0002B191  1:0x0001B191  static,code  Convert_Ordinal_To_Msl_Type        Convert_Ordinal_To_Msl_Type_        regions/07-object-1/000B0654-000B0E53.txt
+m018f033  33   -      0x0002B1FD  1:0x0001B1FD  code         Get_Effective_Missile_Strength     Get_Effective_Missile_Strength_     regions/07-object-1/000B0654-000B0E53.txt
+m018f034  34   -      0x0002B7CC  1:0x0001B7CC  code         Average_Missile_Kills              Average_Missile_Kills_              regions/07-object-1/000B0654-000B0E53.txt
+m018f035  35   -      0x0002B9E3  1:0x0001B9E3  code         Get_Effective_Weapon_Damage        Get_Effective_Weapon_Damage_        regions/07-object-1/000B0E54-000B1653.txt
+m018f036  36   -      0x0002BA5E  1:0x0001BA5E  code         Get_Effective_Beam_Strength        Get_Effective_Beam_Strength_        regions/07-object-1/000B0E54-000B1653.txt
+m018f037  37   -      0x0002BB06  1:0x0001BB06  code         Get_Total_Hits                     Get_Total_Hits_                     regions/07-object-1/000B0E54-000B1653.txt
+m018f038  38   -      0x0002BBA1  1:0x0001BBA1  code         Retreat_Check                      Retreat_Check_                      regions/07-object-1/000B0E54-000B1653.txt
+m018f039  39   -      0x0002BE25  1:0x0001BE25  code         Get_Long_Range_Beam_Strength       Get_Long_Range_Beam_Strength_       regions/07-object-1/000B0E54-000B1653.txt
+m018f040  40   -      0x0002BF73  1:0x0001BF73  code         Resolve_Ai_Boarding                Resolve_Ai_Boarding_                regions/07-object-1/000B0E54-000B1653.txt
+m018f041  41   -      0x0002C129  1:0x0001C129  code         Boarding_Action_Type               Boarding_Action_Type_               regions/07-object-1/000B1654-000B1E53.txt
+m018f042  42   -      0x0002C43A  1:0x0001C43A  code         Get_Player_Mode                    Get_Player_Mode_                    regions/07-object-1/000B1654-000B1E53.txt
+-         -    -      0x00193540  2:0x00023540  data         _fleet_target                      _fleet_target                       -

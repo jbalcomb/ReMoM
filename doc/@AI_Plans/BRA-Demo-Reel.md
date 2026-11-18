@@ -95,7 +95,7 @@ Scenes 3, 4, 5 and 7 each need a specific starting state. Without a load flag ev
 click through the Load Game menu first — the same fragile ~5-second prefix on four scenes, coupled to
 save-slot ordering and menu coordinates.
 
-Implemented in `src/ReMoM.c`, mirroring HeMoM's `--load`. It deliberately adds **no new load
+Implemented in `src/ReMoM.c`, mirroring DeMoM's `--load`. It deliberately adds **no new load
 sequence**: it sets `g_load_save_gam_name_override` and enters the existing `scr_Continue` path, which
 performs the game's own `Load_WZD_Resources()` + `Load_SAVE_GAM()`. This matters under §2 — a bespoke
 loader would be another way the filmed path diverges from a player's.

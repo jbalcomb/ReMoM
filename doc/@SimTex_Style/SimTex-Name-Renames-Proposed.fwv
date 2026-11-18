@@ -1,0 +1,389 @@
+function                                           kind    proposed                         why
+_sub_6ED5D_Draw                                    none                                     address placeholder; a name needs the behavior read from the asm
+DIPL_sub_72DB6__STUB                               none                                     address placeholder (handles diplomacy actions 45-49); needs the asm
+NPC_Diplo_s74420                                   none                                     address placeholder (header guesses IDK_Dipl_Npc_Demand); needs the asm
+sub_F60F4                                          none                                     address placeholder; needs the asm
+sub_F6316                                          none                                     address placeholder; needs the asm
+o060p03_empty_function                             none                                     empty OG function: the segment address is the only identity it has
+o142p03_empty_function                             none                                     empty OG function
+o148p01_empty_function                             none                                     empty OG function
+o153p22_empty_function                             none                                     empty OG function
+o153p24_empty_function                             none                                     empty OG function
+o51p54_empty_function                              none                                     empty OG function
+o52p14_empty_function                              none                                     empty OG function
+o52p26_empty_function                              none                                     empty OG function
+o52p4_empty_function                               none                                     empty OG function
+o58p03_empty_function                              none                                     empty OG function
+o59p10_empty_function                              none                                     empty OG function
+o62p01_empty_function                              none                                     empty OG function
+s01p11_empty_function                              none                                     empty OG function
+s01p12_empty_function                              none                                     empty OG function
+s01p16_empty_function                              none                                     empty OG function
+s146p1_empty_function                              none                                     empty OG function
+s146p2_empty_function                              none                                     empty OG function
+s146p3_empty_function                              none                                     empty OG function
+s146p4_empty_function                              none                                     empty OG function
+s146p5_empty_function                              none                                     empty OG function
+s146p6_empty_function                              none                                     empty OG function
+s88p04_empty_function                              none                                     empty OG function
+DBG_Disp_PSTR                                      none                                     OG has both Disp_PSTR (MoO2 verbatim) and this; the asm has to say how they differ before it gets a name
+Copy_On_To_Off_NM                                  none                                     meaning of NM unverified; sibling _YM maps to MoO2 Copy_Off_To_On_Mode_Y
+Copy_On_To_Off_YM                                  rename  Copy_On_To_Off_Mode_Y            MoO2 Copy_Off_To_On_Mode_Y (MoM is VGA Mode Y)
+BigBook_Draw                                       rename  Draw_Big_Spellbook               verb-first; no CamelCase
+SmlBook_Draw                                       rename  Draw_Small_Spellbook             verb-first; Sml is not attested
+LBX_Load                                           keep    LBX_Load                         LBX_ module prefix + verb is the WLIBS pattern (LBX_Open_File / LBX_Add_File)
+Clipped_Draw                                       keep    Clipped_Draw                     Clipped_ family is MoO2 WLIBS (Clipped_Dot / Clipped_Print_String / Clipped_Draw_Bitmap_Sprite)
+Clipped_Fill                                       keep    Clipped_Fill                     Clipped_ family is MoO2 WLIBS
+Clipped_Print                                      keep    Clipped_Print                    Clipped_ family is MoO2 WLIBS
+AI_Spell_Select                                    keep    AI_Spell_Select                  same shape as MoO2 AI_Tech_Select
+AI_Spell_Research_Select                           keep    AI_Spell_Research_Select         same shape as MoO2 AI_Tech_Select
+AI_Retreat_Check                                   keep    AI_Retreat_Check                 same shape as MoO2 Ai_Stasis_Check / Ai_Self_Destruct_Check
+AI_Unit_Army_Do_Move                               keep    AI_Unit_Army_Do_Move             Do_ is the verb; family AI_Unit_Army_Do_Settle/Ferry/Meld/Road
+Terrain_Init                                       keep    Terrain_Init                     <Noun>_Init is MoO2 (Audio_Init / Diplomacy_Mouse_Init)
+Pool_Init                                          keep    Pool_Init                        <Noun>_Init is MoO2 (Audio_Init / Diplomacy_Mouse_Init)
+Copy_Page4_To_Off                                  keep    Copy_Page4_To_Off                matches MoO2 Copy_Off_To_On / Copy_Back_To_Off; the digit names a VGA page
+Army_Moves2                                        keep    Army_Moves2                      '2' is the half-move unit of the moves2 field, not a version digit; rename only with the field
+Unit_Moves2                                        keep    Unit_Moves2                      '2' is the half-move unit of the moves2 field
+Road_Build_Moves2_Max                              keep    Road_Build_Moves2_Max            '2' is the half-move unit of the moves2 field
+Set_Newgame_Screen_0_Help_List                     keep    Set_Newgame_Screen_0_Help_List   already MoO2 Set_<X>_Help_List; flagged only for the screen number
+Set_Newgame_Screen_1_Help_List                     keep    Set_Newgame_Screen_1_Help_List   already MoO2 Set_<X>_Help_List
+Set_Newgame_Screen_2_Help_List                     keep    Set_Newgame_Screen_2_Help_List   already MoO2 Set_<X>_Help_List
+Set_Newgame_Screen_4_Help_List                     keep    Set_Newgame_Screen_4_Help_List   already MoO2 Set_<X>_Help_List
+Set_Newgame_Screen_6_Help_List                     keep    Set_Newgame_Screen_6_Help_List   already MoO2 Set_<X>_Help_List
+Set_Newgame_Screen_7_Help_List                     keep    Set_Newgame_Screen_7_Help_List   already MoO2 Set_<X>_Help_List
+Newgame_Screen_5_Spell_Fields                      keep    Newgame_Screen_5_Spell_Fields    <X>_Fields suffix is MoO2; flagged only for the screen number
+UU_EMM_Data_Mark                                   keep    UU_EMM_Data_Mark                 EMM_ module prefix + Proper_Snake (see EMM_ family)
+UU_EMM_Data_Undo                                   keep    UU_EMM_Data_Undo                 EMM_ module prefix + Proper_Snake
+EMM_Startup                                        keep    EMM_Startup                      EMM_ module prefix + Proper_Snake
+EMM_Set_Minimum                                    keep    EMM_Set_Minimum                  EMM_ module prefix + Proper_Snake
+lbxgfx_draw_pixels_offs_fmt0                       rename  Draw_Picture_Pixels_Offset       1oom-style lower_snake; MoO2 calls an LBX image a Picture (Draw_Picture_To_Bitmap)
+ui_draw_line_ctbl                                  rename  Multi_Colored_Line_Base          draws a line through a color table = MoO2 Multi_Colored_Line; _Base as in ReMoM Clipped_Line_Base
+ui_draw_line_limit_do                              rename  Clip_Multi_Colored_Line          clips then calls the color-table line
+util_math_line_plot                                rename  Plot_Line_Path                   fills x/y tables along a line
+util_math_get_route_len                            rename  Get_Path_Length                  1oom-style name
+util_math_route_step_len                           rename  Get_Path_Step_Length             1oom-style name
+DBG_Compare_MAGIC_SET                              rename  Test_Magic_Settings              Test_ debug vocabulary; MAGIC.SET is a file name (heuristic 7: no 8.3 in code names)
+DBG_Print_MAGIC_SET                                rename  Dump_Magic_Settings              Dump_ debug vocabulary
+DBG_Compare_Battle_Units                           rename  Test_Battle_Units                Test_ debug vocabulary
+DBG_Trace_Fix_Match                                rename  Trace_Fix_Match                  Trace_ debug vocabulary
+DBG_Disp_PSTR_Known_Spells                         rename  Dump_Known_Spells                Dump_ debug vocabulary
+DBG_Open_ERROR_LOG__STUB                           rename  Open_Error_Log__STUB             verb-first; drop the drake178 DBG_ prefix
+DBG_Close_ERROR_LOG__STUB                          rename  Close_Error_Log__STUB            verb-first
+Combat_Screen_TST_001                              rename  Combat_Screen_Test1              MoO2 test names: Ken_Test / Diplomacy_Test; digit version suffix as Random_Skill2
+Combat_Screen_TST_002                              rename  Combat_Screen_Test2
+Combat_Screen_TST_003                              rename  Combat_Screen_Test3
+Combat_Screen_TST_004                              rename  Combat_Screen_Test4
+Combat_Screen_TST_001_Draw                         rename  Draw_Combat_Screen_Test1         Draw_<X>_Screen
+Combat_Screen_TST_002_Draw                         rename  Draw_Combat_Screen_Test2
+Combat_Screen_TST_003_Draw                         rename  Draw_Combat_Screen_Test3
+Combat_Screen_TST_004_Draw                         rename  Draw_Combat_Screen_Test4
+TST_Prepare_All_Battle_Units                       rename  Prepare_Test_Battle_Units        verb-first
+EMM_Map4Pages_VGAFILEH1234                         rename  EMM_Map_VGAFILEH                 EMM_Map_<handle> family (EMS handle names VGAFILEH / EMMDATAH / CONTXXX stay upper case like LBX names)
+EMMDATAH_Map                                       rename  EMM_Map_EMMDATAH                 EMM_Map_<handle> family
+CONTXXX_Map                                        rename  EMM_Map_CONTXXX                  maps the CONTXXX EMS handle (EMM_MapMulti4 + AI landmass arrays); EMM_Map_<handle> family
+EMM_MapMulti4                                      rename  EMM_Map_Multi_Four               EMM_ prefix + Proper_Snake (WLIBS LBX_ precedent); maps logical pages first..first+3
+EMM_MapFourPages                                   rename  EMM_Map_Four_Pages               EMM_ prefix + Proper_Snake
+EMM_GetHandle                                      rename  EMM_Get_Handle                   EMM_ prefix + Proper_Snake
+EMM_MapnRead                                       rename  EMM_Map_And_Read                 EMM_ prefix + Proper_Snake
+EMM_MapnWrite                                      rename  EMM_Map_And_Write                EMM_ prefix + Proper_Snake
+EMM_ReleaseAll__STUB                               rename  EMM_Release_All__STUB            EMM_ prefix + Proper_Snake
+EMM_DetectDevice                                   rename  EMM_Detect_Device                EMM_ prefix + Proper_Snake
+EMM_GetFreePageCnt                                 rename  EMM_Get_Free_Page_Count          EMM_ prefix + Proper_Snake; Cnt is not an attested abbreviation
+EMM_GetHandleCount                                 rename  EMM_Get_Handle_Count             EMM_ prefix + Proper_Snake
+EMM_GetHandleName                                  rename  EMM_Get_Handle_Name              EMM_ prefix + Proper_Snake
+EMM_GetLowString                                   rename  EMM_Get_Low_String               EMM_ prefix + Proper_Snake
+EMM_GetPageCount                                   rename  EMM_Get_Page_Count               EMM_ prefix + Proper_Snake
+EMM_GetPageFrame                                   rename  EMM_Get_Page_Frame               EMM_ prefix + Proper_Snake
+EMM_MakeNamedHandle                                rename  EMM_Make_Named_Handle            EMM_ prefix + Proper_Snake
+EMM_ReleaseHandle__SUTB                            rename  EMM_Release_Handle__STUB         EMM_ prefix + Proper_Snake; marker typo SUTB -> STUB
+EMM_EMMDATAH_AllocFirst                            rename  EMM_Allocate_First_Data          MoO2 Allocate_First_Block / Allocate_Next_Block
+EMM_EMMDATAH_AllocNext                             rename  EMM_Allocate_Next_Data           MoO2 Allocate_First_Block / Allocate_Next_Block
+EMS_FindHandle                                     rename  EMS_Find_Handle                  EMS_ prefix + Proper_Snake
+EMS_FreeHandle                                     rename  EMS_Free_Handle                  EMS_ prefix + Proper_Snake
+EMS_AllocHandle                                    rename  EMS_Allocate_Handle              EMS_ prefix + Proper_Snake
+EMS_GetTotalPages                                  rename  EMS_Get_Total_Pages              EMS_ prefix + Proper_Snake
+EMS_StrICmp                                        rename  EMS_Compare_No_Case              case-insensitive compare of handle names; no CamelCase
+FLIC_Draw                                          rename  Draw_Animation                   FLIC_ = MoO2 'animate' module (FLIC_Draw.c header); Draw_Picture is already a different function
+FLIC_Draw_Frame                                    rename  Draw_Animation_Frame             Animation vocabulary (MoO2 Set_Animation_Frame)
+FLIC_Remap_Draw_Frame                              rename  Draw_Animation_Frame_Remap       variant as a suffix (MoO2 Draw_File_Animation_Palette / _Stencil)
+FLIC_Load_Palette                                  rename  Load_Animation_Palette           the name its own header comment already proposes (FLIC_Draw.c)
+FLIC_Get_Width                                     rename  Get_Animation_Width              Animation vocabulary
+FLIC_Get_Height                                    family  Get_Animation_Height             family member outside the bottom group
+FLIC_Get_CurrentFrame                              rename  Get_Animation_Frame              MoO2 Set_Animation_Frame / Reset_Animation_Frame (both already in ReMoM verbatim)
+FLIC_Get_FrameCount                                rename  Get_Animation_Total_Frames       MoO2 Get_File_Animation_Total_Frames
+FLIC_Set_LoopFrame_1                               rename  Set_Animation_Loop_Frame         Animation vocabulary; no CamelCase
+AITP_HolyWord                                      rename  AI_Pick_Holy_Word_Target         AITP_ is drake178's label; MoO2 Pick_Target / Pick_Random_* and AI_ prefix
+AITP_WarpWood                                      rename  AI_Pick_Warp_Wood_Target         AI_Pick_<Spell>_Target family
+AITP_CracksCall                                    rename  AI_Pick_Cracks_Call_Target       AI_Pick_<Spell>_Target family
+AITP_DarknessLight                                 rename  AI_Pick_Darkness_Light_Target    AI_Pick_<Spell>_Target family (Darkness / True Light)
+AITP_DispelMagic                                   rename  AI_Pick_Dispel_Magic_Target      AI_Pick_<Spell>_Target family
+AITP_EarthToMud                                    rename  AI_Pick_Earth_To_Mud_Target      AI_Pick_<Spell>_Target family
+AITP_RecallHero                                    rename  AI_Pick_Recall_Hero_Target       AI_Pick_<Spell>_Target family
+AITP_WarpCreature                                  rename  AI_Pick_Warp_Creature_Target     AI_Pick_<Spell>_Target family
+AITP_Disrupt                                       rename  AI_Pick_Disrupt_Target           AI_Pick_<Spell>_Target family
+AITP_Healing                                       rename  AI_Pick_Healing_Target           AI_Pick_<Spell>_Target family
+AITP_Node                                          rename  AI_Pick_Node_Target              AI_Pick_<Spell>_Target family
+AITP_Transmute                                     rename  AI_Pick_Transmute_Target         AI_Pick_<Spell>_Target family
+AITP_Consecration                                  rename  AI_Pick_Consecration_Target      AI_Pick_<Spell>_Target family
+AITP_Corruption                                    rename  AI_Pick_Corruption_Target        AI_Pick_<Spell>_Target family
+AITP_Disenchant                                    rename  AI_Pick_Disenchant_Target        AI_Pick_<Spell>_Target family
+AITP_Disintegrate                                  rename  AI_Pick_Disintegrate_Target      AI_Pick_<Spell>_Target family
+AITP_Disjunction                                   rename  AI_Pick_Disjunction_Target       AI_Pick_<Spell>_Target family
+AITP_Inspirations                                  rename  AI_Pick_Inspirations_Target      AI_Pick_<Spell>_Target family
+AITP_Prosperity                                    rename  AI_Pick_Prosperity_Target        AI_Pick_<Spell>_Target family
+AITP_Spell_Ward_Wrapper                            rename  AI_Pick_Spell_Ward_Target2       second form of AITP_Spell_Ward; MoO2 marks a second version with a digit (Init_Homeworld_Colony2)
+AITP_Wall_Of_Darkness                              rename  AI_Pick_Wall_Of_Darkness_Target  AI_Pick_<Spell>_Target family (31 chars)
+AITP_Altar_Of_Battle                               rename  AI_Pick_Altar_Of_Battle_Target   AI_Pick_<Spell>_Target family
+AITP_Cloud_Of_Shadow                               rename  AI_Pick_Cloud_Of_Shadow_Target   AI_Pick_<Spell>_Target family
+AITP_Stream_Of_Life                                rename  AI_Pick_Stream_Of_Life_Target    AI_Pick_<Spell>_Target family
+AITP_Wall_Of_Fire                                  rename  AI_Pick_Wall_Of_Fire_Target      AI_Pick_<Spell>_Target family
+AITP_Wall_Of_Stone                                 rename  AI_Pick_Wall_Of_Stone_Target     AI_Pick_<Spell>_Target family
+AITP_Word_Of_Recall                                rename  AI_Pick_Word_Of_Recall_Target    AI_Pick_<Spell>_Target family
+AITP_City_Enchantment                              family  AI_Pick_City_Enchant_Target      family member outside the bottom group; 'Enchantment' shortened to fit 31
+AITP_Summoning_Circle                              family  AI_Pick_Summon_Circle_Target     family member outside the bottom group; shortened to fit 31
+AITP_Unit_Enchantment                              family  AI_Pick_Unit_Enchant_Target      family member outside the bottom group; shortened to fit 31
+AITP_Astral_Gate                                   family  AI_Pick_Astral_Gate_Target       family member outside the bottom group
+AITP_Attack_Stack                                  family  AI_Pick_Attack_Stack_Target      family member outside the bottom group
+AITP_Attack_Terrain                                family  AI_Pick_Attack_Terrain_Target    family member outside the bottom group
+AITP_Attack_Wizard                                 family  AI_Pick_Attack_Wizard_Target     family member outside the bottom group
+AITP_Change_Terrain                                family  AI_Pick_Change_Terrain_Target    family member outside the bottom group
+AITP_Combat_Spell                                  family  AI_Pick_Combat_Spell_Target      family member outside the bottom group
+AITP_Dark_Rituals                                  family  AI_Pick_Dark_Rituals_Target      family member outside the bottom group
+AITP_Earth_Gate                                    family  AI_Pick_Earth_Gate_Target        family member outside the bottom group
+AITP_Enchant_Road                                  family  AI_Pick_Enchant_Road_Target      family member outside the bottom group
+AITP_Floating_Island                               family  AI_Pick_Floating_Island_Target   family member outside the bottom group
+AITP_Flying_Fortress                               family  AI_Pick_Flying_Fortress_Target   family member outside the bottom group
+AITP_Gaias_Blessing                                family  AI_Pick_Gaias_Blessing_Target    family member outside the bottom group
+AITP_Heavenly_Light                                family  AI_Pick_Heavenly_Light_Target    family member outside the bottom group
+AITP_Move_Fortress                                 family  AI_Pick_Move_Fortress_Target     family member outside the bottom group
+AITP_Natures_Cures                                 family  AI_Pick_Natures_Cures_Target     family member outside the bottom group
+AITP_Plane_Shift                                   family  AI_Pick_Plane_Shift_Target       family member outside the bottom group
+AITP_Spell_Ward                                    family  AI_Pick_Spell_Ward_Target        family member outside the bottom group
+WIZ_DisbandSummons                                 rename  Disband_Summons                  verb-first; drop drake178 WIZ_
+WIZ_MatchGoldUpkeep                                rename  Match_Gold_Upkeep                verb-first
+WIZ_MatchFoodUpkeep__WIP                           rename  Match_Food_Upkeep__WIP           verb-first
+WIZ_MatchManaUpkeep__WIP                           rename  Match_Mana_Upkeep__WIP           verb-first
+WIZ_NextIdleStack                                  rename  Next_Idle_Stack                  MoO2 Next_ (Next_File_Name / Next_List_Page)
+WIZ_NextIdleStack_GEMINI                           rename  Next_Idle_Stack__GEMINI          same; GEMINI variants use the __GEMINI marker
+WIZ_RollSpellReward                                rename  Pick_Random_Spell_Reward         MoO2 Pick_Random_* for random choices
+WIZ_AddSpellRank__WIP                              rename  Add_Spell_Rank__WIP              verb-first
+WIZ_GlobalSpellAnim                                rename  Play_Global_Spell_Anim           MoO2 Play_*_Flic; Anim is attested
+OVL_DrawGlobalAnim                                 rename  Draw_Global_Spell_Anim           Draw_ + Anim (pairs with Play_Global_Spell_Anim)
+OVL_LoadGlobalAnim                                 rename  Load_Global_Spell_Anim           Load_ + Anim
+OVL_BringIntoView                                  rename  Bring_Unit_Into_View             verb-first (Center_Map is already taken by the MoO2 name)
+OVL_TileOffScrnEdge                                rename  Square_At_Screen_Edge            noun-first predicate as MoO2 Star_On_Screen / Ship_On_Screen (header cites them)
+OVL_GetRoadPath                                    rename  Get_Road_Path                    verb-first
+TILE_ResetRoadConns                                rename  Reset_Road_Connections           verb-first; Conns is not attested
+UU_TILE_GetUnsdMPCost                              rename  UU_Get_Terrain_Move_Cost         body returns a move cost per terrain type; 'Unsd' unverified and dropped
+UV_Set_Specials_Help_Fields                        rename  Set_Unit_Specials_Help           UV_ is drake178's label; MoO2 Set_<X>_Help
+UV_Add_Specials_Fields                             rename  Add_Unit_Specials_Fields         MoO2 Add_<X>_Fields
+UV_Clear_Specials_Fields                           rename  Clear_Unit_Specials_Fields       MoO2 Clear_<X>_Fields
+UV_Handle_Arrow_Buttons                            rename  Handle_Unit_View_Arrows          verb-first
+UV_Remove_Unit_Enchantment                         rename  Unit_View_Remove_Enchant         keeps the unit-view scope; Remove_Unit_Enchantment would read as the general-purpose call
+UV_Draw_Hits_Icons                                 rename  Draw_Unit_Hits_Icons             Draw_ + subject
+UV_Draw_Stat_Icons                                 rename  Draw_Unit_Stat_Icons             Draw_ + subject
+UV_Draw_Upkeep_Icons                               family  Draw_Unit_Upkeep_Icons           family member outside the bottom group
+UV_Add_UpDn_Buttons                                rename  Add_Unit_View_Arrow_Buttons      UpDn is not attested
+UV_Setup_HireScr                                   rename  Setup_Unit_View_Hire             MoO2 Setup verb; HireScr is CamelCase
+UV_Setup_ProdScr                                   rename  Setup_Unit_View_Prod             Prod is attested (First_Prod_Colony_Queue_Slot)
+USW_DrawListPage                                   rename  Draw_Specials_List_Page          MoO2 Display_List_Page / Next_List_Page
+USW_Build_Effect_List                              rename  Build_Unit_Effect_List           MoO2 Build_<X>_List
+DIPL_GetOffMyLawn                                  rename  NPC_Get_Off_My_Lawn              NPC_ diplomacy family is MoO2 (NPC_Threats / NPC_Sneak_Attacks); no CamelCase
+DIPL_HumanWarOrPeace                               rename  Human_War_Or_Peace               MoO2 Human_ first token
+DIPL_LoadTalkGFX                                   rename  Load_Diplomacy_Pictures          MoO2 Load_<X>_Pictures
+G_DIPL_SuperiorityWar                              rename  NPC_Superiority_War              NPC_ diplomacy family
+G_DIPL_NeedForWar                                  rename  NPC_Need_For_War                 NPC_ diplomacy family
+G_DIPL_PickSides                                   rename  NPC_Pick_Sides                   NPC_ diplomacy family
+GUI_SetFullHelp                                    rename  Set_Full_Help_List               MoO2 Set_Help_List family
+GUI_MoveDlgHighlight__STUB                         rename  Move_Dialog_Highlight__STUB      verb-first; Dlg is not attested
+UU_GUI_ExtClear                                    rename  UU_Clear_Fields_Extended         low confidence: Ext read as extended
+UU_GUI_ClearSelectable                             rename  Disable_String_List_Field        MoO2 Enable_/Disable_String_Field pattern; field type from Add_String_List_Field
+UU_GUI_SetSelectable                               rename  Enable_String_List_Field         MoO2 Enable_/Disable_String_Field pattern; field type from Add_String_List_Field
+UU_GUI_MouseEMUMoveTo                              rename  UU_Move_Mouse_To_Field           takes a field index and moves the cursor to it
+UU_DBG_SelectDialog                                rename  UU_Debug_Select_Dialog           drop DBG_; Debug token only (MoO2 has no Dbg)
+UU_DBG_SetSelectSetting                            rename  UU_Debug_Set_Select              drop DBG_
+GAME_NextHumanStack                                rename  Next_Human_Stack                 MoO2 Next_
+GAME_WizardsLaunch__WIP                            rename  Launch_Wizards__WIP              verb-first (loads a save and runs WIZARDS.EXE)
+ITEM_GetPowerNames                                 rename  Get_Item_Power_Names             verb-first
+ITEM_ResetViewGrow                                 rename  Reset_Item_View_Grow             verb-first
+UNIT_GetDependants__WIP                            rename  Get_Unit_Dependants__WIP         verb-first
+SPL_IsChsSuppressed                                rename  Is_Chaos_Suppressed              MoO2 Is_ predicate; Chs is not attested
+SPL_IsDthSuppressed                                rename  Is_Death_Suppressed              MoO2 Is_ predicate
+SPL_IsLifeSupressed                                rename  Is_Life_Suppressed               MoO2 Is_ predicate; spelling Supressed -> Suppressed
+CRP_SPL_IsNatSuppressed                            rename  Is_Nature_Suppressed             CRP_ is drake178's Can-Repurpose label (always rename)
+IDK_Drown_Units                                    rename  UU_Drown_Units                   header says Not In-Use: UU_ is the project's marker for that
+IDK_CheckSet_MapDisplay_XY                         rename  Check_Set_Map_Display_XY         no CamelCase; XY is attested
+UU_IDK_turn_to_cast__STUB                          rename  UU_N_Turns_To_Research__STUB     header: ~MoO2 Player_N_Turns_Until_Research_Complete; N_ count prefix
+Surveyor_IDK_Print_Terrain_And_Effect              rename  Print_Surveyor_Terrain_Effect    verb-first; 29 chars
+Surveyor_IDK_Set_Font_Stuff__1                     rename  Set_Surveyor_Fonts               verb-first
+Surveyor_IDK_Set_Font_Stuff__2                     rename  Set_Surveyor_Fonts2              MoO2 digit = second version
+EZ_SpecialTreasure                                 rename  Add_Special_Treasure             awards wizard special abilities from a lair; MoO2 Add_ verb
+RP_Mouse_SetUsable                                 rename  Set_Mouse_Usable                 verb-first
+UU_MOUSE_Usable                                    rename  UU_Mouse_Usable                  Mouse_ noun family is MoO2 (Mouse_Wait / Mouse_Setup)
+GFX_Swap_AppendUView                               rename  Append_Unit_View_Graphics        low confidence: body is empty (push bp / pop bp)
+UU_HLP_Load_MainMenu                               rename  UU_Load_Main_Menu_Help           verb-first
+DEPR_MainScr_Draw_Map_Cities                       rename  DEPR_Draw_Map_Cities             keep the DEPR_ marker; drop MainScr CamelCase
+NOOP_Current_Player_All_City_Areas                 rename  NOOP_Refresh_City_Areas          keep the NOOP_ marker; 34 -> 23 chars
+DUPE_Inverse_Gray_Scale_Bitmap                     rename  Inverse_Gray_Scale_Bitmap2       byte-identical second copy; MoO2 digit = second version
+UU_MEM_ClearBit_Near                               rename  UU_Clear_Bit_Field_Near          MoO2 Clear_Bit_Field (already verbatim in ReMoM) + _Near variant
+UU_LBX_IMG_GetIntensity                            rename  UU_Get_Picture_Intensity         Picture vocabulary
+UU_VGA_RestoreToFrame3                             rename  UU_Restore_Mouse_Page3           restores the mouse buffer to VGA page 3
+VGA_PartCopyFromF3                                 rename  Partial_Copy_From_Page3          MoO2 Partial_ (Partial_Screen_Dump_Hi_Res)
+VGA_ShiftCopyFromF3                                rename  Shift_Copy_From_Page3            no CamelCase
+UU_VGA_DrawDblRect                                 rename  UU_Draw_Double_Box               MoO2 Box vocabulary (Draw_Highlight_Box)
+UU_VGA_WndDrawTransform                            rename  UU_Draw_Window_Transformed       no CamelCase
+VGA_GetDACBlock                                    rename  Get_Palette_Block                body copies 64 entries of current_palette
+VGA_ReadScreenLine                                 rename  Read_Screen_Line                 verb-first
+F11_Key__WIP                                       rename  Screen_Capture_Key__WIP          MoO2 Screen_Flic_Capture
+ST_PSTR                                            rename  PSTR                             MoO2 WLIBS name verbatim (ReMoM already has PSTRL / PSTRS / PSTRU)
+ST_PSTRM                                           rename  PSTRM                            MoO2 WLIBS name verbatim
+lbx_read_sgmt                                      rename  Read_LBX_Segment                 MoO2 Read_LBX_File_Type / Read_LBX_File_Entry_Count
+lbx_seek                                           rename  Seek_LBX_File                    verb-first
+gfopen                                             rename  FILE_open                        MoO2 WLIBS _FILE_read / _FILE_write / _FILE_append
+gfclose                                            rename  FILE_close                       MoO2 WLIBS _FILE_* family
+gfread                                             rename  FILE_read                        MoO2 WLIBS _FILE_read without the leading underscore
+gfseek                                             rename  FILE_seek                        MoO2 WLIBS _FILE_* family
+gfwrite                                            rename  FILE_write                       MoO2 WLIBS _FILE_write without the leading underscore
+Notify1                                            rename  Notification_Box1                MoO2 Warning_Box / Confirmation_Box; digit = variant
+Notify2                                            rename  Notification_Box2
+Notify1_Draw                                       rename  Draw_Notification_Box1           Draw_<X>_Box
+Notify2_Draw                                       rename  Draw_Notification_Box2
+Notify_Load                                        rename  Load_Notification_Pictures       MoO2 Load_<X>_Pictures
+Warn0                                              rename  Warning_Box0                     MoO2 Warning_Box
+Warn1                                              rename  Warning_Box1
+Warn_Draw                                          rename  Draw_Warning_Box                 Draw_<X>_Box
+Warn                                               family  Warning_Box                      MoO2 name verbatim
+Newgame_Screen_0_Draw                              rename  Draw_Newgame_Screen_0            MoO2 Draw_Newgame_Screen
+Newgame_Screen_1_2_Draw                            rename  Draw_Newgame_Screen_1_2          MoO2 Draw_Newgame_Screen
+Newgame_Screen_3_Draw__WIP                         rename  Draw_Newgame_Screen_3__WIP
+Newgame_Screen_4_Draw__WIP                         rename  Draw_Newgame_Screen_4__WIP
+Newgame_Screen_5_Draw                              rename  Draw_Newgame_Screen_5
+Newgame_Screen_6_Draw__WIP                         rename  Draw_Newgame_Screen_6__WIP
+Newgame_Screen_7_Draw__WIP                         rename  Draw_Newgame_Screen_7__WIP
+Newgame_Screen_5_Draw_Spells                       rename  Draw_Newgame_Screen_5_Spells
+NEWG_DrawDefShelf__WIP                             rename  Draw_Default_Bookshelf__WIP      draws the preset wizard's spellbook shelf
+ArmyList_Screen_Draw                               rename  Draw_Army_List_Screen            Draw_<X>_Screen
+ArmyList_Screen_Load                               rename  Load_Army_List_Screen            Load_<X>_Screen
+CityList_Screen_Draw                               rename  Draw_City_List_Screen            Draw_<X>_Screen
+CityList_Screen_Load                               rename  Load_City_List_Screen            Load_<X>_Screen
+ArmyList_Set_List_Item_Count                       rename  Set_Army_List_Item_Count         verb-first
+CityList_Set_List_Item_Count                       rename  Set_City_List_Item_Count         verb-first
+ArmyList_Screen                                    family  Army_List_Screen                 family member outside the bottom group
+CityList_Screen                                    family  City_List_Screen                 family member outside the bottom group
+ArmyList_Add_List_Fields                           family  Add_Army_List_Fields             family member outside the bottom group
+CityList_Add_List_Fields                           family  Add_City_List_Fields             family member outside the bottom group
+ArmyList_Draw_Reduced_Map                          family  Draw_Army_List_Reduced_Map       family member outside the bottom group
+CityList_Draw_Reduced_Map                          family  Draw_City_List_Reduced_Map       family member outside the bottom group
+ArmyList_Hero_Portrait_Coords                      family  Army_List_Portrait_Coords        family member outside the bottom group
+ArmyList_UnitFigure_Coordinates                    family  Army_List_Figure_Coords          family member outside the bottom group
+Square_Food_x2                                     rename  Square_Food2                     '2' = half-unit scale as in moves2 / Unit_Moves2
+Square_Food2_NewGame                               rename  Square_Food_Newgame              header: returns food not food2; _Newgame as MoO2 Newgame_Screen
+Random_City_Name_By_Race_NewGame                   rename  Random_Race_City_Name_Newgame    _Newgame spelling; 32 -> 29 chars
+Square_Is_River_Mouth_NewGame                      rename  Square_Is_River_Mouth_Newgame    _Newgame spelling (MoO2 Newgame_Screen / Reload_Newgame_Screen)
+Get_Useable_City_Area_NewGame                      rename  Get_Useable_City_Area_Newgame    _Newgame spelling
+Square_Is_Grassland_NewGame                        family  Square_Is_Grassland_Newgame      _Newgame spelling
+City_Maximum_Size_NewGame                          family  City_Maximum_Size_Newgame        _Newgame spelling
+Square_Has_Tower_NewGame                           family  Square_Has_Tower_Newgame         _Newgame spelling
+Square_Is_Desert_NewGame                           family  Square_Is_Desert_Newgame         _Newgame spelling
+Square_Is_Forest_NewGame                           family  Square_Is_Forest_Newgame         _Newgame spelling
+Square_Is_Hills_NewGame                            family  Square_Is_Hills_Newgame          _Newgame spelling
+Square_Is_Mountain_NewGame                         family  Square_Is_Mountain_Newgame       _Newgame spelling
+Square_Is_Node_NewGame                             family  Square_Is_Node_Newgame           _Newgame spelling
+Square_Is_Ocean_NewGame                            family  Square_Is_Ocean_Newgame          _Newgame spelling
+Square_Is_River_NewGame                            family  Square_Is_River_Newgame          _Newgame spelling
+Square_Is_Shore_NewGame                            family  Square_Is_Shore_Newgame          _Newgame spelling
+Square_Is_Swamp_NewGame                            family  Square_Is_Swamp_Newgame          _Newgame spelling
+Create_Unit_NewGame                                family  Create_Unit_Newgame              _Newgame spelling
+UU_Square_Has_MSF_UNKNOWN_40H                      none                                     tests _map_square_flags bit 0x40, whose meaning is unknown; not the terrain-special bit ts_Wild_Game 0x40 (a different array)
+Record_Unknown_40H_Squares                         none                                     same unknown _map_square_flags bit 0x40
+Update_Units_MvsSts                                rename  Update_Units_Moves_Status        updates Finished / Status / moves2; MvsSts is not attested
+Draw_Stat_Icons_10_And_1                           rename  Draw_Tens_And_Ones_Icons         draws a row of tens icons then ones icons
+Hero_LevelUp_Popup_Draw                            rename  Draw_Hero_Level_Up_Popup         Draw_<X>_Popup (MoO2 Draw_Naming_Popup)
+Random_at                                          rename  Random_With_Location             MoO2 Random_With_Restore
+AI_Update_Gold_Income_And_Food_Income              rename  AI_Update_Gold_And_Food_Income   37 -> 30 chars
+Combat_Spell_Counter_Message_Box_Draw              rename  Draw_Spell_Counter_Message       verb-first; 37 -> 26 chars
+DOS_PrintString__STUB                              rename  DOS_Print_String__STUB           no CamelCase (DOS is attested)
+Combat_Spellbook_Add_Spells_From_Magic_Realm       rename  Add_Realm_Combat_Spells          verb-first; 44 -> 23 chars
+Itam_Make_Screen_Build_Weapon_Powers_List          rename  Build_Item_Weapon_Powers_List    MoO2 Build_<X>_List; fixes Itam typo; 41 -> 29 chars
+Main_Screen_Draw_Unit_Action_Locked_Buttons        rename  Draw_Locked_Action_Buttons       verb-first; 43 -> 26 chars
+AI_Stacks_Do_RoadBuild                             rename  AI_Stacks_Do_Road_Build          no CamelCase
+AI_Stacks_Order_RoadBuild                          rename  AI_Stacks_Order_Road_Build       no CamelCase
+AI_Stacks_Order_Attack_Target_Or_Goto_Destination  rename  AI_Stacks_Attack_Or_Goto         49 -> 24 chars
+AI_Stacks_Wartime_Ocean_Movement_And_Cleanup       rename  AI_Stacks_Wartime_Ocean_Moves    44 -> 29 chars
+AI_Stacks_Move_Out_NonMilitary_Garrisoned          rename  AI_Stacks_Move_Out_Nonmilitary   no CamelCase; 41 -> 30 chars
+AI_Build_Castable_Combat_Spell_List                rename  AI_Build_Combat_Spell_List       35 -> 26 chars
+AI_Build_Unit_Realm_Threat_Percentages             rename  AI_Build_Realm_Threat_Pcts       Pct is attested; 38 -> 26 chars
+AI_Find_Tower_To_Settle_Elsewhere                  rename  AI_Find_Resettle_Tower           33 -> 22 chars
+AI_Kill_Excess_Settlers_And_Engineers              rename  AI_Kill_Excess_Worker_Units      37 -> 27 chars (settlers + engineers)
+AI_Select_Spell_Group_City_Enchantment             rename  AI_Select_City_Enchantments      38 -> 27 chars; AI_Select_<group> family
+AI_Select_Spell_Group_Unit_Enchantment             rename  AI_Select_Unit_Enchantments      AI_Select_<group> family
+AI_Select_Spell_Group_Disenchant                   rename  AI_Select_Disenchant_Spells      AI_Select_<group> family
+AI_Select_Spell_Group_Disjunction                  rename  AI_Select_Disjunction_Spells     AI_Select_<group> family
+AI_Select_Spell_Group_Suppression                  rename  AI_Select_Suppression_Spells     AI_Select_<group> family
+AI_Select_Spell_Group_Attack                       family  AI_Select_Attack_Spells          AI_Select_<group> family
+AI_Select_Spell_Group_Global                       family  AI_Select_Global_Spells          AI_Select_<group> family
+AI_Select_Spell_Group_Summon                       family  AI_Select_Summon_Spells          AI_Select_<group> family
+AI_Stacks_Init_Build_Target_Order                  rename  AI_Init_Build_Target_Order       33 -> 26 chars
+AI_Stacks_Roamers_Target_Or_Deploy                 rename  AI_Target_Or_Deploy_Roamers      34 -> 27 chars
+AI_Stacks_Target_Nearest_Hostile_Stack             rename  AI_Target_Nearest_Enemy_Stack    38 -> 29 chars
+AI_Update_Gold_And_Mana_Reserves                   rename  AI_Update_Gold_Mana_Reserves     32 -> 28 chars
+AI_Evaluate_Magic_Power_Strategy                   rename  AI_Evaluate_Magic_Strategy       32 -> 26 chars
+AI_Landmass_Values_And_Strengths                   rename  AI_Landmass_Value_Strength       32 -> 26 chars
+AI_Player_Calculate_Target_Values                  rename  AI_Calculate_Target_Values       33 -> 26 chars
+AI_Sanity_Check_Overland_Enchantments              rename  AI_Check_Overland_Enchants       37 -> 26 chars
+AI_Stacks_Reorder_Settle_Elsewhere                 rename  AI_Stacks_Reorder_Resettle       34 -> 26 chars
+AI_Stacks_Stage_Expedition_Forces                  rename  AI_Stage_Expedition_Forces       33 -> 26 chars; pairs with AI_Survey_Expedition_Forces
+AI_Stacks_Order_To_War_Landmass                    rename  AI_Stacks_Order_War_Landmass     31 -> 28 chars
+All_AI_Refresh_Units_Movement                      rename  Refresh_All_AI_Unit_Moves        verb-first
+Remap_Draw_File_Animation_Frame_ASM                rename  Remap_Draw_Animation_Frame_ASM   _ASM suffix is MoO2; 35 -> 30 chars
+Init_Summoning_Circle_And_Spell_Of_Mastery         rename  Init_Circle_And_Mastery          42 -> 23 chars
+Set_Square_Explored_Flags_Bottom_Right_Corner      rename  Set_Explored_Flags_Lower_Right   45 -> 30 chars
+Combat_Spellbook_Mana_Adder_Draw                   rename  Draw_Spellbook_Mana_Adder        verb-first; 32 -> 25 chars
+Combat_Spellbook_Mana_Adder_Load                   rename  Load_Spellbook_Mana_Adder        verb-first; 32 -> 25 chars
+MainScr_Create_Reduced_Map_Picture                 rename  Create_Reduced_Map_Picture2      Create_Reduced_Map_Picture already exists (MainScr_Maps.c); MoO2 digit = second version
+EarthGateTeleport__WIP                             rename  Earth_Gate_Teleport__WIP         no CamelCase
+IsPassableTower                                    rename  Tower_Is_Passable                MoO2 Star_Is_Orion predicate shape
+City_Screen_Garrison_Window_Picture_Coords         rename  City_Garrison_Picture_Coords     42 -> 28 chars
+Diplomacy_Screen_Draw_Portrait_Mouth_Animation     rename  Draw_Diplomacy_Mouth_Anim        verb-first; 46 -> 25 chars
+Player_Armies_And_Enchantments_Mana_Upkeep         rename  Player_Total_Mana_Upkeep         42 -> 24 chars
+Translate_Heightmap_To_Base_Terrain_Types          rename  Heightmap_To_Base_Terrain        MoO2 converter shape <A>_To_<B>; 41 -> 25 chars
+Change_City_Name_Popup_Draw                        rename  Draw_Change_City_Name_Popup      MoO2 Change_Star_Name_Popup + Draw_<X>_Popup
+Combat_Spell_Target_Screen_Draw                    rename  Draw_Combat_Target_Screen        Draw_<X>_Screen
+Set_TaxCollector_Window_Help_List                  rename  Set_Tax_Collector_Help_List      no CamelCase; MoO2 Set_Tax_Rate_Popup_Help_List
+Unit_Statistics_Popup_Do_Draw                      rename  Draw_Unit_Statistics_Popup       Draw_<X>_Popup
+Update_Move_Map_City_Perimeter_Restrictions        rename  Update_City_Perimeter_Moves      43 -> 27 chars
+Load_BUILDDAT                                      rename  Load_Building_Data               heuristic 7: no 8.3 file names in code names
+Load_SPELLDAT                                      rename  Load_Spell_Data                  heuristic 7
+Load_TERRSTAT                                      rename  Load_Terrain_Stats               heuristic 7
+CP_Is_Dead                                         rename  All_Computer_Players_Dead        true when no non-human player has a fortress or a city
+Player_Colony_Autobuild_CP                         rename  Autobuild_Computer_Colony        verb-first; CP = computer player
+Player_Colony_Autobuild_HP                         rename  Autobuild_Human_Colony           verb-first; HP = human player
+Player_Colony_Autobuild_NP                         rename  Autobuild_Neutral_Colony         verb-first; NP = neutral player
+Chancellor_Screen_Scroll_Draw__WIP                 rename  Draw_Chancellor_Scroll__WIP      verb-first
+Combat_Information_Window_Draw                     rename  Draw_Combat_Info_Window          Info is attested
+Combat_Spellbook_Screen_Draw                       rename  Draw_Combat_Spellbook_Screen     Draw_<X>_Screen
+Diplomacy_Display_Response_Draw                    rename  Draw_Diplomacy_Response          MoO2 Diplomacy_Display_Response is the non-draw sibling
+Spell_Casting_Screen_Allocate                      rename  Allocate_Spell_Casting_Screen    verb-first
+Claim_EMS_Page_For_Figure_Set                      rename  Claim_Figure_Set_Page            'Set' read as a verb by the scorer; shorter
+Map_Tile_EMS_Page_As_Sandbox                       rename  Map_Tile_EMS_Sandbox             shorter
+Lair_Clear                                         rename  Clear_Lair                       MoO2 Clear_ verb-first
+Set_Spell_Casting_Map_Draw_WX_1                    keep    Set_Spell_Casting_Map_Draw_WX_1  renamed in the previous round; WX = world x is the ReMoM coordinate token
+Set_Spell_Casting_Map_Draw_WX_2                    keep    Set_Spell_Casting_Map_Draw_WX_2  renamed in the previous round
+Set_Spell_Casting_Map_Draw_WX_3                    keep    Set_Spell_Casting_Map_Draw_WX_3  renamed in the previous round
+Set_Spell_Casting_Map_Draw_WX_4                    keep    Set_Spell_Casting_Map_Draw_WX_4  renamed in the previous round
+Hero_Slot_Types_MGC                                rename  Hero_Slot_Types_Newgame          MAGIC.EXE twin of Hero_Slot_Types; same _Newgame suffix as the other MAGIC.EXE twins
+s01p11_empty_function_MGC                          none                                     MAGIC.EXE twin of s01p11_empty_function: empty OG function, the segment address is its only identity
+s01p12_empty_function_MGC                          none                                     MAGIC.EXE twin of s01p12_empty_function: empty OG function
+Load_MAGIC_SET                                     rename  Load_Magic_Settings              heuristic 7: no 8.3 file names in code names (MAGIC.SET); pairs with Test_Magic_Settings / Dump_Magic_Settings
+Main_Screen_Draw_Do_Draw                           rename  Draw_Main_Screen_At              verb-first; draws the whole main screen at a given map position (MoO2 Draw_Main_Screen)
+AI_ContactWizards                                  rename  Contact_Nearby_Wizards           verb-first; no CamelCase; marks contact with owners of units and cities in scout range (MoO2 Contact_With_Player)
+Hall_Of_Fame_Screen_Draw                           rename  Draw_Hall_Of_Fame_Screen         Draw_<X>_Screen (MoO2 Hall_Of_Fame_Screen)
+Spell_Of_Mastery_Lose_Load                         rename  Load_Spell_Of_Mastery_Lose       verb-first
+Spell_Of_Mastery_Lose_Draw                         rename  Draw_Spell_Of_Mastery_Lose       verb-first
+Read_MAGIC_SET                                     rename  Read_Magic_Settings              heuristic 7: no 8.3 file names in code names (MAGIC.SET); pairs with Load_Magic_Settings (MoO2 Write_Game_Settings)
+Write_MAGIC_SET                                    family  Write_Magic_Settings             pairs with Read_Magic_Settings
+Save_SAVE_GAM                                      rename  Save_Game                        MoO2 Save_Game
+Load_SAVE_GAM                                      rename  Load_Game                        MoO2 Load_Game
+Read_SAVE_GAM                                      rename  Read_Save_Test_File              heuristic 7: no 8.3 file names in code names; reads SAVETEST.GAM
+Write_SAVE_GAM                                     rename  Write_Save_Test_File             heuristic 7: no 8.3 file names in code names; writes SAVETEST.GAM
+BigBook_Load_Spell_Descriptions                    rename  Load_Spell_Descriptions          verb-first; no CamelCase; loads the spell descriptions for the two open pages

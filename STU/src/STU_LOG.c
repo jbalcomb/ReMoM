@@ -68,7 +68,7 @@ static FILE * log_file = NULL;
 static size_t log_dropped_since_last_pump = 0;
 
 /* Log-output directory.  base_dir is the caller's preferred location (ReMoM
-   passes the resolved XDG state dir; HeMoM/tests/matchup leave it empty = CWD).
+   passes the resolved XDG state dir; DeMoM/tests/matchup leave it empty = CWD).
    effective_dir is what a given startup actually uses, after applying the
    REMOM_LOG_DIR override and any not-writable fallback to CWD.  Empty = CWD. */
 static char   log_base_dir[512] = "";
@@ -92,7 +92,7 @@ static const char * const log_sev_str[] = {
 };
 
 /* Width sized to the longest per-file category name across the codebase
- * (currently ARTIFICIAL_HUMAN_PLAYER at 23 chars). Fixed-width keeps the
+ * (23 chars: the old ARTIFICIAL_HUMAN_PLAYER, now AUTOMATION_DRIVER, kept the width). Fixed-width keeps the
  * log column predictable for awk-by-position. */
 static const char * const log_cat_str[] = {
     "GENERAL                ",
@@ -112,9 +112,9 @@ static const char * const log_cat_str[] = {
     "SDL3_INIT              ",
     "SDL3_PFL               ",
     "WIN_PFL                ",
-    "HEMOM                  ",
+    "DEMOM                  ",
     "REMOM                  ",
-    "ARTIFICIAL_HUMAN_PLAYER",
+    "AUTOMATION_DRIVER      ",
     "GAME_SAVE_DUMP         ",
     "STU_WRLD               ",
     "STU_VLD                ",
@@ -165,9 +165,9 @@ static const char * const log_cat_ini_key[] = {
     "SDL3_INIT",
     "SDL3_PFL",
     "WIN_PFL",
-    "HEMOM",
+    "DEMOM",
     "REMOM",
-    "ARTIFICIAL_HUMAN_PLAYER",
+    "AUTOMATION_DRIVER",
     "GAME_SAVE_DUMP",
     "STU_WRLD",
     "STU_VLD",
@@ -522,6 +522,12 @@ static void STU_Log_Build_Path(char * out, size_t cap, const char * filename)
     }
 }
 
+/* Public form of STU_Log_Build_Path, so companion logs (STU_CLOG's catalog files) land in the same directory as the general log. */
+void STU_Log_Path_For(char * out, size_t cap, const char * filename)
+{
+    STU_Log_Build_Path(out, cap, filename);
+}
+
 /* Resolve the effective log dir for this startup: REMOM_LOG_DIR (env) wins, then
    the caller's base_dir, then the CWD.  REMOM_LOG_DIR="." forces the CWD. */
 static void STU_Log_Resolve_Dir(void)
@@ -583,7 +589,7 @@ static LPTOP_LEVEL_EXCEPTION_FILTER log_previous_seh_filter = NULL;
 
 static const char * STU_Log_SEH_Code_Name(DWORD code)
 {
-    switch (code)
+    switch(code)
     {
         case EXCEPTION_ACCESS_VIOLATION:        return "EXCEPTION_ACCESS_VIOLATION";
         case EXCEPTION_ILLEGAL_INSTRUCTION:     return "EXCEPTION_ILLEGAL_INSTRUCTION";
@@ -630,7 +636,7 @@ static void STU_Log_Install_Crash_Handlers(void)
 
 static const char * STU_Log_Signal_Name(int sig)
 {
-    switch (sig)
+    switch(sig)
     {
         case SIGSEGV:  return "SIGSEGV";
         case SIGABRT:  return "SIGABRT";

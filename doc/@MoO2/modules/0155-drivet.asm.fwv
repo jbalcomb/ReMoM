@@ -1,0 +1,10 @@
+module_num=155
+module=dos\drivet.asm
+source=0155-drivet.asm.md
+range[0]=1:0x00117858 linear=0x00127858 size=75
+range[1]=2:0x0000C57C linear=0x0017C57C size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m155f001  1    -      0x00127858  1:0x00117858  code  Drive_Test     Drive_Test_     regions/07-object-1/001ACE54-001AD653.txt
+m155f002  2    -      0x00127880  1:0x00117880  code  Windows_Check  Windows_Check_  regions/07-object-1/001ACE54-001AD653.txt

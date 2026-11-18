@@ -170,7 +170,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookFiltersNonMilitaryUnitsBefor
     G_Pushout_Lowest_Value = 10000;
     G_Seafaring_Lowest_Value = 10000;
 
-    AI_Stacks_Survey_Expedition_Forces_Stack(0, 3, 3);
+    AI_Survey_Expedition_Stack(0, 3, 3);
 
     ASSERT_EQ(cp_drafted_unit_count, 1);
     EXPECT_EQ(G_Pushout_UL_Indices[0], 0);
@@ -190,7 +190,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookSkipsUndefinedSlots)
     G_Pushout_Lowest_Value = 10000;
     G_Seafaring_Lowest_Value = 10000;
 
-    AI_Stacks_Survey_Expedition_Forces_Stack(2, 2, 2);
+    AI_Survey_Expedition_Stack(2, 2, 2);
 
     ASSERT_EQ(cp_drafted_unit_count, 1);
     EXPECT_EQ(G_Pushout_CX_IDs[0], 2);
@@ -210,7 +210,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookHonorsExcessCountLimit)
     G_Pushout_Lowest_Value = 10000;
     G_Seafaring_Lowest_Value = 10000;
 
-    AI_Stacks_Survey_Expedition_Forces_Stack(4, 2, 1);
+    AI_Survey_Expedition_Stack(4, 2, 1);
 
     ASSERT_EQ(cp_drafted_unit_count, 1);
     EXPECT_EQ(G_Pushout_CX_IDs[0], 4);
@@ -229,7 +229,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, StackHookHonorsExcessCountLimit)
 
 /*
  * DISABLED: this test is non-deterministic because of an OGBUG: in
- * AI_Stacks_Survey_Expedition_Forces_Stack().
+ * AI_Survey_Expedition_Stack().
  *
  * The drafted-unit "value" is the faithfully-reconstructed original-game garbage
  * ogbug_value = ((Random(256) << 8) | Random(256)), stored in an int16_t (see the
@@ -296,7 +296,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, DISABLED_ResetsAndHonorsStackEligibil
     Seed_Stack(3, AISTK_Garrison, 6, large_garrison_units);
     Seed_Stack(4, AISTK_FortressGarrison, 6, fortress_units);
 
-    AI_Stacks_Survey_Expedition_Forces();
+    AI_Survey_Expedition_Forces();
 
     EXPECT_EQ(cp_drafted_unit_count, 3);
     EXPECT_EQ(G_Pushout_Lowest_Value, 10000);
@@ -313,7 +313,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, FlyingCombatUnitAlsoEntersSeafaringPo
     _turn = 10;
     Seed_Stack(0, AISTK_Unknown, 1, flying_units);
 
-    AI_Stacks_Survey_Expedition_Forces();
+    AI_Survey_Expedition_Forces();
 
     ASSERT_EQ(cp_drafted_unit_count, 1);
     ASSERT_EQ(G_Seafaring_Count, 1);
@@ -336,7 +336,7 @@ TEST_F(AIStacksSurveyExpeditionForcesTest, FortressGarrisonStopsContributingAtTu
     _turn = 100;
     Seed_Stack(0, AISTK_FortressGarrison, 6, fortress_units);
 
-    AI_Stacks_Survey_Expedition_Forces();
+    AI_Survey_Expedition_Forces();
 
     EXPECT_EQ(cp_drafted_unit_count, 0);
     EXPECT_EQ(G_Seafaring_Count, 0);

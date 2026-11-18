@@ -387,7 +387,7 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
     sdl3_scancode_name = SDL_GetScancodeName(sdl3_scancode);
     sdl3_key_code_name = SDL_GetKeyName(sdl3_key_code);
 
-    switch (sdl3_event->type)
+    switch(sdl3_event->type)
     {
         case SDL_EVENT_KEY_DOWN:
         {
@@ -415,6 +415,7 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
                 {
                     case SDLK_BACKSPACE: mox_character = '\b'; break;
                     case SDLK_RETURN:    mox_character = '\r'; break;
+                    case SDLK_KP_ENTER:  mox_character = '\r'; break;  /* CLAUDE: Numpad Enter, as the OG */
                     case SDLK_ESCAPE:    mox_character = 0x1B; break;
                     case SDLK_TAB:       mox_character = '\t'; break;
                     default: break;
@@ -546,6 +547,7 @@ void Build_Key_Xlat(void)
     key_xlat[SDL_SCANCODE_BACKSPACE] = MOX_KEY_BACKSPACE;
     key_xlat[SDL_SCANCODE_TAB] = MOX_KEY_TAB;
     key_xlat[SDL_SCANCODE_RETURN] = MOX_KEY_ENTER;
+    key_xlat[SDL_SCANCODE_KP_ENTER] = MOX_KEY_ENTER;  /* CLAUDE: the OG Read_Key() maps EKey_NumEnter (E00Dh) to ST_KEY_ENTER, as EKey_Enter (1C0Dh) */
     key_xlat[SDL_SCANCODE_ESCAPE] = MOX_KEY_ESCAPE;
     key_xlat[SDL_SCANCODE_A] = MOX_KEY_a;
     key_xlat[SDL_SCANCODE_B] = MOX_KEY_b;

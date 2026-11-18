@@ -1,0 +1,39 @@
+module_num=38
+module=D:\MOX\OTHERS\ANTARANS.C
+source=0038-antarans.c.md
+range[0]=1:0x00053D92 linear=0x00063D92 size=2801
+range[1]=2:0x00000FDC linear=0x00170FDC size=404
+range[2]=2:0x00009734 linear=0x00179734 size=28
+range[3]=2:0x00023898 linear=0x00193898 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                SYMBOL                               CHUNK
+m038f001  1    -      0x00063D92  1:0x00053D92  code         Antaran_Invasion_Check              Antaran_Invasion_Check_              regions/07-object-1/000E8E54-000E9653.txt
+m038f002  2    -      0x00063DDA  1:0x00053DDA  static,code  Antaran_Defensive_Force             Antaran_Defensive_Force_             regions/07-object-1/000E8E54-000E9653.txt
+m038f003  3    -      0x00063E06  1:0x00053E06  static,code  Antaran_Defensive_Resource_Bonus    Antaran_Defensive_Resource_Bonus_    regions/07-object-1/000E8E54-000E9653.txt
+m038f004  4    -      0x00063E29  1:0x00053E29  static,code  Antaran_Offensive_Resource_Bonus    Antaran_Offensive_Resource_Bonus_    regions/07-object-1/000E8E54-000E9653.txt
+m038f005  5    -      0x00063E4C  1:0x00053E4C  static,code  Antaran_Delay                       Antaran_Delay_                       regions/07-object-1/000E8E54-000E9653.txt
+m038f006  6    -      0x00063E73  1:0x00053E73  static,code  Antaran_Offensive_Force             Antaran_Offensive_Force_             regions/07-object-1/000E8E54-000E9653.txt
+m038f007  7    -      0x00063E9E  1:0x00053E9E  static,code  Antaran_Total_Resources             Antaran_Total_Resources_             regions/07-object-1/000E8E54-000E9653.txt
+m038f008  8    -      0x00063EDD  1:0x00053EDD  static,code  Antarans_Should_Attack              Antarans_Should_Attack_              regions/07-object-1/000E8E54-000E9653.txt
+m038f009  9    -      0x00063F9C  1:0x00053F9C  static,code  Build_Antaran_Defensive_Ships       Build_Antaran_Defensive_Ships_       regions/07-object-1/000E8E54-000E9653.txt
+m038f010  10   -      0x00063FCB  1:0x00053FCB  static,code  Build_Antaran_Offensive_Ships       Build_Antaran_Offensive_Ships_       regions/07-object-1/000E8E54-000E9653.txt
+m038f011  11   -      0x00063FF0  1:0x00053FF0  static,code  Build_Antaran_Ships                 Build_Antaran_Ships_                 regions/07-object-1/000E8E54-000E9653.txt
+m038f012  12   -      0x00064311  1:0x00054311  static,code  Build_List_Of_Stars_By_Player       Build_List_Of_Stars_By_Player_       regions/07-object-1/000E9654-000E9E53.txt
+m038f013  13   -      0x00064395  1:0x00054395  code         Delta_Stardate                      Delta_Stardate_                      regions/07-object-1/000E9654-000E9E53.txt
+m038f014  14   -      0x000643A0  1:0x000543A0  static,code  Deploy_Antaran_Ships                Deploy_Antaran_Ships_                regions/07-object-1/000E9654-000E9E53.txt
+m038f015  15   -      0x000645A4  1:0x000545A4  static,code  Get_Antaran_Target_Star             Get_Antaran_Target_Star_             regions/07-object-1/000E9654-000E9E53.txt
+m038f016  16   -      0x000645EC  1:0x000545EC  static,code  Increment_Antaran_Resource_Level    Increment_Antaran_Resource_Level_    regions/07-object-1/000E9654-000E9E53.txt
+m038f017  17   -      0x000646BD  1:0x000546BD  static,code  Antaran_Defensive_Force_At_Maximum  Antaran_Defensive_Force_At_Maximum_  regions/07-object-1/000E9654-000E9E53.txt
+m038f018  18   -      0x000646F9  1:0x000546F9  code         Kill_Antaran_Defensive_Ship         Kill_Antaran_Defensive_Ship_         regions/07-object-1/000E9654-000E9E53.txt
+m038f019  19   -      0x0006474B  1:0x0005474B  code         Kill_Antaran_Offensive_Ship         Kill_Antaran_Offensive_Ship_         regions/07-object-1/000E9654-000E9E53.txt
+m038f020  20   -      0x0006478C  1:0x0005478C  code         Modify_Antaran_Resource_Level       Modify_Antaran_Resource_Level_       regions/07-object-1/000E9654-000E9E53.txt
+m038f021  21   -      0x0006478D  1:0x0005478D  static,code  Next_Antaran_Ship_Size              Next_Antaran_Ship_Size_              regions/07-object-1/000E9654-000E9E53.txt
+m038f022  22   -      0x000647D7  1:0x000547D7  static,code  No_Small_Ships_After_N_Turns        No_Small_Ships_After_N_Turns_        regions/07-object-1/000E9654-000E9E53.txt
+m038f023  23   -      0x0006481B  1:0x0005481B  static,code  No_Medium_Ships_After_N_Turns       No_Medium_Ships_After_N_Turns_       regions/07-object-1/000E9E54-000EA653.txt
+m038f024  24   -      0x0006485F  1:0x0005485F  code         Restock_Antaran_Ship                Restock_Antaran_Ship_                regions/07-object-1/000E9E54-000EA653.txt
+-         -    -      0x00179734  2:0x00009734  static,data  _antaran_ship_cost                  _antaran_ship_cost                   regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x0017973D  2:0x0000973D  static,data  _n_max_antaran_off_ships            _n_max_antaran_off_ships             regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00179746  2:0x00009746  static,data  _n_max_antaran_def_ships            _n_max_antaran_def_ships             regions/08-object-2/001F7654-001F7E53.txt
+-         -    -      0x00193898  2:0x00023898  static,data  _first_antaran_ship_id              _first_antaran_ship_id               -
+-         -    -      0x0019389A  2:0x0002389A  static,data  _offensive_titan_ship_built         _offensive_titan_ship_built          -

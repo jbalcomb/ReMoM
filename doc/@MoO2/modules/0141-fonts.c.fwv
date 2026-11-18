@@ -1,0 +1,1406 @@
+module_num=141
+module=E:\WLIBS\fonts\fonts.c
+source=0141-fonts.c.md
+range[0]=1:0x00110526 linear=0x00120526 size=11918
+range[1]=2:0x000025FC linear=0x001725FC size=28
+range[2]=2:0x0000C4EC linear=0x0017C4EC size=44
+range[3]=2:0x0003BE20 linear=0x001ABE20 size=9164
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                SYMBOL                               CHUNK
+m141f001  1    -      0x00120526  1:0x00110526  code  Load_Font_File                      Load_Font_File_                      regions/07-object-1/001A5654-001A5E53.txt
+m141f002  2    -      0x001205E6  1:0x001105E6  code  Load_Palette                        Load_Palette_                        regions/07-object-1/001A5654-001A5E53.txt
+m141f003  3    -      0x0012066F  1:0x0011066F  code  Get_String_Width                    Get_String_Width_                    regions/07-object-1/001A5654-001A5E53.txt
+m141f004  4    -      0x00120705  1:0x00110705  code  Set_Font                            Set_Font_                            regions/07-object-1/001A5654-001A5E53.txt
+m141f005  5    -      0x0012082F  1:0x0011082F  code  Set_Font_Solid                      Set_Font_Solid_                      regions/07-object-1/001A5E54-001A6653.txt
+m141f006  6    -      0x00120940  1:0x00110940  code  Set_Remap_Font_Style                Set_Remap_Font_Style_                regions/07-object-1/001A5E54-001A6653.txt
+m141f007  7    -      0x00120A93  1:0x00110A93  code  Set_Remap_Font_Style_Shadow_Down    Set_Remap_Font_Style_Shadow_Down_    regions/07-object-1/001A5E54-001A6653.txt
+m141f008  8    -      0x00120ACD  1:0x00110ACD  code  Set_Remap_Font_Style_Shadow_Up      Set_Remap_Font_Style_Shadow_Up_      regions/07-object-1/001A5E54-001A6653.txt
+m141f009  9    -      0x00120B07  1:0x00110B07  code  Set_Remap_Font_Style_Shadow_Heavy   Set_Remap_Font_Style_Shadow_Heavy_   regions/07-object-1/001A5E54-001A6653.txt
+m141f010  10   -      0x00120B41  1:0x00110B41  code  Set_Remap_Font_Style_Outline        Set_Remap_Font_Style_Outline_        regions/07-object-1/001A5E54-001A6653.txt
+m141f011  11   -      0x00120B7B  1:0x00110B7B  code  Set_Remap_Font_Style_Outline_Heavy  Set_Remap_Font_Style_Outline_Heavy_  regions/07-object-1/001A5E54-001A6653.txt
+m141f012  12   -      0x00120BB5  1:0x00110BB5  code  Set_Font_Style                      Set_Font_Style_                      regions/07-object-1/001A5E54-001A6653.txt
+m141f013  13   -      0x00120CCB  1:0x00110CCB  code  Set_Font_Style_Shadow_Down          Set_Font_Style_Shadow_Down_          regions/07-object-1/001A5E54-001A6653.txt
+m141f014  14   -      0x00120D05  1:0x00110D05  code  Set_Font_Style_Shadow_Up            Set_Font_Style_Shadow_Up_            regions/07-object-1/001A5E54-001A6653.txt
+m141f015  15   -      0x00120D3F  1:0x00110D3F  code  Set_Font_Style_Shadow_Heavy         Set_Font_Style_Shadow_Heavy_         regions/07-object-1/001A5E54-001A6653.txt
+m141f016  16   -      0x00120D79  1:0x00110D79  code  Set_Font_Style_Outline              Set_Font_Style_Outline_              regions/07-object-1/001A5E54-001A6653.txt
+m141f017  17   -      0x00120DB3  1:0x00110DB3  code  Set_Font_Style_Outline_Heavy        Set_Font_Style_Outline_Heavy_        regions/07-object-1/001A5E54-001A6653.txt
+m141f018  18   -      0x00120DED  1:0x00110DED  code  Set_Outline_Color                   Set_Outline_Color_                   regions/07-object-1/001A5E54-001A6653.txt
+m141f019  19   -      0x00120E24  1:0x00110E24  code  Set_Font_LF                         Set_Font_LF_                         regions/07-object-1/001A5E54-001A6653.txt
+m141f020  20   -      0x00120E60  1:0x00110E60  code  Set_Font_Spacing_Width              Set_Font_Spacing_Width_              regions/07-object-1/001A5E54-001A6653.txt
+m141f021  21   -      0x00120E8C  1:0x00110E8C  code  Set_Font_Spacing                    Set_Font_Spacing_                    regions/07-object-1/001A5E54-001A6653.txt
+m141f022  22   -      0x00120EB9  1:0x00110EB9  code  Set_Font_Highlight_Colors           Set_Font_Highlight_Colors_           regions/07-object-1/001A5E54-001A6653.txt
+m141f023  23   -      0x00120F07  1:0x00110F07  code  Set_Font_Special_Colors             Set_Font_Special_Colors_             regions/07-object-1/001A5E54-001A6653.txt
+m141f024  24   -      0x00120F55  1:0x00110F55  code  Set_Alias_Color                     Set_Alias_Color_                     regions/07-object-1/001A5E54-001A6653.txt
+m141f025  25   -      0x00120F99  1:0x00110F99  code  Save_Alias_Colors                   Save_Alias_Colors_                   regions/07-object-1/001A5E54-001A6653.txt
+m141f026  26   -      0x00120FE2  1:0x00110FE2  code  Restore_Alias_Colors                Restore_Alias_Colors_                regions/07-object-1/001A5E54-001A6653.txt
+m141f027  27   -      0x0012102B  1:0x0011102B  code  Print_Integer                       Print_Integer_                       regions/07-object-1/001A6654-001A6E53.txt
+m141f028  28   -      0x00121071  1:0x00111071  code  Print_Unsigned                      Print_Unsigned_                      regions/07-object-1/001A6654-001A6E53.txt
+m141f029  29   -      0x001210B7  1:0x001110B7  code  Print_Right                         Print_Right_                         regions/07-object-1/001A6654-001A6E53.txt
+m141f030  30   -      0x001210FD  1:0x001110FD  code  Print_Centered                      Print_Centered_                      regions/07-object-1/001A6654-001A6E53.txt
+m141f031  31   -      0x00121153  1:0x00111153  code  Print_Integer_Right                 Print_Integer_Right_                 regions/07-object-1/001A6654-001A6E53.txt
+m141f032  32   -      0x00121199  1:0x00111199  code  Print_Integer_Centered              Print_Integer_Centered_              regions/07-object-1/001A6654-001A6E53.txt
+m141f033  33   -      0x001211DF  1:0x001111DF  code  Print_Unsigned_Centered             Print_Unsigned_Centered_             regions/07-object-1/001A6654-001A6E53.txt
+m141f034  34   -      0x00121225  1:0x00111225  code  Print_Unsigned_Right                Print_Unsigned_Right_                regions/07-object-1/001A6654-001A6E53.txt
+m141f035  35   -      0x0012126B  1:0x0011126B  code  Print_Full                          Print_Full_                          regions/07-object-1/001A6654-001A6E53.txt
+m141f036  36   -      0x001212B3  1:0x001112B3  code  Print                               Print_                               regions/07-object-1/001A6654-001A6E53.txt
+m141f037  37   -      0x001212EB  1:0x001112EB  code  Print_Display                       Print_Display_                       regions/07-object-1/001A6654-001A6E53.txt
+m141f038  38   -      0x00121814  1:0x00111814  code  Print_String                        Print_String_                        regions/07-object-1/001A6E54-001A7653.txt
+m141f039  39   -      0x00121B18  1:0x00111B18  code  No_Print_Alias                      No_Print_Alias_                      regions/07-object-1/001A6E54-001A7653.txt
+m141f040  40   -      0x00121B40  1:0x00111B40  code  Set_Normal_Colors_On                Set_Normal_Colors_On_                regions/07-object-1/001A6E54-001A7653.txt
+m141f041  41   -      0x00121B8C  1:0x00111B8C  code  Set_Highlight_Colors_On             Set_Highlight_Colors_On_             regions/07-object-1/001A6E54-001A7653.txt
+m141f042  42   -      0x00121BD8  1:0x00111BD8  code  Set_Special_Colors_On               Set_Special_Colors_On_               regions/07-object-1/001A6E54-001A7653.txt
+m141f043  43   -      0x00121C24  1:0x00111C24  code  PSTRM                               PSTRM_                               regions/07-object-1/001A6E54-001A7653.txt
+m141f044  44   -      0x00121CE5  1:0x00111CE5  code  PSTRS                               PSTRS_                               regions/07-object-1/001A6E54-001A7653.txt
+m141f045  45   -      0x00121D19  1:0x00111D19  code  PSTR                                PSTR_                                regions/07-object-1/001A6E54-001A7653.txt
+m141f046  46   -      0x00121D5D  1:0x00111D5D  code  PSTRL                               PSTRL_                               regions/07-object-1/001A6E54-001A7653.txt
+m141f047  47   -      0x00121DA1  1:0x00111DA1  code  PSTRU                               PSTRU_                               regions/07-object-1/001A6E54-001A7653.txt
+m141f048  48   -      0x00121DEB  1:0x00111DEB  code  Print_Character                     Print_Character_                     regions/07-object-1/001A6E54-001A7653.txt
+m141f049  49   -      0x00121E85  1:0x00111E85  code  Print_Character_No_Alias            Print_Character_No_Alias_            regions/07-object-1/001A6E54-001A7653.txt
+m141f050  50   -      0x00121F1F  1:0x00111F1F  code  Set_Background_Color                Set_Background_Color_                regions/07-object-1/001A6E54-001A7653.txt
+m141f051  51   -      0x00121F4C  1:0x00111F4C  code  Set_Foreground_Color                Set_Foreground_Color_                regions/07-object-1/001A6E54-001A7653.txt
+m141f052  52   -      0x00121F7B  1:0x00111F7B  code  Disp_PSTR                           Disp_PSTR_                           regions/07-object-1/001A6E54-001A7653.txt
+m141f053  53   -      0x00122119  1:0x00112119  code  Find_Closest_PSTR_Color             Find_Closest_PSTR_Color_             regions/07-object-1/001A7654-001A7E53.txt
+m141f054  54   -      0x001221D4  1:0x001121D4  code  Set_PSTR_Color                      Set_PSTR_Color_                      regions/07-object-1/001A7654-001A7E53.txt
+m141f055  55   -      0x00122201  1:0x00112201  code  Get_Current_Font_Style              Get_Current_Font_Style_              regions/07-object-1/001A7654-001A7E53.txt
+m141f056  56   -      0x0012222E  1:0x0011222E  code  Get_Current_Font_Color              Get_Current_Font_Color_              regions/07-object-1/001A7654-001A7E53.txt
+m141f057  57   -      0x00122259  1:0x00112259  code  Get_Font_Height                     Get_Font_Height_                     regions/07-object-1/001A7654-001A7E53.txt
+m141f058  58   -      0x00122286  1:0x00112286  code  Get_Font_Vertical_Spacing           Get_Font_Vertical_Spacing_           regions/07-object-1/001A7654-001A7E53.txt
+m141f059  59   -      0x001222B3  1:0x001122B3  code  Get_Current_Highlight_Color         Get_Current_Highlight_Color_         regions/07-object-1/001A7654-001A7E53.txt
+m141f060  60   -      0x001222DE  1:0x001122DE  code  Get_Current_Special_Color           Get_Current_Special_Color_           regions/07-object-1/001A7654-001A7E53.txt
+m141f061  61   -      0x00122309  1:0x00112309  code  Clipped_Print_String                Clipped_Print_String_                regions/07-object-1/001A7654-001A7E53.txt
+m141f062  62   -      0x0012260F  1:0x0011260F  code  Print_Clipped_Character             Print_Clipped_Character_             regions/07-object-1/001A7654-001A7E53.txt
+m141f063  63   -      0x001227EC  1:0x001127EC  code  Print_Clipped_Letter                Print_Clipped_Letter_                regions/07-object-1/001A7654-001A7E53.txt
+m141f064  64   -      0x0012297B  1:0x0011297B  code  Print_Right_To_Bitmap               Print_Right_To_Bitmap_               regions/07-object-1/001A7E54-001A8653.txt
+m141f065  65   -      0x001229C5  1:0x001129C5  code  Print_Centered_To_Bitmap            Print_Centered_To_Bitmap_            regions/07-object-1/001A7E54-001A8653.txt
+m141f066  66   -      0x00122A1F  1:0x00112A1F  code  Print_Full_To_Bitmap                Print_Full_To_Bitmap_                regions/07-object-1/001A7E54-001A8653.txt
+m141f067  67   -      0x00122A6E  1:0x00112A6E  code  Print_To_Bitmap                     Print_To_Bitmap_                     regions/07-object-1/001A7E54-001A8653.txt
+m141f068  68   -      0x00122AAB  1:0x00112AAB  code  Print_Display_To_Bitmap             Print_Display_To_Bitmap_             regions/07-object-1/001A7E54-001A8653.txt
+m141f069  69   -      0x00122D8A  1:0x00112D8A  code  Print_String_To_Bitmap              Print_String_To_Bitmap_              regions/07-object-1/001A7E54-001A8653.txt
+m141f070  70   -      0x00123070  1:0x00113070  code  Print_Character_To_Bitmap           Print_Character_To_Bitmap_           regions/07-object-1/001A8654-001A8E53.txt
+m141f071  71   -      0x001231B1  1:0x001131B1  code  Print_Clipped_Letter_To_Bitmap      Print_Clipped_Letter_To_Bitmap_      regions/07-object-1/001A8654-001A8E53.txt
+m141f072  72   -      0x00123387  1:0x00113387  code  Set_PSTR_Style                      Set_PSTR_Style_                      regions/07-object-1/001A8654-001A8E53.txt
+-         -    -      0x0017C4EC  2:0x0000C4EC  data  _default_font_colors                _default_font_colors                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C50C  2:0x0000C50C  data  _outline_color                      _outline_color                       regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C50E  2:0x0000C50E  data  _alias_outline_color                _alias_outline_color                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C510  2:0x0000C510  data  _draw_alias_flag                    _draw_alias_flag                     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C512  2:0x0000C512  data  _font_background_color              _font_background_color               regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001ABE20  2:0x0003BE20  data  _font_name                          _font_name                           -
+-         -    -      0x001ABE70  2:0x0003BE70  data  _old_alias_colors                   _old_alias_colors                    -
+-         -    -      0x001ABE74  2:0x0003BE74  data  _font_data                          _font_data                           -
+-         -    -      0x001ABE78  2:0x0003BE78  data  _palette_block                      _palette_block                       -
+-         -    -      0x001ABE7C  2:0x0003BE7C  data  _font_header                        _font_header                         -
+-         -    -      0x001AE1D8  2:0x0003E1D8  data  _current_font_color_array           _current_font_color_array            -
+-         -    -      0x001AE1E2  2:0x0003E1E2  data  _print_ypos                         _print_ypos                          -
+-         -    -      0x001AE1E4  2:0x0003E1E4  data  _current_font_color                 _current_font_color                  -
+-         -    -      0x001AE1E6  2:0x0003E1E6  data  _current_font_style                 _current_font_style                  -
+-         -    -      0x001AE1E8  2:0x0003E1E8  data  _print_xpos                         _print_xpos                          -
+-         -    -      0x001AE1EA  2:0x0003E1EA  data  _PSTR_style                         _PSTR_style                          -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                      TYPE
+0x0017C4EC  2:0x0000C4EC  default_font_colors       SWORD[16]
+0x001ABE20  2:0x0003BE20  font_name                 UBYTE[80]
+0x001ABE70  2:0x0003BE70  old_alias_colors          UBYTE[4]
+0x001ABE74  2:0x0003BE74  font_data                 UBYTE *
+0x001ABE78  2:0x0003BE78  palette_block             UBYTE *
+0x001ABE7C  2:0x0003BE7C  font_header               struct s_font_header
+0x001AE1D8  2:0x0003E1D8  current_font_color_array  UBYTE[10]
+0x001AE1E2  2:0x0003E1E2  print_ypos                SWORD
+0x0017C512  2:0x0000C512  font_background_color     SWORD
+0x0017C50C  2:0x0000C50C  outline_color             SWORD
+0x001AE1E4  2:0x0003E1E4  current_font_color        SWORD
+0x001AE1E6  2:0x0003E1E6  current_font_style        SWORD
+0x0017C510  2:0x0000C510  draw_alias_flag           SWORD
+0x001AE1E8  2:0x0003E1E8  print_xpos                SWORD
+0x0017C50E  2:0x0000C50E  alias_outline_color       SWORD
+0x001AE1EA  2:0x0003E1EA  PSTR_style                SWORD
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                                TYPE                                                            CHUNK
+m141f001  0x00120526  1:0x00110526  192   24        9         0x18     -    EAX              Load_Font_File                      void (UBYTE *)                                                  regions/07-object-1/001A5654-001A5E53.txt
+m141f002  0x001205E6  1:0x001105E6  137   22        7         0x10     -    EAX,EDX,EBX      Load_Palette                        void (SWORD, SWORD, SWORD)                                      regions/07-object-1/001A5654-001A5E53.txt
+m141f003  0x0012066F  1:0x0011066F  150   24        9         0x18     -    EAX              Get_String_Width                    SWORD (UBYTE *); returns in AX                                  regions/07-object-1/001A5654-001A5E53.txt
+m141f004  0x00120705  1:0x00110705  298   23        8         0x14     -    EAX,EDX          Set_Font                            void (SDWORD, SDWORD)                                           regions/07-object-1/001A5654-001A5E53.txt
+m141f005  0x0012082F  1:0x0011082F  273   23        8         0x14     -    EAX,EDX          Set_Font_Solid                      void (SDWORD, SDWORD)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f006  0x00120940  1:0x00110940  339   23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style                void (SDWORD, UBYTE *)                                          regions/07-object-1/001A5E54-001A6653.txt
+m141f007  0x00120A93  1:0x00110A93  58    23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style_Shadow_Down    void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f008  0x00120ACD  1:0x00110ACD  58    23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style_Shadow_Up      void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f009  0x00120B07  1:0x00110B07  58    23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style_Shadow_Heavy   void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f010  0x00120B41  1:0x00110B41  58    23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style_Outline        void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f011  0x00120B7B  1:0x00110B7B  58    23        8         0x14     -    EAX,EDX          Set_Remap_Font_Style_Outline_Heavy  void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f012  0x00120BB5  1:0x00110BB5  278   23        8         0x14     -    EAX,EDX          Set_Font_Style                      void (SDWORD, UBYTE *)                                          regions/07-object-1/001A5E54-001A6653.txt
+m141f013  0x00120CCB  1:0x00110CCB  58    23        8         0x14     -    EAX,EDX          Set_Font_Style_Shadow_Down          void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f014  0x00120D05  1:0x00110D05  58    23        8         0x14     -    EAX,EDX          Set_Font_Style_Shadow_Up            void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f015  0x00120D3F  1:0x00110D3F  58    23        8         0x14     -    EAX,EDX          Set_Font_Style_Shadow_Heavy         void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f016  0x00120D79  1:0x00110D79  58    23        8         0x14     -    EAX,EDX          Set_Font_Style_Outline              void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f017  0x00120DB3  1:0x00110DB3  58    23        8         0x14     -    EAX,EDX          Set_Font_Style_Outline_Heavy        void (SWORD, UBYTE *)                                           regions/07-object-1/001A5E54-001A6653.txt
+m141f018  0x00120DED  1:0x00110DED  55    23        8         0x14     -    EAX,EDX          Set_Outline_Color                   void (SWORD, SWORD)                                             regions/07-object-1/001A5E54-001A6653.txt
+m141f019  0x00120E24  1:0x00110E24  60    24        9         0x18     -    EAX              Set_Font_LF                         void (SWORD)                                                    regions/07-object-1/001A5E54-001A6653.txt
+m141f020  0x00120E60  1:0x00110E60  44    24        9         0x18     -    EAX              Set_Font_Spacing_Width              void (SWORD)                                                    regions/07-object-1/001A5E54-001A6653.txt
+m141f021  0x00120E8C  1:0x00110E8C  45    24        9         0x18     -    EAX              Set_Font_Spacing                    void (SWORD)                                                    regions/07-object-1/001A5E54-001A6653.txt
+m141f022  0x00120EB9  1:0x00110EB9  78    24        9         0x18     -    EAX              Set_Font_Highlight_Colors           void (UBYTE *)                                                  regions/07-object-1/001A5E54-001A6653.txt
+m141f023  0x00120F07  1:0x00110F07  78    24        9         0x18     -    EAX              Set_Font_Special_Colors             void (UBYTE *)                                                  regions/07-object-1/001A5E54-001A6653.txt
+m141f024  0x00120F55  1:0x00110F55  68    24        9         0x18     -    EAX              Set_Alias_Color                     void (SWORD)                                                    regions/07-object-1/001A5E54-001A6653.txt
+m141f025  0x00120F99  1:0x00110F99  73    24        9         0x18     -    -                Save_Alias_Colors                   void (void)                                                     regions/07-object-1/001A5E54-001A6653.txt
+m141f026  0x00120FE2  1:0x00110FE2  73    24        9         0x18     -    -                Restore_Alias_Colors                void (void)                                                     regions/07-object-1/001A5E54-001A6653.txt
+m141f027  0x0012102B  1:0x0011102B  70    22        7         0x10     -    EAX,EDX,EBX      Print_Integer                       void (SWORD, SWORD, SDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f028  0x00121071  1:0x00111071  70    22        7         0x10     -    EAX,EDX,EBX      Print_Unsigned                      void (SWORD, SWORD, UDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f029  0x001210B7  1:0x001110B7  70    22        7         0x10     -    EAX,EDX,EBX      Print_Right                         void (SWORD, SWORD, UBYTE *)                                    regions/07-object-1/001A6654-001A6E53.txt
+m141f030  0x001210FD  1:0x001110FD  86    22        7         0x10     -    EAX,EDX,EBX      Print_Centered                      void (SWORD, SWORD, UBYTE *)                                    regions/07-object-1/001A6654-001A6E53.txt
+m141f031  0x00121153  1:0x00111153  70    22        7         0x10     -    EAX,EDX,EBX      Print_Integer_Right                 void (SWORD, SWORD, SDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f032  0x00121199  1:0x00111199  70    22        7         0x10     -    EAX,EDX,EBX      Print_Integer_Centered              void (SWORD, SWORD, SDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f033  0x001211DF  1:0x001111DF  70    22        7         0x10     -    EAX,EDX,EBX      Print_Unsigned_Centered             void (SWORD, SWORD, UDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f034  0x00121225  1:0x00111225  70    22        7         0x10     -    EAX,EDX,EBX      Print_Unsigned_Right                void (SWORD, SWORD, UDWORD)                                     regions/07-object-1/001A6654-001A6E53.txt
+m141f035  0x0012126B  1:0x0011126B  72    21        6         0xC      -    EAX,EDX,EBX,ECX  Print_Full                          void (SWORD, SWORD, UBYTE *, SDWORD)                            regions/07-object-1/001A6654-001A6E53.txt
+m141f036  0x001212B3  1:0x001112B3  56    22        7         0x10     -    EAX,EDX,EBX      Print                               void (SWORD, SWORD, UBYTE *)                                    regions/07-object-1/001A6654-001A6E53.txt
+m141f037  0x001212EB  1:0x001112EB  1321  21        6         0xC      -    EAX,EDX,EBX,ECX  Print_Display                       void (SWORD, SWORD, UBYTE *, SWORD)                             regions/07-object-1/001A6654-001A6E53.txt
+m141f038  0x00121814  1:0x00111814  772   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_String                        SWORD (SWORD, SWORD, UBYTE *, SWORD, SWORD); returns in AX      regions/07-object-1/001A6E54-001A7653.txt
+m141f039  0x00121B18  1:0x00111B18  40    24        7         0x18     -    -                No_Print_Alias                      void (void)                                                     regions/07-object-1/001A6E54-001A7653.txt
+m141f040  0x00121B40  1:0x00111B40  76    24        9         0x18     -    -                Set_Normal_Colors_On                void (void)                                                     regions/07-object-1/001A6E54-001A7653.txt
+m141f041  0x00121B8C  1:0x00111B8C  76    24        9         0x18     -    -                Set_Highlight_Colors_On             void (void)                                                     regions/07-object-1/001A6E54-001A7653.txt
+m141f042  0x00121BD8  1:0x00111BD8  76    24        9         0x18     -    -                Set_Special_Colors_On               void (void)                                                     regions/07-object-1/001A6E54-001A7653.txt
+m141f043  0x00121C24  1:0x00111C24  193   21        6         0xC      -    EAX,EDX,EBX,ECX  PSTRM                               void (SDWORD, SDWORD, SDWORD, UBYTE *)                          regions/07-object-1/001A6E54-001A7653.txt
+m141f044  0x00121CE5  1:0x00111CE5  52    22        7         0x10     -    EAX,EDX,EBX      PSTRS                               void (SDWORD, SDWORD, UBYTE *)                                  regions/07-object-1/001A6E54-001A7653.txt
+m141f045  0x00121D19  1:0x00111D19  68    22        7         0x10     -    EAX,EDX,EBX      PSTR                                void (SDWORD, SDWORD, SDWORD)                                   regions/07-object-1/001A6E54-001A7653.txt
+m141f046  0x00121D5D  1:0x00111D5D  68    22        7         0x10     -    EAX,EDX,EBX      PSTRL                               void (SDWORD, SDWORD, long)                                     regions/07-object-1/001A6E54-001A7653.txt
+m141f047  0x00121DA1  1:0x00111DA1  74    22        7         0x10     -    EAX,EDX,EBX      PSTRU                               void (SDWORD, SDWORD, UDWORD)                                   regions/07-object-1/001A6E54-001A7653.txt
+m141f048  0x00121DEB  1:0x00111DEB  154   22        7         0x10     -    EAX,EDX,EBX      Print_Character                     SWORD (SWORD, SWORD, UBYTE); returns in AX                      regions/07-object-1/001A6E54-001A7653.txt
+m141f049  0x00121E85  1:0x00111E85  154   22        7         0x10     -    EAX,EDX,EBX      Print_Character_No_Alias            SWORD (SWORD, SWORD, UBYTE); returns in AX                      regions/07-object-1/001A6E54-001A7653.txt
+m141f050  0x00121F1F  1:0x00111F1F  45    24        9         0x18     -    EAX              Set_Background_Color                void (SWORD)                                                    regions/07-object-1/001A6E54-001A7653.txt
+m141f051  0x00121F4C  1:0x00111F4C  47    24        9         0x18     -    EAX              Set_Foreground_Color                void (SWORD)                                                    regions/07-object-1/001A6E54-001A7653.txt
+m141f052  0x00121F7B  1:0x00111F7B  414   22        7         0x10     -    EAX,EDX,EBX      Disp_PSTR                           void (SDWORD, SDWORD, UBYTE *)                                  regions/07-object-1/001A6E54-001A7653.txt
+m141f053  0x00122119  1:0x00112119  187   24        9         0x18     -    -                Find_Closest_PSTR_Color             void (void)                                                     regions/07-object-1/001A7654-001A7E53.txt
+m141f054  0x001221D4  1:0x001121D4  45    24        9         0x18     -    EAX              Set_PSTR_Color                      void (int)                                                      regions/07-object-1/001A7654-001A7E53.txt
+m141f055  0x00122201  1:0x00112201  45    24        9         0x18     -    -                Get_Current_Font_Style              SWORD (void); returns in AX                                     regions/07-object-1/001A7654-001A7E53.txt
+m141f056  0x0012222E  1:0x0011222E  43    24        9         0x18     -    -                Get_Current_Font_Color              void * (void); returns in EAX                                   regions/07-object-1/001A7654-001A7E53.txt
+m141f057  0x00122259  1:0x00112259  45    24        9         0x18     -    -                Get_Font_Height                     SWORD (void); returns in AX                                     regions/07-object-1/001A7654-001A7E53.txt
+m141f058  0x00122286  1:0x00112286  45    24        9         0x18     -    -                Get_Font_Vertical_Spacing           SWORD (void); returns in AX                                     regions/07-object-1/001A7654-001A7E53.txt
+m141f059  0x001222B3  1:0x001122B3  43    24        9         0x18     -    -                Get_Current_Highlight_Color         char * (void); returns in EAX                                   regions/07-object-1/001A7654-001A7E53.txt
+m141f060  0x001222DE  1:0x001122DE  43    24        9         0x18     -    -                Get_Current_Special_Color           char * (void); returns in EAX                                   regions/07-object-1/001A7654-001A7E53.txt
+m141f061  0x00122309  1:0x00112309  774   21        8         0xC      -    EAX,EDX,EBX,ECX  Clipped_Print_String                SWORD (SWORD, SWORD, UBYTE *, SWORD, SWORD); returns in AX      regions/07-object-1/001A7654-001A7E53.txt
+m141f062  0x0012260F  1:0x0011260F  477   22        7         0x10     -    EAX,EDX,EBX      Print_Clipped_Character             SWORD (SWORD, SWORD, UBYTE); returns in AX                      regions/07-object-1/001A7654-001A7E53.txt
+m141f063  0x001227EC  1:0x001127EC  399   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Clipped_Letter                void (SWORD, SWORD, UBYTE, SWORD, SWORD, SWORD, SWORD)          regions/07-object-1/001A7654-001A7E53.txt
+m141f064  0x0012297B  1:0x0011297B  74    21        6         0xC      -    EAX,EDX,EBX,ECX  Print_Right_To_Bitmap               void (SWORD, SWORD, UBYTE *, void *)                            regions/07-object-1/001A7E54-001A8653.txt
+m141f065  0x001229C5  1:0x001129C5  90    21        6         0xC      -    EAX,EDX,EBX,ECX  Print_Centered_To_Bitmap            void (SWORD, SWORD, UBYTE *, void *)                            regions/07-object-1/001A7E54-001A8653.txt
+m141f066  0x00122A1F  1:0x00112A1F  79    21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Full_To_Bitmap                void (SWORD, SWORD, UBYTE *, SWORD, void *)                     regions/07-object-1/001A7E54-001A8653.txt
+m141f067  0x00122A6E  1:0x00112A6E  61    21        6         0xC      -    EAX,EDX,EBX,ECX  Print_To_Bitmap                     void (SWORD, SWORD, UBYTE *, void *)                            regions/07-object-1/001A7E54-001A8653.txt
+m141f068  0x00122AAB  1:0x00112AAB  735   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Display_To_Bitmap             void (SWORD, SWORD, UBYTE *, SWORD, void *)                     regions/07-object-1/001A7E54-001A8653.txt
+m141f069  0x00122D8A  1:0x00112D8A  742   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_String_To_Bitmap              void (SWORD, SWORD, UBYTE *, SWORD, SWORD, void *)              regions/07-object-1/001A7E54-001A8653.txt
+m141f070  0x00123070  1:0x00113070  321   21        6         0xC      -    EAX,EDX,EBX,ECX  Print_Character_To_Bitmap           void (SWORD, SWORD, UBYTE, void *)                              regions/07-object-1/001A8654-001A8E53.txt
+m141f071  0x001231B1  1:0x001131B1  470   21        8         0xC      -    EAX,EDX,EBX,ECX  Print_Clipped_Letter_To_Bitmap      void (SWORD, SWORD, UBYTE, SWORD, SWORD, SWORD, SWORD, void *)  regions/07-object-1/001A8654-001A8E53.txt
+m141f072  0x00123387  1:0x00113387  45    24        9         0x18     -    EAX              Set_PSTR_Style                      void (SWORD)                                                    regions/07-object-1/001A8654-001A8E53.txt
+
+[Locals]
+KEY       ROUTINE                             BLOCK  LOCAL                    LOCATION              TYPE
+m141f001  Load_Font_File                      -      font_file                [EBP-0x8]             UBYTE *
+m141f001  Load_Font_File                      -      font_ptr                 address 2:0x0000C514  UBYTE *
+m141f001  Load_Font_File                      -      style_data               [EBP-0x4]             UBYTE *
+m141f002  Load_Palette                        -      entry                    [EBP-0xC]             SWORD
+m141f002  Load_Palette                        -      start_color              [EBP-0x8]             SWORD
+m141f002  Load_Palette                        -      end_color                [EBP-0x4]             SWORD
+m141f002  Load_Palette                        -      palette_data             [EBP-0x10]            UBYTE *
+m141f002  Load_Palette                        -      i                        [EBP-0x14]            SDWORD
+m141f002  Load_Palette                        -      buffer                   [EBP-0x3C]            UBYTE *[10]
+m141f003  Get_String_Width                    -      string                   [EBP-0x18]            UBYTE *
+m141f003  Get_String_Width                    -      pos                      [EBP-0x14]            SWORD
+m141f003  Get_String_Width                    -      width                    [EBP-0x10]            SWORD
+m141f003  Get_String_Width                    -      char_num                 [EBP-0xC]             SWORD
+m141f003  Get_String_Width                    -      horizontal_spacing       [EBP-0x8]             SWORD
+m141f004  Set_Font                            -      style_num                [EBP-0xC]             SDWORD
+m141f004  Set_Font                            -      color_num                [EBP-0x8]             SDWORD
+m141f004  Set_Font                            -      i                        [EBP-0x4]             SDWORD
+m141f005  Set_Font_Solid                      -      style_num                [EBP-0xC]             SDWORD
+m141f005  Set_Font_Solid                      -      color_num                [EBP-0x8]             SDWORD
+m141f005  Set_Font_Solid                      -      i                        [EBP-0x4]             SDWORD
+m141f006  Set_Remap_Font_Style                -      style_num                [EBP-0xC]             SDWORD
+m141f006  Set_Remap_Font_Style                -      colors                   [EBP-0x8]             UBYTE *
+m141f006  Set_Remap_Font_Style                -      i                        [EBP-0x4]             SDWORD
+m141f007  Set_Remap_Font_Style_Shadow_Down    -      style_num                [EBP-0x4]             SWORD
+m141f007  Set_Remap_Font_Style_Shadow_Down    -      colors                   [EBP-0x8]             UBYTE *
+m141f008  Set_Remap_Font_Style_Shadow_Up      -      style_num                [EBP-0x4]             SWORD
+m141f008  Set_Remap_Font_Style_Shadow_Up      -      colors                   [EBP-0x8]             UBYTE *
+m141f009  Set_Remap_Font_Style_Shadow_Heavy   -      style_num                [EBP-0x4]             SWORD
+m141f009  Set_Remap_Font_Style_Shadow_Heavy   -      colors                   [EBP-0x8]             UBYTE *
+m141f010  Set_Remap_Font_Style_Outline        -      style_num                [EBP-0x4]             SWORD
+m141f010  Set_Remap_Font_Style_Outline        -      colors                   [EBP-0x8]             UBYTE *
+m141f011  Set_Remap_Font_Style_Outline_Heavy  -      style_num                [EBP-0x4]             SWORD
+m141f011  Set_Remap_Font_Style_Outline_Heavy  -      colors                   [EBP-0x8]             UBYTE *
+m141f012  Set_Font_Style                      -      style_num                [EBP-0xC]             SDWORD
+m141f012  Set_Font_Style                      -      colors                   [EBP-0x8]             UBYTE *
+m141f012  Set_Font_Style                      -      i                        [EBP-0x4]             SDWORD
+m141f013  Set_Font_Style_Shadow_Down          -      style_num                [EBP-0x4]             SWORD
+m141f013  Set_Font_Style_Shadow_Down          -      colors                   [EBP-0x8]             UBYTE *
+m141f014  Set_Font_Style_Shadow_Up            -      style_num                [EBP-0x4]             SWORD
+m141f014  Set_Font_Style_Shadow_Up            -      colors                   [EBP-0x8]             UBYTE *
+m141f015  Set_Font_Style_Shadow_Heavy         -      style_num                [EBP-0x4]             SWORD
+m141f015  Set_Font_Style_Shadow_Heavy         -      colors                   [EBP-0x8]             UBYTE *
+m141f016  Set_Font_Style_Outline              -      style_num                [EBP-0x4]             SWORD
+m141f016  Set_Font_Style_Outline              -      colors                   [EBP-0x8]             UBYTE *
+m141f017  Set_Font_Style_Outline_Heavy        -      style_num                [EBP-0x4]             SWORD
+m141f017  Set_Font_Style_Outline_Heavy        -      colors                   [EBP-0x8]             UBYTE *
+m141f018  Set_Outline_Color                   -      color_num                [EBP-0x8]             SWORD
+m141f018  Set_Outline_Color                   -      alias_color              [EBP-0x4]             SWORD
+m141f019  Set_Font_LF                         -      spacing                  [EBP-0x4]             SWORD
+m141f020  Set_Font_Spacing_Width              -      spacing                  [EBP-0x4]             SWORD
+m141f021  Set_Font_Spacing                    -      spacing                  [EBP-0x4]             SWORD
+m141f022  Set_Font_Highlight_Colors           -      colors                   [EBP-0x8]             UBYTE *
+m141f022  Set_Font_Highlight_Colors           -      i                        [EBP-0x4]             SDWORD
+m141f023  Set_Font_Special_Colors             -      colors                   [EBP-0x8]             UBYTE *
+m141f023  Set_Font_Special_Colors             -      i                        [EBP-0x4]             SDWORD
+m141f024  Set_Alias_Color                     -      palette_num              [EBP-0x4]             SWORD
+m141f024  Set_Alias_Color                     -      i                        [EBP-0xC]             SDWORD
+m141f024  Set_Alias_Color                     -      start_offset             [EBP-0x8]             SDWORD
+m141f025  Save_Alias_Colors                   -      i                        [EBP-0x4]             SDWORD
+m141f026  Restore_Alias_Colors                -      i                        [EBP-0x4]             SDWORD
+m141f027  Print_Integer                       -      x                        [EBP-0x4]             SWORD
+m141f027  Print_Integer                       -      y                        [EBP-0x8]             SWORD
+m141f027  Print_Integer                       -      val                      [EBP-0x10]            SDWORD
+m141f027  Print_Integer                       -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f027  Print_Integer                       -      next_x                   [EBP-0xC]             SDWORD
+m141f028  Print_Unsigned                      -      x                        [EBP-0x4]             SWORD
+m141f028  Print_Unsigned                      -      y                        [EBP-0x8]             SWORD
+m141f028  Print_Unsigned                      -      val                      [EBP-0x10]            UDWORD
+m141f028  Print_Unsigned                      -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f028  Print_Unsigned                      -      next_x                   [EBP-0xC]             SDWORD
+m141f029  Print_Right                         -      x                        [EBP-0x4]             SWORD
+m141f029  Print_Right                         -      y                        [EBP-0x8]             SWORD
+m141f029  Print_Right                         -      string                   [EBP-0x14]            UBYTE *
+m141f029  Print_Right                         -      string_len               [EBP-0x10]            SDWORD
+m141f029  Print_Right                         -      next_x                   [EBP-0xC]             SDWORD
+m141f030  Print_Centered                      -      x                        [EBP-0x4]             SWORD
+m141f030  Print_Centered                      -      y                        [EBP-0x8]             SWORD
+m141f030  Print_Centered                      -      string                   [EBP-0x14]            UBYTE *
+m141f030  Print_Centered                      -      string_len               [EBP-0x10]            SDWORD
+m141f030  Print_Centered                      -      next_x                   [EBP-0xC]             SDWORD
+m141f031  Print_Integer_Right                 -      x                        [EBP-0x4]             SWORD
+m141f031  Print_Integer_Right                 -      y                        [EBP-0x8]             SWORD
+m141f031  Print_Integer_Right                 -      val                      [EBP-0x10]            SDWORD
+m141f031  Print_Integer_Right                 -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f031  Print_Integer_Right                 -      next_x                   [EBP-0xC]             SDWORD
+m141f032  Print_Integer_Centered              -      x                        [EBP-0x4]             SWORD
+m141f032  Print_Integer_Centered              -      y                        [EBP-0x8]             SWORD
+m141f032  Print_Integer_Centered              -      val                      [EBP-0x10]            SDWORD
+m141f032  Print_Integer_Centered              -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f032  Print_Integer_Centered              -      next_x                   [EBP-0xC]             SDWORD
+m141f033  Print_Unsigned_Centered             -      x                        [EBP-0x4]             SWORD
+m141f033  Print_Unsigned_Centered             -      y                        [EBP-0x8]             SWORD
+m141f033  Print_Unsigned_Centered             -      val                      [EBP-0x10]            UDWORD
+m141f033  Print_Unsigned_Centered             -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f033  Print_Unsigned_Centered             -      next_x                   [EBP-0xC]             SDWORD
+m141f034  Print_Unsigned_Right                -      x                        [EBP-0x4]             SWORD
+m141f034  Print_Unsigned_Right                -      y                        [EBP-0x8]             SWORD
+m141f034  Print_Unsigned_Right                -      val                      [EBP-0x10]            UDWORD
+m141f034  Print_Unsigned_Right                -      buffer                   [EBP-0x1C]            UBYTE[10]
+m141f034  Print_Unsigned_Right                -      next_x                   [EBP-0xC]             SDWORD
+m141f035  Print_Full                          -      x                        [EBP-0x8]             SWORD
+m141f035  Print_Full                          -      y                        [EBP-0x4]             SWORD
+m141f035  Print_Full                          -      string                   [EBP-0x10]            UBYTE *
+m141f035  Print_Full                          -      right_side               [EBP-0xC]             SDWORD
+m141f036  Print                               -      x                        [EBP-0x8]             SWORD
+m141f036  Print                               -      y                        [EBP-0x4]             SWORD
+m141f036  Print                               -      string                   [EBP-0xC]             UBYTE *
+m141f037  Print_Display                       -      x                        [EBP-0x8]             SWORD
+m141f037  Print_Display                       -      y                        [EBP-0x4]             SWORD
+m141f037  Print_Display                       -      string                   [EBP-0x28]            UBYTE *
+m141f037  Print_Display                       -      full_flag                [EBP-0xC]             SWORD
+m141f037  Print_Display                       -      outline_style            [EBP-0x20]            SDWORD
+m141f037  Print_Display                       -      current_color_set        [EBP-0x1C]            SDWORD
+m141f037  Print_Display                       -      i                        [EBP-0x30]            SDWORD
+m141f037  Print_Display                       -      ddx                      [EBP-0x2C]            SDWORD
+m141f037  Print_Display                       -      x1                       [EBP-0x10]            SDWORD
+m141f037  Print_Display                       -      x2                       [EBP-0x24]            SDWORD
+m141f037  Print_Display                       -      y1                       [EBP-0x18]            SDWORD
+m141f037  Print_Display                       -      y2                       [EBP-0x14]            SDWORD
+m141f038  Print_String                        -      x                        [EBP-0x8]             SWORD
+m141f038  Print_String                        -      y                        [EBP-0xC]             SWORD
+m141f038  Print_String                        -      string                   [EBP-0x34]            UBYTE *
+m141f038  Print_String                        -      change_color_ok_flag     [EBP-0x10]            SWORD
+m141f038  Print_String                        -      full_flag                [EBP+0x10]            SWORD
+m141f038  Print_String                        -      ptr                      [EBP-0x28]            SDWORD
+m141f038  Print_String                        -      button_flag              [EBP-0x24]            SDWORD
+m141f038  Print_String                        -      tab                      [EBP-0x3C]            SDWORD
+m141f038  Print_String                        -      character                [EBP-0x38]            SDWORD
+m141f038  Print_String                        -      space_count              [EBP-0x18]            SDWORD
+m141f038  Print_String                        -      current_space            [EBP-0x30]            SDWORD
+m141f038  Print_String                        -      space_remainder          [EBP-0x2C]            SDWORD
+m141f038  Print_String                        -      space_add                [EBP-0x20]            SDWORD
+m141f038  Print_String                        -      i                        [EBP-0x1C]            SDWORD
+m141f038  Print_String                        -      tab_string               [EBP-0x14]            char[4]
+m141f040  Set_Normal_Colors_On                -      i                        [EBP-0x4]             SDWORD
+m141f041  Set_Highlight_Colors_On             -      i                        [EBP-0x4]             SDWORD
+m141f042  Set_Special_Colors_On               -      i                        [EBP-0x4]             SDWORD
+m141f043  PSTRM                               -      x                        [EBP-0x14]            SDWORD
+m141f043  PSTRM                               -      y                        [EBP-0x20]            SDWORD
+m141f043  PSTRM                               -      val                      [EBP-0x1C]            SDWORD
+m141f043  PSTRM                               -      string                   [EBP-0x18]            UBYTE *
+m141f043  PSTRM                               -      buffer                   [EBP-0x30]            UBYTE[15]
+m141f043  PSTRM                               -      i                        [EBP-0x10]            SDWORD
+m141f043  PSTRM                               -      j                        [EBP-0xC]             SDWORD
+m141f043  PSTRM                               -      old_color                [EBP-0x8]             SDWORD
+m141f043  PSTRM                               -      old_style                [EBP-0x4]             SDWORD
+m141f044  PSTRS                               -      x                        [EBP-0xC]             SDWORD
+m141f044  PSTRS                               -      y                        [EBP-0x8]             SDWORD
+m141f044  PSTRS                               -      string                   [EBP-0x4]             UBYTE *
+m141f045  PSTR                                -      x                        [EBP-0xC]             SDWORD
+m141f045  PSTR                                -      y                        [EBP-0x4]             SDWORD
+m141f045  PSTR                                -      val                      [EBP-0x8]             SDWORD
+m141f045  PSTR                                -      buffer                   [EBP-0x1C]            UBYTE[15]
+m141f046  PSTRL                               -      x                        [EBP-0xC]             SDWORD
+m141f046  PSTRL                               -      y                        [EBP-0x4]             SDWORD
+m141f046  PSTRL                               -      val                      [EBP-0x8]             long
+m141f046  PSTRL                               -      buffer                   [EBP-0x1C]            UBYTE[15]
+m141f047  PSTRU                               -      x                        [EBP-0xC]             SDWORD
+m141f047  PSTRU                               -      y                        [EBP-0x10]            SDWORD
+m141f047  PSTRU                               -      value                    [EBP-0x4]             UDWORD
+m141f047  PSTRU                               -      val                      [EBP-0x8]             unsigned long
+m141f047  PSTRU                               -      buffer                   [EBP-0x20]            UBYTE[15]
+m141f048  Print_Character                     -      x                        [EBP-0x18]            SWORD
+m141f048  Print_Character                     -      y                        [EBP-0x24]            SWORD
+m141f048  Print_Character                     -      char_num                 [EBP-0x4]             UBYTE
+m141f048  Print_Character                     -      screen_pos               [EBP-0x2C]            SDWORD
+m141f048  Print_Character                     -      screen_start             [EBP-0x38]            SDWORD
+m141f048  Print_Character                     -      line_num                 [EBP-0x34]            SDWORD
+m141f048  Print_Character                     -      i                        [EBP-0x30]            SDWORD
+m141f048  Print_Character                     -      height                   [EBP-0x1C]            SWORD
+m141f048  Print_Character                     -      pos                      [EBP-0x10]            SWORD
+m141f048  Print_Character                     -      new_x                    [EBP-0x20]            SWORD
+m141f048  Print_Character                     -      data                     [EBP-0x8]             UBYTE
+m141f048  Print_Character                     -      skip_count               [EBP-0xC]             UBYTE
+m141f048  Print_Character                     -      data_offset              [EBP-0x28]            SDWORD
+m141f049  Print_Character_No_Alias            -      x                        [EBP-0x18]            SWORD
+m141f049  Print_Character_No_Alias            -      y                        [EBP-0x24]            SWORD
+m141f049  Print_Character_No_Alias            -      char_num                 [EBP-0x4]             UBYTE
+m141f049  Print_Character_No_Alias            -      screen_pos               [EBP-0x2C]            SDWORD
+m141f049  Print_Character_No_Alias            -      screen_start             [EBP-0x38]            SDWORD
+m141f049  Print_Character_No_Alias            -      line_num                 [EBP-0x34]            SDWORD
+m141f049  Print_Character_No_Alias            -      i                        [EBP-0x30]            SDWORD
+m141f049  Print_Character_No_Alias            -      height                   [EBP-0x1C]            SWORD
+m141f049  Print_Character_No_Alias            -      pos                      [EBP-0x10]            SWORD
+m141f049  Print_Character_No_Alias            -      new_x                    [EBP-0x20]            SWORD
+m141f049  Print_Character_No_Alias            -      data                     [EBP-0x8]             UBYTE
+m141f049  Print_Character_No_Alias            -      skip_count               [EBP-0xC]             UBYTE
+m141f049  Print_Character_No_Alias            -      data_offset              [EBP-0x28]            SDWORD
+m141f050  Set_Background_Color                -      color_num                [EBP-0x4]             SWORD
+m141f051  Set_Foreground_Color                -      color_num                [EBP-0x4]             SWORD
+m141f052  Disp_PSTR                           -      x                        [EBP-0x30]            SDWORD
+m141f052  Disp_PSTR                           -      y                        [EBP-0x2C]            SDWORD
+m141f052  Disp_PSTR                           -      buffer                   [EBP-0x28]            UBYTE *
+m141f052  Disp_PSTR                           -      old_color                [EBP-0x24]            SDWORD
+m141f052  Disp_PSTR                           -      old_style                [EBP-0x20]            SDWORD
+m141f052  Disp_PSTR                           -      base_height              [EBP-0x1C]            SDWORD
+m141f052  Disp_PSTR                           -      old_x1                   [EBP-0x18]            SDWORD
+m141f052  Disp_PSTR                           -      old_y1                   [EBP-0x14]            SDWORD
+m141f052  Disp_PSTR                           -      old_x2                   [EBP-0x10]            SDWORD
+m141f052  Disp_PSTR                           -      old_y2                   [EBP-0xC]             SDWORD
+m141f052  Disp_PSTR                           -      old_page                 [EBP-0x8]             SDWORD
+m141f052  Disp_PSTR                           -      old_screen_refresh_flag  [EBP-0x4]             SDWORD
+m141f053  Find_Closest_PSTR_Color             -      highest_value            [EBP-0x10]            SDWORD
+m141f053  Find_Closest_PSTR_Color             -      value                    [EBP-0xC]             SDWORD
+m141f053  Find_Closest_PSTR_Color             -      i                        [EBP-0x8]             SDWORD
+m141f053  Find_Closest_PSTR_Color             -      pos                      [EBP-0x4]             SDWORD
+m141f054  Set_PSTR_Color                      -      color_num                [EBP-0x4]             int
+m141f061  Clipped_Print_String                -      x                        [EBP-0x8]             SWORD
+m141f061  Clipped_Print_String                -      y                        [EBP-0xC]             SWORD
+m141f061  Clipped_Print_String                -      string                   [EBP-0x38]            UBYTE *
+m141f061  Clipped_Print_String                -      change_color_ok_flag     [EBP-0x10]            SWORD
+m141f061  Clipped_Print_String                -      full_flag                [EBP+0x10]            SWORD
+m141f061  Clipped_Print_String                -      ptr                      [EBP-0x2C]            SDWORD
+m141f061  Clipped_Print_String                -      button_flag              [EBP-0x28]            SDWORD
+m141f061  Clipped_Print_String                -      tab                      [EBP-0x24]            SDWORD
+m141f061  Clipped_Print_String                -      height                   [EBP-0x40]            SDWORD
+m141f061  Clipped_Print_String                -      character                [EBP-0x3C]            SDWORD
+m141f061  Clipped_Print_String                -      space_count              [EBP-0x18]            SDWORD
+m141f061  Clipped_Print_String                -      current_space            [EBP-0x34]            SDWORD
+m141f061  Clipped_Print_String                -      space_remainder          [EBP-0x30]            SDWORD
+m141f061  Clipped_Print_String                -      space_add                [EBP-0x20]            SDWORD
+m141f061  Clipped_Print_String                -      i                        [EBP-0x1C]            SDWORD
+m141f061  Clipped_Print_String                -      tab_string               [EBP-0x14]            char[4]
+m141f062  Print_Clipped_Character             -      x                        [EBP-0x34]            SWORD
+m141f062  Print_Clipped_Character             -      y                        [EBP-0x30]            SWORD
+m141f062  Print_Clipped_Character             -      character                [EBP-0x4]             UBYTE
+m141f062  Print_Clipped_Character             -      skip_x                   [EBP-0x28]            SWORD
+m141f062  Print_Clipped_Character             -      height                   [EBP-0x24]            SWORD
+m141f062  Print_Clipped_Character             -      width                    [EBP-0x20]            SWORD
+m141f062  Print_Clipped_Character             -      spacing                  [EBP-0x1C]            SWORD
+m141f062  Print_Clipped_Character             -      cpos                     [EBP-0x18]            SWORD
+m141f062  Print_Clipped_Character             -      skip_y                   [EBP-0x2C]            SWORD
+m141f062  Print_Clipped_Character             -      max_y                    [EBP-0x10]            SWORD
+m141f062  Print_Clipped_Character             -      next_x                   [EBP-0xC]             SWORD
+m141f062  Print_Clipped_Character             -      stringer                 [EBP-0x8]             UBYTE[2]
+m141f063  Print_Clipped_Letter                -      x                        [EBP-0x28]            SWORD
+m141f063  Print_Clipped_Letter                -      y                        [EBP-0x24]            SWORD
+m141f063  Print_Clipped_Letter                -      char_num                 [EBP-0xC]             UBYTE
+m141f063  Print_Clipped_Letter                -      skip_x                   [EBP-0x1C]            SWORD
+m141f063  Print_Clipped_Letter                -      width                    [EBP+0x10]            SWORD
+m141f063  Print_Clipped_Letter                -      skip_y                   [EBP+0x14]            SWORD
+m141f063  Print_Clipped_Letter                -      max_y                    [EBP+0x18]            SWORD
+m141f063  Print_Clipped_Letter                -      screen_pos               [EBP-0x2C]            SDWORD
+m141f063  Print_Clipped_Letter                -      screen_start             [EBP-0x40]            SDWORD
+m141f063  Print_Clipped_Letter                -      line_num                 [EBP-0x3C]            SDWORD
+m141f063  Print_Clipped_Letter                -      i                        [EBP-0x38]            SDWORD
+m141f063  Print_Clipped_Letter                -      screen_pos_start         [EBP-0x34]            SDWORD
+m141f063  Print_Clipped_Letter                -      screen_pos_end           [EBP-0x30]            SDWORD
+m141f063  Print_Clipped_Letter                -      data_offset              [EBP-0x18]            SWORD
+m141f063  Print_Clipped_Letter                -      height                   [EBP-0x14]            SWORD
+m141f063  Print_Clipped_Letter                -      pos                      [EBP-0x10]            SWORD
+m141f063  Print_Clipped_Letter                -      new_x                    [EBP-0x20]            SWORD
+m141f063  Print_Clipped_Letter                -      data                     [EBP-0x8]             UBYTE
+m141f063  Print_Clipped_Letter                -      skip_count               [EBP-0x4]             UBYTE
+m141f064  Print_Right_To_Bitmap               -      x                        [EBP-0x4]             SWORD
+m141f064  Print_Right_To_Bitmap               -      y                        [EBP-0x8]             SWORD
+m141f064  Print_Right_To_Bitmap               -      string                   [EBP-0x10]            UBYTE *
+m141f064  Print_Right_To_Bitmap               -      bitmap                   [EBP-0x18]            void *
+m141f064  Print_Right_To_Bitmap               -      string_len               [EBP-0x14]            SDWORD
+m141f064  Print_Right_To_Bitmap               -      next_x                   [EBP-0xC]             SDWORD
+m141f065  Print_Centered_To_Bitmap            -      x                        [EBP-0x4]             SWORD
+m141f065  Print_Centered_To_Bitmap            -      y                        [EBP-0x8]             SWORD
+m141f065  Print_Centered_To_Bitmap            -      string                   [EBP-0x10]            UBYTE *
+m141f065  Print_Centered_To_Bitmap            -      bitmap                   [EBP-0x18]            void *
+m141f065  Print_Centered_To_Bitmap            -      string_len               [EBP-0x14]            SDWORD
+m141f065  Print_Centered_To_Bitmap            -      next_x                   [EBP-0xC]             SDWORD
+m141f066  Print_Full_To_Bitmap                -      x                        [EBP-0xC]             SWORD
+m141f066  Print_Full_To_Bitmap                -      y                        [EBP-0x8]             SWORD
+m141f066  Print_Full_To_Bitmap                -      string                   [EBP-0x10]            UBYTE *
+m141f066  Print_Full_To_Bitmap                -      right_side               [EBP-0x4]             SWORD
+m141f066  Print_Full_To_Bitmap                -      bitmap                   [EBP+0x10]            void *
+m141f067  Print_To_Bitmap                     -      x                        [EBP-0x8]             SWORD
+m141f067  Print_To_Bitmap                     -      y                        [EBP-0x4]             SWORD
+m141f067  Print_To_Bitmap                     -      string                   [EBP-0x10]            UBYTE *
+m141f067  Print_To_Bitmap                     -      bitmap                   [EBP-0xC]             void *
+m141f068  Print_Display_To_Bitmap             -      x                        [EBP-0x4]             SWORD
+m141f068  Print_Display_To_Bitmap             -      y                        [EBP-0x8]             SWORD
+m141f068  Print_Display_To_Bitmap             -      string                   [EBP-0x28]            UBYTE *
+m141f068  Print_Display_To_Bitmap             -      full_flag                [EBP-0xC]             SWORD
+m141f068  Print_Display_To_Bitmap             -      bitmap                   [EBP+0x10]            void *
+m141f068  Print_Display_To_Bitmap             -      outline_style            [EBP-0x20]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      current_color_set        [EBP-0x30]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      i                        [EBP-0x2C]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      ddx                      [EBP-0x14]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      x1                       [EBP-0x24]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      x2                       [EBP-0x1C]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      y1                       [EBP-0x18]            SDWORD
+m141f068  Print_Display_To_Bitmap             -      y2                       [EBP-0x10]            SDWORD
+m141f069  Print_String_To_Bitmap              -      x                        [EBP-0x8]             SWORD
+m141f069  Print_String_To_Bitmap              -      y                        [EBP-0x10]            SWORD
+m141f069  Print_String_To_Bitmap              -      string                   [EBP-0x38]            UBYTE *
+m141f069  Print_String_To_Bitmap              -      change_color_ok_flag     [EBP-0xC]             SWORD
+m141f069  Print_String_To_Bitmap              -      full_flag                [EBP+0x10]            SWORD
+m141f069  Print_String_To_Bitmap              -      bitmap                   [EBP+0x14]            void *
+m141f069  Print_String_To_Bitmap              -      i                        [EBP-0x2C]            SDWORD
+m141f069  Print_String_To_Bitmap              -      button_flag              [EBP-0x28]            SDWORD
+m141f069  Print_String_To_Bitmap              -      tab                      [EBP-0x40]            SDWORD
+m141f069  Print_String_To_Bitmap              -      height                   [EBP-0x3C]            SDWORD
+m141f069  Print_String_To_Bitmap              -      width                    [EBP-0x1C]            SDWORD
+m141f069  Print_String_To_Bitmap              -      current_space            [EBP-0x34]            SDWORD
+m141f069  Print_String_To_Bitmap              -      space_remainder          [EBP-0x30]            SDWORD
+m141f069  Print_String_To_Bitmap              -      space_add                [EBP-0x18]            SDWORD
+m141f069  Print_String_To_Bitmap              -      space_count              [EBP-0x24]            SDWORD
+m141f069  Print_String_To_Bitmap              -      character                [EBP-0x4]             UBYTE
+m141f069  Print_String_To_Bitmap              -      tab_string               [EBP-0x14]            UBYTE[4]
+m141f069  Print_String_To_Bitmap              -      ptr                      [EBP-0x20]            SDWORD
+m141f070  Print_Character_To_Bitmap           -      x                        [EBP-0x38]            SWORD
+m141f070  Print_Character_To_Bitmap           -      y                        [EBP-0x30]            SWORD
+m141f070  Print_Character_To_Bitmap           -      character                [EBP-0x4]             UBYTE
+m141f070  Print_Character_To_Bitmap           -      bitmap                   [EBP-0x3C]            void *
+m141f070  Print_Character_To_Bitmap           -      next_x                   [EBP-0x2C]            SWORD
+m141f070  Print_Character_To_Bitmap           -      skip_x                   [EBP-0x28]            SWORD
+m141f070  Print_Character_To_Bitmap           -      height                   [EBP-0x24]            SWORD
+m141f070  Print_Character_To_Bitmap           -      width                    [EBP-0x20]            SWORD
+m141f070  Print_Character_To_Bitmap           -      spacing                  [EBP-0x1C]            SWORD
+m141f070  Print_Character_To_Bitmap           -      cpos                     [EBP-0x34]            SWORD
+m141f070  Print_Character_To_Bitmap           -      skip_y                   [EBP-0x14]            SWORD
+m141f070  Print_Character_To_Bitmap           -      max_y                    [EBP-0x10]            SWORD
+m141f070  Print_Character_To_Bitmap           -      bitmap_max_width         [EBP-0xC]             SWORD
+m141f070  Print_Character_To_Bitmap           -      bitmap_max_height        [EBP-0x18]            SWORD
+m141f070  Print_Character_To_Bitmap           -      new_x                    [EBP-0x8]             SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      x                        [EBP-0x28]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      y                        [EBP-0x24]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      char_num                 [EBP-0xC]             UBYTE
+m141f071  Print_Clipped_Letter_To_Bitmap      -      skip_x                   [EBP-0x2C]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      width                    [EBP+0x10]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      skip_y                   [EBP+0x14]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      max_y                    [EBP+0x18]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      bitmap                   [EBP+0x1C]            void *
+m141f071  Print_Clipped_Letter_To_Bitmap      -      screen_pos               [EBP-0x40]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      screen_start             [EBP-0x34]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      line_num                 [EBP-0x50]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      i                        [EBP-0x4C]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      screen_pos_start         [EBP-0x48]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      screen_pos_end           [EBP-0x44]            SDWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      data_offset              [EBP-0x18]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      height                   [EBP-0x14]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      pos                      [EBP-0x20]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      new_x                    [EBP-0x1C]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      data                     [EBP-0x8]             UBYTE
+m141f071  Print_Clipped_Letter_To_Bitmap      -      skip_count               [EBP-0x4]             UBYTE
+m141f071  Print_Clipped_Letter_To_Bitmap      -      bitmap_width             [EBP-0x30]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      bitmap_height            [EBP-0x10]            SWORD
+m141f071  Print_Clipped_Letter_To_Bitmap      -      frame_offset             [EBP-0x3C]            UBYTE *
+m141f071  Print_Clipped_Letter_To_Bitmap      -      frame_offset_table       [EBP-0x38]            long *
+m141f072  Set_PSTR_Style                      -      style                    [EBP-0x4]             SWORD
+
+[Types]
+NUM  KIND       NAME                  DETAILS
+-    cue table  -                     source file table (C++)
+1    scope      struct                -
+2    scope      union                 -
+3    scope      enum                  -
+4    scalar     signed char           int 1 bytes
+5    scalar     unsigned char         unsigned 1 bytes
+6    scalar     short                 int 2 bytes
+7    scalar     unsigned short        unsigned 2 bytes
+8    scalar     int                   int 4 bytes
+9    scalar     unsigned int          unsigned 4 bytes
+10   typedef    char                  name for unsigned char (#5)
+11   typedef    char                  name for unsigned char (#5)
+12   typedef    BYTE                  name for unsigned char (#5)
+13   typedef    SBYTE                 name for signed char (#4)
+14   typedef    UBYTE                 name for unsigned char (#5)
+15   typedef    WORD                  name for unsigned short (#7)
+16   typedef    SWORD                 name for short (#6)
+17   typedef    UWORD                 name for unsigned short (#7)
+18   typedef    DWORD                 name for unsigned int (#9)
+19   typedef    SDWORD                name for int (#8)
+20   typedef    UDWORD                name for unsigned int (#9)
+21   typedef    BOOL                  name for unsigned char (#5)
+22   typedef    SampleHandle          name for int (#8)
+23   typedef    size_t                name for unsigned int (#9)
+24   pointer    -                     near386; of char (#10)
+25   array      __va_list             0..0; of char * (#24)
+26   typedef    __va_list             name for char *[1] (#25)
+27   scalar     long                  int 4 bytes
+28   typedef    fpos_t                name for long (#27)
+29   typedef    fpos_t                name for long (#27)
+30   array      -                     0..15; of SWORD (#16)
+31   array      -                     0..79; of UBYTE (#14)
+32   array      -                     0..3; of UBYTE (#14)
+33   pointer    -                     near386; of UBYTE (#14)
+34   array      -                     0..7; of char (#10)
+35   array      -                     0..7; of char (#10)
+36   array      -                     0..7; of char (#10)
+37   array      -                     0..7; of char (#10)
+38   array      -                     0..255; of char (#10)
+39   array      -                     0..255; of unsigned int (#9)
+40   array      -                     0..7; of short (#6)
+41   array      -                     0..7; of short (#6)
+42   array      -                     0..7; of short (#6)
+43   array      -                     0..255; of char (#10)
+44   array      -                     0..5; of char[256] (#43)
+45   array      -                     0..255; of unsigned int (#9)
+46   array      -                     0..5; of unsigned int[256] (#45)
+47   struct     struct s_font_header  17 fields, 9052 bytes
+48   typedef    s_font_header         struct name for struct #47 (#47)
+49   array      -                     0..9; of UBYTE (#14)
+50   scalar     void                  void 1 bytes
+51   procedure  -                     near386; returns void (UBYTE *)
+52   procedure  -                     near386; returns void (SWORD, SWORD, SWORD)
+53   array      -                     0..9; of UBYTE * (#33)
+54   procedure  -                     near386; returns SWORD (UBYTE *)
+55   procedure  -                     near386; returns void (SDWORD, SDWORD)
+56   procedure  -                     near386; returns void (SDWORD, UBYTE *)
+57   procedure  -                     near386; returns void (SWORD, UBYTE *)
+58   procedure  -                     near386; returns void (SWORD, SWORD)
+59   procedure  -                     near386; returns void (SWORD)
+60   procedure  -                     near386; returns void ()
+61   procedure  -                     near386; returns void (SWORD, SWORD, SDWORD)
+62   array      -                     0..9; of UBYTE (#14)
+63   procedure  -                     near386; returns void (SWORD, SWORD, UDWORD)
+64   array      -                     0..9; of UBYTE (#14)
+65   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *)
+66   array      -                     0..9; of UBYTE (#14)
+67   array      -                     0..9; of UBYTE (#14)
+68   array      -                     0..9; of UBYTE (#14)
+69   array      -                     0..9; of UBYTE (#14)
+70   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *, SDWORD)
+71   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *, SWORD)
+72   procedure  -                     near386; returns SWORD (SWORD, SWORD, UBYTE *, SWORD, SWORD)
+73   array      -                     0..3; of char (#10)
+74   procedure  -                     near386; returns void (void)
+75   procedure  -                     near386; returns void (SDWORD, SDWORD, SDWORD, UBYTE *)
+76   array      -                     0..14; of UBYTE (#14)
+77   procedure  -                     near386; returns void (SDWORD, SDWORD, UBYTE *)
+78   procedure  -                     near386; returns void (SDWORD, SDWORD, SDWORD)
+79   array      -                     0..14; of UBYTE (#14)
+80   procedure  -                     near386; returns void (SDWORD, SDWORD, long)
+81   array      -                     0..14; of UBYTE (#14)
+82   procedure  -                     near386; returns void (SDWORD, SDWORD, UDWORD)
+83   scalar     unsigned long         unsigned 4 bytes
+84   array      -                     0..14; of UBYTE (#14)
+85   procedure  -                     near386; returns SWORD (SWORD, SWORD, UBYTE)
+86   procedure  -                     near386; returns void (int)
+87   procedure  -                     near386; returns SWORD ()
+88   pointer    -                     near386; of void (#50)
+89   procedure  -                     near386; returns void * ()
+90   procedure  -                     near386; returns char * ()
+91   array      -                     0..3; of char (#10)
+92   array      -                     0..1; of UBYTE (#14)
+93   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE, SWORD, SWORD, SWORD, SWORD)
+94   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *, void *)
+95   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *, SWORD, void *)
+96   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE *, SWORD, SWORD, void *)
+97   array      -                     0..3; of UBYTE (#14)
+98   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE, void *)
+99   procedure  -                     near386; returns void (SWORD, SWORD, UBYTE, SWORD, SWORD, SWORD, SWORD, void *)
+100  pointer    -                     near386; of long (#27)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER                      OFFSET_VALUE  TYPE                  TYPE_NAME
+47        field        current_colors              0             char[8]               struct s_font_header
+47        field        height                      8             short                 struct s_font_header
+47        field        shadow_flag                 10            short                 struct s_font_header
+47        field        normal_colors               12            char[8]               struct s_font_header
+47        field        highlight_colors            20            char[8]               struct s_font_header
+47        field        special_colors              28            char[8]               struct s_font_header
+47        field        current_base_height         36            short                 struct s_font_header
+47        field        current_line_feed           38            short                 struct s_font_header
+47        field        current_vertical_spacing    40            short                 struct s_font_header
+47        field        current_horizontal_spacing  42            short                 struct s_font_header
+47        field        current_font_widths         44            char[256]             struct s_font_header
+47        field        current_data_offsets        300           unsigned int[256]     struct s_font_header
+47        field        base_height                 1324          short[8]              struct s_font_header
+47        field        horizontal_spacing          1340          short[8]              struct s_font_header
+47        field        vertical_spacing            1356          short[8]              struct s_font_header
+47        field        font_widths                 1372          char[256][6]          struct s_font_header
+47        field        data_offsets                2908          unsigned int[256][6]  struct s_font_header
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m141f001  57    0x00120526  1:0x00110526  0x001A5B7A
+m141f001  62    0x00120541  1:0x00110541  0x001A5B95
+m141f001  64    0x0012054A  1:0x0011054A  0x001A5B9E
+m141f001  65    0x00120557  1:0x00110557  0x001A5BAB
+m141f001  66    0x00120566  1:0x00110566  0x001A5BBA
+m141f001  68    0x0012056E  1:0x0011056E  0x001A5BC2
+m141f001  70    0x00120570  1:0x00110570  0x001A5BC4
+m141f001  71    0x0012057A  1:0x0011057A  0x001A5BCE
+m141f001  72    0x00120584  1:0x00110584  0x001A5BD8
+m141f001  73    0x00120591  1:0x00110591  0x001A5BE5
+m141f001  77    0x00120599  1:0x00110599  0x001A5BED
+m141f001  79    0x001205AB  1:0x001105AB  0x001A5BFF
+m141f001  81    0x001205AF  1:0x001105AF  0x001A5C03
+m141f001  83    0x001205C1  1:0x001105C1  0x001A5C15
+m141f001  85    0x001205C8  1:0x001105C8  0x001A5C1C
+m141f001  88    0x001205D0  1:0x001105D0  0x001A5C24
+m141f001  89    0x001205DD  1:0x001105DD  0x001A5C31
+m141f002  92    0x001205E6  1:0x001105E6  0x001A5C3A
+m141f002  99    0x00120605  1:0x00110605  0x001A5C59
+m141f002  101   0x0012061F  1:0x0011061F  0x001A5C73
+m141f002  104   0x0012064E  1:0x0011064E  0x001A5CA2
+m141f002  106   0x0012065B  1:0x0011065B  0x001A5CAF
+m141f002  107   0x00120668  1:0x00110668  0x001A5CBC
+m141f003  114   0x0012066F  1:0x0011066F  0x001A5CC3
+m141f003  116   0x0012068A  1:0x0011068A  0x001A5CDE
+m141f003  117   0x00120691  1:0x00110691  0x001A5CE5
+m141f003  119   0x00120698  1:0x00110698  0x001A5CEC
+m141f003  121   0x001206A1  1:0x001106A1  0x001A5CF5
+m141f003  123   0x001206C2  1:0x001106C2  0x001A5D16
+m141f003  124   0x001206D0  1:0x001106D0  0x001A5D24
+m141f003  125   0x001206D9  1:0x001106D9  0x001A5D2D
+m141f003  127   0x001206EB  1:0x001106EB  0x001A5D3F
+m141f003  128   0x001206F1  1:0x001106F1  0x001A5D45
+m141f003  130   0x001206F3  1:0x001106F3  0x001A5D47
+m141f003  131   0x001206F9  1:0x001106F9  0x001A5D4D
+m141f004  137   0x00120705  1:0x00110705  0x001A5D59
+m141f004  141   0x00120722  1:0x00110722  0x001A5D76
+m141f004  142   0x0012072B  1:0x0011072B  0x001A5D7F
+m141f004  144   0x00120734  1:0x00110734  0x001A5D88
+m141f004  146   0x0012074B  1:0x0011074B  0x001A5D9F
+m141f004  147   0x0012075F  1:0x0011075F  0x001A5DB3
+m141f004  148   0x00120773  1:0x00110773  0x001A5DC7
+m141f004  150   0x00120775  1:0x00110775  0x001A5DC9
+m141f004  151   0x00120787  1:0x00110787  0x001A5DDB
+m141f004  154   0x00120790  1:0x00110790  0x001A5DE4
+m141f004  155   0x001207A2  1:0x001107A2  0x001A5DF6
+m141f004  156   0x001207B4  1:0x001107B4  0x001A5E08
+m141f004  157   0x001207C0  1:0x001107C0  0x001A5E14
+m141f004  159   0x001207D3  1:0x001107D3  0x001A5E27
+m141f004  161   0x001207ED  1:0x001107ED  0x001A5E41
+m141f004  162   0x00120805  1:0x00110805  0x001A5E59
+m141f004  163   0x00120825  1:0x00110825  0x001A5E79
+m141f004  164   0x00120827  1:0x00110827  0x001A5E7B
+m141f005  172   0x0012082F  1:0x0011082F  0x001A5E83
+m141f005  176   0x0012084C  1:0x0011084C  0x001A5EA0
+m141f005  177   0x00120855  1:0x00110855  0x001A5EA9
+m141f005  179   0x0012085E  1:0x0011085E  0x001A5EB2
+m141f005  181   0x00120875  1:0x00110875  0x001A5EC9
+m141f005  182   0x00120881  1:0x00110881  0x001A5ED5
+m141f005  183   0x0012088D  1:0x0011088D  0x001A5EE1
+m141f005  185   0x0012088F  1:0x0011088F  0x001A5EE3
+m141f005  186   0x001208A1  1:0x001108A1  0x001A5EF5
+m141f005  187   0x001208B3  1:0x001108B3  0x001A5F07
+m141f005  188   0x001208C5  1:0x001108C5  0x001A5F19
+m141f005  189   0x001208D1  1:0x001108D1  0x001A5F25
+m141f005  191   0x001208E4  1:0x001108E4  0x001A5F38
+m141f005  193   0x001208FE  1:0x001108FE  0x001A5F52
+m141f005  194   0x00120916  1:0x00110916  0x001A5F6A
+m141f005  195   0x00120936  1:0x00110936  0x001A5F8A
+m141f005  196   0x00120938  1:0x00110938  0x001A5F8C
+m141f006  201   0x00120940  1:0x00110940  0x001A5F94
+m141f006  205   0x0012095D  1:0x0011095D  0x001A5FB1
+m141f006  207   0x00120966  1:0x00110966  0x001A5FBA
+m141f006  209   0x0012097D  1:0x0011097D  0x001A5FD1
+m141f006  210   0x00120999  1:0x00110999  0x001A5FED
+m141f006  211   0x001209B5  1:0x001109B5  0x001A6009
+m141f006  212   0x001209D1  1:0x001109D1  0x001A6025
+m141f006  214   0x001209D3  1:0x001109D3  0x001A6027
+m141f006  215   0x001209E5  1:0x001109E5  0x001A6039
+m141f006  216   0x001209F7  1:0x001109F7  0x001A604B
+m141f006  218   0x00120A00  1:0x00110A00  0x001A6054
+m141f006  219   0x00120A12  1:0x00110A12  0x001A6066
+m141f006  220   0x00120A24  1:0x00110A24  0x001A6078
+m141f006  222   0x00120A37  1:0x00110A37  0x001A608B
+m141f006  224   0x00120A51  1:0x00110A51  0x001A60A5
+m141f006  225   0x00120A69  1:0x00110A69  0x001A60BD
+m141f006  226   0x00120A89  1:0x00110A89  0x001A60DD
+m141f006  227   0x00120A8B  1:0x00110A8B  0x001A60DF
+m141f007  232   0x00120A93  1:0x00110A93  0x001A60E7
+m141f007  234   0x00120AB0  1:0x00110AB0  0x001A6104
+m141f007  235   0x00120ABC  1:0x00110ABC  0x001A6110
+m141f007  236   0x00120AC5  1:0x00110AC5  0x001A6119
+m141f008  241   0x00120ACD  1:0x00110ACD  0x001A6121
+m141f008  243   0x00120AEA  1:0x00110AEA  0x001A613E
+m141f008  244   0x00120AF6  1:0x00110AF6  0x001A614A
+m141f008  245   0x00120AFF  1:0x00110AFF  0x001A6153
+m141f009  250   0x00120B07  1:0x00110B07  0x001A615B
+m141f009  252   0x00120B24  1:0x00110B24  0x001A6178
+m141f009  253   0x00120B30  1:0x00110B30  0x001A6184
+m141f009  254   0x00120B39  1:0x00110B39  0x001A618D
+m141f010  259   0x00120B41  1:0x00110B41  0x001A6195
+m141f010  261   0x00120B5E  1:0x00110B5E  0x001A61B2
+m141f010  262   0x00120B6A  1:0x00110B6A  0x001A61BE
+m141f010  263   0x00120B73  1:0x00110B73  0x001A61C7
+m141f011  268   0x00120B7B  1:0x00110B7B  0x001A61CF
+m141f011  270   0x00120B98  1:0x00110B98  0x001A61EC
+m141f011  271   0x00120BA4  1:0x00110BA4  0x001A61F8
+m141f011  272   0x00120BAD  1:0x00110BAD  0x001A6201
+m141f012  278   0x00120BB5  1:0x00110BB5  0x001A6209
+m141f012  282   0x00120BD2  1:0x00110BD2  0x001A6226
+m141f012  284   0x00120BE9  1:0x00110BE9  0x001A623D
+m141f012  285   0x00120BFA  1:0x00110BFA  0x001A624E
+m141f012  286   0x00120C0B  1:0x00110C0B  0x001A625F
+m141f012  287   0x00120C1C  1:0x00110C1C  0x001A6270
+m141f012  290   0x00120C1E  1:0x00110C1E  0x001A6272
+m141f012  292   0x00120C27  1:0x00110C27  0x001A627B
+m141f012  293   0x00120C39  1:0x00110C39  0x001A628D
+m141f012  294   0x00120C4B  1:0x00110C4B  0x001A629F
+m141f012  296   0x00120C54  1:0x00110C54  0x001A62A8
+m141f012  297   0x00120C66  1:0x00110C66  0x001A62BA
+m141f012  298   0x00120C78  1:0x00110C78  0x001A62CC
+m141f012  303   0x00120C8B  1:0x00110C8B  0x001A62DF
+m141f012  304   0x00120CA7  1:0x00110CA7  0x001A62FB
+m141f012  306   0x00120CC3  1:0x00110CC3  0x001A6317
+m141f013  313   0x00120CCB  1:0x00110CCB  0x001A631F
+m141f013  315   0x00120CE8  1:0x00110CE8  0x001A633C
+m141f013  316   0x00120CF4  1:0x00110CF4  0x001A6348
+m141f013  317   0x00120CFD  1:0x00110CFD  0x001A6351
+m141f014  323   0x00120D05  1:0x00110D05  0x001A6359
+m141f014  325   0x00120D22  1:0x00110D22  0x001A6376
+m141f014  326   0x00120D2E  1:0x00110D2E  0x001A6382
+m141f014  327   0x00120D37  1:0x00110D37  0x001A638B
+m141f015  334   0x00120D3F  1:0x00110D3F  0x001A6393
+m141f015  336   0x00120D5C  1:0x00110D5C  0x001A63B0
+m141f015  337   0x00120D68  1:0x00110D68  0x001A63BC
+m141f015  338   0x00120D71  1:0x00110D71  0x001A63C5
+m141f016  344   0x00120D79  1:0x00110D79  0x001A63CD
+m141f016  346   0x00120D96  1:0x00110D96  0x001A63EA
+m141f016  347   0x00120DA2  1:0x00110DA2  0x001A63F6
+m141f016  348   0x00120DAB  1:0x00110DAB  0x001A63FF
+m141f017  354   0x00120DB3  1:0x00110DB3  0x001A6407
+m141f017  356   0x00120DD0  1:0x00110DD0  0x001A6424
+m141f017  357   0x00120DDC  1:0x00110DDC  0x001A6430
+m141f017  358   0x00120DE5  1:0x00110DE5  0x001A6439
+m141f018  365   0x00120DED  1:0x00110DED  0x001A6441
+m141f018  367   0x00120E0A  1:0x00110E0A  0x001A645E
+m141f018  368   0x00120E13  1:0x00110E13  0x001A6467
+m141f018  369   0x00120E1C  1:0x00110E1C  0x001A6470
+m141f019  375   0x00120E24  1:0x00110E24  0x001A6478
+m141f019  377   0x00120E3F  1:0x00110E3F  0x001A6493
+m141f019  378   0x00120E48  1:0x00110E48  0x001A649C
+m141f019  379   0x00120E57  1:0x00110E57  0x001A64AB
+m141f020  385   0x00120E60  1:0x00110E60  0x001A64B4
+m141f020  387   0x00120E7B  1:0x00110E7B  0x001A64CF
+m141f020  388   0x00120E83  1:0x00110E83  0x001A64D7
+m141f021  396   0x00120E8C  1:0x00110E8C  0x001A64E0
+m141f021  398   0x00120EA7  1:0x00110EA7  0x001A64FB
+m141f021  399   0x00120EB0  1:0x00110EB0  0x001A6504
+m141f022  405   0x00120EB9  1:0x00110EB9  0x001A650D
+m141f022  409   0x00120ED4  1:0x00110ED4  0x001A6528
+m141f022  410   0x00120EFE  1:0x00110EFE  0x001A6552
+m141f023  417   0x00120F07  1:0x00110F07  0x001A655B
+m141f023  421   0x00120F22  1:0x00110F22  0x001A6576
+m141f023  422   0x00120F39  1:0x00110F39  0x001A658D
+m141f023  423   0x00120F4C  1:0x00110F4C  0x001A65A0
+m141f024  430   0x00120F55  1:0x00110F55  0x001A65A9
+m141f024  435   0x00120F70  1:0x00110F70  0x001A65C4
+m141f024  436   0x00120F78  1:0x00110F78  0x001A65CC
+m141f024  437   0x00120F80  1:0x00110F80  0x001A65D4
+m141f024  438   0x00120F88  1:0x00110F88  0x001A65DC
+m141f024  439   0x00120F90  1:0x00110F90  0x001A65E4
+m141f025  442   0x00120F99  1:0x00110F99  0x001A65ED
+m141f025  446   0x00120FB1  1:0x00110FB1  0x001A6605
+m141f025  447   0x00120FBB  1:0x00110FBB  0x001A660F
+m141f025  448   0x00120FC5  1:0x00110FC5  0x001A6619
+m141f025  449   0x00120FCF  1:0x00110FCF  0x001A6623
+m141f025  451   0x00120FD9  1:0x00110FD9  0x001A662D
+m141f026  453   0x00120FE2  1:0x00110FE2  0x001A6636
+m141f026  456   0x00120FFA  1:0x00110FFA  0x001A664E
+m141f026  457   0x00121004  1:0x00111004  0x001A6658
+m141f026  458   0x0012100E  1:0x0011100E  0x001A6662
+m141f026  459   0x00121018  1:0x00111018  0x001A666C
+m141f026  460   0x00121022  1:0x00111022  0x001A6676
+m141f027  466   0x0012102B  1:0x0011102B  0x001A667F
+m141f027  471   0x0012104A  1:0x0011104A  0x001A669E
+m141f027  472   0x0012105A  1:0x0011105A  0x001A66AE
+m141f027  473   0x0012106A  1:0x0011106A  0x001A66BE
+m141f028  479   0x00121071  1:0x00111071  0x001A66C5
+m141f028  484   0x00121090  1:0x00111090  0x001A66E4
+m141f028  485   0x001210A0  1:0x001110A0  0x001A66F4
+m141f028  486   0x001210B0  1:0x001110B0  0x001A6704
+m141f029  493   0x001210B7  1:0x001110B7  0x001A670B
+m141f029  498   0x001210D6  1:0x001110D6  0x001A672A
+m141f029  499   0x001210E3  1:0x001110E3  0x001A6737
+m141f029  500   0x001210F6  1:0x001110F6  0x001A674A
+m141f030  505   0x001210FD  1:0x001110FD  0x001A6751
+m141f030  510   0x0012111C  1:0x0011111C  0x001A6770
+m141f030  511   0x00121128  1:0x00111128  0x001A677C
+m141f030  512   0x0012114C  1:0x0011114C  0x001A67A0
+m141f031  517   0x00121153  1:0x00111153  0x001A67A7
+m141f031  522   0x00121172  1:0x00111172  0x001A67C6
+m141f031  523   0x00121182  1:0x00111182  0x001A67D6
+m141f031  524   0x00121192  1:0x00111192  0x001A67E6
+m141f032  529   0x00121199  1:0x00111199  0x001A67ED
+m141f032  534   0x001211B8  1:0x001111B8  0x001A680C
+m141f032  535   0x001211C8  1:0x001111C8  0x001A681C
+m141f032  536   0x001211D8  1:0x001111D8  0x001A682C
+m141f033  541   0x001211DF  1:0x001111DF  0x001A6833
+m141f033  546   0x001211FE  1:0x001111FE  0x001A6852
+m141f033  547   0x0012120E  1:0x0011120E  0x001A6862
+m141f033  548   0x0012121E  1:0x0011121E  0x001A6872
+m141f034  553   0x00121225  1:0x00111225  0x001A6879
+m141f034  558   0x00121244  1:0x00111244  0x001A6898
+m141f034  559   0x00121254  1:0x00111254  0x001A68A8
+m141f034  560   0x00121264  1:0x00111264  0x001A68B8
+m141f035  565   0x0012126B  1:0x0011126B  0x001A68BF
+m141f035  567   0x0012128C  1:0x0011128C  0x001A68E0
+m141f035  568   0x00121292  1:0x00111292  0x001A68E6
+m141f035  570   0x00121299  1:0x00111299  0x001A68ED
+m141f035  571   0x001212AD  1:0x001112AD  0x001A6901
+m141f036  577   0x001212B3  1:0x001112B3  0x001A6907
+m141f036  581   0x001212D2  1:0x001112D2  0x001A6926
+m141f036  582   0x001212E4  1:0x001112E4  0x001A6938
+m141f037  584   0x001212EB  1:0x001112EB  0x001A693F
+m141f037  588   0x0012130C  1:0x0011130C  0x001A6960
+m141f037  590   0x00121317  1:0x00111317  0x001A696B
+m141f037  592   0x0012131E  1:0x0011131E  0x001A6972
+m141f037  594   0x00121328  1:0x00111328  0x001A697C
+m141f037  595   0x00121350  1:0x00111350  0x001A69A4
+m141f037  597   0x0012135A  1:0x0011135A  0x001A69AE
+m141f037  599   0x00121363  1:0x00111363  0x001A69B7
+m141f037  600   0x00121376  1:0x00111376  0x001A69CA
+m141f037  602   0x0012137F  1:0x0011137F  0x001A69D3
+m141f037  604   0x00121389  1:0x00111389  0x001A69DD
+m141f037  606   0x00121396  1:0x00111396  0x001A69EA
+m141f037  607   0x001213B1  1:0x001113B1  0x001A6A05
+m141f037  608   0x001213CB  1:0x001113CB  0x001A6A1F
+m141f037  610   0x001213E3  1:0x001113E3  0x001A6A37
+m141f037  612   0x001213E5  1:0x001113E5  0x001A6A39
+m141f037  613   0x00121400  1:0x00111400  0x001A6A54
+m141f037  614   0x0012141A  1:0x0011141A  0x001A6A6E
+m141f037  617   0x00121432  1:0x00111432  0x001A6A86
+m141f037  619   0x00121443  1:0x00111443  0x001A6A97
+m141f037  621   0x00121450  1:0x00111450  0x001A6AA4
+m141f037  622   0x00121468  1:0x00111468  0x001A6ABC
+m141f037  623   0x00121483  1:0x00111483  0x001A6AD7
+m141f037  625   0x0012149D  1:0x0011149D  0x001A6AF1
+m141f037  627   0x0012149F  1:0x0011149F  0x001A6AF3
+m141f037  628   0x001214B7  1:0x001114B7  0x001A6B0B
+m141f037  629   0x001214D2  1:0x001114D2  0x001A6B26
+m141f037  633   0x001214EC  1:0x001114EC  0x001A6B40
+m141f037  635   0x001214FC  1:0x001114FC  0x001A6B50
+m141f037  637   0x00121509  1:0x00111509  0x001A6B5D
+m141f037  638   0x0012152C  1:0x0011152C  0x001A6B80
+m141f037  639   0x0012154B  1:0x0011154B  0x001A6B9F
+m141f037  641   0x0012156A  1:0x0011156A  0x001A6BBE
+m141f037  643   0x0012156C  1:0x0011156C  0x001A6BC0
+m141f037  644   0x0012158F  1:0x0011158F  0x001A6BE3
+m141f037  645   0x001215AE  1:0x001115AE  0x001A6C02
+m141f037  650   0x001215CD  1:0x001115CD  0x001A6C21
+m141f037  652   0x001215D7  1:0x001115D7  0x001A6C2B
+m141f037  654   0x001215E4  1:0x001115E4  0x001A6C38
+m141f037  655   0x001215FF  1:0x001115FF  0x001A6C53
+m141f037  657   0x0012161A  1:0x0011161A  0x001A6C6E
+m141f037  659   0x0012161C  1:0x0011161C  0x001A6C70
+m141f037  660   0x00121637  1:0x00111637  0x001A6C8B
+m141f037  664   0x00121652  1:0x00111652  0x001A6CA6
+m141f037  666   0x0012165C  1:0x0011165C  0x001A6CB0
+m141f037  668   0x00121669  1:0x00111669  0x001A6CBD
+m141f037  669   0x00121685  1:0x00111685  0x001A6CD9
+m141f037  671   0x001216A3  1:0x001116A3  0x001A6CF7
+m141f037  673   0x001216A5  1:0x001116A5  0x001A6CF9
+m141f037  674   0x001216C1  1:0x001116C1  0x001A6D15
+m141f037  678   0x001216DF  1:0x001116DF  0x001A6D33
+m141f037  679   0x001216F6  1:0x001116F6  0x001A6D4A
+m141f037  682   0x0012170A  1:0x0011170A  0x001A6D5E
+m141f037  686   0x00121713  1:0x00111713  0x001A6D67
+m141f037  687   0x00121720  1:0x00111720  0x001A6D74
+m141f037  688   0x0012173A  1:0x0011173A  0x001A6D8E
+m141f037  689   0x0012173C  1:0x0011173C  0x001A6D90
+m141f037  691   0x00121756  1:0x00111756  0x001A6DAA
+m141f037  692   0x00121760  1:0x00111760  0x001A6DB4
+m141f037  694   0x0012176A  1:0x0011176A  0x001A6DBE
+m141f037  696   0x00121771  1:0x00111771  0x001A6DC5
+m141f037  698   0x00121783  1:0x00111783  0x001A6DD7
+m141f037  700   0x00121785  1:0x00111785  0x001A6DD9
+m141f037  702   0x0012179C  1:0x0011179C  0x001A6DF0
+m141f037  704   0x001217B2  1:0x001117B2  0x001A6E06
+m141f037  705   0x001217BF  1:0x001117BF  0x001A6E13
+m141f037  706   0x001217CC  1:0x001117CC  0x001A6E20
+m141f037  707   0x001217E0  1:0x001117E0  0x001A6E34
+m141f037  709   0x001217F4  1:0x001117F4  0x001A6E48
+m141f037  710   0x001217FD  1:0x001117FD  0x001A6E51
+m141f037  712   0x0012180E  1:0x0011180E  0x001A6E62
+m141f038  716   0x00121814  1:0x00111814  0x001A6E68
+m141f038  723   0x00121835  1:0x00111835  0x001A6E89
+m141f038  724   0x0012183C  1:0x0011183C  0x001A6E90
+m141f038  725   0x00121845  1:0x00111845  0x001A6E99
+m141f038  727   0x0012184E  1:0x0011184E  0x001A6EA2
+m141f038  729   0x00121859  1:0x00111859  0x001A6EAD
+m141f038  730   0x00121860  1:0x00111860  0x001A6EB4
+m141f038  732   0x00121867  1:0x00111867  0x001A6EBB
+m141f038  733   0x0012186E  1:0x0011186E  0x001A6EC2
+m141f038  734   0x00121875  1:0x00111875  0x001A6EC9
+m141f038  736   0x001218E4  1:0x001118E4  0x001A6F38
+m141f038  737   0x001218F9  1:0x001118F9  0x001A6F4D
+m141f038  738   0x001218FC  1:0x001118FC  0x001A6F50
+m141f038  739   0x00121901  1:0x00111901  0x001A6F55
+m141f038  741   0x0012190E  1:0x0011190E  0x001A6F62
+m141f038  742   0x00121919  1:0x00111919  0x001A6F6D
+m141f038  743   0x00121927  1:0x00111927  0x001A6F7B
+m141f038  745   0x00121929  1:0x00111929  0x001A6F7D
+m141f038  746   0x00121938  1:0x00111938  0x001A6F8C
+m141f038  750   0x00121947  1:0x00111947  0x001A6F9B
+m141f038  752   0x0012195E  1:0x0011195E  0x001A6FB2
+m141f038  754   0x001219F2  1:0x001119F2  0x001A7046
+m141f038  755   0x001219FE  1:0x001119FE  0x001A7052
+m141f038  757   0x00121A03  1:0x00111A03  0x001A7057
+m141f038  758   0x00121A0F  1:0x00111A0F  0x001A7063
+m141f038  760   0x00121A14  1:0x00111A14  0x001A7068
+m141f038  761   0x00121A20  1:0x00111A20  0x001A7074
+m141f038  763   0x00121A25  1:0x00111A25  0x001A7079
+m141f038  764   0x00121A31  1:0x00111A31  0x001A7085
+m141f038  768   0x00121A36  1:0x00111A36  0x001A708A
+m141f038  769   0x00121A43  1:0x00111A43  0x001A7097
+m141f038  770   0x00121A4C  1:0x00111A4C  0x001A70A0
+m141f038  781   0x00121A51  1:0x00111A51  0x001A70A5
+m141f038  782   0x00121A68  1:0x00111A68  0x001A70BC
+m141f038  783   0x00121A6B  1:0x00111A6B  0x001A70BF
+m141f038  785   0x00121A70  1:0x00111A70  0x001A70C4
+m141f038  789   0x00121A75  1:0x00111A75  0x001A70C9
+m141f038  791   0x00121A83  1:0x00111A83  0x001A70D7
+m141f038  792   0x00121A8D  1:0x00111A8D  0x001A70E1
+m141f038  793   0x00121AAE  1:0x00111AAE  0x001A7102
+m141f038  794   0x00121AB0  1:0x00111AB0  0x001A7104
+m141f038  796   0x00121AD1  1:0x00111AD1  0x001A7125
+m141f038  798   0x00121AE0  1:0x00111AE0  0x001A7134
+m141f038  799   0x00121AEA  1:0x00111AEA  0x001A713E
+m141f038  800   0x00121AF9  1:0x00111AF9  0x001A714D
+m141f038  805   0x00121AFC  1:0x00111AFC  0x001A7150
+m141f038  806   0x00121AFF  1:0x00111AFF  0x001A7153
+m141f038  809   0x00121B04  1:0x00111B04  0x001A7158
+m141f038  810   0x00121B0D  1:0x00111B0D  0x001A7161
+m141f039  812   0x00121B18  1:0x00111B18  0x001A716C
+m141f040  815   0x00121B40  1:0x00111B40  0x001A7194
+m141f040  819   0x00121B58  1:0x00111B58  0x001A71AC
+m141f040  820   0x00121B6F  1:0x00111B6F  0x001A71C3
+m141f040  821   0x00121B83  1:0x00111B83  0x001A71D7
+m141f041  824   0x00121B8C  1:0x00111B8C  0x001A71E0
+m141f041  828   0x00121BA4  1:0x00111BA4  0x001A71F8
+m141f041  829   0x00121BBB  1:0x00111BBB  0x001A720F
+m141f041  830   0x00121BCF  1:0x00111BCF  0x001A7223
+m141f042  833   0x00121BD8  1:0x00111BD8  0x001A722C
+m141f042  837   0x00121BF0  1:0x00111BF0  0x001A7244
+m141f042  838   0x00121C07  1:0x00111C07  0x001A725B
+m141f042  839   0x00121C1B  1:0x00111C1B  0x001A726F
+m141f043  842   0x00121C24  1:0x00111C24  0x001A7278
+m141f043  848   0x00121C45  1:0x00111C45  0x001A7299
+m141f043  849   0x00121C4C  1:0x00111C4C  0x001A72A0
+m141f043  851   0x00121C5F  1:0x00111C5F  0x001A72B3
+m141f043  852   0x00121C6A  1:0x00111C6A  0x001A72BE
+m141f043  853   0x00121C75  1:0x00111C75  0x001A72C9
+m141f043  855   0x00121C87  1:0x00111C87  0x001A72DB
+m141f043  856   0x00121C95  1:0x00111C95  0x001A72E9
+m141f043  857   0x00121CB2  1:0x00111CB2  0x001A7306
+m141f043  858   0x00121CC2  1:0x00111CC2  0x001A7316
+m141f043  860   0x00121CD4  1:0x00111CD4  0x001A7328
+m141f043  861   0x00121CDF  1:0x00111CDF  0x001A7333
+m141f044  864   0x00121CE5  1:0x00111CE5  0x001A7339
+m141f044  866   0x00121D04  1:0x00111D04  0x001A7358
+m141f044  867   0x00121D12  1:0x00111D12  0x001A7366
+m141f045  870   0x00121D19  1:0x00111D19  0x001A736D
+m141f045  874   0x00121D38  1:0x00111D38  0x001A738C
+m141f045  875   0x00121D48  1:0x00111D48  0x001A739C
+m141f045  876   0x00121D56  1:0x00111D56  0x001A73AA
+m141f046  879   0x00121D5D  1:0x00111D5D  0x001A73B1
+m141f046  883   0x00121D7C  1:0x00111D7C  0x001A73D0
+m141f046  884   0x00121D8C  1:0x00111D8C  0x001A73E0
+m141f046  885   0x00121D9A  1:0x00111D9A  0x001A73EE
+m141f047  888   0x00121DA1  1:0x00111DA1  0x001A73F5
+m141f047  893   0x00121DC0  1:0x00111DC0  0x001A7414
+m141f047  894   0x00121DC6  1:0x00111DC6  0x001A741A
+m141f047  895   0x00121DD6  1:0x00111DD6  0x001A742A
+m141f047  896   0x00121DE4  1:0x00111DE4  0x001A7438
+m141f048  899   0x00121DEB  1:0x00111DEB  0x001A743F
+m141f048  905   0x00121E0A  1:0x00111E0A  0x001A745E
+m141f048  906   0x00121E20  1:0x00111E20  0x001A7474
+m141f048  907   0x00121E29  1:0x00111E29  0x001A747D
+m141f048  909   0x00121E3A  1:0x00111E3A  0x001A748E
+m141f048  913   0x00121E59  1:0x00111E59  0x001A74AD
+m141f048  915   0x00121E75  1:0x00111E75  0x001A74C9
+m141f048  916   0x00121E7B  1:0x00111E7B  0x001A74CF
+m141f049  919   0x00121E85  1:0x00111E85  0x001A74D9
+m141f049  926   0x00121EA4  1:0x00111EA4  0x001A74F8
+m141f049  927   0x00121EBA  1:0x00111EBA  0x001A750E
+m141f049  928   0x00121EC3  1:0x00111EC3  0x001A7517
+m141f049  930   0x00121ED4  1:0x00111ED4  0x001A7528
+m141f049  934   0x00121EF3  1:0x00111EF3  0x001A7547
+m141f049  936   0x00121F0F  1:0x00111F0F  0x001A7563
+m141f049  937   0x00121F15  1:0x00111F15  0x001A7569
+m141f050  940   0x00121F1F  1:0x00111F1F  0x001A7573
+m141f050  942   0x00121F3A  1:0x00111F3A  0x001A758E
+m141f050  943   0x00121F43  1:0x00111F43  0x001A7597
+m141f051  946   0x00121F4C  1:0x00111F4C  0x001A75A0
+m141f051  948   0x00121F67  1:0x00111F67  0x001A75BB
+m141f051  949   0x00121F72  1:0x00111F72  0x001A75C6
+m141f052  952   0x00121F7B  1:0x00111F7B  0x001A75CF
+m141f052  958   0x00121F9A  1:0x00111F9A  0x001A75EE
+m141f052  961   0x00121FA8  1:0x00111FA8  0x001A75FC
+m141f052  962   0x00121FAF  1:0x00111FAF  0x001A7603
+m141f052  963   0x00121FB7  1:0x00111FB7  0x001A760B
+m141f052  964   0x00121FC1  1:0x00111FC1  0x001A7615
+m141f052  965   0x00121FDF  1:0x00111FDF  0x001A7633
+m141f052  967   0x00121FFD  1:0x00111FFD  0x001A7651
+m141f052  968   0x00122008  1:0x00112008  0x001A765C
+m141f052  969   0x00122013  1:0x00112013  0x001A7667
+m141f052  970   0x0012201E  1:0x0011201E  0x001A7672
+m141f052  972   0x00122029  1:0x00112029  0x001A767D
+m141f052  973   0x0012203C  1:0x0011203C  0x001A7690
+m141f052  974   0x00122047  1:0x00112047  0x001A769B
+m141f052  975   0x00122052  1:0x00112052  0x001A76A6
+m141f052  978   0x00122061  1:0x00112061  0x001A76B5
+m141f052  979   0x00122066  1:0x00112066  0x001A76BA
+m141f052  981   0x00122097  1:0x00112097  0x001A76EB
+m141f052  982   0x001220A6  1:0x001120A6  0x001A76FA
+m141f052  983   0x001220AB  1:0x001120AB  0x001A76FF
+m141f052  984   0x001220BB  1:0x001120BB  0x001A770F
+m141f052  986   0x001220E3  1:0x001120E3  0x001A7737
+m141f052  987   0x001220F8  1:0x001120F8  0x001A774C
+m141f052  988   0x00122103  1:0x00112103  0x001A7757
+m141f052  989   0x0012210B  1:0x0011210B  0x001A775F
+m141f052  990   0x00122112  1:0x00112112  0x001A7766
+m141f053  993   0x00122119  1:0x00112119  0x001A776D
+m141f053  997   0x00122131  1:0x00112131  0x001A7785
+m141f053  998   0x00122138  1:0x00112138  0x001A778C
+m141f053  1000  0x0012213F  1:0x0011213F  0x001A7793
+m141f053  1002  0x00122159  1:0x00112159  0x001A77AD
+m141f053  1005  0x00122190  1:0x00112190  0x001A77E4
+m141f053  1007  0x00122198  1:0x00112198  0x001A77EC
+m141f053  1008  0x0012219E  1:0x0011219E  0x001A77F2
+m141f053  1010  0x001221A4  1:0x001121A4  0x001A77F8
+m141f053  1012  0x001221A6  1:0x001121A6  0x001A77FA
+m141f053  1013  0x001221BD  1:0x001121BD  0x001A7811
+m141f053  1014  0x001221CB  1:0x001121CB  0x001A781F
+m141f054  1017  0x001221D4  1:0x001121D4  0x001A7828
+m141f054  1019  0x001221EF  1:0x001121EF  0x001A7843
+m141f054  1020  0x001221F8  1:0x001121F8  0x001A784C
+m141f055  1023  0x00122201  1:0x00112201  0x001A7855
+m141f055  1025  0x00122219  1:0x00112219  0x001A786D
+m141f055  1026  0x00122222  1:0x00112222  0x001A7876
+m141f056  1029  0x0012222E  1:0x0011222E  0x001A7882
+m141f056  1031  0x00122246  1:0x00112246  0x001A789A
+m141f056  1032  0x0012224D  1:0x0011224D  0x001A78A1
+m141f057  1035  0x00122259  1:0x00112259  0x001A78AD
+m141f057  1037  0x00122271  1:0x00112271  0x001A78C5
+m141f057  1038  0x0012227A  1:0x0011227A  0x001A78CE
+m141f058  1040  0x00122286  1:0x00112286  0x001A78DA
+m141f058  1042  0x0012229E  1:0x0011229E  0x001A78F2
+m141f058  1043  0x001222A7  1:0x001122A7  0x001A78FB
+m141f059  1045  0x001222B3  1:0x001122B3  0x001A7907
+m141f059  1047  0x001222CB  1:0x001122CB  0x001A791F
+m141f059  1048  0x001222D2  1:0x001122D2  0x001A7926
+m141f060  1049  0x001222DE  1:0x001122DE  0x001A7932
+m141f060  1051  0x001222F6  1:0x001122F6  0x001A794A
+m141f060  1052  0x001222FD  1:0x001122FD  0x001A7951
+m141f061  1055  0x00122309  1:0x00112309  0x001A795D
+m141f061  1062  0x0012232A  1:0x0011232A  0x001A797E
+m141f061  1064  0x00122335  1:0x00112335  0x001A7989
+m141f061  1066  0x00122356  1:0x00112356  0x001A79AA
+m141f061  1073  0x00122362  1:0x00112362  0x001A79B6
+m141f061  1074  0x00122369  1:0x00112369  0x001A79BD
+m141f061  1075  0x00122372  1:0x00112372  0x001A79C6
+m141f061  1077  0x0012237B  1:0x0011237B  0x001A79CF
+m141f061  1079  0x00122386  1:0x00112386  0x001A79DA
+m141f061  1080  0x0012238D  1:0x0011238D  0x001A79E1
+m141f061  1082  0x00122394  1:0x00112394  0x001A79E8
+m141f061  1083  0x0012239B  1:0x0011239B  0x001A79EF
+m141f061  1084  0x001223A2  1:0x001123A2  0x001A79F6
+m141f061  1086  0x00122411  1:0x00112411  0x001A7A65
+m141f061  1087  0x00122426  1:0x00112426  0x001A7A7A
+m141f061  1088  0x00122429  1:0x00112429  0x001A7A7D
+m141f061  1089  0x0012242E  1:0x0011242E  0x001A7A82
+m141f061  1091  0x0012243B  1:0x0011243B  0x001A7A8F
+m141f061  1092  0x00122446  1:0x00112446  0x001A7A9A
+m141f061  1093  0x00122454  1:0x00112454  0x001A7AA8
+m141f061  1095  0x00122456  1:0x00112456  0x001A7AAA
+m141f061  1096  0x00122465  1:0x00112465  0x001A7AB9
+m141f061  1100  0x00122474  1:0x00112474  0x001A7AC8
+m141f061  1102  0x0012248B  1:0x0011248B  0x001A7ADF
+m141f061  1104  0x0012251F  1:0x0011251F  0x001A7B73
+m141f061  1105  0x0012252B  1:0x0011252B  0x001A7B7F
+m141f061  1107  0x00122530  1:0x00112530  0x001A7B84
+m141f061  1108  0x0012253C  1:0x0011253C  0x001A7B90
+m141f061  1110  0x00122541  1:0x00112541  0x001A7B95
+m141f061  1111  0x0012254D  1:0x0011254D  0x001A7BA1
+m141f061  1113  0x00122552  1:0x00112552  0x001A7BA6
+m141f061  1114  0x0012255E  1:0x0011255E  0x001A7BB2
+m141f061  1118  0x00122563  1:0x00112563  0x001A7BB7
+m141f061  1119  0x00122570  1:0x00112570  0x001A7BC4
+m141f061  1120  0x00122579  1:0x00112579  0x001A7BCD
+m141f061  1131  0x0012257E  1:0x0011257E  0x001A7BD2
+m141f061  1132  0x00122595  1:0x00112595  0x001A7BE9
+m141f061  1133  0x00122598  1:0x00112598  0x001A7BEC
+m141f061  1136  0x0012259A  1:0x0011259A  0x001A7BEE
+m141f061  1139  0x0012259C  1:0x0011259C  0x001A7BF0
+m141f061  1143  0x001225A7  1:0x001125A7  0x001A7BFB
+m141f061  1149  0x001225C8  1:0x001125C8  0x001A7C1C
+m141f061  1151  0x001225D7  1:0x001125D7  0x001A7C2B
+m141f061  1152  0x001225E1  1:0x001125E1  0x001A7C35
+m141f061  1153  0x001225F0  1:0x001125F0  0x001A7C44
+m141f061  1158  0x001225F3  1:0x001125F3  0x001A7C47
+m141f061  1159  0x001225F6  1:0x001125F6  0x001A7C4A
+m141f061  1161  0x001225FB  1:0x001125FB  0x001A7C4F
+m141f061  1162  0x00122604  1:0x00112604  0x001A7C58
+m141f062  1165  0x0012260F  1:0x0011260F  0x001A7C63
+m141f062  1171  0x0012262E  1:0x0011262E  0x001A7C82
+m141f062  1173  0x00122645  1:0x00112645  0x001A7C99
+m141f062  1174  0x00122655  1:0x00112655  0x001A7CA9
+m141f062  1175  0x0012265E  1:0x0011265E  0x001A7CB2
+m141f062  1177  0x00122667  1:0x00112667  0x001A7CBB
+m141f062  1179  0x001226B1  1:0x001126B1  0x001A7D05
+m141f062  1180  0x001226C6  1:0x001126C6  0x001A7D1A
+m141f062  1182  0x001226CB  1:0x001126CB  0x001A7D1F
+m141f062  1184  0x001226D9  1:0x001126D9  0x001A7D2D
+m141f062  1186  0x001226E5  1:0x001126E5  0x001A7D39
+m141f062  1187  0x001226F1  1:0x001126F1  0x001A7D45
+m141f062  1188  0x00122705  1:0x00112705  0x001A7D59
+m141f062  1189  0x0012270E  1:0x0011270E  0x001A7D62
+m141f062  1191  0x00122714  1:0x00112714  0x001A7D68
+m141f062  1192  0x00122716  1:0x00112716  0x001A7D6A
+m141f062  1194  0x0012271D  1:0x0011271D  0x001A7D71
+m141f062  1196  0x00122733  1:0x00112733  0x001A7D87
+m141f062  1197  0x00122740  1:0x00112740  0x001A7D94
+m141f062  1200  0x00122754  1:0x00112754  0x001A7DA8
+m141f062  1202  0x00122760  1:0x00112760  0x001A7DB4
+m141f062  1203  0x0012276C  1:0x0011276C  0x001A7DC0
+m141f062  1205  0x00122775  1:0x00112775  0x001A7DC9
+m141f062  1207  0x0012277E  1:0x0011277E  0x001A7DD2
+m141f062  1208  0x001227A1  1:0x001127A1  0x001A7DF5
+m141f062  1210  0x001227A9  1:0x001127A9  0x001A7DFD
+m141f062  1213  0x001227CE  1:0x001127CE  0x001A7E22
+m141f062  1214  0x001227DC  1:0x001127DC  0x001A7E30
+m141f062  1215  0x001227E2  1:0x001127E2  0x001A7E36
+m141f063  1218  0x001227EC  1:0x001127EC  0x001A7E40
+m141f063  1225  0x0012280D  1:0x0011280D  0x001A7E61
+m141f063  1226  0x00122827  1:0x00112827  0x001A7E7B
+m141f063  1227  0x00122830  1:0x00112830  0x001A7E84
+m141f063  1229  0x00122842  1:0x00112842  0x001A7E96
+m141f063  1231  0x00122851  1:0x00112851  0x001A7EA5
+m141f063  1233  0x0012286B  1:0x0011286B  0x001A7EBF
+m141f063  1234  0x00122889  1:0x00112889  0x001A7EDD
+m141f063  1235  0x0012288C  1:0x0011288C  0x001A7EE0
+m141f063  1237  0x0012288E  1:0x0011288E  0x001A7EE2
+m141f063  1239  0x00122894  1:0x00112894  0x001A7EE8
+m141f063  1241  0x001228B1  1:0x001128B1  0x001A7F05
+m141f063  1242  0x001228B7  1:0x001128B7  0x001A7F0B
+m141f063  1243  0x001228C3  1:0x001128C3  0x001A7F17
+m141f063  1245  0x001228CF  1:0x001128CF  0x001A7F23
+m141f063  1246  0x001228DF  1:0x001128DF  0x001A7F33
+m141f063  1248  0x001228EB  1:0x001128EB  0x001A7F3F
+m141f063  1249  0x00122904  1:0x00112904  0x001A7F58
+m141f063  1251  0x00122906  1:0x00112906  0x001A7F5A
+m141f063  1252  0x00122918  1:0x00112918  0x001A7F6C
+m141f063  1253  0x0012292E  1:0x0011292E  0x001A7F82
+m141f063  1255  0x00122931  1:0x00112931  0x001A7F85
+m141f063  1256  0x00122934  1:0x00112934  0x001A7F88
+m141f063  1257  0x00122945  1:0x00112945  0x001A7F99
+m141f063  1258  0x00122947  1:0x00112947  0x001A7F9B
+m141f063  1259  0x0012294A  1:0x0011294A  0x001A7F9E
+m141f063  1260  0x00122952  1:0x00112952  0x001A7FA6
+m141f063  1261  0x00122957  1:0x00112957  0x001A7FAB
+m141f063  1262  0x00122973  1:0x00112973  0x001A7FC7
+m141f064  1269  0x0012297B  1:0x0011297B  0x001A7FCF
+m141f064  1274  0x0012299C  1:0x0011299C  0x001A7FF0
+m141f064  1275  0x001229A9  1:0x001129A9  0x001A7FFD
+m141f064  1276  0x001229BF  1:0x001129BF  0x001A8013
+m141f065  1281  0x001229C5  1:0x001129C5  0x001A8019
+m141f065  1286  0x001229E6  1:0x001129E6  0x001A803A
+m141f065  1287  0x001229F2  1:0x001129F2  0x001A8046
+m141f065  1288  0x00122A19  1:0x00112A19  0x001A806D
+m141f066  1294  0x00122A1F  1:0x00112A1F  0x001A8073
+m141f066  1296  0x00122A40  1:0x00112A40  0x001A8094
+m141f066  1297  0x00122A4E  1:0x00112A4E  0x001A80A2
+m141f066  1298  0x00122A66  1:0x00112A66  0x001A80BA
+m141f067  1305  0x00122A6E  1:0x00112A6E  0x001A80C2
+m141f067  1307  0x00122A8F  1:0x00112A8F  0x001A80E3
+m141f067  1308  0x00122AA5  1:0x00112AA5  0x001A80F9
+m141f068  1311  0x00122AAB  1:0x00112AAB  0x001A80FF
+m141f068  1315  0x00122ACC  1:0x00112ACC  0x001A8120
+m141f068  1316  0x00122AD4  1:0x00112AD4  0x001A8128
+m141f068  1317  0x00122AE8  1:0x00112AE8  0x001A813C
+m141f068  1319  0x00122AF2  1:0x00112AF2  0x001A8146
+m141f068  1321  0x00122AFD  1:0x00112AFD  0x001A8151
+m141f068  1323  0x00122B04  1:0x00112B04  0x001A8158
+m141f068  1325  0x00122B0E  1:0x00112B0E  0x001A8162
+m141f068  1326  0x00122B18  1:0x00112B18  0x001A816C
+m141f068  1328  0x00122B40  1:0x00112B40  0x001A8194
+m141f068  1330  0x00122B49  1:0x00112B49  0x001A819D
+m141f068  1331  0x00122B5C  1:0x00112B5C  0x001A81B0
+m141f068  1333  0x00122B65  1:0x00112B65  0x001A81B9
+m141f068  1335  0x00122B6B  1:0x00112B6B  0x001A81BF
+m141f068  1336  0x00122B8A  1:0x00112B8A  0x001A81DE
+m141f068  1337  0x00122BA8  1:0x00112BA8  0x001A81FC
+m141f068  1339  0x00122BC4  1:0x00112BC4  0x001A8218
+m141f068  1341  0x00122BD2  1:0x00112BD2  0x001A8226
+m141f068  1342  0x00122BEE  1:0x00112BEE  0x001A8242
+m141f068  1343  0x00122C0D  1:0x00112C0D  0x001A8261
+m141f068  1346  0x00122C2B  1:0x00112C2B  0x001A827F
+m141f068  1348  0x00122C37  1:0x00112C37  0x001A828B
+m141f068  1349  0x00122C5E  1:0x00112C5E  0x001A82B2
+m141f068  1350  0x00122C81  1:0x00112C81  0x001A82D5
+m141f068  1353  0x00122CA4  1:0x00112CA4  0x001A82F8
+m141f068  1355  0x00122CAA  1:0x00112CAA  0x001A82FE
+m141f068  1356  0x00122CC9  1:0x00112CC9  0x001A831D
+m141f068  1359  0x00122CE8  1:0x00112CE8  0x001A833C
+m141f068  1361  0x00122CEE  1:0x00112CEE  0x001A8342
+m141f068  1362  0x00122D0E  1:0x00112D0E  0x001A8362
+m141f068  1365  0x00122D30  1:0x00112D30  0x001A8384
+m141f068  1366  0x00122D47  1:0x00112D47  0x001A839B
+m141f068  1368  0x00122D5B  1:0x00112D5B  0x001A83AF
+m141f068  1370  0x00122D64  1:0x00112D64  0x001A83B8
+m141f068  1371  0x00122D82  1:0x00112D82  0x001A83D6
+m141f069  1375  0x00122D8A  1:0x00112D8A  0x001A83DE
+m141f069  1377  0x00122DAB  1:0x00112DAB  0x001A83FF
+m141f069  1380  0x00122DB2  1:0x00112DB2  0x001A8406
+m141f069  1381  0x00122DBD  1:0x00112DBD  0x001A8411
+m141f069  1382  0x00122DC9  1:0x00112DC9  0x001A841D
+m141f069  1383  0x00122DD0  1:0x00112DD0  0x001A8424
+m141f069  1384  0x00122DD7  1:0x00112DD7  0x001A842B
+m141f069  1385  0x00122DDE  1:0x00112DDE  0x001A8432
+m141f069  1388  0x00122DE5  1:0x00112DE5  0x001A8439
+m141f069  1390  0x00122DEC  1:0x00112DEC  0x001A8440
+m141f069  1391  0x00122DF5  1:0x00112DF5  0x001A8449
+m141f069  1393  0x00122DFE  1:0x00112DFE  0x001A8452
+m141f069  1395  0x00122E2F  1:0x00112E2F  0x001A8483
+m141f069  1397  0x00122E34  1:0x00112E34  0x001A8488
+m141f069  1399  0x00122E3F  1:0x00112E3F  0x001A8493
+m141f069  1401  0x00122EAE  1:0x00112EAE  0x001A8502
+m141f069  1402  0x00122EC0  1:0x00112EC0  0x001A8514
+m141f069  1404  0x00122EC6  1:0x00112EC6  0x001A851A
+m141f069  1405  0x00122ECC  1:0x00112ECC  0x001A8520
+m141f069  1407  0x00122ED1  1:0x00112ED1  0x001A8525
+m141f069  1408  0x00122ED7  1:0x00112ED7  0x001A852B
+m141f069  1410  0x00122EDE  1:0x00112EDE  0x001A8532
+m141f069  1412  0x00122EE9  1:0x00112EE9  0x001A853D
+m141f069  1413  0x00122EF0  1:0x00112EF0  0x001A8544
+m141f069  1414  0x00122EF7  1:0x00112EF7  0x001A854B
+m141f069  1416  0x00122EF9  1:0x00112EF9  0x001A854D
+m141f069  1417  0x00122F08  1:0x00112F08  0x001A855C
+m141f069  1421  0x00122F17  1:0x00112F17  0x001A856B
+m141f069  1423  0x00122F2C  1:0x00112F2C  0x001A8580
+m141f069  1426  0x00122FA7  1:0x00112FA7  0x001A85FB
+m141f069  1427  0x00122FAE  1:0x00112FAE  0x001A8602
+m141f069  1428  0x00122FB3  1:0x00112FB3  0x001A8607
+m141f069  1431  0x00122FB8  1:0x00112FB8  0x001A860C
+m141f069  1432  0x00122FBF  1:0x00112FBF  0x001A8613
+m141f069  1433  0x00122FC4  1:0x00112FC4  0x001A8618
+m141f069  1436  0x00122FC9  1:0x00112FC9  0x001A861D
+m141f069  1437  0x00122FD0  1:0x00112FD0  0x001A8624
+m141f069  1438  0x00122FD5  1:0x00112FD5  0x001A8629
+m141f069  1441  0x00122FDA  1:0x00112FDA  0x001A862E
+m141f069  1442  0x00122FE1  1:0x00112FE1  0x001A8635
+m141f069  1443  0x00122FE6  1:0x00112FE6  0x001A863A
+m141f069  1450  0x00122FEB  1:0x00112FEB  0x001A863F
+m141f069  1453  0x00122FF0  1:0x00112FF0  0x001A8644
+m141f069  1455  0x00122FF2  1:0x00112FF2  0x001A8646
+m141f069  1456  0x00123010  1:0x00113010  0x001A8664
+m141f069  1458  0x0012302B  1:0x0011302B  0x001A867F
+m141f069  1460  0x0012303E  1:0x0011303E  0x001A8692
+m141f069  1462  0x00123048  1:0x00113048  0x001A869C
+m141f069  1463  0x00123050  1:0x00113050  0x001A86A4
+m141f069  1465  0x00123057  1:0x00113057  0x001A86AB
+m141f069  1471  0x0012305D  1:0x0011305D  0x001A86B1
+m141f069  1472  0x00123063  1:0x00113063  0x001A86B7
+m141f069  1473  0x00123068  1:0x00113068  0x001A86BC
+m141f070  1476  0x00123070  1:0x00113070  0x001A86C4
+m141f070  1482  0x00123091  1:0x00113091  0x001A86E5
+m141f070  1485  0x001230A1  1:0x001130A1  0x001A86F5
+m141f070  1486  0x001230B1  1:0x001130B1  0x001A8705
+m141f070  1487  0x001230BA  1:0x001130BA  0x001A870E
+m141f070  1489  0x001230C3  1:0x001130C3  0x001A8717
+m141f070  1491  0x001230D1  1:0x001130D1  0x001A8725
+m141f070  1492  0x001230DB  1:0x001130DB  0x001A872F
+m141f070  1494  0x001230E6  1:0x001130E6  0x001A873A
+m141f070  1496  0x001230ED  1:0x001130ED  0x001A8741
+m141f070  1497  0x001230F6  1:0x001130F6  0x001A874A
+m141f070  1498  0x00123103  1:0x00113103  0x001A8757
+m141f070  1499  0x0012310A  1:0x0011310A  0x001A875E
+m141f070  1501  0x00123110  1:0x00113110  0x001A8764
+m141f070  1502  0x00123112  1:0x00113112  0x001A8766
+m141f070  1505  0x00123119  1:0x00113119  0x001A876D
+m141f070  1507  0x0012312B  1:0x0011312B  0x001A877F
+m141f070  1508  0x00123135  1:0x00113135  0x001A8789
+m141f070  1511  0x0012313E  1:0x0011313E  0x001A8792
+m141f070  1513  0x00123145  1:0x00113145  0x001A8799
+m141f070  1514  0x0012314E  1:0x0011314E  0x001A87A2
+m141f070  1516  0x00123155  1:0x00113155  0x001A87A9
+m141f070  1518  0x0012315E  1:0x0011315E  0x001A87B2
+m141f070  1519  0x0012317A  1:0x0011317A  0x001A87CE
+m141f070  1521  0x00123182  1:0x00113182  0x001A87D6
+m141f070  1522  0x001231AB  1:0x001131AB  0x001A87FF
+m141f071  1526  0x001231B1  1:0x001131B1  0x001A8805
+m141f071  1537  0x001231D2  1:0x001131D2  0x001A8826
+m141f071  1539  0x001231DA  1:0x001131DA  0x001A882E
+m141f071  1542  0x001231E5  1:0x001131E5  0x001A8839
+m141f071  1545  0x00123203  1:0x00113203  0x001A8857
+m141f071  1547  0x0012320E  1:0x0011320E  0x001A8862
+m141f071  1548  0x00123228  1:0x00113228  0x001A887C
+m141f071  1549  0x00123231  1:0x00113231  0x001A8885
+m141f071  1551  0x00123243  1:0x00113243  0x001A8897
+m141f071  1553  0x00123252  1:0x00113252  0x001A88A6
+m141f071  1555  0x0012326C  1:0x0011326C  0x001A88C0
+m141f071  1556  0x0012328A  1:0x0011328A  0x001A88DE
+m141f071  1557  0x0012328D  1:0x0011328D  0x001A88E1
+m141f071  1559  0x0012328F  1:0x0011328F  0x001A88E3
+m141f071  1561  0x00123295  1:0x00113295  0x001A88E9
+m141f071  1563  0x001232B2  1:0x001132B2  0x001A8906
+m141f071  1564  0x001232B8  1:0x001132B8  0x001A890C
+m141f071  1565  0x001232C4  1:0x001132C4  0x001A8918
+m141f071  1567  0x001232D0  1:0x001132D0  0x001A8924
+m141f071  1568  0x001232E0  1:0x001132E0  0x001A8934
+m141f071  1570  0x001232F0  1:0x001132F0  0x001A8944
+m141f071  1571  0x001232FC  1:0x001132FC  0x001A8950
+m141f071  1572  0x00123309  1:0x00113309  0x001A895D
+m141f071  1574  0x0012330B  1:0x0011330B  0x001A895F
+m141f071  1575  0x00123325  1:0x00113325  0x001A8979
+m141f071  1577  0x00123338  1:0x00113338  0x001A898C
+m141f071  1579  0x0012333E  1:0x0011333E  0x001A8992
+m141f071  1580  0x00123341  1:0x00113341  0x001A8995
+m141f071  1581  0x00123352  1:0x00113352  0x001A89A6
+m141f071  1582  0x00123354  1:0x00113354  0x001A89A8
+m141f071  1583  0x00123357  1:0x00113357  0x001A89AB
+m141f071  1584  0x0012335E  1:0x0011335E  0x001A89B2
+m141f071  1585  0x00123363  1:0x00113363  0x001A89B7
+m141f071  1586  0x0012337F  1:0x0011337F  0x001A89D3
+m141f072  1589  0x00123387  1:0x00113387  0x001A89DB
+m141f072  1591  0x001233A2  1:0x001133A2  0x001A89F6
+m141f072  1592  0x001233AB  1:0x001133AB  0x001A89FF

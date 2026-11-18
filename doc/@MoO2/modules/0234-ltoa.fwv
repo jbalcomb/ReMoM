@@ -1,0 +1,11 @@
+module_num=234
+module=ltoa
+source=0234-ltoa.md
+range[0]=1:0x00134942 linear=0x00144942 size=138
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME      SYMBOL     CHUNK
+m234f001    1    -      0x00144942  1:0x00134942  static,code  Alphabet  _Alphabet  regions/07-object-1/001C9E54-001CA653.txt
+m234f002    2    -      0x00144967  1:0x00134967  code         ultoa     ultoa_     regions/07-object-1/001C9E54-001CA653.txt
+m234f003    3    1/2    0x001449B1  1:0x001349B1  code         ltoa      ltoa_      regions/07-object-1/001C9E54-001CA653.txt
+m234f003_2  3    2/2    0x001449B1  1:0x001349B1  code         _ltoa     _ltoa_     regions/07-object-1/001C9E54-001CA653.txt

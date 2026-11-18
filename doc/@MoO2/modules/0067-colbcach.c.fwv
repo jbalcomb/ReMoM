@@ -1,0 +1,21 @@
+module_num=67
+module=D:\MOX\OTHERS\COLBCACH.C
+source=0067-colbcach.c.md
+range[0]=1:0x0009F542 linear=0x000AF542 size=512
+range[1]=2:0x0002579C linear=0x0019579C size=720
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m067f001  1    -      0x000AF542  1:0x0009F542  code         Allocate_Bldg_Cache        Allocate_Bldg_Cache_        regions/07-object-1/00134654-00134E53.txt
+m067f002  2    -      0x000AF5AE  1:0x0009F5AE  code         Deallocate_Bldg_Cache      Deallocate_Bldg_Cache_      regions/07-object-1/00134654-00134E53.txt
+m067f003  3    -      0x000AF5F6  1:0x0009F5F6  static,code  Bldg_In_Cache              Bldg_In_Cache_              regions/07-object-1/00134654-00134E53.txt
+m067f004  4    -      0x000AF64E  1:0x0009F64E  static,code  Oldest_Slot_In_Bldg_Cache  Oldest_Slot_In_Bldg_Cache_  regions/07-object-1/00134654-00134E53.txt
+m067f005  5    -      0x000AF67A  1:0x0009F67A  static,code  Touch_Slot                 Touch_Slot_                 regions/07-object-1/00134654-00134E53.txt
+m067f006  6    -      0x000AF692  1:0x0009F692  code         Touch_Bldg                 Touch_Bldg_                 regions/07-object-1/00134654-00134E53.txt
+m067f007  7    -      0x000AF6DC  1:0x0009F6DC  code         Cache_Load_Bldg            Cache_Load_Bldg_            regions/07-object-1/00134654-00134E53.txt
+-         -    -      0x0019579C  2:0x0002579C  data         _bldg_cache_index          _bldg_cache_index           -
+-         -    -      0x001957EC  2:0x000257EC  data         _bldg_cache_col            _bldg_cache_col             -
+-         -    -      0x0019583C  2:0x0002583C  data         _bldg_cache_row            _bldg_cache_row             -
+-         -    -      0x0019588C  2:0x0002588C  data         _bldg_cache                _bldg_cache                 -
+-         -    -      0x0019592C  2:0x0002592C  data         _bldg_cache_time_stamp     _bldg_cache_time_stamp      -
+-         -    -      0x001959CC  2:0x000259CC  data         _bldg_cache_seg            _bldg_cache_seg             -

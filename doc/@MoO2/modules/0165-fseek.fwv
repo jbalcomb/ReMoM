@@ -1,0 +1,9 @@
+module_num=165
+module=fseek
+source=0165-fseek.md
+range[0]=1:0x00119EA6 linear=0x00129EA6 size=318
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME             SYMBOL            CHUNK
+m165f001  1    -      0x00129EA6  1:0x00119EA6  static,code  __update_buffer  __update_buffer_  regions/07-object-1/001AEE54-001AF653.txt
+m165f002  2    -      0x00129EE8  1:0x00119EE8  code         fseek            fseek_            regions/07-object-1/001AEE54-001AF653.txt

@@ -17,10 +17,10 @@
 
 
 // WZD dseg:7602                                                 BEGIN:  seg011 - Initialized Data
-// WZD dseg:7602 72 00                                           str_r__WZD_seg011 db 'r',0              ; DATA XREF: gfopen+7o
-// WZD dseg:7604 72 62 00                                        str_rb__WZD_seg011 db 'rb',0            ; DATA XREF: gfopen+17o
-// WZD dseg:7607 77 00                                           str_w__WZD_seg011 db 'w',0              ; DATA XREF: gfopen:loc_169D5o
-// WZD dseg:7609 77 62 00                                        str_wb__WZD_seg011 db 'wb',0            ; DATA XREF: gfopen+44o
+// WZD dseg:7602 72 00                                           str_r__WZD_seg011 db 'r',0              ; DATA XREF: gfopen+7^o
+// WZD dseg:7604 72 62 00                                        str_rb__WZD_seg011 db 'rb',0            ; DATA XREF: gfopen+17^o
+// WZD dseg:7607 77 00                                           str_w__WZD_seg011 db 'w',0              ; DATA XREF: gfopen:loc_169D5^o
+// WZD dseg:7609 77 62 00                                        str_wb__WZD_seg011 db 'wb',0            ; DATA XREF: gfopen+44^o
 // WZD dseg:7609                                                 END:  seg011 - Initialized Data
 
 // WZD dseg:E5E6                                                 BEGIN:  seg011 - Unitialized Data

@@ -1,0 +1,12 @@
+module_num=151
+module=fclose
+source=0151-fclose.md
+range[0]=1:0x0011697A linear=0x0012697A size=323
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME               SYMBOL              CHUNK
+m151f001  1    -      0x0012697A  1:0x0011697A  code         fclose             fclose_             regions/07-object-1/001ABE54-001AC653.txt
+m151f002  2    -      0x001269A7  1:0x001169A7  code         __shutdown_stream  __shutdown_stream_  regions/07-object-1/001ABE54-001AC653.txt
+m151f003  3    -      0x001269BC  1:0x001169BC  static,code  __hex              __hex_              regions/07-object-1/001ABE54-001AC653.txt
+m151f004  4    -      0x001269C8  1:0x001169C8  code         __MkTmpFile        __MkTmpFile_        regions/07-object-1/001ABE54-001AC653.txt
+m151f005  5    -      0x00126A2D  1:0x00116A2D  code         __doclose          __doclose_          regions/07-object-1/001ABE54-001AC653.txt

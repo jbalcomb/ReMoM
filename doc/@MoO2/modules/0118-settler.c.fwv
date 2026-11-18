@@ -1,0 +1,14 @@
+module_num=118
+module=D:\MOX\OTHERS\SETTLER.C
+source=0118-settler.c.md
+range[0]=1:0x000EED3F linear=0x000FED3F size=1879
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m118f001  1    -      0x000FED3F  1:0x000EED3F  static,code  Settler_ETA                    Settler_ETA_                    regions/07-object-1/00183E54-00184653.txt
+m118f002  2    -      0x000FED77  1:0x000EED77  static,code  Room_For_Another               Room_For_Another_               regions/07-object-1/00183E54-00184653.txt
+m118f003  3    -      0x000FEE4C  1:0x000EEE4C  code         Pop_Tries_To_Settle            Pop_Tries_To_Settle_            regions/07-object-1/00183E54-00184653.txt
+m118f004  4    -      0x000FF015  1:0x000EF015  static,code  Add_Settler_To_Colony          Add_Settler_To_Colony_          regions/07-object-1/00184654-00184E53.txt
+m118f005  5    -      0x000FF116  1:0x000EF116  code         Settle_Pop                     Settle_Pop_                     regions/07-object-1/00184654-00184E53.txt
+m118f006  6    -      0x000FF212  1:0x000EF212  code         Move_Settlers                  Move_Settlers_                  regions/07-object-1/00184654-00184E53.txt
+m118f007  7    -      0x000FF477  1:0x000EF477  code         N_Freighters_Player_Can_Scrap  N_Freighters_Player_Can_Scrap_  regions/07-object-1/00184654-00184E53.txt

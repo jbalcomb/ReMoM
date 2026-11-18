@@ -54,7 +54,7 @@ Durable decisions that apply across all phases:
   The base pointers now point into the static pool instead of into a
   malloc block; the inject API and the OG-captured byte payloads are
   unchanged.
-- **HeMoM ↔ ReMoM parity**: both targets consume MoX/src/Allocate.c
+- **DeMoM ↔ ReMoM parity**: both targets consume MoX/src/Allocate.c
   and the new `Allocate_Pool` module identically. No per-target
   conditional behavior.
 
@@ -98,7 +98,7 @@ end-to-end against the module's public API alone — no integration with
   pool base.
 - [ ] Unit tests for the above live in a new CTest target that builds
   and runs in isolation (no MoM library dependency).
-- [ ] Module compiles and links into both HeMoM and ReMoM without
+- [ ] Module compiles and links into both DeMoM and ReMoM without
   affecting either binary's runtime behavior (it's wired in but
   nothing else calls it yet).
 
@@ -140,7 +140,7 @@ explicit and auditable before the implementation swap.
 - [ ] ReMoM boots to the Main Screen with no behavior change.
 - [ ] Matchup pipeline runs to completion with all `gd_dump_*`
   comparison points still green.
-- [ ] HeMoM headless smoke run completes with no regression.
+- [ ] DeMoM windowless smoke run completes with no regression.
 - [ ] No new ASan crashes; no fewer either.
 
 ---
@@ -160,7 +160,7 @@ unchanged; only the underlying memory source changes. `Pool_Init` runs
 compile-time sum: the enumerated arenas are ~1.5 MB (`g_graphics_cache_seg`
 alone ~1 MB), but the real full-game-entry peak — including run-time-sized
 one-time `sa_Single` LBX graphic loads — is ~4.58 MB, measured via
-`Pool_Bytes_Peak` (logged at HeMoM shutdown). Capacity is set to 16 MB with a
+`Pool_Bytes_Peak` (logged at DeMoM shutdown). Capacity is set to 16 MB with a
 5 MB asserted floor. Excluded arenas are unaffected — they were moved to direct
 `malloc()` in Phase 2a. After this phase, every formerly-pool-bound OOB access
 in either direction lands inside the static pool's bounds — overruns in the
@@ -172,7 +172,7 @@ from in-scope arenas stop, and the byte-compare pipeline continues to pass.
 
 - [x] `Allocate_Space` and `Allocate_Space_No_Header` allocate from the
   pool; SAMB header bytes match what the pre-refactor implementation
-  wrote. *(WorldGen byte-parity + HeMoM_Continue_Assertions green.)*
+  wrote. *(WorldGen byte-parity + DeMoM_Continue_Assertions green.)*
 - [x] `Pool_Init` runs exactly once per process, **lazily** on the first
   `Pool_Carve` (before the first allocation completes).
 - [x] `POOL_ARENA_CAPACITY` is set from the measured peak (~4.58 MB → 16 MB),
@@ -183,9 +183,9 @@ from in-scope arenas stop, and the byte-compare pipeline continues to pass.
   rather than before the static array.
 - [ ] ReMoM starts, reaches the Main Screen, plays a turn without
   crashing. *(unverified — no interactive ReMoM run yet.)*
-- [x] HeMoM run completes through Simtex_Autotiling and reaches the
+- [x] DeMoM run completes through Simtex_Autotiling and reaches the
   post-CRP_NEWG_CreatePathGrids dump point without crashing.
-  *(HeMoM_WorldGen_Run green.)*
+  *(DeMoM_WorldGen_Run green.)*
 - [x] All `gd_dump_*` comparison points that were green before this
   phase remain green after. *(WorldGen_Validate / _Fields green.)*
 - [ ] No new ASan or sanitizer crashes inside in-scope arenas.
@@ -205,9 +205,9 @@ from in-scope arenas stop, and the byte-compare pipeline continues to pass.
 
 ### What to build
 
-A named CTest harness (`HeMoM_OOB_Autotiling`) that drives a new game
+A named CTest harness (`DeMoM_OOB_Autotiling`) that drives a new game
 through Simtex_Autotiling's `wy=39 -> wy+1=40` OOB read site and asserts the
-result is crash-free and deterministic. It reuses the `HeMoM_WorldGen`
+result is crash-free and deterministic. It reuses the `DeMoM_WorldGen`
 fixture's `SAVE9.txt` and `check_save_fields`, pinning the 60 plane-1 (Myrror)
 last-row tiles (`world_map[1][40*wx+39]`) — the squares whose autotiling
 consumes the OOB `p_world_map[1][40][x]` read — to their seed-pinned values in
@@ -225,9 +225,9 @@ inject/pool path), and the direct byte diff remains a CI/`.fwv` matter.
 
 ### Acceptance criteria
 
-- [x] Named HeMoM test boots a new game and runs through Simtex_Autotiling
-  (the `121_Simtex_Autotiling_W` checkpoint) — `HeMoM_OOB_Autotiling` reusing
-  the `HeMoM_WorldGen_Run` fixture.
+- [x] Named DeMoM test boots a new game and runs through Simtex_Autotiling
+  (the `121_Simtex_Autotiling_W` checkpoint) — `DeMoM_OOB_Autotiling` reusing
+  the `DeMoM_WorldGen_Run` fixture.
 - [x] Runs to completion without crashing. *(Under ASan: not yet — no
   sanitizer build wired; deferred with the other ASan items.)*
 - [x] The OOB-dependent output is deterministic and pinned: the plane-1
@@ -235,8 +235,8 @@ inject/pool path), and the direct byte diff remains a CI/`.fwv` matter.
   fresh runs byte-identical). *Direct `byte == injected value` diff is a
   CI-only concern per Realized scope above.*
 - [x] The harness is runnable as a named CTest test
-  (`ctest -R HeMoM_OOB_Autotiling`), auto-running its `HeMoM_WorldGen` fixture.
-- [x] Documentation: `doc/HeMoM-OOB-Autotiling-Harness.md` describes the
+  (`ctest -R DeMoM_OOB_Autotiling`), auto-running its `DeMoM_WorldGen` fixture.
+- [x] Documentation: `doc/DeMoM-OOB-Autotiling-Harness.md` describes the
   harness, what it asserts, the scope caveat, and how to run it standalone.
 
 ---
@@ -255,7 +255,7 @@ case). That file **is** the pool-backed `Allocate_Space` integration test
 (stories 16/17): reset the pool per test (`Pool_Init` in `SetUp`), drop the
 `free()`s, and add pool-specific cases — pool-residency (`Pool_Bytes_Used`
 advances by `(size+1)*16`) and sentinel slack inside a sub-block (story 18).
-`test_Allocate_Pool` (Phase 1) and `HeMoM_OOB_Autotiling` (Phase 3) are already
+`test_Allocate_Pool` (Phase 1) and `DeMoM_OOB_Autotiling` (Phase 3) are already
 CTest tests. Determinism and `gd_dump_*` regression are covered by existing
 tests rather than new bespoke ones (see criteria). Document the catalog.
 
@@ -263,16 +263,16 @@ tests rather than new bespoke ones (see criteria). Document the catalog.
 
 - [x] `ctest` discovers and runs `test_Allocate_Pool` (11 `AllocatePoolTest`),
   the pool-backed `Allocate_Space` integration tests (26 `AllocateTest` in
-  `MOX_tests`), and the OOB harness (`HeMoM_OOB_Autotiling`) as one suite.
+  `MOX_tests`), and the OOB harness (`DeMoM_OOB_Autotiling`) as one suite.
 - [x] Layout determinism: covered at the pool layer by
   `AllocatePoolTest.Reinit_Produces_Identical_Carve_Sequence` and end-to-end by
-  the verified byte-identical `HeMoM_WorldGen`/`OOB` output (full
+  the verified byte-identical `DeMoM_WorldGen`/`OOB` output (full
   `Allocate_Data_Space` call order). *(No bespoke per-arena offset dump — the
   two existing layers cover it.)*
-- [ ] HeMoM ↔ ReMoM pool-layout parity test. *(Deferred — needs a ReMoM
+- [ ] DeMoM ↔ ReMoM pool-layout parity test. *(Deferred — needs a ReMoM
   harness to expose pool offsets; ReMoM is the windowed target.)*
-- [x] `gd_dump_*` regression check: `HeMoM_WorldGen_Fields` / `_Validate` and
-  `HeMoM_OOB_Autotiling` fail the suite if their pinned save fields diverge.
+- [x] `gd_dump_*` regression check: `DeMoM_WorldGen_Fields` / `_Validate` and
+  `DeMoM_OOB_Autotiling` fail the suite if their pinned save fields diverge.
 - [~] Capacity assert (`POOL_ARENA_CAPACITY >= POOL_MIN_ARENA_BYTES`) is present
   and reachable from the test build (compiled into `Allocate_Pool.c`).
   *(A dedicated compile-failure test that it fires on a deliberately-undersized
@@ -285,7 +285,7 @@ tests rather than new bespoke ones (see criteria). Document the catalog.
   `check: safe-to-push` task builds Debug+Release and runs the suite on
   main-bound pushes. *(No new GitHub Actions workflow added.)*
 - [x] Documentation: `doc/Static-Pool-Tests.md` (test catalog) and
-  `doc/HeMoM-OOB-Autotiling-Harness.md` describe what each target covers and how
+  `doc/DeMoM-OOB-Autotiling-Harness.md` describe what each target covers and how
   to run it.
 
 ---
@@ -399,13 +399,13 @@ inject mechanism. Purely mechanical + documentation — no behavior change beyon
   `.fwv` absent, so removing the inert inject + padding didn't move any pinned
   output): `assert_worldgen.txt`, `assert_oob_autotiling.txt`,
   `assert_continue_save.txt`, `assert_continue_next_turn.txt`,
-  `assert_ai_5turns.txt` all pass, and `HeMoM_WorldGen_Validate` confirms the
+  `assert_ai_5turns.txt` all pass, and `DeMoM_WorldGen_Validate` confirms the
   save size is unchanged (123300).
 - [~] `valgrind-suppressions-all.supp` — **not present in this worktree** (no
   `*.supp` anywhere), so there was nothing to review/drop. If it exists in the
   main tree, re-check there when merging.
 - [x] Docs reconciled: `MAPGEN-Simtex_Autotiling.md`,
-  `HeMoM-OOB-Autotiling-Harness.md` (and `Static-Pool-Tests.md`, which had no
+  `DeMoM-OOB-Autotiling-Harness.md` (and `Static-Pool-Tests.md`, which had no
   stale refs) describe the pool as the OOB backing. Also reconciled the three
   sibling walkthroughs that referenced the padding —
   `MAPGEN-Generate_Terrain_Specials.md`, `MAPGEN-Generate_Roads.md`,

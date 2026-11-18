@@ -1,0 +1,409 @@
+module_num=152
+module=F:\WLIBS\lbx\farload.c
+source=0152-farload.c.md
+range[0]=1:0x00116ABD linear=0x00126ABD size=2894
+range[1]=2:0x00002674 linear=0x00172674 size=376
+range[2]=2:0x0000C544 linear=0x0017C544 size=56
+range[3]=2:0x00043A6C linear=0x001B3A6C size=2068
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                           SYMBOL                          CHUNK
+m152f001  1    -      0x00126ABD  1:0x00116ABD  code  Farload                        Farload_                        regions/07-object-1/001ABE54-001AC653.txt
+m152f002  2    -      0x00126AFD  1:0x00116AFD  code  Far_Reload                     Far_Reload_                     regions/07-object-1/001ABE54-001AC653.txt
+m152f003  3    -      0x00126B42  1:0x00116B42  code  Far_Reload_Next                Far_Reload_Next_                regions/07-object-1/001ABE54-001AC653.txt
+m152f004  4    -      0x00126B87  1:0x00116B87  code  Farload_Data                   Farload_Data_                   regions/07-object-1/001ABE54-001AC653.txt
+m152f005  5    -      0x00126BDD  1:0x00116BDD  code  Far_Reload_Data                Far_Reload_Data_                regions/07-object-1/001ABE54-001AC653.txt
+m152f006  6    -      0x00126C37  1:0x00116C37  code  Far_Reload_Next_Data           Far_Reload_Next_Data_           regions/07-object-1/001ABE54-001AC653.txt
+m152f007  7    -      0x00126C91  1:0x00116C91  code  Farload_Data_Static            Farload_Data_Static_            regions/07-object-1/001ABE54-001AC653.txt
+m152f008  8    -      0x00126CEB  1:0x00116CEB  code  Farload_Library                Farload_Library_                regions/07-object-1/001ABE54-001AC653.txt
+m152f009  9    -      0x00126F3B  1:0x00116F3B  code  Farload_Library_Data           Farload_Library_Data_           regions/07-object-1/001ABE54-001AC653.txt
+m152f010  10   -      0x00127233  1:0x00117233  code  Get_Farload_Data_Record_Count  Get_Farload_Data_Record_Count_  regions/07-object-1/001AC654-001ACE53.txt
+m152f011  11   -      0x001273DC  1:0x001173DC  code  Error_Handler                  Error_Handler_                  regions/07-object-1/001AC654-001ACE53.txt
+m152f012  12   -      0x00127593  1:0x00117593  code  Set_Alternate_Path             Set_Alternate_Path_             regions/07-object-1/001AC654-001ACE53.txt
+-         -    -      0x0017C544  2:0x0000C544  data  _secondary_drive_path          _secondary_drive_path           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C576  2:0x0000C576  data  _farload_file_flag             _farload_file_flag              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001B3A6C  2:0x00043A6C  data  _lbx_header                    _lbx_header                     -
+-         -    -      0x001B426C  2:0x0004426C  data  _farload_fptr                  _farload_fptr                   -
+-         -    -      0x001B4270  2:0x00044270  data  _farload_file_name             _farload_file_name              -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                  TYPE
+0x001B3A6C  2:0x00043A6C  lbx_header            struct struct_lbx_header
+0x001B426C  2:0x0004426C  farload_fptr          FILE *
+0x0017C576  2:0x0000C576  farload_file_flag     int
+0x0017C544  2:0x0000C544  secondary_drive_path  char[50]
+0x001B4270  2:0x00044270  farload_file_name     char[15]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                           TYPE                                                                                             CHUNK
+m152f001  0x00126ABD  1:0x00116ABD  64    23        8         0x14     -    EAX,EDX          Farload                        char * (char *, int); returns in EAX                                                             regions/07-object-1/001ABE54-001AC653.txt
+m152f002  0x00126AFD  1:0x00116AFD  69    22        7         0x10     -    EAX,EDX,EBX      Far_Reload                     char * (char *, int, char *); returns in EAX                                                     regions/07-object-1/001ABE54-001AC653.txt
+m152f003  0x00126B42  1:0x00116B42  69    22        7         0x10     -    EAX,EDX,EBX      Far_Reload_Next                char * (char *, int, char *); returns in EAX                                                     regions/07-object-1/001ABE54-001AC653.txt
+m152f004  0x00126B87  1:0x00116B87  86    21        8         0xC      -    EAX,EDX,EBX,ECX  Farload_Data                   char * (char *, int, int, int, int); returns in EAX                                              regions/07-object-1/001ABE54-001AC653.txt
+m152f005  0x00126BDD  1:0x00116BDD  90    21        8         0xC      -    EAX,EDX,EBX,ECX  Far_Reload_Data                char * (char *, int, char *, int, int, int); returns in EAX                                      regions/07-object-1/001ABE54-001AC653.txt
+m152f006  0x00126C37  1:0x00116C37  90    21        8         0xC      -    EAX,EDX,EBX,ECX  Far_Reload_Next_Data           char * (char *, int, char *, int, int, int); returns in EAX                                      regions/07-object-1/001ABE54-001AC653.txt
+m152f007  0x00126C91  1:0x00116C91  90    21        8         0xC      -    EAX,EDX,EBX,ECX  Farload_Data_Static            char * (char *, int, char *, int, int, int); returns in EAX                                      regions/07-object-1/001ABE54-001AC653.txt
+m152f008  0x00126CEB  1:0x00116CEB  592   21        6         0xC      -    EAX,EDX,EBX,ECX  Farload_Library                char * (char *, int, char *, int); returns in EAX                                                regions/07-object-1/001ABE54-001AC653.txt
+m152f009  0x00126F3B  1:0x00116F3B  760   21        8         0xC      -    EAX,EDX,EBX,ECX  Farload_Library_Data           char * (char *, int, char *, int, unsigned int, unsigned short, unsigned short); returns in EAX  regions/07-object-1/001ABE54-001AC653.txt
+m152f010  0x00127233  1:0x00117233  425   23        8         0x14     -    EAX,EDX          Get_Farload_Data_Record_Count  short (char *, int); returns in AX                                                               regions/07-object-1/001AC654-001ACE53.txt
+m152f011  0x001273DC  1:0x001173DC  439   22        7         0x10     -    EAX,EDX,EBX      Error_Handler                  void (char *, int, int)                                                                          regions/07-object-1/001AC654-001ACE53.txt
+m152f012  0x00127593  1:0x00117593  120   24        9         0x18     -    EAX              Set_Alternate_Path             void (char *)                                                                                    regions/07-object-1/001AC654-001ACE53.txt
+
+[Locals]
+KEY       ROUTINE                        BLOCK  LOCAL                  LOCATION    TYPE
+m152f001  Farload                        -      file_name              [EBP-0x10]  char *
+m152f001  Farload                        -      entry_num              [EBP-0xC]   int
+m152f001  Farload                        -      pointer                [EBP-0x8]   char *
+m152f002  Far_Reload                     -      file_name              [EBP-0x14]  char *
+m152f002  Far_Reload                     -      entry_num              [EBP-0x10]  int
+m152f002  Far_Reload                     -      base_seg               [EBP-0xC]   char *
+m152f002  Far_Reload                     -      pointer                [EBP-0x8]   char *
+m152f003  Far_Reload_Next                -      file_name              [EBP-0x14]  char *
+m152f003  Far_Reload_Next                -      entry_num              [EBP-0x10]  int
+m152f003  Far_Reload_Next                -      base_seg               [EBP-0xC]   char *
+m152f003  Far_Reload_Next                -      pointer                [EBP-0x8]   char *
+m152f004  Farload_Data                   -      file_name              [EBP-0x18]  char *
+m152f004  Farload_Data                   -      entry_num              [EBP-0x14]  int
+m152f004  Farload_Data                   -      start_rec              [EBP-0x10]  int
+m152f004  Farload_Data                   -      num_recs               [EBP-0xC]   int
+m152f004  Farload_Data                   -      record_size            [EBP+0x10]  int
+m152f004  Farload_Data                   -      pointer                [EBP-0x8]   char *
+m152f005  Far_Reload_Data                -      file_name              [EBP-0x18]  char *
+m152f005  Far_Reload_Data                -      entry_num              [EBP-0x14]  int
+m152f005  Far_Reload_Data                -      base_seg               [EBP-0x10]  char *
+m152f005  Far_Reload_Data                -      start_rec              [EBP-0xC]   int
+m152f005  Far_Reload_Data                -      num_recs               [EBP+0x10]  int
+m152f005  Far_Reload_Data                -      record_size            [EBP+0x14]  int
+m152f005  Far_Reload_Data                -      pointer                [EBP-0x8]   char *
+m152f006  Far_Reload_Next_Data           -      file_name              [EBP-0x18]  char *
+m152f006  Far_Reload_Next_Data           -      entry_num              [EBP-0x14]  int
+m152f006  Far_Reload_Next_Data           -      base_seg               [EBP-0x10]  char *
+m152f006  Far_Reload_Next_Data           -      start_rec              [EBP-0xC]   int
+m152f006  Far_Reload_Next_Data           -      num_recs               [EBP+0x10]  int
+m152f006  Far_Reload_Next_Data           -      record_size            [EBP+0x14]  int
+m152f006  Far_Reload_Next_Data           -      pointer                [EBP-0x8]   char *
+m152f007  Farload_Data_Static            -      file_name              [EBP-0x18]  char *
+m152f007  Farload_Data_Static            -      entry_num              [EBP-0x14]  int
+m152f007  Farload_Data_Static            -      base_seg               [EBP-0x10]  char *
+m152f007  Farload_Data_Static            -      start_rec              [EBP-0xC]   int
+m152f007  Farload_Data_Static            -      num_recs               [EBP+0x10]  int
+m152f007  Farload_Data_Static            -      record_size            [EBP+0x14]  int
+m152f007  Farload_Data_Static            -      pointer                [EBP-0x8]   char *
+m152f008  Farload_Library                -      file_name              [EBP-0x44]  char *
+m152f008  Farload_Library                -      entry_num              [EBP-0x30]  int
+m152f008  Farload_Library                -      base_seg               [EBP-0x40]  char *
+m152f008  Farload_Library                -      allocation_type        [EBP-0x3C]  int
+m152f008  Farload_Library                -      file_index             [EBP-0x38]  int
+m152f008  Farload_Library                -      space_remaining        [EBP-0x34]  int
+m152f008  Farload_Library                -      current_extended_flag  [EBP-0xC]   int
+m152f008  Farload_Library                -      alternate_set          [EBP-0x2C]  int
+m152f008  Farload_Library                -      num_blocks             [EBP-0x28]  unsigned int
+m152f008  Farload_Library                -      current_seg            [EBP-0x24]  unsigned int
+m152f008  Farload_Library                -      read_size              [EBP-0x20]  unsigned int
+m152f008  Farload_Library                -      foffset                [EBP-0x1C]  long
+m152f008  Farload_Library                -      entry_start            [EBP-0x18]  long
+m152f008  Farload_Library                -      entry_end              [EBP-0x14]  long
+m152f008  Farload_Library                -      entry_length           [EBP-0x10]  long
+m152f008  Farload_Library                -      full_file_path         [EBP-0x80]  char[60]
+m152f008  Farload_Library                -      pointer                [EBP-0x8]   char *
+m152f009  Farload_Library_Data           -      file_name              [EBP-0x44]  char *
+m152f009  Farload_Library_Data           -      entry_num              [EBP-0x4C]  int
+m152f009  Farload_Library_Data           -      base_seg               [EBP-0x48]  char *
+m152f009  Farload_Library_Data           -      allocation_type        [EBP-0x38]  int
+m152f009  Farload_Library_Data           -      start_rec              [EBP+0x10]  unsigned int
+m152f009  Farload_Library_Data           -      num_recs               [EBP+0x14]  unsigned short
+m152f009  Farload_Library_Data           -      record_size            [EBP+0x18]  unsigned short
+m152f009  Farload_Library_Data           -      allocation_seg         [EBP-0x10]  int
+m152f009  Farload_Library_Data           -      file_index             [EBP-0x34]  int
+m152f009  Farload_Library_Data           -      space_remaining        [EBP-0x30]  int
+m152f009  Farload_Library_Data           -      current_extended_flag  [EBP-0x2C]  int
+m152f009  Farload_Library_Data           -      max_records            [EBP-0x8]   unsigned short
+m152f009  Farload_Library_Data           -      rec_size               [EBP-0x4]   unsigned short
+m152f009  Farload_Library_Data           -      num_blocks             [EBP-0x20]  unsigned int
+m152f009  Farload_Library_Data           -      current_seg            [EBP-0x28]  unsigned int
+m152f009  Farload_Library_Data           -      read_size              [EBP-0x18]  unsigned int
+m152f009  Farload_Library_Data           -      foffset                [EBP-0x40]  long
+m152f009  Farload_Library_Data           -      entry_start            [EBP-0x1C]  long
+m152f009  Farload_Library_Data           -      entry_end              [EBP-0x3C]  long
+m152f009  Farload_Library_Data           -      entry_length           [EBP-0x24]  long
+m152f009  Farload_Library_Data           -      full_file_path         [EBP-0x88]  char[60]
+m152f009  Farload_Library_Data           -      pointer                [EBP-0xC]   char *
+m152f010  Get_Farload_Data_Record_Count  -      file_name              [EBP-0x44]  char *
+m152f010  Get_Farload_Data_Record_Count  -      entry_num              [EBP-0x30]  int
+m152f010  Get_Farload_Data_Record_Count  -      allocation_seg         [EBP-0x40]  int
+m152f010  Get_Farload_Data_Record_Count  -      file_index             [EBP-0x3C]  int
+m152f010  Get_Farload_Data_Record_Count  -      space_remaining        [EBP-0x38]  int
+m152f010  Get_Farload_Data_Record_Count  -      current_extended_flag  [EBP-0x34]  int
+m152f010  Get_Farload_Data_Record_Count  -      max_records            [EBP-0xC]   unsigned short
+m152f010  Get_Farload_Data_Record_Count  -      rec_size               [EBP-0x8]   unsigned short
+m152f010  Get_Farload_Data_Record_Count  -      num_blocks             [EBP-0x28]  unsigned int
+m152f010  Get_Farload_Data_Record_Count  -      current_seg            [EBP-0x24]  unsigned int
+m152f010  Get_Farload_Data_Record_Count  -      read_size              [EBP-0x20]  unsigned int
+m152f010  Get_Farload_Data_Record_Count  -      foffset                [EBP-0x1C]  long
+m152f010  Get_Farload_Data_Record_Count  -      entry_start            [EBP-0x18]  long
+m152f010  Get_Farload_Data_Record_Count  -      entry_end              [EBP-0x14]  long
+m152f010  Get_Farload_Data_Record_Count  -      entry_length           [EBP-0x10]  long
+m152f010  Get_Farload_Data_Record_Count  -      full_file_path         [EBP-0x80]  char[60]
+m152f010  Get_Farload_Data_Record_Count  -      pointer                [EBP-0x2C]  char *
+m152f011  Error_Handler                  -      file_name              [EBP-0xC]   char *
+m152f011  Error_Handler                  -      error_num              [EBP-0x8]   int
+m152f011  Error_Handler                  -      entry_num              [EBP-0x4]   int
+m152f011  Error_Handler                  -      buffer                 [EBP-0x98]  char[120]
+m152f011  Error_Handler                  -      buffer2                [EBP-0x20]  char[20]
+m152f012  Set_Alternate_Path             -      alternate              [EBP-0xC]   char *
+m152f012  Set_Alternate_Path             -      i                      [EBP-0x8]   int
+m152f012  Set_Alternate_Path             -      last_char              [EBP-0x4]   int
+
+[Types]
+NUM  KIND       NAME                      DETAILS
+-    cue table  -                         source file table (C++)
+1    scope      struct                    -
+2    scope      union                     -
+3    scope      enum                      -
+4    scalar     signed char               int 1 bytes
+5    scalar     unsigned char             unsigned 1 bytes
+6    scalar     short                     int 2 bytes
+7    scalar     unsigned short            unsigned 2 bytes
+8    scalar     int                       int 4 bytes
+9    scalar     unsigned int              unsigned 4 bytes
+10   typedef    char                      name for unsigned char (#5)
+11   typedef    char                      name for unsigned char (#5)
+12   typedef    BYTE                      name for unsigned char (#5)
+13   typedef    SBYTE                     name for signed char (#4)
+14   typedef    UBYTE                     name for unsigned char (#5)
+15   typedef    WORD                      name for unsigned short (#7)
+16   typedef    SWORD                     name for short (#6)
+17   typedef    UWORD                     name for unsigned short (#7)
+18   typedef    DWORD                     name for unsigned int (#9)
+19   typedef    SDWORD                    name for int (#8)
+20   typedef    UDWORD                    name for unsigned int (#9)
+21   typedef    BOOL                      name for unsigned char (#5)
+22   typedef    SampleHandle              name for int (#8)
+23   typedef    size_t                    name for unsigned int (#9)
+24   pointer    -                         near386; of char (#10)
+25   array      __va_list                 0..0; of char * (#24)
+26   typedef    __va_list                 name for char *[1] (#25)
+27   scalar     long                      int 4 bytes
+28   typedef    fpos_t                    name for long (#27)
+29   typedef    fpos_t                    name for long (#27)
+30   array      -                         0..509; of long (#27)
+31   struct     struct struct_lbx_header  5 fields, 2048 bytes
+32   typedef    struct_lbx_header         struct name for struct #31 (#31)
+33   pointer    -                         near386; of unsigned char (#5)
+34   struct     struct __iobuf            8 fields, 26 bytes
+35   typedef    __iobuf                   struct name for struct #34 (#34)
+36   typedef    FILE                      name for struct __iobuf (#35)
+37   pointer    -                         near386; of FILE (#36)
+38   array      -                         0..49; of char (#10)
+39   array      -                         0..14; of char (#10)
+40   procedure  -                         near386; returns char * (char *, int)
+41   procedure  -                         near386; returns char * (char *, int, char *)
+42   procedure  -                         near386; returns char * (char *, int, int, int, int)
+43   procedure  -                         near386; returns char * (char *, int, char *, int, int, int)
+44   procedure  -                         near386; returns char * (char *, int, char *, int)
+45   array      -                         0..59; of char (#10)
+46   procedure  -                         near386; returns char * (char *, int, char *, int, unsigned int, unsigned short, unsigned short)
+47   array      -                         0..59; of char (#10)
+48   procedure  -                         near386; returns short (char *, int)
+49   array      -                         0..59; of char (#10)
+50   scalar     void                      void 1 bytes
+51   procedure  -                         near386; returns void (char *, int, int)
+52   array      -                         0..119; of char (#10)
+53   array      -                         0..19; of char (#10)
+54   procedure  -                         near386; returns void (char *)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER        OFFSET_VALUE  TYPE             TYPE_NAME
+31        field        entries       0             short            struct struct_lbx_header
+31        field        magic_number  2             unsigned short   struct struct_lbx_header
+31        field        file_type     4             short            struct struct_lbx_header
+31        field        dummy         6             short            struct struct_lbx_header
+31        field        offsets       8             long[510]        struct struct_lbx_header
+34        field        _ptr          0             unsigned char *  struct __iobuf
+34        field        _cnt          4             int              struct __iobuf
+34        field        _base         8             unsigned char *  struct __iobuf
+34        field        _flag         12            unsigned int     struct __iobuf
+34        field        _handle       16            int              struct __iobuf
+34        field        _bufsize      20            unsigned int     struct __iobuf
+34        field        _ungotten     24            unsigned char    struct __iobuf
+34        field        _tmpfchar     25            unsigned char    struct __iobuf
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m152f001  60    0x00126ABD  1:0x00116ABD  0x001AC111
+m152f001  64    0x00126ADA  1:0x00116ADA  0x001AC12E
+m152f001  65    0x00126AEC  1:0x00116AEC  0x001AC140
+m152f001  66    0x00126AF2  1:0x00116AF2  0x001AC146
+m152f002  68    0x00126AFD  1:0x00116AFD  0x001AC151
+m152f002  72    0x00126B1C  1:0x00116B1C  0x001AC170
+m152f002  73    0x00126B32  1:0x00116B32  0x001AC186
+m152f002  74    0x00126B38  1:0x00116B38  0x001AC18C
+m152f003  76    0x00126B42  1:0x00116B42  0x001AC196
+m152f003  80    0x00126B61  1:0x00116B61  0x001AC1B5
+m152f003  81    0x00126B77  1:0x00116B77  0x001AC1CB
+m152f003  82    0x00126B7D  1:0x00116B7D  0x001AC1D1
+m152f004  89    0x00126B87  1:0x00116B87  0x001AC1DB
+m152f004  93    0x00126BA8  1:0x00116BA8  0x001AC1FC
+m152f004  95    0x00126BCC  1:0x00116BCC  0x001AC220
+m152f004  96    0x00126BD2  1:0x00116BD2  0x001AC226
+m152f005  98    0x00126BDD  1:0x00116BDD  0x001AC231
+m152f005  102   0x00126BFE  1:0x00116BFE  0x001AC252
+m152f005  104   0x00126C26  1:0x00116C26  0x001AC27A
+m152f005  105   0x00126C2C  1:0x00116C2C  0x001AC280
+m152f006  107   0x00126C37  1:0x00116C37  0x001AC28B
+m152f006  111   0x00126C58  1:0x00116C58  0x001AC2AC
+m152f006  113   0x00126C80  1:0x00116C80  0x001AC2D4
+m152f006  114   0x00126C86  1:0x00116C86  0x001AC2DA
+m152f007  116   0x00126C91  1:0x00116C91  0x001AC2E5
+m152f007  120   0x00126CB2  1:0x00116CB2  0x001AC306
+m152f007  122   0x00126CDA  1:0x00116CDA  0x001AC32E
+m152f007  123   0x00126CE0  1:0x00116CE0  0x001AC334
+m152f008  126   0x00126CEB  1:0x00116CEB  0x001AC33F
+m152f008  135   0x00126D0C  1:0x00116D0C  0x001AC360
+m152f008  136   0x00126D12  1:0x00116D12  0x001AC366
+m152f008  138   0x00126D22  1:0x00116D22  0x001AC376
+m152f008  140   0x00126D40  1:0x00116D40  0x001AC394
+m152f008  141   0x00126D49  1:0x00116D49  0x001AC39D
+m152f008  143   0x00126D53  1:0x00116D53  0x001AC3A7
+m152f008  144   0x00126D60  1:0x00116D60  0x001AC3B4
+m152f008  146   0x00126D72  1:0x00116D72  0x001AC3C6
+m152f008  148   0x00126D7B  1:0x00116D7B  0x001AC3CF
+m152f008  149   0x00126D84  1:0x00116D84  0x001AC3D8
+m152f008  151   0x00126D94  1:0x00116D94  0x001AC3E8
+m152f008  152   0x00126DA1  1:0x00116DA1  0x001AC3F5
+m152f008  153   0x00126DAE  1:0x00116DAE  0x001AC402
+m152f008  155   0x00126DC0  1:0x00116DC0  0x001AC414
+m152f008  156   0x00126DC9  1:0x00116DC9  0x001AC41D
+m152f008  159   0x00126DD9  1:0x00116DD9  0x001AC42D
+m152f008  161   0x00126DF3  1:0x00116DF3  0x001AC447
+m152f008  162   0x00126E02  1:0x00116E02  0x001AC456
+m152f008  164   0x00126E12  1:0x00116E12  0x001AC466
+m152f008  167   0x00126E1C  1:0x00116E1C  0x001AC470
+m152f008  168   0x00126E29  1:0x00116E29  0x001AC47D
+m152f008  170   0x00126E51  1:0x00116E51  0x001AC4A5
+m152f008  171   0x00126E60  1:0x00116E60  0x001AC4B4
+m152f008  172   0x00126E6F  1:0x00116E6F  0x001AC4C3
+m152f008  174   0x00126E78  1:0x00116E78  0x001AC4CC
+m152f008  176   0x00126E87  1:0x00116E87  0x001AC4DB
+m152f008  179   0x00126E9E  1:0x00116E9E  0x001AC4F2
+m152f008  180   0x00126EA9  1:0x00116EA9  0x001AC4FD
+m152f008  181   0x00126EAF  1:0x00116EAF  0x001AC503
+m152f008  182   0x00126EBF  1:0x00116EBF  0x001AC513
+m152f008  185   0x00126EC1  1:0x00116EC1  0x001AC515
+m152f008  186   0x00126ECF  1:0x00116ECF  0x001AC523
+m152f008  187   0x00126ED5  1:0x00116ED5  0x001AC529
+m152f008  188   0x00126EE5  1:0x00116EE5  0x001AC539
+m152f008  191   0x00126EE7  1:0x00116EE7  0x001AC53B
+m152f008  192   0x00126EF5  1:0x00116EF5  0x001AC549
+m152f008  193   0x00126EFB  1:0x00116EFB  0x001AC54F
+m152f008  194   0x00126F0B  1:0x00116F0B  0x001AC55F
+m152f008  197   0x00126F0D  1:0x00116F0D  0x001AC561
+m152f008  200   0x00126F16  1:0x00116F16  0x001AC56A
+m152f008  202   0x00126F2C  1:0x00116F2C  0x001AC580
+m152f008  203   0x00126F32  1:0x00116F32  0x001AC586
+m152f009  207   0x00126F3B  1:0x00116F3B  0x001AC58F
+m152f009  218   0x00126F5C  1:0x00116F5C  0x001AC5B0
+m152f009  220   0x00126F72  1:0x00116F72  0x001AC5C6
+m152f009  222   0x00126F90  1:0x00116F90  0x001AC5E4
+m152f009  224   0x00126FA3  1:0x00116FA3  0x001AC5F7
+m152f009  225   0x00126FB0  1:0x00116FB0  0x001AC604
+m152f009  227   0x00126FC2  1:0x00116FC2  0x001AC616
+m152f009  229   0x00126FCB  1:0x00116FCB  0x001AC61F
+m152f009  230   0x00126FD4  1:0x00116FD4  0x001AC628
+m152f009  232   0x00126FE4  1:0x00116FE4  0x001AC638
+m152f009  233   0x00126FF4  1:0x00116FF4  0x001AC648
+m152f009  234   0x00127004  1:0x00117004  0x001AC658
+m152f009  236   0x00127019  1:0x00117019  0x001AC66D
+m152f009  237   0x00127022  1:0x00117022  0x001AC676
+m152f009  240   0x00127032  1:0x00117032  0x001AC686
+m152f009  242   0x0012704C  1:0x0011704C  0x001AC6A0
+m152f009  243   0x0012705B  1:0x0011705B  0x001AC6AF
+m152f009  245   0x0012706B  1:0x0011706B  0x001AC6BF
+m152f009  248   0x00127075  1:0x00117075  0x001AC6C9
+m152f009  249   0x00127082  1:0x00117082  0x001AC6D6
+m152f009  251   0x00127092  1:0x00117092  0x001AC6E6
+m152f009  252   0x001270A1  1:0x001170A1  0x001AC6F5
+m152f009  253   0x001270B0  1:0x001170B0  0x001AC704
+m152f009  255   0x001270B9  1:0x001170B9  0x001AC70D
+m152f009  257   0x001270C8  1:0x001170C8  0x001AC71C
+m152f009  258   0x001270E0  1:0x001170E0  0x001AC734
+m152f009  260   0x001270F8  1:0x001170F8  0x001AC74C
+m152f009  261   0x00127103  1:0x00117103  0x001AC757
+m152f009  263   0x0012710C  1:0x0011710C  0x001AC760
+m152f009  264   0x00127127  1:0x00117127  0x001AC77B
+m152f009  266   0x00127155  1:0x00117155  0x001AC7A9
+m152f009  269   0x0012716E  1:0x0011716E  0x001AC7C2
+m152f009  272   0x00127180  1:0x00117180  0x001AC7D4
+m152f009  274   0x00127197  1:0x00117197  0x001AC7EB
+m152f009  275   0x001271A2  1:0x001171A2  0x001AC7F6
+m152f009  276   0x001271A8  1:0x001171A8  0x001AC7FC
+m152f009  277   0x001271B8  1:0x001171B8  0x001AC80C
+m152f009  279   0x001271BA  1:0x001171BA  0x001AC80E
+m152f009  280   0x001271C8  1:0x001171C8  0x001AC81C
+m152f009  281   0x001271CE  1:0x001171CE  0x001AC822
+m152f009  282   0x001271DE  1:0x001171DE  0x001AC832
+m152f009  284   0x001271E0  1:0x001171E0  0x001AC834
+m152f009  285   0x001271EE  1:0x001171EE  0x001AC842
+m152f009  286   0x001271F4  1:0x001171F4  0x001AC848
+m152f009  287   0x00127204  1:0x00117204  0x001AC858
+m152f009  289   0x00127206  1:0x00117206  0x001AC85A
+m152f009  293   0x0012720C  1:0x0011720C  0x001AC860
+m152f009  295   0x00127222  1:0x00117222  0x001AC876
+m152f009  296   0x00127228  1:0x00117228  0x001AC87C
+m152f010  306   0x00127233  1:0x00117233  0x001AC887
+m152f010  315   0x00127250  1:0x00117250  0x001AC8A4
+m152f010  317   0x00127266  1:0x00117266  0x001AC8BA
+m152f010  319   0x00127284  1:0x00117284  0x001AC8D8
+m152f010  321   0x00127297  1:0x00117297  0x001AC8EB
+m152f010  322   0x001272A4  1:0x001172A4  0x001AC8F8
+m152f010  324   0x001272B6  1:0x001172B6  0x001AC90A
+m152f010  326   0x001272BF  1:0x001172BF  0x001AC913
+m152f010  327   0x001272C8  1:0x001172C8  0x001AC91C
+m152f010  329   0x001272D8  1:0x001172D8  0x001AC92C
+m152f010  330   0x001272E5  1:0x001172E5  0x001AC939
+m152f010  331   0x001272F2  1:0x001172F2  0x001AC946
+m152f010  333   0x00127304  1:0x00117304  0x001AC958
+m152f010  334   0x0012730D  1:0x0011730D  0x001AC961
+m152f010  337   0x0012731D  1:0x0011731D  0x001AC971
+m152f010  339   0x00127337  1:0x00117337  0x001AC98B
+m152f010  340   0x00127346  1:0x00117346  0x001AC99A
+m152f010  342   0x00127356  1:0x00117356  0x001AC9AA
+m152f010  345   0x00127360  1:0x00117360  0x001AC9B4
+m152f010  346   0x0012736D  1:0x0011736D  0x001AC9C1
+m152f010  348   0x0012737D  1:0x0011737D  0x001AC9D1
+m152f010  349   0x0012738C  1:0x0011738C  0x001AC9E0
+m152f010  350   0x0012739B  1:0x0011739B  0x001AC9EF
+m152f010  352   0x001273A4  1:0x001173A4  0x001AC9F8
+m152f010  354   0x001273B3  1:0x001173B3  0x001ACA07
+m152f010  356   0x001273CB  1:0x001173CB  0x001ACA1F
+m152f010  357   0x001273D1  1:0x001173D1  0x001ACA25
+m152f011  366   0x001273DC  1:0x001173DC  0x001ACA30
+m152f011  371   0x001273FB  1:0x001173FB  0x001ACA4F
+m152f011  372   0x00127409  1:0x00117409  0x001ACA5D
+m152f011  373   0x00127419  1:0x00117419  0x001ACA6D
+m152f011  374   0x00127429  1:0x00117429  0x001ACA7D
+m152f011  375   0x00127437  1:0x00117437  0x001ACA8B
+m152f011  377   0x00127447  1:0x00117447  0x001ACA9B
+m152f011  379   0x001274C2  1:0x001174C2  0x001ACB16
+m152f011  380   0x001274D7  1:0x001174D7  0x001ACB2B
+m152f011  381   0x001274EC  1:0x001174EC  0x001ACB40
+m152f011  382   0x00127505  1:0x00117505  0x001ACB59
+m152f011  383   0x00127517  1:0x00117517  0x001ACB6B
+m152f011  384   0x00127527  1:0x00117527  0x001ACB7B
+m152f011  385   0x00127529  1:0x00117529  0x001ACB7D
+m152f011  386   0x00127539  1:0x00117539  0x001ACB8D
+m152f011  387   0x0012753B  1:0x0011753B  0x001ACB8F
+m152f011  388   0x0012754B  1:0x0011754B  0x001ACB9F
+m152f011  389   0x0012754D  1:0x0011754D  0x001ACBA1
+m152f011  390   0x0012755D  1:0x0011755D  0x001ACBB1
+m152f011  391   0x0012755F  1:0x0011755F  0x001ACBB3
+m152f011  392   0x0012756F  1:0x0011756F  0x001ACBC3
+m152f011  393   0x00127571  1:0x00117571  0x001ACBC5
+m152f011  395   0x00127581  1:0x00117581  0x001ACBD5
+m152f011  397   0x0012758C  1:0x0011758C  0x001ACBE0
+m152f012  400   0x00127593  1:0x00117593  0x001ACBE7
+m152f012  403   0x001275AE  1:0x001175AE  0x001ACC02
+m152f012  404   0x001275BB  1:0x001175BB  0x001ACC0F
+m152f012  405   0x001275E0  1:0x001175E0  0x001ACC34
+m152f012  406   0x001275F3  1:0x001175F3  0x001ACC47
+m152f012  407   0x00127602  1:0x00117602  0x001ACC56

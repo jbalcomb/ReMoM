@@ -2,6 +2,10 @@
 
 #include <gtest/gtest.h>
 
+/* CALL_TRACE on in this TU, to prove the call trace does not ride the severity floor (CallTraceSurvivesSeverityFloor) */
+#undef STU_CALL_TRACE
+#define STU_CALL_TRACE 1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -83,4 +87,18 @@ TEST(stu_log_strip_test, CompileTimeFloorBeatsPermissiveIni)
 	EXPECT_EQ(contents.find("should still be stripped"), std::string::npos);
 	EXPECT_EQ(contents.find("also stripped"),            std::string::npos);
 	EXPECT_NE(contents.find("info kept"),                std::string::npos);
+}
+
+TEST(stu_log_strip_test, CallTraceSurvivesSeverityFloor)
+{
+	STU_Log_Startup(NULL);
+	LOG_TRACE(LOG_CAT_CALL_TRACE, "stripped plain trace");
+	TRACE_ENTER_NAMED("floor_probe");
+	TRACE_EXIT_NAMED("floor_probe");
+	STU_Log_Shutdown();
+
+	std::string contents = slurp_strip_log("remom_log_new.txt");
+	EXPECT_EQ(contents.find("stripped plain trace"),           std::string::npos);
+	EXPECT_NE(contents.find("[FN-ENTER] name=floor_probe"),    std::string::npos);
+	EXPECT_NE(contents.find("[FN-EXIT]  name=floor_probe"),    std::string::npos);
 }

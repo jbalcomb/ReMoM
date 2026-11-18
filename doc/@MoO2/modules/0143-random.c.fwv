@@ -1,0 +1,93 @@
+module_num=143
+module=F:\WLIBS\special\random.c
+source=0143-random.c.md
+range[0]=1:0x001147A0 linear=0x001247A0 size=267
+range[1]=2:0x00041E34 linear=0x001B1E34 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME             SYMBOL            CHUNK
+m143f001  1    -      0x001247A0  1:0x001147A0  code         Random           Random_           regions/07-object-1/001A9654-001A9E53.txt
+m143f002  2    -      0x00124820  1:0x00114820  code         Set_Random_Seed  Set_Random_Seed_  regions/07-object-1/001A9E54-001AA653.txt
+m143f003  3    -      0x0012484C  1:0x0011484C  code         Get_Random_Seed  Get_Random_Seed_  regions/07-object-1/001A9E54-001AA653.txt
+m143f004  4    -      0x00124878  1:0x00114878  code         Randomize        Randomize_        regions/07-object-1/001A9E54-001AA653.txt
+-         -    -      0x001B1E34  2:0x00041E34  static,data  _random_seed     _random_seed      -
+
+[Module variables]
+LINEAR      SEGOFF        NAME         TYPE
+0x001B1E34  2:0x00041E34  random_seed  unsigned long
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME             TYPE                             CHUNK
+m143f001  0x001247A0  1:0x001147A0  128   24        9         0x18     -    EAX         Random           SDWORD (SDWORD); returns in EAX  regions/07-object-1/001A9654-001A9E53.txt
+m143f002  0x00124820  1:0x00114820  44    24        9         0x18     -    EAX         Set_Random_Seed  void (UDWORD)                    regions/07-object-1/001A9E54-001AA653.txt
+m143f003  0x0012484C  1:0x0011484C  44    24        9         0x18     -    -           Get_Random_Seed  UDWORD (void); returns in EAX    regions/07-object-1/001A9E54-001AA653.txt
+m143f004  0x00124878  1:0x00114878  51    24        9         0x18     -    -           Randomize        void (void)                      regions/07-object-1/001A9E54-001AA653.txt
+
+[Locals]
+KEY       ROUTINE          BLOCK  LOCAL        LOCATION    TYPE
+m143f001  Random           -      n            [EBP-0x14]  SDWORD
+m143f001  Random           -      result       [EBP-0x10]  SDWORD
+m143f001  Random           -      quotient     [EBP-0xC]   unsigned long
+m143f001  Random           -      limit        [EBP-0x8]   unsigned long
+m143f002  Set_Random_Seed  -      n            [EBP-0x4]   UDWORD
+m143f004  Randomize        -      timer_value  [EBP-0x4]   time_t
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   scalar     unsigned long   unsigned 4 bytes
+14   typedef    time_t          name for unsigned long (#13)
+15   typedef    clock_t         name for unsigned long (#13)
+16   typedef    time_t          name for unsigned long (#13)
+17   typedef    BYTE            name for unsigned char (#5)
+18   typedef    SBYTE           name for signed char (#4)
+19   typedef    UBYTE           name for unsigned char (#5)
+20   typedef    WORD            name for unsigned short (#7)
+21   typedef    SWORD           name for short (#6)
+22   typedef    UWORD           name for unsigned short (#7)
+23   typedef    DWORD           name for unsigned int (#9)
+24   typedef    SDWORD          name for int (#8)
+25   typedef    UDWORD          name for unsigned int (#9)
+26   typedef    BOOL            name for unsigned char (#5)
+27   typedef    SampleHandle    name for int (#8)
+28   procedure  -               near386; returns SDWORD (SDWORD)
+29   scalar     unsigned long   unsigned 4 bytes
+30   scalar     void            void 1 bytes
+31   procedure  -               near386; returns void (UDWORD)
+32   procedure  -               near386; returns UDWORD (void)
+33   procedure  -               near386; returns void (void)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m143f001  54    0x001247A0  1:0x001147A0  0x001A9DF4
+m143f001  57    0x001247BB  1:0x001147BB  0x001A9E0F
+m143f001  58    0x001247C8  1:0x001147C8  0x001A9E1C
+m143f001  59    0x001247D2  1:0x001147D2  0x001A9E26
+m143f001  60    0x001247D8  1:0x001147D8  0x001A9E2C
+m143f001  63    0x001247E1  1:0x001147E1  0x001A9E35
+m143f001  64    0x001247F5  1:0x001147F5  0x001A9E49
+m143f001  65    0x00124800  1:0x00114800  0x001A9E54
+m143f001  69    0x0012480D  1:0x0011480D  0x001A9E61
+m143f001  70    0x00124814  1:0x00114814  0x001A9E68
+m143f002  72    0x00124820  1:0x00114820  0x001A9E74
+m143f002  74    0x0012483B  1:0x0011483B  0x001A9E8F
+m143f002  75    0x00124843  1:0x00114843  0x001A9E97
+m143f003  77    0x0012484C  1:0x0011484C  0x001A9EA0
+m143f003  79    0x00124864  1:0x00114864  0x001A9EB8
+m143f003  80    0x0012486C  1:0x0011486C  0x001A9EC0
+m143f004  82    0x00124878  1:0x00114878  0x001A9ECC
+m143f004  85    0x00124890  1:0x00114890  0x001A9EE4
+m143f004  86    0x0012489A  1:0x0011489A  0x001A9EEE
+m143f004  87    0x001248A2  1:0x001148A2  0x001A9EF6

@@ -1,0 +1,19 @@
+module_num=9
+module=D:\MOX\ANTAROOM.C
+source=0009-antaroom.c.md
+range[0]=1:0x00004AAC linear=0x00014AAC size=843
+range[1]=2:0x00000A08 linear=0x00170A08 size=28
+range[2]=2:0x00008164 linear=0x00178164 size=20
+range[3]=2:0x00022010 linear=0x00192010 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                 SYMBOL                                CHUNK
+m009f001  1    -      0x00014AAC  1:0x00004AAC  code  Main_Antaran_Room_Screen             Main_Antaran_Room_Screen_             regions/07-object-1/00099E54-0009A653.txt
+m009f002  2    -      0x00014BFD  1:0x00004BFD  code  Draw_Main_Antaran_Room_Screen        Draw_Main_Antaran_Room_Screen_        regions/07-object-1/00099E54-0009A653.txt
+m009f003  3    -      0x00014C83  1:0x00004C83  code  Reload_Main_Antaran_Room_Screen      Reload_Main_Antaran_Room_Screen_      regions/07-object-1/00099E54-0009A653.txt
+m009f004  4    -      0x00014D7C  1:0x00004D7C  code  Get_Antaran_Room_Message             Get_Antaran_Room_Message_             regions/07-object-1/00099E54-0009A653.txt
+m009f005  5    -      0x00014DE1  1:0x00004DE1  code  Check_Show_Main_Antaran_Room_Screen  Check_Show_Main_Antaran_Room_Screen_  regions/07-object-1/00099E54-0009A653.txt
+-         -    -      0x00178164  2:0x00008164  data  _antaran_room_blank_mouse            _antaran_room_blank_mouse             regions/08-object-2/001F6654-001F6E53.txt
+-         -    -      0x00178170  2:0x00008170  data  _antaran_room_normal_colors          _antaran_room_normal_colors           regions/08-object-2/001F6654-001F6E53.txt
+-         -    -      0x00192010  2:0x00022010  data  _antaran_room_mouse_bitmap           _antaran_room_mouse_bitmap            -
+-         -    -      0x00192014  2:0x00022014  data  _antaran_room_message                _antaran_room_message                 -

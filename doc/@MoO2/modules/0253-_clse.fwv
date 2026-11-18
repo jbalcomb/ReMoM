@@ -1,0 +1,8 @@
+module_num=253
+module=_clse
+source=0253-_clse.md
+range[0]=1:0x001374CE linear=0x001474CE size=53
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m253f001  1    -      0x001474CE  1:0x001374CE  code  __close  __close_  regions/07-object-1/001CC654-001CCE53.txt

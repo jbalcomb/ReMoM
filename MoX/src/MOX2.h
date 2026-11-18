@@ -5,7 +5,7 @@
     ported.
 
     First inhabitant: Check_Command_Line_Parameters_().  In MoO2 this is the
-    single CLI-parsing entry point called early in _main().  Here, both HeMoM
+    single CLI-parsing entry point called early in _main().  Here, both DeMoM
     and ReMoM call it and then read the per-flag globals it sets.
 */
 #ifndef MOX_MOX2_H
@@ -45,7 +45,7 @@ extern int32_t _cmd_line_seed2;
 
     Unrecognised arguments are ignored at this layer; per-target main()
     parsers will keep handling target-specific flags during the incremental
-    migration of CLI parsing from HeMoM/ReMoM into MOX2.
+    migration of CLI parsing from DeMoM/ReMoM into MOX2.
 */
 void Check_Command_Line_Parameters_(int argc, char *argv[]);
 

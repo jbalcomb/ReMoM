@@ -1,0 +1,631 @@
+module_num=181
+module=F:\WLIBS\animate\replace.c
+source=0181-replace.c.md
+range[0]=1:0x0012719F linear=0x0013719F size=4582
+range[1]=2:0x00002F48 linear=0x00172F48 size=76
+range[2]=2:0x0004489C linear=0x001B489C size=2052
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                            SYMBOL                           CHUNK
+m181f001  1    -      0x0013719F  1:0x0012719F  code  Replace_Color                   Replace_Color_                   regions/07-object-1/001BC654-001BCE53.txt
+m181f002  2    -      0x0013743E  1:0x0012743E  code  Replace_Color_All               Replace_Color_All_               regions/07-object-1/001BC654-001BCE53.txt
+m181f003  3    -      0x001376CF  1:0x001276CF  code  No_Replace_Mask_Msg             No_Replace_Mask_Msg_             regions/07-object-1/001BC654-001BCE53.txt
+m181f004  4    -      0x001376F8  1:0x001276F8  code  Replace_Color_Gradient          Replace_Color_Gradient_          regions/07-object-1/001BC654-001BCE53.txt
+m181f005  5    -      0x00137A03  1:0x00127A03  code  Replace_Gradient_Range          Replace_Gradient_Range_          regions/07-object-1/001BCE54-001BD653.txt
+m181f006  6    -      0x00137D86  1:0x00127D86  code  Replace_Color_Range             Replace_Color_Range_             regions/07-object-1/001BCE54-001BD653.txt
+m181f007  7    -      0x001380E0  1:0x001280E0  code  Establish_Color_Gradient        Establish_Color_Gradient_        regions/07-object-1/001BD654-001BDE53.txt
+m181f008  8    -      0x001381B5  1:0x001281B5  code  Shift_Palette_Range             Shift_Palette_Range_             regions/07-object-1/001BD654-001BDE53.txt
+m181f009  9    -      0x00138229  1:0x00128229  code  Gray_Scale_Off_Page             Gray_Scale_Off_Page_             regions/07-object-1/001BD654-001BDE53.txt
+m181f010  10   -      0x001382BF  1:0x001282BF  code  Interlaced_Gray_Scale_Off_Page  Interlaced_Gray_Scale_Off_Page_  regions/07-object-1/001BD654-001BDE53.txt
+-         -    -      0x001B489C  2:0x0004489C  data  _graphics_buffer                _graphics_buffer                 -
+-         -    -      0x001B509C  2:0x0004509C  data  _palette_color_list             _palette_color_list              -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                TYPE
+0x001B489C  2:0x0004489C  graphics_buffer     unsigned char[2048]
+0x001B509C  2:0x0004509C  palette_color_list  unsigned char *
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                            TYPE                                               CHUNK
+m181f001  0x0013719F  1:0x0012719F  671   22        7         0x10     -    EAX,EDX,EBX      Replace_Color                   void (void *, short, short)                        regions/07-object-1/001BC654-001BCE53.txt
+m181f002  0x0013743E  1:0x0012743E  657   23        8         0x14     -    EAX,EDX          Replace_Color_All               void (void *, short)                               regions/07-object-1/001BC654-001BCE53.txt
+m181f003  0x001376CF  1:0x001276CF  41    24        7         0x18     -    -                No_Replace_Mask_Msg             void (void)                                        regions/07-object-1/001BC654-001BCE53.txt
+m181f004  0x001376F8  1:0x001276F8  779   21        6         0xC      -    EAX,EDX,EBX,ECX  Replace_Color_Gradient          void (void *, char *, short, short)                regions/07-object-1/001BC654-001BCE53.txt
+m181f005  0x00137A03  1:0x00127A03  899   21        8         0xC      -    EAX,EDX,EBX,ECX  Replace_Gradient_Range          void (void *, char *, short, short, short, short)  regions/07-object-1/001BCE54-001BD653.txt
+m181f006  0x00137D86  1:0x00127D86  858   21        6         0xC      -    EAX,EDX,EBX,ECX  Replace_Color_Range             void (void *, char *, short, short)                regions/07-object-1/001BCE54-001BD653.txt
+m181f007  0x001380E0  1:0x001280E0  213   23        8         0x14     -    EAX,EDX          Establish_Color_Gradient        void (short, short)                                regions/07-object-1/001BD654-001BDE53.txt
+m181f008  0x001381B5  1:0x001281B5  116   23        8         0x14     -    EAX,EDX          Shift_Palette_Range             void (void *, int)                                 regions/07-object-1/001BD654-001BDE53.txt
+m181f009  0x00138229  1:0x00128229  150   22        7         0x10     -    EAX,EDX,EBX      Gray_Scale_Off_Page             void (short, short, short)                         regions/07-object-1/001BD654-001BDE53.txt
+m181f010  0x001382BF  1:0x001282BF  198   21        8         0xC      -    EAX,EDX,EBX,ECX  Interlaced_Gray_Scale_Off_Page  void (short, short, short, short, short)           regions/07-object-1/001BD654-001BDE53.txt
+
+[Locals]
+KEY       ROUTINE                         BLOCK  LOCAL                 LOCATION    TYPE
+m181f001  Replace_Color                   -      picture               [EBP-0x88]  void *
+m181f001  Replace_Color                   -      color_to_replace      [EBP-0x30]  short
+m181f001  Replace_Color                   -      replacement_color     [EBP-0x2C]  short
+m181f001  Replace_Color                   -      palette_num           [EBP-0x7C]  int
+m181f001  Replace_Color                   -      start                 [EBP-0x78]  int
+m181f001  Replace_Color                   -      count                 [EBP-0x74]  int
+m181f001  Replace_Color                   -      palette_pos           [EBP-0x70]  int
+m181f001  Replace_Color                   -      pict_size             [EBP-0x6C]  int
+m181f001  Replace_Color                   -      frame_num             [EBP-0x14]  short
+m181f001  Replace_Color                   -      current_palette_long  [EBP-0x64]  long *
+m181f001  Replace_Color                   -      palette_data          [EBP-0x84]  long
+m181f001  Replace_Color                   -      frame_offset          [EBP-0x80]  char *
+m181f001  Replace_Color                   -      frame_offset_table    [EBP-0x58]  long *
+m181f001  Replace_Color                   -      bitmap_size           [EBP-0x54]  int
+m181f001  Replace_Color                   -      pos                   [EBP-0x60]  int
+m181f001  Replace_Color                   -      screen_pos            [EBP-0x5C]  int
+m181f001  Replace_Color                   -      line_add              [EBP-0x48]  int
+m181f001  Replace_Color                   -      i                     [EBP-0x44]  int
+m181f001  Replace_Color                   -      height                [EBP-0x20]  short
+m181f001  Replace_Color                   -      width                 [EBP-0x1C]  short
+m181f001  Replace_Color                   -      data                  [EBP-0x4]   unsigned char
+m181f001  Replace_Color                   -      screen_data           [EBP-0x8]   unsigned char
+m181f001  Replace_Color                   -      x                     [EBP-0x50]  int
+m181f001  Replace_Color                   -      y                     [EBP-0x4C]  int
+m181f001  Replace_Color                   -      buffer_pos_word       [EBP-0x38]  int
+m181f001  Replace_Color                   -      buffer_pos            [EBP-0x68]  int
+m181f001  Replace_Color                   -      packet_pos            [EBP-0x40]  int
+m181f001  Replace_Color                   -      data_count            [EBP-0x10]  short
+m181f001  Replace_Color                   -      skip_count            [EBP-0x18]  short
+m181f001  Replace_Color                   -      store_type            [EBP-0x28]  short
+m181f001  Replace_Color                   -      line_skip             [EBP-0x24]  short
+m181f001  Replace_Color                   -      frame_data_word       [EBP-0x3C]  unsigned short *
+m181f001  Replace_Color                   -      bank_num              [EBP-0xC]   short
+m181f001  Replace_Color                   -      frame_data            [EBP-0x34]  char *
+m181f002  Replace_Color_All               -      picture               [EBP-0x84]  void *
+m181f002  Replace_Color_All               -      replacement_color     [EBP-0x2C]  short
+m181f002  Replace_Color_All               -      palette_num           [EBP-0x7C]  int
+m181f002  Replace_Color_All               -      start                 [EBP-0x78]  int
+m181f002  Replace_Color_All               -      count                 [EBP-0x74]  int
+m181f002  Replace_Color_All               -      palette_pos           [EBP-0x70]  int
+m181f002  Replace_Color_All               -      pict_size             [EBP-0x6C]  int
+m181f002  Replace_Color_All               -      frame_num             [EBP-0x14]  short
+m181f002  Replace_Color_All               -      current_palette_long  [EBP-0x64]  long *
+m181f002  Replace_Color_All               -      palette_data          [EBP-0x60]  long
+m181f002  Replace_Color_All               -      frame_offset          [EBP-0x80]  char *
+m181f002  Replace_Color_All               -      frame_offset_table    [EBP-0x58]  long *
+m181f002  Replace_Color_All               -      bitmap_size           [EBP-0x54]  int
+m181f002  Replace_Color_All               -      pos                   [EBP-0x50]  int
+m181f002  Replace_Color_All               -      screen_pos            [EBP-0x5C]  int
+m181f002  Replace_Color_All               -      line_add              [EBP-0x48]  int
+m181f002  Replace_Color_All               -      i                     [EBP-0x44]  int
+m181f002  Replace_Color_All               -      height                [EBP-0x20]  short
+m181f002  Replace_Color_All               -      width                 [EBP-0x1C]  short
+m181f002  Replace_Color_All               -      data                  [EBP-0x4]   unsigned char
+m181f002  Replace_Color_All               -      screen_data           [EBP-0x8]   unsigned char
+m181f002  Replace_Color_All               -      x                     [EBP-0x40]  int
+m181f002  Replace_Color_All               -      y                     [EBP-0x4C]  int
+m181f002  Replace_Color_All               -      buffer_pos_word       [EBP-0x68]  int
+m181f002  Replace_Color_All               -      buffer_pos            [EBP-0x34]  int
+m181f002  Replace_Color_All               -      packet_pos            [EBP-0x30]  int
+m181f002  Replace_Color_All               -      data_count            [EBP-0x10]  short
+m181f002  Replace_Color_All               -      skip_count            [EBP-0x18]  short
+m181f002  Replace_Color_All               -      store_type            [EBP-0x28]  short
+m181f002  Replace_Color_All               -      line_skip             [EBP-0x24]  short
+m181f002  Replace_Color_All               -      frame_data_word       [EBP-0x3C]  unsigned short *
+m181f002  Replace_Color_All               -      bank_num              [EBP-0xC]   short
+m181f002  Replace_Color_All               -      frame_data            [EBP-0x38]  char *
+m181f004  Replace_Color_Gradient          -      picture               [EBP-0x8C]  void *
+m181f004  Replace_Color_Gradient          -      color_array           [EBP-0x88]  char *
+m181f004  Replace_Color_Gradient          -      color_count           [EBP-0x30]  short
+m181f004  Replace_Color_Gradient          -      reverse_flag          [EBP-0x2C]  short
+m181f004  Replace_Color_Gradient          -      palette_num           [EBP-0x7C]  int
+m181f004  Replace_Color_Gradient          -      start                 [EBP-0x78]  int
+m181f004  Replace_Color_Gradient          -      count                 [EBP-0x74]  int
+m181f004  Replace_Color_Gradient          -      palette_pos           [EBP-0x70]  int
+m181f004  Replace_Color_Gradient          -      pict_size             [EBP-0x6C]  int
+m181f004  Replace_Color_Gradient          -      frame_num             [EBP-0x14]  short
+m181f004  Replace_Color_Gradient          -      current_palette_long  [EBP-0x64]  long *
+m181f004  Replace_Color_Gradient          -      palette_data          [EBP-0x84]  long
+m181f004  Replace_Color_Gradient          -      frame_offset          [EBP-0x80]  char *
+m181f004  Replace_Color_Gradient          -      frame_offset_table    [EBP-0x58]  long *
+m181f004  Replace_Color_Gradient          -      bitmap_size           [EBP-0x54]  int
+m181f004  Replace_Color_Gradient          -      pos                   [EBP-0x60]  int
+m181f004  Replace_Color_Gradient          -      screen_pos            [EBP-0x5C]  int
+m181f004  Replace_Color_Gradient          -      line_add              [EBP-0x48]  int
+m181f004  Replace_Color_Gradient          -      i                     [EBP-0x44]  int
+m181f004  Replace_Color_Gradient          -      height                [EBP-0x20]  short
+m181f004  Replace_Color_Gradient          -      width                 [EBP-0x1C]  short
+m181f004  Replace_Color_Gradient          -      data                  [EBP-0x4]   unsigned char
+m181f004  Replace_Color_Gradient          -      screen_data           [EBP-0x8]   unsigned char
+m181f004  Replace_Color_Gradient          -      x                     [EBP-0x50]  int
+m181f004  Replace_Color_Gradient          -      y                     [EBP-0x4C]  int
+m181f004  Replace_Color_Gradient          -      buffer_pos_word       [EBP-0x38]  int
+m181f004  Replace_Color_Gradient          -      buffer_pos            [EBP-0x68]  int
+m181f004  Replace_Color_Gradient          -      packet_pos            [EBP-0x40]  int
+m181f004  Replace_Color_Gradient          -      data_count            [EBP-0x10]  short
+m181f004  Replace_Color_Gradient          -      skip_count            [EBP-0x18]  short
+m181f004  Replace_Color_Gradient          -      store_type            [EBP-0x28]  short
+m181f004  Replace_Color_Gradient          -      line_skip             [EBP-0x24]  short
+m181f004  Replace_Color_Gradient          -      frame_data_word       [EBP-0x3C]  unsigned short *
+m181f004  Replace_Color_Gradient          -      bank_num              [EBP-0xC]   short
+m181f004  Replace_Color_Gradient          -      frame_data            [EBP-0x34]  char *
+m181f005  Replace_Gradient_Range          -      picture               [EBP-0x90]  void *
+m181f005  Replace_Gradient_Range          -      color_array           [EBP-0x8C]  char *
+m181f005  Replace_Gradient_Range          -      color_count           [EBP-0x2C]  short
+m181f005  Replace_Gradient_Range          -      reverse_flag          [EBP-0x28]  short
+m181f005  Replace_Gradient_Range          -      min_color             [EBP+0x10]  short
+m181f005  Replace_Gradient_Range          -      max_color             [EBP+0x14]  short
+m181f005  Replace_Gradient_Range          -      palette_num           [EBP-0x78]  int
+m181f005  Replace_Gradient_Range          -      start                 [EBP-0x74]  int
+m181f005  Replace_Gradient_Range          -      count                 [EBP-0x70]  int
+m181f005  Replace_Gradient_Range          -      palette_pos           [EBP-0x6C]  int
+m181f005  Replace_Gradient_Range          -      pict_size             [EBP-0x68]  int
+m181f005  Replace_Gradient_Range          -      frame_num             [EBP-0x30]  short
+m181f005  Replace_Gradient_Range          -      color_pos             [EBP-0x34]  short
+m181f005  Replace_Gradient_Range          -      current_palette_long  [EBP-0x80]  long *
+m181f005  Replace_Gradient_Range          -      palette_data          [EBP-0x58]  long
+m181f005  Replace_Gradient_Range          -      frame_offset          [EBP-0x7C]  char *
+m181f005  Replace_Gradient_Range          -      frame_offset_table    [EBP-0x64]  long *
+m181f005  Replace_Gradient_Range          -      bitmap_size           [EBP-0x60]  int
+m181f005  Replace_Gradient_Range          -      pos                   [EBP-0x48]  int
+m181f005  Replace_Gradient_Range          -      screen_pos            [EBP-0x44]  int
+m181f005  Replace_Gradient_Range          -      line_add              [EBP-0x88]  int
+m181f005  Replace_Gradient_Range          -      i                     [EBP-0x84]  int
+m181f005  Replace_Gradient_Range          -      height                [EBP-0x24]  short
+m181f005  Replace_Gradient_Range          -      width                 [EBP-0x20]  short
+m181f005  Replace_Gradient_Range          -      data                  [EBP-0x8]   unsigned char
+m181f005  Replace_Gradient_Range          -      screen_data           [EBP-0x4]   unsigned char
+m181f005  Replace_Gradient_Range          -      x                     [EBP-0x54]  int
+m181f005  Replace_Gradient_Range          -      y                     [EBP-0x4C]  int
+m181f005  Replace_Gradient_Range          -      buffer_pos_word       [EBP-0x38]  int
+m181f005  Replace_Gradient_Range          -      buffer_pos            [EBP-0x3C]  int
+m181f005  Replace_Gradient_Range          -      packet_pos            [EBP-0x40]  int
+m181f005  Replace_Gradient_Range          -      data_count            [EBP-0x18]  short
+m181f005  Replace_Gradient_Range          -      skip_count            [EBP-0x14]  short
+m181f005  Replace_Gradient_Range          -      store_type            [EBP-0x10]  short
+m181f005  Replace_Gradient_Range          -      line_skip             [EBP-0xC]   short
+m181f005  Replace_Gradient_Range          -      frame_data_word       [EBP-0x5C]  unsigned short *
+m181f005  Replace_Gradient_Range          -      bank_num              [EBP-0x1C]  short
+m181f005  Replace_Gradient_Range          -      frame_data            [EBP-0x50]  char *
+m181f006  Replace_Color_Range             -      picture               [EBP-0x94]  void *
+m181f006  Replace_Color_Range             -      color_array           [EBP-0x90]  char *
+m181f006  Replace_Color_Range             -      start_color           [EBP-0x34]  short
+m181f006  Replace_Color_Range             -      color_count           [EBP-0x2C]  short
+m181f006  Replace_Color_Range             -      palette_num           [EBP-0x84]  int
+m181f006  Replace_Color_Range             -      start                 [EBP-0x80]  int
+m181f006  Replace_Color_Range             -      count                 [EBP-0x7C]  int
+m181f006  Replace_Color_Range             -      palette_pos           [EBP-0x78]  int
+m181f006  Replace_Color_Range             -      pict_size             [EBP-0x74]  int
+m181f006  Replace_Color_Range             -      frame_num             [EBP-0x28]  short
+m181f006  Replace_Color_Range             -      color_pos             [EBP-0x24]  short
+m181f006  Replace_Color_Range             -      current_palette_long  [EBP-0x68]  long *
+m181f006  Replace_Color_Range             -      palette_data          [EBP-0x8C]  long
+m181f006  Replace_Color_Range             -      frame_offset          [EBP-0x88]  char *
+m181f006  Replace_Color_Range             -      frame_offset_table    [EBP-0x5C]  long *
+m181f006  Replace_Color_Range             -      bitmap_size           [EBP-0x58]  int
+m181f006  Replace_Color_Range             -      pos                   [EBP-0x54]  int
+m181f006  Replace_Color_Range             -      screen_pos            [EBP-0x64]  int
+m181f006  Replace_Color_Range             -      line_add              [EBP-0x4C]  int
+m181f006  Replace_Color_Range             -      i                     [EBP-0x48]  int
+m181f006  Replace_Color_Range             -      height                [EBP-0x30]  short
+m181f006  Replace_Color_Range             -      width                 [EBP-0x18]  short
+m181f006  Replace_Color_Range             -      data                  [EBP-0x8]   unsigned char
+m181f006  Replace_Color_Range             -      screen_data           [EBP-0x4]   unsigned char
+m181f006  Replace_Color_Range             -      x                     [EBP-0x3C]  int
+m181f006  Replace_Color_Range             -      y                     [EBP-0x50]  int
+m181f006  Replace_Color_Range             -      buffer_pos_word       [EBP-0x40]  int
+m181f006  Replace_Color_Range             -      buffer_pos            [EBP-0x70]  int
+m181f006  Replace_Color_Range             -      packet_pos            [EBP-0x6C]  int
+m181f006  Replace_Color_Range             -      data_count            [EBP-0x20]  short
+m181f006  Replace_Color_Range             -      skip_count            [EBP-0x1C]  short
+m181f006  Replace_Color_Range             -      store_type            [EBP-0x10]  short
+m181f006  Replace_Color_Range             -      line_skip             [EBP-0x38]  short
+m181f006  Replace_Color_Range             -      frame_data_word       [EBP-0x60]  unsigned short *
+m181f006  Replace_Color_Range             -      bank_num              [EBP-0xC]   short
+m181f006  Replace_Color_Range             -      end_color             [EBP-0x14]  short
+m181f006  Replace_Color_Range             -      frame_data            [EBP-0x44]  char *
+m181f007  Establish_Color_Gradient        -      color_count           [EBP-0x8]   short
+m181f007  Establish_Color_Gradient        -      reverse_flag          [EBP-0xC]   short
+m181f007  Establish_Color_Gradient        -      i                     [EBP-0x10]  int
+m181f007  Establish_Color_Gradient        -      color_value           [EBP-0x4]   char
+m181f008  Shift_Palette_Range             -      picture               [EBP-0x20]  void *
+m181f008  Shift_Palette_Range             -      new_start             [EBP-0x1C]  int
+m181f008  Shift_Palette_Range             -      palette_num           [EBP-0x18]  int
+m181f008  Shift_Palette_Range             -      start                 [EBP-0x14]  int
+m181f008  Shift_Palette_Range             -      count                 [EBP-0x10]  int
+m181f008  Shift_Palette_Range             -      palette_pos           [EBP-0xC]   int
+m181f008  Shift_Palette_Range             -      current_palette_long  [EBP-0x8]   long *
+m181f008  Shift_Palette_Range             -      palette_data          [EBP-0x4]   long
+m181f009  Gray_Scale_Off_Page             -      start_color           [EBP-0xC]   short
+m181f009  Gray_Scale_Off_Page             -      color_count           [EBP-0x4]   short
+m181f009  Gray_Scale_Off_Page             -      inverse_flag          [EBP-0x8]   short
+m181f009  Gray_Scale_Off_Page             -      i                     [EBP-0x10]  int
+m181f010  Interlaced_Gray_Scale_Off_Page  -      start_color1          [EBP-0xC]   short
+m181f010  Interlaced_Gray_Scale_Off_Page  -      color_count1          [EBP-0x10]  short
+m181f010  Interlaced_Gray_Scale_Off_Page  -      start_color2          [EBP-0x8]   short
+m181f010  Interlaced_Gray_Scale_Off_Page  -      color_count2          [EBP-0x4]   short
+m181f010  Interlaced_Gray_Scale_Off_Page  -      inverse_flag          [EBP+0x10]  short
+m181f010  Interlaced_Gray_Scale_Off_Page  -      i                     [EBP-0x14]  int
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    BYTE            name for unsigned char (#5)
+13   typedef    SBYTE           name for signed char (#4)
+14   typedef    UBYTE           name for unsigned char (#5)
+15   typedef    WORD            name for unsigned short (#7)
+16   typedef    SWORD           name for short (#6)
+17   typedef    UWORD           name for unsigned short (#7)
+18   typedef    DWORD           name for unsigned int (#9)
+19   typedef    SDWORD          name for int (#8)
+20   typedef    UDWORD          name for unsigned int (#9)
+21   typedef    BOOL            name for unsigned char (#5)
+22   typedef    SampleHandle    name for int (#8)
+23   typedef    size_t          name for unsigned int (#9)
+24   pointer    -               near386; of char (#10)
+25   array      __va_list       0..0; of char * (#24)
+26   typedef    __va_list       name for char *[1] (#25)
+27   scalar     long            int 4 bytes
+28   typedef    fpos_t          name for long (#27)
+29   typedef    fpos_t          name for long (#27)
+30   array      -               0..2047; of unsigned char (#5)
+31   pointer    -               near386; of unsigned char (#5)
+32   scalar     void            void 1 bytes
+33   pointer    -               near386; of void (#32)
+34   procedure  -               near386; returns void (void *, short, short)
+35   pointer    -               near386; of long (#27)
+36   pointer    -               near386; of unsigned short (#7)
+37   procedure  -               near386; returns void (void *, short)
+38   procedure  -               near386; returns void ()
+39   procedure  -               near386; returns void (void *, char *, short, short)
+40   procedure  -               near386; returns void (void *, char *, short, short, short, short)
+41   procedure  -               near386; returns void (short, short)
+42   procedure  -               near386; returns void (void *, int)
+43   procedure  -               near386; returns void (short, short, short)
+44   procedure  -               near386; returns void (short, short, short, short, short)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m181f001  25    0x0013719F  1:0x0012719F  0x001BC7F3
+m181f001  42    0x001371C1  1:0x001271C1  0x001BC815
+m181f001  44    0x001371CC  1:0x001271CC  0x001BC820
+m181f001  46    0x001371FF  1:0x001271FF  0x001BC853
+m181f001  48    0x0013720A  1:0x0012720A  0x001BC85E
+m181f001  51    0x00137221  1:0x00127221  0x001BC875
+m181f001  53    0x00137250  1:0x00127250  0x001BC8A4
+m181f001  54    0x0013725C  1:0x0012725C  0x001BC8B0
+m181f001  55    0x00137262  1:0x00127262  0x001BC8B6
+m181f001  56    0x0013726B  1:0x0012726B  0x001BC8BF
+m181f001  57    0x00137277  1:0x00127277  0x001BC8CB
+m181f001  59    0x0013727E  1:0x0012727E  0x001BC8D2
+m181f001  61    0x0013728B  1:0x0012728B  0x001BC8DF
+m181f001  62    0x00137299  1:0x00127299  0x001BC8ED
+m181f001  64    0x001372A8  1:0x001272A8  0x001BC8FC
+m181f001  66    0x001372AC  1:0x001272AC  0x001BC900
+m181f001  67    0x001372BA  1:0x001272BA  0x001BC90E
+m181f001  69    0x001372BC  1:0x001272BC  0x001BC910
+m181f001  70    0x001372C5  1:0x001272C5  0x001BC919
+m181f001  72    0x001372CC  1:0x001272CC  0x001BC920
+m181f001  74    0x001372D5  1:0x001272D5  0x001BC929
+m181f001  75    0x001372E5  1:0x001272E5  0x001BC939
+m181f001  77    0x001372F0  1:0x001272F0  0x001BC944
+m181f001  78    0x001372F3  1:0x001272F3  0x001BC947
+m181f001  79    0x001372F6  1:0x001272F6  0x001BC94A
+m181f001  80    0x001372F8  1:0x001272F8  0x001BC94C
+m181f001  82    0x00137309  1:0x00127309  0x001BC95D
+m181f001  83    0x0013730E  1:0x0012730E  0x001BC962
+m181f001  85    0x00137313  1:0x00127313  0x001BC967
+m181f001  88    0x0013732B  1:0x0012732B  0x001BC97F
+m181f001  89    0x00137344  1:0x00127344  0x001BC998
+m181f001  90    0x00137351  1:0x00127351  0x001BC9A5
+m181f001  91    0x0013735E  1:0x0012735E  0x001BC9B2
+m181f001  94    0x00137363  1:0x00127363  0x001BC9B7
+m181f001  96    0x0013736A  1:0x0012736A  0x001BC9BE
+m181f001  98    0x00137387  1:0x00127387  0x001BC9DB
+m181f001  99    0x00137390  1:0x00127390  0x001BC9E4
+m181f001  100   0x00137399  1:0x00127399  0x001BC9ED
+m181f001  102   0x001373A3  1:0x001273A3  0x001BC9F7
+m181f001  104   0x001373A7  1:0x001273A7  0x001BC9FB
+m181f001  106   0x001373B9  1:0x001273B9  0x001BCA0D
+m181f001  108   0x001373C2  1:0x001273C2  0x001BCA16
+m181f001  109   0x001373C6  1:0x001273C6  0x001BCA1A
+m181f001  110   0x001373E0  1:0x001273E0  0x001BCA34
+m181f001  111   0x001373F0  1:0x001273F0  0x001BCA44
+m181f001  113   0x001373FD  1:0x001273FD  0x001BCA51
+m181f001  115   0x00137404  1:0x00127404  0x001BCA58
+m181f001  116   0x0013740D  1:0x0012740D  0x001BCA61
+m181f001  117   0x00137416  1:0x00127416  0x001BCA6A
+m181f001  119   0x00137420  1:0x00127420  0x001BCA74
+m181f001  120   0x00137424  1:0x00127424  0x001BCA78
+m181f001  121   0x00137426  1:0x00127426  0x001BCA7A
+m181f001  122   0x0013742B  1:0x0012742B  0x001BCA7F
+m181f001  124   0x0013742D  1:0x0012742D  0x001BCA81
+m181f001  126   0x00137432  1:0x00127432  0x001BCA86
+m181f001  127   0x00137437  1:0x00127437  0x001BCA8B
+m181f002  130   0x0013743E  1:0x0012743E  0x001BCA92
+m181f002  148   0x0013745E  1:0x0012745E  0x001BCAB2
+m181f002  150   0x00137469  1:0x00127469  0x001BCABD
+m181f002  152   0x0013749F  1:0x0012749F  0x001BCAF3
+m181f002  154   0x001374AA  1:0x001274AA  0x001BCAFE
+m181f002  157   0x001374C1  1:0x001274C1  0x001BCB15
+m181f002  159   0x001374F0  1:0x001274F0  0x001BCB44
+m181f002  160   0x001374FC  1:0x001274FC  0x001BCB50
+m181f002  161   0x00137502  1:0x00127502  0x001BCB56
+m181f002  162   0x0013750B  1:0x0012750B  0x001BCB5F
+m181f002  163   0x00137517  1:0x00127517  0x001BCB6B
+m181f002  165   0x0013751E  1:0x0012751E  0x001BCB72
+m181f002  167   0x0013752B  1:0x0012752B  0x001BCB7F
+m181f002  168   0x00137539  1:0x00127539  0x001BCB8D
+m181f002  170   0x00137548  1:0x00127548  0x001BCB9C
+m181f002  172   0x0013754C  1:0x0012754C  0x001BCBA0
+m181f002  173   0x0013755A  1:0x0012755A  0x001BCBAE
+m181f002  175   0x0013755C  1:0x0012755C  0x001BCBB0
+m181f002  176   0x00137565  1:0x00127565  0x001BCBB9
+m181f002  178   0x0013756C  1:0x0012756C  0x001BCBC0
+m181f002  180   0x00137575  1:0x00127575  0x001BCBC9
+m181f002  181   0x00137580  1:0x00127580  0x001BCBD4
+m181f002  183   0x0013758B  1:0x0012758B  0x001BCBDF
+m181f002  184   0x0013758E  1:0x0012758E  0x001BCBE2
+m181f002  185   0x00137591  1:0x00127591  0x001BCBE5
+m181f002  186   0x00137593  1:0x00127593  0x001BCBE7
+m181f002  188   0x001375A4  1:0x001275A4  0x001BCBF8
+m181f002  189   0x001375A9  1:0x001275A9  0x001BCBFD
+m181f002  191   0x001375AE  1:0x001275AE  0x001BCC02
+m181f002  193   0x001375C6  1:0x001275C6  0x001BCC1A
+m181f002  194   0x001375DF  1:0x001275DF  0x001BCC33
+m181f002  195   0x001375EA  1:0x001275EA  0x001BCC3E
+m181f002  196   0x001375F7  1:0x001275F7  0x001BCC4B
+m181f002  199   0x001375FC  1:0x001275FC  0x001BCC50
+m181f002  201   0x00137603  1:0x00127603  0x001BCC57
+m181f002  203   0x00137620  1:0x00127620  0x001BCC74
+m181f002  204   0x00137629  1:0x00127629  0x001BCC7D
+m181f002  205   0x00137632  1:0x00127632  0x001BCC86
+m181f002  207   0x0013763C  1:0x0012763C  0x001BCC90
+m181f002  209   0x00137640  1:0x00127640  0x001BCC94
+m181f002  211   0x0013764E  1:0x0012764E  0x001BCCA2
+m181f002  213   0x00137657  1:0x00127657  0x001BCCAB
+m181f002  214   0x0013765B  1:0x0012765B  0x001BCCAF
+m181f002  215   0x00137675  1:0x00127675  0x001BCCC9
+m181f002  216   0x00137680  1:0x00127680  0x001BCCD4
+m181f002  218   0x0013768D  1:0x0012768D  0x001BCCE1
+m181f002  220   0x00137694  1:0x00127694  0x001BCCE8
+m181f002  221   0x0013769D  1:0x0012769D  0x001BCCF1
+m181f002  222   0x001376A6  1:0x001276A6  0x001BCCFA
+m181f002  224   0x001376B0  1:0x001276B0  0x001BCD04
+m181f002  225   0x001376B4  1:0x001276B4  0x001BCD08
+m181f002  226   0x001376B6  1:0x001276B6  0x001BCD0A
+m181f002  227   0x001376BB  1:0x001276BB  0x001BCD0F
+m181f002  229   0x001376BD  1:0x001276BD  0x001BCD11
+m181f002  231   0x001376C2  1:0x001276C2  0x001BCD16
+m181f002  232   0x001376C7  1:0x001276C7  0x001BCD1B
+m181f003  235   0x001376CF  1:0x001276CF  0x001BCD23
+m181f003  237   0x001376E7  1:0x001276E7  0x001BCD3B
+m181f003  238   0x001376F1  1:0x001276F1  0x001BCD45
+m181f004  242   0x001376F8  1:0x001276F8  0x001BCD4C
+m181f004  259   0x0013771F  1:0x0012771F  0x001BCD73
+m181f004  261   0x0013772A  1:0x0012772A  0x001BCD7E
+m181f004  263   0x00137737  1:0x00127737  0x001BCD8B
+m181f004  265   0x0013776B  1:0x0012776B  0x001BCDBF
+m181f004  267   0x00137776  1:0x00127776  0x001BCDCA
+m181f004  270   0x0013778D  1:0x0012778D  0x001BCDE1
+m181f004  272   0x001377BC  1:0x001277BC  0x001BCE10
+m181f004  273   0x001377C8  1:0x001277C8  0x001BCE1C
+m181f004  274   0x001377CE  1:0x001277CE  0x001BCE22
+m181f004  275   0x001377D7  1:0x001277D7  0x001BCE2B
+m181f004  276   0x001377E3  1:0x001277E3  0x001BCE37
+m181f004  278   0x001377EA  1:0x001277EA  0x001BCE3E
+m181f004  280   0x001377F7  1:0x001277F7  0x001BCE4B
+m181f004  281   0x00137805  1:0x00127805  0x001BCE59
+m181f004  283   0x00137814  1:0x00127814  0x001BCE68
+m181f004  285   0x00137818  1:0x00127818  0x001BCE6C
+m181f004  286   0x00137826  1:0x00127826  0x001BCE7A
+m181f004  288   0x00137828  1:0x00127828  0x001BCE7C
+m181f004  289   0x00137831  1:0x00127831  0x001BCE85
+m181f004  291   0x00137838  1:0x00127838  0x001BCE8C
+m181f004  293   0x00137841  1:0x00127841  0x001BCE95
+m181f004  294   0x0013784C  1:0x0012784C  0x001BCEA0
+m181f004  296   0x00137878  1:0x00127878  0x001BCECC
+m181f004  297   0x0013787B  1:0x0012787B  0x001BCECF
+m181f004  298   0x0013787E  1:0x0012787E  0x001BCED2
+m181f004  299   0x00137880  1:0x00127880  0x001BCED4
+m181f004  301   0x00137891  1:0x00127891  0x001BCEE5
+m181f004  302   0x00137896  1:0x00127896  0x001BCEEA
+m181f004  304   0x0013789B  1:0x0012789B  0x001BCEEF
+m181f004  307   0x001378B3  1:0x001278B3  0x001BCF07
+m181f004  308   0x001378CC  1:0x001278CC  0x001BCF20
+m181f004  309   0x001378D7  1:0x001278D7  0x001BCF2B
+m181f004  310   0x00137905  1:0x00127905  0x001BCF59
+m181f004  313   0x0013790A  1:0x0012790A  0x001BCF5E
+m181f004  315   0x00137911  1:0x00127911  0x001BCF65
+m181f004  317   0x0013792E  1:0x0012792E  0x001BCF82
+m181f004  318   0x00137937  1:0x00127937  0x001BCF8B
+m181f004  319   0x00137940  1:0x00127940  0x001BCF94
+m181f004  321   0x0013794A  1:0x0012794A  0x001BCF9E
+m181f004  323   0x0013794E  1:0x0012794E  0x001BCFA2
+m181f004  325   0x00137960  1:0x00127960  0x001BCFB4
+m181f004  327   0x00137969  1:0x00127969  0x001BCFBD
+m181f004  328   0x0013796D  1:0x0012796D  0x001BCFC1
+m181f004  329   0x00137987  1:0x00127987  0x001BCFDB
+m181f004  330   0x00137992  1:0x00127992  0x001BCFE6
+m181f004  332   0x001379C0  1:0x001279C0  0x001BD014
+m181f004  334   0x001379C7  1:0x001279C7  0x001BD01B
+m181f004  335   0x001379D0  1:0x001279D0  0x001BD024
+m181f004  336   0x001379D9  1:0x001279D9  0x001BD02D
+m181f004  338   0x001379E3  1:0x001279E3  0x001BD037
+m181f004  339   0x001379E7  1:0x001279E7  0x001BD03B
+m181f004  340   0x001379EC  1:0x001279EC  0x001BD040
+m181f004  341   0x001379F1  1:0x001279F1  0x001BD045
+m181f004  343   0x001379F3  1:0x001279F3  0x001BD047
+m181f004  345   0x001379F8  1:0x001279F8  0x001BD04C
+m181f004  346   0x001379FD  1:0x001279FD  0x001BD051
+m181f005  350   0x00137A03  1:0x00127A03  0x001BD057
+m181f005  367   0x00137A2A  1:0x00127A2A  0x001BD07E
+m181f005  369   0x00137A35  1:0x00127A35  0x001BD089
+m181f005  371   0x00137A42  1:0x00127A42  0x001BD096
+m181f005  373   0x00137A77  1:0x00127A77  0x001BD0CB
+m181f005  375   0x00137A82  1:0x00127A82  0x001BD0D6
+m181f005  378   0x00137A99  1:0x00127A99  0x001BD0ED
+m181f005  380   0x00137AC8  1:0x00127AC8  0x001BD11C
+m181f005  381   0x00137AD4  1:0x00127AD4  0x001BD128
+m181f005  382   0x00137ADA  1:0x00127ADA  0x001BD12E
+m181f005  383   0x00137AE3  1:0x00127AE3  0x001BD137
+m181f005  384   0x00137AEF  1:0x00127AEF  0x001BD143
+m181f005  386   0x00137AF6  1:0x00127AF6  0x001BD14A
+m181f005  388   0x00137B03  1:0x00127B03  0x001BD157
+m181f005  389   0x00137B11  1:0x00127B11  0x001BD165
+m181f005  391   0x00137B20  1:0x00127B20  0x001BD174
+m181f005  393   0x00137B24  1:0x00127B24  0x001BD178
+m181f005  394   0x00137B32  1:0x00127B32  0x001BD186
+m181f005  396   0x00137B37  1:0x00127B37  0x001BD18B
+m181f005  397   0x00137B40  1:0x00127B40  0x001BD194
+m181f005  399   0x00137B47  1:0x00127B47  0x001BD19B
+m181f005  401   0x00137B50  1:0x00127B50  0x001BD1A4
+m181f005  403   0x00137B5B  1:0x00127B5B  0x001BD1AF
+m181f005  404   0x00137B77  1:0x00127B77  0x001BD1CB
+m181f005  405   0x00137B8B  1:0x00127B8B  0x001BD1DF
+m181f005  407   0x00137B9F  1:0x00127B9F  0x001BD1F3
+m181f005  408   0x00137BA2  1:0x00127BA2  0x001BD1F6
+m181f005  409   0x00137BA5  1:0x00127BA5  0x001BD1F9
+m181f005  410   0x00137BA7  1:0x00127BA7  0x001BD1FB
+m181f005  412   0x00137BB8  1:0x00127BB8  0x001BD20C
+m181f005  413   0x00137BBD  1:0x00127BBD  0x001BD211
+m181f005  415   0x00137BC2  1:0x00127BC2  0x001BD216
+m181f005  418   0x00137BDA  1:0x00127BDA  0x001BD22E
+m181f005  419   0x00137BFF  1:0x00127BFF  0x001BD253
+m181f005  421   0x00137C0D  1:0x00127C0D  0x001BD261
+m181f005  422   0x00137C2C  1:0x00127C2C  0x001BD280
+m181f005  423   0x00137C40  1:0x00127C40  0x001BD294
+m181f005  424   0x00137C57  1:0x00127C57  0x001BD2AB
+m181f005  425   0x00137C59  1:0x00127C59  0x001BD2AD
+m181f005  428   0x00137C5E  1:0x00127C5E  0x001BD2B2
+m181f005  430   0x00137C65  1:0x00127C65  0x001BD2B9
+m181f005  432   0x00137C82  1:0x00127C82  0x001BD2D6
+m181f005  433   0x00137C8B  1:0x00127C8B  0x001BD2DF
+m181f005  434   0x00137C94  1:0x00127C94  0x001BD2E8
+m181f005  436   0x00137C9E  1:0x00127C9E  0x001BD2F2
+m181f005  438   0x00137CA2  1:0x00127CA2  0x001BD2F6
+m181f005  440   0x00137CB4  1:0x00127CB4  0x001BD308
+m181f005  442   0x00137CBD  1:0x00127CBD  0x001BD311
+m181f005  443   0x00137CC1  1:0x00127CC1  0x001BD315
+m181f005  444   0x00137CE7  1:0x00127CE7  0x001BD33B
+m181f005  446   0x00137CF5  1:0x00127CF5  0x001BD349
+m181f005  447   0x00137D14  1:0x00127D14  0x001BD368
+m181f005  448   0x00137D28  1:0x00127D28  0x001BD37C
+m181f005  449   0x00137D3F  1:0x00127D3F  0x001BD393
+m181f005  451   0x00137D41  1:0x00127D41  0x001BD395
+m181f005  453   0x00137D48  1:0x00127D48  0x001BD39C
+m181f005  454   0x00137D51  1:0x00127D51  0x001BD3A5
+m181f005  455   0x00137D5A  1:0x00127D5A  0x001BD3AE
+m181f005  457   0x00137D64  1:0x00127D64  0x001BD3B8
+m181f005  458   0x00137D68  1:0x00127D68  0x001BD3BC
+m181f005  459   0x00137D6D  1:0x00127D6D  0x001BD3C1
+m181f005  461   0x00137D72  1:0x00127D72  0x001BD3C6
+m181f005  463   0x00137D74  1:0x00127D74  0x001BD3C8
+m181f005  465   0x00137D79  1:0x00127D79  0x001BD3CD
+m181f005  466   0x00137D7E  1:0x00127D7E  0x001BD3D2
+m181f006  470   0x00137D86  1:0x00127D86  0x001BD3DA
+m181f006  487   0x00137DAD  1:0x00127DAD  0x001BD401
+m181f006  488   0x00137DB7  1:0x00127DB7  0x001BD40B
+m181f006  490   0x00137DC2  1:0x00127DC2  0x001BD416
+m181f006  492   0x00137DF7  1:0x00127DF7  0x001BD44B
+m181f006  494   0x00137E02  1:0x00127E02  0x001BD456
+m181f006  497   0x00137E1C  1:0x00127E1C  0x001BD470
+m181f006  499   0x00137E4B  1:0x00127E4B  0x001BD49F
+m181f006  500   0x00137E57  1:0x00127E57  0x001BD4AB
+m181f006  501   0x00137E60  1:0x00127E60  0x001BD4B4
+m181f006  502   0x00137E69  1:0x00127E69  0x001BD4BD
+m181f006  503   0x00137E75  1:0x00127E75  0x001BD4C9
+m181f006  505   0x00137E7C  1:0x00127E7C  0x001BD4D0
+m181f006  507   0x00137E89  1:0x00127E89  0x001BD4DD
+m181f006  508   0x00137E97  1:0x00127E97  0x001BD4EB
+m181f006  510   0x00137EA6  1:0x00127EA6  0x001BD4FA
+m181f006  512   0x00137EAA  1:0x00127EAA  0x001BD4FE
+m181f006  513   0x00137EB8  1:0x00127EB8  0x001BD50C
+m181f006  515   0x00137EBD  1:0x00127EBD  0x001BD511
+m181f006  516   0x00137EC6  1:0x00127EC6  0x001BD51A
+m181f006  518   0x00137ECD  1:0x00127ECD  0x001BD521
+m181f006  520   0x00137ED6  1:0x00127ED6  0x001BD52A
+m181f006  522   0x00137EE4  1:0x00127EE4  0x001BD538
+m181f006  523   0x00137EF4  1:0x00127EF4  0x001BD548
+m181f006  524   0x00137EFD  1:0x00127EFD  0x001BD551
+m181f006  525   0x00137F06  1:0x00127F06  0x001BD55A
+m181f006  527   0x00137F25  1:0x00127F25  0x001BD579
+m181f006  528   0x00137F28  1:0x00127F28  0x001BD57C
+m181f006  529   0x00137F2B  1:0x00127F2B  0x001BD57F
+m181f006  530   0x00137F2D  1:0x00127F2D  0x001BD581
+m181f006  532   0x00137F3E  1:0x00127F3E  0x001BD592
+m181f006  533   0x00137F43  1:0x00127F43  0x001BD597
+m181f006  535   0x00137F48  1:0x00127F48  0x001BD59C
+m181f006  538   0x00137F60  1:0x00127F60  0x001BD5B4
+m181f006  539   0x00137F79  1:0x00127F79  0x001BD5CD
+m181f006  541   0x00137F87  1:0x00127F87  0x001BD5DB
+m181f006  542   0x00137F97  1:0x00127F97  0x001BD5EB
+m181f006  543   0x00137FA0  1:0x00127FA0  0x001BD5F4
+m181f006  544   0x00137FA9  1:0x00127FA9  0x001BD5FD
+m181f006  545   0x00137FC8  1:0x00127FC8  0x001BD61C
+m181f006  546   0x00137FCA  1:0x00127FCA  0x001BD61E
+m181f006  549   0x00137FCF  1:0x00127FCF  0x001BD623
+m181f006  551   0x00137FD6  1:0x00127FD6  0x001BD62A
+m181f006  553   0x00137FF3  1:0x00127FF3  0x001BD647
+m181f006  554   0x00137FFF  1:0x00127FFF  0x001BD653
+m181f006  555   0x00138008  1:0x00128008  0x001BD65C
+m181f006  557   0x00138012  1:0x00128012  0x001BD666
+m181f006  559   0x00138016  1:0x00128016  0x001BD66A
+m181f006  561   0x00138028  1:0x00128028  0x001BD67C
+m181f006  563   0x00138034  1:0x00128034  0x001BD688
+m181f006  564   0x00138038  1:0x00128038  0x001BD68C
+m181f006  565   0x00138052  1:0x00128052  0x001BD6A6
+m181f006  567   0x0013805D  1:0x0012805D  0x001BD6B1
+m181f006  568   0x0013806A  1:0x0012806A  0x001BD6BE
+m181f006  569   0x00138073  1:0x00128073  0x001BD6C7
+m181f006  570   0x0013807C  1:0x0012807C  0x001BD6D0
+m181f006  571   0x00138098  1:0x00128098  0x001BD6EC
+m181f006  573   0x0013809A  1:0x0012809A  0x001BD6EE
+m181f006  575   0x001380A1  1:0x001280A1  0x001BD6F5
+m181f006  576   0x001380AD  1:0x001280AD  0x001BD701
+m181f006  577   0x001380B6  1:0x001280B6  0x001BD70A
+m181f006  579   0x001380C0  1:0x001280C0  0x001BD714
+m181f006  580   0x001380C4  1:0x001280C4  0x001BD718
+m181f006  581   0x001380C9  1:0x001280C9  0x001BD71D
+m181f006  583   0x001380CE  1:0x001280CE  0x001BD722
+m181f006  585   0x001380D0  1:0x001280D0  0x001BD724
+m181f006  587   0x001380D5  1:0x001280D5  0x001BD729
+m181f006  588   0x001380DA  1:0x001280DA  0x001BD72E
+m181f007  591   0x001380E0  1:0x001280E0  0x001BD734
+m181f007  596   0x001380FD  1:0x001280FD  0x001BD751
+m181f007  598   0x00138107  1:0x00128107  0x001BD75B
+m181f007  600   0x00138124  1:0x00128124  0x001BD778
+m181f007  604   0x00138162  1:0x00128162  0x001BD7B6
+m181f007  606   0x00138186  1:0x00128186  0x001BD7DA
+m181f007  607   0x0013818F  1:0x0012818F  0x001BD7E3
+m181f007  608   0x001381A8  1:0x001281A8  0x001BD7FC
+m181f007  609   0x001381AD  1:0x001281AD  0x001BD801
+m181f008  612   0x001381B5  1:0x001281B5  0x001BD809
+m181f008  618   0x001381D2  1:0x001281D2  0x001BD826
+m181f008  620   0x001381DA  1:0x001281DA  0x001BD82E
+m181f008  623   0x001381F7  1:0x001281F7  0x001BD84B
+m181f008  624   0x0013820B  1:0x0012820B  0x001BD85F
+m181f008  626   0x00138215  1:0x00128215  0x001BD869
+m181f008  627   0x00138221  1:0x00128221  0x001BD875
+m181f009  630   0x00138229  1:0x00128229  0x001BD87D
+m181f009  634   0x00138248  1:0x00128248  0x001BD89C
+m181f009  636   0x00138252  1:0x00128252  0x001BD8A6
+m181f009  638   0x0013825F  1:0x0012825F  0x001BD8B3
+m181f009  639   0x00138279  1:0x00128279  0x001BD8CD
+m181f009  641   0x00138289  1:0x00128289  0x001BD8DD
+m181f009  644   0x001382B8  1:0x001282B8  0x001BD90C
+m181f010  646   0x001382BF  1:0x001282BF  0x001BD913
+m181f010  651   0x001382E0  1:0x001282E0  0x001BD934
+m181f010  653   0x001382EA  1:0x001282EA  0x001BD93E
+m181f010  655   0x001382F7  1:0x001282F7  0x001BD94B
+m181f010  656   0x00138311  1:0x00128311  0x001BD965
+m181f010  658   0x00138321  1:0x00128321  0x001BD975
+m181f010  660   0x00138331  1:0x00128331  0x001BD985
+m181f010  662   0x0013833E  1:0x0012833E  0x001BD992
+m181f010  663   0x00138358  1:0x00128358  0x001BD9AC
+m181f010  665   0x00138368  1:0x00128368  0x001BD9BC
+m181f010  666   0x0013837D  1:0x0012837D  0x001BD9D1

@@ -1,0 +1,15 @@
+module_num=327
+module=unsmack.ASM
+source=0327-unsmack.asm.md
+range[0]=1:0x00154200 linear=0x00164200 size=16176
+range[1]=2:0x00012600 linear=0x00182600 size=1600
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                SYMBOL               CHUNK
+m327f001  1    -      0x00164690  1:0x00154690  code  SmackGetSizeTables  _SmackGetSizeTables  regions/07-object-1/001E9654-001E9E53.txt
+m327f002  2    -      0x001646A0  1:0x001546A0  code  SmackDoTables       _SmackDoTables       regions/07-object-1/001E9654-001E9E53.txt
+m327f003  3    -      0x00167320  1:0x00157320  code  Unsmack             _Unsmack             regions/07-object-1/001EC654-001ECE53.txt
+m327f004  4    -      0x001676F0  1:0x001576F0  code  SmackDoPCM          _SmackDoPCM          regions/07-object-1/001EC654-001ECE53.txt
+m327f005  5    -      0x00167F20  1:0x00157F20  code  SmackGetSizeDeltas  _SmackGetSizeDeltas  regions/07-object-1/001ECE54-001ED653.txt
+m327f006  6    -      0x00167F40  1:0x00157F40  code  SmackGetRect        _SmackGetRect        regions/07-object-1/001ECE54-001ED653.txt
+m327f007  7    -      0x00168060  1:0x00158060  code  SmackRemapTables    _SmackRemapTables    regions/07-object-1/001ED654-001EDE53.txt

@@ -44,19 +44,19 @@ void Build_Select_Target_String(int16_t spell_target_type, char * spell_name);
 // DONT  void UU_IDK_Entirely_On_Map(int16_t * new_mx, int16_t * new_my, int16_t old_mx, int16_t old_my);
 
 // WZD o70p08
-void Spell_Casting_Screen_Reset_Map_Draw(void);
+void Reset_Spell_Casting_Map_Draw(void);
 
 // WZD o70p09
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__1(int16_t wx);
+void Set_Spell_Casting_Map_Draw_WX_1(int16_t wx);
 
 // WZD o70p10
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__2(int16_t wx);
+void Set_Spell_Casting_Map_Draw_WX_2(int16_t wx);
 
 // WZD o70p11
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__3(int16_t wx);
+void Set_Spell_Casting_Map_Draw_WX_3(int16_t wx);
 
 // WZD o70p12
-void Spell_Casting_Screen_Reset_Map_Draw_With_WX__4(int16_t wx);
+void Set_Spell_Casting_Map_Draw_WX_4(int16_t wx);
 
 // WZD o70p13
 int16_t Map_Square_Is_Targetable(int16_t mx, int16_t my);

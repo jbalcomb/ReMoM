@@ -1,0 +1,8 @@
+module_num=387
+module=ini87386
+source=0387-ini87386.md
+range[0]=1:0x00154130 linear=0x00164130 size=208
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL        CHUNK
+m387f001  1    -      0x00164130  1:0x00154130  code  __init_80x87  __init_80x87  regions/07-object-1/001E9654-001E9E53.txt

@@ -4,6 +4,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 #include "../../STU/src/STU_LOG.h"
 
 #include "../../MoX/src/MOM_DEF.h"
@@ -114,7 +115,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
     int16_t spells_max = 0;
     int16_t itr = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 
     /* Phase 1: Init */
@@ -230,7 +231,7 @@ int16_t Player_Research_Spells(int16_t player_idx)
         }
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return spells_cnt;
     
@@ -324,7 +325,8 @@ void Build_Research_List(int16_t player_idx, int16_t research_list[])
 // WZD o128p03
 int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
 {
-    int16_t Invalid_Realms[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
+    // int16_t Invalid_Realms[NUM_MAGIC_TYPES] = { 0, 0, 0, 0, 0 };
+    int16_t Invalid_Realms[NUM_MAGIC_REALMS] = { 0, 0, 0, 0, 0, 0 };  /* CLAUDE */  /* REBUG */  // asm: Invalid_Realms -18h..-0Dh = 6 words
     int16_t Max_Rarity = 0;
     int16_t Spell_Found = 0;
     int16_t Random_Result = 0;
@@ -337,15 +339,23 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
     Valid_Realm_Count = 0;
     Spell_Found = 0;
 
-    // ¿ BUG: the arcane realm is evaluated by the presence of the Alchemy or Warlord retorts instead of being marked as always available ?
     // DNM, because no item powers have mt_Arcane? which wouldn't make sense anyway?
-    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
+    // for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
+    for(itr = 0; itr < NUM_MAGIC_REALMS; itr++)  /* CLAUDE */  /* REBUG */  // asm: cmp itr, e_NUM_MAGIC_REALMS; jl
     {
         // ¿ ; conflicting condition - will never jump ?
+        // if(
+        //     (itr == NUM_MAGIC_TYPES)
+        //     ||
+        //     (_players[player_idx].spellranks[itr] == 0)
+        // )
+        /* CLAUDE */  /* REBUG */  // asm: cmp itr, e_NUM_MAGIC_REALMS; jz -> valid; cmp spellranks[itr], 0; jle -> invalid
+        /* OGBUG  the loop runs 0..5 but tests itr == 6 for Arcane, so Arcane (itr 5) reads spellranks[5], which is the word at s_WIZARD +64h = the alchemy (low byte) and warlord (high byte) retorts: Arcane is a valid realm only for a wizard with Alchemy or Warlord */
+        /* HACK */  // bound the spellranks[5] read: build the same word from alchemy / warlord
         if(
-            (itr == NUM_MAGIC_TYPES)
+            (itr == NUM_MAGIC_REALMS)
             ||
-            (_players[player_idx].spellranks[itr] == 0)
+            (((itr < NUM_MAGIC_TYPES) ? _players[player_idx].spellranks[itr] : (int16_t)(((uint16_t)(uint8_t)_players[player_idx].warlord << 8) | (uint16_t)(uint8_t)_players[player_idx].alchemy)) > 0)
         )
         {
             Valid_Realm_Count++;
@@ -374,7 +384,7 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
 
         magic_realm--;
 
-        if(magic_realm == 5)  /* _Arcane ... enum Realm_Byte*/
+        if(magic_realm == sbr_Arcane)  /* _Arcane ... enum Realm_Byte*/
         {
             Max_Rarity = 3;
         }
@@ -395,31 +405,39 @@ int16_t WIZ_RollSpellReward(int16_t player_idx, int16_t rarity)
         {
             Random_Result = (Random(10) - 1);
 
-            for(itr = 0; itr < 10; itr++)
+            // for(itr = 0; itr < 10; itr++)
+            // {
+            //     if(Spell_Found == ST_FALSE)
+            //     {
+            /* CLAUDE */  /* REBUG */  // asm loc_ABEAC: cmp itr, 10; jge; cmp Spell_Found, e_ST_FALSE; jz -> body
+            for(itr = 0; ((itr < 10) && (Spell_Found == ST_FALSE)); itr++)
             {
-                if(Spell_Found == ST_FALSE)
+                if(magic_realm == sbr_Arcane)  /* _Arcane */
                 {
-                    if(magic_realm == 5)  /* _Arcane */
-                    {
-                        In_Realm_Index = (Random(11) - 1);
-                    }
-                    else
-                    {
-                        // TODO(JimBalcomb,20240531): no way this is right - run in through the Struggle-Mode debugger
-                        In_Realm_Index = (((Random_Result + itr) % 10) + ((((rarity + Added_Rarity) - 1) / Max_Rarity) * 10));
-                    }
-
-                    if(_players[player_idx].spells_list[((magic_realm * 40) + In_Realm_Index)] == 2)  /* S_Known ... enum Research_Status */
-                    {
-                        Spell_Found = ST_TRUE;
-                        In_Realm_Index = (((magic_realm * 40) + In_Realm_Index) + 1);
-                    }
-
+                    In_Realm_Index = (Random(11) - 1);
                 }
+                else
+                {
+                    // TODO(JimBalcomb,20240531): no way this is right - run in through the Struggle-Mode debugger
+                    // In_Realm_Index = (((Random_Result + itr) % 10) + ((((rarity + Added_Rarity) - 1) / Max_Rarity) * 10));
+                    /* CLAUDE */  /* REBUG */  // asm: idiv [bp+Max_Rarity]; mov ax, dx => remainder
+                    In_Realm_Index = (((Random_Result + itr) % 10) + ((((rarity + Added_Rarity) - 1) % Max_Rarity) * 10));
+                }
+
+                // if(_players[player_idx].spells_list[((magic_realm * 40) + In_Realm_Index)] == 2)  /* S_Known ... enum Research_Status */
+                /* CLAUDE */  /* REBUG */  // asm: cmp spells_list, sls_Known; jz -> skip
+                if(_players[player_idx].spells_list[((magic_realm * NUM_SPELLS_PER_MAGIC_REALM) + In_Realm_Index)] != sls_Known)
+                {
+                    Spell_Found = ST_TRUE;
+                    In_Realm_Index = (((magic_realm * 40) + In_Realm_Index) + 1);
+                }
+
             }
 
         }
 
+        /* OGBUG  the realm just tried is written VALID (0, not 1) while Valid_Realm_Count drops by 1: an exhausted realm stays pickable and the highest-numbered valid realm becomes unreachable, so a treasure spell can fail while a realm still has spells */
+        Invalid_Realms[magic_realm] = ST_FALSE;  /* CLAUDE */  /* REBUG */  // asm @@Next_Magic_Realm_Count: mov [word ptr bx], 0
         Valid_Realm_Count--;
     }
 
@@ -525,7 +543,8 @@ int16_t Calc_Spell_Value(int16_t player_idx, int16_t spell_idx)
 int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t min_value, uint8_t spell_list[])
 {
     /* ¿ BUGBUG  6 * 10 ? */
-    uint8_t candidate_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // uint8_t candidate_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */  uint8_t candidate_list[NUM_SPELLS] = { 0 };  /* CLAUDE */  /* OG: 60 bytes at bp-48h, followed by candidate_idx, spell_realm_idx, spell_idx, spell_count, spell_value, itr and the saved BP / return address; sized so a 61st+ candidate stays inside the array */
     int16_t candidate_idx = 0;
     int16_t spell_realm_idx = 0;
     int16_t spell_idx = 0;
@@ -545,10 +564,6 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 // create a list of spells that are in a realm that both
 // wizards have at least one book of, and are known by
 // the second wizard but not the first
-// BUG: if there are more than 60 possible spells,
-// wrong ones may be awarded, and if there are more than
-// 74, the game will crash if the 74th has an index of
-// 128 or more
 
     candidate_count = 0;
 
@@ -558,7 +573,8 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
 
         magic_realm = spell_data_table[itr].magic_realm;
 
-        spell_realm_idx = ((itr - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+        // spell_realm_idx = ((itr - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+        spell_realm_idx = ((itr - 1) % NUM_SPELLS_PER_MAGIC_REALM);  /* CLAUDE */  /* REBUG */  /* asm: idiv, keeps DX (the remainder) */
 
         if(
             (
@@ -586,6 +602,7 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
             )
             {
 
+                /* OGBUG  candidate_list has 60 bytes and no bound: candidates 61 .. 70 land in the other locals (rewritten before use, but Random(candidate_count) can later pick and zero one of them), the 72nd sets the high byte of itr to its low byte (ending the loop, or making itr negative for a spell index of 128+ so the loop runs on through spell_data_table[] before the start), and later ones overwrite the saved BP and return address */
                 candidate_list[candidate_count] = (uint8_t)itr;
 
                 candidate_count++;
@@ -621,7 +638,8 @@ int16_t Get_Differential_Spell_List(int16_t player1, int16_t player2, int16_t mi
                     // BUGBUG  dead code  ...or, should get spell_num, not use spell_idx?
                     magic_realm = spell_data_table[spell_idx].magic_realm;
 
-                    spell_realm_idx = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+                    // spell_realm_idx = ((spell_idx - 1) / NUM_SPELLS_PER_MAGIC_REALM);  // ¿ thinks it's getting spell_num, rather than spell_idx ?
+                    spell_realm_idx = ((spell_idx - 1) % NUM_SPELLS_PER_MAGIC_REALM);  /* CLAUDE */  /* REBUG */  /* asm: idiv, keeps DX (the remainder) */
 
                     spell_list[spell_count] = (uint8_t)spell_idx;
 
@@ -1036,6 +1054,8 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
     int16_t In_Rarity_Index = 0;
     int16_t realm_spell_count = 0;  // _SI_
     int16_t itr = 0;  // _DI_
+    /* HACK */  int16_t oob_book_spells[4] = { 0, 0, 0, 0 };  /* CLAUDE */  /* stand-in for the rows past Book_Spell_Table[9] */
+    /* HACK */  int16_t * book_spells_row = 0;  /* CLAUDE */
 
     Book_Spell_Table[0][0] = 3;
     Book_Spell_Table[0][1] = 1;
@@ -1080,9 +1100,22 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 
     Existing_Books = _players[player_idx].spellranks[magic_realm];
 
-    // ¿ ; BUG: values greater than 10 corrupt memory ?
+    /* OGBUG  the grants are skipped only when Existing_Books == 10 (cmp 10 / jnz); at 11+ books Book_Spell_Table[Existing_Books] is past the 10-row table: row 11 is the return IP / CS and the player_idx / magic_realm arguments, so each grant there decrements one of them (later grants go to another realm's slots, the book to another realm, and the function returns through the changed segment), and rows 12+ are the caller's frame */
     if(Existing_Books != 10)
     {
+        /* HACK */  /* CLAUDE */  /* OG: Book_Spell_Table[Existing_Books] with no bound; rows 10+ are the locals, the return address and the arguments, so ReMoM uses a stand-in row: the return IP / CS as large garbage counts, then copies of player_idx and magic_realm */
+        if(Existing_Books < 10)
+        {
+            book_spells_row = &Book_Spell_Table[Existing_Books][0];
+        }
+        else
+        {
+            oob_book_spells[0] = Stack_Garbage_Range(0, INT16_MAX);
+            oob_book_spells[1] = Stack_Garbage_Range(0, INT16_MAX);
+            oob_book_spells[2] = player_idx;
+            oob_book_spells[3] = magic_realm;
+            book_spells_row = &oob_book_spells[0];
+        }
         for(itr = 0; itr < 4; itr++)
         {
             realm_spell_count = 0;
@@ -1100,7 +1133,8 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
             while(
                 (realm_spell_count > 0)
                 &&
-                (Book_Spell_Table[Existing_Books][itr] > 0)
+                // (Book_Spell_Table[Existing_Books][itr] > 0)
+                (book_spells_row[itr] > 0)  /* HACK */
             )
             {
                 random_realm_spell = (Random(realm_spell_count) - 1);
@@ -1111,7 +1145,8 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 
                 realm_spell_count--;
 
-                Book_Spell_Table[Existing_Books][itr]--;
+                // Book_Spell_Table[Existing_Books][itr]--;
+                book_spells_row[itr]--;  /* HACK */
             }
         }
     }
@@ -1128,21 +1163,24 @@ void WIZ_AddSpellRank__WIP(int16_t player_idx, int16_t magic_realm)
 
 
 // WZD o128p11
-void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
+// void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
+/* CLAUDE */  /* REBUG */  /* asm: the early exit is xor ax, ax / jmp @@Done (a return 0 in an int function); the other path falls into @@Done without a return value; no caller reads AX */
+int16_t Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
 {
     uint8_t spell_list[60] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t spell_list_idx = 0;
     SAMB_ptr new_spell_img = 0;
     // char p_spell_name;  /* OGBUG: should have been `char *`? */
     // char * p_spell_name;
-    char p_spell_name[LEN_SPELLDAT_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    /* HACK */  char p_spell_name[LEN_SPELLDAT_NAME] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };  /* CLAUDE */  /* OG: an uninitialised word at bp-0Eh whose high byte is passed as the destination (see the OGBUG at the switch); ReMoM copies into a real buffer */
     int16_t awarded_spells[3] = { 0, 0, 0 };
     int16_t spell_idx = 0;
     int16_t spell_count = 0;
     int16_t awarded_count = 0;
     if(winner_idx == NEUTRAL_PLAYER_IDX || loser_idx == NEUTRAL_PLAYER_IDX)
     {
-        return;
+        // return;
+        return 0;  /* CLAUDE */  /* REBUG */  /* asm: xor ax, ax / jmp @@Done */
     }
     spell_count = Get_Differential_Spell_List(winner_idx, loser_idx, 0, &spell_list[0]);
     for(awarded_count = 0; awarded_count < spell_count && awarded_count < 2;)
@@ -1151,6 +1189,7 @@ void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
         spell_idx = spell_list[spell_list_idx];
         if(spell_idx != spl_NONE)
         {
+            /* OGBUG  New_Research 0: if this is the winner's research spell, researching_spell_idx is left negative with no prompt to choose a new one (see Player_Gets_Spell) */
             Player_Gets_Spell(winner_idx, spell_idx, 0);
             spell_list[spell_list_idx] = spl_NONE;
             awarded_spells[awarded_count] = spell_idx;
@@ -1163,6 +1202,7 @@ void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
         Full_Draw_Main_Screen();
         Copy_On_To_Off_Page();
         Copy_Off_To_Back();
+        /* OGBUG  each spell name is String_Copy_Far'd to 0000:(cbw of the uninitialised byte at bp-0Dh), which String_Copy_Far turns into DS:that offset (DS:0000..007F or DS:FF80..FFFF), and strcat then reads the name back from that same near address: the value of p_spell_name is passed where its address was meant, so the start or the end of the data segment is overwritten */
         switch(awarded_count)
         {
             case 0:
@@ -1170,29 +1210,29 @@ void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
                 break;
             case 1:
                 stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
                 break;
             case 2:
                 stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg4);  // " spell and a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
                 break;
             case 3:
                 stu_strcpy(GUI_NearMsgString, cnst_ConqSpell_Msg2);  // "You found a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[0]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg5);  // " spell, a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[1]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg4);  // " spell and a "
-                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[2]].name);     // ; BUG: value passed as pointer!
-                stu_strcat(GUI_NearMsgString, p_spell_name);                            // ; BUG: value passed as pointer!
+                stu_strcpy(p_spell_name, spell_data_table[awarded_spells[2]].name);
+                stu_strcat(GUI_NearMsgString, p_spell_name);
                 stu_strcat(GUI_NearMsgString, cnst_ConqSpell_Msg3);  // " spell in the ruins."
                 break;
             default:
@@ -1202,4 +1242,6 @@ void Conquest_Spells(int16_t winner_idx, int16_t loser_idx)
         new_spell_img = LBX_Reload_Next(spellscr_lbx_file__ovr128, 60, _screen_seg);
         Notify2(0, 40, 2, GUI_NearMsgString, 0, new_spell_img, 0, 9, 0, 0, 0, 1, 0);
     }
+    /* HACK */  /* CLAUDE */  /* no return value in the asm here (AX is whatever the last call left); no caller reads it */
+    return 0;
 }

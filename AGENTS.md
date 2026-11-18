@@ -9,6 +9,7 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 ## Editing Original Game Code — 100% fidelity to the disassembly is the target (hard rule)
 - **The target is 100% fidelity to the disassembly.** The asm is ground truth. "Original code" means the reconstruction that is *faithful to the asm*.
 - **NEVER delete code that is faithful to the asm** (anything with an asm counterpart) — not a line, a declaration, a comment, commented-out scratch, or whitespace. There is no "it's dead / unused / stale / scratch / cleaner" excuse. If faithful code must change, **comment out the original and add the replacement below it**, and mark changes `/* CLAUDE */`.
+- **`REBUG` marks a reconstruction error that was fixed** — the counterpart of `OGBUG`. When ReMoM's reconstruction differed from the asm and is corrected to match it, the replacement line reads `/* CLAUDE */  /* REBUG */  /* asm: <the instructions it now matches> */`, with the commented-out original directly above showing what it was. Removing code the reconstruction added that the asm does not have is also a `REBUG` (`/* CLAUDE */  /* REBUG */  /* asm: <what the asm does instead> */` beside the commented-out lines). Plain `/* CLAUDE */` (no `REBUG`) is for every other change: adding `/* HACK */` stand-ins, non-asm glue, names and style. Do not use `DNE` for any of this: `DNE` is a DEDU note about the original (see the Glossary), not a removal tag. `OGBUG` = the original game is wrong (kept); `REBUG` = our reconstruction was wrong (fixed).
 - **VERIFY against the asm before classifying anything as phantom.** Faithful-but-ugly code, `; `-style asm-derived comments, and reconstruction notes are NOT phantom — preserve them. When you cannot verify no-asm-counterpart, do NOT delete — ask.
 - **Deleting and style-matching are two COMPLETELY DIFFERENT concerns.** Style conformance (renaming a reconstructed local to `lower_snake_case`, whitespace/formatting) removes nothing — allowed. Deleting faithful code is forbidden.
 
@@ -21,10 +22,10 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - Use lower_snake_case for variable names  (e.g., )
 - Use Proper_Snake_Case for function names  (e.g., Simulate_World_Map_Generation)
 - Use UPPER_SNAKE_CASE for manifest constants and macro names
-- Name shared modules by what they do, not by which target first uses them. A file/symbol prefix that names one consumer (e.g., `HeMoM_*` on code that is also linked into ReMoM) reads as a layering violation and misleads readers. Reserve target-specific naming for code that genuinely cannot be linked into another target (e.g., main entry points, target-specific glue).
+- Name shared modules by what they do, not by which target first uses them. A file/symbol prefix that names one consumer (e.g., `DeMoM_*` on code that is also linked into ReMoM) reads as a layering violation and misleads readers. Reserve target-specific naming for code that genuinely cannot be linked into another target (e.g., main entry points, target-specific glue).
 
 ## Filenames
-- One period per filename, reserved for the extension. Use underscores to separate stem components — `hemom_seed12345_stderr.log`, not `hemom.seed12345.stderr.log` or `hemom_seed12345.stderr.log`. Multiple dots confuse tools (shell glob behaviour, IDE syntax detection, archive extractors) and obscure which suffix is actually the extension.
+- One period per filename, reserved for the extension. Use underscores to separate stem components — `demom_seed12345_stderr.log`, not `demom.seed12345.stderr.log` or `demom_seed12345.stderr.log`. Multiple dots confuse tools (shell glob behaviour, IDE syntax detection, archive extractors) and obscure which suffix is actually the extension.
 - Use real, recognized extensions (`.log`, `.txt`, `.csv`, `.json`). Do not use words like `raw`, `trace`, `out`, or `dump` as extensions — they aren't recognized by editors/tools and trigger "unknown file type" handling. If you need to distinguish kinds of output, encode that in the stem (`*_stderr.log`, `*_rng.log`), not the extension.
 
 ## Presenting answers in chat (all agents)
@@ -85,6 +86,9 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 - sgmt stands for Segment
 - ofst stands for Offset
 - OG-MoM stand for Original Master of Magic (1994)
+- DeMoM — Driven Master of Magic: the windowless game (`src/DeMoM.c`), driven by an Automation Driver scenario, an `.RMR` replay, or (planned) an RL agent; used for tests, CI and replay. Formerly HeMoM
+- Automation Driver — scripted user input: reads a `.hms` scenario and injects clicks, typing and keys through the real input path (`src/Automation_Driver.c`; `--scenario FILE.hms`; doc `doc/@Devel/HMS-Scripting.md`). Works in DeMoM and ReMoM. Formerly "Artificial Human Player" (AHP) and, before that, `DeMoM_Player`; renamed in the code too (2026-11-17) — only the `AHP-YYYYMMDDHHMM` save names it generates keep the old letters
+- windowless — runs with no window and no audio (DeMoM, the `platform/headless/` backend), but still takes input from an Automation Driver scenario or an `.RMR` replay. Do not say "headless": it reads as "no input at all". Code names (`platform/headless/`, `Platform_Headless`, `--headless`, the `*-headless-debug` presets) keep the old word.
 
 ## Vetting third-party dependencies (all agents)
 Before recommending, installing, or adding ANY external binary, library, package, or tool — including

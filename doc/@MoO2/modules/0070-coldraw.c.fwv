@@ -1,0 +1,42 @@
+module_num=70
+module=D:\MOX\OTHERS\COLDRAW.C
+source=0070-coldraw.c.md
+range[0]=1:0x000A4D47 linear=0x000B4D47 size=8041
+range[1]=2:0x00026038 linear=0x00196038 size=2748
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                         SYMBOL                                        CHUNK
+m070f001  1    -      0x000B4E01  1:0x000A4E01  code         Draw_Cluster_Update_Function                 Draw_Cluster_Update_Function_                 regions/07-object-1/00139E54-0013A653.txt
+m070f002  2    -      0x000B4E64  1:0x000A4E64  code         Calculate_Squish_Step                        Calculate_Squish_Step_                        regions/07-object-1/00139E54-0013A653.txt
+m070f003  3    -      0x000B4EF6  1:0x000A4EF6  code         Do_Colony_Info_Pop_Stuff_For_Pop             Do_Colony_Info_Pop_Stuff_For_Pop_             regions/07-object-1/00139E54-0013A653.txt
+m070f004  4    -      0x000B53B6  1:0x000A53B6  code         Draw_Info_Morale                             Draw_Info_Morale_                             regions/07-object-1/0013A654-0013AE53.txt
+m070f005  5    -      0x000B53C8  1:0x000A53C8  code         Draw_Info_Wee_Morale                         Draw_Info_Wee_Morale_                         regions/07-object-1/0013A654-0013AE53.txt
+m070f006  6    -      0x000B53CC  1:0x000A53CC  code         Draw_Info_Morale_Both                        Draw_Info_Morale_Both_                        regions/07-object-1/0013A654-0013AE53.txt
+m070f007  7    -      0x000B55A3  1:0x000A55A3  code         Draw_Colony_Prod                             Draw_Colony_Prod_                             regions/07-object-1/0013A654-0013AE53.txt
+m070f008  8    -      0x000B55C7  1:0x000A55C7  code         Draw_Colony_Wee_Prod                         Draw_Colony_Wee_Prod_                         regions/07-object-1/0013A654-0013AE53.txt
+m070f009  9    -      0x000B55CF  1:0x000A55CF  code         Draw_Colony_Prod_Both                        Draw_Colony_Prod_Both_                        regions/07-object-1/0013A654-0013AE53.txt
+m070f010  10   -      0x000B5ED2  1:0x000A5ED2  code         Draw_Colony_PC_Bar                           Draw_Colony_PC_Bar_                           regions/07-object-1/0013AE54-0013B653.txt
+m070f011  11   -      0x000B5FBE  1:0x000A5FBE  code         Load_Road_List_Anims                         Load_Road_List_Anims_                         regions/07-object-1/0013AE54-0013B653.txt
+m070f012  12   -      0x000B6099  1:0x000A6099  code         Build_Road_List_Based_On_Bldg_List           Build_Road_List_Based_On_Bldg_List_           regions/07-object-1/0013B654-0013BE53.txt
+m070f013  13   -      0x000B6227  1:0x000A6227  code         Road_Back_To_Front                           Road_Back_To_Front_                           regions/07-object-1/0013B654-0013BE53.txt
+m070f014  14   -      0x000B6254  1:0x000A6254  code         Load_Veggie_Anims                            Load_Veggie_Anims_                            regions/07-object-1/0013B654-0013BE53.txt
+m070f015  15   -      0x000B6255  1:0x000A6255  code         Draw_Road_List                               Draw_Road_List_                               regions/07-object-1/0013B654-0013BE53.txt
+m070f016  16   -      0x000B62D3  1:0x000A62D3  code         Link_Buildings                               Link_Buildings_                               regions/07-object-1/0013B654-0013BE53.txt
+m070f017  17   -      0x000B634B  1:0x000A634B  code         Draw_Simplest_Path                           Draw_Simplest_Path_                           regions/07-object-1/0013B654-0013BE53.txt
+m070f018  18   -      0x000B6352  1:0x000A6352  code         Find_Simplest_Path_Node                      Find_Simplest_Path_Node_                      regions/07-object-1/0013B654-0013BE53.txt
+m070f019  19   -      0x000B65D8  1:0x000A65D8  static,code  Veggie_Anims                                 Veggie_Anims_                                 regions/07-object-1/0013B654-0013BE53.txt
+m070f020  20   -      0x000B65F3  1:0x000A65F3  code         Pick_Random_Veggie_Anim_For_Colony_CR        Pick_Random_Veggie_Anim_For_Colony_CR_        regions/07-object-1/0013B654-0013BE53.txt
+m070f021  21   -      0x000B6647  1:0x000A6647  code         Pick_Random_Veggie_Anim_Entry_For_Colony_CR  Pick_Random_Veggie_Anim_Entry_For_Colony_CR_  regions/07-object-1/0013B654-0013BE53.txt
+m070f022  22   -      0x000B66D0  1:0x000A66D0  code         Veggie_Type_For_Colony                       Veggie_Type_For_Colony_                       regions/07-object-1/0013B654-0013BE53.txt
+m070f023  23   -      0x000B67E4  1:0x000A67E4  code         N_Roads_Around_CR                            N_Roads_Around_CR_                            regions/07-object-1/0013B654-0013BE53.txt
+m070f024  24   -      0x000B684B  1:0x000A684B  code         Pick_Random_Road_At_CR                       Pick_Random_Road_At_CR_                       regions/07-object-1/0013BE54-0013C653.txt
+m070f025  25   -      0x000B6858  1:0x000A6858  code         Pick_Random_Road_Around_CR                   Pick_Random_Road_Around_CR_                   regions/07-object-1/0013BE54-0013C653.txt
+m070f026  26   -      0x000B6860  1:0x000A6860  code         Pick_Random_Road_At_And_Around_CR            Pick_Random_Road_At_And_Around_CR_            regions/07-object-1/0013BE54-0013C653.txt
+m070f027  27   -      0x000B6932  1:0x000A6932  code         Clear_Veggie_Draw_Flags                      Clear_Veggie_Draw_Flags_                      regions/07-object-1/0013BE54-0013C653.txt
+m070f028  28   -      0x000B6977  1:0x000A6977  code         Build_Veggie_List_Based_On_Bldg_List         Build_Veggie_List_Based_On_Bldg_List_         regions/07-object-1/0013BE54-0013C653.txt
+m070f029  29   -      0x000B6B95  1:0x000A6B95  code         Draw_Veggie_CR                               Draw_Veggie_CR_                               regions/07-object-1/0013BE54-0013C653.txt
+-         -    -      0x00196038  2:0x00026038  data         _veggie_list                                 _veggie_list                                  -
+-         -    -      0x00196398  2:0x00026398  data         _veggie_anims                                _veggie_anims                                 -
+-         -    -      0x00196538  2:0x00026538  data         _g_link_list                                 _g_link_list                                  -
+-         -    -      0x00196562  2:0x00026562  data         _g_n_links                                   _g_n_links                                    -
+-         -    -      0x00196564  2:0x00026564  data         _road_list                                   _road_list                                    -

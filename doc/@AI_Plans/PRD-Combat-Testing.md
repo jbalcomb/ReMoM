@@ -13,17 +13,17 @@ Combat is the largest and most intricate subsystem in ReMoM — tactical battles
 
 ## Solution
 
-Extend the existing headless test harness (HeMoM) and unit-test target so that complete combats — both tactical and strategic — run deterministically from a pinned random seed with known inputs, and their outputs are checked against curated assertion files, in three tiers:
+Extend the existing windowless test harness (DeMoM) and unit-test target so that complete combats — both tactical and strategic — run deterministically from a pinned random seed with known inputs, and their outputs are checked against curated assertion files, in three tiers:
 
 1. **Kernel tests** (GTest): the attack/defense/damage/resistance math and unit-conversion functions, tested in isolation with synthesized battle units.
-2. **Direct-invoke combat runs** (HeMoM `--combat` mode): load a crafted save, seed the RNG at combat entry, invoke the combat dispatcher directly, run the battle to completion with both sides AI-driven, dump the results, assert.
-3. **End-to-end trigger tests** (HeMoM scenario scripts): move a stack onto an enemy through the real overland path so combat triggers, resolves, and writes back exactly as in normal play.
+2. **Direct-invoke combat runs** (DeMoM `--combat` mode): load a crafted save, seed the RNG at combat entry, invoke the combat dispatcher directly, run the battle to completion with both sides AI-driven, dump the results, assert.
+3. **End-to-end trigger tests** (DeMoM scenario scripts): move a stack onto an enemy through the real overland path so combat triggers, resolves, and writes back exactly as in normal play.
 
-All tests run under CTest with the existing fixture pattern and are picked up by the standard HeMoM test invocation. Assertions pin current behavior (characterization tests), including original game bugs — a failure means "behavior changed," never "behavior is wrong."
+All tests run under CTest with the existing fixture pattern and are picked up by the standard DeMoM test invocation. Assertions pin current behavior (characterization tests), including original game bugs — a failure means "behavior changed," never "behavior is wrong."
 
 ## User Stories
 
-1. As a ReMoM developer, I want a complete combat to run headlessly from a pinned seed, so that I can reproduce any battle exactly, on any machine, without playing it by hand.
+1. As a ReMoM developer, I want a complete combat to run windowless from a pinned seed, so that I can reproduce any battle exactly, on any machine, without playing it by hand.
 2. As a ReMoM developer, I want strategic (auto-resolve) combat covered by a deterministic test, so that changes to auto-resolve math are caught the moment they alter an outcome.
 3. As a ReMoM developer, I want tactical combat covered by an AI-vs-AI test that runs the real battle-screen turn loop, so that the turn sequencing, AI action selection, and winner determination are exercised end to end.
 4. As a ReMoM developer, I want the attack, defense, damage, and resistance kernels unit-tested with synthesized battle units, so that I can pinpoint exactly which calculation changed when an integration test fails.
@@ -42,8 +42,8 @@ All tests run under CTest with the existing fixture pattern and are picked up by
 
 ## Implementation Decisions
 
-- **No new executable target.** The headless harness (HeMoM) already owns launch-to-game-state setup, seed handling, save load/dump, and scenario input injection. It gains a `--combat` mode. A separate binary would duplicate the newgame RNG-parity plumbing and burden both build systems.
-- **Kernel tests live in the existing MoM unit-test target**, which already links the game library against the headless platform.
+- **No new executable target.** The windowless harness (DeMoM) already owns launch-to-game-state setup, seed handling, save load/dump, and scenario input injection. It gains a `--combat` mode. A separate binary would duplicate the newgame RNG-parity plumbing and burden both build systems.
+- **Kernel tests live in the existing MoM unit-test target**, which already links the game library against the windowless platform.
 - **The combat dispatcher is the seam.** The dispatcher does all combat setup, then selects tactical (human participant, strategic-only option off) or strategic resolution; shared post-combat writeback follows either. The `--combat` mode invokes the dispatcher directly with prepared state.
 - **Determinism contract:** the RNG is a pure function of the global seed; the `--combat` mode re-seeds immediately before combat entry so overland history cannot shift combat rolls. Outcomes remain seed-stream-sensitive to RNG-consuming code changes inside combat itself — an accepted property, shared with the existing worldgen tests.
 - **Tactical battles run AI-vs-AI via the existing auto-combat flag**, which drives both sides through the AI turn path with no input; the turn-limit rule (defender wins past the cap) guarantees termination.
@@ -60,7 +60,7 @@ All tests run under CTest with the existing fixture pattern and are picked up by
 - **Characterization, not specification:** expected values are captured from real seeded runs of the current code. OGBUGs are pinned as-is per the project's faithfulness rule.
 - **Two assertion styles, both with prior art in the repo:** exact `key = value` field assertions with commented `NONDET` opt-outs (the worldgen/continue-save pattern), and `LIVENESS`/`BOUNDS` range rules (the AI-metrics pattern) for legality properties.
 - **Modules under test:** Tier 1 — attack/defense roll kernels, damage application, resistance checks, overland→battle unit conversion, deployment, winner determination. Tier 2 — the full strategic resolver and the full tactical loop (AI-vs-AI), via the dispatcher. Tier 3 — the overland trigger path and shared post-combat writeback.
-- **CTest fixtures** chain Setup → Run → Assertions so assertion steps only run after a successful battle run (the existing HeMoM fixture pattern). All new tests carry the HeMoM name prefix so the standard suite invocation includes them; the suite is always run whole.
+- **CTest fixtures** chain Setup → Run → Assertions so assertion steps only run after a successful battle run (the existing DeMoM fixture pattern). All new tests carry the DeMoM name prefix so the standard suite invocation includes them; the suite is always run whole.
 - **Prior art:** the seeded worldgen smoke/field tests, the continue/next-turn save-assertion tests, the Debug-only AI-behavior metrics test, and the seeded worldgen GTest modules.
 
 ## Out of Scope
@@ -68,13 +68,13 @@ All tests run under CTest with the existing fixture pattern and are picked up by
 - **Fixing any combat behavior.** This PRD adds observation, not correction; OGBUGs stay.
 - **Byte-level golden saves.** Known invalid due to uninitialized padding regions; curated field assertions only.
 - **Record-and-replay CTest wiring.** `.RMR`-based demo/replay testing remains a separate concern.
-- **Pixel/rendering verification of the combat screen.** Only logic outcomes are asserted; drawing is exercised (headless) but not checked.
+- **Pixel/rendering verification of the combat screen.** Only logic outcomes are asserted; drawing is exercised (windowless) but not checked.
 - **Exhaustive spell coverage.** The initial scenario matrix covers structural combat variants; per-spell combat tests are follow-on work as spell walkthroughs complete.
 - **Performance testing** of combat resolution.
 
 ## Further Notes
 
-- **The one unverified premise** is that the tactical battle screen's allocation/graphics/sound load path runs to completion under the headless platform. Other full screens do; the combat screen never has. The build-out therefore starts with a strategic-only tracer bullet (no battle screen), and headless-tactical is proven (and patched if needed) as its own step before the scenario matrix is built on top of it.
+- **The one unverified premise** is that the tactical battle screen's allocation/graphics/sound load path runs to completion under the windowless platform. Other full screens do; the combat screen never has. The build-out therefore starts with a strategic-only tracer bullet (no battle screen), and windowless-tactical is proven (and patched if needed) as its own step before the scenario matrix is built on top of it.
 - **Seed-stream sensitivity is a maintenance cost:** any change that adds/removes an RNG draw inside combat shifts every downstream roll, so assertion files for affected scenarios must be re-captured. This is accepted and already familiar from the worldgen tests; the re-seed-at-combat-entry decision confines the blast radius to combat-internal changes.
 - Existing half-built scaffolding (the self-contained tactical screen test harnesses wired-but-commented into the dispatcher) is the in-code precedent for direct invocation; the `--combat` mode supersedes it for automated testing but need not remove it.
 - The turn-limit rule (defender wins past the cap) doubles as the termination guarantee for AI-vs-AI runs, so no test-side timeout logic is needed beyond CTest's standard per-test timeout.

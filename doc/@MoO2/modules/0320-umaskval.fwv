@@ -1,0 +1,8 @@
+module_num=320
+module=umaskval
+source=0320-umaskval.md
+range[0]=2:0x00012550 linear=0x00182550 size=4
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL       CHUNK
+-    -    -      0x00182550  2:0x00012550  data  ___umaskval  ___umaskval  regions/08-object-2/00200654-00200E53.txt

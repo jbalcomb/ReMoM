@@ -9,7 +9,7 @@ Type:       5
 
 
 WIZARDS.EXE
-dseg:29D2 terrain_lbx_file db 'TERRAIN.LBX',0     ; DATA XREF: Terrain_Init+Bo ...
+dseg:29D2 terrain_lbx_file db 'TERRAIN.LBX',0     ; DATA XREF: Terrain_Init+Bvo ...
 XREF:
 	Terrain_Init+B  mov     ax, offset terrain_lbx_file     ; "TERRAIN.LBX"
 	Terrain_Init+35 mov     ax, offset terrain_lbx_file     ; "TERRAIN.LBX"

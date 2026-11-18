@@ -50,7 +50,7 @@ void Fizzle_Notification(int16_t player_idx, int16_t counter_player_idx, int16_t
 
 // WZD o134p09
 // sub_B9D14()
-void Cast_Spell_City_Enchantment_Animation_Load_Music(int16_t spell_idx, int16_t good_bad);
+void Load_City_Enchantment_Music(int16_t spell_idx, int16_t good_bad);
 
 // WZD o134p10
 int16_t Spell_Animation_Load_Graphics(int16_t spell_idx);

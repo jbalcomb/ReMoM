@@ -24,10 +24,10 @@ extern "C" {
 void Hero_Slot_Types(int16_t unit_type_idx, int16_t item_slots[]);
 
 // WZD o130p02
-int16_t Cast_DeathWish(int16_t player_idx);
+int16_t Cast_Death_Wish(int16_t player_idx);
 
 // WZD o130p03
-int16_t Cast_GreatUnsummoning(int16_t player_idx);
+int16_t Cast_Great_Unsummoning(int16_t player_idx);
 
 // WZD o130p04
 int16_t Cast_Black_Wind(int16_t player_idx);
@@ -73,7 +73,7 @@ void Apply_Consecration(int16_t city_idx);
 void Apply_Subversion(int16_t player_idx);
 
 // WZD o130p18
-void Cast_NaturesAwareness(int16_t player_idx);
+void Cast_Natures_Awareness(int16_t player_idx);
 
 
 

@@ -30,7 +30,7 @@ enchantments, empty vault items, and undefined hero slots.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_Runtime` / INITGAME | [INITGAME.c:601](../../MoM/src/INITGAME.c#L601) | Right after `Init_Heroes`; followed by `gd_dump_players("101_Init_Players_P")` ([602](../../MoM/src/INITGAME.c#L602)). |
+| `Init_Runtime` / INITGAME | [INITGAME.c:208](../../MoM/src/INITGAME.c#L208) | Right after `Init_Heroes`; followed by `STU_GD_Dump_Players("203_Init_Players_P")` ([209](../../MoM/src/INITGAME.c#L209)). |
 
 ## How it works
 

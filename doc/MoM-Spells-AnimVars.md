@@ -120,11 +120,11 @@ IDK_SummonAnim_Draw()
     if(IDK_DiploScrn_scanned_field == -1)  item
     if(IDK_DiploScrn_scanned_field > -10)  hero or champion
 
-Cast_Spell_City_Enchantment_Animation_1__WIP()
+City_Enchantment_Anim_1__WIP()
     IDK_DiploScrn_scanned_field = INVALID_FIELD;
-Cast_Spell_City_Enchantment_Animation_2__WIP()
+City_Enchantment_Anim_2__WIP()
 
-Cast_Spell_City_Enchantment_Animation_Draw()
+Draw_City_Enchantment_Anim()
     if(city_cityscape_fields[itr] == IDK_DiploScrn_scanned_field)
 
 XREF:
@@ -143,9 +143,9 @@ XREF:
     IDK_SummonAnim_Draw:loc_BEB43                    cmp     [IDK_DiploScrn_scanned_field], -1             
     IDK_SummonAnim_Draw:loc_BEB5B                    cmp     [IDK_DiploScrn_scanned_field], -10            
     IDK_SummonAnim+48                                mov     [IDK_DiploScrn_scanned_field], _DI_unit_type  
-    Cast_Spell_City_Enchantment_Animation_Draw+49    cmp     ax, [IDK_DiploScrn_scanned_field]             
-    Cast_Spell_City_Enchantment_Animation_1__WIP+58  mov     [IDK_DiploScrn_scanned_field], e_INVALID_FIELD
-    Cast_Spell_City_Enchantment_Animation_2__WIP+12D mov     [IDK_DiploScrn_scanned_field], ax             
+    Draw_City_Enchantment_Anim+49    cmp     ax, [IDK_DiploScrn_scanned_field]             
+    City_Enchantment_Anim_1__WIP+58  mov     [IDK_DiploScrn_scanned_field], e_INVALID_FIELD
+    City_Enchantment_Anim_2__WIP+12D mov     [IDK_DiploScrn_scanned_field], ax             
     Spell_Target_Wizard_Screen_Draw+104              cmp     ax, [IDK_DiploScrn_scanned_field]             
     Spell_Target_Wizard_Screen+1B1                   mov     [IDK_DiploScrn_scanned_field], ax             
     SoM_Started+5F                                   mov     [IDK_DiploScrn_scanned_field], 67             
@@ -274,12 +274,12 @@ XERF:
     IDK_SummonAnim_Draw+82                                         cmp     [_temp_sint_1], e_HUMAN_PLAYER_IDX ; clicked spell label index during combat sliders              
     IDK_SummonAnim_Draw+100                                        mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
     IDK_SummonAnim+44                                              mov     [_temp_sint_1], _SI_player_idx  ; clicked spell label index during combat sliders              
-    Cast_Spell_City_Enchantment_Animation_Load+5F                  mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
-    Cast_Spell_City_Enchantment_Animation_Load+94                  mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
+    Load_City_Enchantment_Anim+5F                  mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
+    Load_City_Enchantment_Anim+94                  mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
     Cast_Spell_City_Enchantment_Animation_Draw_Cityscape+2C        push    [_temp_sint_1]                  ; clicked spell label index during combat sliders              
     Cast_Spell_City_Enchantment_Animation_Draw_Cityscape:loc_BEF3C mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
-    Cast_Spell_City_Enchantment_Animation_1__WIP+55                mov     [_temp_sint_1], ax              ; clicked spell label index during combat sliders              
-    Cast_Spell_City_Enchantment_Animation_2__WIP+E                 mov     [_temp_sint_1], ax              ; clicked spell label index during combat sliders              
+    City_Enchantment_Anim_1__WIP+55                mov     [_temp_sint_1], ax              ; clicked spell label index during combat sliders              
+    City_Enchantment_Anim_2__WIP+E                 mov     [_temp_sint_1], ax              ; clicked spell label index during combat sliders              
     OVL_DrawGlobalAnim+49                                          cmp     [_temp_sint_1], e_HUMAN_PLAYER_IDX; clicked spell label index during combat sliders            
     OVL_DrawGlobalAnim:loc_BF63D                                   mov     ax, [_temp_sint_1]              ; clicked spell label index during combat sliders              
     OVL_DrawGlobalAnim:loc_BF82B                                   cmp     [_temp_sint_1], e_HUMAN_PLAYER_IDX; clicked spell label index during combat sliders            
@@ -448,7 +448,7 @@ Spell_Target_Wizard_Screen_Draw()
         " has been spell blasted", " loses " " points of casting ability", " loses " " points of mana", " relations have been subverted"
     ... ~ 'need target'?
 
-Cast_Spell_City_Enchantment_Animation_1__WIP()
+City_Enchantment_Anim_1__WIP()
     _osc_need_target_flag = ST_TRUE;
     _osc_need_target_flag = ST_FALSE;
     _osc_need_target_flag = ST_TRUE;
@@ -460,10 +460,10 @@ XREF:
     IDK_Spell_DisjunctOrBind+1F                            mov     [_osc_need_target_flag], 1        
     IDK_Spell_DisjunctOrBind__1+1E3                        mov     [_osc_need_target_flag], ST_FALSE        
     IDK_Spell_DisjunctOrBind__2+167                        mov     [_osc_need_target_flag], ST_FALSE        
-    Cast_Spell_City_Enchantment_Animation_1__WIP:loc_BF094 mov     [_osc_need_target_flag], 1        
-    Cast_Spell_City_Enchantment_Animation_1__WIP+E2        mov     [_osc_need_target_flag], ST_FALSE        
-    Cast_Spell_City_Enchantment_Animation_1__WIP+F6        mov     [_osc_need_target_flag], 1        
-    Cast_Spell_City_Enchantment_Animation_1__WIP+105       mov     [_osc_need_target_flag], ST_FALSE        
+    City_Enchantment_Anim_1__WIP:loc_BF094 mov     [_osc_need_target_flag], 1        
+    City_Enchantment_Anim_1__WIP+E2        mov     [_osc_need_target_flag], ST_FALSE        
+    City_Enchantment_Anim_1__WIP+F6        mov     [_osc_need_target_flag], 1        
+    City_Enchantment_Anim_1__WIP+105       mov     [_osc_need_target_flag], ST_FALSE        
     Spell_Target_Wizard_Screen_Draw+211                    cmp     [_osc_need_target_flag], e_ST_TRUE
     Spell_Target_Wizard_Screen+1D                          mov     [_osc_need_target_flag], 1        
     Spell_Target_Wizard_Screen+61F                         mov     [_osc_need_target_flag], ST_FALSE        

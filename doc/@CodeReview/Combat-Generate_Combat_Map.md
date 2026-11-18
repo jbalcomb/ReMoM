@@ -194,7 +194,7 @@ The last row is the one that looks wrong and isn't — `clt_FallenTemple` really
 
 Eight `Random` call sites in the listing (asm:125, 165, 171, 247, 369, 409, 415, 497), bracketed by `Get_Random_Seed` (asm:54) and `Set_Random_Seed` (asm:604) so the generator's draws do not disturb the combat sequence. Production has nine textual sites, but two of them are R1's duplicate of one asm site, so the logical count is eight.
 
-This matters because `HeMoM_Combat_Strategic_Assertions` fails on `combat.rng_calls`. **Nothing in this review is that cause**; the accounting here balances.
+This matters because `DeMoM_Combat_Strategic_Assertions` fails on `combat.rng_calls`. **Nothing in this review is that cause**; the accounting here balances.
 
 ---
 
@@ -215,7 +215,7 @@ Nothing in this overlay's generation chain. `Build_Battlefield`, the caller, is 
 
 `cmake --build --preset MSVC-debug --target ReMoM` is clean — `momlib.lib` and `ReMoM.exe` both link.
 
-The full build and the test suite are **not** run for this review, by agreement: several fixes here change generated maps (Tundra now draws 30 rough patches where it drew 0; floating islands write `roads[]` instead of `terrain_type[]`), so the combat goldens need updating before `ctest` means anything. `HeMoM_Combat_Strategic_Assertions` was already failing on a pre-existing `combat.rng_calls` divergence unrelated to this overlay.
+The full build and the test suite are **not** run for this review, by agreement: several fixes here change generated maps (Tundra now draws 30 rough patches where it drew 0; floating islands write `roads[]` instead of `terrain_type[]`), so the combat goldens need updating before `ctest` means anything. `DeMoM_Combat_Strategic_Assertions` was already failing on a pre-existing `combat.rng_calls` divergence unrelated to this overlay.
 
 ## Separately — an allocation bug found while debugging, not a review finding
 

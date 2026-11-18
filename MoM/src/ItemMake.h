@@ -51,25 +51,25 @@ int16_t Item_Make_Screen(int16_t player_idx, int16_t type);
 // WZD o115p09
 // static void Create_Item_Record(int16_t item_idx);
 
-// WZD o115p11
+// WZD o115p10
 // static int16_t Itam_Make_Screen_Build_Weapon_Powers_List(int16_t player_idx, int16_t max_cost);
 
+// WZD o115p11
+// static void Draw_Item_Make_Spellbook_Popup(void);
+
 // WZD o115p12
-// static void Item_Make_Screen_Spellbook_Popup_Draw(void);
+// static int16_t Item_Make_Spellbook_Popup(void);
 
 // WZD o115p13
-// static int16_t Item_Make_Screen_Spellbook_Popup(void);
-
-// WZD o115p14
 // static int16_t Add_Item(int16_t itemdata_idx);
 
-// WZD o115p15
+// WZD o115p14
 int16_t Activate_Item(int16_t old_item_idx);
 
-// WZD o115p16
+// WZD o115p15
 // static void Create_Random_Item(int16_t Power, int16_t Value);
 
-// WZD o115p17
+// WZD o115p16
 int16_t Make_Item(int16_t Power, int16_t spellranks[], int16_t Value);
 
 

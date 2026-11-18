@@ -1,0 +1,211 @@
+module_num=232
+module=F:\WLIBS\fonts\sysfont.c
+source=0232-sysfont.c.md
+range[0]=1:0x00134348 linear=0x00144348 size=1411
+range[1]=2:0x0000CA58 linear=0x0017CA58 size=17176
+range[2]=2:0x00048E7C linear=0x001B8E7C size=11520
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                        SYMBOL                      CHUNK
+m232f001  1    -      0x00144348  1:0x00134348  code  Load_System_Font            Load_System_Font_           regions/07-object-1/001C9654-001C9E53.txt
+m232f002  2    -      0x0014475C  1:0x0013475C  code  Load_System_Mouse           Load_System_Mouse_          regions/07-object-1/001C9654-001C9E53.txt
+-         -    -      0x0017CA58  2:0x0000CA58  data  _mouse_cursor_color         _mouse_cursor_color         regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CA5C  2:0x0000CA5C  data  _column_lookup              _column_lookup              regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CAA8  2:0x0000CAA8  data  _thin_column_lookup         _thin_column_lookup         regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CAF4  2:0x0000CAF4  data  _default_system_mouse_list  _default_system_mouse_list  regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x0017CB00  2:0x0000CB00  data  _font_pixel_data            _font_pixel_data            regions/08-object-2/001FAE54-001FB653.txt
+-         -    -      0x00180B00  2:0x00010B00  data  _default_mouse_image        _default_mouse_image        regions/08-object-2/001FEE54-001FF653.txt
+-         -    -      0x00180D40  2:0x00010D40  data  _default_palette_colors     _default_palette_colors     regions/08-object-2/001FEE54-001FF653.txt
+-         -    -      0x001B8E7C  2:0x00048E7C  data  _default_mouse_palette      _default_mouse_palette      -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                       TYPE
+0x001B8E7C  2:0x00048E7C  default_mouse_palette      struct s_mouse_palette
+0x00180B00  2:0x00010B00  default_mouse_image        char[576]
+0x0017CB00  2:0x0000CB00  font_pixel_data            int[16][256]
+0x00180D40  2:0x00010D40  default_palette_colors     char[3][16]
+0x0017CAF4  2:0x0000CAF4  default_system_mouse_list  struct s_mouse_list
+0x0017CA58  2:0x0000CA58  mouse_cursor_color         int
+0x0017CAA8  2:0x0000CAA8  thin_column_lookup         int[19]
+0x0017CA5C  2:0x0000CA5C  column_lookup              int[19]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME               TYPE         CHUNK
+m232f001  0x00144348  1:0x00134348  1044  24        9         0x18     -    -           Load_System_Font   void (void)  regions/07-object-1/001C9654-001C9E53.txt
+m232f002  0x0014475C  1:0x0013475C  367   24        9         0x18     -    -           Load_System_Mouse  void (void)  regions/07-object-1/001C9654-001C9E53.txt
+
+[Locals]
+KEY       ROUTINE            BLOCK  LOCAL        LOCATION    TYPE
+m232f001  Load_System_Font   -      data_offset  [EBP-0x1C]  int
+m232f001  Load_System_Font   -      char_num     [EBP-0xC]   int
+m232f001  Load_System_Font   -      row          [EBP-0x18]  int
+m232f001  Load_System_Font   -      pos          [EBP-0x14]  int
+m232f001  Load_System_Font   -      base_data    [EBP-0x10]  int
+m232f001  Load_System_Font   -      data         [EBP-0x3C]  int[8]
+m232f001  Load_System_Font   -      i            [EBP-0x8]   int
+m232f001  Load_System_Font   -      skip_count   [EBP-0x4]   int
+m232f002  Load_System_Mouse  -      i            [EBP-0x10]  int
+m232f002  Load_System_Mouse  -      j            [EBP-0xC]   int
+m232f002  Load_System_Mouse  -      white_color  [EBP-0x8]   int
+m232f002  Load_System_Mouse  -      black_color  [EBP-0x4]   int
+
+[Types]
+NUM  KIND       NAME                    DETAILS
+-    cue table  -                       source file table (C++)
+1    scope      struct                  -
+2    scope      union                   -
+3    scope      enum                    -
+4    scalar     signed char             int 1 bytes
+5    scalar     unsigned char           unsigned 1 bytes
+6    scalar     short                   int 2 bytes
+7    scalar     unsigned short          unsigned 2 bytes
+8    scalar     int                     int 4 bytes
+9    scalar     unsigned int            unsigned 4 bytes
+10   typedef    char                    name for unsigned char (#5)
+11   typedef    char                    name for unsigned char (#5)
+12   typedef    BYTE                    name for unsigned char (#5)
+13   typedef    SBYTE                   name for signed char (#4)
+14   typedef    UBYTE                   name for unsigned char (#5)
+15   typedef    WORD                    name for unsigned short (#7)
+16   typedef    SWORD                   name for short (#6)
+17   typedef    UWORD                   name for unsigned short (#7)
+18   typedef    DWORD                   name for unsigned int (#9)
+19   typedef    SDWORD                  name for int (#8)
+20   typedef    UDWORD                  name for unsigned int (#9)
+21   typedef    BOOL                    name for unsigned char (#5)
+22   typedef    SampleHandle            name for int (#8)
+23   typedef    size_t                  name for unsigned int (#9)
+24   pointer    -                       near386; of char (#10)
+25   array      __va_list               0..0; of char * (#24)
+26   typedef    __va_list               name for char *[1] (#25)
+27   scalar     long                    int 4 bytes
+28   typedef    fpos_t                  name for long (#27)
+29   typedef    fpos_t                  name for long (#27)
+30   array      -                       0..575; of char (#10)
+31   array      -                       0..19; of char[576] (#30)
+32   struct     struct s_mouse_palette  1 fields, 11520 bytes
+33   typedef    s_mouse_palette         struct name for struct #32 (#32)
+34   array      -                       0..575; of char (#10)
+35   array      -                       0..15; of int (#8)
+36   array      -                       0..255; of int[16] (#35)
+37   array      -                       0..2; of char (#10)
+38   array      -                       0..15; of char[3] (#37)
+39   struct     struct s_mouse_list     6 fields, 12 bytes
+40   typedef    s_mouse_list            struct name for struct #39 (#39)
+41   array      -                       0..18; of int (#8)
+42   array      -                       0..18; of int (#8)
+43   scalar     void                    void 1 bytes
+44   procedure  -                       near386; returns void ()
+45   array      -                       0..7; of int (#8)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER         OFFSET_VALUE  TYPE           TYPE_NAME
+32        field        mouse_images   0             char[576][20]  struct s_mouse_palette
+39        field        image_num      0             SWORD          struct s_mouse_list
+39        field        center_offset  2             SWORD          struct s_mouse_list
+39        field        x1             4             SWORD          struct s_mouse_list
+39        field        y1             6             SWORD          struct s_mouse_list
+39        field        x2             8             SWORD          struct s_mouse_list
+39        field        y2             10            SWORD          struct s_mouse_list
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m232f001  332   0x00144348  1:0x00134348  0x001C999C
+m232f001  336   0x00144360  1:0x00134360  0x001C99B4
+m232f001  338   0x0014436A  1:0x0013436A  0x001C99BE
+m232f001  340   0x0014436F  1:0x0013436F  0x001C99C3
+m232f001  342   0x00144380  1:0x00134380  0x001C99D4
+m232f001  343   0x0014438F  1:0x0013438F  0x001C99E3
+m232f001  344   0x00144398  1:0x00134398  0x001C99EC
+m232f001  345   0x001443A1  1:0x001343A1  0x001C99F5
+m232f001  347   0x001443AA  1:0x001343AA  0x001C99FE
+m232f001  349   0x001443D0  1:0x001343D0  0x001C9A24
+m232f001  351   0x001443D7  1:0x001343D7  0x001C9A2B
+m232f001  353   0x001443F4  1:0x001343F4  0x001C9A48
+m232f001  355   0x00144403  1:0x00134403  0x001C9A57
+m232f001  357   0x0014441D  1:0x0013441D  0x001C9A71
+m232f001  359   0x0014443D  1:0x0013443D  0x001C9A91
+m232f001  361   0x00144464  1:0x00134464  0x001C9AB8
+m232f001  362   0x00144474  1:0x00134474  0x001C9AC8
+m232f001  363   0x00144484  1:0x00134484  0x001C9AD8
+m232f001  364   0x00144494  1:0x00134494  0x001C9AE8
+m232f001  366   0x001444A4  1:0x001344A4  0x001C9AF8
+m232f001  367   0x001444AB  1:0x001344AB  0x001C9AFF
+m232f001  368   0x001444B2  1:0x001344B2  0x001C9B06
+m232f001  370   0x001444C9  1:0x001344C9  0x001C9B1D
+m232f001  371   0x001444D9  1:0x001344D9  0x001C9B2D
+m232f001  373   0x001444DB  1:0x001344DB  0x001C9B2F
+m232f001  375   0x001444E1  1:0x001344E1  0x001C9B35
+m232f001  376   0x001444F1  1:0x001344F1  0x001C9B45
+m232f001  378   0x001444F4  1:0x001344F4  0x001C9B48
+m232f001  379   0x001444FF  1:0x001344FF  0x001C9B53
+m232f001  380   0x00144502  1:0x00134502  0x001C9B56
+m232f001  382   0x00144509  1:0x00134509  0x001C9B5D
+m232f001  383   0x0014450B  1:0x0013450B  0x001C9B5F
+m232f001  384   0x00144516  1:0x00134516  0x001C9B6A
+m232f001  385   0x00144519  1:0x00134519  0x001C9B6D
+m232f001  386   0x0014451E  1:0x0013451E  0x001C9B72
+m232f001  387   0x0014452A  1:0x0013452A  0x001C9B7E
+m232f001  388   0x00144536  1:0x00134536  0x001C9B8A
+m232f001  389   0x00144542  1:0x00134542  0x001C9B96
+m232f001  392   0x00144547  1:0x00134547  0x001C9B9B
+m232f001  394   0x0014454C  1:0x0013454C  0x001C9BA0
+m232f001  395   0x0014455B  1:0x0013455B  0x001C9BAF
+m232f001  396   0x00144564  1:0x00134564  0x001C9BB8
+m232f001  397   0x0014456D  1:0x0013456D  0x001C9BC1
+m232f001  399   0x00144576  1:0x00134576  0x001C9BCA
+m232f001  401   0x0014459C  1:0x0013459C  0x001C9BF0
+m232f001  403   0x001445A3  1:0x001345A3  0x001C9BF7
+m232f001  405   0x001445C0  1:0x001345C0  0x001C9C14
+m232f001  407   0x001445CF  1:0x001345CF  0x001C9C23
+m232f001  409   0x001445E9  1:0x001345E9  0x001C9C3D
+m232f001  411   0x00144609  1:0x00134609  0x001C9C5D
+m232f001  413   0x00144630  1:0x00134630  0x001C9C84
+m232f001  414   0x00144640  1:0x00134640  0x001C9C94
+m232f001  415   0x00144650  1:0x00134650  0x001C9CA4
+m232f001  416   0x00144660  1:0x00134660  0x001C9CB4
+m232f001  417   0x00144670  1:0x00134670  0x001C9CC4
+m232f001  418   0x00144680  1:0x00134680  0x001C9CD4
+m232f001  419   0x00144690  1:0x00134690  0x001C9CE4
+m232f001  420   0x001446A0  1:0x001346A0  0x001C9CF4
+m232f001  422   0x001446B0  1:0x001346B0  0x001C9D04
+m232f001  423   0x001446B7  1:0x001346B7  0x001C9D0B
+m232f001  424   0x001446BE  1:0x001346BE  0x001C9D12
+m232f001  426   0x001446D5  1:0x001346D5  0x001C9D29
+m232f001  427   0x001446E5  1:0x001346E5  0x001C9D39
+m232f001  429   0x001446E7  1:0x001346E7  0x001C9D3B
+m232f001  431   0x001446ED  1:0x001346ED  0x001C9D41
+m232f001  432   0x001446FD  1:0x001346FD  0x001C9D51
+m232f001  434   0x00144700  1:0x00134700  0x001C9D54
+m232f001  435   0x0014470B  1:0x0013470B  0x001C9D5F
+m232f001  436   0x0014470E  1:0x0013470E  0x001C9D62
+m232f001  438   0x00144715  1:0x00134715  0x001C9D69
+m232f001  439   0x00144717  1:0x00134717  0x001C9D6B
+m232f001  440   0x00144722  1:0x00134722  0x001C9D76
+m232f001  441   0x00144725  1:0x00134725  0x001C9D79
+m232f001  442   0x0014472A  1:0x0013472A  0x001C9D7E
+m232f001  443   0x00144736  1:0x00134736  0x001C9D8A
+m232f001  444   0x00144742  1:0x00134742  0x001C9D96
+m232f001  445   0x0014474E  1:0x0013474E  0x001C9DA2
+m232f001  447   0x00144753  1:0x00134753  0x001C9DA7
+m232f002  450   0x0014475C  1:0x0013475C  0x001C9DB0
+m232f002  455   0x00144774  1:0x00134774  0x001C9DC8
+m232f002  456   0x0014477C  1:0x0013477C  0x001C9DD0
+m232f002  458   0x00144784  1:0x00134784  0x001C9DD8
+m232f002  459   0x0014479B  1:0x0013479B  0x001C9DEF
+m232f002  461   0x001447B2  1:0x001347B2  0x001C9E06
+m232f002  462   0x001447D0  1:0x001347D0  0x001C9E24
+m232f002  463   0x001447EE  1:0x001347EE  0x001C9E42
+m232f002  465   0x001447F2  1:0x001347F2  0x001C9E46
+m232f002  466   0x0014480C  1:0x0013480C  0x001C9E60
+m232f002  468   0x00144826  1:0x00134826  0x001C9E7A
+m232f002  469   0x0014483F  1:0x0013483F  0x001C9E93
+m232f002  470   0x00144852  1:0x00134852  0x001C9EA6
+m232f002  472   0x00144854  1:0x00134854  0x001C9EA8
+m232f002  474   0x00144864  1:0x00134864  0x001C9EB8
+m232f002  475   0x0014487B  1:0x0013487B  0x001C9ECF
+m232f002  476   0x00144891  1:0x00134891  0x001C9EE5
+m232f002  477   0x00144893  1:0x00134893  0x001C9EE7
+m232f002  480   0x001448A9  1:0x001348A9  0x001C9EFD
+m232f002  482   0x001448B3  1:0x001348B3  0x001C9F07
+m232f002  484   0x001448C2  1:0x001348C2  0x001C9F16

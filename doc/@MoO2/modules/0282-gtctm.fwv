@@ -1,0 +1,8 @@
+module_num=282
+module=gtctm
+source=0282-gtctm.md
+range[0]=1:0x00140A27 linear=0x00150A27 size=195
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m282f001  1    -      0x00150A27  1:0x00140A27  code  __getctime  __getctime_  regions/07-object-1/001D5E54-001D6653.txt

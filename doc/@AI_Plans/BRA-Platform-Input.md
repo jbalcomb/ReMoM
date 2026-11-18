@@ -50,11 +50,11 @@ Three findings reshaped the effort:
 | Criterion | Why it matters |
 |---|---|
 | **Separates latency from jitter** | They have different causes/fixes; an instrument that conflates them can't guide a fix. |
-| **Substrate fidelity** | Input can only be measured where it runs — **windowed, against a real display**. Headless has no cursor and no present. |
+| **Substrate fidelity** | Input can only be measured where it runs — **windowed, against a real display**. Windowless has no cursor and no present. |
 | **Coverage of the chain** | The lag lives somewhere in OS→poll→engine→render→present→compositor→glass. An instrument that sees only part of the chain can mislocate the cause. |
 | **Automatability / regression-guard** | Can it run pass/fail so a regression fails a build, without a human watching? |
 | **Ground truth** | Only an external measurement sees the *whole* chain including compositor and display buffering. |
-| **Reuse of existing infrastructure** | `DBG_Frame_Reset`, `.RMR` replay, `PFL_Capture`, HeMoM, CTest. |
+| **Reuse of existing infrastructure** | `DBG_Frame_Reset`, `.RMR` replay, `PFL_Capture`, DeMoM, CTest. |
 | **Observer effect** | The instrument must not add the latency it is measuring (per-event `fprintf` does). |
 | **Fidelity cost** | Does the measurement (or the eventual fix) touch reconstructed original code? |
 
@@ -143,7 +143,7 @@ The first Layer 1 capture on the reporting hardware (SDL2 / X11 / 4× / 60 Hz; r
 
 ## 9. Update — native Win32 backend promoted into scope (2026-07-24)
 
-The hardware-cursor fix landed for SDL2 (confirmed) and SDL3 (ported, unverified) in commit `53eb71b`. That commit also changed the **shared** `Mouse.c` to call `Platform_HW_Cursor_Active()` at the software-cursor choke point — a backend-agnostic suppression hook. SDL2, SDL3, and headless each define that symbol; **the native Win32 backend does not**, so a `USE_WIN32` build now fails to link (`LNK2019`, `Platform_HW_Cursor_Active` unresolved in `Mouse.obj`; `ReMoM.exe` not produced). Verified on the Windows dev box, 2026-07-24.
+The hardware-cursor fix landed for SDL2 (confirmed) and SDL3 (ported, unverified) in commit `53eb71b`. That commit also changed the **shared** `Mouse.c` to call `Platform_HW_Cursor_Active()` at the software-cursor choke point — a backend-agnostic suppression hook. SDL2, SDL3, and windowless each define that symbol; **the native Win32 backend does not**, so a `USE_WIN32` build now fails to link (`LNK2019`, `Platform_HW_Cursor_Active` unresolved in `Mouse.obj`; `ReMoM.exe` not produced). Verified on the Windows dev box, 2026-07-24.
 
 This changes the standing of the "Win32 parity" item that §7 had deferred as "mechanical later":
 

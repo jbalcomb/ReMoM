@@ -1,0 +1,8 @@
+module_num=167
+module=fflush
+source=0167-fflush.md
+range[0]=1:0x00119FE9 linear=0x00129FE9 size=16
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m167f001  1    -      0x00129FE9  1:0x00119FE9  code  fflush  fflush_  regions/07-object-1/001AEE54-001AF653.txt

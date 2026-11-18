@@ -8,6 +8,7 @@
         Module: ¿ Fleet Screen ?
 */
 
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage_Range() */  /* CLAUDE */
 #include "../../STU/src/STU_LOG.h"
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -65,18 +66,18 @@ HEROBUT4    hero ok butt
 // ¿ BEGIN: ArmyList Screen - Initialized Data ?
 
 // WZD dseg:3244
-char armylist_hotkey_NUL = '\0';
+char armylist_hotkey_NUL[] = "";
 // char armylist_hotkey_NUL[] = "";
 // WZD dseg:3245
-char cnst_HOTKEY_I_2 = 'I';
+char cnst_HOTKEY_I_2[] = "I";
 // WZD dseg:3247
-char cnst_HOTKEY_O_4 = 'O';
+char cnst_HOTKEY_O_4[] = "O";
 // WZD dseg:3249
-char cnst_HOTKEY_Esc5 = '\x1B';
+char cnst_HOTKEY_Esc5[] = "\x1B";
 // WZD dseg:324B
-char cnst_HOTKEY_U_3 = 'U';
+char cnst_HOTKEY_U_3[] = "U";
 // WZD dseg:324D
-char cnst_HOTKEY_D_3 = 'D';
+char cnst_HOTKEY_D_3[] = "D";
 // WZD dseg:324F
 char aTheArmiesOf[] = "The Armies Of ";
 // WZD dseg:325E
@@ -87,7 +88,7 @@ char cnst_ARMYLIST_File2[] = "ARMYLIST";
 char cnst_PORTRAIT_File[] = "PORTRAIT";
 // WZD dseg:3277 00                                              db    0
 // WZD dseg:3278 05 07 0A 0B 0D 0E                               NoSide_Explores db SCT_BottomLeft or SCT_TopRight
-// WZD dseg:3278                                                                                         ; DATA XREF: TILE_ExploreCorners+Do
+// WZD dseg:3278                                                                                         ; DATA XREF: TILE_ExploreCorners+Dvo
 
 // ¿ END: ArmyList Screen - Initialized Data ?
 
@@ -95,7 +96,7 @@ char cnst_PORTRAIT_File[] = "PORTRAIT";
 
 
 
-// WZD dseg:956E 00 00                                           mirror_screen_background_seg dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fw ...
+// WZD dseg:956E 00 00                                           mirror_screen_background_seg dw 0           ; DATA XREF: Main_Screen_Load_Pictures+35Fvw ...
 
 // WZD dseg:9570
 // ; 2 frame image (normal - clicked)
@@ -112,20 +113,20 @@ SAMB_ptr armylist_up_button_seg;
 // WZD dseg:9578
 SAMB_ptr armylist_background_seg;
 
-// WZD dseg:957A 00 00 00 00 00 00 00 00 00 00 00 00             item_slot_icons_seg@ ISLT_ICONS <0>      ; DATA XREF: GFX_Swap_AppendItems+A3w ...
+// WZD dseg:957A 00 00 00 00 00 00 00 00 00 00 00 00             item_slot_icons_seg@ ISLT_ICONS <0>      ; DATA XREF: GFX_Swap_AppendItems+A3vw ...
 // WZD dseg:957A                                                                                         ; array of 6 appended reserved EMM headers in
 // WZD dseg:957A                                                                                         ; GFX_Swap_Seg, each with one item slot image
-// WZD dseg:9586 00 00                                           IMG_ItemScrn_Ok@ dw 0                   ; DATA XREF: ITEM_ScreenRedraw+3D6r ...
+// WZD dseg:9586 00 00                                           IMG_ItemScrn_Ok@ dw 0                   ; DATA XREF: ITEM_ScreenRedraw+3D6vr ...
 // WZD dseg:9586                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:9588 00 00                                           IMG_ItemScrn_Alch@ dw 0                 ; DATA XREF: ITEM_ScreenRedraw+3AEr ...
+// WZD dseg:9588 00 00                                           IMG_ItemScrn_Alch@ dw 0                 ; DATA XREF: ITEM_ScreenRedraw+3AEvr ...
 // WZD dseg:9588                                                                                         ; 2 frame image (normal - clicked)
-// WZD dseg:958A 00 00                                           IMG_ItemScrn_HeroBr@ dw 0               ; DATA XREF: ITEM_ScreenRedraw+9Cr ...
-// WZD dseg:958C 00 00                                           IMG_ItemScrn_BG@ dw 0                   ; DATA XREF: Items_Screen+2Fr ...
-// WZD dseg:958E 00 00                                           profile_gem dw 0                        ; DATA XREF: Magic_Screen_Load_Pictures+BFw ...
+// WZD dseg:958A 00 00                                           IMG_ItemScrn_HeroBr@ dw 0               ; DATA XREF: ITEM_ScreenRedraw+9Cvr ...
+// WZD dseg:958C 00 00                                           IMG_ItemScrn_BG@ dw 0                   ; DATA XREF: Items_Screen+2Fvr ...
+// WZD dseg:958E 00 00                                           profile_gem dw 0                        ; DATA XREF: Magic_Screen_Load_Pictures+BFvw ...
 
 
 
-// WZD dseg:95F2 00 00                                           goto_booty_icon dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+371w ...
+// WZD dseg:95F2 00 00                                           goto_booty_icon dw 0                    ; DATA XREF: Main_Screen_Load_Pictures+371vw ...
 
 // WZD dseg:95F4
 // drake178: IMG_Hero_Portraits
@@ -891,9 +892,15 @@ void ArmyList_Draw_Reduced_Map(void)
     int16_t unit_world_x;
     int16_t unit_world_y;
     int16_t unit_world_p;
-    unit_world_x = _UNITS[list_armies[armylist_item_scanned_field]].wx;
-    unit_world_y = _UNITS[list_armies[armylist_item_scanned_field]].wy;
-    unit_world_p = _UNITS[list_armies[armylist_item_scanned_field]].wp;
+    /* OGBUG  no count test: with an empty list the minimap position is read from whatever list_armies[armylist_item_scanned_field] holds */
+    // unit_world_x = _UNITS[list_armies[armylist_item_scanned_field]].wx;
+    // unit_world_y = _UNITS[list_armies[armylist_item_scanned_field]].wy;
+    // unit_world_p = _UNITS[list_armies[armylist_item_scanned_field]].wp;
+    /* HACK */  /* CLAUDE */  /* with no army the near-buffer word is stale: in-range stand-in for the unit index, drawn once (the OG reads the same word three times), so ReMoM does not index _UNITS out of range */
+    int16_t list_unit_idx = ((m_army_list_count == 0) ? Stack_Garbage_Range(0, (MAX_UNIT_COUNT - 1)) : list_armies[armylist_item_scanned_field]);
+    unit_world_x = _UNITS[list_unit_idx].wx;
+    unit_world_y = _UNITS[list_unit_idx].wy;
+    unit_world_p = _UNITS[list_unit_idx].wp;
     List_Screen_Draw_Reduced_Map(ARMYLIST_REDUCED_MAP_X, ARMYLIST_REDUCED_MAP_Y, ARMYLIST_REDUCED_MAP_W, ARMYLIST_REDUCED_MAP_H, unit_world_p, unit_world_x, unit_world_y);
 }
 
@@ -931,6 +938,7 @@ int16_t Get_List_Armies_Index(int16_t unit_idx)
 
     found_unit_flag = ST_FALSE;
 
+    /* OGBUG  this loop has no exit other than finding unit_idx in list_armies[]; a unit that is in no row (e.g., an in-tower unit whose wp differs from its row's: Build_Army_List() merges it into that row, but Build_Army_List_Counts() matches wp exactly) is never found, list_first_item keeps increasing past m_army_list_count, and the screen hangs */
     while(found_unit_flag == ST_FALSE)
     {
 
@@ -940,6 +948,7 @@ int16_t Get_List_Armies_Index(int16_t unit_idx)
             {
                 list_armies_itr = itr;
                 found_unit_flag = ST_TRUE;
+                break;  /* CLAUDE */  /* REBUG */  // asm: jmp short loc_596BC (out of the loop)
             }
         }
 
@@ -953,6 +962,11 @@ int16_t Get_List_Armies_Index(int16_t unit_idx)
             else
             {
                 list_first_item++;
+                /* HACK */  /* CLAUDE */  // the OG reads m_armies_wx/wy/wp[list_first_item + n] past their 1000-byte allocations here; ReMoM wraps list_first_item so the reads stay in bounds (the loop still does not end)
+                if((list_first_item + NUM_ARMY_LIST) > 1000)
+                {
+                    list_first_item = 0;
+                }
             }
             Build_Army_List_Counts();
         }
@@ -999,6 +1013,7 @@ void Build_Army_List(void)
                 )
                 {
                     same_stack = ST_TRUE;
+                    break;  /* CLAUDE */  /* REBUG */  // asm: jmp short loc_59792 (out of the loop)
                 }
             }
             if(same_stack == ST_UNDEFINED)
@@ -1066,6 +1081,7 @@ void Build_Army_List_Counts(void)
 */
 void ArmyList_Set_List_Item_Count(void)
 {
+    /* OGBUG  first + 6 capped at 6 is always 6, so the count ignores list_first_item: after a unit is dismissed while the list is scrolled to the bottom, list_item_count stays min(6, m_army_list_count) and the last row(s) past the end show stale stacks */
     list_item_count = NUM_ARMY_LIST + list_first_item;
     SETMAX(list_item_count, NUM_ARMY_LIST);
     SETMAX(list_item_count, m_army_list_count);

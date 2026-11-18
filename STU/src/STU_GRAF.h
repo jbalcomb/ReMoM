@@ -40,7 +40,7 @@ extern "C" {
 typedef enum
 {
     STU_GRAF_PLAYER   = 0,  /* installed player build: env -> exe-dir -> CWD */
-    STU_GRAF_HEADLESS = 1   /* HeMoM / tests / matchup: env -> CWD          */
+    STU_GRAF_HEADLESS = 1   /* DeMoM / tests / matchup: env -> CWD          */
 } STU_GRAF_Profile;
 
 /* Build the standard ordered read search path for the given profile.  Resets
@@ -102,7 +102,7 @@ int STU_GRAF_User_State_Dir(char * out, size_t cap);
    resolved into the user-data dir (created on demand for write modes).  Same
    signature as stu_fopen_ci, so the reconstructed write sites swap
    stu_fopen_ci -> this.  A name that already carries a path is opened directly.
-   Under the HEADLESS profile (HeMoM / tests / matchup) this degrades to a plain
+   Under the HEADLESS profile (DeMoM / tests / matchup) this degrades to a plain
    CWD-relative open -- byte-identical to the pre-swap behavior -- as does a
    PLAYER build that cannot resolve a user-data dir. */
 FILE * STU_GRAF_Open_User(const char * name, const char * mode);

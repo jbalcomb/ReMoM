@@ -1,0 +1,43 @@
+module_num=16
+module=D:\MOX\JIM.C
+source=0016-jim.c.md
+range[0]=1:0x000145FD linear=0x000245FD size=3242
+range[1]=2:0x00000BB0 linear=0x00170BB0 size=148
+range[2]=2:0x00008EB4 linear=0x00178EB4 size=20
+range[3]=2:0x00022CF4 linear=0x00192CF4 size=4
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                  SYMBOL                                 CHUNK
+m016f001    1    -      0x000245FD  1:0x000145FD  code  Jim_Hot_Key                           Jim_Hot_Key_                           regions/07-object-1/000A9654-000A9E53.txt
+m016f002    2    -      0x00024677  1:0x00014677  code  Play_Streaming_Music                  Play_Streaming_Music_                  regions/07-object-1/000A9654-000A9E53.txt
+m016f003    3    -      0x00024831  1:0x00014831  code  Stop_Background_Music                 Stop_Background_Music_                 regions/07-object-1/000A9E54-000AA653.txt
+m016f004    4    -      0x0002484F  1:0x0001484F  code  Play_Background_Music                 Play_Background_Music_                 regions/07-object-1/000A9E54-000AA653.txt
+m016f005    5    -      0x0002490D  1:0x0001490D  code  Fade_Down_Background_Music            Fade_Down_Background_Music_            regions/07-object-1/000A9E54-000AA653.txt
+m016f006    6    -      0x0002496C  1:0x0001496C  code  Play_Combat_Music                     Play_Combat_Music_                     regions/07-object-1/000A9E54-000AA653.txt
+m016f007    7    -      0x000249F9  1:0x000149F9  code  Get_Text_Message                      Get_Text_Message_                      regions/07-object-1/000A9E54-000AA653.txt
+m016f008    8    -      0x00024ACA  1:0x00014ACA  code  Decode_Text_Message                   Decode_Text_Message_                   regions/07-object-1/000A9E54-000AA653.txt
+m016f009    9    1/3    0x00024D30  1:0x00014D30  code  Decode_Text_Name                      Decode_Text_Name_                      regions/07-object-1/000A9E54-000AA653.txt
+m016f009_2  9    2/3    0x00024D30  1:0x00014D30  code  Decode_Text_Race_And_Name             Decode_Text_Race_And_Name_             regions/07-object-1/000A9E54-000AA653.txt
+m016f009_3  9    3/3    0x00024D30  1:0x00014D30  code  Decode_Text_Race                      Decode_Text_Race_                      regions/07-object-1/000A9E54-000AA653.txt
+m016f010    10   -      0x00024D4C  1:0x00014D4C  code  Decode_Text_Name_And_Stat             Decode_Text_Name_And_Stat_             regions/07-object-1/000A9E54-000AA653.txt
+m016f011    11   -      0x00024D6A  1:0x00014D6A  code  Decode_Text_Name_And_System           Decode_Text_Name_And_System_           regions/07-object-1/000A9E54-000AA653.txt
+m016f012    12   -      0x00024D83  1:0x00014D83  code  Decode_Text_Name_And_Tech             Decode_Text_Name_And_Tech_             regions/07-object-1/000A9E54-000AA653.txt
+m016f013    13   -      0x00024D9C  1:0x00014D9C  code  Decode_Text_Name_And_Other_Tech       Decode_Text_Name_And_Other_Tech_       regions/07-object-1/000A9E54-000AA653.txt
+m016f014    14   -      0x00024DC5  1:0x00014DC5  code  Decode_Text_Name_Tech_And_Other_Tech  Decode_Text_Name_Tech_And_Other_Tech_  regions/07-object-1/000A9E54-000AA653.txt
+m016f015    15   -      0x00024DF0  1:0x00014DF0  code  Decode_Text_Name_And_Name             Decode_Text_Name_And_Name_             regions/07-object-1/000A9E54-000AA653.txt
+m016f016    16   -      0x00024E08  1:0x00014E08  code  Decode_Text_Stat                      Decode_Text_Stat_                      regions/07-object-1/000A9E54-000AA653.txt
+m016f017    17   -      0x00024E27  1:0x00014E27  code  Decode_Text_System                    Decode_Text_System_                    regions/07-object-1/000A9E54-000AA653.txt
+m016f018    18   -      0x00024E3E  1:0x00014E3E  code  Decode_Text_Field                     Decode_Text_Field_                     regions/07-object-1/000A9E54-000AA653.txt
+m016f019    19   -      0x00024E54  1:0x00014E54  code  Decode_Text_Year                      Decode_Text_Year_                      regions/07-object-1/000A9E54-000AA653.txt
+m016f020    20   -      0x00024E73  1:0x00014E73  code  Decode_Text_Tech_And_Other_Name       Decode_Text_Tech_And_Other_Name_       regions/07-object-1/000A9E54-000AA653.txt
+m016f021    21   -      0x00024E96  1:0x00014E96  code  Bill_Picture_To_Mouse                 Bill_Picture_To_Mouse_                 regions/07-object-1/000A9E54-000AA653.txt
+m016f022    22   -      0x00024ED3  1:0x00014ED3  code  Draw_Logos                            Draw_Logos_                            regions/07-object-1/000A9E54-000AA653.txt
+m016f023    23   -      0x0002518F  1:0x0001518F  code  Logo_Fade_Out                         Logo_Fade_Out_                         regions/07-object-1/000AA654-000AAE53.txt
+m016f024    24   -      0x000251EF  1:0x000151EF  code  Slow_Fade_In                          Slow_Fade_In_                          regions/07-object-1/000AA654-000AAE53.txt
+m016f025    25   -      0x00025259  1:0x00015259  code  Check_For_Simtex_Logo                 Check_For_Simtex_Logo_                 regions/07-object-1/000AA654-000AAE53.txt
+-           -    -      0x00178EB4  2:0x00008EB4  data  _jim_current_stream                   _jim_current_stream                    regions/08-object-2/001F6E54-001F7653.txt
+-           -    -      0x00178EB6  2:0x00008EB6  data  _jim_fade_music_flag                  _jim_fade_music_flag                   regions/08-object-2/001F6E54-001F7653.txt
+-           -    -      0x00178EB8  2:0x00008EB8  data  _jim_old_music_id                     _jim_old_music_id                      regions/08-object-2/001F6E54-001F7653.txt
+-           -    -      0x00178EBA  2:0x00008EBA  data  _jim_old_transition_id                _jim_old_transition_id                 regions/08-object-2/001F6E54-001F7653.txt
+-           -    -      0x00178EBC  2:0x00008EBC  data  _logo_mouse_list                      _logo_mouse_list                       regions/08-object-2/001F6E54-001F7653.txt
+-           -    -      0x00192CF4  2:0x00022CF4  data  _darken_palette_value                 _darken_palette_value                  -

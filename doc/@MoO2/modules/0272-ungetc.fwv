@@ -1,0 +1,8 @@
+module_num=272
+module=ungetc
+source=0272-ungetc.md
+range[0]=1:0x0013D140 linear=0x0014D140 size=130
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m272f001  1    -      0x0014D140  1:0x0013D140  code  ungetc  ungetc_  regions/07-object-1/001D2654-001D2E53.txt

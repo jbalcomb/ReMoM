@@ -1,0 +1,8 @@
+module_num=205
+module=istable
+source=0205-istable.md
+range[0]=2:0x00004C94 linear=0x00174C94 size=260
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME       SYMBOL     CHUNK
+-    -    -      0x00174C94  2:0x00004C94  data  __IsTable  __IsTable  regions/08-object-2/001F2E54-001F3653.txt

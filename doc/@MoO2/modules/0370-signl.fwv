@@ -1,0 +1,13 @@
+module_num=370
+module=signl
+source=0370-signl.md
+range[0]=1:0x00153896 linear=0x00163896 size=438
+range[1]=2:0x00012D74 linear=0x00182D74 size=52
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME              SYMBOL             CHUNK
+m370f001  1    -      0x00163896  1:0x00153896  code         __sigabort        __sigabort_        regions/07-object-1/001E8E54-001E9653.txt
+m370f002  2    -      0x001638A0  1:0x001538A0  code         __sigfpe_handler  __sigfpe_handler_  regions/07-object-1/001E8E54-001E9653.txt
+m370f003  3    -      0x001638D5  1:0x001538D5  code         signal            signal_            regions/07-object-1/001E8E54-001E9653.txt
+m370f004  4    -      0x0016398A  1:0x0015398A  code         raise             raise_             regions/07-object-1/001E8E54-001E9653.txt
+-         -    -      0x00182D74  2:0x00012D74  static,data  _SignalTable      _SignalTable       regions/08-object-2/00200E54-00201653.txt

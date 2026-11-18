@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-fields_merge.py - merge static field catalog with runtime TRACE.LOG capture.
+fields_merge.py - merge static field catalog with the runtime remom_clog_fields.tsv capture.
 
 Inputs:
   tools/fields/_static.csv           (from fields_extract.py)
-  TRACE.LOG                          (path on argv; default: ./TRACE.LOG)
+  remom_clog_fields.tsv              (path on argv; default: ./remom_clog_fields.tsv, written by an STU_CLOG build)
 
-Runtime lines recognized (emitted by Fields.c when g_dbg_fields_trace != 0,
+Runtime rows recognized (tab-separated; written by Fields.c via STU_CLOG_Fields_Row when g_clog_fields_trace != 0,
 and FIELDSNAPSHOT from Dump_Fields_CSV):
 
   FIELDADD,<screen>,<idx>,<origin>,<basename>:<line>,type=N,x1=N,y1=N,x2=N,y2=N,hotkey=N,help=N
@@ -90,6 +90,7 @@ def parse_trace(path):
     cur_snapshot_screen = None
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         for line in f:
+            line = line.replace("	", ",")  # remom_clog_fields.tsv is tab-separated; the regexes take the older comma form
             m = FIELDADD_RE.search(line)
             if m:
                 d = m.groupdict()
@@ -126,7 +127,7 @@ def screen_for_static_row(row):
 
 def merge(screen_filter=None):
     static_rows = load_static()
-    trace_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(REPO_ROOT, "TRACE.LOG")
+    trace_path = sys.argv[1] if len(sys.argv) > 1 else "remom_clog_fields.tsv"
     if not os.path.isfile(trace_path):
         print(f"warning: trace file not found: {trace_path}", file=sys.stderr)
         fieldadd_by_key, snapshots, fieldadd_list = {}, {}, []

@@ -25,6 +25,18 @@
 
 
 
+/*
+MoO2
+_TOGGLE_PAGES_
+...
+Eh?
+*/
+// // #define _TOGGLE_PAGES_  PageFlip_FX
+// // #define _TOGGLE_PAGES  PageFlip_FX_MGC
+// #define TOGGLE_PAGES  PageFlip_FX
+
+
+
 #define MOUSE_BUTTON_LEFT   1
 #define MOUSE_BUTTON_RIGHT  2
 
@@ -411,18 +423,18 @@ item_powers = GET_4B_OFS((uint8_t*)&_ITEMS[item_idx], 0x2E);
 #define ITEM_OFS_POWERS  0x2E
 #define GET_ITEM_POWERS(_item_idx_)  ( GET_4B_OFS((uint8_t*)&_ITEMS[(_item_idx_)], ITEM_OFS_POWERS) )
 
-// #define ITEM_POWER(_item_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0) )
+// #define ITEM_POWER(_item_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].powers & (1 << (_item_power_))) != 0) )
 #define ITEM_POWER(_item_idx_,_item_power_)  ( ((GET_4B_OFS((uint8_t*)&_ITEMS[(_item_idx_)], 0x2E) & (1 << (_item_power_))) != 0) )
 
 // ip_Invulnerability = 32 ... warning C4293: '<<': shift count negative or too big, undefined behavior
 // 1000 0000 0000 0000 0000 0000 0000 0000
-//                                       ^ bit 1  ((_ITEMS[(_item_idx_)].Powers & (1 << (0))) != 0)
-// ^ bit 32 ((_ITEMS[(_item_idx_)].Powers & (1 << (31))) != 0)
-// ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0)
+//                                       ^ bit 1  ((_ITEMS[(_item_idx_)].powers & (1 << (0))) != 0)
+// ^ bit 32 ((_ITEMS[(_item_idx_)].powers & (1 << (31))) != 0)
+// ((_ITEMS[(_item_idx_)].powers & (1 << (_item_power_))) != 0)
 
 // item_charges = _ITEMS[_players[_UNITS[unit_idx].owner_idx].Heroes[_UNITS[unit_idx].Hero_Slot].Items[0]].embed_spell_cnt;
 
-// #define UNIT_ENCHANTMENT(_unit_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].Powers & (1 << (_item_power_))) != 0) )
+// #define UNIT_ENCHANTMENT(_unit_idx_,_item_power_)  ( ((_ITEMS[(_item_idx_)].powers & (1 << (_item_power_))) != 0) )
 
 
 
@@ -632,6 +644,12 @@ World Map - Landmass
 #define NUM_BANNER_COLORS                  6
 #define NEUTRAL_PLAYER_BANNER_COLOR_IDX    5
 #define NEUTRAL_PLAYER_BANNER_COLOR       50
+#define BANNER_REMAP_COLOR_BASE          214  // first of the 5 palette indices a unit / city picture uses for its owner's banner shades (Replace_Color())
+#define NUM_BANNER_REMAP_COLORS            5  // banner shades per banner: COL_Banners[] / COL_City_Banner[] hold 5 per banner
+#define NEUTRAL_CITY_REMAP_COLOR_BASE     51  // first of the 5 palette indices a neutral city's banner shades are remapped to
+#define CITY_PICTURE_OVERHANG              6  // a city picture starts this many pixels up and left of its map square
+#define CITY_PICTURE_POPULATION_STEP       4  // population per city-picture frame: frame = (population - 1) / 4
+#define MAX_CITY_PICTURE_FRAME             4  // the largest city-picture frame
 
 /*
 WZD dseg:7011

@@ -24,7 +24,7 @@ Pure visual variety: the base terrain types each have several interchangeable ti
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:606](../../MoM/src/MAPGEN.c#L606) | After `Desert_Autotile` ([600](../../MoM/src/MAPGEN.c#L600)); followed by `gd_dump_world_map("25_Shuffle_Terrains_W")` ([607](../../MoM/src/MAPGEN.c#L607)). Single call (both planes handled by its own `wp` loop). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:455](../../MoM/src/MAPGEN.c#L455) | After `Desert_Autotile` ([449](../../MoM/src/MAPGEN.c#L449)); followed by `STU_GD_Dump_World_Map("126_Shuffle_Terrains_W")` ([456](../../MoM/src/MAPGEN.c#L456)). Single call (both planes handled by its own `wp` loop). |
 
 ## RNG footprint (the alignment-relevant part)
 

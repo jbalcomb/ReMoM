@@ -1,0 +1,32 @@
+module_num=69
+module=D:\MOX\OTHERS\COLBOMB.C
+source=0069-colbomb.c.md
+range[0]=1:0x000A432D linear=0x000B432D size=2586
+range[1]=2:0x00001D94 linear=0x00171D94 size=40
+range[2]=2:0x00025EB0 linear=0x00195EB0 size=392
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                        SYMBOL                       CHUNK
+m069f001  1    -      0x000B432D  1:0x000A432D  static,code  Add_Fields                  Add_Fields_                  regions/07-object-1/00139654-00139E53.txt
+m069f002  2    -      0x000B435A  1:0x000A435A  static,code  Load_Bombing_Anims          Load_Bombing_Anims_          regions/07-object-1/00139654-00139E53.txt
+m069f003  3    -      0x000B4379  1:0x000A4379  static,code  Update_Fields               Update_Fields_               regions/07-object-1/00139654-00139E53.txt
+m069f004  4    -      0x000B4383  1:0x000A4383  static,code  Squeze_Out_Bomb             Squeze_Out_Bomb_             regions/07-object-1/00139654-00139E53.txt
+m069f005  5    -      0x000B43A6  1:0x000A43A6  static,code  Add_Bomb_To_End_Of_Queue    Add_Bomb_To_End_Of_Queue_    regions/07-object-1/00139654-00139E53.txt
+m069f006  6    -      0x000B44DF  1:0x000A44DF  static,code  Queue_Is_Empty              Queue_Is_Empty_              regions/07-object-1/00139654-00139E53.txt
+m069f007  7    -      0x000B44EB  1:0x000A44EB  static,code  Replace_With_New_Bomb       Replace_With_New_Bomb_       regions/07-object-1/00139654-00139E53.txt
+m069f008  8    -      0x000B4523  1:0x000A4523  static,code  Decrement_Bomb_Counters     Decrement_Bomb_Counters_     regions/07-object-1/00139654-00139E53.txt
+m069f009  9    -      0x000B45D4  1:0x000A45D4  static,code  Allocate_Hit                Allocate_Hit_                regions/07-object-1/00139654-00139E53.txt
+m069f010  10   -      0x000B4606  1:0x000A4606  static,code  Do_Bomb                     Do_Bomb_                     regions/07-object-1/00139654-00139E53.txt
+m069f011  11   -      0x000B46CF  1:0x000A46CF  static,code  Do_Bombs                    Do_Bombs_                    regions/07-object-1/00139654-00139E53.txt
+m069f012  12   -      0x000B4733  1:0x000A4733  static,code  Add_Building_To_Queue       Add_Building_To_Queue_       regions/07-object-1/00139654-00139E53.txt
+m069f013  13   -      0x000B4800  1:0x000A4800  static,code  Draw_Colony_Bombing_Screen  Draw_Colony_Bombing_Screen_  regions/07-object-1/00139E54-0013A653.txt
+m069f014  14   -      0x000B48EB  1:0x000A48EB  static,code  Blow_Up_All_Bldgs           Blow_Up_All_Bldgs_           regions/07-object-1/00139E54-0013A653.txt
+m069f015  15   -      0x000B494B  1:0x000A494B  static,code  Do_Summary_String_Popup     Do_Summary_String_Popup_     regions/07-object-1/00139E54-0013A653.txt
+m069f016  16   -      0x000B4B51  1:0x000A4B51  static,code  Draw_Summary                Draw_Summary_                regions/07-object-1/00139E54-0013A653.txt
+m069f017  17   -      0x000B4D02  1:0x000A4D02  code         Colony_Bombing_Screen       Colony_Bombing_Screen_       regions/07-object-1/00139E54-0013A653.txt
+-         -    -      0x00195EB0  2:0x00025EB0  static,data  _l_anims                    _l_anims                     -
+-         -    -      0x00195EB4  2:0x00025EB4  data         _backup_results_ptr         _backup_results_ptr          -
+-         -    -      0x00195EB8  2:0x00025EB8  data         _results_ptr                _results_ptr                 -
+-         -    -      0x00195EBC  2:0x00025EBC  data         _n_bombs                    _n_bombs                     -
+-         -    -      0x00195EBE  2:0x00025EBE  static,data  _fields                     _fields                      -
+-         -    -      0x00195EC0  2:0x00025EC0  data         _bombs                      _bombs                       -

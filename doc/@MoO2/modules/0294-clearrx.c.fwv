@@ -1,0 +1,8 @@
+module_num=294
+module=C:\GCL520\C_ALL\CLEARRX.C
+source=0294-clearrx.c.md
+range[0]=1:0x001427B0 linear=0x001527B0 size=48
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m294f001  1    -      0x001527B0  1:0x001427B0  code  ClearRXBuffer  ClearRXBuffer_  regions/07-object-1/001D7654-001D7E53.txt

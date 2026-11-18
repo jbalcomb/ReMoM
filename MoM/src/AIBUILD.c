@@ -174,6 +174,7 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     {
         if(_CITIES[itr].owner_idx == player_idx)
         {
+            /* OGBUG  tests the construction of city_idx (this city), not of _CITIES[itr]: tradegoods_city_count is the number of own cities when this city already builds Trade Goods and 0 otherwise, so the Trade Goods chance (40 + ((cities / 8) - count) * 10) is 40% + 10% per 8 cities for a city not on Trade Goods, and for one re-choosing from Trade Goods drops by 10 per own city (<= 0 from 4 cities) */
             if(_CITIES[city_idx].construction == bt_TradeGoods)  /* OGBUG: should be itr, not city_Idx */
             {
                 tradegoods_city_count++;
@@ -324,19 +325,29 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     }
     for(itr = 0; itr < product_count; itr++)
     {
-        if(product_array[itr] < 100)
-        {
-            product_weights[itr] = (ai_build_base_weights_table[bldg_data_table[product_array[itr]].Category] + ai_build_objective_weights_table[bldg_data_table[product_array[itr]].Category][_players[player_idx].Objective]);
-        }
-        else
-        {
-            product_weights[itr] = (
-                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
-                *
-                (_unit_type_table[(product_array[itr] - 100)].cost / 10)
-            );
-        }
+        // if(product_array[itr] < 100)
+        // {
+        //     product_weights[itr] = (ai_build_base_weights_table[bldg_data_table[product_array[itr]].Category] + ai_build_objective_weights_table[bldg_data_table[product_array[itr]].Category][_players[player_idx].Objective]);
+        // }
+        // else
+        // {
+        //     product_weights[itr] = (
+        //         (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+        //         *
+        //         (_unit_type_table[(product_array[itr] - 100)].cost / 10)
+        //     );
+        // }
+        /* CLAUDE */  /* REBUG */  if(product_array[itr] >= 100)
+        /* CLAUDE */  {
+        /* CLAUDE */      product_weights[itr] = (_unit_type_table[(product_array[itr] - 100)].cost / 10);
+        /* CLAUDE */      product_weights[itr] = (product_weights[itr] * product_weights[itr]);
+        /* CLAUDE */  }
+        /* CLAUDE */  else
+        /* CLAUDE */  {
+        /* CLAUDE */      product_weights[itr] = (ai_build_base_weights_table[bldg_data_table[product_array[itr]].Category] + ai_build_objective_weights_table[bldg_data_table[product_array[itr]].Category][_players[player_idx].Objective]);
+        /* CLAUDE */  }
     }
+    /* OGBUG  reads _CITIES[itr] with itr left over from the loop above (= product_count, the number of build options), not city_idx: the size of an unrelated city decides whether Housing gets the x2 weight */
     if(_CITIES[itr].population < 5)  /* OGBUG: should use city_idx, not itr */
     {
         for(itr = 0; itr < product_count; itr++)
@@ -349,14 +360,15 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
     }
     for(itr = 0; itr < product_count; itr++)
     {
-        if(product_array[itr] < 100)
-        {
-            if(need_units == ST_TRUE)
-            {
-                product_weights[itr] = 0;
-            }
-        }
-        else
+        // if(product_array[itr] < 100)
+        // {
+        //     if(need_units == ST_TRUE)
+        //     {
+        //         product_weights[itr] = 0;
+        //     }
+        // }
+        // else
+        /* CLAUDE */  if(product_array[itr] >= 100)
         {
             unit_type = (product_array[itr] - 100);
             if((_unit_type_table[unit_type].Abilities & UA_CREATEOUTPOST) != 0)
@@ -396,32 +408,60 @@ void Player_Colony_Autobuild_CP(int16_t player_idx, int16_t city_idx)
             else if(_unit_type_table[unit_type].Transport > 0)
             {
                 /* HP  (_turn / 30) < ai_transport_count || (ai_transport_count > 10) */
-                if(
-                    ((_turn / 40) < ai_transport_count)
-                    ||
-                    (ai_transport_count > 8)
-                )
-                {
-                    product_weights[itr] = 0;
-                }
-                else
-                {
+                // if(
+                //     ((_turn / 40) < ai_transport_count)
+                //     ||
+                //     (ai_transport_count > 8)
+                // )
+                // {
+                //     product_weights[itr] = 0;
+                // }
+                // else
+                // {
+                //     /* HP  product_weights[itr] = (product_weights[itr] * ((_turn / 30) - ai_transport_count)); */
+                //     product_weights[itr] = (product_weights[itr] * ((_turn / 40) - ai_transport_count));
+                // }
+                /* CLAUDE */  /* REBUG */  if(
+                /* CLAUDE */      ((_turn / 40) >= ai_transport_count)
+                /* CLAUDE */      &&
+                /* CLAUDE */      (ai_transport_count <= 8)
+                /* CLAUDE */  )
+                /* CLAUDE */  {
                     /* HP  product_weights[itr] = (product_weights[itr] * ((_turn / 30) - ai_transport_count)); */
-                    product_weights[itr] = (product_weights[itr] * ((_turn / 40) - ai_transport_count));
-                }
+                /* CLAUDE */      product_weights[itr] = (product_weights[itr] * ((_turn / 40) - ai_transport_count));
+                /* CLAUDE */  }
+                /* CLAUDE */  else
+                /* CLAUDE */  {
+                /* CLAUDE */      product_weights[itr] = 0;
+                /* CLAUDE */  }
             }
             else
             {
-                if(need_units != ST_FALSE)
-                {
-                    product_weights[itr] = ((product_weights[itr] * (ai_build_objective_weights_table[8][_players[player_idx].Objective] + 10)) / 10);
-                }
-                else
-                {
-                    product_weights[itr] = 0;
-                }
+                // if(need_units != ST_FALSE)
+                // {
+                //     product_weights[itr] = ((product_weights[itr] * (ai_build_objective_weights_table[8][_players[player_idx].Objective] + 10)) / 10);
+                // }
+                // else
+                // {
+                //     product_weights[itr] = 0;
+                // }
+                /* CLAUDE */  /* REBUG */  if(need_units == ST_FALSE)
+                /* CLAUDE */  {
+                /* CLAUDE */      product_weights[itr] = 0;
+                /* CLAUDE */  }
+                /* CLAUDE */  else
+                /* CLAUDE */  {
+                /* CLAUDE */      product_weights[itr] = ((product_weights[itr] * (ai_build_objective_weights_table[8][_players[player_idx].Objective] + 10)) / 10);
+                /* CLAUDE */  }
             }
         }
+        /* CLAUDE */  else
+        /* CLAUDE */  {
+        /* CLAUDE */      if(need_units == ST_TRUE)
+        /* CLAUDE */      {
+        /* CLAUDE */          product_weights[itr] = 0;
+        /* CLAUDE */      }
+        /* CLAUDE */  }
     }
     product_choice = Get_Weighted_Choice(&product_weights[0], product_count);
     _CITIES[city_idx].construction = product_array[product_choice];

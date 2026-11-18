@@ -1,0 +1,8 @@
+module_num=302
+module=histsplt
+source=0302-histsplt.md
+range[0]=2:0x000513F8 linear=0x001C13F8 size=4
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                    CHUNK
+-    -    -      0x001C13F8  2:0x000513F8  data  ___historical_splitparms  ___historical_splitparms  -

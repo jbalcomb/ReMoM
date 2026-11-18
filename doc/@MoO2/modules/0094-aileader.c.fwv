@@ -1,0 +1,12 @@
+module_num=94
+module=D:\MOX\OTHERS\AILEADER.C
+source=0094-aileader.c.md
+range[0]=1:0x000C6FDA linear=0x000D6FDA size=1672
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                       SYMBOL                      CHUNK
+m094f001  1    -      0x000D6FDA  1:0x000C6FDA  static,code  Assign_Fleet_Officer       Assign_Fleet_Officer_       regions/07-object-1/0015BE54-0015C653.txt
+m094f002  2    -      0x000D7078  1:0x000C7078  static,code  Reassign_Fleet_Officer     Reassign_Fleet_Officer_     regions/07-object-1/0015C654-0015CE53.txt
+m094f003  3    -      0x000D7171  1:0x000C7171  static,code  Assign_Star_Officer        Assign_Star_Officer_        regions/07-object-1/0015C654-0015CE53.txt
+m094f004  4    -      0x000D73D4  1:0x000C73D4  static,code  Assign_Unassigned_Leaders  Assign_Unassigned_Leaders_  regions/07-object-1/0015C654-0015CE53.txt
+m094f005  5    -      0x000D7439  1:0x000C7439  code         Do_AI_Leaders              Do_AI_Leaders_              regions/07-object-1/0015C654-0015CE53.txt

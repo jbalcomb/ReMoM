@@ -1,0 +1,8 @@
+module_num=332
+module=minreal
+source=0332-minreal.md
+range[0]=2:0x00051C50 linear=0x001C1C50 size=16
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL      CHUNK
+-    -    -      0x001C1C50  2:0x00051C50  data  ___minreal  ___minreal  -

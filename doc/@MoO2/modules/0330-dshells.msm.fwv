@@ -1,0 +1,28 @@
+module_num=330
+module=net\dshells.msm
+source=0330-dshells.msm.md
+range[0]=1:0x0014DACE linear=0x0015DACE size=1110
+range[1]=2:0x00012C48 linear=0x00182C48 size=124
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME               SYMBOL             CHUNK
+m330f001  1    -      0x0015DACE  1:0x0014DACE  code  LoadKernel         LoadKernel_        regions/07-object-1/001E2E54-001E3653.txt
+m330f002  2    -      0x0015DBCA  1:0x0014DBCA  code  CallKernel         CallKernel_        regions/07-object-1/001E2E54-001E3653.txt
+m330f003  3    -      0x0015DC73  1:0x0014DC73  code  DeleteKernel       DeleteKernel_      regions/07-object-1/001E2E54-001E3653.txt
+m330f004  4    -      0x0015DCBA  1:0x0014DCBA  code  SetSocket          SetSocket_         regions/07-object-1/001E2E54-001E3653.txt
+m330f005  5    -      0x0015DCCE  1:0x0014DCCE  code  IPX_Present        IPX_Present_       regions/07-object-1/001E2E54-001E3653.txt
+m330f006  6    -      0x0015DCEE  1:0x0014DCEE  code  LoadTxStart        LoadTxStart_       regions/07-object-1/001E2E54-001E3653.txt
+m330f007  7    -      0x0015DD1A  1:0x0014DD1A  code  LoadRxStart        LoadRxStart_       regions/07-object-1/001E2E54-001E3653.txt
+m330f008  8    -      0x0015DD55  1:0x0014DD55  code  XferPDU            XferPDU_           regions/07-object-1/001E2E54-001E3653.txt
+m330f009  9    -      0x0015DDE1  1:0x0014DDE1  code  NCheck             NCheck_            regions/07-object-1/001E2E54-001E3653.txt
+m330f010  10   -      0x0015DE09  1:0x0014DE09  code  GetPDU             GetPDU_            regions/07-object-1/001E2E54-001E3653.txt
+-         -    -      0x00182C7A  2:0x00012C7A  data  _kernelfilename    _kernelfilename    regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C7E  2:0x00012C7E  data  _fileSize          _fileSize          regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C82  2:0x00012C82  data  _realModeSegment   _realModeSegment   regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C84  2:0x00012C84  data  _realModeSelector  _realModeSelector  regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C86  2:0x00012C86  data  _KernelVector      _KernelVector      regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C8A  2:0x00012C8A  data  _DestNet           _DestNet           regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C8E  2:0x00012C8E  data  _DestNde1          _DestNde1          regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182C92  2:0x00012C92  data  _DestNde2          _DestNde2          regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182CBC  2:0x00012CBC  data  _FirstPara         _FirstPara         regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182CC0  2:0x00012CC0  data  _PacketSize        _PacketSize        regions/08-object-2/00200E54-00201653.txt

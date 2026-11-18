@@ -53,8 +53,7 @@ void Set_Default_Game_Settings(void);
 // WZD o125p05
 void Set_Settings_Screen_Help_List(void);
 
-void DBG_Print_MAGIC_SET(const char * label);
-void DBG_Compare_MAGIC_SET(const struct s_MAGIC_SET * before, const struct s_MAGIC_SET * after, const char * label);
+/* DBG_Print_MAGIC_SET() / DBG_Compare_MAGIC_SET() moved to STU/src/STU_DBG_MoM.h */
 
 
 

@@ -521,7 +521,7 @@ FA 23 07 00 FF 00 00 03 04 06 64 00 02 05 09 03
 06 02 1E 00 01 06 03 08 00 00 01 01 00 08 00 00
 
 dseg:019C D3 21 05 00 FF 00 00 04 0A 04 64 00 02 04 0A 00+_unit_type_table s_UNIT_TYPE <offset cnst_Dwarf,   5, 0, 0FFh, 0, 0,   4,  10,   4,   100,   2, R_Dwarf, _AnimistsGuild, 0, 0,  10,   1, 0,   1, 0, 0, M_Cavalry or M_Mntnr, 0, 0, 0, 0, 0>; 0
-dseg:019C 00 00 0A 01 00 01 00 00 41 00 00 00 00 00 00 00+                                        ; DATA XREF: sub_4A90D+2DCr ...
+dseg:019C 00 00 0A 01 00 01 00 00 41 00 00 00 00 00 00 00+                                        ; DATA XREF: sub_4A90D+2DCvr ...
 dseg:019C 00 00 00 00 D9 21 05 03 64 00 00 03 06 04 64 00+s_UNIT_TYPE <offset cnst_Barbarian,   5,   3,  64h, 0, 0,   3,   6,   4,   100,   2, 0, _SagesGuild, 0,      1,   9,   1, 0,   1, 0, 0, M_Cavalry, 0, 0, 0, 0, 0>; 1 ; "Dwarf"
 dseg:019C 02 00 11 00 01 00 09 01 00 01 00 00 01 00 00 00+s_UNIT_TYPE <offset cnst_Sage,   1,   6,  20h, 0, 0,   4,   6,   4,   100,   2, R_High_Man, _MerchantsGuild, _Barracks,      2,   5,   1, 0,   1, 0, 0, M_Cavalry, 0, 0, 0, 0, 0>; 2
 dseg:019C 00 00 00 00 00 00 00 00 E3 21 01 06 20 00 00 04+s_UNIT_TYPE <offset cnst_Dervish,   4,   4,  14h,   8, 0,   4,   6,   4,   100,   2, R_High_Man, _Housing, _Trade_Goods,      3,   6,   1, 0,   1, 0, 0, M_Cavalry, 0, 0, 0, 0, 0>; 3

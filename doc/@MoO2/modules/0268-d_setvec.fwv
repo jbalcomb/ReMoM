@@ -1,0 +1,8 @@
+module_num=268
+module=d_setvec
+source=0268-d_setvec.md
+range[0]=1:0x0013980B linear=0x0014980B size=53
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL         CHUNK
+m268f001  1    -      0x0014980B  1:0x0013980B  code  _dos_setvect  _dos_setvect_  regions/07-object-1/001CEE54-001CF653.txt

@@ -47,7 +47,7 @@ played to that point. That is the most expensive part of the reel; the cost is a
 ## `ReMoM --load <SAVE.GAM>` — IMPLEMENTED
 
 Scenes 3, 4, 5 and 7 each begin in a specific game state.  `--load` now exists in `src/ReMoM.c`,
-mirroring HeMoM's, so no scene has to click through the Load Game menu first.
+mirroring DeMoM's, so no scene has to click through the Load Game menu first.
 
 It adds no new load sequence: it sets `g_load_save_gam_name_override` and enters the existing
 `scr_Continue` path, so the game performs its own `Load_WZD_Resources()` + `Load_SAVE_GAM()`.

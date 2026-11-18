@@ -7,7 +7,7 @@
 # the exact string "AbCdEf" at the correct offset (slot 0 = offset 0x40).
 #
 # Usage:
-#   HeMoM --continue --scenario test_uppercase_save_name.hms
+#   DeMoM --continue --scenario test_uppercase_save_name.hms
 #
 # Requires: a game save loaded via --continue (or --newgame + --continue)
 #           with the Main Screen active and all units finished.

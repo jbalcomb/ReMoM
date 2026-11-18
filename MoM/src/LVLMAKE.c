@@ -257,7 +257,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
             // TODO  _help_entries[itr].help_00.entry_idx = uv_specials_list_array.helps[itr];
 
-            uv_special_desc_fields[itr] = Add_Hidden_Field((xmin + 19), (ymin + 5), (xmin + 93), (ymin + 13), str_empty_string__ovr102[0], uv_specials_list_array->helps[itr]);
+            uv_special_desc_fields[itr] = Add_Hidden_Field((xmin + 19), (ymin + 5), (xmin + 93), (ymin + 13), str_empty_string__ovr102, uv_specials_list_array->helps[itr]);
 
             xmin = (lvlmake_base_x + 13);
 
@@ -281,7 +281,7 @@ void Hero_LevelUp_Popup(int16_t unit_idx)
 
         uu_screen_coordinate = (lvlmake_base_y + 49 + (((uv_specials_list_count + 1) / 2) * 17));
 
-        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr102[0], ST_UNDEFINED);
+        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr102, ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 

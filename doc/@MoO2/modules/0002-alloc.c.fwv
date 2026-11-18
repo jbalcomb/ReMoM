@@ -1,0 +1,10 @@
+module_num=2
+module=L:\MOX\ALLOC.C
+source=0002-alloc.c.md
+range[0]=1:0x00000CB5 linear=0x00010CB5 size=378
+range[1]=2:0x0002200C linear=0x0019200C size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                 SYMBOL                CHUNK
+m002f001  1    -      0x00010CB5  1:0x00000CB5  code  Allocate_Data_Space  Allocate_Data_Space_  regions/07-object-1/00095E54-00096653.txt
+-         -    -      0x0019200C  2:0x0002200C  data  _special_names_seg   _special_names_seg    -

@@ -1,0 +1,8 @@
+module_num=312
+module=setbuf
+source=0312-setbuf.md
+range[0]=1:0x00146157 linear=0x00156157 size=29
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m312f001  1    -      0x00156157  1:0x00146157  code  setbuf  setbuf_  regions/07-object-1/001DB654-001DBE53.txt

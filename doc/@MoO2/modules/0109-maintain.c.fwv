@@ -1,0 +1,22 @@
+module_num=109
+module=D:\MOX\OTHERS\MAINTAIN.C
+source=0109-maintain.c.md
+range[0]=1:0x000DD904 linear=0x000ED904 size=2973
+range[1]=2:0x000323F0 linear=0x001A23F0 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                     SYMBOL                    CHUNK
+m109f001  1    -      0x000ED908  1:0x000DD908  static,code  Kill_Research_Buildings  Kill_Research_Buildings_  regions/07-object-1/00172E54-00173653.txt
+m109f002  2    -      0x000ED9EC  1:0x000DD9EC  static,code  Building_Worth           Building_Worth_           regions/07-object-1/00172E54-00173653.txt
+m109f003  3    -      0x000EDAE2  1:0x000DDAE2  static,code  Phase1_Building          Phase1_Building_          regions/07-object-1/00172E54-00173653.txt
+m109f004  4    -      0x000EDB1D  1:0x000DDB1D  static,code  Phase2_Building          Phase2_Building_          regions/07-object-1/00172E54-00173653.txt
+m109f005  5    -      0x000EDB2D  1:0x000DDB2D  static,code  Phase3_Building          Phase3_Building_          regions/07-object-1/00172E54-00173653.txt
+m109f006  6    -      0x000EDB35  1:0x000DDB35  static,code  Kill_Buildings           Kill_Buildings_           regions/07-object-1/00172E54-00173653.txt
+m109f007  7    -      0x000EDCBF  1:0x000DDCBF  static,code  Kill_Spy                 Kill_Spy_                 regions/07-object-1/00172E54-00173653.txt
+m109f008  8    -      0x000EDD73  1:0x000DDD73  static,code  Ship_Is_At_Colony        Ship_Is_At_Colony_        regions/07-object-1/00172E54-00173653.txt
+m109f009  9    -      0x000EDDD8  1:0x000DDDD8  code         Ship_Scrap_Value         Ship_Scrap_Value_         regions/07-object-1/00172E54-00173653.txt
+m109f010  10   -      0x000EDDF7  1:0x000DDDF7  static,code  Kill_Ships               Kill_Ships_               regions/07-object-1/00172E54-00173653.txt
+m109f011  11   -      0x000EDF92  1:0x000DDF92  code         Make_Scrap_Ships_Dead    Make_Scrap_Ships_Dead_    regions/07-object-1/00172E54-00173653.txt
+m109f012  12   -      0x000EDFE0  1:0x000DDFE0  static,code  Kill_Leaders             Kill_Leaders_             regions/07-object-1/00172E54-00173653.txt
+m109f013  13   -      0x000EE0B0  1:0x000DE0B0  code         Player_Maintenance       Player_Maintenance_       regions/07-object-1/00173654-00173E53.txt
+-         -    -      0x001A23F0  2:0x000323F0  static,data  _ship_worths             _ship_worths              -

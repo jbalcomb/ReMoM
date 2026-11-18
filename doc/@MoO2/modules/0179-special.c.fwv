@@ -1,0 +1,388 @@
+module_num=179
+module=F:\WLIBS\special\special.c
+source=0179-special.c.md
+range[0]=1:0x0012432D linear=0x0013432D size=2560
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                       SYMBOL                      CHUNK
+m179f001  1    -      0x0013432D  1:0x0012432D  code  Interpolate_Line           Interpolate_Line_           regions/07-object-1/001B9654-001B9E53.txt
+m179f002  2    -      0x001344B0  1:0x001244B0  code  Absolute_Interpolate_Line  Absolute_Interpolate_Line_  regions/07-object-1/001B9654-001B9E53.txt
+m179f003  3    -      0x00134637  1:0x00124637  code  Range                      Range_                      regions/07-object-1/001B9654-001B9E53.txt
+m179f004  4    -      0x001346C4  1:0x001246C4  code  Delta_XY_With_Wrap         Delta_XY_With_Wrap_         regions/07-object-1/001B9654-001B9E53.txt
+m179f005  5    -      0x00134769  1:0x00124769  code  Path                       Path_                       regions/07-object-1/001B9654-001B9E53.txt
+m179f006  6    -      0x0013498E  1:0x0012498E  code  Path_Wrap                  Path_Wrap_                  regions/07-object-1/001B9E54-001BA653.txt
+m179f007  7    -      0x00134C92  1:0x00124C92  code  isqrt                      isqrt_                      regions/07-object-1/001B9E54-001BA653.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME                       TYPE                                                                                    CHUNK
+m179f001  0x0013432D  1:0x0012432D  387   21        8         0xC      -    EAX,EDX,EBX,ECX  Interpolate_Line           void (short *, short *, short, short, short)                                            regions/07-object-1/001B9654-001B9E53.txt
+m179f002  0x001344B0  1:0x001244B0  391   21        8         0xC      -    EAX,EDX,EBX,ECX  Absolute_Interpolate_Line  void (short *, short *, short, short, short, short, short)                              regions/07-object-1/001B9654-001B9E53.txt
+m179f003  0x00134637  1:0x00124637  141   21        6         0xC      -    EAX,EDX,EBX,ECX  Range                      short (short, short, short, short); returns in AX                                       regions/07-object-1/001B9654-001B9E53.txt
+m179f004  0x001346C4  1:0x001246C4  165   21        8         0xC      -    EAX,EDX,EBX,ECX  Delta_XY_With_Wrap         short (short, short, short, short, short); returns in AX                                regions/07-object-1/001B9654-001B9E53.txt
+m179f005  0x00134769  1:0x00124769  549   21        8         0xC      -    EAX,EDX,EBX,ECX  Path                       short (short, short, short, short, char *, char *); returns in AX                       regions/07-object-1/001B9654-001B9E53.txt
+m179f006  0x0013498E  1:0x0012498E  772   21        8         0xC      -    EAX,EDX,EBX,ECX  Path_Wrap                  short (short, short, short, short, signed char *, signed char *, short); returns in AX  regions/07-object-1/001B9E54-001BA653.txt
+m179f007  0x00134C92  1:0x00124C92  155   24        9         0x18     -    EAX              isqrt                      SDWORD (UDWORD); returns in EAX                                                         regions/07-object-1/001B9E54-001BA653.txt
+
+[Locals]
+KEY       ROUTINE                    BLOCK          LOCAL          LOCATION    TYPE
+m179f001  Interpolate_Line           -              x              [EBP-0x1C]  short *
+m179f001  Interpolate_Line           -              y              [EBP-0x18]  short *
+m179f001  Interpolate_Line           -              end_x          [EBP-0x10]  short
+m179f001  Interpolate_Line           -              end_y          [EBP-0x14]  short
+m179f001  Interpolate_Line           -              step_size      [EBP+0x10]  short
+m179f001  Interpolate_Line           -              delta_x        [EBP-0xC]   short
+m179f001  Interpolate_Line           -              delta_y        [EBP-0x8]   short
+m179f001  Interpolate_Line           -              angle          [EBP-0x4]   short
+m179f002  Absolute_Interpolate_Line  -              x              [EBP-0x1C]  short *
+m179f002  Absolute_Interpolate_Line  -              y              [EBP-0x18]  short *
+m179f002  Absolute_Interpolate_Line  -              source_x       [EBP-0x14]  short
+m179f002  Absolute_Interpolate_Line  -              source_y       [EBP-0x10]  short
+m179f002  Absolute_Interpolate_Line  -              end_x          [EBP+0x10]  short
+m179f002  Absolute_Interpolate_Line  -              end_y          [EBP+0x14]  short
+m179f002  Absolute_Interpolate_Line  -              step_size      [EBP+0x18]  short
+m179f002  Absolute_Interpolate_Line  -              delta_x        [EBP-0xC]   short
+m179f002  Absolute_Interpolate_Line  -              delta_y        [EBP-0x8]   short
+m179f002  Absolute_Interpolate_Line  -              angle          [EBP-0x4]   short
+m179f003  Range                      -              x1             [EBP-0x20]  short
+m179f003  Range                      -              y1             [EBP-0x1C]  short
+m179f003  Range                      -              x2             [EBP-0x18]  short
+m179f003  Range                      -              y2             [EBP-0x14]  short
+m179f003  Range                      -              delta_x        [EBP-0x10]  short
+m179f003  Range                      -              delta_y        [EBP-0xC]   short
+m179f003  Range                      -              range          [EBP-0x8]   short
+m179f004  Delta_XY_With_Wrap         -              x1             [EBP-0x18]  short
+m179f004  Delta_XY_With_Wrap         -              y1             [EBP-0x24]  short
+m179f004  Delta_XY_With_Wrap         -              x2             [EBP-0x20]  short
+m179f004  Delta_XY_With_Wrap         -              y2             [EBP-0x1C]  short
+m179f004  Delta_XY_With_Wrap         -              wrap_x         [EBP+0x10]  short
+m179f004  Delta_XY_With_Wrap         -              delta_x1       [EBP-0x14]  short
+m179f004  Delta_XY_With_Wrap         -              delta_x2       [EBP-0x10]  short
+m179f004  Delta_XY_With_Wrap         -              delta_y        [EBP-0xC]   short
+m179f004  Delta_XY_With_Wrap         -              range          [EBP-0x8]   short
+m179f005  Path                       -              x1             [EBP-0x14]  short
+m179f005  Path                       -              y1             [EBP-0x10]  short
+m179f005  Path                       -              x2             [EBP-0xC]   short
+m179f005  Path                       -              y2             [EBP-0x8]   short
+m179f005  Path                       -              path_string_x  [EBP+0x10]  char *
+m179f005  Path                       -              path_string_y  [EBP+0x14]  char *
+m179f005  Path                       -              length         [EBP-0x2C]  int
+m179f005  Path                       -              delta_x        [EBP-0x3C]  int
+m179f005  Path                       -              delta_y        [EBP-0x38]  int
+m179f005  Path                       -              sptr           [EBP-0x34]  int
+m179f005  Path                       -              sign_x         [EBP-0x30]  int
+m179f005  Path                       -              sign_y         [EBP-0x18]  int
+m179f005  Path                       -              cur_x          [EBP-0x28]  int
+m179f005  Path                       -              cur_y          [EBP-0x24]  int
+m179f005  Path                       -              remainder      [EBP-0x20]  unsigned long
+m179f005  Path                       -              delta_add      [EBP-0x1C]  unsigned long
+m179f006  Path_Wrap                  -              x1             [EBP-0x14]  short
+m179f006  Path_Wrap                  -              y1             [EBP-0x8]   short
+m179f006  Path_Wrap                  -              x2             [EBP-0x10]  short
+m179f006  Path_Wrap                  -              y2             [EBP-0xC]   short
+m179f006  Path_Wrap                  -              path_string_x  [EBP+0x10]  signed char *
+m179f006  Path_Wrap                  -              path_string_y  [EBP+0x14]  signed char *
+m179f006  Path_Wrap                  -              MAP_X          [EBP+0x18]  short
+m179f006  Path_Wrap                  -              length         [EBP-0x30]  int
+m179f006  Path_Wrap                  -              delta_x        [EBP-0x44]  int
+m179f006  Path_Wrap                  -              delta_y        [EBP-0x40]  int
+m179f006  Path_Wrap                  -              sptr           [EBP-0x3C]  int
+m179f006  Path_Wrap                  -              sign_x         [EBP-0x38]  int
+m179f006  Path_Wrap                  -              sign_y         [EBP-0x1C]  int
+m179f006  Path_Wrap                  -              cur_x          [EBP-0x24]  int
+m179f006  Path_Wrap                  -              cur_y          [EBP-0x2C]  int
+m179f006  Path_Wrap                  -              remainder      [EBP-0x28]  unsigned long
+m179f006  Path_Wrap                  -              delta_add      [EBP-0x34]  unsigned long
+m179f006  Path_Wrap                  -              i              [EBP-0x20]  int
+m179f006  Path_Wrap                  -              base_delta_x   [EBP-0x18]  int
+m179f007  isqrt                      0x00134CE6+44  mid            [EBP-0x14]  SDWORD
+m179f007  isqrt                      -              n              [EBP-0x10]  UDWORD
+m179f007  isqrt                      -              lo             [EBP-0xC]   SDWORD
+m179f007  isqrt                      -              hi             [EBP-0x8]   SDWORD
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   typedef    BYTE            name for unsigned char (#5)
+20   typedef    SBYTE           name for signed char (#4)
+21   typedef    UBYTE           name for unsigned char (#5)
+22   typedef    WORD            name for unsigned short (#7)
+23   typedef    SWORD           name for short (#6)
+24   typedef    UWORD           name for unsigned short (#7)
+25   typedef    DWORD           name for unsigned int (#9)
+26   typedef    SDWORD          name for int (#8)
+27   typedef    UDWORD          name for unsigned int (#9)
+28   typedef    BOOL            name for unsigned char (#5)
+29   typedef    SampleHandle    name for int (#8)
+30   typedef    SDWORD          name for int (#8)
+31   scalar     void            void 1 bytes
+32   pointer    -               near386; of short (#6)
+33   procedure  -               near386; returns void (short *, short *, short, short, short)
+34   procedure  -               near386; returns void (short *, short *, short, short, short, short, short)
+35   procedure  -               near386; returns short (short, short, short, short)
+36   procedure  -               near386; returns short (short, short, short, short, short)
+37   procedure  -               near386; returns short (short, short, short, short, char *, char *)
+38   scalar     unsigned long   unsigned 4 bytes
+39   pointer    -               near386; of signed char (#4)
+40   procedure  -               near386; returns short (short, short, short, short, signed char *, signed char *, short)
+41   procedure  -               near386; returns SDWORD (UDWORD)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m179f001  8     0x0013432D  1:0x0012432D  0x001B9981
+m179f001  12    0x0013434E  1:0x0012434E  0x001B99A2
+m179f001  14    0x00134374  1:0x00124374  0x001B99C8
+m179f001  15    0x00134380  1:0x00124380  0x001B99D4
+m179f001  17    0x0013438C  1:0x0012438C  0x001B99E0
+m179f001  18    0x001343AC  1:0x001243AC  0x001B9A00
+m179f001  19    0x001343D2  1:0x001243D2  0x001B9A26
+m179f001  20    0x001343D4  1:0x001243D4  0x001B9A28
+m179f001  23    0x001343E4  1:0x001243E4  0x001B9A38
+m179f001  25    0x001343F0  1:0x001243F0  0x001B9A44
+m179f001  26    0x00134405  1:0x00124405  0x001B9A59
+m179f001  28    0x0013441A  1:0x0012441A  0x001B9A6E
+m179f001  30    0x0013441C  1:0x0012441C  0x001B9A70
+m179f001  31    0x00134431  1:0x00124431  0x001B9A85
+m179f001  34    0x00134446  1:0x00124446  0x001B9A9A
+m179f001  36    0x00134452  1:0x00124452  0x001B9AA6
+m179f001  37    0x00134467  1:0x00124467  0x001B9ABB
+m179f001  39    0x0013447C  1:0x0012447C  0x001B9AD0
+m179f001  41    0x0013447E  1:0x0012447E  0x001B9AD2
+m179f001  42    0x00134493  1:0x00124493  0x001B9AE7
+m179f001  45    0x001344A8  1:0x001244A8  0x001B9AFC
+m179f002  53    0x001344B0  1:0x001244B0  0x001B9B04
+m179f002  59    0x001344D1  1:0x001244D1  0x001B9B25
+m179f002  61    0x001344F7  1:0x001244F7  0x001B9B4B
+m179f002  62    0x00134500  1:0x00124500  0x001B9B54
+m179f002  64    0x0013450A  1:0x0012450A  0x001B9B5E
+m179f002  65    0x00134513  1:0x00124513  0x001B9B67
+m179f002  68    0x0013451D  1:0x0012451D  0x001B9B71
+m179f002  70    0x0013452A  1:0x0012452A  0x001B9B7E
+m179f002  72    0x00134533  1:0x00124533  0x001B9B87
+m179f002  73    0x0013453C  1:0x0012453C  0x001B9B90
+m179f002  75    0x00134551  1:0x00124551  0x001B9BA5
+m179f002  77    0x00134553  1:0x00124553  0x001B9BA7
+m179f002  78    0x0013455C  1:0x0012455C  0x001B9BB0
+m179f002  80    0x00134571  1:0x00124571  0x001B9BC5
+m179f002  82    0x001345AA  1:0x001245AA  0x001B9BFE
+m179f002  84    0x001345AF  1:0x001245AF  0x001B9C03
+m179f002  86    0x001345B8  1:0x001245B8  0x001B9C0C
+m179f002  87    0x001345C1  1:0x001245C1  0x001B9C15
+m179f002  89    0x001345D6  1:0x001245D6  0x001B9C2A
+m179f002  91    0x001345D8  1:0x001245D8  0x001B9C2C
+m179f002  92    0x001345E1  1:0x001245E1  0x001B9C35
+m179f002  94    0x001345F6  1:0x001245F6  0x001B9C4A
+m179f002  97    0x0013462F  1:0x0012462F  0x001B9C83
+m179f003  106   0x00134637  1:0x00124637  0x001B9C8B
+m179f003  110   0x00134658  1:0x00124658  0x001B9CAC
+m179f003  111   0x00134661  1:0x00124661  0x001B9CB5
+m179f003  113   0x0013466A  1:0x0012466A  0x001B9CBE
+m179f003  114   0x00134674  1:0x00124674  0x001B9CC8
+m179f003  116   0x0013467E  1:0x0012467E  0x001B9CD2
+m179f003  117   0x0013469D  1:0x0012469D  0x001B9CF1
+m179f003  119   0x001346B5  1:0x001246B5  0x001B9D09
+m179f003  120   0x001346BB  1:0x001246BB  0x001B9D0F
+m179f004  127   0x001346C4  1:0x001246C4  0x001B9D18
+m179f004  131   0x001346E5  1:0x001246E5  0x001B9D39
+m179f004  132   0x001346EE  1:0x001246EE  0x001B9D42
+m179f004  134   0x001346F7  1:0x001246F7  0x001B9D4B
+m179f004  135   0x00134701  1:0x00124701  0x001B9D55
+m179f004  137   0x0013470B  1:0x0012470B  0x001B9D5F
+m179f004  138   0x00134714  1:0x00124714  0x001B9D68
+m179f004  139   0x00134720  1:0x00124720  0x001B9D74
+m179f004  140   0x00134722  1:0x00124722  0x001B9D76
+m179f004  141   0x0013472E  1:0x0012472E  0x001B9D82
+m179f004  143   0x00134738  1:0x00124738  0x001B9D8C
+m179f004  144   0x00134747  1:0x00124747  0x001B9D9B
+m179f004  146   0x00134758  1:0x00124758  0x001B9DAC
+m179f004  147   0x0013475E  1:0x0012475E  0x001B9DB2
+m179f005  156   0x00134769  1:0x00124769  0x001B9DBD
+m179f005  161   0x0013478A  1:0x0012478A  0x001B9DDE
+m179f005  162   0x00134797  1:0x00124797  0x001B9DEB
+m179f005  164   0x001347A4  1:0x001247A4  0x001B9DF8
+m179f005  166   0x001347AA  1:0x001247AA  0x001B9DFE
+m179f005  167   0x001347AD  1:0x001247AD  0x001B9E01
+m179f005  169   0x001347B4  1:0x001247B4  0x001B9E08
+m179f005  171   0x001347BD  1:0x001247BD  0x001B9E11
+m179f005  173   0x001347C3  1:0x001247C3  0x001B9E17
+m179f005  174   0x001347C6  1:0x001247C6  0x001B9E1A
+m179f005  176   0x001347CD  1:0x001247CD  0x001B9E21
+m179f005  178   0x001347D6  1:0x001247D6  0x001B9E2A
+m179f005  180   0x001347DD  1:0x001247DD  0x001B9E31
+m179f005  181   0x001347E4  1:0x001247E4  0x001B9E38
+m179f005  183   0x001347EB  1:0x001247EB  0x001B9E3F
+m179f005  185   0x001347F7  1:0x001247F7  0x001B9E4B
+m179f005  187   0x001347FE  1:0x001247FE  0x001B9E52
+m179f005  188   0x0013480C  1:0x0012480C  0x001B9E60
+m179f005  190   0x00134812  1:0x00124812  0x001B9E66
+m179f005  192   0x0013481A  1:0x0012481A  0x001B9E6E
+m179f005  194   0x00134820  1:0x00124820  0x001B9E74
+m179f005  195   0x00134826  1:0x00124826  0x001B9E7A
+m179f005  197   0x0013482F  1:0x0012482F  0x001B9E83
+m179f005  198   0x00134832  1:0x00124832  0x001B9E86
+m179f005  201   0x00134839  1:0x00124839  0x001B9E8D
+m179f005  202   0x00134844  1:0x00124844  0x001B9E98
+m179f005  203   0x0013484F  1:0x0012484F  0x001B9EA3
+m179f005  204   0x00134852  1:0x00124852  0x001B9EA6
+m179f005  206   0x00134854  1:0x00124854  0x001B9EA8
+m179f005  208   0x00134856  1:0x00124856  0x001B9EAA
+m179f005  210   0x0013485E  1:0x0012485E  0x001B9EB2
+m179f005  212   0x00134864  1:0x00124864  0x001B9EB8
+m179f005  213   0x0013486A  1:0x0012486A  0x001B9EBE
+m179f005  215   0x00134873  1:0x00124873  0x001B9EC7
+m179f005  216   0x00134877  1:0x00124877  0x001B9ECB
+m179f005  218   0x0013487E  1:0x0012487E  0x001B9ED2
+m179f005  219   0x00134889  1:0x00124889  0x001B9EDD
+m179f005  220   0x00134894  1:0x00124894  0x001B9EE8
+m179f005  221   0x00134897  1:0x00124897  0x001B9EEB
+m179f005  224   0x00134899  1:0x00124899  0x001B9EED
+m179f005  226   0x0013489E  1:0x0012489E  0x001B9EF2
+m179f005  228   0x001348AA  1:0x001248AA  0x001B9EFE
+m179f005  229   0x001348B1  1:0x001248B1  0x001B9F05
+m179f005  231   0x001348BF  1:0x001248BF  0x001B9F13
+m179f005  233   0x001348C5  1:0x001248C5  0x001B9F19
+m179f005  235   0x001348CD  1:0x001248CD  0x001B9F21
+m179f005  237   0x001348D3  1:0x001248D3  0x001B9F27
+m179f005  238   0x001348D9  1:0x001248D9  0x001B9F2D
+m179f005  240   0x001348E2  1:0x001248E2  0x001B9F36
+m179f005  241   0x001348E5  1:0x001248E5  0x001B9F39
+m179f005  244   0x001348EC  1:0x001248EC  0x001B9F40
+m179f005  245   0x001348F7  1:0x001248F7  0x001B9F4B
+m179f005  246   0x00134902  1:0x00124902  0x001B9F56
+m179f005  247   0x00134905  1:0x00124905  0x001B9F59
+m179f005  249   0x00134907  1:0x00124907  0x001B9F5B
+m179f005  251   0x00134909  1:0x00124909  0x001B9F5D
+m179f005  253   0x00134911  1:0x00124911  0x001B9F65
+m179f005  255   0x00134917  1:0x00124917  0x001B9F6B
+m179f005  256   0x0013491D  1:0x0012491D  0x001B9F71
+m179f005  258   0x00134926  1:0x00124926  0x001B9F7A
+m179f005  259   0x0013492A  1:0x0012492A  0x001B9F7E
+m179f005  262   0x00134931  1:0x00124931  0x001B9F85
+m179f005  263   0x0013493C  1:0x0012493C  0x001B9F90
+m179f005  264   0x00134947  1:0x00124947  0x001B9F9B
+m179f005  265   0x0013494A  1:0x0012494A  0x001B9F9E
+m179f005  268   0x0013494C  1:0x0012494C  0x001B9FA0
+m179f005  270   0x0013494E  1:0x0012494E  0x001B9FA2
+m179f005  272   0x00134956  1:0x00124956  0x001B9FAA
+m179f005  273   0x0013495C  1:0x0012495C  0x001B9FB0
+m179f005  275   0x00134962  1:0x00124962  0x001B9FB6
+m179f005  276   0x0013496D  1:0x0012496D  0x001B9FC1
+m179f005  277   0x00134978  1:0x00124978  0x001B9FCC
+m179f005  278   0x0013497B  1:0x0012497B  0x001B9FCF
+m179f005  281   0x0013497D  1:0x0012497D  0x001B9FD1
+m179f005  282   0x00134983  1:0x00124983  0x001B9FD7
+m179f006  308   0x0013498E  1:0x0012498E  0x001B9FE2
+m179f006  315   0x001349AF  1:0x001249AF  0x001BA003
+m179f006  316   0x001349E3  1:0x001249E3  0x001BA037
+m179f006  318   0x00134A17  1:0x00124A17  0x001BA06B
+m179f006  319   0x00134A24  1:0x00124A24  0x001BA078
+m179f006  321   0x00134A31  1:0x00124A31  0x001BA085
+m179f006  323   0x00134A37  1:0x00124A37  0x001BA08B
+m179f006  324   0x00134A3A  1:0x00124A3A  0x001BA08E
+m179f006  326   0x00134A41  1:0x00124A41  0x001BA095
+m179f006  328   0x00134A4A  1:0x00124A4A  0x001BA09E
+m179f006  330   0x00134A50  1:0x00124A50  0x001BA0A4
+m179f006  331   0x00134A53  1:0x00124A53  0x001BA0A7
+m179f006  333   0x00134A5A  1:0x00124A5A  0x001BA0AE
+m179f006  335   0x00134A63  1:0x00124A63  0x001BA0B7
+m179f006  337   0x00134A6A  1:0x00124A6A  0x001BA0BE
+m179f006  338   0x00134A71  1:0x00124A71  0x001BA0C5
+m179f006  340   0x00134A78  1:0x00124A78  0x001BA0CC
+m179f006  342   0x00134A84  1:0x00124A84  0x001BA0D8
+m179f006  344   0x00134A8B  1:0x00124A8B  0x001BA0DF
+m179f006  346   0x00134A99  1:0x00124A99  0x001BA0ED
+m179f006  348   0x00134A9F  1:0x00124A9F  0x001BA0F3
+m179f006  350   0x00134AA7  1:0x00124AA7  0x001BA0FB
+m179f006  352   0x00134AAD  1:0x00124AAD  0x001BA101
+m179f006  353   0x00134AB3  1:0x00124AB3  0x001BA107
+m179f006  355   0x00134ABC  1:0x00124ABC  0x001BA110
+m179f006  356   0x00134ABF  1:0x00124ABF  0x001BA113
+m179f006  359   0x00134AC6  1:0x00124AC6  0x001BA11A
+m179f006  360   0x00134AD1  1:0x00124AD1  0x001BA125
+m179f006  361   0x00134ADC  1:0x00124ADC  0x001BA130
+m179f006  362   0x00134ADF  1:0x00124ADF  0x001BA133
+m179f006  364   0x00134AE1  1:0x00124AE1  0x001BA135
+m179f006  366   0x00134AE3  1:0x00124AE3  0x001BA137
+m179f006  368   0x00134AEB  1:0x00124AEB  0x001BA13F
+m179f006  370   0x00134AF1  1:0x00124AF1  0x001BA145
+m179f006  371   0x00134AF7  1:0x00124AF7  0x001BA14B
+m179f006  373   0x00134B00  1:0x00124B00  0x001BA154
+m179f006  374   0x00134B04  1:0x00124B04  0x001BA158
+m179f006  377   0x00134B0B  1:0x00124B0B  0x001BA15F
+m179f006  378   0x00134B16  1:0x00124B16  0x001BA16A
+m179f006  379   0x00134B21  1:0x00124B21  0x001BA175
+m179f006  380   0x00134B24  1:0x00124B24  0x001BA178
+m179f006  383   0x00134B26  1:0x00124B26  0x001BA17A
+m179f006  385   0x00134B2B  1:0x00124B2B  0x001BA17F
+m179f006  387   0x00134B37  1:0x00124B37  0x001BA18B
+m179f006  388   0x00134B3E  1:0x00124B3E  0x001BA192
+m179f006  390   0x00134B4C  1:0x00124B4C  0x001BA1A0
+m179f006  392   0x00134B52  1:0x00124B52  0x001BA1A6
+m179f006  394   0x00134B5A  1:0x00124B5A  0x001BA1AE
+m179f006  396   0x00134B60  1:0x00124B60  0x001BA1B4
+m179f006  397   0x00134B66  1:0x00124B66  0x001BA1BA
+m179f006  399   0x00134B6F  1:0x00124B6F  0x001BA1C3
+m179f006  400   0x00134B72  1:0x00124B72  0x001BA1C6
+m179f006  403   0x00134B79  1:0x00124B79  0x001BA1CD
+m179f006  404   0x00134B84  1:0x00124B84  0x001BA1D8
+m179f006  405   0x00134B8F  1:0x00124B8F  0x001BA1E3
+m179f006  406   0x00134B92  1:0x00124B92  0x001BA1E6
+m179f006  408   0x00134B94  1:0x00124B94  0x001BA1E8
+m179f006  410   0x00134B96  1:0x00124B96  0x001BA1EA
+m179f006  412   0x00134B9E  1:0x00124B9E  0x001BA1F2
+m179f006  414   0x00134BA4  1:0x00124BA4  0x001BA1F8
+m179f006  415   0x00134BAA  1:0x00124BAA  0x001BA1FE
+m179f006  417   0x00134BB3  1:0x00124BB3  0x001BA207
+m179f006  418   0x00134BB7  1:0x00124BB7  0x001BA20B
+m179f006  421   0x00134BBE  1:0x00124BBE  0x001BA212
+m179f006  422   0x00134BC9  1:0x00124BC9  0x001BA21D
+m179f006  423   0x00134BD4  1:0x00124BD4  0x001BA228
+m179f006  424   0x00134BD7  1:0x00124BD7  0x001BA22B
+m179f006  427   0x00134BD9  1:0x00124BD9  0x001BA22D
+m179f006  429   0x00134BDB  1:0x00124BDB  0x001BA22F
+m179f006  431   0x00134BE3  1:0x00124BE3  0x001BA237
+m179f006  432   0x00134BE9  1:0x00124BE9  0x001BA23D
+m179f006  434   0x00134BEF  1:0x00124BEF  0x001BA243
+m179f006  435   0x00134BFA  1:0x00124BFA  0x001BA24E
+m179f006  436   0x00134C05  1:0x00124C05  0x001BA259
+m179f006  437   0x00134C08  1:0x00124C08  0x001BA25C
+m179f006  442   0x00134C0A  1:0x00124C0A  0x001BA25E
+m179f006  443   0x00134C25  1:0x00124C25  0x001BA279
+m179f006  445   0x00134C43  1:0x00124C43  0x001BA297
+m179f006  446   0x00134C5C  1:0x00124C5C  0x001BA2B0
+m179f006  448   0x00134C81  1:0x00124C81  0x001BA2D5
+m179f006  449   0x00134C87  1:0x00124C87  0x001BA2DB
+m179f007  452   0x00134C92  1:0x00124C92  0x001BA2E6
+m179f007  457   0x00134CAD  1:0x00124CAD  0x001BA301
+m179f007  458   0x00134CB6  1:0x00124CB6  0x001BA30A
+m179f007  460   0x00134CBF  1:0x00124CBF  0x001BA313
+m179f007  462   0x00134CC8  1:0x00124CC8  0x001BA31C
+m179f007  463   0x00134CCF  1:0x00124CCF  0x001BA323
+m179f007  465   0x00134CD6  1:0x00124CD6  0x001BA32A
+m179f007  467   0x00134CD8  1:0x00124CD8  0x001BA32C
+m179f007  468   0x00134CDF  1:0x00124CDF  0x001BA333
+m179f007  473   0x00134CE6  1:0x00124CE6  0x001BA33A
+m179f007  475   0x00134CF8  1:0x00124CF8  0x001BA34C
+m179f007  476   0x00134D04  1:0x00124D04  0x001BA358
+m179f007  477   0x00134D0A  1:0x00124D0A  0x001BA35E
+m179f007  478   0x00134D0C  1:0x00124D0C  0x001BA360
+m179f007  480   0x00134D12  1:0x00124D12  0x001BA366
+m179f007  482   0x00134D1B  1:0x00124D1B  0x001BA36F
+m179f007  483   0x00134D21  1:0x00124D21  0x001BA375

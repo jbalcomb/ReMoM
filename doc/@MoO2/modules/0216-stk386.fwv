@@ -1,0 +1,13 @@
+module_num=216
+module=stk386
+source=0216-stk386.md
+range[0]=1:0x0012F1D8 linear=0x0013F1D8 size=72
+range[1]=2:0x0000CA34 linear=0x0017CA34 size=20
+range[2]=2:0x00012FF2 linear=0x00182FF2 size=6
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m216f001  1    -      0x0013F1E0  1:0x0012F1E0  code  __CHK          __CHK           regions/07-object-1/001C4654-001C4E53.txt
+m216f002  2    -      0x0013F1F0  1:0x0012F1F0  code  __GRO          __GRO           regions/07-object-1/001C4654-001C4E53.txt
+m216f003  3    -      0x0013F1F3  1:0x0012F1F3  code  __STK          __STK           regions/07-object-1/001C4654-001C4E53.txt
+m216f004  4    -      0x0013F211  1:0x0012F211  code  __STKOVERFLOW  __STKOVERFLOW_  regions/07-object-1/001C4654-001C4E53.txt

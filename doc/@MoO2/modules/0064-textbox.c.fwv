@@ -1,0 +1,38 @@
+module_num=64
+module=D:\MOX\OTHERS\TEXTBOX.C
+source=0064-textbox.c.md
+range[0]=1:0x000959A1 linear=0x000A59A1 size=3050
+range[1]=2:0x00001D3C linear=0x00171D3C size=76
+range[2]=2:0x0000A400 linear=0x0017A400 size=56
+range[3]=2:0x00025330 linear=0x00195330 size=64
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                          SYMBOL                         CHUNK
+m064f001  1    -      0x000A59A1  1:0x000959A1  code         Draw_Help_Entry               Draw_Help_Entry_               regions/07-object-1/0012AE54-0012B653.txt
+m064f002  2    -      0x000A5EB2  1:0x00095EB2  code         Text_Box                      Text_Box_                      regions/07-object-1/0012AE54-0012B653.txt
+m064f003  3    -      0x000A5EBC  1:0x00095EBC  code         Timed_Text_Box                Timed_Text_Box_                regions/07-object-1/0012AE54-0012B653.txt
+m064f004  4    -      0x000A5EBF  1:0x00095EBF  code         Do_Text_Box                   Do_Text_Box_                   regions/07-object-1/0012AE54-0012B653.txt
+m064f005  5    -      0x000A6166  1:0x00096166  static,code  Box_Centered_On_XY            Box_Centered_On_XY_            regions/07-object-1/0012B654-0012BE53.txt
+m064f006  6    -      0x000A62E0  1:0x000962E0  static,code  Text_Box_Startup              Text_Box_Startup_              regions/07-object-1/0012B654-0012BE53.txt
+m064f007  7    -      0x000A63DD  1:0x000963DD  static,code  Text_Box_Cleanup              Text_Box_Cleanup_              regions/07-object-1/0012B654-0012BE53.txt
+m064f008  8    -      0x000A644D  1:0x0009644D  static,code  Text_Box_Get_Input            Text_Box_Get_Input_            regions/07-object-1/0012B654-0012BE53.txt
+m064f009  9    -      0x000A64AB  1:0x000964AB  code         Get_Mox_Text_Box_Base_Colors  Get_Mox_Text_Box_Base_Colors_  regions/07-object-1/0012B654-0012BE53.txt
+m064f010  10   -      0x000A6547  1:0x00096547  code         Get_Help_Lbx_Name             Get_Help_Lbx_Name_             regions/07-object-1/0012B654-0012BE53.txt
+-         -    -      0x0017A400  2:0x0000A400  static,data  _textbox_normal_colors        _textbox_normal_colors         regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A408  2:0x0000A408  static,data  _textbox_normal2_colors       _textbox_normal2_colors        regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A410  2:0x0000A410  static,data  _default_textbox_y            _default_textbox_y             regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A415  2:0x0000A415  static,data  _textbox_heights              _textbox_heights               regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A41F  2:0x0000A41F  static,data  _helpbox_text_heights         _helpbox_text_heights          regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A429  2:0x0000A429  static,data  _textbox_text_dy              _textbox_text_dy               regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A433  2:0x0000A433  static,data  _field_save_ix                _field_save_ix                 regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x00195330  2:0x00025330  static,data  _textbox_field_save           _textbox_field_save            -
+-         -    -      0x00195354  2:0x00025354  static,data  _textbox_seg                  _textbox_seg                   -
+-         -    -      0x00195358  2:0x00025358  static,data  _textbox_af                   _textbox_af                    -
+-         -    -      0x0019535C  2:0x0002535C  static,data  _bottom_y                     _bottom_y                      -
+-         -    -      0x0019535E  2:0x0002535E  static,data  _box_y                        _box_y                         -
+-         -    -      0x00195360  2:0x00025360  static,data  _box_x                        _box_x                         -
+-         -    -      0x00195362  2:0x00025362  static,data  _old_fields_count             _old_fields_count              -
+-         -    -      0x00195364  2:0x00025364  static,data  _old_help_list_active         _old_help_list_active          -
+-         -    -      0x00195366  2:0x00025366  static,data  _old_draw_fields_flag         _old_draw_fields_flag          -
+-         -    -      0x00195368  2:0x00025368  static,data  _box_size                     _box_size                      -
+-         -    -      0x0019536A  2:0x0002536A  static,data  _reload_saved_block           _reload_saved_block            -

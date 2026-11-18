@@ -1,0 +1,19 @@
+module_num=154
+module=memory\struct.asm
+source=0154-struct.asm.md
+range[0]=1:0x00117678 linear=0x00127678 size=480
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                     CHUNK
+m154f001  1    -      0x00127678  1:0x00117678  code  Set_Memory                Set_Memory_                regions/07-object-1/001AC654-001ACE53.txt
+m154f002  2    -      0x001276AE  1:0x001176AE  code  Copy_Structure_Aligned    Copy_Structure_Aligned_    regions/07-object-1/001AC654-001ACE53.txt
+m154f003  3    -      0x001276BD  1:0x001176BD  code  Copy_Structure_DW         Copy_Structure_DW_         regions/07-object-1/001AC654-001ACE53.txt
+m154f004  4    -      0x001276C9  1:0x001176C9  code  Store_Memory_Differences  Store_Memory_Differences_  regions/07-object-1/001AC654-001ACE53.txt
+m154f005  5    -      0x001276EA  1:0x001176EA  code  Clear_Direction_Flag      Clear_Direction_Flag_      regions/07-object-1/001AC654-001ACE53.txt
+m154f006  6    -      0x001276F0  1:0x001176F0  code  Test_Bit_Field            Test_Bit_Field_            regions/07-object-1/001AC654-001ACE53.txt
+m154f007  7    -      0x00127712  1:0x00117712  code  Set_Bit_Field             Set_Bit_Field_             regions/07-object-1/001AC654-001ACE53.txt
+m154f008  8    -      0x0012772A  1:0x0011772A  code  Clear_Bit_Field           Clear_Bit_Field_           regions/07-object-1/001AC654-001ACE53.txt
+m154f009  9    -      0x00127744  1:0x00117744  code  Set_Structure             Set_Structure_             regions/07-object-1/001AC654-001ACE53.txt
+m154f010  10   -      0x00127776  1:0x00117776  code  Clear_Structure           Clear_Structure_           regions/07-object-1/001AC654-001ACE53.txt
+m154f011  11   -      0x0012779E  1:0x0011779E  code  Copy_Structure            Copy_Structure_            regions/07-object-1/001AC654-001ACE53.txt
+m154f012  12   -      0x001277DE  1:0x001177DE  code  Swap_Structure            Swap_Structure_            regions/07-object-1/001AC654-001ACE53.txt

@@ -1,0 +1,12 @@
+module_num=243
+module=seterrno
+source=0243-seterrno.md
+range[0]=1:0x00136F95 linear=0x00146F95 size=52
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL           CHUNK
+m243f001  1    -      0x00146F95  1:0x00136F95  code  __set_EDOM      __set_EDOM_      regions/07-object-1/001CBE54-001CC653.txt
+m243f002  2    -      0x00146F9A  1:0x00136F9A  code  __set_errno     __set_errno_     regions/07-object-1/001CBE54-001CC653.txt
+m243f003  3    -      0x00146FA6  1:0x00136FA6  code  __set_ERANGE    __set_ERANGE_    regions/07-object-1/001CBE54-001CC653.txt
+m243f004  4    -      0x00146FAD  1:0x00136FAD  code  __set_EINVAL    __set_EINVAL_    regions/07-object-1/001CBE54-001CC653.txt
+m243f005  5    -      0x00146FBD  1:0x00136FBD  code  __set_doserrno  __set_doserrno_  regions/07-object-1/001CBE54-001CC653.txt

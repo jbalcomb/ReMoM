@@ -1,0 +1,206 @@
+module_num=241
+module=F:\WLIBS\video\vesa.c
+source=0241-vesa.c.md
+range[0]=1:0x00135FD2 linear=0x00145FD2 size=997
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                   SYMBOL                  CHUNK
+m241f001  1    -      0x00145FD2  1:0x00135FD2  code  Test_For_Vesa          Test_For_Vesa_          regions/07-object-1/001CAE54-001CB653.txt
+m241f002  2    -      0x001460C1  1:0x001360C1  code  Get_Vesa_Total_Memory  Get_Vesa_Total_Memory_  regions/07-object-1/001CB654-001CBE53.txt
+m241f003  3    -      0x001461F0  1:0x001361F0  code  Get_Vesa_Granularity   Get_Vesa_Granularity_   regions/07-object-1/001CB654-001CBE53.txt
+m241f004  4    -      0x00146348  1:0x00136348  code  Set_Video_Mode_Vesa    Set_Video_Mode_Vesa_    regions/07-object-1/001CB654-001CBE53.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME                   TYPE                        CHUNK
+m241f001  0x00145FD2  1:0x00135FD2  239   24        9         0x18     -    -           Test_For_Vesa          int (void); returns in EAX  regions/07-object-1/001CAE54-001CB653.txt
+m241f002  0x001460C1  1:0x001360C1  303   24        9         0x18     -    -           Get_Vesa_Total_Memory  int (void); returns in EAX  regions/07-object-1/001CB654-001CBE53.txt
+m241f003  0x001461F0  1:0x001361F0  344   24        9         0x18     -    -           Get_Vesa_Granularity   int (void); returns in EAX  regions/07-object-1/001CB654-001CBE53.txt
+m241f004  0x00146348  1:0x00136348  111   24        9         0x18     -    -           Set_Video_Mode_Vesa    void (void)                 regions/07-object-1/001CB654-001CBE53.txt
+
+[Locals]
+KEY       ROUTINE                BLOCK  LOCAL          LOCATION    TYPE
+m241f001  Test_For_Vesa          -      i              [EBP-0xC]   int
+m241f001  Test_For_Vesa          -      regs_for_dpmi  [EBP-0x40]  struct s_regs_for_dpmi
+m241f001  Test_For_Vesa          -      VesaInfo       [EBP-0x8]   struct VesaInfoBlock *
+m241f002  Get_Vesa_Total_Memory  -      i              [EBP-0xC]   int
+m241f002  Get_Vesa_Total_Memory  -      regs_for_dpmi  [EBP-0x40]  struct s_regs_for_dpmi
+m241f002  Get_Vesa_Total_Memory  -      VesaInfo       [EBP-0x8]   struct VesaInfoBlock *
+m241f003  Get_Vesa_Granularity   -      i              [EBP-0xC]   int
+m241f003  Get_Vesa_Granularity   -      regs_for_dpmi  [EBP-0x40]  struct s_regs_for_dpmi
+m241f003  Get_Vesa_Granularity   -      VesaModeInfo   [EBP-0x8]   struct VESAModeinfoblock *
+m241f004  Set_Video_Mode_Vesa    -      i              [EBP-0x4]   int
+
+[Types]
+NUM  KIND       NAME                      DETAILS
+-    cue table  -                         source file table (C++)
+1    scope      struct                    -
+2    scope      union                     -
+3    scope      enum                      -
+4    scalar     signed char               int 1 bytes
+5    scalar     unsigned char             unsigned 1 bytes
+6    scalar     short                     int 2 bytes
+7    scalar     unsigned short            unsigned 2 bytes
+8    scalar     int                       int 4 bytes
+9    scalar     unsigned int              unsigned 4 bytes
+10   typedef    char                      name for unsigned char (#5)
+11   typedef    char                      name for unsigned char (#5)
+12   typedef    size_t                    name for unsigned int (#9)
+13   pointer    -                         near386; of char (#10)
+14   array      __va_list                 0..0; of char * (#13)
+15   typedef    __va_list                 name for char *[1] (#14)
+16   scalar     long                      int 4 bytes
+17   typedef    fpos_t                    name for long (#16)
+18   typedef    fpos_t                    name for long (#16)
+19   typedef    BYTE                      name for unsigned char (#5)
+20   typedef    SBYTE                     name for signed char (#4)
+21   typedef    UBYTE                     name for unsigned char (#5)
+22   typedef    WORD                      name for unsigned short (#7)
+23   typedef    SWORD                     name for short (#6)
+24   typedef    UWORD                     name for unsigned short (#7)
+25   typedef    DWORD                     name for unsigned int (#9)
+26   typedef    SDWORD                    name for int (#8)
+27   typedef    UDWORD                    name for unsigned int (#9)
+28   typedef    BOOL                      name for unsigned char (#5)
+29   typedef    SampleHandle              name for int (#8)
+30   procedure  -                         near386; returns int ()
+31   struct     struct s_regs_for_dpmi    17 fields, 50 bytes
+32   typedef    s_regs_for_dpmi           struct name for struct #31 (#31)
+33   array      -                         0..3; of char (#10)
+34   array      -                         0..3; of char (#10)
+35   array      -                         0..237; of char (#10)
+36   struct     struct VesaInfoBlock      9 fields, 258 bytes
+37   typedef    VesaInfoBlock             struct name for struct #36 (#36)
+38   pointer    -                         near386; of struct VesaInfoBlock (#37)
+39   array      -                         0..226; of char (#10)
+40   struct     struct VESAModeinfoblock  21 fields, 257 bytes
+41   typedef    VESAModeinfoblock         struct name for struct #40 (#40)
+42   pointer    -                         near386; of struct VESAModeinfoblock (#41)
+43   scalar     void                      void 1 bytes
+44   procedure  -                         near386; returns void ()
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER               OFFSET_VALUE  TYPE            TYPE_NAME
+31        field        edi                  0             long            struct s_regs_for_dpmi
+31        field        esi                  4             long            struct s_regs_for_dpmi
+31        field        ebp                  8             long            struct s_regs_for_dpmi
+31        field        reserver_for_system  12            long            struct s_regs_for_dpmi
+31        field        ebx                  16            long            struct s_regs_for_dpmi
+31        field        edx                  20            long            struct s_regs_for_dpmi
+31        field        ecx                  24            long            struct s_regs_for_dpmi
+31        field        eax                  28            long            struct s_regs_for_dpmi
+31        field        flags                32            short           struct s_regs_for_dpmi
+31        field        es                   34            short           struct s_regs_for_dpmi
+31        field        ds                   36            short           struct s_regs_for_dpmi
+31        field        fs                   38            short           struct s_regs_for_dpmi
+31        field        gs                   40            short           struct s_regs_for_dpmi
+31        field        ip                   42            short           struct s_regs_for_dpmi
+31        field        cs                   44            short           struct s_regs_for_dpmi
+31        field        sp                   46            short           struct s_regs_for_dpmi
+31        field        ss                   48            short           struct s_regs_for_dpmi
+36        field        VESAsignature        0             char[4]         struct VesaInfoBlock
+36        field        VESAversion          4             short           struct VesaInfoBlock
+36        field        OEMptroff            6             unsigned short  struct VesaInfoBlock
+36        field        OEMptrseg            8             unsigned short  struct VesaInfoBlock
+36        field        capabilities         10            char[4]         struct VesaInfoBlock
+36        field        videomodeptroff      14            unsigned short  struct VesaInfoBlock
+36        field        videomodeptrseg      16            unsigned short  struct VesaInfoBlock
+36        field        total_memory         18            short           struct VesaInfoBlock
+36        field        dummy                20            char[238]       struct VesaInfoBlock
+40        field        ModeAttributes       0             unsigned short  struct VESAModeinfoblock
+40        field        WinAAttributes       2             char            struct VESAModeinfoblock
+40        field        WinBAttributes       3             char            struct VESAModeinfoblock
+40        field        WinGranularity       4             unsigned short  struct VESAModeinfoblock
+40        field        WinSize              6             unsigned short  struct VESAModeinfoblock
+40        field        WinASegment          8             unsigned short  struct VESAModeinfoblock
+40        field        WinBSegment          10            unsigned short  struct VESAModeinfoblock
+40        field        WinFuncPtroff        12            unsigned short  struct VESAModeinfoblock
+40        field        WinFuncPtrseg        14            unsigned short  struct VESAModeinfoblock
+40        field        BytesPerScanLine     16            unsigned short  struct VESAModeinfoblock
+40        field        Xresolution          18            unsigned short  struct VESAModeinfoblock
+40        field        Yresolution          20            unsigned short  struct VESAModeinfoblock
+40        field        Xcharsize            22            char            struct VESAModeinfoblock
+40        field        Ycharsize            23            char            struct VESAModeinfoblock
+40        field        NumberOfPlanes       24            char            struct VESAModeinfoblock
+40        field        BitsPerPixel         25            char            struct VESAModeinfoblock
+40        field        NumberOfBanks        26            char            struct VESAModeinfoblock
+40        field        MemoryModel          27            char            struct VESAModeinfoblock
+40        field        BankSize             28            char            struct VESAModeinfoblock
+40        field        NumberOfImagePages   29            char            struct VESAModeinfoblock
+40        field        dummy                30            char[227]       struct VESAModeinfoblock
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m241f001  53    0x00145FD2  1:0x00135FD2  0x001CB626
+m241f001  60    0x00145FEA  1:0x00135FEA  0x001CB63E
+m241f001  61    0x00145FFB  1:0x00135FFB  0x001CB64F
+m241f001  63    0x0014600C  1:0x0013600C  0x001CB660
+m241f001  64    0x00146014  1:0x00136014  0x001CB668
+m241f001  65    0x00146023  1:0x00136023  0x001CB677
+m241f001  67    0x00146032  1:0x00136032  0x001CB686
+m241f001  68    0x00146039  1:0x00136039  0x001CB68D
+m241f001  69    0x00146043  1:0x00136043  0x001CB697
+m241f001  71    0x0014604A  1:0x0013604A  0x001CB69E
+m241f001  72    0x00146053  1:0x00136053  0x001CB6A7
+m241f001  73    0x0014605A  1:0x0013605A  0x001CB6AE
+m241f001  74    0x00146061  1:0x00136061  0x001CB6B5
+m241f001  75    0x0014606A  1:0x0013606A  0x001CB6BE
+m241f001  76    0x0014607E  1:0x0013607E  0x001CB6D2
+m241f001  77    0x00146086  1:0x00136086  0x001CB6DA
+m241f001  79    0x0014609F  1:0x0013609F  0x001CB6F3
+m241f001  80    0x001460AE  1:0x001360AE  0x001CB702
+m241f001  81    0x001460B5  1:0x001360B5  0x001CB709
+m241f002  83    0x001460C1  1:0x001360C1  0x001CB715
+m241f002  89    0x001460D9  1:0x001360D9  0x001CB72D
+m241f002  90    0x001460EA  1:0x001360EA  0x001CB73E
+m241f002  92    0x001460FB  1:0x001360FB  0x001CB74F
+m241f002  93    0x00146103  1:0x00136103  0x001CB757
+m241f002  94    0x00146112  1:0x00136112  0x001CB766
+m241f002  96    0x00146121  1:0x00136121  0x001CB775
+m241f002  97    0x00146128  1:0x00136128  0x001CB77C
+m241f002  98    0x00146132  1:0x00136132  0x001CB786
+m241f002  100   0x00146139  1:0x00136139  0x001CB78D
+m241f002  101   0x00146142  1:0x00136142  0x001CB796
+m241f002  102   0x00146149  1:0x00136149  0x001CB79D
+m241f002  103   0x00146150  1:0x00136150  0x001CB7A4
+m241f002  104   0x00146159  1:0x00136159  0x001CB7AD
+m241f002  105   0x0014616D  1:0x0013616D  0x001CB7C1
+m241f002  106   0x00146175  1:0x00136175  0x001CB7C9
+m241f002  109   0x0014618E  1:0x0013618E  0x001CB7E2
+m241f002  110   0x00146197  1:0x00136197  0x001CB7EB
+m241f002  111   0x001461A0  1:0x001361A0  0x001CB7F4
+m241f002  112   0x001461A9  1:0x001361A9  0x001CB7FD
+m241f002  113   0x001461B2  1:0x001361B2  0x001CB806
+m241f002  114   0x001461C6  1:0x001361C6  0x001CB81A
+m241f002  117   0x001461D5  1:0x001361D5  0x001CB829
+m241f002  118   0x001461E4  1:0x001361E4  0x001CB838
+m241f003  127   0x001461F0  1:0x001361F0  0x001CB844
+m241f003  133   0x00146208  1:0x00136208  0x001CB85C
+m241f003  134   0x00146219  1:0x00136219  0x001CB86D
+m241f003  135   0x0014622A  1:0x0013622A  0x001CB87E
+m241f003  136   0x00146232  1:0x00136232  0x001CB886
+m241f003  137   0x00146241  1:0x00136241  0x001CB895
+m241f003  139   0x00146250  1:0x00136250  0x001CB8A4
+m241f003  140   0x00146257  1:0x00136257  0x001CB8AB
+m241f003  141   0x0014625E  1:0x0013625E  0x001CB8B2
+m241f003  142   0x00146268  1:0x00136268  0x001CB8BC
+m241f003  144   0x0014626F  1:0x0013626F  0x001CB8C3
+m241f003  145   0x00146278  1:0x00136278  0x001CB8CC
+m241f003  146   0x0014627F  1:0x0013627F  0x001CB8D3
+m241f003  147   0x00146286  1:0x00136286  0x001CB8DA
+m241f003  148   0x0014628F  1:0x0013628F  0x001CB8E3
+m241f003  149   0x001462A3  1:0x001362A3  0x001CB8F7
+m241f003  150   0x001462AB  1:0x001362AB  0x001CB8FF
+m241f003  152   0x001462C4  1:0x001362C4  0x001CB918
+m241f003  153   0x001462DF  1:0x001362DF  0x001CB933
+m241f003  154   0x001462FA  1:0x001362FA  0x001CB94E
+m241f003  155   0x00146315  1:0x00136315  0x001CB969
+m241f003  157   0x00146330  1:0x00136330  0x001CB984
+m241f003  158   0x0014633C  1:0x0013633C  0x001CB990
+m241f004  162   0x00146348  1:0x00136348  0x001CB99C
+m241f004  166   0x00146360  1:0x00136360  0x001CB9B4
+m241f004  167   0x00146371  1:0x00136371  0x001CB9C5
+m241f004  169   0x00146382  1:0x00136382  0x001CB9D6
+m241f004  170   0x00146389  1:0x00136389  0x001CB9DD
+m241f004  171   0x00146390  1:0x00136390  0x001CB9E4
+m241f004  172   0x0014639A  1:0x0013639A  0x001CB9EE
+m241f004  173   0x001463AE  1:0x001363AE  0x001CBA02

@@ -235,14 +235,10 @@ void Startup_Platform(void)
     sdl2_Log_Graphics_Environment();
 
     sdl2_ticks_startup = (uint64_t)SDL_GetTicks();  // the number of milliseconds since SDL library initialization
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_PFL, "sdl2_ticks_startup: %llu", sdl2_ticks_startup);
-#endif
 
     sdl2_performance_counter = SDL_GetPerformanceCounter();
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_PFL, "sdl2_performance_counter: %llu", sdl2_performance_counter);
-#endif
 
     w = sdl2_window_width;
     h = sdl2_window_height;

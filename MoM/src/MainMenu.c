@@ -25,7 +25,6 @@
 #include "Settings.h"
 #include "CREDITS.h"
 #include "../../MoX/src/Help.h"
-#include "MOM_DBG.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -201,7 +200,7 @@ switch(current_screen)
                 // j_Init_Credits();
             } break;
         }
-        // IDK_previous_screen = e_ST_UNDEFINED;
+        // IDK_previous_screen = ST_UNDEFINED;
     }
 
     // MGC dseg:2880 cnst_QUIT_Message db 'Thank you for playing Master of Magic!',0
@@ -209,19 +208,20 @@ switch(current_screen)
 
 }
 
-// MGC s01p04
-void Main_Menu_Load_Pictures(void)
-{
 
-    mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
-    mainmenu_bot = LBX_Load(mainscrn_lbx_file, 5);
-    mainmenu_c   = LBX_Load(vortex_lbx_file, 1);
-    mainmenu_h   = LBX_Load(vortex_lbx_file, 2);
-    mainmenu_q   = LBX_Load(vortex_lbx_file, 3);
-    mainmenu_n   = LBX_Load(vortex_lbx_file, 4);
-    mainmenu_l   = LBX_Load(vortex_lbx_file, 5);
-
-}
+// ~== MGC s01p04  Load_MGC_Resources()
+/* HACK */  void Main_Menu_Load_Pictures(void)
+/* HACK */  {
+/* HACK */  
+/* HACK */      mainmenu_top = LBX_Load(mainscrn_lbx_file, 0);
+/* HACK */      mainmenu_bot = LBX_Load(mainscrn_lbx_file, 5);
+/* HACK */      mainmenu_c   = LBX_Load(vortex_lbx_file, 1);
+/* HACK */      mainmenu_h   = LBX_Load(vortex_lbx_file, 2);
+/* HACK */      mainmenu_q   = LBX_Load(vortex_lbx_file, 3);
+/* HACK */      mainmenu_n   = LBX_Load(vortex_lbx_file, 4);
+/* HACK */      mainmenu_l   = LBX_Load(vortex_lbx_file, 5);
+/* HACK */  
+/* HACK */  }
 
 
 // MGC ⊆ s01p05 Main_Menu_Screen()
@@ -236,12 +236,12 @@ void Main_Menu_Add_Fields(void)
     // _hof_button = Add_Hidden_Field(108, 174, 211, 185, 0, -1);
     // _quit_button = Add_Hidden_Field(108, 186, 211, 199, 0, -1);
 
-    _continue_hotkey = Add_Hot_Key('C');
-    _load_hotkey = Add_Hot_Key('L');
-    _new_hotkey = Add_Hot_Key('N');
-    _hof_hotkey = Add_Hot_Key('H');
-    _quit_hotkey = Add_Hot_Key('Q');
-    _esc_hotkey = Add_Hot_Key('\x1B');
+    _continue_hotkey = Add_Hot_Key("C");
+    _load_hotkey = Add_Hot_Key("L");
+    _new_hotkey = Add_Hot_Key("N");
+    _hof_hotkey = Add_Hot_Key("H");
+    _quit_hotkey = Add_Hot_Key("Q");
+    _esc_hotkey = Add_Hot_Key("\x1B");
 
 }
 
@@ -285,25 +285,27 @@ int16_t Main_Menu_Screen(void)
     int16_t mouse_x = 0;
     int16_t mouse_y = 0;
     
+#ifdef STU_DEBUG  /* CLAUDE: debug hot-keys, compiled out of Release */
     int16_t hotkey_idx_Z = 0;  // debug_hotkey
     int16_t hotkey_idx_T = 0;  // test_hotkey
+#endif
 
 #ifdef MOUSE_DEBUG
     MOUSE_LOG("SCR t=%llu MENU loading pictures\n", (unsigned long long)Platform_Get_Millies());
 #endif
-    if(!main_menu_screen_loaded)
-    {
-        Main_Menu_Load_Pictures();
-        main_menu_screen_loaded = ST_TRUE;
-    }
+    /* HACK */  if(!main_menu_screen_loaded)
+    /* HACK */  {
+    /* HACK */      Main_Menu_Load_Pictures();
+    /* HACK */      main_menu_screen_loaded = ST_TRUE;
+    /* HACK */  }
 #ifdef MOUSE_DEBUG
     MOUSE_LOG("SCR t=%llu MENU pictures loaded\n", (unsigned long long)Platform_Get_Millies());
 #endif
 
-    // if(g_GUI_MainScreenJump != e_ST_UNDEFINED)
+    // if(g_GUI_MainScreenJump != ST_UNDEFINED)
     // {
     //     itr_saves__retval = g_GUI_MainScreenJump;
-    //     g_GUI_MainScreenJump = e_ST_UNDEFINED;
+    //     g_GUI_MainScreenJump = ST_UNDEFINED;
     //     return itr_saves__retval;
     // }
 
@@ -391,7 +393,7 @@ int16_t Main_Menu_Screen(void)
     }
     else
     {
-        _load_button = Add_Hidden_Field(108, 150, 211, 161, 0, ST_UNDEFINED);
+        _load_button = Add_Hidden_Field(108, 150, 211, 161, "", ST_UNDEFINED);
         _help_entries[0].help_idx = HLP_LOAD;
         _help_entries[0].x1 = 108;
         _help_entries[0].y1 = 148;
@@ -405,7 +407,7 @@ int16_t Main_Menu_Screen(void)
     }
     else
     {
-        _continue_button = Add_Hidden_Field(108, (138 + (12 * menu_shift)), 211, (149 + (12 * menu_shift)), 0, ST_UNDEFINED);
+        _continue_button = Add_Hidden_Field(108, (138 + (12 * menu_shift)), 211, (149 + (12 * menu_shift)), "", ST_UNDEFINED);
         _help_entries[1].help_idx = HLP_CONTINUE;
         _help_entries[1].x1 = 108;
         _help_entries[1].y1 = (138 + (12 * menu_shift));
@@ -413,21 +415,21 @@ int16_t Main_Menu_Screen(void)
         _help_entries[1].y2 = (149 + (12 * menu_shift));
     }
 
-    _new_button = Add_Hidden_Field(108, 162, 211, 173, 0, ST_UNDEFINED);
+    _new_button = Add_Hidden_Field(108, 162, 211, 173, "", ST_UNDEFINED);
     _help_entries[2].help_idx = HLP_NEW_GAME;
     _help_entries[2].x1 = 108;
     _help_entries[2].y1 = 162;
     _help_entries[2].x2 = 211;
     _help_entries[2].y2 = 173;
 
-    _hof_button = Add_Hidden_Field(108, 174, 211, 185, 0, ST_UNDEFINED);
+    _hof_button = Add_Hidden_Field(108, 174, 211, 185, "", ST_UNDEFINED);
     _help_entries[3].help_idx = HLP_HALL_OF_FAME;
     _help_entries[3].x1 = 108;
     _help_entries[3].y1 = 174;
     _help_entries[3].x2 = 211;
     _help_entries[3].y2 = 185;
 
-    _quit_button = Add_Hidden_Field(108, 186, 211, 199, 0, ST_UNDEFINED);
+    _quit_button = Add_Hidden_Field(108, 186, 211, 199, "", ST_UNDEFINED);
     _help_entries[4].help_idx = HLP_QUIT_TO_DOS;
     _help_entries[4].x1 = 108;
     _help_entries[4].y1 = 186;
@@ -437,18 +439,20 @@ int16_t Main_Menu_Screen(void)
     if(cont_flag == ST_FALSE)
         _continue_hotkey = INVALID_FIELD;
     else
-        _continue_hotkey = Add_Hot_Key('C');
+        _continue_hotkey = Add_Hot_Key("C");
     if(load_flag == ST_FALSE)
         _load_hotkey = INVALID_FIELD;
     else
-        _load_hotkey = Add_Hot_Key('L');
-    _new_hotkey = Add_Hot_Key('N');
-    _hof_hotkey = Add_Hot_Key('H');
-    _quit_hotkey = Add_Hot_Key('Q');
-    _esc_hotkey = Add_Hot_Key(27); // ? '\1B' = 322?
+        _load_hotkey = Add_Hot_Key("L");
+    _new_hotkey = Add_Hot_Key("N");
+    _hof_hotkey = Add_Hot_Key("H");
+    _quit_hotkey = Add_Hot_Key("Q");
+    _esc_hotkey = Add_Hot_Key("\x1B"); // ? '\1B' = 322?
 
-    hotkey_idx_Z = Add_Hot_Key('Z');  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
-    hotkey_idx_T = Add_Hot_Key('T');  // test_hotkey
+#ifdef STU_DEBUG  /* CLAUDE: debug hot-keys, compiled out of Release */
+    hotkey_idx_Z = Add_Hot_Key("Z");  // debug_hotkey  ...  Derp. 'D' is already used for the "Done" button.
+    hotkey_idx_T = Add_Hot_Key("T");  // test_hotkey
+#endif
 
 
 
@@ -459,6 +463,7 @@ int16_t Main_Menu_Screen(void)
 
 
     // TODO  GUI_MouseEMUMoveTo(_newgame_button);
+    Center_Emulated_Pointer_On_Field(_new_button);  /* CLAUDE */  /* MGC asm Main_Menu_Screen: push [_newgame_button] (= _new_button) / call UU_GUI_MouseEMUMoveTo */
 
 
 
@@ -562,10 +567,8 @@ int16_t Main_Menu_Screen(void)
             }
             if((input_field_idx == _quit_hotkey) || (input_field_idx == _quit_button) || (input_field_idx == _esc_hotkey))
             {
-#ifdef STU_DEBUG
                 LOG_TRACE(LOG_CAT_GENERAL, "[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
                 LOG_DEBUG(LOG_CAT_GENERAL, "[MENU] Quit hit: field=%d _quit_hotkey=%d _quit_button=%d _esc_hotkey=%d", input_field_idx, _quit_hotkey, _quit_button, _esc_hotkey);
-#endif
                 leave_screen_flag = ST_TRUE;
                 current_menu_screen = 3;
                 /* HACK */  current_screen = scr_Quit_To_DOS;
@@ -579,6 +582,7 @@ int16_t Main_Menu_Screen(void)
         }
 
         // ST_DEBUG Hot-Keys
+#ifdef STU_DEBUG  /* CLAUDE: debug hot-keys, compiled out of Release */
         if(input_field_idx == hotkey_idx_Z)  /* Debug Hot-Key */
         {
             // // TODO  DLOG("STU_DEBUG: debug_hotkey");
@@ -593,6 +597,7 @@ int16_t Main_Menu_Screen(void)
         {
 
         }
+#endif
         
 
         if(current_menu_screen == ST_UNDEFINED)
@@ -602,11 +607,13 @@ int16_t Main_Menu_Screen(void)
 
         if(leave_screen_flag == ST_FALSE)
         {
+#ifdef STU_DEBUG  /* CLAUDE: debug hot-keys, compiled out of Release */
             if(DBG_debug_flag)
             {
                 Main_Menu_Screen_Draw_Debug();
             }
             else
+#endif
             {
                 Main_Menu_Screen_Draw();
             }
@@ -724,6 +731,7 @@ void Main_Menu_Screen_Draw(void)
 /*
 NOTE(JimBalcomb,20250302): added per a request from Blake, but can't won't work ... EMM_Open_Handles, str_Initializing_Roland_drivers ... already deing in win_Mom, MoM_Data
 */
+#ifdef STU_DEBUG  /* CLAUDE: debug draw, only reached from the Debug-only Z hot-key */
 void Main_Menu_Screen_Draw_Debug()
 {
     int16_t logo_frame_idx = 0;
@@ -805,3 +813,4 @@ void Main_Menu_Screen_Draw_Debug()
 //     // TODO  IDK_frame_count = ((IDK_frame_count + 1) % 20);
 // 
 }
+#endif

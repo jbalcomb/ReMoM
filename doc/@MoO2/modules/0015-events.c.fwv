@@ -1,0 +1,81 @@
+module_num=15
+module=D:\MOX\EVENTS.C
+source=0015-events.c.md
+range[0]=1:0x000101A4 linear=0x000201A4 size=17497
+range[1]=2:0x00000B28 linear=0x00170B28 size=136
+range[2]=2:0x00008E7C linear=0x00178E7C size=56
+range[3]=2:0x00022A6C linear=0x00192A6C size=648
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                  SYMBOL                                 CHUNK
+m015f001  1    -      0x000201A4  1:0x000101A4  code  Init_Events                           Init_Events_                           regions/07-object-1/000A5654-000A5E53.txt
+m015f002  2    -      0x000201F9  1:0x000101F9  code  Reset_Events                          Reset_Events_                          regions/07-object-1/000A5654-000A5E53.txt
+m015f003  3    -      0x0002023F  1:0x0001023F  code  Check_For_Event_Message               Check_For_Event_Message_               regions/07-object-1/000A5654-000A5E53.txt
+m015f004  4    -      0x0002027E  1:0x0001027E  code  Check_For_Event                       Check_For_Event_                       regions/07-object-1/000A5654-000A5E53.txt
+m015f005  5    -      0x0002031D  1:0x0001031D  code  Start_Main_Event                      Start_Main_Event_                      regions/07-object-1/000A5654-000A5E53.txt
+m015f006  6    -      0x000203CB  1:0x000103CB  code  Load_Event_Picture                    Load_Event_Picture_                    regions/07-object-1/000A5654-000A5E53.txt
+m015f007  7    -      0x00020400  1:0x00010400  code  Drive_Event_Screen                    Drive_Event_Screen_                    regions/07-object-1/000A5654-000A5E53.txt
+m015f008  8    -      0x00020460  1:0x00010460  code  Draw_Event_Screen                     Draw_Event_Screen_                     regions/07-object-1/000A5654-000A5E53.txt
+m015f009  9    -      0x00020538  1:0x00010538  code  Event_Fade_In                         Event_Fade_In_                         regions/07-object-1/000A5654-000A5E53.txt
+m015f010  10   -      0x000206A2  1:0x000106A2  code  Event_Twiddle                         Event_Twiddle_                         regions/07-object-1/000A5654-000A5E53.txt
+m015f011  11   -      0x00021371  1:0x00011371  code  Setup_Next_Event                      Setup_Next_Event_                      regions/07-object-1/000A6654-000A6E53.txt
+m015f012  12   -      0x00021B6D  1:0x00011B6D  code  Get_Event_Message                     Get_Event_Message_                     regions/07-object-1/000A6E54-000A7653.txt
+m015f013  13   -      0x0002223D  1:0x0001223D  code  Event_Get_Fleet_Strength              Event_Get_Fleet_Strength_              regions/07-object-1/000A7654-000A7E53.txt
+m015f014  14   -      0x0002230A  1:0x0001230A  code  Determine_Event                       Determine_Event_                       regions/07-object-1/000A7654-000A7E53.txt
+m015f015  15   -      0x00022D57  1:0x00012D57  code  Get_Event_Victim                      Get_Event_Victim_                      regions/07-object-1/000A7E54-000A8653.txt
+m015f016  16   -      0x00022F5C  1:0x00012F5C  code  Get_Antaran_Victim                    Get_Antaran_Victim_                    regions/07-object-1/000A7E54-000A8653.txt
+m015f017  17   -      0x000230B6  1:0x000130B6  code  Player_Has_Bad_Event                  Player_Has_Bad_Event_                  regions/07-object-1/000A8654-000A8E53.txt
+m015f018  18   -      0x0002310C  1:0x0001310C  code  Get_Event_Climate_Change_Colony       Get_Event_Climate_Change_Colony_       regions/07-object-1/000A8654-000A8E53.txt
+m015f019  19   -      0x000231B4  1:0x000131B4  code  Get_Event_Industrial_Accident_Colony  Get_Event_Industrial_Accident_Colony_  regions/07-object-1/000A8654-000A8E53.txt
+m015f020  20   -      0x0002325E  1:0x0001325E  code  Get_Event_Mineral_Depletion_Colony    Get_Event_Mineral_Depletion_Colony_    regions/07-object-1/000A8654-000A8E53.txt
+m015f021  21   -      0x000232BB  1:0x000132BB  code  Get_Event_Mineral_Deposit_Colony      Get_Event_Mineral_Deposit_Colony_      regions/07-object-1/000A8654-000A8E53.txt
+m015f022  22   -      0x0002332C  1:0x0001332C  code  Event_Monster_Update                  Event_Monster_Update_                  regions/07-object-1/000A8654-000A8E53.txt
+m015f023  23   -      0x000233AB  1:0x000133AB  code  Event_Race_Eliminated                 Event_Race_Eliminated_                 regions/07-object-1/000A8654-000A8E53.txt
+m015f024  24   -      0x000233B8  1:0x000133B8  code  Event_Orion_Discovered                Event_Orion_Discovered_                regions/07-object-1/000A8654-000A8E53.txt
+m015f025  25   -      0x000233C5  1:0x000133C5  code  Event_Defeat_Antarans                 Event_Defeat_Antarans_                 regions/07-object-1/000A8654-000A8E53.txt
+m015f026  26   -      0x000233D2  1:0x000133D2  code  Event_Surrender                       Event_Surrender_                       regions/07-object-1/000A8654-000A8E53.txt
+m015f027  27   -      0x000233E6  1:0x000133E6  code  Event_Rebel_Assimilation              Event_Rebel_Assimilation_              regions/07-object-1/000A8654-000A8E53.txt
+m015f028  28   -      0x000233FA  1:0x000133FA  code  Event_Check_Hyperspace_Flux           Event_Check_Hyperspace_Flux_           regions/07-object-1/000A8654-000A8E53.txt
+m015f029  29   -      0x0002341E  1:0x0001341E  code  Event_Check_Space_Anomaly             Event_Check_Space_Anomaly_             regions/07-object-1/000A8654-000A8E53.txt
+m015f030  30   -      0x0002346E  1:0x0001346E  code  Event_Check_Pirate_Activity           Event_Check_Pirate_Activity_           regions/07-object-1/000A8654-000A8E53.txt
+m015f031  31   -      0x000234B8  1:0x000134B8  code  Event_Check_Plague                    Event_Check_Plague_                    regions/07-object-1/000A8654-000A8E53.txt
+m015f032  32   -      0x000234E5  1:0x000134E5  code  Event_Check_Warp_Beast                Event_Check_Warp_Beast_                regions/07-object-1/000A8654-000A8E53.txt
+m015f033  33   -      0x00023509  1:0x00013509  code  Event_Check_Population_Boom           Event_Check_Population_Boom_           regions/07-object-1/000A8654-000A8E53.txt
+m015f034  34   -      0x00023536  1:0x00013536  code  Event_Check_Comet                     Event_Check_Comet_                     regions/07-object-1/000A8654-000A8E53.txt
+m015f035  35   -      0x00023563  1:0x00013563  code  Event_Check_Planet_Warning            Event_Check_Planet_Warning_            regions/07-object-1/000A8654-000A8E53.txt
+m015f036  36   -      0x0002373F  1:0x0001373F  code  Event_Check_General_Status            Event_Check_General_Status_            regions/07-object-1/000A8654-000A8E53.txt
+m015f037  37   -      0x00023780  1:0x00013780  code  Allocate_Comet_Hit                    Allocate_Comet_Hit_                    regions/07-object-1/000A8654-000A8E53.txt
+m015f038  38   -      0x00023833  1:0x00013833  code  Allocate_Industrial_Accident_Hit      Allocate_Industrial_Accident_Hit_      regions/07-object-1/000A8E54-000A9653.txt
+m015f039  39   -      0x000238A8  1:0x000138A8  code  Allocate_Earthquake_Hit               Allocate_Earthquake_Hit_               regions/07-object-1/000A8E54-000A9653.txt
+m015f040  40   -      0x00023988  1:0x00013988  code  Find_Nearest_Player_Colony_to_Ship    Find_Nearest_Player_Colony_to_Ship_    regions/07-object-1/000A8E54-000A9653.txt
+m015f041  41   -      0x000239E8  1:0x000139E8  code  Colony_To_Ship_Dist2                  Colony_To_Ship_Dist2_                  regions/07-object-1/000A8E54-000A9653.txt
+m015f042  42   -      0x00023A5F  1:0x00013A5F  code  Pick_Completely_Random_Star           Pick_Completely_Random_Star_           regions/07-object-1/000A8E54-000A9653.txt
+m015f043  43   -      0x00023B28  1:0x00013B28  code  Ship_Size_Points_At_Star              Ship_Size_Points_At_Star_              regions/07-object-1/000A8E54-000A9653.txt
+m015f044  44   -      0x00023B64  1:0x00013B64  code  Colony_Research_Points                Colony_Research_Points_                regions/07-object-1/000A8E54-000A9653.txt
+m015f045  45   -      0x00023B7D  1:0x00013B7D  code  Pick_Random_Player_In_Contact         Pick_Random_Player_In_Contact_         regions/07-object-1/000A8E54-000A9653.txt
+m015f046  46   -      0x00023BEC  1:0x00013BEC  code  Pick_Random_Star                      Pick_Random_Star_                      regions/07-object-1/000A8E54-000A9653.txt
+m015f047  47   -      0x00023CA1  1:0x00013CA1  code  Pick_Random_Officer                   Pick_Random_Officer_                   regions/07-object-1/000A8E54-000A9653.txt
+m015f048  48   -      0x00023CED  1:0x00013CED  code  Pick_Random_Ship                      Pick_Random_Ship_                      regions/07-object-1/000A8E54-000A9653.txt
+m015f049  49   -      0x00023D44  1:0x00013D44  code  Pick_Random_Colony_No_Outpost         Pick_Random_Colony_No_Outpost_         regions/07-object-1/000A8E54-000A9653.txt
+m015f050  50   -      0x00023DA0  1:0x00013DA0  code  Pick_Random_Colony_No_Capitol         Pick_Random_Colony_No_Capitol_         regions/07-object-1/000A8E54-000A9653.txt
+m015f051  51   -      0x00023DFE  1:0x00013DFE  code  Event_Check_Colony_Researching        Event_Check_Colony_Researching_        regions/07-object-1/000A8E54-000A9653.txt
+m015f052  52   -      0x00023E60  1:0x00013E60  code  Colony_Has_Event                      Colony_Has_Event_                      regions/07-object-1/000A8E54-000A9653.txt
+m015f053  53   -      0x0002401F  1:0x0001401F  code  Kill_All_Events_At_Colony             Kill_All_Events_At_Colony_             regions/07-object-1/000A9654-000A9E53.txt
+m015f054  54   -      0x000242CF  1:0x000142CF  code  Event_Check_Space_Anomaly_At_Star     Event_Check_Space_Anomaly_At_Star_     regions/07-object-1/000A9654-000A9E53.txt
+m015f055  55   -      0x000242FC  1:0x000142FC  code  Star_Has_Event                        Star_Has_Event_                        regions/07-object-1/000A9654-000A9E53.txt
+m015f056  56   -      0x0002448F  1:0x0001448F  code  Event_Pirate_Activity_Strength        Event_Pirate_Activity_Strength_        regions/07-object-1/000A9654-000A9E53.txt
+m015f057  57   -      0x00024511  1:0x00014511  code  Determine_Lucky_Players_Events        Determine_Lucky_Players_Events_        regions/07-object-1/000A9654-000A9E53.txt
+m015f058  58   -      0x000245C4  1:0x000145C4  code  Update_Lucky_Players_Events           Update_Lucky_Players_Events_           regions/07-object-1/000A9654-000A9E53.txt
+-         -    -      0x00178E7C  2:0x00008E7C  data  _event_normal_colors                  _event_normal_colors                   regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00178E84  2:0x00008E84  data  _event_good_array                     _event_good_array                      regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00178EA8  2:0x00008EA8  data  _event_blank_mouse                    _event_blank_mouse                     regions/08-object-2/001F6E54-001F7653.txt
+-         -    -      0x00192A6C  2:0x00022A6C  data  _event_mouse_bitmap                   _event_mouse_bitmap                    -
+-         -    -      0x00192A70  2:0x00022A70  data  _event_display_seg                    _event_display_seg                     -
+-         -    -      0x00192A74  2:0x00022A74  data  _event_message                        _event_message                         -
+-         -    -      0x00192BA0  2:0x00022BA0  data  _jim_saved_autofunction               _jim_saved_autofunction                -
+-         -    -      0x00192BA4  2:0x00022BA4  data  _event_data                           _event_data                            -
+-         -    -      0x00192CE8  2:0x00022CE8  data  _last_event_year                      _last_event_year                       -
+-         -    -      0x00192CEC  2:0x00022CEC  data  _event_delay_count                    _event_delay_count                     -
+-         -    -      0x00192CEE  2:0x00022CEE  data  _max_current_event                    _max_current_event                     -
+-         -    -      0x00192CEF  2:0x00022CEF  data  _event_status_flag                    _event_status_flag                     -
+-         -    -      0x00192CF0  2:0x00022CF0  data  _current_event                        _current_event                         -

@@ -13,14 +13,14 @@
  *   1 = usage error
  *   2 = file read/write error
  *
- * This tool is independent of HeMoM and the game engine.  It reads the raw
+ * This tool is independent of DeMoM and the game engine.  It reads the raw
  * 123300-byte save file and interprets the fields using the same layout as
  * Save_SAVE_GAM() / Load_SAVE_GAM() in MoX/src/LOADSAVE.c.
  *
  * Works on .GAM files produced by:
  *   - OG-MoM (MAGIC.EXE / WIZARDS.EXE)
  *   - ReMoM
- *   - HeMoM
+ *   - DeMoM
  */
 
 #define _CRT_SECURE_NO_WARNINGS

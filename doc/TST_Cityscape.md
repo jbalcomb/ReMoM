@@ -22,7 +22,7 @@ City_Screen_Draw__WIP()
     4,101
 Enemy_City_Screen_Draw()
     4,101
-Cast_Spell_City_Enchantment_Animation_Draw()
+Draw_City_Enchantment_Anim()
     x_start+5,y_start+27  ... x_start = 53; y_start = 38;
 
 

@@ -1,0 +1,45 @@
+module_num=26
+module=D:\MOX\OTHERS\COMBINIT.C
+source=0026-combinit.c.md
+range[0]=1:0x00037896 linear=0x00047896 size=24288
+range[1]=2:0x00000E34 linear=0x00170E34 size=108
+range[2]=2:0x0002357C linear=0x0019357C size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m026f001  1    -      0x000478A2  1:0x000378A2  code         Combat_Screen                  Combat_Screen_                  regions/07-object-1/000CCE54-000CD653.txt
+m026f002  2    -      0x000478A3  1:0x000378A3  code         Colony_Has_Defenses            Colony_Has_Defenses_            regions/07-object-1/000CCE54-000CD653.txt
+m026f003  3    -      0x000478FC  1:0x000378FC  static,code  qsort_ship_array_by_size       qsort_ship_array_by_size_       regions/07-object-1/000CCE54-000CD653.txt
+m026f004  4    -      0x00047939  1:0x00037939  code         Tactical_Combat                Tactical_Combat_                regions/07-object-1/000CCE54-000CD653.txt
+m026f005  5    -      0x00048EDF  1:0x00038EDF  static,code  qsort_combat_data_by_size      qsort_combat_data_by_size_      regions/07-object-1/000CDE54-000CE653.txt
+m026f006  6    -      0x00048EFC  1:0x00038EFC  code         Ship_Size_In_Squares           Ship_Size_In_Squares_           regions/07-object-1/000CDE54-000CE653.txt
+m026f007  7    -      0x00048F49  1:0x00038F49  code         Ship_Can_Deploy_At             Ship_Can_Deploy_At_             regions/07-object-1/000CDE54-000CE653.txt
+m026f008  8    -      0x00049043  1:0x00039043  code         Deploy_Ships                   Deploy_Ships_                   regions/07-object-1/000CE654-000CEE53.txt
+m026f009  9    -      0x000494A8  1:0x000394A8  code         Calc_Combat_Shield_Max         Calc_Combat_Shield_Max_         regions/07-object-1/000CE654-000CEE53.txt
+m026f010  10   -      0x0004954A  1:0x0003954A  code         Load_Combat_Ship               Load_Combat_Ship_               regions/07-object-1/000CE654-000CEE53.txt
+m026f011  11   -      0x00049A41  1:0x00039A41  code         Scroll_Combat_Screen           Scroll_Combat_Screen_           regions/07-object-1/000CEE54-000CF653.txt
+m026f012  12   -      0x00049D09  1:0x00039D09  code         Snap_Center_Combat_Screen      Snap_Center_Combat_Screen_      regions/07-object-1/000CEE54-000CF653.txt
+m026f013  13   -      0x00049ED1  1:0x00039ED1  code         Ship_Center_Offsets            Ship_Center_Offsets_            regions/07-object-1/000CEE54-000CF653.txt
+m026f014  14   -      0x00049F99  1:0x00039F99  static,code  Load_Combat_Ship_Palette       Load_Combat_Ship_Palette_       regions/07-object-1/000CEE54-000CF653.txt
+m026f015  15   -      0x0004A12A  1:0x0003A12A  static,code  Load_Individual_Ship_Pictures  Load_Individual_Ship_Pictures_  regions/07-object-1/000CF654-000CFE53.txt
+m026f016  16   -      0x0004A4E4  1:0x0003A4E4  code         Increment_Bhg                  Increment_Bhg_                  regions/07-object-1/000CF654-000CFE53.txt
+m026f017  17   -      0x0004A575  1:0x0003A575  code         End_Of_Turn_Bookeeping         End_Of_Turn_Bookeeping_         regions/07-object-1/000CF654-000CFE53.txt
+m026f018  18   -      0x0004A5CE  1:0x0003A5CE  code         Plasma_Web_Damage              Plasma_Web_Damage_              regions/07-object-1/000CF654-000CFE53.txt
+m026f019  19   -      0x0004A790  1:0x0003A790  code         Recharge_Shields               Recharge_Shields_               regions/07-object-1/000CF654-000CFE53.txt
+m026f020  20   -      0x0004A884  1:0x0003A884  code         Type_Of_Space_Station          Type_Of_Space_Station_          regions/07-object-1/000CFE54-000D0653.txt
+m026f021  21   -      0x0004A8D3  1:0x0003A8D3  code         Load_Antaran_Planet            Load_Antaran_Planet_            regions/07-object-1/000CFE54-000D0653.txt
+m026f022  22   -      0x0004A9E9  1:0x0003A9E9  code         Load_Colony_Defense            Load_Colony_Defense_            regions/07-object-1/000CFE54-000D0653.txt
+m026f023  23   -      0x0004AA36  1:0x0003AA36  code         Load_Tactical_Colony           Load_Tactical_Colony_           regions/07-object-1/000CFE54-000D0653.txt
+m026f024  24   -      0x0004B01A  1:0x0003B01A  code         Load_Combat_Colony_Picture     Load_Combat_Colony_Picture_     regions/07-object-1/000D0654-000D0E53.txt
+m026f025  25   -      0x0004B0D3  1:0x0003B0D3  code         Does_Combat_Ship_Have_Special  Does_Combat_Ship_Have_Special_  regions/07-object-1/000D0654-000D0E53.txt
+m026f026  26   -      0x0004B11E  1:0x0003B11E  code         Apply_Bio_Weapon_Penalty       Apply_Bio_Weapon_Penalty_       regions/07-object-1/000D0654-000D0E53.txt
+m026f027  27   -      0x0004B184  1:0x0003B184  code         End_Of_Combat                  End_Of_Combat_                  regions/07-object-1/000D0654-000D0E53.txt
+m026f028  28   -      0x0004B9E1  1:0x0003B9E1  code         Unload_Combat_Ship             Unload_Combat_Ship_             regions/07-object-1/000D0E54-000D1653.txt
+m026f029  29   -      0x0004BBD5  1:0x0003BBD5  code         Load_Combat_Satelite           Load_Combat_Satelite_           regions/07-object-1/000D0E54-000D1653.txt
+m026f030  30   -      0x0004C9F6  1:0x0003C9F6  code         Init_Special_Devices           Init_Special_Devices_           regions/07-object-1/000D1E54-000D2653.txt
+m026f031  31   -      0x0004CB1E  1:0x0003CB1E  code         Load_Display_Combat_Ship       Load_Display_Combat_Ship_       regions/07-object-1/000D1E54-000D2653.txt
+m026f032  32   -      0x0004CFE7  1:0x0003CFE7  code         Repair_All_Combat_Ships        Repair_All_Combat_Ships_        regions/07-object-1/000D1E54-000D2653.txt
+m026f033  33   -      0x0004D10E  1:0x0003D10E  code         Load_Combat_Antaran_Ship       Load_Combat_Antaran_Ship_       regions/07-object-1/000D2654-000D2E53.txt
+m026f034  34   -      0x0004D141  1:0x0003D141  code         Load_Antaran_Defense_Fleet     Load_Antaran_Defense_Fleet_     regions/07-object-1/000D2654-000D2E53.txt
+m026f035  35   -      0x0004D18E  1:0x0003D18E  code         Load_Antaran_Star_Fortress     Load_Antaran_Star_Fortress_     regions/07-object-1/000D2654-000D2E53.txt
+-         -    -      0x0019357C  2:0x0002357C  data         _real_attack_flag              _real_attack_flag               -

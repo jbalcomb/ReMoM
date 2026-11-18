@@ -1,0 +1,8 @@
+module_num=190
+module=strncpy
+source=0190-strncpy.md
+range[0]=1:0x00129ACE linear=0x00139ACE size=37
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m190f001  1    -      0x00139ACE  1:0x00129ACE  code  strncpy  strncpy_  regions/07-object-1/001BEE54-001BF653.txt

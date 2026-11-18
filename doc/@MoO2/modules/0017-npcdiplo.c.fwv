@@ -1,0 +1,34 @@
+module_num=17
+module=D:\MOX\NPCDIPLO.C
+source=0017-npcdiplo.c.md
+range[0]=1:0x000152A7 linear=0x000252A7 size=11391
+range[1]=2:0x00022CF8 linear=0x00192CF8 size=2120
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                             SYMBOL                            CHUNK
+m017f001  1    -      0x000252A7  1:0x000152A7  code  NPC_Diplomacy                    NPC_Diplomacy_                    regions/07-object-1/000AA654-000AAE53.txt
+m017f002  2    -      0x000252C5  1:0x000152C5  code  NPC_Tech_Exchange                NPC_Tech_Exchange_                regions/07-object-1/000AA654-000AAE53.txt
+m017f003  3    -      0x000252D5  1:0x000152D5  code  NPC_Threats                      NPC_Threats_                      regions/07-object-1/000AA654-000AAE53.txt
+m017f004  4    -      0x0002552D  1:0x0001552D  code  NPC_To_NPC_Treaty_Negotiations   NPC_To_NPC_Treaty_Negotiations_   regions/07-object-1/000AA654-000AAE53.txt
+m017f005  5    -      0x00025AD2  1:0x00015AD2  code  Honor_Alliances                  Honor_Alliances_                  regions/07-object-1/000AAE54-000AB653.txt
+m017f006  6    -      0x00025BC6  1:0x00015BC6  code  Eliminate_NPC_Treaty_Conflicts   Eliminate_NPC_Treaty_Conflicts_   regions/07-object-1/000AAE54-000AB653.txt
+m017f007  7    -      0x00025C7C  1:0x00015C7C  code  NPC_Diplomacy_Buildup_Penalties  NPC_Diplomacy_Buildup_Penalties_  regions/07-object-1/000AAE54-000AB653.txt
+m017f008  8    -      0x00025DF1  1:0x00015DF1  code  NPC_Declarations_Of_War          NPC_Declarations_Of_War_          regions/07-object-1/000AAE54-000AB653.txt
+m017f009  9    -      0x0002670A  1:0x0001670A  code  NPC_Peace_Negotiations           NPC_Peace_Negotiations_           regions/07-object-1/000AB654-000ABE53.txt
+m017f010  10   -      0x0002689D  1:0x0001689D  code  NPC_Required_Alliances           NPC_Required_Alliances_           regions/07-object-1/000ABE54-000AC653.txt
+m017f011  11   -      0x00026990  1:0x00016990  code  NPC_To_Human_Diplomacy           NPC_To_Human_Diplomacy_           regions/07-object-1/000ABE54-000AC653.txt
+m017f012  12   -      0x00026BBD  1:0x00016BBD  code  Get_Tech_Exchange_Reaction       Get_Tech_Exchange_Reaction_       regions/07-object-1/000ABE54-000AC653.txt
+m017f013  13   -      0x00026D0D  1:0x00016D0D  code  compare_tech                     compare_tech_                     regions/07-object-1/000ABE54-000AC653.txt
+m017f014  14   -      0x00026D12  1:0x00016D12  code  reverse_compare_tech             reverse_compare_tech_             regions/07-object-1/000ABE54-000AC653.txt
+m017f015  15   -      0x00026D19  1:0x00016D19  code  Get_Exchange_Tech_List           Get_Exchange_Tech_List_           regions/07-object-1/000ABE54-000AC653.txt
+m017f016  16   -      0x00026FBA  1:0x00016FBA  code  Get_Tech_Exchange_Expectation    Get_Tech_Exchange_Expectation_    regions/07-object-1/000ABE54-000AC653.txt
+m017f017  17   -      0x00027094  1:0x00017094  code  Get_Differential_Tech_List       Get_Differential_Tech_List_       regions/07-object-1/000AC654-000ACE53.txt
+m017f018  18   -      0x0002720F  1:0x0001720F  code  NPC_Tech_Exchange_Check          NPC_Tech_Exchange_Check_          regions/07-object-1/000AC654-000ACE53.txt
+m017f019  19   -      0x0002736E  1:0x0001736E  code  NPC_Good_Proposal_Check          NPC_Good_Proposal_Check_          regions/07-object-1/000AC654-000ACE53.txt
+m017f020  20   -      0x00027507  1:0x00017507  code  Clear_Last_Proposal_Turn         Clear_Last_Proposal_Turn_         regions/07-object-1/000AC654-000ACE53.txt
+m017f021  21   -      0x0002755F  1:0x0001755F  code  NPC_Message_Rejection_Check      NPC_Message_Rejection_Check_      regions/07-object-1/000AC654-000ACE53.txt
+m017f022  22   -      0x000276E6  1:0x000176E6  code  NPC_Proposal_Rejection_Accept    NPC_Proposal_Rejection_Accept_    regions/07-object-1/000AC654-000ACE53.txt
+m017f023  23   -      0x000277CF  1:0x000177CF  code  NPC_Treaty_Hatred                NPC_Treaty_Hatred_                regions/07-object-1/000AC654-000ACE53.txt
+m017f024  24   -      0x00027A3D  1:0x00017A3D  code  NPC_Surrender_Check              NPC_Surrender_Check_              regions/07-object-1/000ACE54-000AD653.txt
+-         -    -      0x00192CF8  2:0x00022CF8  data  _human_tech                      _human_tech                       -
+-         -    -      0x0019311C  2:0x0002311C  data  _target_tech                     _target_tech                      -

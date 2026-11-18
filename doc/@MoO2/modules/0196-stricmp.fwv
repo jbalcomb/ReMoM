@@ -1,0 +1,10 @@
+module_num=196
+module=stricmp
+source=0196-stricmp.md
+range[0]=1:0x0012C896 linear=0x0013C896 size=71
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL     CHUNK
+m196f001    1    1/3    0x0013C896  1:0x0012C896  code  stricmp   stricmp_   regions/07-object-1/001C1E54-001C2653.txt
+m196f001_2  1    2/3    0x0013C896  1:0x0012C896  code  _stricmp  _stricmp_  regions/07-object-1/001C1E54-001C2653.txt
+m196f001_3  1    3/3    0x0013C896  1:0x0012C896  code  strcmpi   strcmpi_   regions/07-object-1/001C1E54-001C2653.txt

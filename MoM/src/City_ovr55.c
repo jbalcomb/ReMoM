@@ -9,6 +9,7 @@
 #ifdef STU_DEBUG
 #include "../../STU/src/STU_DBG.h"
 #endif
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage() */  /* CLAUDE */  /* outside STU_DEBUG: the HACK stand-ins are in Release too */
 
 #include "../../ext/stu_compat.h"
 
@@ -19,6 +20,7 @@
 #include "../../MoX/src/Graphics.h"
 #include "../../MoX/src/LBX_Load.h"
 #include "../../MoX/src/MOX_BASE.h"
+#include "../../MoX/src/TEXTBOX.h"  /* COL_HLP_Titles, COL_HLP_Text */
 #include "../../MoX/src/Timer.h"
 #include "../../MoX/src/Util.h"
 #include "../../MoX/src/random.h"
@@ -115,14 +117,32 @@ char str_listdat_lbx_file__ovr055[] = "LISTDAT";
 char str_hotkey_M__ovr055[] = "M";
 
 // WZD dseg:2D17 46 6F 6F 64 00                                  cnst_Food db 'Food',0
+char str_Food__ovr055[] = "Food";
+
 // WZD dseg:2D1C 20 28 52 65 70 6C 61 63 65 64 29 00             aReplaced db ' (Replaced)',0
+char str_Replaced__ovr055[] = " (Replaced)";
+
 // WZD dseg:2D28 50 72 6F 64 75 63 74 69 6F 6E 00                aProduction_0 db 'Production',0
+char str_Production__ovr055[] = "Production";
+
 // WZD dseg:2D33 42 75 69 6C 64 69 6E 67 20 4D 61 69 6E 74 65 6E+aBuildingMaintenance db 'Building Maintenance',0
+char str_BuildingMaintenance__ovr055[] = "Building Maintenance";
+
 // WZD dseg:2D48 4D 6F 72 65 00                                  aMore db 'More',0
+char str_More__ovr055[] = "More";
+
 // WZD dseg:2D4D 47 6F 6C 64 00                                  cnst_Gold db 'Gold',0                   ; could use dseg:2ac5
+char str_Gold__ovr055[] = "Gold";
+
 // WZD dseg:2D52 4D 61 67 69 63 61 6C 20 50 6F 77 65 72 00       aMagicalPower db 'Magical Power',0
+char str_MagicalPower__ovr055[] = "Magical Power";
+
 // WZD dseg:2D60 2D 00                                           asc_39800 db '-',0
+char str_Minus__ovr055[] = "-";
+
 // WZD dseg:2D62 53 70 65 6C 6C 20 52 65 73 65 61 72 63 68 00    aSpellResearch db 'Spell Research',0
+char str_SpellResearch__ovr055[] = "Spell Research";
+
 
 // WZD dseg:2D71 00                                              align 2
 
@@ -241,12 +261,12 @@ void Enemy_City_Screen(void)
             x1 = (x_start +  5 + ((itr_troops % 6) * 22));
             y1 = (y_start + 52 + ((itr_troops / 6) * 20));
 
-            m_troop_fields[itr_troops] = Add_Hidden_Field(x1, y1, (x1 + 19), (y1 + 18), str_empty_string__ovr055[0], ST_UNDEFINED);
+            m_troop_fields[itr_troops] = Add_Hidden_Field(x1, y1, (x1 + 19), (y1 + 18), str_empty_string__ovr055, ST_UNDEFINED);
         }
 
-        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055[0], ST_UNDEFINED);
+        full_screen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055, ST_UNDEFINED);
 
-        hotkey_X = Add_Hot_Key(str_hotkey_X__ovr055[0]);
+        hotkey_X = Add_Hot_Key(str_hotkey_X__ovr055);
 
         input_field_idx = Get_Input();
 
@@ -361,6 +381,7 @@ void Enemy_City_Screen(void)
             city_enchantment_display_first -= 6;
             if(city_enchantment_display_first < 0)
             {
+                /* OGBUG  (count / 6) * 6 is one page past the end when the count is a multiple of 6 (12, 18, 24): City_Add_Fields_City_Enchantments then resets the empty page to 0, so 'previous' on the first page stays there; City_Screen() adds 'first >= count -> count - 6' */
                 city_enchantment_display_first = ((city_enchantment_list_count / 6) * 6);
             }
             screen_changed = ST_TRUE;
@@ -371,7 +392,8 @@ void Enemy_City_Screen(void)
         {
             Play_Left_Click();
             city_enchantment_display_first += 6;
-            if(city_enchantment_display_first > city_enchantment_list_count)
+            // if(city_enchantment_display_first > city_enchantment_list_count)
+            if(city_enchantment_display_first >= city_enchantment_list_count)  /* CLAUDE */  /* REBUG */  /* asm: cmp ax, [city_enchantment_list_count] / jl (keep) */
             {
                 city_enchantment_display_first = 0;
             }
@@ -428,12 +450,12 @@ void Enemy_City_Screen_Draw(void)
 
     for( itr = 0; itr < 6; itr++)
     {
-        // TODO  mov     [_help_entries[itr].help_05.entry_idx+bx], e_ST_UNDEFINED
+        // TODO  mov     [_help_entries[itr].help_05.entry_idx+bx], ST_UNDEFINED
     }
 
     if(city_enchantment_display_count > 0)
     {
-        // TODO  mov     [_help_entries.help_02.entry_idx], e_ST_UNDEFINED
+        // TODO  mov     [_help_entries.help_02.entry_idx], ST_UNDEFINED
         for(itr = 0; itr < city_enchantment_display_count; itr++)
         {
             // TODO  mov     [_help_entries[itr].help_05.entry_idx+bx], City_Enchantment_HelpIdx(city_enchantment_list[(city_enchantment_display_first + itr)]);
@@ -706,7 +728,7 @@ int16_t Init_Outpost(void)
     _CITIES[_cities].enchantments[HEAVENLY_LIGHT] = ST_FALSE;
     _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;
     _CITIES[_cities].enchantments[WALL_OF_DARKNESS] = ST_FALSE;
-    _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;
+    // _CITIES[_cities].enchantments[INSPIRATIONS] = ST_FALSE;  /* CLAUDE */  /* REBUG */  /* asm: WALL_OF_DARKNESS is followed by NIGHTSHADE */
     _CITIES[_cities].enchantments[NIGHTSHADE] = 0;  // this is a count, not (ST_FALSE || PLAYER_NUM())
     _CITIES[_cities].enchantments[ALTAR_OF_BATTLE] = ST_FALSE;
     _CITIES[_cities].enchantments[CONSECRATION] = ST_FALSE;  // BUGBUG dupe
@@ -741,7 +763,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
     city_enchantments = &_CITIES[city_idx].enchantments[0];
 
     // clear all enchantments belonging to the current owner
-    // drake178: BUG: should also remove curses placed by the conquering player
+    /* OGBUG  removes only the OLD owner's enchantments: curses the conqueror himself cast on the city (Famine, Pestilence, Cursed Lands, Evil Presence, Chaos Rift ...) stay on his new city and keep costing him their upkeep */
     for(itr = 0; itr < NUM_CITY_ENCHANTMENTS; itr++)
     {
         if(city_enchantments[itr] > 0)
@@ -790,15 +812,20 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
         (fortress_city_idx != ST_UNDEFINED)
     )
     {
-        _players[player_idx].summon_wp = _CITIES[fortress_city_idx].wp;
-        _players[player_idx].summon_wx = _CITIES[fortress_city_idx].wx;
-        _players[player_idx].summon_wy = _CITIES[fortress_city_idx].wy;
+        // _players[player_idx].summon_wp = _CITIES[fortress_city_idx].wp;
+        // _players[player_idx].summon_wx = _CITIES[fortress_city_idx].wx;
+        // _players[player_idx].summon_wy = _CITIES[fortress_city_idx].wy;
+        /* CLAUDE */  /* REBUG */  /* asm: mov [_players.summon_wp+bx], ax with bx = city_owner_idx * size s_WIZARD - the OLD owner's summoning circle moves to his fortress */
+        _players[city_owner_idx].summon_wp = _CITIES[fortress_city_idx].wp;
+        _players[city_owner_idx].summon_wx = _CITIES[fortress_city_idx].wx;
+        _players[city_owner_idx].summon_wy = _CITIES[fortress_city_idx].wy;
     }
 
     if(player_idx == _current_player_idx)
     {
-        // drake178: ; BUG: ignores Oracle exploration radius
-        Set_Map_Square_Explored_Flags_XYP_Range(_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
+        /* OGBUG  the new (human) owner always explores radius 2 around the conquered city, whatever it holds: a conquered Oracle's larger scouting radius is not revealed here */
+        Set_Square_Explored_Flags_Range(
+_CITIES[city_idx].wx, _CITIES[city_idx].wy, _CITIES[city_idx].wp, 2);  // TODO  manifest constant for default scout range
     }
 
     _CITIES[city_idx].owner_idx = (int8_t)player_idx;
@@ -814,6 +841,7 @@ void Change_City_Ownership(int16_t city_idx, int16_t player_idx)
     Reset_City_Road_Connection_Bitfields();
 
     // DONT  NOOP_Current_Player_All_City_Areas()
+    NOOP_Current_Player_All_City_Areas();  /* CLAUDE */  /* REBUG */  /* asm: call j_NOOP_Current_Player_All_City_Areas */
 
     Reset_City_Area_Bitfields();
 
@@ -841,6 +869,7 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
         bldg_ctr = 0;
         for(itr_buildings = 1; itr_buildings < NUM_BUILDINGS; itr_buildings++)
         {
+            /* OGBUG  'status >= bs_Built' includes bs_Removed (sold / destroyed this turn, cleared only at the turn end): a second damage event in the same turn can 'destroy' and list such a building again; replaced buildings (bs_Replaced) are never hit */
             if(_CITIES[city_idx].bldg_status[itr_buildings] >= bs_Built)
             {
                 bldg_roll = Random(100);
@@ -862,6 +891,7 @@ void Apply_Damage_To_City(int16_t city_idx, int16_t population_lost, int16_t bld
     _CITIES[city_idx].size = ((_CITIES[city_idx].population + 3) / 4);
     SETMAX(_CITIES[city_idx].size, 5);
     City_Check_Production(city_idx);
+    /* OGBUG  an outpost has population 0 and size 0 (Init_Outpost), so every call on an outpost destroys it */
     if
     (
         (_CITIES[city_idx].population < 1)
@@ -1091,7 +1121,7 @@ int16_t City_Sell_Building(int16_t bldg_idx, int16_t city_idx, int16_t gold_amou
     XREF: City Screen - Sell Building
         after valid bldg_idx, sold_building == ST_FALSE
         if this returns ST_TRUE
-            it calls City_Building_Is_Currently_Required()
+            it calls City_Building_Not_Needed_For_Product()
 
 bldg_idx is the the from the building that was left-clicked in the 'Cityscape Window'
 the in/out bldg_idx is subsequently checked for being -1
@@ -1162,54 +1192,64 @@ int16_t City_Building_Has_Requirement(int16_t bldg_idx, int16_t city_idx, int16_
 
 // WZD o55p15
 // drake178: N/A
+// JimBalcomb: City_Building_Is_Currently_Required()
 /*
     OOX XREF: City Screen - Sell Building
         after valid bldg_idx, sold_building == ST_FALSE, and Bldg_PreChk() == ST_TRUE
         if returns ST_FALSE, Warning_Message() of "Selling back your " " will cease production of your " "."
-
 the building you are trying to sell is a required building for the building you are currently constructing
-
 */
-int16_t City_Building_Is_Currently_Required(int16_t city_idx, int16_t bldg_idx)
+int16_t City_Building_Not_Needed_For_Product(int16_t city_idx, int16_t bldg_idx)
 {
     int16_t product_idx = 0;  // _CX_
-    int16_t building_is_required = 0;  // DNE in Dasm
 
     product_idx = _CITIES[city_idx].construction;
 
-    if(product_idx < bt_NUM_BUILDINGS)
+    if(product_idx >= bt_NUM_BUILDINGS)
     {
-        if(
-            (bldg_data_table[product_idx].reqd_bldg_1 == bldg_idx)
-            ||
-            (bldg_data_table[product_idx].reqd_bldg_2 == bldg_idx)
-        )
-        {
-            building_is_required = ST_TRUE;
-        }
-        else
-        {
-            building_is_required = ST_FALSE;
-        }
-    }
-    else
-    {
+
         product_idx -= bt_NUM_BUILDINGS;  // translate to unit_type_idx
+
         if(
             (_unit_type_table[product_idx].reqd_bldg_1 == bldg_idx)
             ||
             (_unit_type_table[product_idx].reqd_bldg_2 == bldg_idx)
         )
         {
-            building_is_required = ST_TRUE;
+
+            return ST_FALSE;
+
         }
         else
         {
-            building_is_required = ST_FALSE;
+
+            return ST_TRUE;
+
         }
+
+    }
+    else
+    {
+
+        if(
+            (bldg_data_table[product_idx].reqd_bldg_1 == bldg_idx)
+            ||
+            (bldg_data_table[product_idx].reqd_bldg_2 == bldg_idx)
+        )
+        {
+
+            return ST_FALSE;
+
+        }
+        else
+        {
+
+            return ST_TRUE;
+
+        }
+
     }
 
-    return building_is_required;
 }
 
 
@@ -1331,7 +1371,27 @@ void City_Cancel_Production(int16_t city_idx)
 
 // WZD o55p18
 // MoO2  Module: MAINTAIN  Building_Worth_()
-int16_t City_Sell_Building_Value(int16_t bldg_idx)
+/*
+What the asm fixes. The call site pushes [_city_idx] first and [bp+cityscape_bldg_idx] second, then cleans up with pop cx / pop cx (4 bytes). Borland pushes arguments right to left, so the call was written as:
+building_value = City_Sell_Building_Value(cityscape_bldg_idx, _city_idx);
+The callee only ever reads [bp+6], which is the first argument, bldg_idx.
+BC 3.1 tests (-mm -a -d), in /c/Users/jbalcomb/AppData/Local/Temp/claude/c00932cd21261fca/d4f00be7-c55a-4638-9b50-07bd75edd53f/scratchpad/sellval/:
+What the call site could see	Result
+int f(int bldg_idx); in scope	Error: "Extra parameter in call". Ruled out.
+No declaration at all	Warning "Call to function with no prototype". Pushes city_idx then bldg_idx, pop cx ×2: matches.
+int f(); (empty parentheses, K&R style)	Same warning, same code: matches.
+int f(int bldg_idx, int city_idx);	No warning, same code: matches.
+The two possible definitions also compile to identical callee code:
+int f(int bldg_idx)
+int f(int bldg_idx, int city_idx) with city_idx never used
+The only difference is the warning "Parameter 'city_idx' is never used". An unused parameter gets no stack-slot reference, so the callee asm can't show it.
+So, to your question: either cause is possible.
+It was in the declaration. The function was declared and defined as (bldg_idx, city_idx) and never used city_idx. That compiles cleanly at the call site.
+There wasn't a usable prototype. There was no declaration at all, or an empty-parentheses one, and the call passed two arguments to a one-parameter definition. C allows this, and BC only warns.
+...
+MoO2 hint, not proof. The header names MoO2's Building_Worth_. In ORION2.asm:344119, that function takes two arguments in registers (EAX = colony record, EDX = building index) and does use the colony: it reads the owner's government. So in the MoO2 design this function really did take a colony/city argument. That makes "two parameters, the MoM version just doesn't use the city" the more likely reading, but nothing in the MoM bytes proves it. The argument order is also reversed between the two games (MoM passes the building first).
+*/
+int16_t City_Sell_Building_Value(int16_t bldg_idx, int16_t city_idx)
 {
     int16_t building_value = 0;
 
@@ -1350,6 +1410,38 @@ int16_t City_Sell_Building_Value(int16_t bldg_idx)
 // WZD o55p19
 // drake178: N/A
 // sub_4BEF0()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+can player_idx pay the base production cost of city_idx's current product out of its gold reserve?
+    compares City_Production_Cost(), not City_Cost_To_Buy_Product()
+returns {ST_FALSE,ST_TRUE}
+*/
+int16_t Player_Gold_Covers_Production_Cost__NIU(int16_t player_idx, int16_t city_idx)
+{
+    int16_t production_cost = 0;
+    int16_t gold_reserve = 0;
+    int16_t can_afford = 0;  // _DI_
+
+    production_cost = City_Production_Cost(_CITIES[city_idx].construction, city_idx);
+
+    gold_reserve = _players[player_idx].gold_reserve;  /* asm: mov ax, [bx-5DE0h] - the word at _players + gold_reserve */
+
+    if(production_cost <= gold_reserve)  /* asm: cmp ax, [bp+var_4] / jg - a signed compare */
+    {
+
+        can_afford = ST_TRUE;
+
+    }
+    else
+    {
+
+        can_afford = ST_FALSE;
+
+    }
+
+    return can_afford;
+
+}
 
 
 // WZD o55p20
@@ -1468,7 +1560,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 xpos += 6;
             }
 
-            city_resources_rows_fields[0] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
+            city_resources_rows_fields[0] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055, ST_UNDEFINED);
 
             // city_resource_row_field_idx = xpos;
             group_two_x1 = xpos;
@@ -1482,7 +1574,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 Draw_Resource_Icons(&xpos, (ystart + (itr_resource_types * 8)), resources[itr_resource_types], abs_diff_food, city_big_resource_icon_seg[itr_resource_types], city_lil_resource_icon_seg[itr_resource_types]);
             }
 
-            city_resources_rows_fields[1] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
+            city_resources_rows_fields[1] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055, ST_UNDEFINED);
 
         }
         else if(itr_resource_types == 2)
@@ -1506,7 +1598,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 xpos += 5;  // BUGBUG: ¿ should be 6 like food, because (icon space - min icon space) = (8 - 2) = 6 ?
             }
 
-            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
+            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055, ST_UNDEFINED);
 
             // BUGBUG: recalculates abs_diff_gold as group_amount  probably just shouldn't calculate either in the prep-work and just do this for food as well
             group_amount = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
@@ -1523,7 +1615,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
                 Draw_Resource_Icons(&xpos, (ystart + (itr_resource_types * 8)), resources[itr_resource_types], group_amount, city_big_resource_icon_seg[itr_resource_types], city_lil_resource_icon_seg[itr_resource_types]);
             }
 
-            city_resources_rows_fields[4] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
+            city_resources_rows_fields[4] = Add_Hidden_Field(group_two_x1, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055, ST_UNDEFINED);
 
         }
         else
@@ -1551,7 +1643,7 @@ void City_Screen_Add_Fields_Resource_Window(int16_t city_idx, int16_t xstart, in
             }
 
             // city_resources_rows_fields[city_resource_row_field_idx] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  cnst_ZeroString_30, 0xFFFF);
-            city_resources_rows_fields[city_resource_row_field_idx] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  0, ST_UNDEFINED);
+            city_resources_rows_fields[city_resource_row_field_idx] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), 132, (ystart + (itr_resource_types * 8) + 7),  "", ST_UNDEFINED);
 
         }
 
@@ -1644,7 +1736,7 @@ void City_Screen_Draw_Resource_Icons(int16_t city_idx, int16_t xstart, int16_t y
                 xpos += 5;  // BUGBUG: ¿ should be 6 like food, because (icon space - min icon space) = (8 - 2) = 6 ?
             }
 
-            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055[0], ST_UNDEFINED);
+            city_resources_rows_fields[3] = Add_Hidden_Field(xstart, (ystart + (itr_resource_types * 8)), xpos, (ystart + (itr_resource_types * 8) + 7),  str_empty_string__ovr055, ST_UNDEFINED);
 
             // BUGBUG: recalculates abs_diff_gold as group_amount  probably just shouldn't calculate either in the prep-work and just do this for food as well
             group_amount = abs(_CITIES[city_idx].gold_units - _CITIES[city_idx].building_maintenance);
@@ -2021,8 +2113,8 @@ void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
 
     if(city_enchantment_display_scroll_flag == ST_TRUE)
     {
-        city_up_button = Add_Button_Field((xstart + 62), (ystart -  1), str_empty_string__ovr055, city_spell_up_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED);
-        city_dn_button = Add_Button_Field((xstart + 62), (ystart + 34), str_empty_string__ovr055, city_spell_dn_arrow_button_seg, str_empty_string__ovr055[0], ST_UNDEFINED);
+        city_up_button = Add_Button_Field((xstart + 62), (ystart -  1), str_empty_string__ovr055, city_spell_up_arrow_button_seg, str_empty_string__ovr055, ST_UNDEFINED);
+        city_dn_button = Add_Button_Field((xstart + 62), (ystart + 34), str_empty_string__ovr055, city_spell_dn_arrow_button_seg, str_empty_string__ovr055, ST_UNDEFINED);
     }
 
     city_enchantment_display_count = 0;
@@ -2031,7 +2123,8 @@ void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
     {
         city_enchantment_display_count = 6;
     }
-    if(city_enchantment_display_count < 0)
+    // if(city_enchantment_display_count < 0)
+    if(city_enchantment_display_count <= 0)  /* CLAUDE */  /* REBUG */  /* asm: cmp [city_enchantment_display_count], 0 / jg (keep) */
     {
         city_enchantment_display_first = 0;
         city_enchantment_display_count = (city_enchantment_list_count - city_enchantment_display_first);
@@ -2044,7 +2137,9 @@ void City_Add_Fields_City_Enchantments(int16_t xstart, int16_t ystart)
     for(itr = 0; itr < city_enchantment_display_count; itr++)
     {
         // city_enchantment_fields[itr] = Add_Hidden_Field(xstart, (ystart + (itr * 7)), (xstart + 60), (ystart + (itr * 7) + 6), cnst_ZeroString_30, 0xFFFF);
-        city_enchantment_fields[itr] = Add_Hidden_Field(xstart, (ystart + (itr * 7)), (xstart + 60), (ystart + (itr * 7) + 6), 0, ST_UNDEFINED);
+        // city_enchantment_fields[itr] = Add_Hidden_Field(xstart, (ystart + (itr * 7)), (xstart + 60), (ystart + (itr * 7) + 6), "", ST_UNDEFINED);
+        /* CLAUDE */  /* REBUG */  /* asm: mov ax, offset str_empty_string__ovr055 / push ax */
+        city_enchantment_fields[itr] = Add_Hidden_Field(xstart, (ystart + (itr * 7)), (xstart + 60), (ystart + (itr * 7) + 6), str_empty_string__ovr055, ST_UNDEFINED);
     }
 
 }
@@ -2207,7 +2302,7 @@ void City_Screen_Add_Fields_Population_Row(int16_t city_idx, int16_t xstart, int
         y2 = y1 + 14;
 
         // Add_Hidden_Field(x1, y1, x2, y2, cnst_ZeroString_30, 0xFFFF);
-        city_population_row_fields[itr_figures] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr055[0], ST_UNDEFINED);
+        city_population_row_fields[itr_figures] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr055, ST_UNDEFINED);
 
         xadd += figure_space;
         
@@ -2404,20 +2499,21 @@ void Possessive(char * string)
 // WZD o55p38
 // drake178: N/A  sub_4D5EA()
 /*
+City Screen
+Resource Window
+loads the 15 line labels and the breakdown for one resource, then runs the window until Esc (or a click anywhere)
 
-Resource window
-breakdown
-
+resource_id  0, 1 Food;  2 Production;  3 Building Maintenance;  4 Gold;  5 Power;  6 Research
 */
-void Resource_Breakdown__STUB(int16_t resource_id)
+void Resource_Breakdown(int16_t resource_id)
 {
-    int16_t var_A = 0;
-    int16_t var_8 = 0;
-    int16_t var_6 = 0;
+    int16_t has_more_lines = 0;
+    int16_t more_field_idx = 0;
+    int16_t escape_field_idx = 0;
     int16_t input_field_idx = 0;
     int16_t leave_screen = 0;
     int16_t itr = 0;  // _SI_
-    int16_t di = 0;  // _DI_
+    int16_t first_label_record = 0;  // _DI_
 
     m_resource_id = resource_id;
 
@@ -2425,18 +2521,18 @@ void Resource_Breakdown__STUB(int16_t resource_id)
 
     GUI_String_2 = (char *)Near_Allocate_Next(80);
 
-    Retn_Struct = Near_Allocate_Next(100);  // 15 2-byte values
+    m_resource_breakdown = (int16_t *)Near_Allocate_Next(100);  // RESOURCE_BREAKDOWN_LINES 2-byte values
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
     {
 
-        IDK_CityScr_15x50_tmpbuf[itr] = Near_Allocate_Next(50);  // 15 2-byte values
+        m_resource_line_labels[itr] = (char *)Near_Allocate_Next(50);
 
     }
 
-    IMG_Seg = LBX_Reload(help_lbx_file__ovr055, 0, _screen_seg);
+    m_resource_window_top_seg = LBX_Reload(help_lbx_file__ovr055, 0, _screen_seg);
 
-    word_42A82 = LBX_Reload_Next(help_lbx_file__ovr055, 1, _screen_seg);
+    m_resource_window_bottom_seg = LBX_Reload_Next(help_lbx_file__ovr055, 1, _screen_seg);
 
     Clear_Fields();
 
@@ -2444,57 +2540,181 @@ void Resource_Breakdown__STUB(int16_t resource_id)
 
     Deactivate_Auto_Function();
 
-    Assign_Auto_Function(Resource_Breakdown_Draw__STUB, 0);
+    /* OGBUG  pushes only the function pointer (push seg / push offset / call / pop cx / pop cx): 'delay' is the next word on the stack, the saved DI of the caller, so the redraw pacing depends on a leftover register (1..9 is used as is, anything else gives 2) */
+    /* HACK */  Assign_Auto_Function(Resource_Breakdown_Draw, Stack_Garbage());  /* stand-in for the caller's DI */
 
     Copy_On_To_Off_Page();
 
     Copy_Off_To_Back();
 
-    var_A = 0;
+    has_more_lines = ST_FALSE;
 
-    word_42A80 = 0;
+    m_resource_first_line = 0;
 
-    word_42A7E = 0;
+    m_resource_line_count = 0;
 
     switch(m_resource_id)
     {
 
         case 0:
+        case 1:
         {
 
-            di = 0;
+            first_label_record = 0;
 
-            for(itr = 0; itr < 15; itr++)
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
             {
 
-                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (di + itr), 1, 200);
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (first_label_record + itr), 1, 200);
 
-                stu_strcpy((char *)IDK_CityScr_15x50_tmpbuf[itr], GUI_String_1);
+                stu_strcpy(m_resource_line_labels[itr], GUI_String_1);
 
             }
 
-            CTY_Food_Breakdown(_city_idx, (struct s_FOOD_BREAKDOWN *)Retn_Struct);
+            City_Food_Breakdown(_city_idx, (struct s_FOOD_BREAKDOWN *)m_resource_breakdown);
 
-            for(itr = 0; itr < 15; itr++)
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
             {
 
-                if(Retn_Struct[itr] != 0)
+                if(m_resource_breakdown[itr] != 0)
                 {
 
-                    word_42A7E++;
+                    m_resource_line_count++;
 
                 }
-                
+
+            }
+
+        } break;
+
+        case 2:
+        {
+
+            first_label_record = (1 * RESOURCE_BREAKDOWN_LINES);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (first_label_record + itr), 1, 200);
+
+                stu_strcpy(m_resource_line_labels[itr], GUI_String_1);
+
+            }
+
+            City_Production_Breakdown(_city_idx, (struct s_PRODUCTION_BREAKDOWN *)m_resource_breakdown);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    m_resource_line_count++;
+
+                }
+
+            }
+
+        } break;
+
+        case 3:
+        case 4:
+        {
+
+            first_label_record = (2 * RESOURCE_BREAKDOWN_LINES);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (first_label_record + itr), 1, 200);
+
+                stu_strcpy(m_resource_line_labels[itr], GUI_String_1);
+
+            }
+
+            City_Gold_Breakdown(_city_idx, (struct s_GOLD_BREAKDOWN *)m_resource_breakdown);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    m_resource_line_count++;
+
+                }
+
+            }
+
+        } break;
+
+        case 5:
+        {
+
+            first_label_record = (3 * RESOURCE_BREAKDOWN_LINES);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (first_label_record + itr), 1, 200);
+
+                stu_strcpy(m_resource_line_labels[itr], GUI_String_1);
+
+            }
+
+            City_Power_Breakdown(_city_idx, (struct s_POWER_BREAKDOWN *)m_resource_breakdown);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    m_resource_line_count++;
+
+                }
+
+            }
+
+        } break;
+
+        case 6:
+        {
+
+            first_label_record = (4 * RESOURCE_BREAKDOWN_LINES);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                LBX_Load_Data_Static(str_listdat_lbx_file__ovr055, 0, (SAMB_ptr)&GUI_String_1[0], (first_label_record + itr), 1, 200);
+
+                stu_strcpy(m_resource_line_labels[itr], GUI_String_1);
+
+            }
+
+            City_Research_Breakdown(_city_idx, m_resource_breakdown);
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    m_resource_line_count++;
+
+                }
+
             }
 
         } break;
 
     }
 
+    /* asm: loc_4D8DC - Building Maintenance lists the built buildings (by index) instead of breakdown values */
     if(m_resource_id == 3)
     {
 
-        word_42A7E = 0;
+        m_resource_line_count = 0;
 
         for(itr = 1; itr < NUM_BUILDINGS; itr++)
         {
@@ -2506,18 +2726,18 @@ void Resource_Breakdown__STUB(int16_t resource_id)
             )
             {
 
-                Retn_Struct[word_42A7E] = (unsigned char)itr;
+                m_resource_breakdown[m_resource_line_count] = itr;
 
-                word_42A7E++;
+                m_resource_line_count++;
 
             }
 
         }
 
-        if(word_42A7E > 17)
+        if(m_resource_line_count > RESOURCE_WINDOW_MAX_LINES)
         {
 
-            var_A = 1;
+            has_more_lines = ST_TRUE;
 
         }
 
@@ -2532,39 +2752,39 @@ void Resource_Breakdown__STUB(int16_t resource_id)
 
         Clear_Fields();
 
-        var_8 = INVALID_FIELD;
+        more_field_idx = INVALID_FIELD;
 
-        if(var_A == 1)
+        if(has_more_lines == ST_TRUE)
         {
 
-            var_8 = Add_Hidden_Field(217, 166, 240, 175, str_hotkey_M__ovr055[0], ST_UNDEFINED);
+            more_field_idx = Add_Hidden_Field(217, 166, 240, 175, str_hotkey_M__ovr055, ST_UNDEFINED);
 
         }
 
-        var_6 = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055[0], ST_UNDEFINED);
+        escape_field_idx = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr055, ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == var_6)
+        if(input_field_idx == escape_field_idx)
         {
 
             leave_screen = ST_TRUE;
 
         }
 
-        if(input_field_idx == var_8)
+        if(input_field_idx == more_field_idx)
         {
 
-            if(word_42A80 == 0)
+            if(m_resource_first_line == 0)
             {
 
-                word_42A80 = 17;
+                m_resource_first_line = RESOURCE_WINDOW_MAX_LINES;
 
             }
             else
             {
 
-                word_42A80 = 0;
+                m_resource_first_line = 0;
 
             }
 
@@ -2573,7 +2793,7 @@ void Resource_Breakdown__STUB(int16_t resource_id)
         if(leave_screen == ST_FALSE)
         {
 
-            Resource_Breakdown_Draw__STUB();
+            Resource_Breakdown_Draw();
 
             PageFlip_FX();
 
@@ -2595,16 +2815,816 @@ void Resource_Breakdown__STUB(int16_t resource_id)
 // WZD o55p39
 // drake178: N/A  sub_4DA19()
 /*
-
+City Screen
+Resource Window
+draws the window: the top picture sized to the visible lines, the bottom picture, the title, then one line per non-zero value (icons, then label)
 */
-void Resource_Breakdown_Draw__STUB(void)
+void Resource_Breakdown_Draw(void)
 {
+    int16_t upkeep = 0;
+    int16_t amount = 0;  /* also the visible line count at the top and in Building Maintenance (asm reuses this local) */
+    int16_t label_x = 0;
+    int16_t first_line_y = 0;
+    int16_t icons_end_x = 0;
+    int16_t window_bottom = 0;
+    int16_t body_height = 0;
+    int16_t window_top = 0;
+    int16_t window_left = 0;
+    int16_t line_x = 0;
+    int16_t line_y = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
+    amount = m_resource_line_count;
 
+    if(amount > RESOURCE_WINDOW_MAX_LINES)
+    {
+
+        amount = RESOURCE_WINDOW_MAX_LINES;
+
+    }
+
+    body_height = ((amount * 8) + 15);
+
+    window_left = 50;
+
+    window_top = (100 - ((body_height + 48) / 2));
+
+    window_bottom = (window_top + body_height + 23);
+
+    Set_Page_Off();
+
+    Copy_Back_To_Off();
+
+    Set_Window(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, window_bottom);
+
+    Clipped_Draw(window_left, window_top, m_resource_window_top_seg);
+
+    Reset_Window();
+
+    Clipped_Draw(window_left, (window_top + body_height + 24), m_resource_window_bottom_seg);
+
+    line_y = (window_top + 26);
+
+    Set_Font_Colors_15(4, &COL_HLP_Titles[0]);
+
+    /* asm: jump table off_4E4F9 (ovr055/_misc.asm 39-45); anything above 6 draws only the frame */
+    switch(m_resource_id)
+    {
+
+        case 0:
+        case 1:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_Food__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = (window_left + 20);
+
+                    amount = abs(m_resource_breakdown[itr]);
+
+                    if(m_resource_breakdown[itr] < 0)
+                    {
+
+                        icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_grey_lil_bread_icon_seg, city_grey_big_bread_icon_seg);
+
+                    }
+                    else
+                    {
+
+                        icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_lil_resource_icon_seg[0], city_big_resource_icon_seg[0]);
+
+                    }
+
+                    if(icons_end_x > label_x)
+                    {
+
+                        label_x = icons_end_x;
+
+                    }
+
+                    line_y += 8;
+
+                }
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = label_x;
+
+                    stu_strcpy(GUI_String_1, m_resource_line_labels[itr]);
+
+                    if(itr == 1)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_AnimistsGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 2)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Granary] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 3)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_FarmersMarket] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 4)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    Print(line_x, line_y, GUI_String_1);
+
+                    line_y += 8;
+
+                }
+
+            }
+
+        } break;
+
+        case 2:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_Production__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = (window_left + 20);
+
+                    amount = abs(m_resource_breakdown[itr]);
+
+                    icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_lil_resource_icon_seg[1], city_big_resource_icon_seg[1]);
+
+                    if(icons_end_x > label_x)
+                    {
+
+                        label_x = icons_end_x;
+
+                    }
+
+                    line_y += 8;
+
+                }
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = label_x;
+
+                    stu_strcpy(GUI_String_1, m_resource_line_labels[itr]);
+
+                    if(itr == 3)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Sawmill] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 4)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_ForestersGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 5)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 6)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_MechaniciansGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    Print(line_x, line_y, GUI_String_1);
+
+                    line_y += 8;
+
+                }
+
+            }
+
+        } break;
+
+        case 3:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_BuildingMaintenance__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            amount = m_resource_line_count;
+
+            if(amount > RESOURCE_WINDOW_MAX_LINES)
+            {
+
+                Print(217, 167, str_More__ovr055);
+
+                amount = RESOURCE_WINDOW_MAX_LINES;
+
+            }
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; ((itr < amount) && ((m_resource_first_line + itr) < m_resource_line_count)); itr++)
+            {
+
+                line_x = (window_left + 20);
+
+                upkeep = abs(bldg_data_table[m_resource_breakdown[(m_resource_first_line + itr)]].maintenance_cost);
+
+                icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), upkeep, city_lil_resource_icon_seg[2], city_big_resource_icon_seg[2]);
+
+                if(icons_end_x > label_x)
+                {
+
+                    label_x = icons_end_x;
+
+                }
+
+                line_y += 8;
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; ((itr < amount) && ((m_resource_first_line + itr) < m_resource_line_count)); itr++)
+            {
+
+                line_x = label_x;
+
+                stu_strcpy(GUI_String_2, bldg_data_table[m_resource_breakdown[(m_resource_first_line + itr)]].name);  /* asm: String_Copy_Far(0000:GUI_String_2, name) - segment 0, which String_Copy_Far takes as DS */
+
+                stu_strcpy(GUI_String_1, GUI_String_2);
+
+                if(_CITIES[_city_idx].bldg_status[m_resource_breakdown[(m_resource_first_line + itr)]] == bs_Replaced)
+                {
+
+                    stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                }
+
+                Print(line_x, line_y, GUI_String_1);
+
+                line_y += 8;
+
+            }
+
+        } break;
+
+        case 4:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_Gold__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = (window_left + 20);
+
+                    amount = abs(m_resource_breakdown[itr]);
+
+                    icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_lil_resource_icon_seg[2], city_big_resource_icon_seg[2]);
+
+                    if(icons_end_x > label_x)
+                    {
+
+                        label_x = icons_end_x;
+
+                    }
+
+                    line_y += 8;
+
+                }
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = label_x;
+
+                    stu_strcpy(GUI_String_1, m_resource_line_labels[itr]);
+
+                    if(itr == 5)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 7)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Marketplace] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 8)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Bank] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 9)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_MerchantsGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    Print(line_x, line_y, GUI_String_1);
+
+                    line_y += 8;
+
+                }
+
+            }
+
+        } break;
+
+        case 5:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_MagicalPower__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = (window_left + 20);
+
+                    /* the Wizards' Guild line (power it consumes) gets a minus sign in front of its icons */
+                    if(itr == 7)
+                    {
+
+                        if(
+                            (_CITIES[_city_idx].bldg_status[bt_WizardsGuild] == bs_Replaced)
+                            ||
+                            (_CITIES[_city_idx].bldg_status[bt_WizardsGuild] == bs_Built)
+                        )
+                        {
+
+                            Print((line_x - 4), line_y, str_Minus__ovr055);
+
+                        }
+
+                    }
+
+                    amount = abs(m_resource_breakdown[itr]);
+
+                    icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_lil_resource_icon_seg[3], city_big_resource_icon_seg[3]);
+
+                    if(icons_end_x > label_x)
+                    {
+
+                        label_x = icons_end_x;
+
+                    }
+
+                    line_y += 8;
+
+                }
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = label_x;
+
+                    stu_strcpy(GUI_String_1, m_resource_line_labels[itr]);
+
+                    if(itr == 2)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Shrine] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 3)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Temple] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 4)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Parthenon] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 5)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Cathedral] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 6)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_AlchemistsGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 7)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_WizardsGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 12)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_MinersGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    Print(line_x, line_y, GUI_String_1);
+
+                    line_y += 8;
+
+                }
+
+            }
+
+        } break;
+
+        case 6:
+        {
+
+            Print_Centered((window_left + 103), line_y, str_SpellResearch__ovr055);
+
+            line_y += 12;
+
+            Set_Font_Colors_15(1, &COL_HLP_Text[0]);
+
+            icons_end_x = 0;
+
+            label_x = 0;
+
+            first_line_y = line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = (window_left + 20);
+
+                    amount = abs(m_resource_breakdown[itr]);
+
+                    icons_end_x = Draw_Stat_Icons_10_And_1(line_x, (line_y - 1), amount, city_lil_resource_icon_seg[4], city_big_resource_icon_seg[4]);
+
+                    if(icons_end_x > label_x)
+                    {
+
+                        label_x = icons_end_x;
+
+                    }
+
+                    line_y += 8;
+
+                }
+
+            }
+
+            line_y = first_line_y;
+
+            for(itr = 0; itr < RESOURCE_BREAKDOWN_LINES; itr++)
+            {
+
+                if(m_resource_breakdown[itr] != 0)
+                {
+
+                    line_x = label_x;
+
+                    stu_strcpy(GUI_String_1, m_resource_line_labels[itr]);
+
+                    if(itr == 0)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_Library] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 1)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_SagesGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 2)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_University] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    if(itr == 3)
+                    {
+
+                        if(_CITIES[_city_idx].bldg_status[bt_WizardsGuild] == bs_Replaced)
+                        {
+
+                            stu_strcat(GUI_String_1, str_Replaced__ovr055);
+
+                        }
+
+                    }
+
+                    Print(line_x, line_y, GUI_String_1);
+
+                    line_y += 8;
+
+                }
+
+            }
+
+        } break;
+
+    }
 
 }
 
 
 // WZD o55p40
-// drake178: N/A
-// sub_4E507()
+// drake178: N/A  sub_4E507()
+/*
+draws 'value' as a row of tens icons then a row of ones icons, starting at x; returns the x after the last icon (x unchanged for 0)
+ones are packed tighter (6 px) when there are more than 3
+*/
+int16_t Draw_Stat_Icons_10_And_1(int16_t x, int16_t y, int16_t value, SAMB_ptr ones_icon_seg, SAMB_ptr tens_icon_seg)
+{
+    int16_t tens_count = 0;
+    int16_t icon_spacing = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t icon_x = 0;  // _DI_
+
+    icon_x = x;
+
+    tens_count = (value / 10);
+
+    if(tens_count > 0)
+    {
+
+        icon_spacing = 8;
+
+        for(itr = 0; itr < tens_count; itr++)
+        {
+
+            FLIC_Draw((icon_x + (itr * icon_spacing)), y, tens_icon_seg);
+
+        }
+
+        icon_x = (icon_x + (tens_count * icon_spacing) + 6);
+
+        value = (value - (tens_count * 10));
+
+    }
+
+    if(value > 0)
+    {
+
+        if(value > 3)
+        {
+
+            icon_spacing = 6;
+
+        }
+        else
+        {
+
+            icon_spacing = 8;
+
+        }
+
+        for(itr = 0; itr < value; itr++)
+        {
+
+            FLIC_Draw((icon_x + (itr * icon_spacing)), y, ones_icon_seg);
+
+        }
+
+        icon_x = (icon_x + (value * icon_spacing) + 4);
+
+    }
+
+    return icon_x;
+
+}

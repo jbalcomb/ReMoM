@@ -55,7 +55,7 @@ wait 500ms
 # Chaos	    (190,  99) – (286, 121)	click 198 110
 # Nature	(190, 125) – (286, 147)	click 198 136
 # Sorcery	(190, 151) – (286, 173)	click 198 162
-# Test with matchup_hemom.ini set books_sorcery = 4 (etc.) — if a single click at x=198 only adds one book, you'll need 3 more clicks marching right by ~8 px each (≈ 206, 214, 222). Easier alternative: click on the target position directly — at x = 190 + book_count * 8, so for 4 books click x=222 once.
+# Test with matchup_demom.ini set books_sorcery = 4 (etc.) — if a single click at x=198 only adds one book, you'll need 3 more clicks marching right by ~8 px each (≈ 206, 214, 222). Easier alternative: click on the target position directly — at x = 190 + book_count * 8, so for 4 books click x=222 once.
 # Layout sanity check: WSA picklist is the upper-right block (y ≈ 5–45), bookshelves are the right-middle block below it (y ≈ 47–173), portrait + name on the left half. That matches the coords above and the actual screen.
 
 # Artificer button

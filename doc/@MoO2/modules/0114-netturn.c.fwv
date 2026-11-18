@@ -1,0 +1,17 @@
+module_num=114
+module=D:\MOX\OTHERS\NETTURN.C
+source=0114-netturn.c.md
+range[0]=1:0x000EBFAF linear=0x000FBFAF size=1925
+range[1]=2:0x0000218C linear=0x0017218C size=12
+range[2]=2:0x00033104 linear=0x001A3104 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                           SYMBOL                          CHUNK
+m114f001  1    -      0x000FBFAF  1:0x000EBFAF  code         Load_Netturn_Strings           Load_Netturn_Strings_           regions/07-object-1/00180E54-00181653.txt
+m114f002  2    -      0x000FBFE2  1:0x000EBFE2  static,code  Host_Next_Turn                 Host_Next_Turn_                 regions/07-object-1/00180E54-00181653.txt
+m114f003  3    -      0x000FC299  1:0x000EC299  static,code  Must_Broadcast_AI_Player_Data  Must_Broadcast_AI_Player_Data_  regions/07-object-1/00181654-00181E53.txt
+m114f004  4    -      0x000FC2D2  1:0x000EC2D2  static,code  Client_Next_Turn               Client_Next_Turn_               regions/07-object-1/00181654-00181E53.txt
+m114f005  5    -      0x000FC470  1:0x000EC470  code         Net_Next_Turn                  Net_Next_Turn_                  regions/07-object-1/00181654-00181E53.txt
+m114f006  6    -      0x000FC6A5  1:0x000EC6A5  code         Net_Init_Host_Election         Net_Init_Host_Election_         regions/07-object-1/00181654-00181E53.txt
+-         -    -      0x001A3104  2:0x00033104  static,data  _have_d_of_d_chunks_fmt        _have_d_of_d_chunks_fmt         -
+-         -    -      0x001A3108  2:0x00033108  data         _waiting_fmt                   _waiting_fmt                    -

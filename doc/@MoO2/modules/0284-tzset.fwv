@@ -1,0 +1,25 @@
+module_num=284
+module=tzset
+source=0284-tzset.md
+range[0]=1:0x00140C3E linear=0x00150C3E size=976
+range[1]=2:0x00004210 linear=0x00174210 size=4
+range[2]=2:0x00011720 linear=0x00181720 size=160
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME           SYMBOL          CHUNK
+m284f001  1    -      0x00150C3E  1:0x00140C3E  code         __CacheOSTZ    __CacheOSTZ_    regions/07-object-1/001D5E54-001D6653.txt
+m284f002  2    -      0x00150C92  1:0x00140C92  static,code  tryOSTimeZone  tryOSTimeZone_  regions/07-object-1/001D5E54-001D6653.txt
+m284f003  3    -      0x00150CAA  1:0x00140CAA  code         tzset          tzset_          regions/07-object-1/001D5E54-001D6653.txt
+m284f004  4    -      0x00150CB8  1:0x00140CB8  code         __parse_tz     __parse_tz_     regions/07-object-1/001D5E54-001D6653.txt
+m284f005  5    -      0x00150CEF  1:0x00140CEF  static,code  parse_time     parse_time_     regions/07-object-1/001D5E54-001D6653.txt
+m284f006  6    -      0x00150D13  1:0x00140D13  static,code  parse_offset   parse_offset_   regions/07-object-1/001D5E54-001D6653.txt
+m284f007  7    -      0x00150E3C  1:0x00140E3C  static,code  parse_rule     parse_rule_     regions/07-object-1/001D5E54-001D6653.txt
+-         -    -      0x00181720  2:0x00011720  data         ___start_dst   ___start_dst    regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181744  2:0x00011744  data         ___end_dst     ___end_dst      regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181768  2:0x00011768  data         _timezone      _timezone       regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018176C  2:0x0001176C  data         ___dst_adjust  ___dst_adjust   regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181770  2:0x00011770  data         _daylight      _daylight       regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181774  2:0x00011774  static,data  _stzone        _stzone         regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181793  2:0x00011793  static,data  _dtzone        _dtzone         regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817B2  2:0x000117B2  data         _tzname        _tzname         regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817BA  2:0x000117BA  static,data  _tzFlag        _tzFlag         regions/08-object-2/001FF654-001FFE53.txt

@@ -1,0 +1,13 @@
+module_num=376
+module=fpe387
+source=0376-fpe387.md
+range[0]=1:0x00153B9E linear=0x00163B9E size=186
+range[1]=2:0x00012DA8 linear=0x00182DA8 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                SYMBOL               CHUNK
+m376f001  1    -      0x00163B9E  1:0x00153B9E  code  __Init_FPE_handler  __Init_FPE_handler_  regions/07-object-1/001E8E54-001E9653.txt
+m376f002  2    -      0x00163BFB  1:0x00153BFB  code  __Fini_FPE_handler  __Fini_FPE_handler_  regions/07-object-1/001E8E54-001E9653.txt
+-         -    -      0x00182DA8  2:0x00012DA8  data  ___PMSeg            ___PMSeg             regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182DAA  2:0x00012DAA  data  ___PMAddr           ___PMAddr            regions/08-object-2/00200E54-00201653.txt
+-         -    -      0x00182DAE  2:0x00012DAE  data  ___RMAddr           ___RMAddr            regions/08-object-2/00200E54-00201653.txt

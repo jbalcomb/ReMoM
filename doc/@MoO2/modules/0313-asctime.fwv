@@ -1,0 +1,15 @@
+module_num=313
+module=asctime
+source=0313-asctime.md
+range[0]=1:0x00146174 linear=0x00156174 size=332
+range[1]=2:0x00004DD4 linear=0x00174DD4 size=300
+range[2]=2:0x000515BC linear=0x001C15BC size=28
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME      SYMBOL     CHUNK
+m313f001  1    -      0x00156174  1:0x00146174  static,code  convDec   convDec_   regions/07-object-1/001DB654-001DBE53.txt
+m313f002  2    -      0x001561A7  1:0x001461A7  code         _asctime  _asctime_  regions/07-object-1/001DB654-001DBE53.txt
+m313f003  3    -      0x00156294  1:0x00146294  code         _ctime    _ctime_    regions/07-object-1/001DB654-001DBE53.txt
+m313f004  4    -      0x001562AD  1:0x001462AD  code         ctime     ctime_     regions/07-object-1/001DB654-001DBE53.txt
+m313f005  5    -      0x001562B2  1:0x001462B2  code         asctime   asctime_   regions/07-object-1/001DB654-001DBE53.txt
+-         -    -      0x001C15BC  2:0x000515BC  static,data  _result   _result    -

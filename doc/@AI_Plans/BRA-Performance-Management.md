@@ -30,7 +30,7 @@ We are **not** starting from zero; we are starting from scattered, half-connecte
 | A per-**present** frame-time recorder → `.fwv` | exists, runtime-gated, off by default | `PFL_Input_Metrics` (`REMOM_INPUT_METRICS=1`), built for the input work |
 | A per-**frame** counter/summary (frametime, max input gap) | exists, Debug-only, TRACE | `DBG_Frame_Reset` |
 | A per-**call** timing macro | exists, ad-hoc, one function | `PHASE(CALL)` in `NEXTTURN.c` |
-| A deterministic headless runner | exists | HeMoM (`--seed1`, `--load`, `--continue`) |
+| A deterministic windowless runner | exists | DeMoM (`--seed1`, `--load`, `--continue`) |
 | Deterministic input replay | exists | `.RMR` record/replay |
 | A frame budget / SLA | exists implicitly | 55 ms tick |
 | A debug on-screen summary window | exists | `DBG_Main_Screen_Draw_Summary_Window` |
@@ -53,7 +53,7 @@ Findings that shape the effort:
 | **Localizes the cost** | "Slow" must resolve to a layer and a call, not just a frame total. |
 | **Distributions, not means** | p95/p99/max expose the tail that is the actual complaint. |
 | **Low observer effect** | The instrument must not add the time it measures (per-event `fprintf` does). |
-| **Reuses existing infrastructure** | clock, `.fwv`, `DBG_Frame_Reset`, `PHASE`, HeMoM, `.RMR`, CTest. |
+| **Reuses existing infrastructure** | clock, `.fwv`, `DBG_Frame_Reset`, `PHASE`, DeMoM, `.RMR`, CTest. |
 | **Interops with external profilers** | For deep dives, don't reinvent VTune/Tracy/perf — feed or coexist with them. |
 | **Code-clutter cost** | Instrumentation that litters every call site has a real readability/maintenance price. |
 | **Fidelity cost** | Does measuring (or fixing) touch reconstructed original code? |
@@ -79,7 +79,7 @@ Findings that shape the effort:
 "It got slow" with no repro, no number, no attribution. **Rejected** — it is the problem statement.
 
 ### Option B — In-house instrumentation only (zones + frame-time sink + CI gate)
-Formalize `PHASE` into a build-gated zone API, unify it and `PFL_Input_Metrics`/`DBG_Frame_Reset` on one `.fwv` sink with percentile reporting, add headless (HeMoM) and windowed (replay) perf tests with reference baselines in CTest.
+Formalize `PHASE` into a build-gated zone API, unify it and `PFL_Input_Metrics`/`DBG_Frame_Reset` on one `.fwv` sink with percentile reporting, add windowless (DeMoM) and windowed (replay) perf tests with reference baselines in CTest.
 - **Pros:** always available, deterministic, CI-gateable, reuses everything, no external dependency, works on the reporter's machine.
 - **Cons:** shallow (only what you instrument); adds code; manual zone placement has blind spots.
 - **Verdict:** the necessary backbone.
@@ -91,7 +91,7 @@ Adopt a profiler; no in-house code.
 - **Verdict:** right for deep dives, wrong as the system of record.
 
 ### Option D — Hybrid: thin always-on in-house layer for confirm/localize/guard, external profilers for deep dives  ✅ **chosen**
-Build Option B as the always-on, deterministic, CI-gated backbone; make it **profiler-friendly** (a deterministic headless workload external tools can attach to, optional Tracy zone emission behind a build flag) so a deep dive is one step away when the backbone localizes a hotspot.
+Build Option B as the always-on, deterministic, CI-gated backbone; make it **profiler-friendly** (a deterministic windowless workload external tools can attach to, optional Tracy zone emission behind a build flag) so a deep dive is one step away when the backbone localizes a hotspot.
 - **Pros:** covers the whole span — always-on numbers + regression gate + a clean on-ramp to deep tooling; maximal reuse; no mandatory dependency.
 - **Cons:** two things to keep coherent (in-house sink + optional profiler hooks); zone placement is still manual.
 - **Verdict:** **Accepted.**
@@ -100,11 +100,11 @@ Build Option B as the always-on, deterministic, CI-gated backbone; make it **pro
 
 ## 6. Decision
 
-**Implement Option D.** Build a small in-house performance layer — *unified clock + build-gated zone primitive + one frame-time sink with percentile reporting + live readouts + deterministic headless & windowed perf tests + a CTest regression gate against reference baselines* — and keep it **interoperable with** external profilers for deep dives. **Measure and guard first; optimizations are separate, measurement-gated changes.**
+**Implement Option D.** Build a small in-house performance layer — *unified clock + build-gated zone primitive + one frame-time sink with percentile reporting + live readouts + deterministic windowless & windowed perf tests + a CTest regression gate against reference baselines* — and keep it **interoperable with** external profilers for deep dives. **Measure and guard first; optimizations are separate, measurement-gated changes.**
 
 Supporting decisions:
 1. **Frame time in ms, percentiles not means, budget = 55 ms.** Every report is a p50/p95/p99/max distribution against the tick budget and a named-hardware baseline.
-2. **Logic and render are measured and reported separately.** Headless HeMoM isolates logic; windowed replay measures render/present.
+2. **Logic and render are measured and reported separately.** Windowless DeMoM isolates logic; windowed replay measures render/present.
 3. **`PHASE` graduates to a build-gated zone API, auto-stripped in Release.** No hand-toggled per-file `#define`s; one build option; zones feed the shared sink. The code-clutter cost is acknowledged and managed (see PRD §"Instrumentation ergonomics").
 4. **The instrument must not perturb what it measures.** Timestamp arithmetic into a preallocated buffer; no I/O on the hot path; no string formatting in a zone body.
 5. **External profilers are documented, not mandated.** A recommended tool per platform and a deterministic workload for them to chew on; none is a build dependency.

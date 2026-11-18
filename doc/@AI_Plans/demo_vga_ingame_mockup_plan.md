@@ -19,7 +19,7 @@ and calls their public API.
 - **Showcase screens**: dissolve between MAINSCR (main menu) and a magic/spell screen;
   earthquake shakes the main/overland screen.
 - **Safety net**: if an LBX load fails, fall back to the current synthetic pattern and log it,
-  so the headless smoke-run and the no-assets case keep working exactly as today.
+  so the windowless smoke-run and the no-assets case keep working exactly as today.
 
 ## Anchors (verified in the codebase)
 - `LBX_Load(file, entry)` → loads an LBX entry into allocated memory (returns a segment ptr).
@@ -42,7 +42,7 @@ and calls their public API.
 2. New effect `screen`: `LBX_Load` → `Draw_Picture(0,0,seg)` into a page → `Load_Palette` →
    `Demo_Present`, then hold.
 3. Asset-missing detection → synthetic fallback + log.
-4. **Gate**: windowed run shows a real MoM screen; headless smoke-run still clean. Do not
+4. **Gate**: windowed run shows a real MoM screen; windowless smoke-run still clean. Do not
    proceed until the pipeline is proven.
 
 ### Phase 2 — real screens into the effects
@@ -93,7 +93,7 @@ Two gotchas found and fixed:
   - `earthquake`: shakes MAIN.LBX 0 (overland) loaded once into F3 (page 2) -- the quake's real
     in-game context.
   - Both fall back to synthetic patterns when assets are absent.
-  - Builds under /WX; all three effects headless-smoke clean.  Windowed visual not yet eyeballed.
+  - Builds under /WX; all three effects windowless-smoke clean.  Windowed visual not yet eyeballed.
 - Verified along the way: full-screen backgrounds are drawn with FLIC_Draw(0,0,seg) (decompressing
   blitter) -- e.g. main_background_seg = LBX_Load("MAIN",0) (LOADER.c), magic_background_seg =
   LBX_Reload("MAGIC",0) (MagicScr.c).
@@ -119,7 +119,7 @@ Two gotchas found and fixed:
   `dissolve <lbxA> <entryA> <lbxB> <entryB> <palette>` (one shared palette -- a cross-dissolve shows
   both images under a single active palette, so per-screen palettes there would be incoherent).
   Palettes: 0=EMPERATO(main), 1=LOADSAVE, 2=ARCANUS(castle/magic), 4=spell-mastery.
-- Builds under /WX; all effects + palette overrides headless-smoke clean.  Windowed visuals still
+- Builds under /WX; all effects + palette overrides windowless-smoke clean.  Windowed visuals still
   to be eyeballed by the user.
 
 ## Scope note
@@ -140,7 +140,7 @@ Goal: watch IDK_SummonAnim's animation for a given summon type.
 - Reliable for NEGATIVE special types (hero/item): -2 male hero, -3 female hero, -1 item -- these
   avoid the unit/spell data tables.  Positive creature types need those tables loaded AND rely on
   a MONSTER.LBX figure-index formula the reconstruction flags as uncertain -> deferred.
-- CAVEAT: summon visuals are NOT self-verifiable (headless smoke only crash-checks); needs user eyeball.
+- CAVEAT: summon visuals are NOT self-verifiable (windowless smoke only crash-checks); needs user eyeball.
 
 ## Lose animation path (DONE — effect_lose.c; visually confirmed)
 `demo_vga lose <wizard 0-13>` calls the REAL Lose_Animation() directly (self-contained, no world,
@@ -173,9 +173,9 @@ full engine boot itself.
 - End_Of_Game_Score is INTERACTIVE (ESC advances the score screen + Hall of Fame) and WRITES the
   SET file on the hi-score upsert -> run from an ISOLATED copy of assets so it can't clobber the
   real SET file.  Verified: copy assets/ to a temp dir, cd there, run bin/Debug/demo_vga.exe (DLLs
-  load from the exe dir, data + SET write from cwd).  Headless smoke reached the score screen
+  load from the exe dir, data + SET write from cwd).  Windowless smoke reached the score screen
   crash-clean; real assets/MAGIC.SET untouched.  Windowed visual still to be eyeballed.
-- setvbuf(stdout, _IONBF) added to demo main() so progress prints survive a headless kill.
+- setvbuf(stdout, _IONBF) added to demo main() so progress prints survive a windowless kill.
 
 ## Spell of Mastery path (DONE — effect_mastery.c; DIRECT test, real function, visual unverified)
 `demo_vga mastery` DIRECTLY tests the real Cast_Spell_Of_Mastery() from a save -- same full_boot +
@@ -184,7 +184,7 @@ Allocate_Reduced_Map + Main_Screen_Draw, needing a loaded world).
   ReMoM_Init_Engine -> Load_WZD_Resources -> Load_SAVE_GAM(-1 -> SAVETEST.GAM) -> Loaded_Game_Update
   -> Cast_Spell_Of_Mastery(HUMAN_PLAYER_IDX)
 Self-terminating (_combat_wx < 200) or ESC, then returns to the overland; effect holds.  MOM_FONT_FILE
-defined once in effect_score.c (shared).  Headless smoke reached the casting animation crash-clean in
+defined once in effect_score.c (shared).  Windowless smoke reached the casting animation crash-clean in
 the isolated dir.  Windowed visual still to be eyeballed.
 
 ## Vanish_Bitmap path (DONE — effect_vanish.c; visual unverified)
@@ -194,7 +194,7 @@ visibility percent (Vanish_Bitmap: pixel transparent if dither_threshold > perce
 FLIC_Set_LoopFrame_1 -> Draw_Picture.  percent 0->100 materializes, 100->0 dematerializes; loops.
 Vanish_Bitmap is destructive so the copy is re-rendered every frame.  Default sprite = CITYSCAP.LBX
 building (entries 42+, per LOADER.c:1190); LBX/entry CLI-overridable.  Trimmed boot -- no world/state,
-no file writes (run from bin/Debug directly).  Headless smoke: loaded CITYSCAP 42, looped crash-clean.
+no file writes (run from bin/Debug directly).  Windowless smoke: loaded CITYSCAP 42, looped crash-clean.
 
 ## Crash reporter (DONE — demo_crash.c)
 `Demo_Install_Crash_Handler()` (called first thing in main) installs a SetUnhandledExceptionFilter
@@ -245,6 +245,6 @@ arithmetic in the reconstruction -- same class of bug.
 - `demo/` stand-alone target `demo_vga`:
   - `demo_main.c` (dispatcher), `demo_harness.{h,c}` (boot + helpers), `demo_effects.h`
     (registry), `effect_dissolve.c`, `effect_earthquake.c`.
-  - Builds, links, headless smoke-runs clean for both effects. Visuals not yet eyeballed.
+  - Builds, links, windowless smoke-runs clean for both effects. Visuals not yet eyeballed.
 - Effects currently use synthetic bar patterns + a synthetic palette; no assets required.
 - Not wired into autotools (`Makefile.am`) — CMake-only, by intent (optional dev harness).

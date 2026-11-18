@@ -17,7 +17,7 @@
 // WZD dseg:7004                                                 ovr057
 // WZD dseg:7004                                                 ovr150
 // WZD dseg:7004
-extern int16_t DBG_ShowTileInfo;
+extern int16_t dbg_show_square_info;
 
 // WZD dseg:7006 00                                              db    0
 // WZD dseg:7007 00                                              db    0
@@ -48,7 +48,7 @@ extern int16_t DBG_ShowTileInfo;
 // WZD dseg:7011
  // PRIVATE uint8_t COL_City_Banner[];
  
-// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+m_node_warp_shear_array db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Er ...
+// WZD dseg:7034 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+m_node_warp_shear_array db 14h dup(0)        ; DATA XREF: Draw_Map_Nodes+27Evr ...
 // WZD dseg:7034 00 00 00 00                                                                             ; 20 bytes randomized between -1, 0, or +1
 
 // WZD dseg:7048  9B 9F        WarpNode_SeedSave_LO dw 9F9Bh
@@ -123,21 +123,10 @@ extern "C" {
 */
 
 // WZD o67p01
-/*
-; draws the visible sections of the overland into the
-; current draw segment, and the minimap into the
-; Minimap_IMG_Seg allocation, according to the passed
-; parameters:
-;   Top/Left - main display pixel coordinates
-;   H/VTiles - horizontal/vertical window size in squares
-;   XPos/YPos/Plane - top left map coordinates
-;   MapX@/MapY@ - return values to set
-; resets the draw window after finishing
-*/
 void Draw_Maps(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t *MapX, int16_t *MapY, int16_t Plane, int16_t XPos, int16_t YPos, int16_t player_idx);
 
 // WZD o67p02
-void IDK_CheckSet_MapDisplay_XY(void);
+void Clamp_Map_Window_Position(void);
 
 // WZD o67p03
 // void sub_59DF7(int16_t arg_0);
@@ -167,7 +156,8 @@ void Set_Entities_On_Map_Window(int16_t world_x, int16_t world_y, int16_t world_
 void Add_Nodes_To_Entities_On_Map_Window(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o67p12
-// OVL_DrawMapSection
+// drake178: OVL_DrawMapSection()
+void Draw_Map_Squares_Around_Screen_Point(int16_t screen_x, int16_t screen_y, int16_t wp, int16_t map_x, int16_t map_y);
 
 // WZD o67p13
 void Set_Unit_Draw_Priority(void);
@@ -201,10 +191,11 @@ void Reduced_Map_Coords(int16_t * minimap_x, int16_t * minimap_y, int16_t mid_x,
 void Redraw_Map_Unexplored_Area(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t world_plane);
 
 // WZD o68p05
-// RP_OVL_DrawCities2()
+// drake178: RP_OVL_DrawCities2()
+void Draw_Map_Cities_In_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_grid_width, int16_t map_grid_height, int16_t world_grid_x, int16_t world_grid_y, int16_t wp);
 
 // WZD o68p06
-void Set_Map_Square_Explored_Flags_XYP(int16_t wx, int16_t wy, int16_t wp);
+void Set_Square_Explored_Flags(int16_t wx, int16_t wy, int16_t wp);
 
 // WZD o68p07
 void Set_Square_Explored_Flags_Bottom_Right_Corner(int16_t wx, int16_t wy, int16_t wp);
@@ -224,14 +215,16 @@ void List_Screen_Draw_Reduced_Map(int16_t x, int16_t y, int16_t w, int16_t h, in
 // WZD o150p01
 // AKA Undef_Prev_Map_Draw_XY()
 void Reset_Map_Draw(void);
-// WZD o150p02 
-// OVL_MapStateSave()
-// WZD o150p03 
-// OVL_MapStateRestore()
+// WZD o150p02
+// drake178: OVL_MapStateSave()
+void Save_Map_Draw_State(void);
+// WZD o150p03
+// drake178: OVL_MapStateRestore()
+void Restore_Map_Draw_State(void);
 // WZD o150p04
 void Draw_Map_Window(int16_t screen_x, int16_t screen_y, int16_t map_w, int16_t map_h, int16_t map_x, int16_t map_y, int16_t map_p);
 // WZD o150p05
-void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
+// void TST_Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);  /* CLAUDE: no definition */
 void Draw_Map_Terrain(int16_t x, int16_t y, int16_t HTiles, int16_t VTiles, int16_t map_xpos, int16_t map_ypos, int16_t map_plane);
 // WZD o150p06
 void Cycle_Map_Animations(void);

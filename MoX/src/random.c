@@ -57,63 +57,60 @@ unsigned long g_rng_seg_idx = 0;   /* Random() draws since that reseed       */
 */
 
 // WZD s01p07
+// drake178: RNG_WeightedPick16()
 // MoO2  Module: KEN  Get_Weighted_Choice_()
-/* GEMINI */
 // MGC  int16_t Get_Weighted_Choice_MGC(int16_t * weight_array, int16_t weight_count)
 int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count)
 {
-    int16_t i = 0;
-    int16_t choice = 0;
+    uint16_t weight_total = 0;  // _DI_
+    int16_t itr_weights = 0;
     int16_t weight_remainder = 0;
-    int16_t j = 0;
-    int16_t max_weight = 0;
+    int16_t choice = 0;
+    int16_t itr_halve = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 restart_sum:
-    max_weight = 0;
-    
+    weight_total = 0;
+
     /* 1. Sum up all the weights in the array */
-    for(j = 0; j < weight_count; j++)
+    for(itr_weights = 0; itr_weights < weight_count; itr_weights++)
     {
-        max_weight += weight_array[j];
-        
+        weight_total += weight_array[itr_weights];
+
         /* 2. THE NORMALIZATION HACK */
-        if(max_weight >= 512)
+        if(weight_total >= 512)
         {
             /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
-            for(i = 0; i < weight_count; i++)
+            for(itr_halve = 0; itr_halve < weight_count; itr_halve++)
             {
-                weight_array[i] >>= 1; 
+                weight_array[itr_halve] = (int16_t)((uint16_t)weight_array[itr_halve] >> 1);
             }
             /* Start the summation completely over! */
             goto restart_sum;
         }
     }
 
-    /* 3. Safety Check: If the max weight is 0, default to the first element */
-    if(max_weight == 0)
+    /* 3. Safety Check: If the total weight is 0, default to the first element */
+    if(weight_total == 0)
     {
-        LOG_TRACE(LOG_CAT_GENERAL, "max_weight: %d", max_weight);
+        LOG_TRACE(LOG_CAT_GENERAL, "weight_total: %u", weight_total);
         return 0;
     }
 
-    /* 4. Roll the dice */
-    // weight_remainder = Random(max_weight);
-    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__, __func__);
-
-    /* 5. Find the winning index */
-    weight_remainder -= weight_array[0];
+    /* 4. Roll the dice and 5. take the first weight off */
+    // weight_remainder = Random(weight_total) - weight_array[0];
+    /* CLAUDE */ weight_remainder = Random_at(weight_total, __FILE__, __LINE__, __func__) - weight_array[0];
     choice = 0;
 
     /* Subtract weights until the random value dips below zero */
     while(weight_remainder > 0 && choice < weight_count - 1)
     {
         choice++;
-        weight_remainder -= weight_array[choice];
+        weight_remainder = weight_remainder - weight_array[choice];  // asm: mov ax, [rem] / sub ax, [w] / mov [rem], ax  ...-= compiles to mov ax, [w] / sub [rem], ax
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return choice;
 }
@@ -122,56 +119,57 @@ restart_sum:
 // WZD s01p08
 // MoO2  Module: KEN  Get_Weighted_Choice_Long_()
 /* only difference is the type for the weights and the sum */
-/* GEMINI */
 int16_t Get_Weighted_Choice_Long(int32_t * weight_array, int16_t weight_count)
 {
-    int16_t i = 0;
-    int16_t choice = 0;
+    int32_t weight_total = 0;
+    int16_t itr_weights = 0;
     int16_t weight_remainder = 0;
-    int16_t j = 0;
-    int32_t max_weight = 0;
+    int16_t choice = 0;
+    int16_t itr_halve = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
 restart_sum:
-    max_weight = 0;
-    
+    weight_total = 0;
+
     /* 1. Sum up all the weights in the array */
-    for (j = 0; j < weight_count; j++) {
-        max_weight += weight_array[j];
-        
+    for(itr_weights = 0; itr_weights < weight_count; itr_weights++)
+    {
+        weight_total += weight_array[itr_weights];
+
         /* 2. THE NORMALIZATION HACK */
-        if(max_weight >= 512) {
-            /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 (bit-shift right) */
-            for (i = 0; i < weight_count; i++) {
-                weight_array[i] >>= 1; 
+        if(weight_total >= 512)
+        {
+            /* If the total weight gets dangerously high, divide EVERY weight in the array by 2 */
+            for(itr_halve = 0; itr_halve < weight_count; itr_halve++)
+            {
+                weight_array[itr_halve] = (weight_array[itr_halve] / 2);
             }
             /* Start the summation completely over! */
             goto restart_sum;
         }
     }
 
-    /* 3. Safety Check: If the max weight is 0, default to the first element */
-    if(max_weight == 0) {
-        LOG_TRACE(LOG_CAT_GENERAL, "max_weight: %d", max_weight);
+    /* 3. Safety Check: If the total weight is 0, default to the first element */
+    if(weight_total == 0)
+    {
+        LOG_TRACE(LOG_CAT_GENERAL, "weight_total: %d", weight_total);
         return 0;
     }
 
-    /* 4. Roll the dice */
-    // weight_remainder = Random(max_weight);
-    /* CLAUDE */ weight_remainder = Random_at(max_weight, __FILE__, __LINE__, __func__);
-    
-    /* 5. Find the winning index */
-    weight_remainder -= weight_array[0];
+    /* 4. Roll the dice and 5. take the first weight off */
+    // weight_remainder = Random(weight_total) - weight_array[0];
+    /* CLAUDE */ weight_remainder = Random_at(weight_total, __FILE__, __LINE__, __func__) - weight_array[0];  // asm: push the low word of the sum / call Random / sub ax, [di] (the low word of weight_array[0]) / mov [rem], ax
     choice = 0;
 
     /* Subtract weights until the random value dips below zero */
-    while(weight_remainder > 0 && choice < weight_count - 1) {
+    while(weight_remainder > 0 && choice < weight_count - 1)
+    {
         choice++;
-        weight_remainder -= weight_array[choice];
+        weight_remainder -= (int16_t)weight_array[choice];  // asm: mov ax, [w] / sub [rem], ax  ...BCC 3.1 gives this only with the (int16_t) cast; without it: mov ax, [rem] / sub ax, [w] / mov [rem], ax
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     return choice;
 
@@ -180,12 +178,81 @@ restart_sum:
 
 // WZD s01p09
 // MoO2  Module: KEN  Get_Weighted_Best_Choice_()
-// Get_Weighted_Best_Choice()
+/*
+OON XREF:  none - no caller in WIZARDS.EXE
+
+adds a random 1..random_range to every non-zero weight, then returns the index of the highest weight
+the array is modified in place
+*/
+int16_t Get_Weighted_Best_Choice(uint16_t * weight_array, int16_t weight_count, int16_t random_range)
+{
+    int16_t choice = 0;
+    uint16_t highest_weight = 0;  // asm: cmp ax, [bp+Highest_Value] / jbe  ...unsigned compare
+    int16_t itr = 0;  // _SI_
+
+    for(itr = 0; itr < weight_count; itr++)
+    {
+        if(weight_array[itr] != 0)
+        {
+            weight_array[itr] += Random(random_range);
+        }
+    }
+
+    highest_weight = weight_array[0];
+
+    choice = 0;
+
+    for(itr = 1; itr < weight_count; itr++)
+    {
+        if(weight_array[itr] > highest_weight)
+        {
+            choice = itr;
+            highest_weight = weight_array[itr];
+        }
+    }
+
+    return choice;
+
+}
 
 
 // WZD s01p10
 // MoO2  Module: KEN  Get_Weighted_Choice_Best_Long_()
-// Get_Weighted_Best_Choice_Long()
+/*
+OON XREF:  none - no caller in WIZARDS.EXE
+
+the int32_t version of Get_Weighted_Best_Choice(); here the compare is signed
+*/
+int16_t Get_Weighted_Choice_Best_Long(int32_t * weight_array, int16_t weight_count, int16_t random_range)
+{
+    int16_t choice = 0;
+    int32_t highest_weight = 0;  // asm: cmp hi / jl / jg / cmp lo / jbe  ...signed long compare
+    int16_t itr = 0;  // _DI_
+
+    for(itr = 0; itr < weight_count; itr++)
+    {
+        if(weight_array[itr] != 0)
+        {
+            weight_array[itr] += Random(random_range);  // asm: call Random / cwd  ...sign-extended
+        }
+    }
+
+    highest_weight = weight_array[0];
+
+    choice = 0;
+
+    for(itr = 1; itr < weight_count; itr++)
+    {
+        if(weight_array[itr] > highest_weight)
+        {
+            choice = itr;
+            highest_weight = weight_array[itr];
+        }
+    }
+
+    return choice;
+
+}
 
 
 
@@ -337,6 +404,8 @@ int16_t Random(int16_t n)
 
     random_seed = ((uint32_t)seed_hi << 16) | (uint32_t)seed_lo;
 
+    /* OGBUG  only 9 bits per call (9 LFSR steps into a 0..511 value), returned as result % n + 1: results above 512 are impossible and every roll has modulo bias
+       (Random(100): 1..12 come up 6/512 each, 13..100 5/512 each, so Random(100) <= 10 is 11.7%, not 10%) */
     bounded_seed = (int16_t)((result % n) + 1);
 
     return bounded_seed;

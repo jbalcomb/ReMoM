@@ -286,7 +286,7 @@ Main_Screen+12A8                     mov     [current_screen], scr_Next_Turn_Pro
 
 
 
-WZD dseg:C050 00 00                                           _next_turn_button dw 0                  ; DATA XREF: Main_Screen:loc_50610r ...
+WZD dseg:C050 00 00                                           _next_turn_button dw 0                  ; DATA XREF: Main_Screen:loc_50610vr ...
 
 Main_Screen:@@Check_Input_NextTurnButton cmp     _SI_InputIndex, [_next_turn_button]
 Main_Screen+B17                          cmp     _SI_InputIndex, [_next_turn_button]
@@ -323,7 +323,7 @@ void Main_Screen_Draw_Next_Turn_Button(void)
 
 main() |-> Screen_Control() |-> Main_Screen()
 
-ovr057:0AB0                                                 @@Check_Input_NextTurnButton:           ; CODE XREF: Main_Screen+A9Fj ...
+ovr057:0AB0                                                 @@Check_Input_NextTurnButton:           ; CODE XREF: Main_Screen+A9F^j ...
 ovr057:0AB0 3B 36 50 C0                                     cmp     _SI_InputIndex, [_next_turn_button]
 ovr057:0AB4 74 3B                                           jz      short @@PrepNextTurn
 

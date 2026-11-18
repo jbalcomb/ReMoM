@@ -12,22 +12,23 @@
 
 
 
+#include "Fields.h"  /* Get_Field_Counter() */
 #include "Fonts.h"
 #include "paragrph.h"
 
 
 
 // dseg:783C                                                 seg017  MoO2 Module: fonts
-// dseg:783C 00 00                                           outline_color dw 0                      ; DATA XREF: Set_Outline_Color+6w ...
-// dseg:783E 00 00                                           draw_alias_flag dw 0                    ; DATA XREF: Print_Display+4Cw ...
-// dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4w
+// dseg:783C 00 00                                           outline_color dw 0                      ; DATA XREF: Set_Outline_Color+6^w ...
+// dseg:783E 00 00                                           draw_alias_flag dw 0                    ; DATA XREF: Print_Display+4C^w ...
+// dseg:7840 00 00                                           UU_VGA_TextDraw_Enabled dw 0            ; DATA XREF: VGA_TextDraw_Init+4^w
 
 // dseg:7842
 // drake178: VGA_FltBlock_Count
 int16_t exclusion_count = 0;
 
 // dseg:7844                                                 seg020  MoO2 Module: palette
-// dseg:7844 FF FF                                           cycle_direction_flag dw 0FFFFh          ; DATA XREF: Reset_Cycle_Palette_Color+3w ...
+// dseg:7844 FF FF                                           cycle_direction_flag dw 0FFFFh          ; DATA XREF: Reset_Cycle_Palette_Color+3^w ...
 
 
 
@@ -86,26 +87,26 @@ MoO2
 VGA_TextDraw_Lines  ~==  paragraph_max_lines
 
 
-dseg02:0017C9EC word_17C9EC         dw 0                                                                            ; DATA XREF: Set_Paragraph_Exclusion_Area+21r ...
-dseg02:0017C9EE exclusion_count     dw 0                                                                            ; DATA XREF: Set_Line_Limits_:loc_106B54r ...
+dseg02:0017C9EC word_17C9EC         dw 0                                                                            ; DATA XREF: Set_Paragraph_Exclusion_Area+21^r ...
+dseg02:0017C9EE exclusion_count     dw 0                                                                            ; DATA XREF: Set_Line_Limits_:loc_106B54^r ...
 
 dseg02:001B8AF4 exclusion_area_x1   dw 4 dup(     ?)                                                                ; 0
-dseg02:001B8AF4                                                                                                     ; DATA XREF: Set_Line_Limits_+C2r ...
+dseg02:001B8AF4                                                                                                     ; DATA XREF: Set_Line_Limits_+C2^r ...
 dseg02:001B8AFC exclusion_area_x2   dw 4 dup(     ?)                                                                ; 0
-dseg02:001B8AFC                                                                                                     ; DATA XREF: Set_Line_Limits_+C9r ...
+dseg02:001B8AFC                                                                                                     ; DATA XREF: Set_Line_Limits_+C9^r ...
 dseg02:001B8B04 exclusion_area_y1   dw 4 dup(     ?)                                                                ; 0
-dseg02:001B8B04                                                                                                     ; DATA XREF: Set_Line_Limits_+A1r ...
+dseg02:001B8B04                                                                                                     ; DATA XREF: Set_Line_Limits_+A1^r ...
 dseg02:001B8B0C exclusion_area_y2   dw 4 dup(     ?)                                                                ; 0
-dseg02:001B8B0C                                                                                                     ; DATA XREF: Set_Line_Limits_+B5r ...
+dseg02:001B8B0C                                                                                                     ; DATA XREF: Set_Line_Limits_+B5^r ...
 dseg02:001B8B14 paragraph_line_y_start dw 64h dup(     ?)                                                              ; 0
-dseg02:001B8B14                                                                                                     ; DATA XREF: Mark_Paragraph+2B0w ...
+dseg02:001B8B14                                                                                                     ; DATA XREF: Mark_Paragraph+2B0^w ...
 dseg02:001B8BDC paragraph_line_x_start dw 64h dup(     ?)                                                              ; 0
-dseg02:001B8BDC                                                                                                     ; DATA XREF: Mark_Paragraph+286w ...
+dseg02:001B8BDC                                                                                                     ; DATA XREF: Mark_Paragraph+286^w ...
 dseg02:001B8CA4 paragraph_line_offset dw 64h dup(     ?)                                                              ; 0
-dseg02:001B8CA4                                                                                                     ; DATA XREF: Mark_Paragraph+2C5w ...
+dseg02:001B8CA4                                                                                                     ; DATA XREF: Mark_Paragraph+2C5^w ...
 dseg02:001B8D6C paragraph_line_x_end dw 64h dup(     ?)                                                              ; 0
-dseg02:001B8D6C                                                                                                     ; DATA XREF: Mark_Paragraph+29Bw ...
-dseg02:001B8E34 paragraph_max_lines dw ?                                                                            ; DATA XREF: Print_Paragraph+3Fr ...
+dseg02:001B8D6C                                                                                                     ; DATA XREF: Mark_Paragraph+29B^w ...
+dseg02:001B8E34 paragraph_max_lines dw ?                                                                            ; DATA XREF: Print_Paragraph+3F^r ...
 dseg02:001B8E36                     align 4
 */
 
@@ -192,10 +193,322 @@ void Print_Paragraph(int16_t x, int16_t y, int16_t max_width, char * string, int
 }
 
 // WZD s19p02
-// UU_VGA_WndDrawText()
+// drake178: UU_VGA_WndDrawText()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+Mark_Paragraph() string into width at (x, y), then prints every line left-aligned (align 0), right-aligned (1) or centered (2)
+*/
+void Print_Paragraph_Aligned__NIU(int16_t x, int16_t y, int16_t width, char * string, int16_t align)
+{
+    int16_t itr = 0;  // _SI_
+
+    Mark_Paragraph(x, y, width, string);
+
+    for(itr = 0; itr < paragraph_max_lines; itr++)
+    {
+
+        switch(align)
+        {
+
+            case 0:
+            {
+
+                Clipped_Print(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);
+
+            } break;
+
+            case 1:
+            {
+
+                Clipped_Print_Right(paragraph_line_x_end[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);  /* NOTE  the asm also pushes width (add sp, 8); Clipped_Print_Right() reads only x, y, string */
+
+            } break;
+
+            case 2:
+            {
+
+                Clipped_Print_Centered(((paragraph_line_x_start[itr] + paragraph_line_x_end[itr]) / 2), paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]]);  /* NOTE  the asm also pushes width (add sp, 8); Clipped_Print_Centered() reads only x, y, string */
+
+            } break;
+
+        }
+
+    }
+
+    Remove_Paragraph_Marks(string);
+
+    exclusion_count = 0;
+
+}
+
 
 // WZD s19p03
-// UU_GUI_CreateHelpLinks()
+// drake178: UU_GUI_CreateHelpLinks()
+/*
+NIU  nothing in WIZARDS.EXE calls it
+Mark_Paragraph() string into width at (x, y) and adds a field for each link in it - the text between a pair of char 4 marks - that sets *variable to the link's number (1, 2, ...)
+    align 0 left, 1 right, 2 centered, 3 justified (the last line left-aligned): the link x positions follow the same layout
+*/
+void Add_Paragraph_Link_Fields__NIU(int16_t x, int16_t y, int16_t width, char * string, int16_t align, int16_t * variable, char * hotkey, int16_t help)
+{
+    int16_t link_x2[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t link_x1[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t * font_widths = 0;
+    int16_t line_string_width = 0;
+    int16_t space_extension = 0;
+    int16_t line_space_count = 0;
+    int16_t spread_pixels = 0;
+    int16_t spaces_drawn = 0;
+    int16_t link_on = 0;
+    int16_t link_count = 0;
+    int16_t link_number = 0;
+    int16_t first_field_idx = 0;
+    int16_t line_char = 0;
+    int16_t justify_width = 0;
+    int16_t line_char_idx = 0;
+    int16_t line_x = 0;
+    int16_t font_spacing = 0;
+    int16_t font_height = 0;
+    int16_t itr_chars = 0;  // _SI_
+    int16_t itr_lines = 0;  // _DI_
+
+    font_widths = (uint8_t *)(font_style_data + FONT_HDR_POS_CURRENT_FONT_WIDTHS);
+
+    font_height = GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);  /* asm: farpeekb */
+
+    font_spacing = GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);  /* asm: farpeekb */
+
+    first_field_idx = Get_Field_Counter();
+
+    link_number = 1;
+
+    Mark_Paragraph(x, y, width, string);
+
+    justify_width = 0;
+
+    for(itr_lines = 0; itr_lines < paragraph_max_lines; itr_lines++)
+    {
+
+        line_string_width = Get_String_Width(&string[paragraph_line_offset[itr_lines]]);
+
+        if(
+            ((paragraph_max_lines - 1) == itr_lines)
+            &&
+            (align == 3)
+        )
+        {
+
+            align = 0;
+
+        }
+
+        switch(align)
+        {
+
+            case 0:
+            {
+
+                line_x = paragraph_line_x_start[itr_lines];
+
+            } break;
+
+            case 1:
+            {
+
+                line_x = (paragraph_line_x_end[itr_lines] - line_string_width);
+
+            } break;
+
+            case 2:
+            {
+
+                line_x = (((paragraph_line_x_start[itr_lines] + paragraph_line_x_end[itr_lines]) / 2) - (line_string_width / 2));
+
+            } break;
+
+            case 3:
+            {
+
+                line_x = paragraph_line_x_start[itr_lines];
+
+                justify_width = (paragraph_line_x_end[itr_lines] - line_x);
+
+                if(justify_width < 0)
+                {
+
+                    justify_width = 0;
+
+                }
+
+                if(justify_width != 0)
+                {
+
+                    spaces_drawn = 0;
+
+                    spread_pixels = 0;
+
+                    itr_chars = paragraph_line_offset[itr_lines];
+
+                    line_space_count = 0;
+
+                    /* OGBUG  the last test compares the INDEX with 29 (asm: cmp si, 1Dh), not string[itr_chars] - every other end-of-line code is tested on the character */
+                    while(
+                        (string[itr_chars] != 0)
+                        &&
+                        (string[itr_chars] != 13)
+                        &&
+                        (string[itr_chars] != 20)
+                        &&
+                        (string[itr_chars] != 25)
+                        &&
+                        (string[itr_chars] != 21)
+                        &&
+                        (itr_chars != 29)
+                    )
+                    {
+
+                        if(string[itr_chars] == ' ')
+                        {
+
+                            line_space_count++;
+
+                        }
+
+                        itr_chars++;
+
+                    }
+
+                    if(line_space_count == 0)
+                    {
+
+                        justify_width = 0;
+
+                    }
+
+                    justify_width -= line_string_width;
+
+                    if(justify_width <= 0)
+                    {
+
+                        justify_width = 0;
+
+                    }
+                    else
+                    {
+
+                        spread_pixels = (justify_width % line_space_count);
+
+                        space_extension = (justify_width / line_space_count);
+
+                    }
+
+                }
+
+            } break;
+
+        }
+
+        line_char_idx = paragraph_line_offset[itr_lines];
+
+        link_count = 0;
+
+        link_on = ST_FALSE;
+
+        while(1)
+        {
+
+            line_char = string[line_char_idx];  /* asm: mov al, [bx] / cbw - a signed char */
+
+            /* end-of-line codes: 0, 21, 13, 20, 25, 29 */
+            if(
+                (line_char == 0)
+                ||
+                (line_char == 21)
+                ||
+                (line_char == 13)
+                ||
+                (line_char == 20)
+                ||
+                (line_char == 25)
+                ||
+                (line_char == 29)
+            )
+            {
+
+                break;
+
+            }
+
+            if(line_char == 4)
+            {
+
+                if(link_on == ST_FALSE)
+                {
+
+                    link_on = ST_TRUE;
+
+                    link_x1[link_count] = line_x;
+
+                }
+                else
+                {
+
+                    link_on = ST_FALSE;
+
+                    link_x2[link_count] = line_x;
+
+                    link_count++;
+
+                }
+
+            }
+
+            if(line_char >= ' ')
+            {
+
+                line_x += (font_widths[(line_char - ' ')] + font_spacing);
+
+                if(
+                    (justify_width != 0)
+                    &&
+                    (line_char == ' ')
+                )
+                {
+
+                    line_x += space_extension;
+
+                    if(spaces_drawn < spread_pixels)
+                    {
+
+                        line_x++;
+
+                    }
+
+                    spaces_drawn++;
+
+                }
+
+            }
+
+            line_char_idx++;
+
+        }
+
+        for(itr_chars = 0; itr_chars < link_count; itr_chars++)
+        {
+
+            Add_Click_Link_Field__NIU(first_field_idx, variable, link_number, (link_x1[itr_chars] - 1), (paragraph_line_y_start[itr_lines] - 1), link_x2[itr_chars], (paragraph_line_y_start[itr_lines] + font_height), hotkey, help);
+
+            link_number++;
+
+        }
+
+    }
+
+    Remove_Paragraph_Marks(string);
+
+}
+
 
 // WZD s19p04
 // drake178: VGA_TextSetup()
@@ -238,9 +551,12 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
     paragraph_max_lines = 0; // ; the amount of elements in the VGA_TextLine_ arrays
     x_override = -1;
     string_widths = (uint8_t *)(font_style_data + FONT_HDR_POS_CURRENT_FONT_WIDTHS);
-    font_height = GET_2B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
-    spacing = GET_2B_OFS(font_style_data, FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);
-    line_feed = GET_2B_OFS(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT);  // MoO2  font_header.current_line_feed ¿ added after MoM ?
+    // font_height = GET_2B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);
+    // spacing = GET_2B_OFS(font_style_data, FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);
+    // line_feed = GET_2B_OFS(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT);  // MoO2  font_header.current_line_feed ¿ added after MoM ?
+    font_height = GET_1B_OFS(font_style_data, FONT_HDR_POS_HEIGHT);  /* CLAUDE  asm seg019 Mark_Paragraph reads all three with farpeekb (byte, zero-extended) */
+    spacing = GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_HORIZONTAL_SPACING);  /* CLAUDE */
+    line_feed = GET_1B_OFS(font_style_data, FONT_HDR_POS_CURRENT_BASE_HEIGHT);  /* CLAUDE */  // MoO2  font_header.current_line_feed ¿ added after MoM ?
     ypos = y;
 
     xmin = 0;  // DNE in Dasm
@@ -254,16 +570,28 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 
         skip_flag = 0;
 
-        if(x_override != -1)
+        // if(x_override != -1)
+        // {
+        //     xmin = x_override;
+        //     xmax = x + full_width - 1;
+        //     x_override = -1;
+        // }
+        // else
+        // {
+        //     xmin = x;
+        //     xmax = x + full_width;
+        // }
+        /* CLAUDE  asm: `cmp [bp+x_override], -1; jnz` - the -1 branch comes first, and its xmax is `x + full_width` then `dec ax`, too */
+        if(x_override == -1)
+        {
+            xmin = x;
+            xmax = x + full_width - 1;
+        }
+        else
         {
             xmin = x_override;
             xmax = x + full_width - 1;
             x_override = -1;
-        }
-        else
-        {
-            xmin = x;
-            xmax = x + full_width;
         }
 
 
@@ -302,10 +630,15 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                         {
                             xmin = (exclusion_area_x2[itr_exclusion_count] + 1);
                         }
-                        if(xmin > xmax)
-                        {
-                            skip_flag = ST_TRUE;
-                        }
+                        // if(xmin > xmax)
+                        // {
+                        //     skip_flag = ST_TRUE;
+                        // }
+                    }
+                    /* CLAUDE  asm @@CheckXminGteXmax: reached by every exclusion whose y range matches, x overlap or not, and `cmp xmin, xmax; jl` skips only while xmin < xmax */
+                    if(xmin >= xmax)
+                    {
+                        skip_flag = ST_TRUE;
                     }
                 }
             }
@@ -339,26 +672,37 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
 
                 character = string[temp_ptr];
 
-                if(character < 0x20)  /* LT ASCII SPACE ∴ Non-Printable ∴ Control Character */
-                {
-                    
-                    if(
-                        character == 0x14   /*  ASCII  14h  20d  DC4 (device control 4)      */
-                        ||
-                        character == 0x0D   /*  ASCII  0Dh  13d  CR  (carriage return)       */
-                        ||
-                        character == 0x00   /*  ASCII  00h  00d  NUL (null)                  */
-                        ||
-                        character == 0x19   /*  ASCII  15h  21d  NAK (negative acknowledge)  */
-                        ||
-                        character == 0x1D   /*  ASCII  1Dh  29d  GS  (group separator)       */
-                    )
-                    {
-                        Line_Width = (-(spacing) - 1);  // ¿ this makes it take the other branch at the top of the loop ?
-                        tab = character;
-                    }
-                }
-                else
+                // if(character < 0x20)  /* LT ASCII SPACE ∴ Non-Printable ∴ Control Character */
+                // {
+                //
+                //     if(
+                //         character == 0x14   /*  ASCII  14h  20d  DC4 (device control 4)      */
+                //         ||
+                //         character == 0x0D   /*  ASCII  0Dh  13d  CR  (carriage return)       */
+                //         ||
+                //         character == 0x00   /*  ASCII  00h  00d  NUL (null)                  */
+                //         ||
+                //         character == 0x19   /*  ASCII  15h  21d  NAK (negative acknowledge)  */
+                //         ||
+                //         character == 0x1D   /*  ASCII  1Dh  29d  GS  (group separator)       */
+                //     )
+                //     {
+                //         Line_Width = (-(spacing) - 1);  // ¿ this makes it take the other branch at the top of the loop ?
+                //         tab = character;
+                //     }
+                // }
+                // else
+                // {
+                //
+                //     Line_Width -= string_widths[(character - 32)] + spacing;
+                //
+                //     if(character == 0x20)
+                //     {
+                //         blank_pos = temp_ptr;
+                //     }
+                // }
+                /* CLAUDE  asm: `cmp [bp+character], 20h; jl` - the printable branch comes first */
+                if(character >= 0x20)
                 {
 
                     Line_Width -= string_widths[(character - 32)] + spacing;
@@ -366,6 +710,25 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                     if(character == 0x20)
                     {
                         blank_pos = temp_ptr;
+                    }
+                }
+                else  /* LT ASCII SPACE ∴ Non-Printable ∴ Control Character */
+                {
+
+                    if(
+                        character == 0x14   /*  ASCII  14h  20d  DC4 (device control 4)      */
+                        ||
+                        character == 0x0D   /*  ASCII  0Dh  13d  CR  (carriage return)       */
+                        ||
+                        character == 0x00   /*  ASCII  00h  00d  NUL (null)                  */
+                        ||
+                        character == 0x19   /*  ASCII  19h  25d  EM  (end of medium)         */
+                        ||
+                        character == 0x1D   /*  ASCII  1Dh  29d  GS  (group separator)       */
+                    )
+                    {
+                        Line_Width = (-(spacing) - 1);  // ¿ this makes it take the other branch at the top of the loop ?
+                        tab = character;
                     }
                 }
                 
@@ -400,6 +763,7 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                     // 72 - 48 = 24 * 11 = 264
                     // ...
                     // IDGI
+                    /* OGBUG  both digits are read from string[temp_ptr]: the first digit is used twice ("42" gives 44, always 11 x the first digit), the second digit is never read */
                     DrawPos_Override =  ((string[temp_ptr] + -48) * 10);
                     DrawPos_Override +=  (string[temp_ptr] + -48);
 
@@ -411,6 +775,7 @@ void Mark_Paragraph(int16_t x, int16_t y, int16_t full_width, char * string)
                 }
                 if(tab == 0x1D)  /*  ASCII  1Dh  29d  GS (group separator)        */
                 {
+                    /* OGBUG  same as the 19h code: the first digit is read twice */
                     DrawPos_Override =  ((string[temp_ptr] + -48) * 10);
                     DrawPos_Override +=  (string[temp_ptr] + -48);
 
@@ -645,24 +1010,38 @@ void Print_Paragraph_To_Bitmap(int16_t x, int16_t y, int16_t max_width, char * s
             case 1:  // ¿ Align-Right ?
             {
                 // DEDU  Print_Right_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width, bitmap);
-                Print_Right_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                // Print_Right_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                /* OGBUG  the asm pushes five words (x, y, text, max_width, bitmap; `add sp, 0Ah`) to the four-argument Print_Right_To_Bitmap(), which takes max_width as its bitmap segment
+                   and writes the glyphs into that low-memory segment; never reached in the game (both callers pass print_type 0) */
+                Print_Right_To_Bitmap(paragraph_line_x_end[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);  /* CLAUDE  asm: x is paragraph_line_x_end[itr] */  /* HACK  passes the real bitmap; the OG's bitmap segment is max_width */
             } break;
 
             case 2:  // ¿ Center ?
             {
                 // DEDU  Print_Centered_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], max_width, bitmap);
-                Print_Centered_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                // Print_Centered_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                /* OGBUG  same as print_type 1: five words pushed to the four-argument Print_Centered_To_Bitmap(), so max_width is used as the bitmap segment */
+                Print_Centered_To_Bitmap(((paragraph_line_x_start[itr] + paragraph_line_x_end[itr]) / 2), paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);  /* CLAUDE  asm: x is (x_start + x_end) / 2 */  /* HACK  passes the real bitmap; the OG's bitmap segment is max_width */
             } break;
             
             case 3:  // ¿ Justify ?
             {
-                if((paragraph_max_lines - 1) == itr)  /* last line */
-                {
-                    Print_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
-                }
-                else
+                // if((paragraph_max_lines - 1) == itr)  /* last line */
+                // {
+                //     Print_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
+                // }
+                // else
+                // {
+                //     Print_Full_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], (paragraph_line_x_end[itr] - paragraph_line_x_start[itr]), bitmap);
+                // }
+                /* CLAUDE  asm: `cmp ax, si; jz` to the last-line Print_To_Bitmap - the Print_Full_To_Bitmap branch comes first */
+                if((paragraph_max_lines - 1) != itr)
                 {
                     Print_Full_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], (paragraph_line_x_end[itr] - paragraph_line_x_start[itr]), bitmap);
+                }
+                else  /* last line */
+                {
+                    Print_To_Bitmap(paragraph_line_x_start[itr], paragraph_line_y_start[itr], &string[paragraph_line_offset[itr]], bitmap);
                 }
 
             } break;

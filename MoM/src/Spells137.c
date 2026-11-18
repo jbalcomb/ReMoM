@@ -213,12 +213,12 @@ int16_t _osc_leave_screen;
 // WZD dseg:CA4E
 /*
     {F,T} 'need target' for wizard or wizard spell
-    BUGBUG in Cast_Spell_City_Enchantment_Animation_1__WIP()
+    BUGBUG in City_Enchantment_Anim_1__WIP()
 */
 int16_t _osc_need_target_flag;
 // Spells137.c  // WZD dseg:CA50
 // Spells137.c  int16_t _temp_sint_1;
-// WZD dseg:CA50 00 00                                           _osc_player_idx dw 0                 ; DATA XREF: SBK_SliderRedraw+8r ...
+// WZD dseg:CA50 00 00                                           _osc_player_idx dw 0                 ; DATA XREF: SBK_SliderRedraw+8vr ...
 int16_t _temp_sint_1;
 #define _osc_player_idx _temp_sint_1
 #define _osc_spell_idx _temp_sint_1
@@ -459,7 +459,7 @@ void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
     Assign_Auto_Function(Summon_Animation_Draw, 2);
     _page_flip_effect = pfe_Dissolve;
     Clear_Fields();
-    full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED);
+    full_screen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
     if(magic_set.spell_animations == ST_TRUE)
     {
         anim_stg_cnt = 130;
@@ -481,7 +481,7 @@ void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
         Summon_Animation_Draw();
         PageFlip_FX();
         Release_Time(2);
-        _page_flip_effect = pfe_None;
+        _page_flip_effect = pfe_Default;
     }
     Deactivate_Auto_Function();
     Dissolve_Main_Screen();
@@ -503,7 +503,7 @@ void Summon_Animation(int16_t unit_type, int16_t rarity, int16_t player_idx)
 // WZD o137p04
 // drake178: sub_BECD9()
 // AKA IDK_CastCityEnchMsg()
-void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  player_idx)
+void Load_City_Enchantment_Anim(int16_t spell_idx,int16_t  player_idx)
 {
     char string[26] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -524,7 +524,7 @@ void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  playe
 
     stu_strcat(GUI_NearMsgString, cnst_Sp_Of_Sp_5);  // " of "
 
-    _fstrcpy(string, _CITIES[_osc_city_idx].name);  // [YOUR CITY NAME HERE]
+    String_Copy_Far(string, _CITIES[_osc_city_idx].name);  // [YOUR CITY NAME HERE]
 
     stu_strcat(GUI_NearMsgString, string);
 
@@ -551,7 +551,7 @@ void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  playe
 
     }
 
-    _fstrcpy(string, spell_data_table[spell_idx].name);
+    String_Copy_Far(string, spell_data_table[spell_idx].name);
 
     stu_strcat(GUI_NearMsgString, string);
 
@@ -573,7 +573,7 @@ void Cast_Spell_City_Enchantment_Animation_Load(int16_t spell_idx,int16_t  playe
 
 ~ City_ovr55.C  // WZD o55p04  Cityscape_Draw_Scanned_Building_Name()
 */
-void Cast_Spell_City_Enchantment_Animation_Draw(void)
+void Draw_City_Enchantment_Anim(void)
 {
     int16_t y_start = 0;
     int16_t x_start = 0;
@@ -589,8 +589,11 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
 
     for(itr = 0; itr < city_cityscape_field_count; itr++)
     {
-        assert(cityscape_bldg_fields[itr].field_bldg_idx >= 0);
-        assert(cityscape_bldg_fields[itr].field_bldg_idx <= 35);
+        // assert(cityscape_bldg_fields[itr].field_bldg_idx >= 0);
+        // assert(cityscape_bldg_fields[itr].field_bldg_idx <= 35);
+        /* CLAUDE */  /* not in the asm: the loop runs to city_cityscape_field_count, which nothing here sets - it is the last city view's count (Spells137.c sets it only
+                         after this first draw) - so entries past this cityscape's cityscape_bldg_count are not its buildings; the asm reads cityscape_bldg_fields[itr]
+                         only for the field under the pointer (cmp ax, [_temp_sint_4]), so the asserts aborted on entries the OG never looks at (Spell of Return, city picked) */
 
         if(city_cityscape_fields[itr] == _osc_scanned_field)
         {
@@ -637,16 +640,14 @@ void Cast_Spell_City_Enchantment_Animation_Draw(void)
 
 // WZD o137p06
 // drake178: sub_BF048()
-void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+void City_Enchantment_Anim_1__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
 {
     int16_t sw_spell_idx = 0;
     int16_t good_bad = 0;
     int16_t OT = 0;
     int16_t OL = 0;
     int16_t itr = 0;  // _SI_
-
     Stop_All_Sounds__STUB();
-
     if(spell_data_table[spell_idx].type == scc_City_Enchantment_Negative)
     {
         good_bad = 6;
@@ -655,23 +656,15 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
     {
         good_bad = 0;
     }
-
-    Cast_Spell_City_Enchantment_Animation_Load_Music(spell_idx, good_bad);
-
+    Load_City_Enchantment_Music(spell_idx, good_bad);
     if(magic_set.background_music == ST_TRUE)
     {
         Play_Sound(SND_Spell_Music, SND_Spell_Music_size);
-
     }
-
     _osc_need_target_flag = ST_TRUE;
-
     _osc_city_idx = city_idx;
-
     _osc_scanned_field = INVALID_FIELD;
-
     sw_spell_idx = spell_idx;
-
     switch(sw_spell_idx)
     {
         case spl_Move_Fortress:    { _ce_bldg_idx = bt_Fortress; } break;
@@ -683,52 +676,32 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
         case spl_Altar_Of_Battle:  { _ce_bldg_idx = bt_Altar_Of_Battle; } break;
         default: { _ce_bldg_idx = bt_NONE; } break;
     }
-
-    Cast_Spell_City_Enchantment_Animation_Load(spell_idx, player_idx);
-
+    Load_City_Enchantment_Anim(spell_idx, player_idx);
     Reset_First_Block(_screen_seg);
-
-    Assign_Auto_Function(Cast_Spell_City_Enchantment_Animation_Draw, 2);
-
+    Assign_Auto_Function(Draw_City_Enchantment_Anim, 2);
     _osc_need_target_flag = 0;
-
     Set_Page_Off();
-
-    Cast_Spell_City_Enchantment_Animation_Draw();
-
+    Draw_City_Enchantment_Anim();
     Copy_Off_To_Page4();
-
     _osc_need_target_flag = 1;
-
     Set_Page_Off();
-
-    Cast_Spell_City_Enchantment_Animation_Draw();
-
+    Draw_City_Enchantment_Anim();
     _osc_need_target_flag = 0;
-
     if(magic_set.spell_animations != ST_FALSE)
     {
-
         OL = _CITIES[city_idx].wx;
         OT = _CITIES[city_idx].wy;
-
         World_To_Screen(_map_x, _map_y, &OL, &OT);
-
-        // TODO  HLP_NoResizeExpand__TODO(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), 0);
-
+        Draw_Expanding_Box(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), ST_FALSE);  /* CLAUDE */  /* asm: call j_HLP_NoResizeExpand__TODO - was a TODO comment */
         Set_Page_Off();
-
         Copy_Page4_To_Off();
-
         Copy_Off_To_Back();
-
         PageFlip_FX();
-
         if(spell_idx == spl_Earthquake)
         {
             Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
             Set_Page_Off();
-            Cast_Spell_City_Enchantment_Animation_Draw();
+            Draw_City_Enchantment_Anim();
             Copy_Off_To_Back();
             if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
             {
@@ -740,42 +713,30 @@ void Cast_Spell_City_Enchantment_Animation_1__WIP(int16_t city_idx, int16_t spel
                 PageFlip_FX();
             }
             Set_Page_Off();
-            Cast_Spell_City_Enchantment_Animation_Draw();
+            Draw_City_Enchantment_Anim();
             PageFlip_FX();
             SND_SpellCast = (SAMB_ptr)ST_UNDEFINED;
         }
         else
         {
-            
             for(itr = 0; itr < 8; itr++)
             {
-
                 Set_Page_Off();
-
-                Cast_Spell_City_Enchantment_Animation_Draw();
-
+                Draw_City_Enchantment_Anim();
                 PageFlip_FX();
-
             }
-
         }
-
         Near_Allocate_Undo();
-
         Clear_Fields();
-
         Deactivate_Auto_Function();
-
         Cityscape_Build_Anim_Reset();
-
     }
-
 }
 
 
 // WZD o137p07
 // drake178: sub_BF2AF()
-void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
+void City_Enchantment_Anim_2__WIP(int16_t city_idx, int16_t spell_idx, int16_t player_idx)
 {
     int16_t y2 = 0;
     int16_t y1 = 0;
@@ -783,99 +744,57 @@ void Cast_Spell_City_Enchantment_Animation_2__WIP(int16_t city_idx, int16_t spel
     int16_t x1 = 0;
     int16_t fullscreen_field = 0;
     int16_t itr = 0;  // _SI_
-
     _osc_city_idx = city_idx;
-
     if(spell_idx != spl_Earthquake)
     {
-
         Reset_First_Block(_screen_seg);
-
         Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-
     }
-
     _ce_bldg_idx = bt_NONE;
-
     _page_flip_effect = pfe_Dissolve;
-
     Set_Page_Off();
-
-    Cast_Spell_City_Enchantment_Animation_Draw();
-
+    Draw_City_Enchantment_Anim();
     PageFlip_FX();
-
-
     if(
         (spell_idx != spl_Earthquake)
         &&
         (SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
     )
     {
-        
         Play_Sound(SND_SpellCast, SND_SpellCast_size);
-
     }
-
-    Assign_Auto_Function(Cast_Spell_City_Enchantment_Animation_Draw, 2);
-
+    Assign_Auto_Function(Draw_City_Enchantment_Anim, 2);
     Clear_Fields();
-
     for(itr = 0; itr < cityscape_bldg_count; itr++)
     {
-
         x1 = cityscape_bldg_fields[itr].field_x1;
         y1 = cityscape_bldg_fields[itr].field_y1;
         x2 = cityscape_bldg_fields[itr].field_x2;
         y2 = cityscape_bldg_fields[itr].field_y2;
-
-        city_cityscape_fields[city_cityscape_field_count] = (unsigned char)Add_Hidden_Field(x1, y1, x2, y2, (int16_t)empty_string__ovr137[0], ST_UNDEFINED);
-
+        city_cityscape_fields[city_cityscape_field_count] = (unsigned char)Add_Hidden_Field(x1, y1, x2, y2, empty_string__ovr137, ST_UNDEFINED);
         city_cityscape_field_count++;
-
     }
-
-    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)empty_string__ovr137[0], ST_UNDEFINED);
-
+    fullscreen_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
     for(itr = 0; itr < 250; itr++)
     {
-
         if(Get_Input() != ST_FALSE)
         {
             break;
         }
-
         _osc_scanned_field = Scan_Input();
-
         Mark_Time();
-
         Set_Page_Off();
-
-        Cast_Spell_City_Enchantment_Animation_Draw();
-
+        Draw_City_Enchantment_Anim();
         PageFlip_FX();
-
         Release_Time(2);
-
     }
-
     Near_Allocate_Undo();
-
     Release_Block(_screen_seg);
-
     Clear_Fields();
-
-    // DOMSDOS  Stop_All_Sounds__STUB();
-
-    // DOMSDOS  Play_Background_Music();
     Play_Background_Music();
-
     Deactivate_Auto_Function();
-
     Allocate_Reduced_Map();
-
     Dissolve_Main_Screen();
-
 }
 
 
@@ -1233,7 +1152,7 @@ void WIZ_GlobalSpellAnim(int16_t player_idx, int16_t spell_idx)
 
     Clear_Fields();
 
-    fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137[0], ST_UNDEFINED);
+    fullscreen_ESC_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
 
     Assign_Auto_Function(OVL_DrawGlobalAnim, 2);
 
@@ -1493,7 +1412,7 @@ static void Target_Wizard_Screen_Draw(void)
 
         stu_strcpy(GUI_NearMsgString, aChooseTargetFo);  // "Choose target for a "
 
-        _fstrcpy(string, spell_data_table[g_active_spell_idx].name);
+        String_Copy_Far(string, spell_data_table[g_active_spell_idx].name);
 
         stu_strcat(GUI_NearMsgString, string);
 
@@ -1548,11 +1467,10 @@ static void Target_Wizard_Screen_Draw(void)
 
 }
 
+
 // WZD o137p13
 /*
-
 "Choose target for a " ... " spell"
-
 */
 int16_t Target_Wizard_Screen(int16_t spell_idx)
 {
@@ -1566,17 +1484,16 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
     int16_t x_start = 0;
     int16_t player_idx = 0;  // _DI_
     int16_t itr = 0;  // _SI_
-
 #define ADD_FIELDS_LOCAL()  \
     do {  \
         Clear_Fields();  \
         for(itr = 0; itr < 4; itr++)  \
         {  \
-            gem_player_nums[itr] = Add_Hidden_Field((x_start + 17 + ((itr % 2) * 77)), (y_start + 27 + ((itr / 2) * 61)), (x_start + 62 + ((itr % 2) * 77)), (y_start + 72 + ((itr / 2) * 61)), (int16_t)empty_string__ovr137[0], ST_UNDEFINED);  \
+            gem_player_nums[itr] = Add_Hidden_Field((x_start + 17 + ((itr % 2) * 77)), (y_start + 27 + ((itr / 2) * 61)), (x_start + 62 + ((itr % 2) * 77)), (y_start + 72 + ((itr / 2) * 61)), empty_string__ovr137, ST_UNDEFINED);  \
         }  \
         if(spell_idx != spl_Spell_Blast)  \
         {  \
-            G_Cancel_Button_Index = Add_Button_Field((x_start + 40), (y_start + 145), empty_string__ovr137, IMG_OVL_TrgtWizCncl, (int16_t)str_hotkey_ESC__ovr137[0], ST_UNDEFINED);  \
+            G_Cancel_Button_Index = Add_Button_Field((x_start + 40), (y_start + 145), empty_string__ovr137, IMG_OVL_TrgtWizCncl, str_hotkey_ESC__ovr137, ST_UNDEFINED);  \
             _help_entries[1].help_idx = ST_UNDEFINED;  \
             _help_entries[2].help_idx = ST_UNDEFINED;  \
             for(itr = 0; itr < 4; itr++)  \
@@ -1586,7 +1503,7 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
         }  \
         else  \
         {  \
-            G_Cancel_Button_Index = Add_Button_Field((x_start + 78), (y_start + 145), empty_string__ovr137, IMG_OVL_TrgtWizCncl, (int16_t)str_hotkey_ESC__ovr137[0], ST_UNDEFINED);  \
+            G_Cancel_Button_Index = Add_Button_Field((x_start + 78), (y_start + 145), empty_string__ovr137, IMG_OVL_TrgtWizCncl, str_hotkey_ESC__ovr137, ST_UNDEFINED);  \
             _help_entries[0].help_idx = ST_UNDEFINED;  \
             for(itr = 0; itr < 4; itr++)  \
             {  \
@@ -1602,40 +1519,26 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
         }  \
         Set_Help_List(&_help_entries[0], 7);  \
     } while(0)
-
     var_10 = ST_FALSE;
-
     x_start = 50;
     y_start = 20;
-
     g_active_spell_idx = spell_idx;
-
     _osc_need_target_flag = ST_TRUE;
-
     Target_Wizard_Screen_Load(spell_idx);
-
     Assign_Auto_Function(Target_Wizard_Screen_Draw, 2);
-
     ADD_FIELDS_LOCAL();
-
     _osc_leave_screen = ST_FALSE;
-
     while(_osc_leave_screen == ST_FALSE)
     {
-
         input_field_idx = Get_Input();
-
         _osc_scanned_field = Scan_Input();
-
         if(input_field_idx == G_Cancel_Button_Index)
         {
             _osc_leave_screen = ST_TRUE;
             var_10 = ST_TRUE;
         }
-
         for(itr = 0; itr < 4; itr++)
         {
-
             if(
                 (gem_player_nums[itr] == input_field_idx)
                 &&
@@ -1646,31 +1549,24 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
             {
                 Play_Left_Click();
                 player_idx = (itr + 1);
-
                 if(spell_idx == spl_Spell_Blast)
                 {
                     var_E = (_players[player_idx].casting_cost_original - _players[player_idx].casting_cost_remaining);
                     if(var_E > _players[HUMAN_PLAYER_IDX].mana_reserve)
                     {
-
                     LBX_Load_Data_Static(message_lbx_file__ovr137, 0, (SAMB_ptr)&GUI_NearMsgString[0], 68, 1, 150);
-
                     Warn1(GUI_NearMsgString);
-
                     }
                     else
                     {
                         _osc_leave_screen = ST_TRUE;
                     }
-
                 }
                 else
                 {
                     _osc_leave_screen = ST_TRUE;
                 }
-
             }
-
             if(
                 (-(gem_player_nums[itr]) == input_field_idx)
                 &&
@@ -1686,46 +1582,33 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
                 Assign_Auto_Function(Target_Wizard_Screen_Draw, 2);
                 ADD_FIELDS_LOCAL();
             }
-
         }
-
         if(_osc_leave_screen == ST_FALSE)
         {
             Set_Page_Off();
             Target_Wizard_Screen_Draw();
             PageFlip_FX();
         }
-
     }
-
     if(var_10 == ST_FALSE)
     {
-
         _temp_sint_1 = player_idx;
-
         x = (x_start + 10 + (((player_idx - 1) % 2) * 77));
-
         y = (y_start + 21 + (((player_idx - 1) / 2) * 61));
-
         Reset_First_Block(_screen_seg);
-
         Spell_Animation_Load_Graphics(spell_idx);
-
         Spell_Animation_Load_Sound_Effect__WIP(spell_idx);
-
         if(SND_SpellCast != (SAMB_ptr)ST_UNDEFINED)
         {
             Play_Sound(SND_SpellCast, SND_SpellCast_size);
         }
-
         Clear_Fields();
-
-        G_Cancel_Button_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)empty_string__ovr137[0], ST_UNDEFINED);
-
+        G_Cancel_Button_Index = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, empty_string__ovr137, ST_UNDEFINED);
         switch(spell_data_table[spell_idx].Param0)
         {
             case 0:
             {
+                /* OGBUG  the human pays the target's invested mana, casting_cost_original - casting_cost_remaining, while the AI (Cast_Spell_Overland()) pays the target spell's BASE casting_cost - casting_cost_remaining */
                 var_E = (_players[player_idx].casting_cost_original - _players[player_idx].casting_cost_remaining);
                 if(var_E <= _players[HUMAN_PLAYER_IDX].mana_reserve)
                 {
@@ -1759,26 +1642,15 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
                 STU_DEBUG_BREAK();
             } break;
         }
-
-        for(itr = 0; itr < 45; itr++)
+        for(itr = 0; ((itr < 45) && (Get_Input() != G_Cancel_Button_Index)); itr++)
         {
-
-            if(Get_Input() == G_Cancel_Button_Index)
-            {
-                break;
-            }
-
             Mark_Time();
-
             Set_Page_Off();
-
             if(itr == 12)
             {
                 _osc_need_target_flag = ST_FALSE;
             }
-
             Target_Wizard_Screen_Draw();
-
             if(itr < 36)
             {
                 if((itr % 6) == 0)
@@ -1787,24 +1659,15 @@ int16_t Target_Wizard_Screen(int16_t spell_idx)
                 }
                 FLIC_Draw(x, y, spell_animation_seg);
             }
-
             PageFlip_FX();
-
             Release_Time(2);
-
         }
-
     }
-
     Dissolve_Main_Screen();
-
-    /* OGBUG: called Release_Block() without seg parameter */
-    Release_Block(_screen_seg);
-
+    /* OGBUG  Release_Block() is called with nothing pushed (ovr137/Target_Wizard_Screen.asm 716, no push and no 'pop cx'): its block argument is the word on top of the stack, the caller's DI saved by this function's prologue ('push _DI_player_idx', asm 18), so the OG reads SAMB.mark and writes SAMB.used at that value taken as a segment, and the _screen_seg scratch heap is not reset */
+    /* HACK */  // Release_Block(_screen_seg);
+    /* HACK */  /* skipped: the OG's segment is a register leftover, not a block ReMoM owns; without the call _screen_seg is not reset, as in the OG */
     Deactivate_Auto_Function();
-
     Deactivate_Help_List();
-
     return player_idx;
-    
 }

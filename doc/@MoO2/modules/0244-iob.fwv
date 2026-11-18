@@ -1,0 +1,13 @@
+module_num=244
+module=iob
+source=0244-iob.md
+range[0]=2:0x00010DA4 linear=0x00180DA4 size=532
+range[1]=2:0x0004BC00 linear=0x001BBC00 size=4
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME              SYMBOL            CHUNK
+-    -    -      0x00180DA4  2:0x00010DA4  data         ___iob            ___iob            regions/08-object-2/001FEE54-001FF653.txt
+-    -    -      0x00180FAC  2:0x00010FAC  data         ___tmpfnext       ___tmpfnext       regions/08-object-2/001FEE54-001FF653.txt
+-    -    -      0x00180FAD  2:0x00010FAD  data         __fmode           __fmode           regions/08-object-2/001FEE54-001FF653.txt
+-    -    -      0x00180FB1  2:0x00010FB1  static,data  _force            _force            regions/08-object-2/001FEE54-001FF653.txt
+-    -    -      0x001BBC00  2:0x0004BC00  data         ___ClosedStreams  ___ClosedStreams  -

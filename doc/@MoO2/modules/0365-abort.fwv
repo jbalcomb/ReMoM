@@ -1,0 +1,12 @@
+module_num=365
+module=abort
+source=0365-abort.md
+range[0]=1:0x00153289 linear=0x00163289 size=39
+range[1]=2:0x00004C7C linear=0x00174C7C size=24
+range[2]=2:0x00012D48 linear=0x00182D48 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME         SYMBOL        CHUNK
+m365f001  1    -      0x00163289  1:0x00153289  code  abort        abort_        regions/07-object-1/001E8654-001E8E53.txt
+m365f002  2    -      0x0016328F  1:0x0015328F  code  __terminate  __terminate_  regions/07-object-1/001E8654-001E8E53.txt
+-         -    -      0x00182D48  2:0x00012D48  data  ___abort     ___abort      regions/08-object-2/00200E54-00201653.txt

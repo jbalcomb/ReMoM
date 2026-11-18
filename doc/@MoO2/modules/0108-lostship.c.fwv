@@ -1,0 +1,10 @@
+module_num=108
+module=D:\MOX\OTHERS\LOSTSHIP.C
+source=0108-lostship.c.md
+range[0]=1:0x000DD7A3 linear=0x000ED7A3 size=353
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                             CHUNK
+m108f001  1    -      0x000ED7A3  1:0x000DD7A3  static,code  Compute_Stars_In_Range_Of_Player  Compute_Stars_In_Range_Of_Player_  regions/07-object-1/00172654-00172E53.txt
+m108f002  2    -      0x000ED82F  1:0x000DD82F  static,code  Player_Lose_Out_Of_Range_Ships    Player_Lose_Out_Of_Range_Ships_    regions/07-object-1/00172E54-00173653.txt
+m108f003  3    -      0x000ED8BF  1:0x000DD8BF  code         Lose_Out_Of_Range_Ships           Lose_Out_Of_Range_Ships_           regions/07-object-1/00172E54-00173653.txt

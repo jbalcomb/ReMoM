@@ -1,0 +1,12 @@
+module_num=319
+module=noefgfmt
+source=0319-noefgfmt.md
+range[0]=1:0x0014C582 linear=0x0015C582 size=18
+range[1]=2:0x000047B0 linear=0x001747B0 size=36
+range[2]=2:0x00012548 linear=0x00182548 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                SYMBOL               CHUNK
+m319f001  1    -      0x0015C582  1:0x0014C582  static,code  _no_support_loaded  _no_support_loaded_  regions/07-object-1/001E1654-001E1E53.txt
+-         -    -      0x00182548  2:0x00012548  data         ___EFG_printf       ___EFG_printf        regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x0018254C  2:0x0001254C  data         ___EFG_scanf        ___EFG_scanf         regions/08-object-2/00200654-00200E53.txt

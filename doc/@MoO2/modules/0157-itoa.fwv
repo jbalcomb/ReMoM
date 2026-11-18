@@ -1,0 +1,11 @@
+module_num=157
+module=itoa
+source=0157-itoa.md
+range[0]=1:0x00118851 linear=0x00128851 size=138
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME      SYMBOL     CHUNK
+m157f001    1    -      0x00128851  1:0x00118851  static,code  Alphabet  _Alphabet  regions/07-object-1/001ADE54-001AE653.txt
+m157f002    2    -      0x00128876  1:0x00118876  code         utoa      utoa_      regions/07-object-1/001ADE54-001AE653.txt
+m157f003    3    1/2    0x001288C0  1:0x001188C0  code         itoa      itoa_      regions/07-object-1/001ADE54-001AE653.txt
+m157f003_2  3    2/2    0x001288C0  1:0x001188C0  code         _itoa     _itoa_     regions/07-object-1/001ADE54-001AE653.txt

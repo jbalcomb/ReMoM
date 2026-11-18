@@ -76,6 +76,8 @@ extern int16_t mouse_enabled;
 extern int16_t mouse_driver_installed;
 
 // WZD dseg:78C0 MOUSE_Usable dw 0
+// drake178: MOUSE_Usable
+extern int16_t mouse_usable;
 
 // WZD dseg:78C2
 extern int16_t pointer_x;
@@ -138,7 +140,8 @@ void Mouse_Wait(void);
 int16_t Init_Mouse_Driver(void);
 
 // WZD s35p08
-void RP_Mouse_SetUsable(void);
+// drake178: RP_MOUSE_SetUsable()
+void Set_Mouse_Usable(void);
 
 // WZD s35p09
 void Reset_System_Mouse(void);

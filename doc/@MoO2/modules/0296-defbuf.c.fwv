@@ -1,0 +1,11 @@
+module_num=296
+module=C:\GCL520\C_ALL\DEFBUF.C
+source=0296-defbuf.c.md
+range[0]=1:0x00142840 linear=0x00152840 size=16
+range[1]=2:0x000117D0 linear=0x001817D0 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                   SYMBOL                 CHUNK
+m296f001  1    -      0x00152840  1:0x00142840  code  SetDefaultBufferSize   SetDefaultBufferSize_  regions/07-object-1/001D7E54-001D8653.txt
+-         -    -      0x001817D0  2:0x000117D0  data  __DefaultRXBufferSize  __DefaultRXBufferSize  regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001817D4  2:0x000117D4  data  __DefaultTXBufferSize  __DefaultTXBufferSize  regions/08-object-2/001FF654-001FFE53.txt

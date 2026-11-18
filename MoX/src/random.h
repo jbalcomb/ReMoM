@@ -34,10 +34,10 @@ int16_t Get_Weighted_Choice(int16_t * weight_array, int16_t weight_count);
 int16_t Get_Weighted_Choice_Long(int32_t * weight_array, int16_t weight_count);
 
 // WZD s01p09
-// Get_Weighted_Best_Choice()
+int16_t Get_Weighted_Best_Choice(uint16_t * weight_array, int16_t weight_count, int16_t random_range);
 
 // WZD s01p10
-// Get_Weighted_Best_Choice_Long()
+int16_t Get_Weighted_Choice_Best_Long(int32_t * weight_array, int16_t weight_count, int16_t random_range);
 
 
 

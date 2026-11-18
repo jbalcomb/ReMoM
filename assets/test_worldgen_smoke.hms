@@ -7,10 +7,10 @@
 # This scenario just tells the game to exit cleanly.
 #
 # Usage:
-#   HeMoM --newgame test_worldgen.ini --scenario test_worldgen_smoke.hms
+#   DeMoM --newgame test_worldgen.ini --scenario test_worldgen_smoke.hms
 #
 # Validation:
-#   - HeMoM exits with code 0
+#   - DeMoM exits with code 0
 #   - SAVE9.GAM exists and is exactly 123300 bytes
 
 quit

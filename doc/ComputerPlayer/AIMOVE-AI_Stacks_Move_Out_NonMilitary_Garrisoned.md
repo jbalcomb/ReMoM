@@ -207,7 +207,7 @@ AI_Stacks_Move_Out_NonMilitary_Garrisoned(wp)
 |---|---|---|
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Rebuilds `_ai_own_stack_*` from scratch for this (plane, landmass). |
 | **2** | **`AI_Stacks_Move_Out_NonMilitary_Garrisoned`** | **(this function)** — push builders out of garrisons |
-| 3 | `AI_Stacks_Survey_Expedition_Forces` | Score surplus combat units into the `G_Pushout_*` / `G_Seafaring_*` global pools |
+| 3 | `AI_Survey_Expedition_Forces` | Score surplus combat units into the `G_Pushout_*` / `G_Seafaring_*` global pools |
 | 4 | `AI_Stacks_Do_Meld` | Issue meld orders |
 | 5 | `AI_Stacks_Do_Settle` | Issue settle orders |
 | 6 | `AI_Stacks_Do_Purify` | Issue purify orders |

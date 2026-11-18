@@ -1,0 +1,15 @@
+module_num=286
+module=timeutil
+source=0286-timeutil.md
+range[0]=1:0x0014114E linear=0x0015114E size=1095
+range[1]=2:0x00004DA0 linear=0x00174DA0 size=52
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m286f001  1    -      0x0015114E  1:0x0014114E  code         __leapyear   __leapyear_   regions/07-object-1/001D6654-001D6E53.txt
+m286f002  2    -      0x00151189  1:0x00141189  static,code  calc_yday    calc_yday_    regions/07-object-1/001D6654-001D6E53.txt
+m286f003  3    -      0x0015126E  1:0x0014126E  static,code  check_order  check_order_  regions/07-object-1/001D6654-001D6E53.txt
+m286f004  4    -      0x001512A2  1:0x001412A2  code         __isindst    __isindst_    regions/07-object-1/001D6654-001D6E53.txt
+m286f005  5    -      0x00151565  1:0x00141565  static,code  time_less    time_less_    regions/07-object-1/001D6654-001D6E53.txt
+-         -    -      0x00174DA0  2:0x00004DA0  data         ___diyr      ___diyr       regions/08-object-2/001F2E54-001F3653.txt
+-         -    -      0x00174DBA  2:0x00004DBA  data         ___dilyr     ___dilyr      regions/08-object-2/001F2E54-001F3653.txt

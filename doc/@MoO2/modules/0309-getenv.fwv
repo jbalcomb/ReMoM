@@ -1,0 +1,8 @@
+module_num=309
+module=getenv
+source=0309-getenv.md
+range[0]=1:0x00145777 linear=0x00155777 size=97
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m309f001  1    -      0x00155777  1:0x00145777  code  getenv  getenv_  regions/07-object-1/001DA654-001DAE53.txt

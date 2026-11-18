@@ -1,0 +1,8 @@
+module_num=150
+module=fgets
+source=0150-fgets.md
+range[0]=1:0x00116911 linear=0x00126911 size=105
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME   SYMBOL  CHUNK
+m150f001  1    -      0x00126911  1:0x00116911  code  fgets  fgets_  regions/07-object-1/001ABE54-001AC653.txt

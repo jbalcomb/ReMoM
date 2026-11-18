@@ -35,7 +35,7 @@ function is part of the new-game `Random()` alignment chain.
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_Runtime` / INITGAME | [INITGAME.c:597](../../MoM/src/INITGAME.c#L597) | Followed by `gd_dump_players("100_Init_Heroes_P")` ([598](../../MoM/src/INITGAME.c#L598)); `Init_Players` runs next. |
+| `Init_Runtime` / INITGAME | [INITGAME.c:204](../../MoM/src/INITGAME.c#L204) | Followed by `STU_GD_Dump_Players("201_Init_Heroes_P")` and `STU_GD_Dump_Heroes("202_Init_Heroes_HE")` ([205-206](../../MoM/src/INITGAME.c#L205-L206)); `Init_Players` runs next. |
 
 ## How it works
 

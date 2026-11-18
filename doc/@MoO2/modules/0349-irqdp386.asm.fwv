@@ -1,0 +1,31 @@
+module_num=349
+module=..\ASM_386\IRQDP386.ASM
+source=0349-irqdp386.asm.md
+range[0]=1:0x00158540 linear=0x00168540 size=1
+range[1]=1:0x00158577 linear=0x00168577 size=283
+range[2]=1:0x00158694 linear=0x00168694 size=1
+range[3]=2:0x00013018 linear=0x00183018 size=92
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                    SYMBOL                  CHUNK
+m349f001  1    -      0x00168540  1:0x00158540  code  __SegmentStartPC32      __SegmentStartPC32      regions/07-object-1/001ED654-001EDE53.txt
+m349f002  2    -      0x00168577  1:0x00158577  code  __GreenleafFastIsr      __GreenleafFastIsr      regions/07-object-1/001ED654-001EDE53.txt
+m349f003  3    -      0x001685E9  1:0x001585E9  code  __prot_dispatcher       __prot_dispatcher       regions/07-object-1/001ED654-001EDE53.txt
+m349f004  4    -      0x00168636  1:0x00158636  code  __prot_irq_stub_0_PC32  __prot_irq_stub_0_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f005  5    -      0x0016863E  1:0x0015863E  code  __prot_irq_stub_1_PC32  __prot_irq_stub_1_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f006  6    -      0x00168646  1:0x00158646  code  __prot_irq_stub_2_PC32  __prot_irq_stub_2_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f007  7    -      0x0016864E  1:0x0015864E  code  __prot_irq_stub_3_PC32  __prot_irq_stub_3_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f008  8    -      0x00168656  1:0x00158656  code  __prot_irq_stub_4_PC32  __prot_irq_stub_4_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f009  9    -      0x0016865E  1:0x0015865E  code  __prot_irq_stub_5_PC32  __prot_irq_stub_5_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f010  10   -      0x00168666  1:0x00158666  code  __prot_irq_stub_6_PC32  __prot_irq_stub_6_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f011  11   -      0x00168671  1:0x00158671  code  __prot_irq_stub_7_PC32  __prot_irq_stub_7_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f012  12   -      0x0016867C  1:0x0015867C  code  __prot_irq_stub_8_PC32  __prot_irq_stub_8_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f013  13   -      0x00168687  1:0x00158687  code  __prot_irq_stub_9_PC32  __prot_irq_stub_9_PC32  regions/07-object-1/001ED654-001EDE53.txt
+m349f014  14   -      0x00168694  1:0x00158694  code  __SegmentEndPC32        __SegmentEndPC32        regions/07-object-1/001ED654-001EDE53.txt
+-         -    -      0x00183018  2:0x00013018  data  __ProtStubOffsetsPD32   __ProtStubOffsetsPD32   regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x00183018  2:0x00013018  data  __SegmentStartPD32      __SegmentStartPD32      regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x00183040  2:0x00013040  data  __IrqDataPD32           __IrqDataPD32           regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x00183046  2:0x00013046  data  __SizeOfIrqDataPD32     __SizeOfIrqDataPD32     regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x00183048  2:0x00013048  data  __SizeOfFastDataPD32    __SizeOfFastDataPD32    regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x0018304A  2:0x0001304A  data  __RealStubOffsetsPD32   __RealStubOffsetsPD32   regions/08-object-2/00201654-002016C4.txt
+-         -    -      0x00183072  2:0x00013072  data  __SegmentEndPD32        __SegmentEndPD32        -

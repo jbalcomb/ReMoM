@@ -213,6 +213,7 @@ void Cityscape_Window__WIP(int16_t city_idx, int16_t xstart, int16_t ystart, int
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
     
+    /* OGBUG  seed has no plane: cities at the same wx * wy (either plane, or e.g. 6,10 and 10,6) get the same layout */
     Set_Random_Seed((0x2895 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
     m_cityscape_fortress_city = ST_FALSE;
@@ -314,7 +315,8 @@ void Cityscape_Roads_1__WIP(int16_t xstart, int16_t ystart)
     /* IDK  #1 */  for(itr1 =  0; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 =  0; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
     /* IDK  #2 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
     /* IDK  #3 */  for(itr1 = 10; itr1 < 13; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 = 10; itr2 < 13; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
-    /* IDK  #4 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 0][itr2] = -5; } itr1 = 1000; } }
+    /* OGBUG  #4 writes row 5 (asm es:bx+0E6h), not row 0 like #1-#3, so a building in row 1 cols 14-17 never gets its row-0 road */
+    /* IDK  #4 */  for(itr1 = 14; itr1 < 18; itr1++) { if((cityscape_bldg_array->RC[ 1][itr1] > 0                                            )) { for(itr2 = 14; itr2 < 18; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
 
     /* IDK  #5 */  for(itr1 =  1; itr1 <  4; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 =  1; itr2 <  4; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
     /* IDK  #6 */  for(itr1 =  5; itr1 <  9; itr1++) { if((cityscape_bldg_array->RC[ 4][itr1] > 0) || (cityscape_bldg_array->RC[ 6][itr1] > 0)) { for(itr2 =  5; itr2 <  9; itr2++) { cityscape_bldg_array->RC[ 5][itr2] = -5; } itr1 = 1000; } }
@@ -1430,6 +1432,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
 
                 Draw_Picture(col_sx, (row_sy - 32), scratch_bitmap_seg);
 
+                /* OGBUG  Evil Presence overlay covers bt_Shrine..bt_Parthenon only; Cathedral is not in the range */
                 if((cr_bldg_idx >= bt_Shrine) && (cr_bldg_idx <= bt_Parthenon) && (_CITIES[city_idx].enchantments[EVIL_PRESENCE] != ST_FALSE))
                 {
                     Set_Animation_Frame(cityscape_evilpresence_seg, cityscape_bldg_anim_ctr);
@@ -1595,6 +1598,7 @@ void Cityscape_Draw_Buildings(int16_t city_idx, int16_t x_start, int16_t y_start
     {
         Set_Animation_Frame(cityscape_city_walls_seg, 0);
         Draw_Picture_To_Bitmap(cityscape_city_walls_seg, scratch_bitmap_seg);
+        /* OGBUG  cr_bldg_idx is left over from the last grid cell, not bt_CityWalls, so newly built City Walls never fade in */
         if(cr_bldg_idx == new_bldg_idx)
         {
             Vanish_Bitmap(scratch_bitmap_seg, cityscape_build_anim_ctr);
@@ -1671,6 +1675,18 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     int16_t itr_row = 0;  // Dasm uses itr2
     int16_t itr_col = 0;  // Dasm uses itr1
     int16_t DBG_ever_is = 0;
+    /* CLAUDE */  /* HACK */
+    /*
+        The OG's stack frame from bp-5Ch (rows_2x2) to bp-2 (itr2), one word per slot: rows_2x2[14 + k] is cols_2x2[k], cols_2x2[14 ..] are house_count, bldg_status, rock_count, tree_count, rnd_loc, ...
+        The 2x2 lot stores and reads go through it, so a 15th+ 2x2 lot overruns into the same locals as in the OG instead of out of the C arrays.
+        building_shape_2x2_count is at most the 2x2 buildings plus the three gate enchantments, well inside the 46 slots.
+    */
+    int16_t * og_frame_2x2[46] = {
+        &rows_2x2[0], &rows_2x2[1], &rows_2x2[2], &rows_2x2[3], &rows_2x2[4], &rows_2x2[5], &rows_2x2[6], &rows_2x2[7], &rows_2x2[8], &rows_2x2[9], &rows_2x2[10], &rows_2x2[11], &rows_2x2[12], &rows_2x2[13],
+        &cols_2x2[0], &cols_2x2[1], &cols_2x2[2], &cols_2x2[3], &cols_2x2[4], &cols_2x2[5], &cols_2x2[6], &cols_2x2[7], &cols_2x2[8], &cols_2x2[9], &cols_2x2[10], &cols_2x2[11], &cols_2x2[12], &cols_2x2[13],
+        &house_count, &bldg_status, &rock_count, &tree_count, &rnd_loc, &row, &col, &tries, &ctr_3x3, &ctr_2x3, &ctr_3x2, &ctr_2x2,
+        &building_shape_3x3_count, &building_shape_2x3_count, &building_shape_3x2_count, &building_shape_2x2_count, &itr_bldg, &itr2
+    };
 
     /*
         BEGIN:  Clear buildings array  (MoO2  Module: COLONY  Clear_Bldgs_Array_())
@@ -1860,41 +1876,56 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
 
             bldg_status = _CITIES[city_idx].bldg_status[itr_bldg];
 
+            // if(
+            //     (
+            //         (bldg_status < bs_Built)
+            //         &&
+            //         (itr_bldg != bldg_idx)
+            //     )
+            //     ||
+            //     (itr_bldg == bt_ShipYard)
+            //     ||
+            //     (itr_bldg == bt_ShipWrightsGuild)
+            //     ||
+            //     (itr_bldg == bt_MaritimeGuild)
+            // )
+            // {
+            //     continue;
+            // }
+            /* CLAUDE */  /* REBUG */  /* asm: jge short loc_D024E / ... jnz short @@Next_Normal_Builings / jz short @@Next_Normal_Builings x3, straight to the loop increment; the || ... continue form jumps to a shared jmp (BCC 3.1 -c bytes checked) */
             if(
                 (
-                    (bldg_status < bs_Built)
-                    &&
-                    (itr_bldg != bldg_idx)
+                    (bldg_status >= bs_Built)
+                    ||
+                    (itr_bldg == bldg_idx)
                 )
-                ||
-                (itr_bldg == bt_ShipYard)
-                ||
-                (itr_bldg == bt_ShipWrightsGuild)
-                ||
-                (itr_bldg == bt_MaritimeGuild)
+                &&
+                (itr_bldg != bt_ShipYard)
+                &&
+                (itr_bldg != bt_ShipWrightsGuild)
+                &&
+                (itr_bldg != bt_MaritimeGuild)
             )
             {
-                continue;
-            }
-        
-            switch(bldg_data_table[itr_bldg].shape)
-            {
-                case bp_2x2:
+                switch(bldg_data_table[itr_bldg].shape)
                 {
-                    building_shape_2x2_count++;
-                } break;
-                case bp_2x3:
-                {
-                    building_shape_2x3_count++;
-                } break;
-                case bp_3x2:
-                {
-                    building_shape_3x2_count++;
-                } break;
-                case bp_3x3:
-                {
-                    building_shape_3x3_count++;
-                } break;
+                    case bp_2x2:
+                    {
+                        building_shape_2x2_count++;
+                    } break;
+                    case bp_2x3:
+                    {
+                        building_shape_2x3_count++;
+                    } break;
+                    case bp_3x2:
+                    {
+                        building_shape_3x2_count++;
+                    } break;
+                    case bp_3x3:
+                    {
+                        building_shape_3x3_count++;
+                    } break;
+                }
             }
         }
 
@@ -2212,8 +2243,17 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
                 )
                 {
                     tries = 0;
-                    cols_2x2[itr_bldg] = col;
-                    rows_2x2[itr_bldg] = row;
+                    /* OGBUG  rows_2x2 / cols_2x2 hold 14 lots each and the stores have no bound: with a 15th 2x2 lot (16 class-0 buildings in BUILDDAT, plus Earth Gate / Stream of Life / Astral Gate) its row is written over the first lot's column, so that building is drawn in the wrong column and its own lot stays empty; cols entries 14..17 land on house_count / bldg_status / rock_count / tree_count (set again or not read later) and entry 18 on rnd_loc (the search radius) */
+                    /* CLAUDE */  /* traced: those slots ARE read back - the RC writes for lots 14..18 (gates, then the 2x2 buildings) take their column from house_count / bldg_status / rock_count /
+                       tree_count / rnd_loc as they are by then; house_count is population * 8 (set after this loop), so lot 14 writes RC[row + 1][population * 8], word (row + 1) * 23 + population * 8,
+                       past the 345-word RC array when that reaches 345 (e.g. row 12 and population 6+): into the _screen_seg space after cityscape_bldg_array, as in the OG.
+                       BUILDDAT has 16 2x2 buildings (Armory, Smithy, Animists / Sages / Alchemists / Wizards / Merchants / Foresters / Mechanicians / Miners Guild, Sawmill, Oracle, Marketplace, Bank,
+                       Granary, Farmers Market) + 3 gates: up to 19 lots */
+                    // cols_2x2[itr_bldg] = col;
+                    // rows_2x2[itr_bldg] = row;
+                    /* HACK */  /* through og_frame_2x2[], so the overrun lands where it does in the OG instead of being UB */
+                    *og_frame_2x2[(14 + itr_bldg)] = col;  /* asm: mov [bp+cols2x2+itr_bldg*2], col */
+                    *og_frame_2x2[itr_bldg] = row;         /* asm: mov [bp+rows_2x2+itr_bldg*2], row */
                     itr_bldg++;
                     for(itr1 = 0; itr1 < 2; itr1++)
                     {
@@ -2411,7 +2451,8 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     {
         if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Earth_Gate;
+            // cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Earth_Gate;
+            /* HACK */  cityscape_bldg_array->RC[(*og_frame_2x2[ctr_2x2] + 1)][(*og_frame_2x2[(14 + ctr_2x2)])] = bt_Earth_Gate;
         }
         ctr_2x2++;
     }
@@ -2424,7 +2465,8 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     {
         if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Stream_Of_Life;
+            // cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Stream_Of_Life;
+            /* HACK */  cityscape_bldg_array->RC[(*og_frame_2x2[ctr_2x2] + 1)][(*og_frame_2x2[(14 + ctr_2x2)])] = bt_Stream_Of_Life;
         }
         ctr_2x2++;
     }
@@ -2437,7 +2479,8 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     {
         if(ctr_2x2 < building_shape_2x2_count)
         {
-            cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Astral_Gate;
+            // cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = bt_Astral_Gate;
+            /* HACK */  cityscape_bldg_array->RC[(*og_frame_2x2[ctr_2x2] + 1)][(*og_frame_2x2[(14 + ctr_2x2)])] = bt_Astral_Gate;
         }
         ctr_2x2++;
     }
@@ -2473,8 +2516,29 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
     {
 
         // skip, manually handled, bt_ShipWrightsGuild, bt_ShipYard, bt_MaritimeGuild
-        if(((_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)&&(itr_bldg != bldg_idx))||(itr_bldg == bt_ShipYard)||(itr_bldg == bt_ShipWrightsGuild)||(itr_bldg == bt_MaritimeGuild))
+        // if(((_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)&&(itr_bldg != bldg_idx))||(itr_bldg == bt_ShipYard)||(itr_bldg == bt_ShipWrightsGuild)||(itr_bldg == bt_MaritimeGuild))
+        //     continue;
+        /* CLAUDE */  /* REBUG */  /* asm: each test has its own jmp loc_D1261 (jz short loc_D10CF / jmp loc_D1261, jnz short loc_D10D8 / jmp loc_D1261, ...); one || test compiles to a shared jmp (BCC 3.1 -c bytes checked) */
+        if(
+            (_CITIES[city_idx].bldg_status[itr_bldg] < bs_Built)
+            &&
+            (itr_bldg != bldg_idx)
+        )
+        {
             continue;
+        }
+        if(itr_bldg == bt_ShipYard)
+        {
+            continue;
+        }
+        if(itr_bldg == bt_ShipWrightsGuild)
+        {
+            continue;
+        }
+        if(itr_bldg == bt_MaritimeGuild)
+        {
+            continue;
+        }
 
 
         switch(bldg_data_table[itr_bldg].shape)
@@ -2488,24 +2552,25 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
                     (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
                 )
                 {
-                    cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = itr_bldg;
+                    // cityscape_bldg_array->RC[(rows_2x2[ctr_2x2] + 1)][(cols_2x2[ctr_2x2])] = itr_bldg;
+                    /* HACK */  cityscape_bldg_array->RC[(*og_frame_2x2[ctr_2x2] + 1)][(*og_frame_2x2[(14 + ctr_2x2)])] = itr_bldg;
                     ctr_2x2++;
                 }
             } break;
 
-            case bp_2x3:
-            {
-                if(
-                    (ctr_2x3 < building_shape_2x3_count)
-                    &&
-                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
-                )
-                {
-                    cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = itr_bldg;
-                    ctr_2x3++;
-                }
-
-            } break;
+            // case bp_2x3:
+            // {
+            //     if(
+            //         (ctr_2x3 < building_shape_2x3_count)
+            //         &&
+            //         (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
+            //     )
+            //     {
+            //         cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = itr_bldg;
+            //         ctr_2x3++;
+            //     }
+            //
+            // } break;
 
             case bp_3x2:
             {
@@ -2517,6 +2582,21 @@ void Cityscape_Make_Buildings_Array(int16_t city_idx, int16_t bldg_idx)
                 {
                     cityscape_bldg_array->RC[(rows_3x2[ctr_3x2] + 2)][(cols_3x2[ctr_3x2])] = itr_bldg;
                     ctr_3x2++;
+                }
+
+            } break;
+
+            /* CLAUDE */  /* REBUG */  /* asm: the case bodies are laid out 2x2 (loc_D110B), 3x2 (loc_D115F), 2x3 (loc_D11B5), 3x3 (loc_D120A); the 2x3 case was above the 3x2 case */
+            case bp_2x3:
+            {
+                if(
+                    (ctr_2x3 < building_shape_2x3_count)
+                    &&
+                    (_CITIES[city_idx].bldg_status[itr_bldg] >= bs_Built)
+                )
+                {
+                    cityscape_bldg_array->RC[(rows_2x3[ctr_2x3] + 1)][(cols_2x3[ctr_2x3])] = itr_bldg;
+                    ctr_2x3++;
                 }
 
             } break;
@@ -2906,6 +2986,7 @@ void Outpost_Cityscape(int16_t city_idx, int16_t x_start, int16_t y_start)
     city_wy = _CITIES[city_idx].wy;
     city_wp = _CITIES[city_idx].wp;
 
+    /* OGBUG  seed has no plane: cities at the same wx * wy (either plane, or e.g. 6,10 and 10,6) get the same layout */
     Set_Random_Seed((0x2895 + (city_wx * city_wy)));  // IDGI:  deterministic per City? Why the addition? Related to (max) wx,wy?
 
     Outpost_Cityscape_Draw(city_idx, x_start, y_start);

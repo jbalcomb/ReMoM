@@ -67,6 +67,8 @@ ITEM_MAX_POWERS
 #define MAX_BATTLE_UNIT_SLOT_COUNT 36
 #define CASTER_IDX_BASE            20
 #define CASTER_IDX_MAX             25  // 20 + 1 + 4  pretty sure MoO2 has name for players except neutral player(s)/monsters
+/* Life Drain cast by a wizard: casting-skill points gained per point of drain damage (OG: imul 3, ovr133 BU_LifeDrain) */
+#define LIFE_DRAIN_MANA_PER_HIT_POINT  3
 
 
 
@@ -974,7 +976,7 @@ enum enum_ITEM_POWER_TYPES
 };
 
 /*
-    _ITEMS[].Powers
+    _ITEMS[].powers
     bit indices
 */
 enum e_ITEM_POWER

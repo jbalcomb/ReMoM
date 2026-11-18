@@ -1,7 +1,7 @@
-# assert_cast_summon.txt -- Field assertions for the HeMoM_Cast_Summon test (GitHub issue #21).
+# assert_cast_summon.txt -- Field assertions for the DeMoM_Cast_Summon test (GitHub issue #21).
 #
-#   HeMoM --cast-summon 201 --seed1 12345
-# Fixture: SAVECMBT.GAM.  HeMoM kills the last two units (840, 841) and compacts, which leaves dead records
+#   DeMoM --cast-summon 201 --seed1 12345
+# Fixture: SAVECMBT.GAM.  DeMoM kills the last two units (840, 841) and compacts, which leaves dead records
 # (owner = -1, wp = ST_UNDEFINED) past the end of _UNITS[], then casts Magic Spirit (spell 201) for the human player
 # through the real Cast_Spell_Overland() and draws the main screen.
 #

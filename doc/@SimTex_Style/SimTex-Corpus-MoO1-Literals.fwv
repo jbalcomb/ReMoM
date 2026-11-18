@@ -1,0 +1,136 @@
+exe      order  ds_off  literal       form  stem      ext  case_stem  case_ext  n_refs  primary_region  is_shipped_file  regions
+ORION        0  029A    CONFIG.MOO    full  CONFIG    MOO  UPPER      UPPER          3  s01                           1  s01:3
+ORION        1  02F6    FONTS.LBX     full  FONTS     LBX  UPPER      UPPER          1  s01                           1  s01:1
+ORION        2  0387    VORTEX.LBX    full  VORTEX    LBX  UPPER      UPPER         17  s01                           1  s01:17
+ORION        3  0392    RESEARCH.LBX  full  RESEARCH  LBX  UPPER      UPPER          1  s01                           1  s01:1
+ORION        4  039F    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          1  s01                           1  s01:1
+ORION        5  03A9    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          2  s01                           1  s01:2
+ORION        6  03B5    V11.LBX       full  V11       LBX  UPPER      UPPER          1  s01                           1  s01:1
+ORION        7  03BD    SAVE7.GAM     full  SAVE7     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION        8  03C7    SAVE1.GAM     full  SAVE1     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION        9  03D1    SAVE2.GAM     full  SAVE2     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION       10  03DB    SAVE3.GAM     full  SAVE3     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION       11  03E5    SAVE4.GAM     full  SAVE4     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION       12  03EF    SAVE5.GAM     full  SAVE5     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION       13  03F9    SAVE6.GAM     full  SAVE6     GAM  UPPER      UPPER          1  s01                           0  s01:1
+ORION       14  044B    STARMAP.EXE   full  STARMAP   EXE  UPPER      UPPER          1  s01                           1  s01:1
+ORION       15  04B8    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       16  04C4    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          3  o00                           1  o00:2 s39:1
+ORION       17  04CE    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       18  04DB    EMBASSY.LBX   full  EMBASSY   LBX  UPPER      UPPER          2  s01                           1  o00:1 s01:1
+ORION       19  04E7    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       20  04F4    SPIES.LBX     full  SPIES     LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       21  04FE    NEWSCAST.LBX  full  NEWSCAST  LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       22  050B    TECHNO.LBX    full  TECHNO    LBX  UPPER      UPPER          2  s08                           1  o00:1 s08:1
+ORION       23  0516    LANDING.LBX   full  LANDING   LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       24  0522    STARVIEW.LBX  full  STARVIEW  LBX  UPPER      UPPER          1  o00                           1  o00:1
+ORION       25  052F    INTROSND.LBX  full  INTROSND  LBX  UPPER      UPPER          3  o00                           1  o00:3
+ORION       26  053C    INTRO.LBX     full  INTRO     LBX  UPPER      UPPER          4  o00                           1  o00:4
+ORION       27  0546    INTRO2.LBX    full  INTRO2    LBX  UPPER      UPPER          3  o00                           1  o00:3
+ORION       28  0562    WINLOSE.LBX   full  WINLOSE   LBX  UPPER      UPPER         18  o01                           1  o01:18
+ORION       29  056E    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          5  o01                           1  o01:5
+ORION       30  06F1    NEWSCAST.LBX  full  NEWSCAST  LBX  UPPER      UPPER          4  o01                           1  o01:4
+ORION       31  1101    SPIES         bare  SPIES          UPPER      none           0                                0
+ORION       32  1176    RESEARCH      bare  RESEARCH       UPPER      none           0                                0
+ORION       33  1306    DIPLOMAT      bare  DIPLOMAT       UPPER      none           0                                0
+ORION       34  1EA2    CONFIG.MOO    full  CONFIG    MOO  UPPER      UPPER          2  o03                           1  o03:2
+ORION       35  1F07    NAMES.LBX     full  NAMES     LBX  UPPER      UPPER          1  o04                           1  o04:1
+ORION       36  1F82    ERROR.LOG     full  ERROR     LOG  UPPER      UPPER          1  s06                           1  s06:1
+ORION       37  2352    FONTS.LBX     full  FONTS     LBX  UPPER      UPPER          2  s14                           1  s14:2
+ORION       38  24CC    HELP          bare  HELP           UPPER      none           0                                0
+ORION       39  24D4    SCRDMP00.FLI  full  SCRDMP00  FLI  UPPER      UPPER          1  s24                           0  s24:1
+ORION       40  2ED4    HELP.LBX      full  HELP      LBX  UPPER      UPPER          1  s36                           1  s36:1
+ORION       41  2F0C    SNDDRV.LBX    full  SNDDRV    LBX  UPPER      UPPER          4  s38                           1  s38:4
+STARMAP      0  03C2    Diplomat      bare  Diplomat       Title      none           0                                0
+STARMAP      1  0408    CONFIG.MOO    full  CONFIG    MOO  UPPER      UPPER          5  s01                           1  o15:1 s01:4
+STARMAP      2  0445    FONTS.LBX     full  FONTS     LBX  UPPER      UPPER          1  s01                           1  s01:1
+STARMAP      3  048C    ORION.EXE     full  ORION     EXE  UPPER      UPPER          1  s01                           1  s01:1
+STARMAP      4  04A5    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          3  s03                           1  s03:3
+STARMAP      5  0507    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          1  s03                           1  s03:1
+STARMAP      6  051A    ORION.EXE     full  ORION     EXE  UPPER      UPPER          5  s03                           1  s03:5
+STARMAP      7  0557    SAVE7.GAM     full  SAVE7     GAM  UPPER      UPPER          1  s03                           0  s03:1
+STARMAP      8  059C    ships         bare  ships          lower      none           0                                0
+STARMAP      9  05B6    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          3  s04                           1  s04:3
+STARMAP     10  05C3    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          1  s04                           1  s04:1
+STARMAP     11  06CF    RESEARCH      bare  RESEARCH       UPPER      none           0                                0
+STARMAP     12  07C6    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          6  s05                           1  s05:6
+STARMAP     13  07D3    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          2  s05                           1  s05:2
+STARMAP     14  07DD    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          3  s05                           1  s05:3
+STARMAP     15  08B4    ORION.EXE     full  ORION     EXE  UPPER      UPPER          1  s07                           1  s07:1
+STARMAP     16  08E4    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          5  s08                           1  s08:5
+STARMAP     17  0A6E    TECHNO.LBX    full  TECHNO    LBX  UPPER      UPPER          3  s10                           1  s10:3
+STARMAP     18  0A79    SPIES.LBX     full  SPIES     LBX  UPPER      UPPER          2  s10                           1  s10:2
+STARMAP     19  0A83    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          8  s10                           1  s10:8
+STARMAP     20  0ABF    RESEARCH.LBX  full  RESEARCH  LBX  UPPER      UPPER          1  s10                           1  s10:1
+STARMAP     21  0D48    colonies      bare  colonies       lower      none           0                                0
+STARMAP     22  0E46    VORTEX.LBX    full  VORTEX    LBX  UPPER      UPPER         13  o01                           1  o01:13
+STARMAP     23  0E5F    CONFIG.MOO    full  CONFIG    MOO  UPPER      UPPER          1  o01                           1  o01:1
+STARMAP     24  2800    MISSILE       bare  MISSILE        UPPER      none           0                                0
+STARMAP     25  2965    MISSILE       bare  MISSILE        UPPER      none           0                                0
+STARMAP     26  2BB3    MISSILE       bare  MISSILE        UPPER      none           0                                0
+STARMAP     27  316B    SPACE         bare  SPACE          UPPER      none           0                                0
+STARMAP     28  3198    SHIPS         bare  SHIPS          UPPER      none           0                                0
+STARMAP     29  335C    SHIPS         bare  SHIPS          UPPER      none           0                                0
+STARMAP     30  34F7    DESIGN.LBX    full  DESIGN    LBX  UPPER      UPPER         12  o02                           1  o02:12
+STARMAP     31  3502    PLANETS.LBX   full  PLANETS   LBX  UPPER      UPPER          1  o02                           1  o02:1
+STARMAP     32  3667    SPACE         bare  SPACE          UPPER      none           5  o03                           0  o03:5
+STARMAP     33  3709    SPACE         bare  SPACE          UPPER      none           0                                0
+STARMAP     34  3745    SPACE         bare  SPACE          UPPER      none           0                                0
+STARMAP     35  3878    FIRING.LBX    full  FIRING    LBX  UPPER      UPPER          1  o04                           1  o04:1
+STARMAP     36  3883    SPACE.LBX     full  SPACE     LBX  UPPER      UPPER         44  o04                           1  o04:44
+STARMAP     37  388D    missile.LBX   full  missile   LBX  lower      UPPER          5  o04                           1  o04:5
+STARMAP     38  3918    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          1  o07                           1  o07:1
+STARMAP     39  398F    STARMAP.LBX   full  STARMAP   LBX  UPPER      UPPER          5  o08                           1  o08:5
+STARMAP     40  3A20    starview.LBX  full  starview  LBX  lower      UPPER          7  o08                           1  o08:7
+STARMAP     41  3CB6    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          5  o09                           1  o09:5
+STARMAP     42  3E12    MISSILE       bare  MISSILE        UPPER      none           0                                0
+STARMAP     43  3F0F    RESEARCH.LBX  full  RESEARCH  LBX  UPPER      UPPER          1  o09                           1  o09:1
+STARMAP     44  41BA    DIPLOMAT.LBX  full  DIPLOMAT  LBX  UPPER      UPPER          1  o10                           1  o10:1
+STARMAP     45  43C0    EMBASSY.LBX   full  EMBASSY   LBX  UPPER      UPPER          4  o10                           1  o10:4
+STARMAP     46  43CC    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          2  o10                           1  o10:2
+STARMAP     47  48B4    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          3  o12                           1  o12:3
+STARMAP     48  48C5    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          1  o12                           1  o12:1
+STARMAP     49  48DD    DESIGN        bare  DESIGN         UPPER      none           0                                0
+STARMAP     50  4A7B    spies         bare  spies          lower      none           0                                0
+STARMAP     51  4B98    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER         13  o13                           1  o13:13
+STARMAP     52  4BA5    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          1  o13                           1  o13:1
+STARMAP     53  4BB2    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          3  o13                           1  o13:3
+STARMAP     54  4BBC    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          1  o13                           1  o13:1
+STARMAP     55  4C4A    PLANETS       bare  PLANETS        UPPER      none           1  o13                           0  o13:1
+STARMAP     56  4ECD    PLANETS       bare  PLANETS        UPPER      none           1  o14                           0  o14:1
+STARMAP     57  4FA4    COLONIES.LBX  full  COLONIES  LBX  UPPER      UPPER          2  o14                           1  o14:2
+STARMAP     58  5551    Design        bare  Design         Title      none           1  o16                           0  o16:1
+STARMAP     59  5568    Planets       bare  Planets        Title      none           1  o16                           0  o16:1
+STARMAP     60  55A4    BACKGRND.LBX  full  BACKGRND  LBX  UPPER      UPPER          5  o17                           1  o17:5
+STARMAP     61  5638    Diplomat      bare  Diplomat       Title      none           1  o17                           0  o17:1
+STARMAP     62  5649    SPIES         bare  SPIES          UPPER      none           0                                0
+STARMAP     63  56D0    missile       bare  missile        lower      none           0                                0
+STARMAP     64  5946    COUNCIL.LBX   full  COUNCIL   LBX  UPPER      UPPER          9  o18                           1  o18:9
+STARMAP     65  5952    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          1  o18                           1  o18:1
+STARMAP     66  59A2    LANDING.LBX   full  LANDING   LBX  UPPER      UPPER          6  o19                           1  o19:6
+STARMAP     67  59AE    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          4  o19                           1  o19:4
+STARMAP     68  5AA2    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          1  o19                           1  o19:1
+STARMAP     69  5C50    NEWSCAST.LBX  full  NEWSCAST  LBX  UPPER      UPPER          5  o21                           1  o21:5
+STARMAP     70  5C5D    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          2  o21                           1  o21:2
+STARMAP     71  5C7B    EVENTMSG.LBX  full  EVENTMSG  LBX  UPPER      UPPER          1  o21                           1  o21:1
+STARMAP     72  5CC6    PLANETS.LBX   full  PLANETS   LBX  UPPER      UPPER          6  o24                           1  o24:6
+STARMAP     73  5CD2    STARMAP.LBX   full  STARMAP   LBX  UPPER      UPPER         59  o24                           1  o24:59
+STARMAP     74  5CDE    SHIPS.LBX     full  SHIPS     LBX  UPPER      UPPER          2  o24                           1  o24:2
+STARMAP     75  5CE8    SHIPS2.LBX    full  SHIPS2    LBX  UPPER      UPPER          3  o24                           1  o24:3
+STARMAP     76  5CF3    SCREENS.LBX   full  SCREENS   LBX  UPPER      UPPER         16  o24                           1  o24:16
+STARMAP     77  5CFF    SPACE.LBX     full  SPACE     LBX  UPPER      UPPER          1  o24                           1  o24:1
+STARMAP     78  5D09    MISSILE.LBX   full  MISSILE   LBX  UPPER      UPPER          1  o24                           1  o24:1
+STARMAP     79  5D15    DESIGN.LBX    full  DESIGN    LBX  UPPER      UPPER          1  o24                           1  o24:1
+STARMAP     80  5D20    NEBULA.LBX    full  NEBULA    LBX  UPPER      UPPER          2  o24                           1  o24:2
+STARMAP     81  5D2B    V11.LBX       full  V11       LBX  UPPER      UPPER          2  o24                           1  o24:2
+STARMAP     82  5D33    RESEARCH.LBX  full  RESEARCH  LBX  UPPER      UPPER          4  o24                           1  o24:4
+STARMAP     83  5D40    DIPLOMAT.LBX  full  DIPLOMAT  LBX  UPPER      UPPER          1  o24                           1  o24:1
+STARMAP     84  5D4D    SOUNDFX.LBX   full  SOUNDFX   LBX  UPPER      UPPER          2  o24                           1  o24:2
+STARMAP     85  5D59    MUSIC.LBX     full  MUSIC     LBX  UPPER      UPPER          4  o24                           1  o24:4
+STARMAP     86  5D63    NAMES.LBX     full  NAMES     LBX  UPPER      UPPER          1  o24                           1  o24:1
+STARMAP     87  5DDE    ERROR.LOG     full  ERROR     LOG  UPPER      UPPER          1  s16                           1  s16:1
+STARMAP     88  61AE    FONTS.LBX     full  FONTS     LBX  UPPER      UPPER          2  s24                           1  s24:2
+STARMAP     89  6328    HELP          bare  HELP           UPPER      none           0                                0
+STARMAP     90  6330    SCRDMP00.FLI  full  SCRDMP00  FLI  UPPER      UPPER          1  s34                           0  s34:1
+STARMAP     91  6D30    HELP.LBX      full  HELP      LBX  UPPER      UPPER          1  s46                           1  s46:1
+STARMAP     92  6D68    SNDDRV.LBX    full  SNDDRV    LBX  UPPER      UPPER          4  s48                           1  s48:4

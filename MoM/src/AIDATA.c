@@ -2,7 +2,6 @@
     AI - Data
 
     WIZARDS.EXE
-        ¿ ovr145 ?
         ¿ ovr164 ?
 */
 
@@ -32,16 +31,6 @@
 #include "../../STU/src/STU_LOG.h"
 
 #include <stdlib.h>
-
-
-
-/*
-    WIZARDS.EXE  ovr145
-*/
-
-// WZD o145p0
-
-
 
 
 
@@ -109,9 +98,7 @@ void NPC_Excess_Garrison(void)
             /* If garrison exceeds limits, remove the cheapest unit */
             if(troop_count > max_garrison && cheapest_unit != ST_UNDEFINED)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Excess garrison at city %d (%d/%d), removing unit %d (type %d)", itr_cities, troop_count, max_garrison, cheapest_unit, _UNITS[cheapest_unit].type);
-#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "GARRISON_CULL", itr_cities, city_wx, city_wy, city_wp, 1, 0, 0, 0, troop_count, max_garrison);
                 Kill_Unit(cheapest_unit, kt_Normal);
             }
@@ -169,92 +156,63 @@ void Make_Monsters(void)
     /* Check if the accumulator has reached the threshold: (50 - (difficulty * 5)) */
     if(_players[NEUTRAL_PLAYER_IDX].average_unit_cost < (50 - (_difficulty * 5)))
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters accumulator %d < threshold %d", _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
-#endif
         return;
     }
 
     /* Threshold reached: reset and check turn minimum */
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters accumulator reached threshold, turn=%d", _turn);
-#endif
     _players[NEUTRAL_PLAYER_IDX].average_unit_cost = 0;
     if(_turn < 50)
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters skipped (turn %d < 50)", _turn);
-#endif
         return;
     }
 
     /* Search for an eligible lair that is on the same continent as a non-neutral city */
-    /* loc_F99C3 */
     tries = 0;
     lair_idx = ST_UNDEFINED;
-    while(1)
+    do
     {
-        if(
-            (lair_idx == ST_UNDEFINED)
-            &&
-            (tries < 1000)
-        )
+        while((lair_idx == ST_UNDEFINED) && (tries < 1000))
         {
             rolled_idx = (Random(NUM_LAIRS) - 1);
-            if(_LAIRS[rolled_idx].intact == ST_TRUE && _LAIRS[rolled_idx].guard1_unit_type != 0)
+            if(
+                (_LAIRS[rolled_idx].intact == ST_TRUE)
+                &&
+                (_LAIRS[rolled_idx].guard1_unit_type != 0)
+                &&
+                (_unit_type_table[_LAIRS[rolled_idx].guard1_unit_type].race_type != rt_Life)
+            )
             {
-                if(_unit_type_table[_LAIRS[rolled_idx].guard1_unit_type].race_type != rt_Life)
+                /* Check if this lair is on a continent with any player city */
+                for(itr = 0; ((itr < _cities) && (lair_idx == ST_UNDEFINED)); itr++)
                 {
-                    /* Check if this lair is on a continent with any player city */
-                    city_match_found = 0;
-                    for(itr = 0; itr < _cities; itr++)
+                    if(
+                        (_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
+                        &&
+                        (_CITIES[itr].wp == _LAIRS[rolled_idx].wp)
+                        &&
+                        (_landmasses[((_CITIES[itr].wp * WORLD_SIZE) + (_CITIES[itr].wy * WORLD_WIDTH) + _CITIES[itr].wx)] == _landmasses[((_LAIRS[rolled_idx].wp * WORLD_SIZE) + (_LAIRS[rolled_idx].wy * WORLD_WIDTH) + _LAIRS[rolled_idx].wx)])
+                    )
                     {
-                        if(_CITIES[itr].owner_idx != NEUTRAL_PLAYER_IDX)
-                        {
-                            if(_CITIES[itr].wp == _LAIRS[rolled_idx].wp)
-                            {
-                                if(_landmasses[_CITIES[itr].wp * WORLD_SIZE + _CITIES[itr].wy * WORLD_WIDTH + _CITIES[itr].wx] ==
-                                    _landmasses[_LAIRS[rolled_idx].wp * WORLD_SIZE + _LAIRS[rolled_idx].wy * WORLD_WIDTH + _LAIRS[rolled_idx].wx])
-                                {
-                                    lair_idx = rolled_idx;
-                                    break;
-                                }
-                            }
-                        }
+                        lair_idx = rolled_idx;
                     }
                 }
             }
             tries++;
         }
-        else
-        {
-            /* loc_F9B46 */
-            if(Random(3) <= 1)
-            {
-                break;
-            }
-            /* OGBUG: OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
-            if(_FORTRESSES[HUMAN_PLAYER_IDX].wp == _LAIRS[lair_idx].wp)
-            {
-                break;
-            }
-        }
-    }
-    /* loc_F9B76 */
+        /* OGBUG  the "not on the human's plane, try again" re-test never re-picks: lair_idx is still set, so the while above is skipped and only Random(3) is re-rolled; the same lair is used either way */
+        /* OGBUG: OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] (tries reached 1000 without a match) */
+    } while((Random(3) > 1) && (_FORTRESSES[HUMAN_PLAYER_IDX].wp != _LAIRS[lair_idx].wp));
     if(tries >= 1000)
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters failed to find eligible lair after %d tries", tries);
-#endif
         AI_Metrics_Emit_NPC_Event(_turn, "MONSTER_FAIL", -1, 0, 0, 0, 0, 0, 0, 0, _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
         return;
     }
 
     /* Lair selected, extract map data */
-#ifdef STU_DEBUG
-    LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters selected lair %d at (%d,%d) plane %d after %d tries", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, _LAIRS[lair_idx].wp, tries);
-#endif
-    /* OGBUG: OOB AVRL  lair_idx can be -1 at _LAIRS[lair_idx] */
     lair_wx = _LAIRS[lair_idx].wx;
     lair_wy = _LAIRS[lair_idx].wy;
     lair_wp = _LAIRS[lair_idx].wp;
@@ -263,10 +221,7 @@ void Make_Monsters(void)
     /* Determine if an AI player's fortress is on this continent */
     ai_home_continent = 0;
 
-    /* BUG: The code compares the human landmass (Player 0) without checking the plane first */
-    /* This can cause ai_home_continent to be 0 even if an AI is on the same landmass ID on a different plane */
-    // slightly different than Raiders, which doesn't branch on the human players home continent
-    // here, means we a flag for whether the rampage is on a continent the human is sharing with an AI
+    /* OGBUG  _landmasses ids restart at 1 on each plane (Init_Landmasses()), and neither test below checks wp: a human fortress on the other plane with the same id skips the AI search (ai_home_continent stays 0), and an AI fortress on the other plane with the same id sets it */
     if(_landmasses[_FORTRESSES[HUMAN_PLAYER_IDX].wp * WORLD_SIZE + _FORTRESSES[HUMAN_PLAYER_IDX].wy * WORLD_WIDTH + _FORTRESSES[HUMAN_PLAYER_IDX].wx] != lair_landmass_idx)
     {
         for(itr = 1; itr < _num_players; itr++)
@@ -274,7 +229,6 @@ void Make_Monsters(void)
             if(_landmasses[_FORTRESSES[itr].wp * WORLD_SIZE + _FORTRESSES[itr].wy * WORLD_WIDTH + _FORTRESSES[itr].wx] == lair_landmass_idx)
             {
                 ai_home_continent = ST_TRUE;
-                break;
             }
         }
     }
@@ -314,9 +268,7 @@ void Make_Monsters(void)
     /* Generate the monster stack based on budget and race */
     n_monsters = Make_Monster_List(rampage_budget, lair_race, &monster_type_list[0]);
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Monsters spawning %d monsters (budget=%d) at (%d,%d) plane %d", n_monsters, rampage_budget, adjacent_wx, adjacent_wy, lair_wp);
-#endif
     AI_Metrics_Emit_NPC_Event(_turn, "MONSTER_SPAWN", lair_idx, _LAIRS[lair_idx].wx, _LAIRS[lair_idx].wy, lair_wp, n_monsters, rampage_budget, adjacent_wx, adjacent_wy, _players[NEUTRAL_PLAYER_IDX].average_unit_cost, (50 - (_difficulty * 5)));
 
     /* Create the units on the map */
@@ -409,19 +361,16 @@ void Make_Raiders(void)
 
     if(_players[NEUTRAL_PLAYER_IDX].casting_cost_original < 30)
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders accumulator %d < 30", _players[NEUTRAL_PLAYER_IDX].casting_cost_original);
-#endif
         return;
     }
 
     /* Reset raider accumulator and start generation attempts */
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders accumulator reached 30, attempting spawn");
-#endif
     _players[NEUTRAL_PLAYER_IDX].casting_cost_original = 0;
     unused_local = 0;
     did_create = 0;
+    /* CLAUDE */  /* REBUG */  tries = 0;  /* asm loc_F9DD7: tries is zeroed twice */
 
     for(tries = 0; tries < 1000 && did_create == 0; tries++)
     {
@@ -455,7 +404,8 @@ void Make_Raiders(void)
 
         /* Check if there is at least one non-neutral city on the same landmass */
         have_non_neutral = 0;
-        for(itr = 0; itr < _cities; itr++)
+        // for(itr = 0; itr < _cities; itr++)
+        /* CLAUDE */  /* REBUG */  for(itr = 0; ((itr < _cities) && (have_non_neutral == ST_FALSE)); itr++)  /* asm loc_F9F6A: the found test is in the loop condition */
         {
             city_ptr = &_CITIES[itr];
             if(city_ptr->owner_idx != NEUTRAL_PLAYER_IDX)
@@ -463,7 +413,7 @@ void Make_Raiders(void)
                 if(_landmasses[(city_ptr->wp * WORLD_SIZE) + (city_ptr->wy * WORLD_WIDTH) + city_ptr->wx] == city_landmass_idx)
                 {
                     have_non_neutral = ST_TRUE;
-                    break;
+                    // break;
                 }
             }
         }
@@ -537,6 +487,7 @@ void Make_Raiders(void)
 
             unit_type = _UNITS[troops[(Random(troop_count) - 1)]].type;
 
+            /* OGBUG  `<= ut_BarbSwordsmen` (40) drops every hero type and the race-14 ships / catapult, but also unit types 39 (Barbarian Spearmen) and 40 (Barbarian Swordsmen): a pick of either creates no raider */
             /* OGBUG: This comparison excludes barbarian spearmen and swordsmen from raiding */
             if(unit_type <= ut_BarbSwordsmen)
             {
@@ -555,9 +506,7 @@ void Make_Raiders(void)
             }
 
             /* Create the raider unit for the neutral player */
-#ifdef STU_DEBUG
             LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders creating unit type %d at (%d,%d) plane %d, level %d", unit_type, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
-#endif
             Create_Unit(unit_type, NEUTRAL_PLAYER_IDX, empty_adjacent_x, empty_adjacent_y, city_wp, raiders_level_neg);
             units_created++;
         }
@@ -568,9 +517,7 @@ void Make_Raiders(void)
             Kill_Unit(troops[itr2], kt_Normal);
         }
 
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders spawned %d raiders from city %d at (%d,%d) plane %d, removed %d garrison", units_created, rolled_city, city_wx, city_wy, city_wp, (units_created / 3));
-#endif
         AI_Metrics_Emit_NPC_Event(_turn, "RAIDER_SPAWN", rolled_city, city_wx, city_wy, city_wp, units_created, raiders_count, 0, 0, _players[NEUTRAL_PLAYER_IDX].casting_cost_original, 30);
         did_create = ST_TRUE;
     }
@@ -578,9 +525,7 @@ void Make_Raiders(void)
     /* If raider generation failed, increment the rampaging monster accumulator instead */
     if(did_create == ST_FALSE)
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Make_Raiders failed after 1000 tries, boosting monster accumulator by 15");
-#endif
         AI_Metrics_Emit_NPC_Event(_turn, "RAIDER_FAIL", -1, 0, 0, 0, 0, 0, 0, 0, _players[NEUTRAL_PLAYER_IDX].casting_cost_original, 30);
         _players[NEUTRAL_PLAYER_IDX].average_unit_cost += 15;
     }
@@ -614,9 +559,7 @@ int16_t NPC_Destinations(void)
 
     Build_NPC_Stacks();  // OGBUG: definitely passes NEUTRAL_PLAYER_IDX here, but Build_NPC_Stacks doesn't take a parameter and is hard-coded for NEUTRAL_PLAYER_IDX
 
-#ifdef STU_DEBUG
     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: NPC_Destinations evaluating %d neutral stacks", _ai_all_own_stack_count);
-#endif
 
     for(stack_idx = 0; stack_idx < _ai_all_own_stack_count; stack_idx++)
     {
@@ -681,9 +624,7 @@ int16_t NPC_Destinations(void)
 
                 if(adj_city_val > cur_target_val)
                 {
-#ifdef STU_DEBUG
                     LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) redirected to adjacent city %d at (%d,%d) (val %d > %d)", stack_idx, stack_wx, stack_wy, adj_city_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, adj_city_val, cur_target_val);
-#endif
                     AI_Metrics_Emit_NPC_Event(_turn, "NPC_REDIRECT", stack_idx, stack_wx, stack_wy, stack_wp, 0, adj_city_val, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, 0, 0);
                     AI_Stack_Set_Destination(stack_idx, _CITIES[adj_city_idx].wx, _CITIES[adj_city_idx].wy, NEUTRAL_PLAYER_IDX);
                     stack->unit_status = us_GOTO;
@@ -730,18 +671,14 @@ int16_t NPC_Destinations(void)
             if(cities_examined > 0)
             {
                 uu_city_idx = target_city_idx;
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) targeting city %d at (%d,%d) (val %d, examined %d cities)", stack_idx, stack_wx, stack_wy, target_city_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, adj_city_val, cities_examined);
-#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "NPC_TARGET", stack_idx, stack_wx, stack_wy, stack_wp, 0, adj_city_val, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, cities_examined, 0);
                 AI_Stack_Set_Destination(stack_idx, _CITIES[target_city_idx].wx, _CITIES[target_city_idx].wy, NEUTRAL_PLAYER_IDX);
                 stack->unit_status = us_GOTO;
             } else {
                 /* No reachable targets: disband the stack to clear conventional memory */
                 /* same as seen in MoO2 ... `if(NPC_Dest_() == ST_UNDEFINED)` */
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_AIMOVE, "AI_NPC: Stack %d at (%d,%d) disbanded (no reachable targets)", stack_idx, stack_wx, stack_wy);
-#endif
                 AI_Metrics_Emit_NPC_Event(_turn, "NPC_DISBAND", stack_idx, stack_wx, stack_wy, stack_wp, 0, 0, 0, 0, 0, 0);
                 for(itr = 0; itr < _units; itr++)
                 {
@@ -769,6 +706,7 @@ void Allocate_AI_Data(void)
     _ai_all_own_stacks = (struct s_AI_STACK_DATA *)Near_Allocate_Next(800);
     _ai_all_enemy_stacks = (struct s_AI_TARGET *)Near_Allocate_Next(1440);
     g_ai_spell_group_flags = Near_Allocate_Next(92);
+    /* OGBUG  50 bytes, but AI_Compute_Spells_Info() appends every known non-combat spell with no bound test: past 50 it writes into _ai_landmass_own_strengths[0], allocated next */
     g_niu_ai_spell_info_list = Near_Allocate_Next(50);
     _ai_landmass_own_strengths[0] = (int16_t *)Near_Allocate_Next(120);
     _ai_landmass_own_strengths[1] = (int16_t *)Near_Allocate_Next(120);
@@ -1039,6 +977,7 @@ void AI_Evaluate_Hostility(int16_t player_idx)
             continue;
         }
 
+        /* OGBUG  tests the AI's OWN casting_spell_idx against spell 90 (spl_Fire_Elemental) (the Spell of Mastery tests below use spl_Spell_Of_Mastery and the OTHER wizard's casting_spell_idx): while the AI's own casting_spell_idx is 90, every contacted wizard is set to hostility 3 */
         if(
             (_players[player_idx].Dipl.Dipl_Status[itr_players] == DIPL_War)
             ||
@@ -1062,9 +1001,11 @@ void AI_Evaluate_Hostility(int16_t player_idx)
                     _players[player_idx].Hostility[itr_players] = 4;
                 }
             }
-            else if(_players[player_idx].Personality == PRS_Chaotic)
+            // else if(_players[player_idx].Personality == PRS_Chaotic)
+            /* CLAUDE */  /* REBUG */  else if(_players[player_idx].Personality >= PRS_Chaotic)  /* asm loc_FAB69: cmp PRS_Chaotic; jl skip - Chaotic, Lawful and Peaceful */
             {
-                if(Random(10) <= 1)  // 10% chance
+                // if(Random(10) <= 1)  // 10% chance
+                /* CLAUDE */  /* REBUG */  if(Random(10) == 1)  /* asm: cmp ax, 1; jnz */
                 {
                     _players[player_idx].Hostility[itr_players] = 4;
                 }
@@ -1090,7 +1031,8 @@ void AI_Evaluate_Hostility(int16_t player_idx)
 
             if(_players[player_idx].Dipl.Visible_Rel[itr_players] < 0)
             {
-                hostility_percentage = ((50 + -(_players[player_idx].Dipl.Visible_Rel[itr_players])) / 2);
+                // hostility_percentage = ((50 + -(_players[player_idx].Dipl.Visible_Rel[itr_players])) / 2);
+                /* CLAUDE */  /* REBUG */  hostility_percentage = ((-(_players[player_idx].Dipl.Visible_Rel[itr_players]) / 2) + 50);  /* asm: neg; cwd; sub; sar 1; add 50 */
             }
             else
             {
@@ -1110,6 +1052,7 @@ void AI_Evaluate_Hostility(int16_t player_idx)
                 hostility_percentage += TBL_AI_PRS_War_Mod[_players[player_idx].Personality];
             }
 
+            /* OGBUG  ADDS the hidden relation (a liked wizard is likelier to be set hostile, a disliked one less likely), and reads it as _players[player_idx].Hidden_Rel[other], the AI's row, where the diplomacy code keeps the other wizard's hidden opinion of the AI (Diplomacy_Break_Treaty() reads _players[0].Hidden_Rel[partner]) */
             hostility_percentage += _players[player_idx].Dipl.Hidden_Rel[itr_players];
 
             if(_players[itr_players].casting_spell_idx == spl_Spell_Of_Mastery)
@@ -1124,7 +1067,8 @@ void AI_Evaluate_Hostility(int16_t player_idx)
                 {
                     if(Random(100) < hostility_percentage)
                     {
-                        _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Warlike"
+                        // _players[player_idx].Hostility[itr_players] = 2;  // OSG: "Warlike"
+                        /* CLAUDE */  /* REBUG */  _players[player_idx].Hostility[itr_players] = 3;  /* asm: mov Hostility, 3 */
                     }
                 }
             }

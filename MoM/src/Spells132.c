@@ -4,6 +4,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/capture.h"
@@ -22,6 +23,7 @@
 #include "../../MoX/src/random.h"
 #include "../../MoX/src/SOUND.h"
 #include "../../MoX/src/special.h"
+#include "../../MoX/src/Util.h"  /* Copy_Memory_Near() */
 
 #include "AISPELL.h"
 #include "City_ovr55.h"
@@ -44,6 +46,8 @@
 #include "TerrType.h"
 #include "UNITTYPE.h"
 #include "UnitMove.h"
+#include "OverSpel.h"  /* Get_Spell_For_City_Enchantment(); Calculate_Dispel_Difficulty() */
+#include "RACETYPE.h"  /* rt_Death */
 #include "WZD_o059.h"
 #include "WZD_o143.h"
 
@@ -90,7 +94,7 @@ type
     2: Champion
 
 Hire_Hero_Popup()
-    |-> WIZ_HireHero()
+    |-> Hire_Hero()
         |-> Create_Unit()
 
 */
@@ -106,11 +110,16 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
     if(hero_slot_idx == ST_UNDEFINED)
     {
 
-        Full_Draw_Main_Screen();
+        if(player_idx == HUMAN_PLAYER_IDX)
+        {
 
-        LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 47, 1, 150);
+            Full_Draw_Main_Screen();
 
-        Warn0(GUI_NearMsgString);
+            LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 47, 1, 150);
+
+            Warn0(GUI_NearMsgString);
+
+        }
 
     }
     else
@@ -124,50 +133,14 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
             (
                 (_units < 950)
                 ||
-                (
-                    (player_idx == HUMAN_PLAYER_IDX)
-                    &&
-                    (_units < 980)
-                )
+                (player_idx == HUMAN_PLAYER_IDX)
             )
+            &&
+            (_units < 980)
         )
         {
 
-            if(player_idx != HUMAN_PLAYER_IDX)
-            {
-
-                if(
-                    (magic_set.enemy_spells == ST_TRUE)
-                    &&
-                    (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] != ST_FALSE)
-                    &&
-                    (_players[HUMAN_PLAYER_IDX].Dipl.Contacted[player_idx] == ST_TRUE)
-                )
-                {
-
-                    if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
-                    {
-
-                        Summon_Animation(-3, 3, player_idx);
-
-                    }
-                    else
-                    {
-                        
-                        Summon_Animation(-2, 3, player_idx);
-
-                    }
-
-                }
-
-                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
-
-                Evict_Weakest_Unit((_units - 1));
-
-                _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
-
-            }
-            else
+            if(player_idx == HUMAN_PLAYER_IDX)
             {
 
                 if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
@@ -227,10 +200,45 @@ void Cast_Summon_Hero(int16_t player_idx, int16_t type)
                     _active_world_y = _UNITS[(_units - 1)].wy;
                     _map_plane = _UNITS[(_units - 1)].wp;
 
-                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
-                    Select_Stack_At_Unit((_units - 1));
+                    /* OGBUG  Select_Stack_At_Unit() is called with nothing pushed: its unit_idx is the stale word on top of the stack (the caller's saved register), not the new unit (_units - 1), so it selects and centres on another unit's stack, or reads past the live units */
+                    // Select_Stack_At_Unit((_units - 1));
+                    /* HACK */  Select_Stack_At_Unit(Stack_Garbage_Range(0, (_units - 1)));  /* CLAUDE */  /* OG: no argument pushed (the callee reads [bp+6] = the caller's saved DI); the stand-in stays inside the live units */
 
                 }
+
+            }
+            else
+            {
+
+                if(
+                    (magic_set.enemy_spells == ST_TRUE)
+                    &&
+                    (_players[HUMAN_PLAYER_IDX].Globals[DETECT_MAGIC] > 0)
+                    &&
+                    (_players[HUMAN_PLAYER_IDX].Dipl.Contacted[player_idx] == ST_TRUE)
+                )
+                {
+
+                    if((_HEROES2[player_idx]->heroes[unit_type].abilities & HSA_FEMALE) != 0)
+                    {
+
+                        Summon_Animation(-3, 3, player_idx);
+
+                    }
+                    else
+                    {
+
+                        Summon_Animation(-2, 3, player_idx);
+
+                    }
+
+                }
+
+                Hire_Hero(player_idx, unit_type, hero_slot_idx, ST_FALSE);
+
+                Evict_Weakest_Unit((_units - 1));
+
+                _HEROES2[player_idx]->heroes[unit_type].Level = -20;  // Why?
 
             }
 
@@ -298,10 +306,10 @@ void Cast_Incarnation(int16_t player_idx)
 
         if(
             (_units < 980)
-            ||
+            &&
             (
                 (_units < 950)
-                &&
+                ||
                 (player_idx == HUMAN_PLAYER_IDX)
             )
         )
@@ -335,12 +343,12 @@ void Cast_Incarnation(int16_t player_idx)
                     if(hired == ST_TRUE)
                     {
 
-                        _active_world_x = _players[HUMAN_PLAYER_IDX].summon_wx;
-                        _active_world_y = _players[HUMAN_PLAYER_IDX].summon_wy;
-                        _map_plane = _players[HUMAN_PLAYER_IDX].summon_wp;
+                        _active_world_x = _players[player_idx].summon_wx;
+                        _active_world_y = _players[player_idx].summon_wy;
+                        _map_plane = _players[player_idx].summon_wp;
 
-                        // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
-                        Select_Stack_At_Unit((_units - 1));
+                        /* OGBUG  Select_Stack_At_Unit() is called with nothing pushed: its unit_idx is the stale word on top of the stack (the caller's saved register), not the new unit (_units - 1), so it selects and centres on another unit's stack, or reads past the live units */
+                        /* HACK */  Select_Stack_At_Unit(Stack_Garbage_Range(0, (_units - 1)));
 
                     }
 
@@ -348,7 +356,7 @@ void Cast_Incarnation(int16_t player_idx)
                 else
                 {
 
-                    WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 0);
+                    Hire_Hero(player_idx, unit_type, hero_slot_idx, ST_FALSE);
 
                     Evict_Weakest_Unit((_units - 1));
 
@@ -381,50 +389,188 @@ void Cast_Incarnation(int16_t player_idx)
 
 
 // WZD o132p03
-// CTY_ChaosRift()
+// drake178: CTY_ChaosRift()
+/*
+Chaos Rift, each turn (Apply_City_Changes()): up to five strength-8 Lightning Bolts at random units in the city, then a 5% chance to destroy each building
+items from killed heroes go to the city owner's item pool; the human gets 'unit killed' and 'building lost' notices
+*/
+void Apply_Chaos_Rift(int16_t city_idx)
+{
+    int16_t unit_list_idx = 0;
+    int16_t unit_count = 0;
+    int16_t original_unit_count = 0;
+    int16_t surviving_list_idx = 0;
+    int16_t item_count = 0;
+    int16_t unit_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t original_unit_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_list[(NUM_HEROES * NUM_HERO_ITEMS)] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t building_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr_buildings = 0;  // _SI_
+    int16_t itr = 0;  // _DI_
+
+    Army_At_City(city_idx, &unit_count, &unit_list[0]);
+
+    original_unit_count = unit_count;
+
+    Copy_Memory_Near((uint8_t *)&original_unit_list[0], (uint8_t *)&unit_list[0], sizeof(unit_list));
+
+    item_count = 0;
+
+    for(itr = 0; ((itr < 5) && (unit_count > 0)); itr++)
+    {
+
+        unit_list_idx = (Random(unit_count) - 1);
+
+        if(unit_list[unit_list_idx] > ST_UNDEFINED)
+        {
+
+            Cast_Attack_Spell_On_Enemy_Unit(unit_list[unit_list_idx], spl_Lightning_Bolt, &item_count, &item_list[0], 8);
+
+        }
+
+        Army_At_City(city_idx, &unit_count, &unit_list[0]);
+
+    }
+
+    item_pool_in_process = ST_TRUE;
+
+    m_item_wx = _CITIES[city_idx].wx;
+
+    m_item_wy = _CITIES[city_idx].wy;
+
+    m_item_wp = _CITIES[city_idx].wp;
+
+    Player_Process_Item_Pool(_CITIES[city_idx].owner_idx, item_count, &item_list[0]);
+
+    if(
+        (unit_count != original_unit_count)
+        &&
+        (_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    )
+    {
+
+        surviving_list_idx = 0;
+
+        /* OGBUG  Army_At_City() rewrites only the first unit_count entries, so unit_list[] past the survivors still holds the earlier lists: a killed unit that was last in the city's list matches its own stale entry and is never reported (a lone garrison wiped out included) */
+        for(itr = 0; itr < original_unit_count; itr++)
+        {
+
+            if(unit_list[surviving_list_idx] != original_unit_list[itr])
+            {
+
+                if(MSG_UnitKilled_Count < 20)
+                {
+
+                    MSG_UnitKilled_Array[MSG_UnitKilled_Count].Unit_Type = _UNITS[original_unit_list[itr]].type;
+
+                    MSG_UnitKilled_Array[MSG_UnitKilled_Count].City = (int8_t)city_idx;
+
+                    MSG_UnitKilled_Array[MSG_UnitKilled_Count].Spell = spl_Chaos_Rift;
+
+                    MSG_UnitKilled_Count++;
+
+                }
+
+            }
+            else
+            {
+
+                surviving_list_idx++;
+
+            }
+
+        }
+
+    }
+
+    for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)
+    {
+
+        building_list[itr_buildings] = 0;
+
+    }
+
+    Apply_Damage_To_City(city_idx, 0, 5, &building_list[0]);
+
+    if(_CITIES[city_idx].owner_idx == HUMAN_PLAYER_IDX)
+    {
+
+        for(itr_buildings = 0; itr_buildings < NUM_BUILDINGS; itr_buildings++)
+        {
+
+            if(
+                (building_list[itr_buildings] > 0)
+                &&
+                (MSG_BldLost_Count < 20)
+            )
+            {
+
+                MSG_BldLost_Array[MSG_BldLost_Count].city_idx = (int8_t)city_idx;
+
+                MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = building_list[itr_buildings];
+
+                MSG_BldLost_Count++;
+
+            }
+
+        }
+
+    }
+
+}
 
 
 // WZD o132p04
-void WIZ_MeteorStorm(int Player_Index)
+// drake178: WIZ_MeteorStorm()
+/*
+Meteor Storm, each turn (Next_Turn_Proc()):
+    every city not owned by the caster takes Apply_Damage_To_City(city_idx, 0, 1, ...), unless countered
+    every unit that is NOT in a city (of anyone's) takes the spl_Call_Chaos conventional spell attack
+NOTE:  the asm passes spl_Call_Chaos, not spl_Meteor_Storms, to Cast_Attack_Spell_On_Enemy_Unit(); the killed-unit message still says spl_Meteor_Storms
+*/
+void Apply_Meteor_Storm(int16_t player_idx)
 {
-    int16_t Building_List[NUM_BUILDINGS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int16_t Unit_List[MAX_STACK] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int16_t Items[3] = { 0, 0, 0 };
-    int16_t Item_Count = 0;
+    int16_t building_list[NUM_BUILDINGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t unit_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t item_list[3] = { 0, 0, 0 };
+    int16_t item_count = 0;
     int16_t unit_owner_idx = 0;
-    int16_t Unit_Count = 0;
-    int16_t itr_units = 0;
-    char * unit_flags = NULL;
-    int16_t i = 0;
-    unit_flags = (char * /* near */)Near_Allocate_First(_units);
+    int16_t unit_count = 0;
+    int16_t itr_units = 0;  // also the city iterator
+    uint8_t * unit_in_city = NULL;  // _DI_
+    int16_t itr = 0;  // _SI_
+
+    unit_in_city = Near_Allocate_First(_units);
+
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        unit_flags[itr_units] = 0;
+        unit_in_city[itr_units] = ST_FALSE;
     }
+
     for(itr_units = 0; itr_units < _cities; itr_units++)
     {
-        Army_At_City(itr_units, &Unit_Count, Unit_List);
-        for(i = 0; i < Unit_Count; i++)
+        Army_At_City(itr_units, &unit_count, &unit_list[0]);
+        for(itr = 0; itr < unit_count; itr++)
         {
-            unit_flags[Unit_List[i]] = 1;
+            unit_in_city[unit_list[itr]] = ST_TRUE;
         }
         if(Apply_Automatic_Spell_Counters(spl_Meteor_Storms, itr_units, 0, 0) != 0)
         {
-            if(_CITIES[itr_units].owner_idx != Player_Index)
+            if(_CITIES[itr_units].owner_idx != player_idx)
             {
-                for(i = 0; i < NUM_BUILDINGS; i++)
+                for(itr = 0; itr < NUM_BUILDINGS; itr++)
                 {
-                    Building_List[i] = 0;
+                    building_list[itr] = 0;
                 }
-                Apply_Damage_To_City(itr_units, 0, 1, Building_List);
+                Apply_Damage_To_City(itr_units, 0, 1, &building_list[0]);
                 if(_CITIES[itr_units].owner_idx == HUMAN_PLAYER_IDX)
                 {
-                    for(i = 0; i < NUM_BUILDINGS; i++)
+                    for(itr = 0; itr < NUM_BUILDINGS; itr++)
                     {
-                        if(Building_List[i] > 0 && MSG_BldLost_Count < 20)
+                        if(building_list[itr] > 0 && MSG_BldLost_Count < 20)
                         {
-                            MSG_BldLost_Array[(int)MSG_BldLost_Count].city_idx = (char)itr_units;
-                            MSG_BldLost_Array[(int)MSG_BldLost_Count].bldg_type_idx = Building_List[i];
+                            MSG_BldLost_Array[MSG_BldLost_Count].city_idx = itr_units;
+                            MSG_BldLost_Array[MSG_BldLost_Count].bldg_type_idx = building_list[itr];
                             MSG_BldLost_Count++;
                         }
                     }
@@ -432,40 +578,72 @@ void WIZ_MeteorStorm(int Player_Index)
             }
         }
     }
+
     for(itr_units = 0; itr_units < _units; itr_units++)
     {
-        if(unit_flags[itr_units] == 0)
+        if(unit_in_city[itr_units] == ST_FALSE)
         {
             unit_owner_idx = _UNITS[itr_units].owner_idx;
-            Item_Count = 0;
+            item_count = 0;
             item_pool_in_process = ST_TRUE;
             m_item_wx = _UNITS[itr_units].wx;
             m_item_wy = _UNITS[itr_units].wy;
             m_item_wp = _UNITS[itr_units].wp;
-            Cast_Attack_Spell_On_Enemy_Unit(itr_units, spl_Call_Chaos, &Item_Count, Items, 0);
-            Player_Process_Item_Pool(unit_owner_idx, Item_Count, Items);
+            Cast_Attack_Spell_On_Enemy_Unit(itr_units, spl_Call_Chaos, &item_count, &item_list[0], 0);
+            Player_Process_Item_Pool(unit_owner_idx, item_count, &item_list[0]);
             if(unit_owner_idx == HUMAN_PLAYER_IDX)
             {
-                if(_UNITS[itr_units].owner_idx == -1)
+                if(_UNITS[itr_units].owner_idx == ST_UNDEFINED)
                 {
                     if(MSG_UnitKilled_Count < 20)
                     {
-                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].Unit_Type = _UNITS[itr_units].type;
-                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].City = -1;
-                        MSG_UnitKilled_Array[(int)MSG_UnitKilled_Count].Spell = spl_Meteor_Storms;
+                        MSG_UnitKilled_Array[MSG_UnitKilled_Count].Unit_Type = _UNITS[itr_units].type;
+                        MSG_UnitKilled_Array[MSG_UnitKilled_Count].City = ST_UNDEFINED;
+                        MSG_UnitKilled_Array[MSG_UnitKilled_Count].Spell = spl_Meteor_Storms;
                         MSG_UnitKilled_Count++;
                     }
                 }
             }
         }
     }
+
 }
 
 
 // WZD o132p05
-// CTY_StreamOfLife()
+// drake178: CTY_StreamOfLife()
+/*
+Stream of Life, each turn (Apply_City_Changes()): every unit in the city that is neither Death-realm nor undead is fully healed (Damage = 0)
+*/
+void Apply_Stream_Of_Life(int16_t city_idx)
+{
+    int16_t unit_count = 0;
+    int16_t unit_list[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
+
+    Army_At_City(city_idx, &unit_count, &unit_list[0]);
+
+    for(itr = 0; itr < unit_count; itr++)
+    {
+
+        if(
+            (_unit_type_table[_UNITS[unit_list[itr]].type].race_type != rt_Death)
+            &&
+            ((_UNITS[unit_list[itr]].mutations & UM_UNDEAD) == 0)
+        )
+        {
+
+            _UNITS[unit_list[itr]].Damage = 0;
+
+        }
+
+    }
+
+}
+
 
 // WZD o132p06
+// drake178: WIZ_HireHero()
 // ¿ MoO2  Module: OFFICER  Set_Officer_To_Player_()
 // Hire_Officer_() |-> Set_Officer_To_Player_()  ...Hire_Officer_() handles the officer cost
 /*
@@ -477,23 +655,23 @@ so, not quite 'Generate Random Hero'
 
 
 XREF:
-    sub_B4250()
-    sub_B4471()
-    sub_B4E00()
-    j_WIZ_HireHero()
-        Hire_Hero_Popup()
-        AI_Accept_Hero()
+    Cast_Summon_Hero()   (o132p01)  saved_flag = ST_FALSE
+    Cast_Incarnation()   (o132p02)  saved_flag = ST_FALSE
+    Cast_Resurrection()  (o132p07)  saved_flag = ST_TRUE  (x2)
+    j_Hire_Hero()
+        Hire_Hero_Popup()  (o127p06)  saved_flag = ST_FALSE
+        AI_Accept_Hero()   (o127p09)  saved_flag = ST_FALSE
 e.g.,
     Hire_Hero_Popup()
-        |-> j_WIZ_HireHero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, 0)
+        |-> j_Hire_Hero(HUMAN_PLAYER_IDX, unit_type_idx, hero_slot_idx, ST_FALSE)
 
     void AI_Accept_Hero(int16_t player_idx, int16_t hero_slot_idx, int16_t unit_type_idx)
-        Hero_Hired = WIZ_HireHero(player_idx, unit_type_idx, hero_slot_idx, 0);
+        Hero_Hired = Hire_Hero(player_idx, unit_type_idx, hero_slot_idx, ST_FALSE);
 
 "Hire" as in "Summon"
 ...except "Summon" uses 'Summoning Circle', rather than 'Fortress City'
 */
-int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
+int16_t Hire_Hero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slot_idx, int16_t saved_flag)
 {
     int16_t itr = 0;
 
@@ -501,7 +679,7 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
 
     _UNITS[(_units - 1)].Finished = ST_FALSE;  // default is ST_TRUE
     _UNITS[(_units - 1)].moves2 = _UNITS[(_units - 1)].moves2_max;  // default is 0
-    _UNITS[(_units - 1)].Hero_Slot = (int8_t)hero_slot_idx;  // default is ST_UNDEFINED
+    _UNITS[(_units - 1)].Hero_Slot = hero_slot_idx;  // default is ST_UNDEFINED
 
     _players[player_idx].Heroes[hero_slot_idx].unit_idx = (_units - 1);
 
@@ -519,19 +697,19 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
         if(player_idx == HUMAN_PLAYER_IDX)
         {
 
-            stu_strcpy(_players[player_idx].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
+            stu_strcpy(_players[HUMAN_PLAYER_IDX].Heroes[hero_slot_idx].name, hero_names_table[unit_type_idx].name);
 
             _UNITS[(_units - 1)].XP = hero_names_table[unit_type_idx].experience_points;
 
-            _UNITS[(_units - 1)].Level = (int8_t)Calc_Unit_Level((_units - 1));
+            _UNITS[(_units - 1)].Level = Calc_Unit_Level((_units - 1));
 
         }
         else
         {
 
-            LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+            LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * NUM_HERO_TYPES) + unit_type_idx), 1, 13);
 
-            _UNITS[(_units - 1)].Level = abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level);
+            _UNITS[(_units - 1)].Level = (abs(_HEROES2[player_idx]->heroes[unit_type_idx].Level) - 1);
 
             _UNITS[(_units - 1)].XP = TBL_Experience[_UNITS[(_units - 1)].Level];
 
@@ -541,19 +719,20 @@ int16_t WIZ_HireHero(int16_t player_idx, int16_t unit_type_idx, int16_t hero_slo
     else
     {
 
-        LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * 35) + unit_type_idx), 1, 13);
+        LBX_Load_Data_Static(names_lbx_file__ovr132, 0, (SAMB_ptr)_players[player_idx].Heroes[hero_slot_idx].name, ((player_idx * NUM_HERO_TYPES) + unit_type_idx), 1, 13);
 
         SETMAX(_HEROES2[player_idx]->heroes[unit_type_idx].Level, HL_GRANDLORD);
 
+        _UNITS[(_units - 1)].Level = _HEROES2[player_idx]->heroes[unit_type_idx].Level;
+
+        _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
+
     }
-
-    _UNITS[(_units - 1)].Level = (int8_t)_HEROES2[player_idx]->heroes[unit_type_idx].Level;
-
-    _UNITS[(_units - 1)].XP = TBL_Experience[_HEROES2[player_idx]->heroes[unit_type_idx].Level];
 
     // BUG  Did this used to do something different? What tests it?
     // may be is/was success status as in cast the spell
     // NOTE(JimBalcomb,202409090905): AI_Accept_Hero() tests this
+    /* CLAUDE */  /* NOTE  asm: mov ax, e_ST_TRUE  ...the OG always returns ST_TRUE; there is no failure path */
     return ST_TRUE;
 
 }
@@ -614,7 +793,7 @@ void Cast_Resurrection(int16_t player_idx)
 
                 unit_type = hero_list[hero_ctr];
 
-                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, ST_TRUE);
+                Hire_Hero(player_idx, unit_type, hero_slot_idx, ST_TRUE);
 
                 Evict_Weakest_Unit((_units - 1));
 
@@ -649,11 +828,11 @@ void Cast_Resurrection(int16_t player_idx)
                 else
                 {
 
-                    Select_Hero_To_Ressurect(hero_ctr, &hero_list[1]);
+                    unit_type = Select_Hero_To_Ressurect(hero_ctr, &hero_list[1]);
 
                 }
 
-                WIZ_HireHero(player_idx, unit_type, hero_slot_idx, 1);
+                Hire_Hero(player_idx, unit_type, hero_slot_idx, ST_TRUE);
 
                 _UNITS[(_units - 1)].wx = (int8_t)_players[player_idx].summon_wx;
                 _UNITS[(_units - 1)].wy = (int8_t)_players[player_idx].summon_wy;
@@ -678,8 +857,9 @@ void Cast_Resurrection(int16_t player_idx)
                     _active_world_y = _UNITS[(_units - 1)].wy;
                     _map_plane = _UNITS[(_units - 1)].wp;
 
-                    // ¿ BUGBUG  no unit_idx param  Select_Stack_At_Unit();  ...as-compiled, would be wp, in AX?
-                    Select_Stack_At_Unit((_units - 1));
+                    /* OGBUG  Select_Stack_At_Unit() is called with nothing pushed: its unit_idx is the stale word on top of the stack (the caller's saved register), not the new unit (_units - 1), so it selects and centres on another unit's stack, or reads past the live units */
+                    // Select_Stack_At_Unit((_units - 1));
+                    /* HACK */  Select_Stack_At_Unit(Stack_Garbage_Range(0, (_units - 1)));  /* CLAUDE */  /* OG: no argument pushed (the callee reads [bp+6] = the caller's saved DI); the stand-in stays inside the live units */
 
                 }
 
@@ -853,9 +1033,9 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
     int16_t scsv1 = 0;
     int16_t itr = 0;  // _SI_
 
-    _map_x = IDK_map_x;
-    _map_y = IDK_map_y;
-    _map_plane = IDK_map_p;
+    IDK_map_x = _map_x;
+    IDK_map_y = _map_y;
+    IDK_map_p = _map_plane;
 
     troop_count = 0;
 
@@ -865,7 +1045,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
         if(_players[itr].Globals[PLANAR_SEAL] > ST_FALSE)
         {
 
-            if(itr == HUMAN_PLAYER_IDX)
+            if(player_idx == HUMAN_PLAYER_IDX)
             {
 
                 LBX_Load_Data_Static(message_lbx_file__ovr132, 0, (SAMB_ptr)&GUI_NearMsgString[0], 54, 1, 150);
@@ -885,6 +1065,10 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
         return_value = Spell_Casting_Screen__WIP(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_PlaneShift_2);
 
+        scsv2 = _UNITS[scsv1].wy;
+        scsv3 = _UNITS[scsv1].wp;
+        scsv1 = _UNITS[scsv1].wx;
+
     }
     else
     {
@@ -892,10 +1076,6 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
         return_value = Get_Map_Square_Target_For_Spell(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, spl_Plane_Shift, player_idx);
 
     }
-
-    scsv2 = _UNITS[scsv1].wy;
-    scsv3 = _UNITS[scsv1].wp;
-    scsv1 = _UNITS[scsv1].wx;
 
     plane = ((scsv3 + 1) % NUM_PLANES);
 
@@ -930,7 +1110,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
             bitmap = Allocate_Next_Block(_screen_seg, 30);
 
-            OVL_BringIntoView(&_map_x, &_map_y, scsv1, scsv2, scsv3);
+            Bring_Square_Into_View(&_map_x, &_map_y, scsv1, scsv2, scsv3);
 
             _map_plane = scsv3;
             scsv4 = scsv1;
@@ -975,7 +1155,47 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
         }
 
-        if(plane_shift_status != 0)
+        if(plane_shift_status == 0)
+        {
+
+            for(itr = 0; itr < troop_count; itr++)
+            {
+
+                _UNITS[troops[itr]].wp = ((_UNITS[troops[itr]].wp + 1) % 2);
+
+            }
+
+            if(player_idx == HUMAN_PLAYER_IDX)
+            {
+
+                _map_plane = ((_map_plane + 1) % 2);
+
+                range = Player_Units_Max_Range(player_idx, scsv1, scsv2, _map_plane);
+
+                // TODO  DIPLO  AI_ContactWizards(player_idx, scsv1, scsv2, _map_plane, range);
+                Contact_Players_In_Scouting_Range(player_idx, scsv1, scsv2, _map_plane, range);  /* CLAUDE */  /* asm 332: call j_AI_ContactWizards; the return value is dropped */
+
+                Set_Square_Explored_Flags(scsv1, scsv2, _map_plane);
+
+                Update_Scouted_And_Contacted();
+
+                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
+
+            }
+            else
+            {
+
+                if(Check_Square_Scouted(scsv1, scsv2, plane) != ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: loc_B55D1: push [bp+plane] / push scsv2 / push scsv1 / call j_Check_Square_Scouted / or ax, ax / jz loc_B55F4 */
+                {
+
+                    _map_plane = ((_map_plane + 1) % 2);
+
+                }
+
+            }
+
+        }
+        else
         {
 
             if(player_idx == HUMAN_PLAYER_IDX)
@@ -991,7 +1211,8 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
                 if(
                     (player_idx == HUMAN_PLAYER_IDX)
                     ||
-                    (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+                    // (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+                    (Check_Square_Scouted(scsv1, scsv2, plane) != ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: push [bp+plane] / push [bp+scsv2] / push [bp+scsv1] / call j_Check_Square_Scouted */
                 )
                 {
 
@@ -999,9 +1220,10 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                     Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
 
-                    Set_Map_Square_Explored_Flags_XYP(scsv1, scsv2, _map_plane);
+                    Set_Square_Explored_Flags(scsv1, scsv2, _map_plane);
 
-                    _page_flip_effect = pfe_TogglePagesFadeIn;
+                    // _page_flip_effect = pfe_TogglePagesFadeIn;
+                    _page_flip_effect = pfe_Dissolve;  /* CLAUDE */  /* REBUG */  /* asm: mov [_page_flip_effect], 3 */
 
                     Set_Page_Off();
 
@@ -1009,7 +1231,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
                     PageFlip_FX();
 
-                    _page_flip_effect = pfe_None;
+                    _page_flip_effect = pfe_Default;
 
                     Update_Scouted_And_Contacted();
 
@@ -1118,38 +1340,6 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
             }
 
         }
-        else
-        {
-
-            for(itr = 0; itr < troop_count; itr++)
-            {
-
-                _UNITS[troops[itr]].wp = ((_UNITS[troops[itr]].wp + 1) % 2);
-
-            }
-
-            if(
-                (player_idx == HUMAN_PLAYER_IDX)
-                ||
-                (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
-            )
-            {
-
-                _map_plane = ((_map_plane + 1) % 2);
-
-                range = Player_Units_Max_Range(player_idx, scsv1, scsv2, _map_plane);
-
-                // TODO  DIPLO  AI_ContactWizards(player_idx, scsv1, scsv2, _map_plane, range);
-
-                Set_Map_Square_Explored_Flags_XYP(scsv1, scsv2, _map_plane);
-
-                Update_Scouted_And_Contacted();
-
-                Set_Entities_On_Map_Window(_map_x, _map_y, _map_plane);
-
-            }
-
-        }
 
         /*
             AFTER:
@@ -1161,7 +1351,8 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
             (
                 (plane_shift_status == 0)
                 &&
-                (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+                // (Check_Square_Scouted(scsv1, scsv2, scsv3) != ST_FALSE)
+                (Check_Square_Scouted(scsv1, scsv2, _map_plane) != ST_FALSE)  /* CLAUDE */  /* REBUG */  /* asm: loc_B580F: push [_map_plane] / push [bp+scsv2] / push [bp+scsv1] / call j_Check_Square_Scouted */
             )
         )
         {
@@ -1211,6 +1402,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
     }
 
+    /* OGBUG  Mark_Block(_screen_seg) happens only in the setup branch (the human, or an AI cast with Cast_Plane_Shift_Check() == 0 on a square the human has scouted); an AI cast elsewhere, or a cast with no target (return_value != ST_TRUE), reaches this release with no mark, rolling _screen_seg back to whatever older mark it holds */
     Release_Block(_screen_seg);
 
     _map_x = IDK_map_x;
@@ -1223,123 +1415,224 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
 
 
 // WZD o132p11
-void WIZ_GreatWasting(int16_t Player_Index)
+// drake178: WIZ_GreatWasting()
+/*
+Great Wasting, each turn (Next_Turn_Proc()): 3..5 attempts, each trying up to 50 random squares, to corrupt one land square
+that is not within 2 squares of one of the caster's own cities and is not already corrupted
+NOTE:  an attempt counts even when all 50 tries fail
+*/
+void Apply_Great_Wasting(int16_t player_idx)
 {
-    int16_t Tiles_Corrupted = 0;
-    int16_t Tiles_To_Corrupt = 0;
-    int16_t Tries = 0;
-    int16_t XPos = 0;
-    int16_t YPos = 0;
-    int16_t Plane = 0;
-    int8_t * UU_Array1 = 0;
-    int8_t * UU_Array2 = 0;
-    int16_t si = 0;
-    int16_t success = 0;
-    UU_Array1 = (int8_t *)Near_Allocate_First(50);
-    UU_Array2 = (int8_t *)Near_Allocate_Next(50);
-    Tiles_To_Corrupt = Random(3) + 3;
-    Tiles_Corrupted = 0;
-    while(Tiles_Corrupted < Tiles_To_Corrupt)
+    int16_t squares_corrupted = 0;
+    int16_t squares_to_corrupt = 0;
+    int16_t tries = 0;
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t wp = 0;
+    uint8_t * niu_array_1 = NULL;  /* OGBUG */  /* allocated and never used */
+    uint8_t * niu_array_2 = NULL;  /* OGBUG */  /* allocated and never used */
+    int16_t itr_cities = 0;  // _SI_
+    int16_t square_ok = 0;  // _DI_
+    niu_array_1 = Near_Allocate_First(50);
+    niu_array_2 = Near_Allocate_Next(50);
+    squares_to_corrupt = Random(3) + 3;
+    squares_corrupted = 0;
+    while(squares_corrupted < squares_to_corrupt)
     {
-        Tries = 0;
-        success = 0;
-        while(success == 0 && Tries < 50)
+        tries = 0;
+        square_ok = ST_FALSE;
+        while(square_ok == ST_FALSE && tries < 50)
         {
-            Tries++;
-            success = 1;
-            XPos = Random(60) - 1;
-            YPos = Random(40) - 1;
-            Plane = Random(2) - 1;
-            for(si = 0; si < _cities; si++)
+            tries++;
+            square_ok = ST_TRUE;
+            wx = Random(WORLD_WIDTH) - 1;
+            wy = Random(WORLD_HEIGHT) - 1;
+            wp = Random(NUM_PLANES) - 1;
+            for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
-                if(_CITIES[si].wp == Plane && _CITIES[si].owner_idx == Player_Index)
+                if(_CITIES[itr_cities].wp == wp && _CITIES[itr_cities].owner_idx == player_idx)
                 {
-                    if(Delta_XY_With_Wrap(_CITIES[si].wx, _CITIES[si].wy, XPos, YPos, 60) <= 2)
+                    if(Delta_XY_With_Wrap(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, wx, wy, WORLD_WIDTH) <= 2)
                     {
-                        success = 0;
+                        square_ok = ST_FALSE;
                     }
                 }
             }
-            if(Square_Is_Sailable(XPos, YPos, Plane) != 0)
+            if(Square_Is_Sailable(wx, wy, wp) != ST_FALSE)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            if(Square_Has_Corruption(XPos, YPos, Plane) != 0)
+            if(Square_Has_Corruption(wx, wy, wp) != ST_FALSE)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            if(success == 1)
+            if(square_ok == ST_TRUE)
             {
-                _map_square_flags[Plane * 2400 + YPos * 60 + XPos] |= MSF_CORRUPTION;
+                _map_square_flags[((wp * WORLD_SIZE) + (wy * WORLD_WIDTH) + wx)] |= MSF_CORRUPTION;
             }
         }
-        Tiles_Corrupted++;
+        squares_corrupted++;
     }
 }
 
 
 // WZD o132p12
-// CTY_GaiasBlessing()
+// drake178: CTY_GaiasBlessing()
+/*
+Gaia's Blessing, each turn (Apply_City_Changes()): over the 5x5 squares around the city,
+    a desert becomes grasslands (10%), a volcano becomes hills (10%), corruption is cleared (20%)
+*/
+void Apply_Gaias_Blessing(int16_t city_idx)
+{
+    int16_t wp = 0;
+    int16_t square_wx = 0;
+    int16_t itr_wy = 0;  // _SI_
+    int16_t itr_wx = 0;  // _DI_
+
+    wp = _CITIES[city_idx].wp;
+
+    for(itr_wx = (_CITIES[city_idx].wx - 2); itr_wx <= (_CITIES[city_idx].wx + 2); itr_wx++)
+    {
+
+        if(itr_wx < 0)
+        {
+
+            square_wx = (itr_wx + WORLD_WIDTH);
+
+        }
+        /* OGBUG  > where >= was meant (asm: cmp di, 60 / jle): for a city at wx 58 or 59, the column 60 is not wrapped, so square (60, wy) - in the map arrays, (0, wy + 1) - is changed instead of (0, wy) */
+        else if(itr_wx > WORLD_WIDTH)
+        {
+
+            square_wx = (itr_wx - WORLD_WIDTH);
+
+        }
+        else
+        {
+
+            square_wx = itr_wx;
+
+        }
+
+        for(itr_wy = (_CITIES[city_idx].wy - 2); itr_wy <= (_CITIES[city_idx].wy + 2); itr_wy++)
+        {
+
+            if(
+                (itr_wy < 0)
+                ||
+                (itr_wy >= WORLD_HEIGHT)
+            )
+            {
+
+                continue;
+
+            }
+
+            if(
+                (Square_Is_Desert(square_wx, itr_wy, wp) != ST_FALSE)
+                &&
+                (Random(100) <= 10)
+            )
+            {
+
+                Set_Terrain_Type_Grasslands(square_wx, itr_wy, wp);
+
+            }
+
+            /* OGBUG  Square_Is_Volcano() is also true for tt_ChaosNode (asm: cmp cx, tt_ChaosNode / jz), so a Chaos Node square in the city area can become ordinary hills; the node record is not touched */
+            if(
+                (Square_Is_Volcano(square_wx, itr_wy, wp) != ST_FALSE)
+                &&
+                (Random(100) <= 10)
+            )
+            {
+
+                Set_Terrain_Type_Hills(square_wx, itr_wy, wp);
+
+            }
+
+            if(
+                (Square_Has_Corruption(square_wx, itr_wy, wp) != ST_FALSE)
+                &&
+                (Random(100) <= 20)
+            )
+            {
+
+                Square_Clear_Corruption(square_wx, itr_wy, wp);
+
+            }
+
+        }
+
+    }
+
+}
 
 
 // WZD o132p13
-void WIZ_Armageddon(int Player_Index)
+// drake178: WIZ_Armageddon()
+/*
+Armageddon, each turn (Next_Turn_Proc()): 3..5 attempts, each trying up to 50 random squares, to raise a volcano (owned by the caster)
+on a land square that is not a volcano, river or magic node, and is not within 2 squares of one of the caster's own cities
+NOTE:  an attempt counts even when all 50 tries fail
+*/
+void Apply_Armageddon(int16_t player_idx)
 {
-    int16_t Volcanos_Created = 0;
-    int16_t Volcanos_Intended = 0;
-    int16_t Tries = 0;
-    int16_t XPos = 0;
-    int16_t YPos = 0;
-    int16_t Plane = 0;
+    int16_t volcanoes_created = 0;
+    int16_t volcanoes_to_create = 0;
+    int16_t tries = 0;
+    int16_t wx = 0;
+    int16_t wy = 0;
+    int16_t wp = 0;
     int16_t terrain_type = 0;
-    int16_t success = 0;
-    int16_t di = 0;
-    Volcanos_Intended = Random(3) + 3;
-    Volcanos_Created = 0;
-    while(Volcanos_Created < Volcanos_Intended)
+    int16_t square_ok = 0;  // _SI_
+    int16_t itr_cities = 0;  // _DI_
+    volcanoes_to_create = Random(3) + 3;
+    volcanoes_created = 0;
+    while(volcanoes_created < volcanoes_to_create)
     {
-        Tries = 0;
-        success = 0;
-        while(success == 0 && Tries < 50)
+        tries = 0;
+        square_ok = ST_FALSE;
+        while(square_ok == ST_FALSE && tries < 50)
         {
-            Tries++;
-            success = 1;
-            XPos = Random(60) - 1;
-            YPos = Random(40) - 1;
-            Plane = Random(2) - 1;
-            if(Square_Is_Sailable(XPos, YPos, Plane) != 0)
+            tries++;
+            square_ok = ST_TRUE;
+            wx = Random(WORLD_WIDTH) - 1;
+            wy = Random(WORLD_HEIGHT) - 1;
+            wp = Random(NUM_PLANES) - 1;
+            if(Square_Is_Sailable(wx, wy, wp) != ST_FALSE)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            if(Square_Is_Volcano(XPos, YPos, Plane) != 0)
+            if(Square_Is_Volcano(wx, wy, wp) != ST_FALSE)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            if(Square_Is_River(XPos, YPos, Plane) != 0)
+            if(Square_Is_River(wx, wy, wp) != ST_FALSE)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            terrain_type = (p_world_map[Plane][YPos][XPos] % NUM_TERRAIN_TYPES);
+            terrain_type = (p_world_map[wp][wy][wx] % NUM_TERRAIN_TYPES);
             if(terrain_type == tt_ChaosNode || terrain_type == tt_SorceryNode || terrain_type == tt_NatureNode)
             {
-                success = 0;
+                square_ok = ST_FALSE;
             }
-            for(di = 0; di < _cities; di++)
+            for(itr_cities = 0; itr_cities < _cities; itr_cities++)
             {
-                if(_CITIES[di].wp == Plane && _CITIES[di].owner_idx == Player_Index)
+                if(_CITIES[itr_cities].wp == wp && _CITIES[itr_cities].owner_idx == player_idx)
                 {
-                    if(Delta_XY_With_Wrap(_CITIES[di].wx, _CITIES[di].wy, XPos, YPos, 60) <= 2)
+                    if(Delta_XY_With_Wrap(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, wx, wy, WORLD_WIDTH) <= 2)
                     {
-                        success = 0;
+                        square_ok = ST_FALSE;
                     }
                 }
             }
-            if(success == 1)
+            if(square_ok == ST_TRUE)
             {
-                Set_Terrain_Type_Volcano_With_Owner(XPos, YPos, Plane, Player_Index);
+                Set_Terrain_Type_Volcano_With_Owner(wx, wy, wp, player_idx);
             }
         }
-        Volcanos_Created++;
+        volcanoes_created++;
     }
     Volcano_Counts();
 }
@@ -1475,7 +1768,53 @@ void Cast_Floating_Island(int16_t player_idx)
 
 
 // WZD o132p15
-// CTY_NightshadeDispel()
+// drake178: CTY_NightshadeDispel()
+/*
+Nightshade, each turn (Apply_City_Changes()): every enchantment on the city not cast by its owner may be dispelled
+    chance in 250:  (nightshade_count x 25000) / (Calculate_Dispel_Difficulty() + nightshade_count x 100)
+*/
+void Apply_Nightshade_Dispel(int16_t city_idx)
+{
+    int16_t dispel_chance = 0;
+    int16_t caster_idx = 0;
+    int8_t * city_enchantments = NULL;
+    int16_t spell_idx = 0;
+    int16_t itr = 0;  // _SI_
+
+    city_enchantments = &_CITIES[city_idx].enchantments[0];
+
+    /* OGBUG  loops all NUM_CITY_ENCHANTMENTS slots, including enchantments[NIGHTSHADE], which holds a count of Nightshade squares, not an owner + 1: unless the count equals owner_idx + 1, it is treated as an enemy enchantment of player count - 1, Get_Spell_For_City_Enchantment() returns spl_NONE, and the difficulty is read from spell_data_table[0] - a dispelled count is put back by All_City_Nightshade_Count() later in Next_Turn_Calc() */
+    for(itr = 0; itr < NUM_CITY_ENCHANTMENTS; itr++)
+    {
+
+        if(
+            (city_enchantments[itr] > 0)
+            &&
+            (city_enchantments[itr] != (_CITIES[city_idx].owner_idx + 1))
+        )
+        {
+
+            spell_idx = Get_Spell_For_City_Enchantment(itr);
+
+            caster_idx = (city_enchantments[itr] - 1);
+
+            dispel_chance = (Calculate_Dispel_Difficulty(spell_data_table[spell_idx].casting_cost, caster_idx, spell_data_table[spell_idx].magic_realm) + (_CITIES[city_idx].enchantments[NIGHTSHADE] * 100));
+
+            dispel_chance = ((_CITIES[city_idx].enchantments[NIGHTSHADE] * 25000) / dispel_chance);
+
+            if(Random(250) <= dispel_chance)
+            {
+
+                city_enchantments[itr] = 0;
+
+            }
+
+        }
+
+    }
+
+}
+
 
 // WZD o132p16
 int16_t Cast_Lycantrophy(int16_t player_idx)
@@ -1661,7 +2000,7 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_1__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
+            City_Enchantment_Anim_1__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
 
         }
 
@@ -1680,7 +2019,7 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
         )
         {
 
-            Cast_Spell_City_Enchantment_Animation_2__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
+            City_Enchantment_Anim_2__WIP(city_idx, spl_Wall_Of_Stone, player_idx);
 
         }
 
@@ -1724,7 +2063,7 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
     if(return_value == ST_TRUE)
     {
 
-        Cast_Spell_City_Enchantment_Animation_1__WIP(scsv1, spl_Spell_Of_Return, player_idx);
+        City_Enchantment_Anim_1__WIP(scsv1, spl_Spell_Of_Return, player_idx);
 
         _players[player_idx].summon_wx = _CITIES[scsv1].wx;
         _players[player_idx].summon_wy = _CITIES[scsv1].wy;
@@ -1736,7 +2075,7 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
 
         _players[player_idx].capital_race = _CITIES[scsv1].race;
 
-        Cast_Spell_City_Enchantment_Animation_2__WIP(scsv1, spl_Spell_Of_Return, player_idx);
+        City_Enchantment_Anim_2__WIP(scsv1, spl_Spell_Of_Return, player_idx);
 
     }
 

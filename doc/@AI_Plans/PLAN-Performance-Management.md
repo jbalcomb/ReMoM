@@ -9,7 +9,7 @@
 
 ## Goal
 
-Turn the scattered timing pieces into one always-on, deterministic, CI-gated performance layer, reusing the clock, the `.fwv` sink, `DBG_Frame_Reset`, `PHASE`, HeMoM, and `.RMR` rather than building a parallel system — and keep a clean on-ramp to external profilers. Deliver the ruler and the regression gate; optimizations are a separate, measurement-gated effort.
+Turn the scattered timing pieces into one always-on, deterministic, CI-gated performance layer, reusing the clock, the `.fwv` sink, `DBG_Frame_Reset`, `PHASE`, DeMoM, and `.RMR` rather than building a parallel system — and keep a clean on-ramp to external profilers. Deliver the ruler and the regression gate; optimizations are a separate, measurement-gated effort.
 
 ## The perf code slice through the codebase
 
@@ -19,7 +19,7 @@ Where a frame's time is spent, and where instrumentation taps in. Solid arrows =
 flowchart TB
     subgraph SRC["src/ — entry & loop"]
         LOOP["Main loop / Get_Input<br/>ReMoM.c"]
-        HEMOM["HeMoM headless runner<br/>src/HeMoM.c --seed1 / --load"]
+        DEMOM["DeMoM windowless runner<br/>src/DeMoM.c --seed1 / --load"]
     end
     subgraph MOM["MoM/ — game logic (the usual sink)"]
         NEXT["Next_Turn_Proc<br/>NEXTTURN.c (PHASE stages)"]
@@ -53,7 +53,7 @@ flowchart TB
     LOOP --> CITY
     NEXT --> PAGE --> VUP --> PRES
     LOOP --> RELT
-    HEMOM -.deterministic logic, no render.-> NEXT
+    DEMOM -.deterministic logic, no render.-> NEXT
 
     ZONE -.wraps stages.-> NEXT
     ZONE -.wraps stages.-> AI
@@ -71,7 +71,7 @@ flowchart TB
     ZONE -.optional.-> TRACY
 ```
 
-Reading it: **logic** time accrues in the `MoM` subgraph (wrapped by zones, isolatable headless via HeMoM); **render** time accrues in `PAGE → VUP → PRES` (bracketed by `PFL_Input_Metrics`); the **55 ms budget** is enforced by `Release_Time`; everything timestamps off the one `STU` clock and lands in one sink that feeds the reporter, the live readouts, and (optionally) an external profiler.
+Reading it: **logic** time accrues in the `MoM` subgraph (wrapped by zones, isolatable windowless via DeMoM); **render** time accrues in `PAGE → VUP → PRES` (bracketed by `PFL_Input_Metrics`); the **55 ms budget** is enforced by `Release_Time`; everything timestamps off the one `STU` clock and lands in one sink that feeds the reporter, the live readouts, and (optionally) an external profiler.
 
 ## What already exists (reuse, don't rebuild)
 
@@ -79,7 +79,7 @@ Reading it: **logic** time accrues in the `MoM` subgraph (wrapped by zones, isol
 - **Frame/present rows → `.fwv`:** `PFL_Input_Metrics` (`REMOM_INPUT_METRICS=1`).
 - **Per-frame counters:** `DBG_Frame_Reset` (Debug, TRACE, every 60 frames).
 - **Zone timing (ad-hoc):** `PHASE(CALL)` in `MoM/src/NEXTTURN.c:681`.
-- **Deterministic runners:** HeMoM (`--seed1`/`--load`/`--continue`), `.RMR` replay.
+- **Deterministic runners:** DeMoM (`--seed1`/`--load`/`--continue`), `.RMR` replay.
 - **Budget:** `PLATFORM_MILLISECONDS_PER_FRAME = 55`.
 - **On-screen surface:** `DBG_Main_Screen_Draw_Summary_Window`.
 - **CTest fixtures + pre-push Release-symbol check** (the `dbg_prn`/`trc_prn` leak gate) — the template for the "no zone code in Release" check.
@@ -88,7 +88,7 @@ Reading it: **logic** time accrues in the `MoM` subgraph (wrapped by zones, isol
 
 1. **No new subsystem — unify what exists.** One clock, one `.fwv` sink, one gate (`REMOM_PERF`, `REMOM_INPUT_METRICS` kept as alias), one reporter.
 2. **`PHASE` graduates to a build-gated zone primitive**; the hand-toggled two-`#define` scheme is deleted. See below.
-3. **Logic vs render reported separately**; HeMoM isolates logic, replay measures render.
+3. **Logic vs render reported separately**; DeMoM isolates logic, replay measures render.
 4. **Percentiles, never means**; every report is p50/p95/p99/max + count-over-budget. **Amended 2026-07-29:** that stands for *reporting* — but for *gating*, only `p50` survived measurement. `total` and `max` are outlier-dominated on a live desktop (`max` varied 0.12×..24.46× between identical runs) and produce false failures. See PRD FR14a.
 5. **Off and stripped in Release**; the hot path is one branch when off; zones vanish at compile time.
 6. **External profilers documented, not depended on**; optional Tracy behind its own flag.
@@ -126,19 +126,19 @@ Target (one build option, scope-based, structured sink, zero Release cost):
 
 ## Build-out order (tracer bullets)
 
-1. **Confirm-with-what-exists (zero code). ✅ DONE (first capture 2026-07-28).** SDL2 release, ~12.6 min / 13,435 frames: median `dt_ms` = 55 ms (on budget) but tail **p95 = 111, p99 = 166, max = 1280 ms**; **47% of intervals > 55 ms**; **`block_ms` p50 = 1 → only 6% of frame time is vsync, 94% is work.** Verdict: **work/logic-bound, not render-bound** — render optimizations would be wasted. Caveat that drove FR5a: `dt_ms` conflates `Release_Time(N)` holds with real overruns, so the raw "47% over budget" over-counts; the tick-aware metric + Mode A (headless, no waits) give the honest logic number. *Next: attribute the tail to a stage via Mode A + the existing `NEXTTURN` `PHASE` zones.*
+1. **Confirm-with-what-exists (zero code). ✅ DONE (first capture 2026-07-28).** SDL2 release, ~12.6 min / 13,435 frames: median `dt_ms` = 55 ms (on budget) but tail **p95 = 111, p99 = 166, max = 1280 ms**; **47% of intervals > 55 ms**; **`block_ms` p50 = 1 → only 6% of frame time is vsync, 94% is work.** Verdict: **work/logic-bound, not render-bound** — render optimizations would be wasted. Caveat that drove FR5a: `dt_ms` conflates `Release_Time(N)` holds with real overruns, so the raw "47% over budget" over-counts; the tick-aware metric + Mode A (windowless, no waits) give the honest logic number. *Next: attribute the tail to a stage via Mode A + the existing `NEXTTURN` `PHASE` zones.*
 2. **Unify the sink + reporter.** Fold frame rows and a percentile reporter into one module and one gate (`REMOM_PERF`). Emit a shutdown summary.
 3. **Live readouts.** `Platform_Set_Window_Title()` (both backends) with rolling+worst-frame; percentile block on the Debug screen; time-based summary log from `DBG_Frame_Reset`.
 4. **Zone primitive.** Land `perf.h`, the build option, and the scoped-zone mechanism; migrate `NEXTTURN.c`; strip-in-Release check.
-5. **Mode A — headless logic perf.** Deterministic HeMoM scenario (committed late-game save, N turns), zones on the turn pipeline, per-stage ms out. Commit a reference baseline; wire a CTest test with relative thresholds.
+5. **Mode A — windowless logic perf.** Deterministic DeMoM scenario (committed late-game save, N turns), zones on the turn pipeline, per-stage ms out. Commit a reference baseline; wire a CTest test with relative thresholds.
 6. **Mode B — windowed render perf.** Deterministic `.RMR` replay + capture, frame-time `.fwv`, p95/max vs. committed baseline; CTest test gated to display-capable runners.
-7. **External-profiler on-ramp.** Document the recommended tool per platform (PRD §external) and the exact HeMoM workload to attach; optional `PERF_TRACY` emission.
+7. **External-profiler on-ramp.** Document the recommended tool per platform (PRD §external) and the exact DeMoM workload to attach; optional `PERF_TRACY` emission.
 
 Steps 1–4 are days and mostly wiring; 5–6 are the durable investment; 7 is documentation + a thin optional hook.
 
 ## CTest & build wiring
 
-- **Mode A** as a headless CTest test (runs in the existing HeMoM/CTest suite): `Perf_LogicA_Run` (HeMoM `--seed1 N --load <ref.GAM>` N turns, perf on) → `Perf_LogicA_Assert` (reporter vs. committed baseline, non-zero exit on regression). No display needed.
+- **Mode A** as a windowless CTest test (runs in the existing DeMoM/CTest suite): `Perf_LogicA_Run` (DeMoM `--seed1 N --load <ref.GAM>` N turns, perf on) → `Perf_LogicA_Assert` (reporter vs. committed baseline, non-zero exit on regression). No display needed.
 - **Mode B** as a windowed CTest test (display-capable runners only), mirroring the input Layer-2 fixture chain: setup `sweep.RMR` → run replay+capture → assert frame-time percentiles vs. baseline.
 - **Build option** `PERF_INSTRUMENT` in `CMakePresets.json` (a `*-perf` preset) and `Makefile.am`; **off** in the release presets. Extend the pre-push Release check to assert no perf-zone symbols in Release binaries.
 - Baseline `.fwv`/summary files committed under `doc/PlatformLayer/perf-baselines/` (or similar), each tagged with the reference machine + build.

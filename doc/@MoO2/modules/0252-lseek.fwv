@@ -1,0 +1,9 @@
+module_num=252
+module=lseek
+source=0252-lseek.md
+range[0]=1:0x0013748B linear=0x0014748B size=67
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m252f001    1    1/2    0x0014748B  1:0x0013748B  code  lseek   lseek_   regions/07-object-1/001CC654-001CCE53.txt
+m252f001_2  1    2/2    0x0014748B  1:0x0013748B  code  _lseek  _lseek_  regions/07-object-1/001CC654-001CCE53.txt

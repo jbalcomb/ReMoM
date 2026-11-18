@@ -1,0 +1,12 @@
+module_num=350
+module=C:\GCL520\C_DOS\WINUTIL.C
+source=0350-winutil.c.md
+range[0]=1:0x0014F1E0 linear=0x0015F1E0 size=384
+range[1]=2:0x00012CF4 linear=0x00182CF4 size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                    SYMBOL                   CHUNK
+m350f001  1    -      0x0015F1E0  1:0x0014F1E0  code  WindowsEnhancedMode     WindowsEnhancedMode_     regions/07-object-1/001E4654-001E4E53.txt
+m350f002  2    -      0x0015F248  1:0x0014F248  code  DESQViewRunning         DESQViewRunning_         regions/07-object-1/001E4654-001E4E53.txt
+m350f003  3    -      0x0015F300  1:0x0014F300  code  YieldWindowsTimeSlice   YieldWindowsTimeSlice_   regions/07-object-1/001E4654-001E4E53.txt
+m350f004  4    -      0x0015F32C  1:0x0014F32C  code  YieldDESQViewTimeSlice  YieldDESQViewTimeSlice_  regions/07-object-1/001E4654-001E4E53.txt

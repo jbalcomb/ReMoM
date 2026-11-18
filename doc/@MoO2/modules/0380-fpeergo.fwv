@@ -1,0 +1,9 @@
+module_num=380
+module=fpeergo
+source=0380-fpeergo.md
+range[0]=1:0x00153FEE linear=0x00163FEE size=88
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL             CHUNK
+m380f001  1    -      0x00163FEE  1:0x00153FEE  code  __Ergo_hook_init  __Ergo_hook_init_  regions/07-object-1/001E8E54-001E9653.txt
+m380f002  2    -      0x0016402C  1:0x0015402C  code  __Ergo_hook_fini  __Ergo_hook_fini_  regions/07-object-1/001E9654-001E9E53.txt

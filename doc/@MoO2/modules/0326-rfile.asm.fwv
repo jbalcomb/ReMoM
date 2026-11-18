@@ -1,0 +1,19 @@
+module_num=326
+module=rfile.ASM
+source=0326-rfile.asm.md
+range[0]=1:0x0014C850 linear=0x0015C850 size=394
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME            SYMBOL           CHUNK
+m326f001  1    -      0x0015C850  1:0x0014C850  code  radopen         _radopen         regions/07-object-1/001E1E54-001E2653.txt
+m326f002  2    -      0x0015C871  1:0x0014C871  code  raderase        _raderase        regions/07-object-1/001E1E54-001E2653.txt
+m326f003  3    -      0x0015C889  1:0x0014C889  code  radcreate       _radcreate       regions/07-object-1/001E1E54-001E2653.txt
+m326f004  4    -      0x0015C8A9  1:0x0014C8A9  code  radread         _radread         regions/07-object-1/001E1E54-001E2653.txt
+m326f005  5    -      0x0015C8F5  1:0x0014C8F5  code  radwrite        _radwrite        regions/07-object-1/001E1E54-001E2653.txt
+m326f006  6    -      0x0015C941  1:0x0014C941  code  radseekbegin    _radseekbegin    regions/07-object-1/001E1E54-001E2653.txt
+m326f007  7    -      0x0015C965  1:0x0014C965  code  radseekcur      _radseekcur      regions/07-object-1/001E1E54-001E2653.txt
+m326f008  8    -      0x0015C96B  1:0x0014C96B  code  radseekend      _radseekend      regions/07-object-1/001E1E54-001E2653.txt
+m326f009  9    -      0x0015C971  1:0x0014C971  code  radclose        _radclose        regions/07-object-1/001E1E54-001E2653.txt
+m326f010  10   -      0x0015C97F  1:0x0014C97F  code  IsRemote        _IsRemote        regions/07-object-1/001E1E54-001E2653.txt
+m326f011  11   -      0x0015C99D  1:0x0014C99D  code  radgetfiletime  _radgetfiletime  regions/07-object-1/001E1E54-001E2653.txt
+m326f012  12   -      0x0015C9B8  1:0x0014C9B8  code  radsetfiletime  _radsetfiletime  regions/07-object-1/001E1E54-001E2653.txt

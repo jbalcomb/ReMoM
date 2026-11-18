@@ -31,8 +31,9 @@
 #include "MOM_SCR.h"
 #include "RACETYPE.h"
 #include "Settings.h"
+#include "../../STU/src/STU_DBG_MoM.h"  /* DBG_Print_MAGIC_SET(), DBG_Compare_MAGIC_SET() */  /* CLAUDE */
 #include "Spellbook.h"
-#include "INITGAME.h"   /* gd_dump_players() */
+#include "INITGAME.h"   /* Init_Computer_Players_Spell_Library(), Init_Runtime(), Initialize_Events() */
 
 #include <assert.h>
 #include <stdio.h>      /* FILE; fclose(), fread(), frite(), fseek(); */
@@ -40,6 +41,7 @@
 
 #include "NewGame.h"
 #include "../../STU/src/STU_LOG.h"
+#include "../../STU/src/STU_GD_MoM.h"  /* STU_GD_ONCE(), STU_GD_DO(), STU_GD_Dump_*() */  /* CLAUDE */
 #include "../../STU/src/STU_GRAF.h"  /* STU_GRAF_Open_User / _User_DIR / _User_LOF -- MAGIC.SET -> user-data */
 
 
@@ -205,14 +207,14 @@ spell_data_table    = SA_MK_FP0( LBXR_LoadSingle("SPELLDAT", 0, 0, 215, 36) )
 
 
 // MGC  dseg:354C 00 00 01 00 01 00 01 00 05 00 02 00 01 00 02 00+TBL_AI_Realm_PER AI_PERS_Modifiers <0, 1, 1, 1, 5, 2>    ; 0
-// MGC  dseg:354C 03 00 01 00 02 00 01 00 01 00 02 00 02 00 05 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2A7r
+// MGC  dseg:354C 03 00 01 00 02 00 01 00 01 00 02 00 02 00 05 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2A7vr
 // MGC  dseg:354C 00 00 00 00 00 00 01 00 02 00 00 00 02 00 05 00+AI_PERS_Modifiers <1, 2, 3, 1, 2, 1>    ; 1
 // MGC  dseg:354C 03 00 03 00 02 00 01 00 01 00 00 00 00 00 00 00+AI_PERS_Modifiers <1, 2, 2, 5, 0, 0>    ; 2
 // MGC  dseg:354C 00 00 00 00 00 00 00 00                         AI_PERS_Modifiers <0, 1, 2, 0, 2, 5>    ; 3
 // MGC  dseg:354C                                                 AI_PERS_Modifiers <3, 3, 2, 1, 1, 0>    ; 4
 // MGC  dseg:354C                                                 AI_PERS_Modifiers  <0>
 // MGC  dseg:3594 00 00 02 00 02 00 04 00 02 00 00 00 01 00 04 00+TBL_AI_Realm_OBJ AI_OBJ_Modifiers <0, 2, 2, 4, 2>        ; 0
-// MGC  dseg:3594 02 00 03 00 00 00 03 00 02 00 02 00 03 00 00 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2D0r
+// MGC  dseg:3594 02 00 03 00 00 00 03 00 02 00 02 00 03 00 00 00+                                        ; DATA XREF: WIZ_SetPersonalities__WIP+2D0vr
 // MGC  dseg:3594 02 00 03 00 04 00 01 00 00 00 04 00 01 00 01 00+AI_OBJ_Modifiers <0, 1, 4, 2, 3>        ; 1
 // MGC  dseg:3594 04 00 00 00 00 00 00 00 00 00 00 00             AI_OBJ_Modifiers <0, 3, 2, 2, 3>        ; 2
 // MGC  dseg:3594                                                 AI_OBJ_Modifiers <0, 2, 3, 4, 1>        ; 3
@@ -299,7 +301,7 @@ struct S_HERO_TEMPLATE _hero_premade_table[NUM_HERO_TYPES] = {
 };
 
 // dseg:35D0 00 00 00 00 00 10 00 00 00 00 00 00 00 00 00 00+_hero_premade_table s_HERO_TEMPLATE <0, 0, 1000h, 0, 0, 0, 0, 0>
-// dseg:35D0 00 00 00 00 00 00 00 80 00 00 00 00 00 00 00 00+                                        ; DATA XREF: NEWG_CreateHeroes+66r ...
+// dseg:35D0 00 00 00 00 00 00 00 80 00 00 00 00 00 00 00 00+                                        ; DATA XREF: NEWG_CreateHeroes+66vr ...
 // dseg:35D0 00 00 00 00 00 00 01 00 00 00 20 00 02 00 2A 00+s_HERO_TEMPLATE <0, 0, 8000h, 0, 0, 0, 0, 0>
 // dseg:35D0 30 00 00 00 00 00 00 00 00 00 00 00 00 20 00 00+s_HERO_TEMPLATE <0, 1, 200000h, 2, 42, 48, 0, 0>
 // dseg:35D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+s_HERO_TEMPLATE <0, 0, 20000000h, 0, 0, 0, 0, 0>
@@ -358,56 +360,56 @@ int16_t _ok_button = 0;
 // MGC  dseg:52B2                                                 ? BEGIN: Main Menu Screen ?
 // MGC  dseg:52B2
 // MGC  dseg:52B2                                                 ; char *GUI_String_2
-// MGC  dseg:52B2 00 00                                           GUI_String_2 dw 0                       ; DATA XREF: start+C7o ...
+// MGC  dseg:52B2 00 00                                           GUI_String_2 dw 0                       ; DATA XREF: start+C7^o ...
 // MGC  dseg:52B2                                                                                         ; _bdata_start
 // MGC  dseg:52B2                                                                                         ; 100 LBX_NearAlloc_Next bytes
 // MGC  dseg:52B4                                                 ; char *GUI_String_1
-// MGC  dseg:52B4 00 00                                           GUI_String_1 dw 0                       ; DATA XREF: Hall_Of_Fame_Screen+8Dw ...
+// MGC  dseg:52B4 00 00                                           GUI_String_1 dw 0                       ; DATA XREF: Hall_Of_Fame_Screen+8Dvw ...
 // MGC  dseg:52B4                                                                                         ; 100 LBX_NearAlloc_First bytes
-// MGC  dseg:52B6 00 00                                           _load_button dw 0                       ; DATA XREF: Main_Menu_Screen+19Fw ...
-// MGC  dseg:52B8 00 00                                           _background_seg dw 0                    ; DATA XREF: Load_Screen+1Bw ...
+// MGC  dseg:52B6 00 00                                           _load_button dw 0                       ; DATA XREF: Main_Menu_Screen+19F^w ...
+// MGC  dseg:52B8 00 00                                           _background_seg dw 0                    ; DATA XREF: Load_Screen+1Bvw ...
 SAMB_ptr newgame_background_seg = 0;
-// MGC  dseg:52BA 00 00                                           menu_quit_button dw 0                   ; DATA XREF: Load_MGC_Resources+76w ...
+// MGC  dseg:52BA 00 00                                           menu_quit_button dw 0                   ; DATA XREF: Load_MGC_Resources+76^w ...
 // MGC  dseg:52BA                                                                                         ; single-loaded 2-frame image
-// MGC  dseg:52BC 00 00                                           _halloffame_button dw 0                 ; DATA XREF: Main_Menu_Screen+29Ew ...
-// MGC  dseg:52BE 00 00                                           menu_hof_button dw 0                    ; DATA XREF: Load_MGC_Resources+40w ...
+// MGC  dseg:52BC 00 00                                           _halloffame_button dw 0                 ; DATA XREF: Main_Menu_Screen+29E^w ...
+// MGC  dseg:52BE 00 00                                           menu_hof_button dw 0                    ; DATA XREF: Load_MGC_Resources+40^w ...
 // MGC  dseg:52BE                                                                                         ; single-loaded 2-frame image
-// MGC  dseg:52C0 00 00                                           _quit_button dw 0                       ; DATA XREF: Main_Menu_Screen+2DFw ...
-// MGC  dseg:52C2 00 00                                           menu_load_button dw 0                   ; DATA XREF: Load_MGC_Resources+52w ...
+// MGC  dseg:52C0 00 00                                           _quit_button dw 0                       ; DATA XREF: Main_Menu_Screen+2DF^w ...
+// MGC  dseg:52C2 00 00                                           menu_load_button dw 0                   ; DATA XREF: Load_MGC_Resources+52^w ...
 
-// MGC  dseg:52C4 00 00                                           current_menu_screen dw 0                ; DATA XREF: Main_Menu_Screen+32w ...
+// MGC  dseg:52C4 00 00                                           current_menu_screen dw 0                ; DATA XREF: Main_Menu_Screen+32^w ...
 int16_t auto_input_field_idx = 0;
 
 // MGC  dseg:52C4                                                                                         ; 0 - continue, 1 -load, 2 - new, 3 - quit, 4 - HoF
 // MGC  dseg:52C4                                                                                         ; holds the mouse focus control instead during the
 // MGC  dseg:52C4                                                                                         ;  redraw functions of other screens
-// MGC  dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+wizard_portrait_segs dw 14 dup(    0)   ; DATA XREF: Load_MGC_Resources+A9w ...
+// MGC  dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+wizard_portrait_segs dw 14 dup(    0)   ; DATA XREF: Load_MGC_Resources+A9^w ...
 // MGC  dseg:52C6 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 single-loaded images
 // MGC  dseg:52E2 00 00                                           IMG_NewG_BtnBorder@ dw 0                ; used by the map customizer and profile reloader
-// MGC  dseg:52E4 00 00                                           load_flag dw 0                          ; DATA XREF: Main_Menu_Screen+38w ...
+// MGC  dseg:52E4 00 00                                           load_flag dw 0                          ; DATA XREF: Main_Menu_Screen+38^w ...
 // MGC  dseg:52E4                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
 // MGC  dseg:52E4                                                                                         ; Da-Funk? "OXRB"? "only x-ref'd by"? if so, nowadays, use "OON XREF"
 // MGC  dseg:52E6 00 00                                           NEWG_HaveLastProfile dw 0               ; used by the profile reloader
-// MGC  dseg:52E8 00 00                                           mainmenu_top dw 0                       ; DATA XREF: Load_MGC_Resources+1Cw ...
+// MGC  dseg:52E8 00 00                                           mainmenu_top dw 0                       ; DATA XREF: Load_MGC_Resources+1C^w ...
 // MGC  dseg:52E8                                                                                         ; single-loaded 20 frame animation
 // MGC  dseg:52E8                                                                                         ; includes the background for the top of the screen too
-// MGC  dseg:52EA 00 00                                           _newgame_button dw 0                    ; DATA XREF: Main_Menu_Screen+25Dw ...
-// MGC  dseg:52EC 00 00                                           menu_new_button dw 0                    ; DATA XREF: Load_MGC_Resources+64w ...
+// MGC  dseg:52EA 00 00                                           _newgame_button dw 0                    ; DATA XREF: Main_Menu_Screen+25D^w ...
+// MGC  dseg:52EC 00 00                                           menu_new_button dw 0                    ; DATA XREF: Load_MGC_Resources+64^w ...
 // MGC  dseg:52EC                                                                                         ; single-loaded 2-frame image
-// MGC  dseg:52EE 00 00                                           _continue_button dw 0                   ; DATA XREF: Main_Menu_Screen+204w ...
-// MGC  dseg:52F0 00 00                                           menu_continue_button dw 0               ; DATA XREF: Load_MGC_Resources+2Ew ...
+// MGC  dseg:52EE 00 00                                           _continue_button dw 0                   ; DATA XREF: Main_Menu_Screen+204^w ...
+// MGC  dseg:52F0 00 00                                           menu_continue_button dw 0               ; DATA XREF: Load_MGC_Resources+2E^w ...
 // MGC  dseg:52F0                                                                                         ; single-loaded 2-frame image
-// MGC  dseg:52F2 00 00                                           cont_flag dw 0                          ; DATA XREF: Main_Menu_Screen+2Cw ...
+// MGC  dseg:52F2 00 00                                           cont_flag dw 0                          ; DATA XREF: Main_Menu_Screen+2C^w ...
 // MGC  dseg:52F2                                                                                         ; OXRB:Menu,MenuDraw.:.static?module-scoped?private?
-// MGC  dseg:52F4 00 00                                           mainmenu_bottom dw 0                    ; DATA XREF: Load_MGC_Resources+88w ...
+// MGC  dseg:52F4 00 00                                           mainmenu_bottom dw 0                    ; DATA XREF: Load_MGC_Resources+88^w ...
 // MGC  dseg:52F4                                                                                         ; single-loaded image
 // MGC  dseg:52F6 00 00                                           mainmenu_bot dw 0                       ; used by the map customizer to indicate which screen
 // MGC  dseg:52F6                                                                                         ; is currently active (basic/patch/world/world2)
-// MGC  dseg:52F8 00 00                                           _load_inactive_seg dw 0                 ; DATA XREF: Load_Screen+60w ...
+// MGC  dseg:52F8 00 00                                           _load_inactive_seg dw 0                 ; DATA XREF: Load_Screen+60vw ...
 // MGC  dseg:52FA 00 00                                           NEWG_LastRetorts@ dw 0                  ; used by the profile reloader
-// MGC  dseg:52FC 00 00                                           g_GUI_MainScreenJump dw 0               ; DATA XREF: Menu_Screen_Control+5Aw ...
-// MGC  dseg:52FE 00 00                                           save_game_count dw 0                    ; DATA XREF: Main_Menu_Screen+C6w ...
-// MGC  dseg:5300 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 save_game_slots dw 8 dup(     0)        ; DATA XREF: Main_Menu_Screen+137w ...
+// MGC  dseg:52FC 00 00                                           g_GUI_MainScreenJump dw 0               ; DATA XREF: Menu_Screen_Control+5A^w ...
+// MGC  dseg:52FE 00 00                                           save_game_count dw 0                    ; DATA XREF: Main_Menu_Screen+C6^w ...
+// MGC  dseg:5300 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 save_game_slots dw 8 dup(     0)        ; DATA XREF: Main_Menu_Screen+137^w ...
 // MGC  dseg:5300
 // MGC  dseg:5300                                                 ? END: Main Menu Screen ?
 // MGC  dseg:5300
@@ -438,23 +440,23 @@ int16_t auto_input_field_idx = 0;
 // MGC  dseg:54CA 00                                              NEWG_SliderDragged db 0
 // MGC  dseg:54CB 00                                              align 2
 // MGC  dseg:54CC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+UU_Some_AI_Array db 54Eh dup(0)
-// MGC  dseg:5A1A 00 00                                           Wiz5_Spell_E0h@ dw 0                    ; DATA XREF: NEWG_FinalizeTables+95r ...
+// MGC  dseg:5A1A 00 00                                           Wiz5_Spell_E0h@ dw 0                    ; DATA XREF: NEWG_FinalizeTables+95vr ...
 // MGC  dseg:5A1A                                                                                         ; 80 + rnd(40) is stored here for each AI wizard (word
 // MGC  dseg:5A1A                                                                                         ; array pointer, human excluded) when setting initial
 // MGC  dseg:5A1A                                                                                         ; gold
-// MGC  dseg:5A1C 00 00                                           Wiz5_Spell_C8h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F6w
-// MGC  dseg:5A1E 00 00                                           Wiz5_Spell_D4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3FCw
-// MGC  dseg:5A20 00 00                                           Wiz5_Spell_A0h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3EAw
-// MGC  dseg:5A22 00 00                                           Wiz5_Spell_B4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F0w
-// MGC  dseg:5A24 00 00                                           Wiz5_Spell_50h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D2w
-// MGC  dseg:5A26 00 00                                           Wiz5_Spell_64h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D8w
-// MGC  dseg:5A28 00 00                                           Wiz5_Spell_28h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C6w
-// MGC  dseg:5A2A 00 00                                           Wiz5_Spell_3Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3CCw
-// MGC  dseg:5A2C 00 00                                           Wiz5_Spell_18h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C0w
-// MGC  dseg:5A2E 00 00                                           Wiz5_Spell_78h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3DEw
-// MGC  dseg:5A30 00 00                                           Wiz5_Spell_8Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3E4w
-// MGC  dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4w
-// MGC  dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAw
+// MGC  dseg:5A1C 00 00                                           Wiz5_Spell_C8h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F6vw
+// MGC  dseg:5A1E 00 00                                           Wiz5_Spell_D4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3FCvw
+// MGC  dseg:5A20 00 00                                           Wiz5_Spell_A0h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3EAvw
+// MGC  dseg:5A22 00 00                                           Wiz5_Spell_B4h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3F0vw
+// MGC  dseg:5A24 00 00                                           Wiz5_Spell_50h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D2vw
+// MGC  dseg:5A26 00 00                                           Wiz5_Spell_64h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3D8vw
+// MGC  dseg:5A28 00 00                                           Wiz5_Spell_28h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C6vw
+// MGC  dseg:5A2A 00 00                                           Wiz5_Spell_3Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3CCvw
+// MGC  dseg:5A2C 00 00                                           Wiz5_Spell_18h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3C0vw
+// MGC  dseg:5A2E 00 00                                           Wiz5_Spell_78h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3DEvw
+// MGC  dseg:5A30 00 00                                           Wiz5_Spell_8Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3E4vw
+// MGC  dseg:5A32 00 00                                           Wiz5_Spell_00h@ dw 0                    ; DATA XREF: Allocate_Data_Space+3B4vw
+// MGC  dseg:5A34 00 00                                           Wiz5_Spell_0Ch@ dw 0                    ; DATA XREF: Allocate_Data_Space+3BAvw
 // MGC  dseg:5A36 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+G_UU_Some_AI_Array_2 db 176h dup(0)
 
 // MGC  dseg:5BAC  terrain_stats_table
@@ -718,8 +720,8 @@ int16_t wsa_picklist_order[NUM_WIZARD_SPECIAL_ABILITIES] =
     wsa_Node_Mastery     /* 17 */
 };
 
-// MGC  dseg:2E0C 66 66 66 66                                     COL_SaveLoad1 db 4 dup( 66h)            ; DATA XREF: Load_Screen_Draw+Br ...
-// MGC  dseg:2E10 60 61 60 61                                     COL_SaveLoad2 db  60h, 61h, 60h, 61h    ; DATA XREF: Load_Screen_Draw+18r ...
+// MGC  dseg:2E0C 66 66 66 66                                     COL_SaveLoad1 db 4 dup( 66h)            ; DATA XREF: Load_Screen_Draw+Bvr ...
+// MGC  dseg:2E10 60 61 60 61                                     COL_SaveLoad2 db  60h, 61h, 60h, 61h    ; DATA XREF: Load_Screen_Draw+18vr ...
 
 // MGC  dseg:2E14
 uint8_t RP_COL_NEWG_4Shadow[4] = { 31, 31, 31, 31 };
@@ -813,7 +815,7 @@ uint8_t RP_COL_NEWG_Font3[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };
 
 // MGC  dseg:2ECD
 /*
-used for player name in Newgame_Screen_7_Draw__WIP()
+used for player name in Newgame_Screen_7_Draw()
     Set_Font_Colors_15(4, &shadow_colors[0]);
     Set_Font_Colors_15(4, &text_colors[0]);
 */
@@ -969,20 +971,20 @@ char m_realm_strings[5][10] =
     { 'D','e','a','t','h',  0,  0,  0,  0,  0 }
 };
 
-// MGC  dseg:303E 57 49 5A 41 52 44 53 2E 45 58 45                cnst_EXESwap_File db 'WIZARDS.EXE'      ; DATA XREF: GAME_WizardsLaunch+38o
+// MGC  dseg:303E 57 49 5A 41 52 44 53 2E 45 58 45                cnst_EXESwap_File db 'WIZARDS.EXE'      ; DATA XREF: GAME_WizardsLaunch+38vo
 
 // MGC  dseg:3049
 char empty_string__ovr050[] = "";
 
-// MGC  dseg:304A 4A 45 4E 4E 59 00                               cnst_EXESwap_Arg db 'JENNY',0           ; DATA XREF: GAME_WizardsLaunch+30o ...
-// MGC  dseg:3050 4C 4F 41 44 2E 4C 42 58 00                      load_lbx_file db 'LOAD.LBX',0           ; DATA XREF: Load_Screen+Fo ...
+// MGC  dseg:304A 4A 45 4E 4E 59 00                               cnst_EXESwap_Arg db 'JENNY',0           ; DATA XREF: GAME_WizardsLaunch+30vo ...
+// MGC  dseg:3050 4C 4F 41 44 2E 4C 42 58 00                      load_lbx_file db 'LOAD.LBX',0           ; DATA XREF: Load_Screen+Fvo ...
 
 // MGC  dseg:3059
 char str_ESC__ovr050[] = "\x1B";
 
-// MGC  dseg:305B 4C 00                                           cnst_HOTKEY_L_2 db 'L',0                ; DATA XREF: Load_Screen+196o
-// MGC  dseg:305D 53 41 56 45 00                                  cnst_SAVE3 db 'SAVE',0                  ; DATA XREF: Load_Screen:@@Loop_SaveSlotso
-// MGC  dseg:3062 2E 47 41 4D 00                                  cnst_SAVE_ext3 db '.GAM',0              ; DATA XREF: Load_Screen+1FDo
+// MGC  dseg:305B 4C 00                                           cnst_HOTKEY_L_2 db 'L',0                ; DATA XREF: Load_Screen+196vo
+// MGC  dseg:305D 53 41 56 45 00                                  cnst_SAVE3 db 'SAVE',0                  ; DATA XREF: Load_Screen:@@Loop_SaveSlotsvo
+// MGC  dseg:3062 2E 47 41 4D 00                                  cnst_SAVE_ext3 db '.GAM',0              ; DATA XREF: Load_Screen+1FDvo
 // MGC  dseg:3067 43 6F 70 79 72 69 67 68 74 20 20 53 69 6D 74 65+load_screen_copyright db 'Copyright  Simtex Software, 1995   V1.31',0
 
 // MGC  dseg:3090
@@ -1029,7 +1031,7 @@ char cnst_Pick_Error_21[] = " you need:   ";
 char cnst_Pick_Error_22[] = " picks in ";
 char cnst_Pick_Error_23[] = " Magic";
 char cnst_Pick_Error_24[] = " pick";
-char cnst_Pick_Error_25[] = "s";
+char cnst_Pick_Error_25[] = "s in any ";
 char cnst_Pick_Error_26[] = " in any ";
 char cnst_Pick_Error_27[] = " Realms of Magic";
 char cnst_Pick_Error_28[] = "Realm of Magic";
@@ -1157,15 +1159,18 @@ int16_t m_bookshelf_life;
 
 // MGC  dseg:8DE2
 /*
-set to 8 in Newgame_Screen_1__WIP() set-up portion
+set to 8 in Newgame_Screen_1() set-up portion
 
 "Select Wizard" vs. "Select Picture"
 
 WTF?
 init'd to 0, defaulted to 8, never changed
 
+CLAUDE:  corrected: it does change - 8 in Newgame_Screen_1() (Select Wizard: 7 presets + Custom in the right column), 7 in Newgame_Screen_2() (Select Picture:
+              7 portraits), 0 in Newgame_Screen_3_Draw() (neither list). It is the right column's row count, which also tells the screens which list they are on.
 */
-int16_t NEWG_PortraitSelType = 0;
+// int16_t NEWG_PortraitSelType = 0;
+int16_t m_right_column_rows = 0;
 
 // MGC  dseg:8DE4 00                                              db    0
 // MGC  dseg:8DE5 00                                              db    0
@@ -1204,7 +1209,7 @@ Newgame_Screen_0()
 NEWGAME.LBX, 001  NEWGAMP2    New game border
 IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 1, _screen_seg);
 
-Newgame_Screen_3__WIP()
+Newgame_Screen_3()
 NEWGAME.LBX, 040  NEWGMNAM   Name box
 IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 40, _screen_seg);
 */
@@ -1213,9 +1218,9 @@ SAMB_ptr IMG_NewG_RgtOverlay = 0;
 // MGC  dseg:8E6A
 int16_t wsa_picklist_fields[NUM_WIZARD_SPECIAL_ABILITIES];
 
-// MGC  dseg:8E8E 00 00                                           _quit_active_seg dw 0                   ; DATA XREF: Load_Screen+32w ...
-// MGC  dseg:8E90 00 00                                           _load_active_seg dw 0                   ; DATA XREF: Load_Screen+49w ...
-// MGC  dseg:8E92 00 00                                           _ok_button dw 0                         ; DATA XREF: Load_Screen+1BDw ...
+// MGC  dseg:8E8E 00 00                                           _quit_active_seg dw 0                   ; DATA XREF: Load_Screen+32vw ...
+// MGC  dseg:8E90 00 00                                           _load_active_seg dw 0                   ; DATA XREF: Load_Screen+49vw ...
+// MGC  dseg:8E92 00 00                                           _ok_button dw 0                         ; DATA XREF: Load_Screen+1BDvw ...
 // MGC  dseg:8E94
 int16_t spellpicks_count;
 
@@ -1232,9 +1237,9 @@ extern int16_t selected_load_game_slot_idx;
 // MGC  dseg:8E9C
 int16_t m_select_spells_realm;
 
-// MGC  dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5w ...
-// MGC  dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCw ...
-// MGC  dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5w ...
+// MGC  dseg:8E9E 00 00                                           _settings_button dw 0                   ; DATA XREF: Load_Screen+2D5vw ...
+// MGC  dseg:8EA0 00 00                                           _settings_button_seg dw 0               ; DATA XREF: Load_Screen+BCvw ...
+// MGC  dseg:8EA2 00 00                                           _text_fill_seg dw 0                     ; DATA XREF: Load_Screen+A5vw ...
 
 // MGC  dseg:8EA4
 /*
@@ -1242,13 +1247,13 @@ int16_t m_select_spells_realm;
  *
  * Holds the enum_RACE_BYTE value of the race the human player (player 0) selected on New Game Screen 6 ("Select Race").
  *
- * Written by Newgame_Screen_6__WIP() when the player clicks one of the 14 race-name labels in the race list panel.  If the clicked
+ * Written by Newgame_Screen_6() when the player clicks one of the 14 race-name labels in the race list panel.  If the clicked
  * label index falls in [0..8], the value is looked up from the local Arcanus_Races[9] table (Barbarian, Gnoll, Halfling, High Elf,
  * High Man, Klackon, Lizardman, Nomad, Orc).  If the index falls in [9..13] AND the player has the Myrran special ability, the value is
  * looked up from the local Myrran_Races[5] table (Beastman, Dark Elf, Draconian, Dwarf, Troll); otherwise the click is rejected
  * and a warning dialog is shown ("You can not select a Myrran race unless you have the Myrran special.").
  *
- * After the selection loop exits, Newgame_Screen_6__WIP() uses NEWG_Clicked_Race to drive the four-iteration "blink" animation:
+ * After the selection loop exits, Newgame_Screen_6() uses NEWG_Clicked_Race to drive the four-iteration "blink" animation:
  * the chosen race name is redrawn in alternating highlight/dim colors so the player gets visual feedback before advancing to the
  * next new-game screen (Screen 7 -- "Select Banner").
  *
@@ -1268,7 +1273,7 @@ int16_t NEWG_Clicked_Race;
 // MGC  dseg:8EA8 00 00                                           dw 0
 
 // MGC  dseg:8EAA
-int16_t NEWG_ProfileComplete;
+int16_t m_all_picks_made;
 
 // MGC  dseg:8EAC
 /*
@@ -1276,7 +1281,7 @@ NEWGAME.LBX, 043  MAGICOK    non selectable ok
 */
 SAMB_ptr _ok_inactive_seg;
 
-// MGC  dseg:8EAE 00 00                                           _save_inactive_seg dw 0                 ; DATA XREF: Load_Screen+77w ...
+// MGC  dseg:8EAE 00 00                                           _save_inactive_seg dw 0                 ; DATA XREF: Load_Screen+77vw ...
 
 // MGC  dseg:8EAE                                                 END:  ovr050 - Uninitialized Data
 
@@ -1284,8 +1289,8 @@ SAMB_ptr _ok_inactive_seg;
 
 // MGC  dseg:8EB0                                                 BEGIN:  ovr051 - Uninitialized Data
 
-// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+m_landmasses_default_race dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39w ...
-// MGC  dseg:9040 00 00                                           m_landmasses_ctr dw 0                 ; DATA XREF: NEWG_ClearLandmasses+4w ...
+// MGC  dseg:8EB0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+m_landmasses_default_race dw 200 dup(0)       ; DATA XREF: NEWG_CreateNeutrals+39vw ...
+// MGC  dseg:9040 00 00                                           m_landmasses_ctr dw 0                 ; DATA XREF: NEWG_ClearLandmasses+4vw ...
 // MGC  dseg:9042 00 00                                           dw 0
 // MGC  dseg:9044 00 00                                           dw 0
 // MGC  dseg:9046 00 00                                           dw 0
@@ -1298,71 +1303,71 @@ SAMB_ptr _ok_inactive_seg;
 
 // MGC  dseg:904E                                                 BEGIN:  ovr053 - Uninitialized Data
 
-// MGC  dseg:904E 00 00                                           HLP_ExpandLines dw 0                    ; DATA XREF: UU_HLP_DrawExpanding+Bw ...
-// MGC  dseg:9050 00 00                                           HLP_ExpandOrigBottom dw 0               ; DATA XREF: UU_HLP_DrawExpanding+3Bw ...
-// MGC  dseg:9052 00 00                                           HLP_ExpandOrigRight dw 0                ; DATA XREF: UU_HLP_DrawExpanding+35w ...
-// MGC  dseg:9054 00 00                                           HLP_ExpandOrigTop dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+2Fw ...
-// MGC  dseg:9056 00 00                                           HLP_ExpandOrigLeft dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+29w ...
-// MGC  dseg:9058 00 00                                           HLP_ExpandTgtBottom dw 0                ; DATA XREF: UU_HLP_DrawExpanding+23w ...
-// MGC  dseg:905A 00 00                                           HLP_ExpandTgtRight dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+1Dw ...
-// MGC  dseg:905C 00 00                                           HLP_ExpandTgtTop dw 0                   ; DATA XREF: UU_HLP_DrawExpanding+17w ...
-// MGC  dseg:905E 00 00                                           HLP_ExpandTgtLeft dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+11w ...
-// MGC  dseg:9060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_ListSel_Buttons dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+217w ...
-// MGC  dseg:9074 00 00                                           GUI_ListSel_Title@ dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+1CBw ...
-// MGC  dseg:9076 00 00                                           GUI_ListSel_Strings@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1C5w ...
-// MGC  dseg:9078 00 00                                           GUI_ListSel_DispCnt dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1BFw ...
-// MGC  dseg:907A 00 00                                           GUI_ListSel_Disp1st dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1CEw ...
-// MGC  dseg:907C 00 00                                           GUI_ListSelHighlight dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1D4w ...
+// MGC  dseg:904E 00 00                                           HLP_ExpandLines dw 0                    ; DATA XREF: UU_HLP_DrawExpanding+Bvw ...
+// MGC  dseg:9050 00 00                                           HLP_ExpandOrigBottom dw 0               ; DATA XREF: UU_HLP_DrawExpanding+3Bvw ...
+// MGC  dseg:9052 00 00                                           HLP_ExpandOrigRight dw 0                ; DATA XREF: UU_HLP_DrawExpanding+35vw ...
+// MGC  dseg:9054 00 00                                           HLP_ExpandOrigTop dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+2Fvw ...
+// MGC  dseg:9056 00 00                                           HLP_ExpandOrigLeft dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+29vw ...
+// MGC  dseg:9058 00 00                                           HLP_ExpandTgtBottom dw 0                ; DATA XREF: UU_HLP_DrawExpanding+23vw ...
+// MGC  dseg:905A 00 00                                           HLP_ExpandTgtRight dw 0                 ; DATA XREF: UU_HLP_DrawExpanding+1Dvw ...
+// MGC  dseg:905C 00 00                                           HLP_ExpandTgtTop dw 0                   ; DATA XREF: UU_HLP_DrawExpanding+17vw ...
+// MGC  dseg:905E 00 00                                           HLP_ExpandTgtLeft dw 0                  ; DATA XREF: UU_HLP_DrawExpanding+11vw ...
+// MGC  dseg:9060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+GUI_ListSel_Buttons dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+217vw ...
+// MGC  dseg:9074 00 00                                           GUI_ListSel_Title@ dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+1CBvw ...
+// MGC  dseg:9076 00 00                                           GUI_ListSel_Strings@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1C5vw ...
+// MGC  dseg:9078 00 00                                           GUI_ListSel_DispCnt dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1BFvw ...
+// MGC  dseg:907A 00 00                                           GUI_ListSel_Disp1st dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1CEvw ...
+// MGC  dseg:907C 00 00                                           GUI_ListSelHighlight dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+1D4vw ...
 // MGC  dseg:907E 00 00                                           dw 0
-// MGC  dseg:9080 00 00                                           GUI_ListSel_Bottom dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+441r ...
-// MGC  dseg:9082 00 00                                           GUI_ListSel_Right dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+2EFr ...
-// MGC  dseg:9084 00 00                                           GUI_ListSel_Top dw 0                    ; DATA XREF: UU_GUI_ListSelect_Dlg+2DAr ...
-// MGC  dseg:9086 00 00                                           GUI_ListSel_Left dw 0                   ; DATA XREF: UU_GUI_ListSelect_Dlg+321r ...
-// MGC  dseg:9088 00 00                                           GUI_ListSel_MultiPg dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1B9w ...
-// MGC  dseg:908A 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+264r ...
-// MGC  dseg:908C 00 00                                           IMG_GUI_NoButton@ dw 0                  ; DATA XREF: UU_GUI_Confirm_Dialog+78w ...
+// MGC  dseg:9080 00 00                                           GUI_ListSel_Bottom dw 0                 ; DATA XREF: UU_GUI_ListSelect_Dlg+441vr ...
+// MGC  dseg:9082 00 00                                           GUI_ListSel_Right dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+2EFvr ...
+// MGC  dseg:9084 00 00                                           GUI_ListSel_Top dw 0                    ; DATA XREF: UU_GUI_ListSelect_Dlg+2DAvr ...
+// MGC  dseg:9086 00 00                                           GUI_ListSel_Left dw 0                   ; DATA XREF: UU_GUI_ListSelect_Dlg+321vr ...
+// MGC  dseg:9088 00 00                                           GUI_ListSel_MultiPg dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+1B9vw ...
+// MGC  dseg:908A 00 00                                           GUI_ListSel_Count dw 0                  ; DATA XREF: UU_GUI_ListSelect_Dlg+264vr ...
+// MGC  dseg:908C 00 00                                           IMG_GUI_NoButton@ dw 0                  ; DATA XREF: UU_GUI_Confirm_Dialog+78vw ...
 // MGC  dseg:908C                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// MGC  dseg:908E 00 00                                           IMG_GUI_YesButton@ dw 0                 ; DATA XREF: UU_GUI_Confirm_Dialog+61w ...
+// MGC  dseg:908E 00 00                                           IMG_GUI_YesButton@ dw 0                 ; DATA XREF: UU_GUI_Confirm_Dialog+61vw ...
 // MGC  dseg:908E                                                                                         ; 2 frame image appended in the LBX_Sandbox_Segment
-// MGC  dseg:9090 00 00                                           IMG_GUI_Confirm_Btm@ dw 0               ; DATA XREF: UU_GUI_Confirm_Dialog:loc_4D5FAw ...
+// MGC  dseg:9090 00 00                                           IMG_GUI_Confirm_Btm@ dw 0               ; DATA XREF: UU_GUI_Confirm_Dialog:loc_4D5FAvw ...
 // MGC  dseg:9090                                                                                         ; single image appended in the LBX_Sandbox_Segment
-// MGC  dseg:9092 00 00                                           IMG_GUI_Confirm_BG@ dw 0                ; DATA XREF: UU_GUI_Confirm_Dialog+33w ...
+// MGC  dseg:9092 00 00                                           IMG_GUI_Confirm_BG@ dw 0                ; DATA XREF: UU_GUI_Confirm_Dialog+33vw ...
 // MGC  dseg:9092                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
-// MGC  dseg:9094 00 00                                           GUI_Notify_IMG2_Left dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+11Cw ...
-// MGC  dseg:9096 00 00                                           GUI_Notify_IMG2_Top dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+122w ...
-// MGC  dseg:9098 00 00                                           GUI_Notify_IMG_Top dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+116w ...
-// MGC  dseg:909A 00 00                                           GUI_Notify_IMG_Left dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+110w ...
-// MGC  dseg:909C 00 00                                           GUI_Notify_GemBorder dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+10Aw ...
-// MGC  dseg:909E 00 00                                           IMG_GUI_Dialog_Pic2@ dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+100w ...
-// MGC  dseg:90A0 00 00                                           IMG_GUI_Dialog_Pic@ dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+F9w ...
-// MGC  dseg:90A2 00 00                                           GUI_Notify_Color dw 0                   ; DATA XREF: UU_GUI_Notify_Dialog+103w ...
+// MGC  dseg:9094 00 00                                           GUI_Notify_IMG2_Left dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+11Cvw ...
+// MGC  dseg:9096 00 00                                           GUI_Notify_IMG2_Top dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+122vw ...
+// MGC  dseg:9098 00 00                                           GUI_Notify_IMG_Top dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+116vw ...
+// MGC  dseg:909A 00 00                                           GUI_Notify_IMG_Left dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+110vw ...
+// MGC  dseg:909C 00 00                                           GUI_Notify_GemBorder dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+10Avw ...
+// MGC  dseg:909E 00 00                                           IMG_GUI_Dialog_Pic2@ dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+100vw ...
+// MGC  dseg:90A0 00 00                                           IMG_GUI_Dialog_Pic@ dw 0                ; DATA XREF: UU_GUI_Notify_Dialog+F9vw ...
+// MGC  dseg:90A2 00 00                                           GUI_Notify_Color dw 0                   ; DATA XREF: UU_GUI_Notify_Dialog+103vw ...
 // MGC  dseg:90A2                                                                                         ; blue - red - green - brown
 // MGC  dseg:90A4 00 00                                           dw 0
-// MGC  dseg:90A6 00 00                                           IMG_GUI_BlueNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+81w ...
-// MGC  dseg:90A8 00 00                                           IMG_GUI_RedNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+C9w
-// MGC  dseg:90AA 00 00                                           IMG_GUI_GrnNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+111w
-// MGC  dseg:90AC 00 00                                           IMG_GUI_BrwnNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+158w
-// MGC  dseg:90AE 00 00                                           IMG_GUI_BlueNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+6Aw ...
-// MGC  dseg:90B0 00 00                                           IMG_GUI_RedNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+B2w
-// MGC  dseg:90B2 00 00                                           IMG_GUI_GrnNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+FAw
-// MGC  dseg:90B4 00 00                                           IMG_GUI_BrwnNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+141w
-// MGC  dseg:90B6 00 00                                           IMG_GUI_BlueNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+53w ...
-// MGC  dseg:90B8 00 00                                           IMG_GUI_RedNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+9Bw
-// MGC  dseg:90BA 00 00                                           IMG_GUI_GrnNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+E3w
-// MGC  dseg:90BC 00 00                                           IMG_GUI_BrwnNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+12Aw
-// MGC  dseg:90BE 00 00                                           GUI_ColorSlideType dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+AFw ...
+// MGC  dseg:90A6 00 00                                           IMG_GUI_BlueNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+81vw ...
+// MGC  dseg:90A8 00 00                                           IMG_GUI_RedNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+C9vw
+// MGC  dseg:90AA 00 00                                           IMG_GUI_GrnNtfyGem@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+111vw
+// MGC  dseg:90AC 00 00                                           IMG_GUI_BrwnNtfyGem@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+158vw
+// MGC  dseg:90AE 00 00                                           IMG_GUI_BlueNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+6Avw ...
+// MGC  dseg:90B0 00 00                                           IMG_GUI_RedNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+B2vw
+// MGC  dseg:90B2 00 00                                           IMG_GUI_GrnNtfyPic@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+FAvw
+// MGC  dseg:90B4 00 00                                           IMG_GUI_BrwnNtfyPic@ dw 0               ; DATA XREF: UU_GUI_LoadNotifyGfx+141vw
+// MGC  dseg:90B6 00 00                                           IMG_GUI_BlueNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+53vw ...
+// MGC  dseg:90B8 00 00                                           IMG_GUI_RedNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+9Bvw
+// MGC  dseg:90BA 00 00                                           IMG_GUI_GrnNotify@ dw 0                 ; DATA XREF: UU_GUI_LoadNotifyGfx+E3vw
+// MGC  dseg:90BC 00 00                                           IMG_GUI_BrwnNotify@ dw 0                ; DATA XREF: UU_GUI_LoadNotifyGfx+12Avw
+// MGC  dseg:90BE 00 00                                           GUI_ColorSlideType dw 0                 ; DATA XREF: UU_GUI_Notify_Dialog+AFvw ...
 // MGC  dseg:90C0                                                 ; int GUI_ColorSlide_State
-// MGC  dseg:90C0 00 00                                           GUI_ColorSlide_State dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+B2w ...
+// MGC  dseg:90C0 00 00                                           GUI_ColorSlide_State dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+B2vw ...
 /*
     BEGIN:  Warning Box
 */
-// MGC  dseg:90C2 00 00                                           m_warning2_box_bottom_seg dw 0          ; DATA XREF: Warning_Message+68w ...
+// MGC  dseg:90C2 00 00                                           m_warning2_box_bottom_seg dw 0          ; DATA XREF: Warning_Message+68vw ...
 // MGC  dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C4 00 00                                           m_warning2_box_top_seg dw 0             ; DATA XREF: Warning_Message+51w ...
+// MGC  dseg:90C4 00 00                                           m_warning2_box_top_seg dw 0             ; DATA XREF: Warning_Message+51vw ...
 // MGC  dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0           ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
+// MGC  dseg:90C6 00 00                                           m_warning_box_bottom_seg dw 0           ; DATA XREF: Newgame_Screen_6+BFvw ...
 // MGC  dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C8 00 00                                           m_warning_box_top_seg dw 0              ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
+// MGC  dseg:90C8 00 00                                           m_warning_box_top_seg dw 0              ; DATA XREF: Newgame_Screen_6+A8vw ...
 // MGC  dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
 /*
     END:  Warning Box
@@ -1370,28 +1375,28 @@ SAMB_ptr _ok_inactive_seg;
 /*
     BEGIN:  Selection Box
 */
-// MGC  dseg:90CA 00 00                                           IMG_GUI_ListSelLkDn@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+144w ...
-// MGC  dseg:90CC 00 00                                           IMG_GUI_ListSelLkUp@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+12Dw ...
-// MGC  dseg:90CE 00 00                                           IMG_GUI_ListS_BScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+116w ...
-// MGC  dseg:90D0 00 00                                           IMG_GUI_ListS_TScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+FFw ...
-// MGC  dseg:90D2 00 00                                           IMG_GUI_ListSelDnAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+E8w ...
-// MGC  dseg:90D4 00 00                                           IMG_GUI_ListSelUpAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+D1w ...
-// MGC  dseg:90D6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGRs@ dw 0Ah dup(     0) ; DATA XREF: UU_GUI_ListSelect_Dlg+181w ...
+// MGC  dseg:90CA 00 00                                           IMG_GUI_ListSelLkDn@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+144vw ...
+// MGC  dseg:90CC 00 00                                           IMG_GUI_ListSelLkUp@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+12Dvw ...
+// MGC  dseg:90CE 00 00                                           IMG_GUI_ListS_BScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+116vw ...
+// MGC  dseg:90D0 00 00                                           IMG_GUI_ListS_TScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+FFvw ...
+// MGC  dseg:90D2 00 00                                           IMG_GUI_ListSelDnAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+E8vw ...
+// MGC  dseg:90D4 00 00                                           IMG_GUI_ListSelUpAr@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+D1vw ...
+// MGC  dseg:90D6 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGRs@ dw 0Ah dup(     0) ; DATA XREF: UU_GUI_ListSelect_Dlg+181vw ...
 // MGC  dseg:90D6 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
-// MGC  dseg:90EA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGs@ dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+165w ...
+// MGC  dseg:90EA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_GUI_ListS_IBGs@ dw 0Ah dup(     0)  ; DATA XREF: UU_GUI_ListSelect_Dlg+165vw ...
 // MGC  dseg:90EA 00 00 00 00                                                                             ; array of 5 2-frame images appended into the sandbox
-// MGC  dseg:90FE 00 00                                           IMG_GUI_ListSelScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+BAw ...
-// MGC  dseg:9100 00 00                                           IMG_GUI_ListSel_BR@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+A3w ...
-// MGC  dseg:9102 00 00                                           IMG_GUI_ListSelRght@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+8Cw ...
-// MGC  dseg:9104 00 00                                           IMG_GUI_ListSel_Btm@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+75w ...
-// MGC  dseg:9106 00 00                                           IMG_GUI_ListSel_Top@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+5Ew ...
-// MGC  dseg:9108 00 00                                           IMG_GUI_ListSel_BL@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+47w ...
-// MGC  dseg:910A 00 00                                           IMG_GUI_ListSelLeft@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+30w ...
-// MGC  dseg:910C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+16w ...
-// MGC  dseg:910E 00 00                                           GUI_Dialog_Text@ dw 0                   ; DATA XREF: UU_GUI_Confirm_Dialog+83w ...
-// MGC  dseg:9110 00 00                                           GUI_Dialog_Top dw 0                     ; DATA XREF: UU_GUI_Confirm_Dialog+CAw ...
-// MGC  dseg:9112 00 00                                           GUI_Dialog_Left dw 0                    ; DATA XREF: UU_GUI_Confirm_Dialog+B8w ...
-// MGC  dseg:9114 00 00                                           m_warning_type dw 0                        ; DATA XREF: UU_GUI_WarningType1+3w ...
+// MGC  dseg:90FE 00 00                                           IMG_GUI_ListSelScrl@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+BAvw ...
+// MGC  dseg:9100 00 00                                           IMG_GUI_ListSel_BR@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+A3vw ...
+// MGC  dseg:9102 00 00                                           IMG_GUI_ListSelRght@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+8Cvw ...
+// MGC  dseg:9104 00 00                                           IMG_GUI_ListSel_Btm@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+75vw ...
+// MGC  dseg:9106 00 00                                           IMG_GUI_ListSel_Top@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+5Evw ...
+// MGC  dseg:9108 00 00                                           IMG_GUI_ListSel_BL@ dw 0                ; DATA XREF: UU_GUI_ListSelect_Dlg+47vw ...
+// MGC  dseg:910A 00 00                                           IMG_GUI_ListSelLeft@ dw 0               ; DATA XREF: UU_GUI_ListSelect_Dlg+30vw ...
+// MGC  dseg:910C 00 00                                           GUI_FamiliarIMGIndex dw 0               ; DATA XREF: UU_GUI_Notify_Dialog+16vw ...
+// MGC  dseg:910E 00 00                                           GUI_Dialog_Text@ dw 0                   ; DATA XREF: UU_GUI_Confirm_Dialog+83vw ...
+// MGC  dseg:9110 00 00                                           GUI_Dialog_Top dw 0                     ; DATA XREF: UU_GUI_Confirm_Dialog+CAvw ...
+// MGC  dseg:9112 00 00                                           GUI_Dialog_Left dw 0                    ; DATA XREF: UU_GUI_Confirm_Dialog+B8vw ...
+// MGC  dseg:9114 00 00                                           m_warning_type dw 0                        ; DATA XREF: UU_GUI_WarningType1+3vw ...
 // MGC  dseg:9114                                                                                         ; determines whether to use the first or the second
 // MGC  dseg:9114                                                                                         ; of the two different warning message backgrounds
 // MGC  dseg:9114                                                                                         ; (both of which are red, but slightly different and
@@ -1436,7 +1441,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
     int16_t custom_game_flag = 0;  // _DI_
     int16_t newgame_state = 0;  // _SI_
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     _landsize = 1;
     _magic = 1;
@@ -1459,7 +1464,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             case ST_UNDEFINED:
             {
                 // return;  // ¿ cancel ?
-                LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+                TRACE_EXIT();
                 /* HACK */  return ST_FALSE;
             } break;
             case ngscr_Options:
@@ -1468,7 +1473,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             } break;
             case ngscr_Wizard:
             {
-                newgame_state = Newgame_Screen_1__WIP();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
+                newgame_state = Newgame_Screen_1();  // returns {0,2,3} - {0:cancel,2:custom,3:prefab}
                 if(newgame_state == 2)
                 {
                     custom_game_flag = ST_TRUE;
@@ -1480,11 +1485,11 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             } break;
             case ngscr_Portrait:
             {
-                newgame_state = Newgame_Screen_2__WIP();
+                newgame_state = Newgame_Screen_2();
             } break;
             case ngscr_Name:
             {
-                newgame_state = Newgame_Screen_3__WIP();
+                newgame_state = Newgame_Screen_3();
                 if(custom_game_flag != ST_FALSE)
                 {
                     if(newgame_state == ST_UNDEFINED)  // cancelled, go back a screen
@@ -1510,7 +1515,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             } break;
             case ngscr_Creation:  //  (Custom Wizard) ..."spell pick screen"
             {
-                newgame_state = Newgame_Screen_4__WIP();
+                newgame_state = Newgame_Screen_4();
             } break;
             case ngscr_Spells:  //  (Custom Wizard) ..."select spells screen"
             {
@@ -1518,23 +1523,24 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
             } break;
             case ngscr_Race:  // Wizard's Race
             {
-                newgame_state = Newgame_Screen_6__WIP();
+                newgame_state = Newgame_Screen_6();
                 if(newgame_state == ST_UNDEFINED)  // Cancel Wizards Race
                 {
+                    /* OGBUG  Esc on the race screen goes back to the spell-selection state (5), but for a custom wizard with no realm of 2+ books Newgame_Screen_5() returns ngscr_Race (6) at once, so Esc only bounces between the two and the custom picks screen cannot be reached again */
                     if(custom_game_flag != ST_FALSE)
                     {
-                        newgame_state = 5;
+                        newgame_state = ngscr_Spells;
                     }
                     else
                     {
-                        newgame_state = 3;  // Wizards Name
+                        newgame_state = ngscr_Name;  // Wizards Name
                     }
                 }
             } break;
             case ngscr_Banner:
             {
-                newgame_state = Newgame_Screen_7__WIP();
-                gd_dump_players("000_Newgame_Screen_7_P");
+                newgame_state = Newgame_Screen_7();
+                STU_GD_DO(STU_GD_Dump_Players("000_Newgame_Screen_7_P"));  /* CLAUDE */
             } break;
             case 99:  /* What sets 99? */
             {
@@ -1568,7 +1574,7 @@ NOTE(JimBalcomb,20251221): definitely done-done, non-WIP
     LOG_INFO(LOG_CAT_NEWGAME, "SUCCESS: PLATFORM is #defined");
 #endif
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
     /* HACK */  return ST_TRUE;
 
@@ -1672,30 +1678,18 @@ int16_t Newgame_Screen_0(void)
     int16_t First_Draw_Done = 0;
     int16_t input_field_idx = 0;  // _SI_
     FILE * file_pointer = 0;
-#ifdef STU_DEBUG
-    struct s_MAGIC_SET magic_set_snapshot;
-#endif
-
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
+    TRACE_ENTER();
     screen_changed = ST_TRUE;
-    
-    // KNOWNBUG  conflicting condition - will never jump
+    // ¿ BUG  conflicting condition - will never jump ?
     if(screen_changed != ST_FALSE)
     {
         Fade_Out();
     }
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
     Set_Page_On();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
     Set_Page_Off();
-
     Load_Palette(0, -1, ST_NULL);
-
     /*
     NEWGAME.LBX, 000  BACKGRND    Main screen back
     NEWGAME.LBX, 001  NEWGAMP2    New game border
@@ -1714,28 +1708,20 @@ int16_t Newgame_Screen_0(void)
     m_shared_pict_segs[1] = LBX_Reload_Next(newgame_lbx_file__ovr050, 5, _screen_seg);
     m_shared_pict_segs[2] = LBX_Reload_Next(newgame_lbx_file__ovr050, 6, _screen_seg);
     m_shared_pict_segs[3] = LBX_Reload_Next(newgame_lbx_file__ovr050, 7, _screen_seg);
-
     if(
-        (STU_GRAF_User_DIR(str_MAGIC_SET__ovr050, file_found) == 0)  /* CLAUDE: -> user-data */
+        (STU_GRAF_User_DIR(str_MAGIC_SET__ovr050, file_found) == 0)
         ||
-        (STU_GRAF_User_LOF(str_MAGIC_SET__ovr050) == 0)  /* CLAUDE: -> user-data */
+        (STU_GRAF_User_LOF(str_MAGIC_SET__ovr050) == 0)
     )
     {
-
         Set_Default_Game_Settings();
-
     }
     else
     {
-
-        file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_rb__ovr050);  /* CLAUDE: -> user-data */
-
+        file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_rb__ovr050);
         fread(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
-
         fclose(file_pointer);
-        
     }
-
     if(
         (magic_set.Difficulty < 0)
         ||
@@ -1744,7 +1730,6 @@ int16_t Newgame_Screen_0(void)
     {
         magic_set.Difficulty = 0;
     }
-
     if(
         (magic_set.Opponents < 0)
         ||
@@ -1753,7 +1738,6 @@ int16_t Newgame_Screen_0(void)
     {
         magic_set.Opponents = 1;
     }
-
     if(
         (magic_set.LandSize < 0)
         ||
@@ -1762,7 +1746,6 @@ int16_t Newgame_Screen_0(void)
     {
         magic_set.LandSize = 0;
     }
-
     if(
         (magic_set.MagicPower < 0)
         ||
@@ -1771,165 +1754,98 @@ int16_t Newgame_Screen_0(void)
     {
         magic_set.MagicPower = 0;
     }
-
-#ifdef STU_DEBUG
-    DBG_Print_MAGIC_SET("Newgame_Screen_0 after load");
-    memcpy(&magic_set_snapshot, &magic_set, sizeof(struct s_MAGIC_SET));
-#endif
-
     Set_Mouse_List(1, mouse_list_newgame);
-
     Clear_Fields();
-
     Set_Page_On();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
     Set_Page_Off();
-
     Fill(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, ST_TRANSPARENT);
-
-    _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050[0], ST_UNDEFINED);
-
-    _quit_button = Add_Button_Field(171, 179, &empty_string__ovr050[0], _quit_active_seg, str_ESC__ovr050[0], ST_UNDEFINED);
-
-    newgame_difficulty_button_field = Add_Hidden_Field(250, 38, 315, 54, empty_string__ovr050[0], ST_UNDEFINED);
-
-    newgame_opponents_button_field = Add_Hidden_Field(250, 65, 315, 81, empty_string__ovr050[0], ST_UNDEFINED);
-
-    newgame_landsize_button_field = Add_Hidden_Field(250, 92, 315, 108, empty_string__ovr050[0], ST_UNDEFINED);
-
-    newgame_magic_button_field = Add_Hidden_Field(250, 119, 315, 135, empty_string__ovr050[0], ST_UNDEFINED);
-
+    _ok_button = Add_Button_Field(252, 179, &empty_string__ovr050[0], newgame_ok_button_seg, empty_string__ovr050, ST_UNDEFINED);
+    _quit_button = Add_Button_Field(171, 179, &empty_string__ovr050[0], _quit_active_seg, str_ESC__ovr050, ST_UNDEFINED);
+    newgame_difficulty_button_field = Add_Hidden_Field(250, 38, 315, 54, empty_string__ovr050, ST_UNDEFINED);
+    newgame_opponents_button_field = Add_Hidden_Field(250, 65, 315, 81, empty_string__ovr050, ST_UNDEFINED);
+    newgame_landsize_button_field = Add_Hidden_Field(250, 92, 315, 108, empty_string__ovr050, ST_UNDEFINED);
+    newgame_magic_button_field = Add_Hidden_Field(250, 119, 315, 135, empty_string__ovr050, ST_UNDEFINED);
     leave_screen = ST_FALSE;
-
     First_Draw_Done = ST_FALSE;
-
     Assign_Auto_Function(Newgame_Screen_0_Draw, 1);
-
     Set_Newgame_Screen_0_Help_List();
-
     while(leave_screen == ST_FALSE)
     {
-
         input_field_idx = Get_Input();
-
         Mark_Time();
-
         if(input_field_idx == _quit_button)
         {
             Deactivate_Auto_Function();
             Deactivate_Help_List();
             return ST_UNDEFINED;
         }
-
         if(input_field_idx == _ok_button)
         {
-
-#ifdef STU_DEBUG
-            DBG_Compare_MAGIC_SET(&magic_set_snapshot, &magic_set, "Newgame_Screen_0 before save");
-#endif
-
-            file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_wb__ovr050);  /* CLAUDE: -> user-data */
+            file_pointer = STU_GRAF_Open_User(str_MAGIC_SET__ovr050, str_wb__ovr050);
             stu_fwrite(&magic_set, sizeof(struct s_MAGIC_SET), 1, file_pointer);
             stu_fclose(file_pointer);
-
             Deactivate_Auto_Function();
-
             Deactivate_Help_List();
-
             Randomize_Book_Heights();
-
             _landsize = magic_set.LandSize;  /* ~== NewGame.c  Line 1820 */
             _magic = magic_set.MagicPower;
             _num_players = (magic_set.Opponents + 1);
             _difficulty = magic_set.Difficulty;
-            
-            return 1;          }
-        
+            return 1;
+        }
         if(input_field_idx == newgame_difficulty_button_field)
         {
-
             magic_set.Difficulty++;
-
             if(magic_set.Difficulty > god_Impossible)
             {
                 magic_set.Difficulty = god_Intro;
             }
-
         }
-
         if(input_field_idx == newgame_opponents_button_field)
         {
-
             magic_set.Opponents++;
-
             if(magic_set.Opponents > goo_Four)
             {
                 magic_set.Opponents = goo_One;
             }
-
         }
-
         if(input_field_idx == newgame_landsize_button_field)
         {
-
             magic_set.LandSize++;
-
             if(magic_set.LandSize > gol_Large)
             {
                 magic_set.LandSize = gol_Small;
             }
-
         }
-
         if(input_field_idx == newgame_magic_button_field)
         {
-
             magic_set.MagicPower++;
-
             if(magic_set.MagicPower > gom_Powerful)
             {
                 magic_set.MagicPower = gom_Weak;
             }
-
         }
-
         if(leave_screen == ST_FALSE)
         {
-
             Newgame_Screen_0_Draw();
-
             Toggle_Pages();
-
-            // ; conflicting condition - will never jump
+            // ¿ BUG ; conflicting condition - will never jump ?
             if(screen_changed != ST_FALSE)
             {
-                
                 if(First_Draw_Done == ST_FALSE)
                 {
-
                     Copy_On_To_Off_Page();
-
                     Fade_In();
-                    
                     First_Draw_Done = ST_TRUE;
-                    
                 }
-                
             }
-
             Release_Time(2);
-
         }
-
     }
-    
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
-
+    TRACE_EXIT();
 // Non-void function does not return a value in all control paths
 /* HACK */  return 0;
-
 }
 
 // MGC  o50p06
@@ -1943,9 +1859,8 @@ int16_t Newgame_Screen_0(void)
  * hover-aware button offsets.
  *
  * Current behavior:
- * 1) Copies global option-name tables to local arrays used for text rendering.
- * 2) Selects shadow/font color ramps (`RP_COL_NEWG_4Shadow`,
- *    `RP_COL_NEWG_4Font`).
+ * 1) Local option-name tables and shadow/font colour arrays, initialised in place.
+ * 2) (the copies the OG emits for those initialisers)
  * 3) Draws background and right-side overlay.
  * 4) Clears transparent rectangles for each interactive option row and the
  *    lower action-button regions.
@@ -1962,121 +1877,93 @@ int16_t Newgame_Screen_0(void)
  * @return void
  *
  * @note Draw-only routine; option value mutation and navigation are handled by
- *       the enclosing controller loop (`Newgame_Screen_0__WIP`).
+ *       the enclosing controller loop (`Newgame_Screen_0`).
  * @note Writes to global `auto_input_field_idx` as part of input focus state.
  *
- * @see Newgame_Screen_0__WIP
+ * @see Newgame_Screen_0
  */
 void Newgame_Screen_0_Draw(void)
 {
-    struct s_OPPONENT_COUNT_NAMES l_opponent_count_names[4] = { 0, 0, 0, 0 };
-    struct s_MAGIC_STRENGTH_NAMES l_magic_strength_names[3] = { 0, 0, 0 };
-    struct s_LAND_SIZE_NAMES l_land_size_names[3] = { 0, 0, 0 };
-    struct s_DIFFICULTY_NAMES l_difficulty_names[5] = { 0, 0, 0, 0, 0 };
-    uint8_t * colors2 = NULL;
-    uint8_t * colors1 = NULL;
-
-    colors1 = RP_COL_NEWG_4Shadow;
-    
-    colors2 = RP_COL_NEWG_4Font;
-    
-    memcpy(l_difficulty_names, _difficulty_names, sizeof(_difficulty_names));
-    
-    memcpy(l_land_size_names, _land_size_names, sizeof(_land_size_names));
-    
-    memcpy(l_magic_strength_names, _magic_strength_names, sizeof(_magic_strength_names));
-
-    memcpy(l_opponent_count_names, _opponent_count_names, sizeof(_opponent_count_names));
-
-    // FLIC_Draw(0, 0, _background_seg);
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31 };
+    uint8_t text_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187 };
+    struct s_DIFFICULTY_NAMES difficulty_names[5] = { { "Intro" }, { "Easy" }, { "Normal" }, { "Hard" }, { "Impossible" } };
+    struct s_LAND_SIZE_NAMES land_size_names[3] = { { "Small" }, { "Medium" }, { "Large" } };
+    struct s_MAGIC_STRENGTH_NAMES magic_strength_names[3] = { { "Weak" }, { "Normal" }, { "Powerful" } };
+    struct s_OPPONENT_COUNT_NAMES opponent_count_names[4] = { { "One" }, { "Two" }, { "Three" }, { "Four" } };
     FLIC_Draw(0, 0, newgame_background_seg);
-
     Fill(250, 38, 315, 54, ST_TRANSPARENT);
-    
     Fill(250, 65, 315, 82, ST_TRANSPARENT);
-
     Fill(250, 92, 315, 107, ST_TRANSPARENT);
-    
     Fill(250, 119, 315, 134, ST_TRANSPARENT);
-
     Fill(251, 178, 315, 193, ST_TRANSPARENT);
-
     Fill(170, 178, 234, 193, ST_TRANSPARENT);
-
     FLIC_Draw(165, 0, IMG_NewG_RgtOverlay);
-
     auto_input_field_idx = Auto_Input();
-
     Set_Font_Style(3, 15, ST_NULL, ST_NULL);
-
     if(auto_input_field_idx != newgame_difficulty_button_field)
     {
         FLIC_Draw(251, 39, m_shared_pict_segs[0]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(283, 43, l_difficulty_names[magic_set.Difficulty].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 42, l_difficulty_names[magic_set.Difficulty].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(283, 43, difficulty_names[magic_set.Difficulty].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(282, 42, difficulty_names[magic_set.Difficulty].name);
     }
     else
     {
         FLIC_Draw(252, 40, m_shared_pict_segs[0]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(284, 44, l_difficulty_names[magic_set.Difficulty].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(283, 43, l_difficulty_names[magic_set.Difficulty].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(284, 44, difficulty_names[magic_set.Difficulty].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(283, 43, difficulty_names[magic_set.Difficulty].name);
     }
-
     if(auto_input_field_idx != newgame_opponents_button_field)
     {
         FLIC_Draw(251, 66, m_shared_pict_segs[1]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(283, 71, l_opponent_count_names[(magic_set.Opponents - 1)].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 70, l_opponent_count_names[(magic_set.Opponents - 1)].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(283, 71, opponent_count_names[(magic_set.Opponents - 1)].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(282, 70, opponent_count_names[(magic_set.Opponents - 1)].name);
     }
     else
     {
         FLIC_Draw(252, 67, m_shared_pict_segs[1]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(284, 72, l_opponent_count_names[(magic_set.Opponents - 1)].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(283, 71, l_opponent_count_names[(magic_set.Opponents - 1)].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(284, 72, opponent_count_names[(magic_set.Opponents - 1)].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(283, 71, opponent_count_names[(magic_set.Opponents - 1)].name);
     }
-
     if(auto_input_field_idx != newgame_landsize_button_field)
     {
         FLIC_Draw(251, 93, m_shared_pict_segs[2]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(283, 97, l_land_size_names[magic_set.LandSize].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 96, l_land_size_names[magic_set.LandSize].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(283, 97, land_size_names[magic_set.LandSize].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(282, 96, land_size_names[magic_set.LandSize].name);
     }
     else
     {
         FLIC_Draw(252, 94, m_shared_pict_segs[2]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(284, 98, l_land_size_names[magic_set.LandSize].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(283, 97, l_land_size_names[magic_set.LandSize].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(284, 98, land_size_names[magic_set.LandSize].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(283, 97, land_size_names[magic_set.LandSize].name);
     }
-
     if(auto_input_field_idx != newgame_magic_button_field)
     {
         FLIC_Draw(251, 120, m_shared_pict_segs[3]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(283, 124, l_magic_strength_names[magic_set.MagicPower].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(282, 123, l_magic_strength_names[magic_set.MagicPower].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(283, 124, magic_strength_names[magic_set.MagicPower].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(282, 123, magic_strength_names[magic_set.MagicPower].name);
     }
     else
     {
         FLIC_Draw(252, 121, m_shared_pict_segs[3]);
-        Set_Font_Colors_15(3, &colors1[0]);
-        Print_Centered(284, 125, l_magic_strength_names[magic_set.MagicPower].name);
-        Set_Font_Colors_15(3, &colors2[0]);
-        Print_Centered(283, 124, l_magic_strength_names[magic_set.MagicPower].name);
+        Set_Font_Colors_15(3, shadow_colors);
+        Print_Centered(284, 125, magic_strength_names[magic_set.MagicPower].name);
+        Set_Font_Colors_15(3, text_colors);
+        Print_Centered(283, 124, magic_strength_names[magic_set.MagicPower].name);
     }
-
 }
 
 // MGC  o50p07
@@ -2112,7 +1999,7 @@ void Randomize_Book_Heights(void)
     int32_t itr = 0;
     int32_t niu = 0;
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-ENTER] name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_ENTER();
 
     /* OGBUG: niu is leftover, should be remnoved */
     niu = ((((magic_set.MagicPower * magic_set.Opponents) * (magic_set.Difficulty * magic_set.LandSize)) * 123) + 1234);
@@ -2127,7 +2014,7 @@ void Randomize_Book_Heights(void)
         TBL_Bookshelf_Books[itr] = (Random(3) - 1);
     }
 
-    LOG_TRACE(LOG_CAT_CALL_TRACE, "[FN-EXIT]  name=%s rng_call=%llu", __func__, (unsigned long long)g_random_call_count);
+    TRACE_EXIT();
 
 }
 
@@ -2147,18 +2034,18 @@ returns {0,2,3} - {0:cancel,2:custom,3:prefab}
  * or cancel.
  *
  * Main flow:
- * 1) Chooses right-column count/mode by difficulty (`IDK`):
+ * 1) Chooses right-column count/mode by difficulty (`right_column_rows`):
  *    - 7 entries when `magic_set.Difficulty < 1`
  *    - 8 entries otherwise.
  * 2) Loads background, button images, appropriate right overlay, and all
  *    spellbook sprites used by the shared draw routine.
  * 3) Sets mouse/input state, clears fields, initializes display globals
- *    (`m_displayed_wizard`, `NEWG_PortraitSelType`), and creates clickable
+ *    (`m_displayed_wizard`, `m_right_column_rows`), and creates clickable
  *    list fields for left column + variable right column.
  * 4) Installs ESC hotkey, assigns `Newgame_Screen_1_2_Draw`, configures help
  *    list based on difficulty, and sets input delay.
  * 5) Runs input loop:
- *    - ESC returns `0`.
+ *    - ESC returns `ngscr_Options`.
  *    - Preset click (indices 0..13) copies wizard defaults via
  *      `Human_Player_Wizard_Profile` and returns `3`.
  *    - "Custom" click (`m_newgame_fields[14]` when present) returns `2`.
@@ -2167,9 +2054,9 @@ returns {0,2,3} - {0:cancel,2:custom,3:prefab}
  * @param void This function accepts no parameters.
  *
  * @return int16_t
- * @retval 0 Cancel/back path.
- * @retval 2 Custom wizard path selected.
- * @retval 3 Preset wizard path selected.
+ * @retval ngscr_Options  Cancel/back path.
+ * @retval ngscr_Portrait Custom wizard path selected.
+ * @retval ngscr_Name     Preset wizard path selected.
  *
  * @note Mutates global new-game UI/profile state and depends on preloaded game
  *       data tables for wizard presets, colors, and string resources.
@@ -2177,24 +2064,25 @@ returns {0,2,3} - {0:cancel,2:custom,3:prefab}
  * @see Newgame_Screen_1_2_Draw
  * @see Human_Player_Wizard_Profile
  */
-int16_t Newgame_Screen_1__WIP(void)
+// Newgame_Screen_1__WIP()
+int16_t Newgame_Screen_1(void)
 {
-    int16_t hotkey_ESC = 0;
-    int16_t input_field_idx = 0;
+    int16_t first_draw_done = 0;
     int16_t leave_screen = 0;
-    int16_t First_Draw_Done = 0;
-    int16_t IDK = 0;
-    int16_t itr = 0;
+    int16_t input_field_idx = 0;
+    int16_t hotkey_esc = 0;
+    int16_t right_column_rows = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
 
-    IDK = 0;
+    right_column_rows = 0;
 
-    if(magic_set.Difficulty < 1)
+    if(magic_set.Difficulty < god_Easy)
     {
-        IDK = 7;
+        right_column_rows = WIZARD_COLUMN_ROWS;
     }
     else
     {
-        IDK = 8;
+        right_column_rows = RIGHT_COLUMN_ROWS_CUSTOM;
     }
 
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
@@ -2216,12 +2104,13 @@ int16_t Newgame_Screen_1__WIP(void)
     NEWGAME.LBX, 022  NEWGMWBT     Wizards button14
     NEWGAME.LBX, 023  NEWGMWBT     Wizards button15
     */
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < NUM_WIZARD_PRESETS; itr++)
     {
         m_shared_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
     }
 
-    if(IDK == 0)
+    /* OGBUG  right_column_rows (IDK) is 7 or 8 here, never 0: entry 39 (NEWPICS) is always loaded and entry 8 (NEWGMWZ2, "Wizards border") never is */
+    if(right_column_rows == 0)
     {
         // NEWGAME.LBX, 008  NEWGMWZ2    Wizards border
         IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 8, _screen_seg);
@@ -2249,7 +2138,7 @@ int16_t Newgame_Screen_1__WIP(void)
     NEWGAME.LBX, 037  BOOKS      Red book 2
     NEWGAME.LBX, 038  BOOKS      Red book 3
     */
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < (NUM_MAGIC_TYPES * NUM_BOOK_PICTS_PER_REALM); itr++)
     {
         m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
@@ -2260,29 +2149,29 @@ int16_t Newgame_Screen_1__WIP(void)
 
     leave_screen = ST_FALSE;
     
-    First_Draw_Done = ST_FALSE;
+    first_draw_done = ST_FALSE;
     
     m_displayed_wizard = 0;
 
-    NEWG_PortraitSelType = 8;  // Default: "Select Wizard"
+    m_right_column_rows = RIGHT_COLUMN_ROWS_CUSTOM;  // Default: "Select Wizard"
 
-    m_newgame_fields[14] = INVALID_FIELD;
+    m_newgame_fields[CUSTOM_WIZARD_IDX] = INVALID_FIELD;
 
-    for(itr = 0; itr < 7; itr++)
+    for(itr = 0; itr < WIZARD_COLUMN_ROWS; itr++)
     {
 
-        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
 
     }
 
-    for(itr = 0; itr < IDK; itr++)
+    for(itr = 0; itr < right_column_rows; itr++)
     {
 
-        m_newgame_fields[(7+itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[(WIZARD_COLUMN_ROWS + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
 
     }
 
-    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_esc = Add_Hot_Key(str_ESC__ovr050);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2304,27 +2193,27 @@ int16_t Newgame_Screen_1__WIP(void)
 
         Mark_Time();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
-            return 0;
+            return ngscr_Options;
         }
 
-        for(itr = 0; itr < 14; itr++)
+        for(itr = 0; itr < NUM_PRESET_WIZARDS; itr++)
         {
             if(m_newgame_fields[itr] == input_field_idx)
             {
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
                 Human_Player_Wizard_Profile(itr);
-                return 3;
+                return ngscr_Name;
             }
         }
 
-        if(input_field_idx == m_newgame_fields[14])  // "Custom"
+        if(input_field_idx == m_newgame_fields[CUSTOM_WIZARD_IDX])  // "Custom"
         {
             Deactivate_Auto_Function();
             Deactivate_Help_List();
-            return 2;
+            return ngscr_Portrait;
         }
 
         if(leave_screen == ST_FALSE)
@@ -2332,9 +2221,9 @@ int16_t Newgame_Screen_1__WIP(void)
             Newgame_Screen_1_2_Draw();
             Apply_Palette();
             Toggle_Pages();
-            if(First_Draw_Done == ST_FALSE)
+            if(first_draw_done == ST_FALSE)
             {
-                First_Draw_Done = ST_TRUE;
+                first_draw_done = ST_TRUE;
                 Copy_On_To_Off_Page();
             }
             Release_Time(2);
@@ -2342,7 +2231,7 @@ int16_t Newgame_Screen_1__WIP(void)
 
     }
 
-    return 0;
+    return ngscr_Options;  /* NOTE  not reached: leave_screen is never set */
 
 }
 
@@ -2361,14 +2250,14 @@ int16_t Newgame_Screen_1__WIP(void)
  * 2) Reads hover/focus from `Auto_Input()` and updates `m_displayed_wizard`
  *    from `Scan_Input()` when a control is active.
  * 3) Draws background and right overlay, then title text:
- *    - `cnst_Wiz_Select` when `NEWG_PortraitSelType == 8`
+ *    - `cnst_Wiz_Select` when `m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM`
  *    - `cnst_Pic_Select` otherwise.
  * 4) Clears list button regions and draws left/right wizard name columns with
  *    highlighted offsets for the currently hovered field.
- * 5) Computes right-column count from `NEWG_PortraitSelType`, forcing 7 on low
+ * 5) Computes right-column count from `m_right_column_rows`, forcing 7 on low
  *    difficulty (`magic_set.Difficulty < god_Easy`).
  * 6) Draws selected portrait preview when `m_displayed_wizard < 14`.
- * 7) In wizard-select mode (`NEWG_PortraitSelType == 8`), optionally prints the
+ * 7) In wizard-select mode (`m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM`), optionally prints the
  *    preset special ability line and draws default shelf books.
  * 8) Draws displayed wizard name (non-custom entries).
  *
@@ -2380,25 +2269,19 @@ int16_t Newgame_Screen_1__WIP(void)
  * @note Assumes wizard list fields/assets are already initialized by the caller
  *       and that `m_newgame_fields` indices map to the expected list layout.
  *
- * @see Newgame_Screen_1__WIP
- * @see Newgame_Screen_2__WIP
- * @see NEWG_DrawDefShelf__WIP
+ * @see Newgame_Screen_1
+ * @see Newgame_Screen_2
+ * @see Draw_Default_Bookshelf
  */
 void Newgame_Screen_1_2_Draw(void)
 {
-    char Retort_String[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t * Retort_Text_Color = 0;
-    uint8_t Font_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t l_auto_input_field_idx = 0;  // _DI_
     int16_t Right_Column_Count = 0;
-    int16_t l_auto_input_field_idx = 0;
-    int16_t itr = 0;
-
-    memcpy(Shadow_Colors, COL_NEWG_FontShadow, 8);
-
-    memcpy(Font_Colors, COL_NEWG_Font, 8);
-
-    Retort_Text_Color = alias_colors;
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31, 31, 31 };
+    uint8_t font_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187, 187, 187, 187 };
+    uint8_t retort_text_colors[COLOR_SET_COUNT] = { 183, 178 };
+    char retort_string[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
 
     l_auto_input_field_idx = Auto_Input();
 
@@ -2411,10 +2294,9 @@ void Newgame_Screen_1_2_Draw(void)
 
     FLIC_Draw(165, 17, IMG_NewG_RgtOverlay);
 
-    // FTW  Set_Font_Style1(5, 5);
     Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
 
-    if(NEWG_PortraitSelType == 8)
+    if(m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM)
     {
         Print_Centered(242, 1, cnst_Wiz_Select);  // "Select Wizard"
     }
@@ -2439,7 +2321,7 @@ void Newgame_Screen_1_2_Draw(void)
     Fill(244, 158, 313, 174, ST_TRANSPARENT);
 
     if(
-        (NEWG_PortraitSelType == 8)
+        (m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM)
         &&
         (magic_set.Difficulty > god_Intro)
     )
@@ -2460,23 +2342,23 @@ void Newgame_Screen_1_2_Draw(void)
         if(m_newgame_fields[itr] != l_auto_input_field_idx)
         {
             FLIC_Draw(169, (27 + (22 * itr)), m_shared_pict_segs[itr]);
-            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Set_Font_Colors_15(3, shadow_colors);
             Print_Centered(203, (31 + (22 * itr)), _wizard_presets_table[itr].name);
-            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Set_Font_Colors_15(3, font_colors);
             Print_Centered(202, (30 + (22 * itr)), _wizard_presets_table[itr].name);
         }
         else
         {
             FLIC_Draw(170, (28 + (22 * itr)), m_shared_pict_segs[itr]);
-            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Set_Font_Colors_15(3, shadow_colors);
             Print_Centered(204, (32 + (22 * itr)), _wizard_presets_table[itr].name);
-            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Set_Font_Colors_15(3, font_colors);
             Print_Centered(203, (31 + (22 * itr)), _wizard_presets_table[itr].name);
         }
 
     }
 
-    Right_Column_Count = NEWG_PortraitSelType;
+    Right_Column_Count = m_right_column_rows;
 
     if(magic_set.Difficulty < god_Easy)
     {
@@ -2489,17 +2371,17 @@ void Newgame_Screen_1_2_Draw(void)
         if(m_newgame_fields[(7+itr)] == l_auto_input_field_idx)
         {
             FLIC_Draw(246, (28 + (22 * itr)), m_shared_pict_segs[(7 + itr)]);
-            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Set_Font_Colors_15(3, shadow_colors);
             Print_Centered(280, (32 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
-            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Set_Font_Colors_15(3, font_colors);
             Print_Centered(279, (31 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
         }
         else
         {
             FLIC_Draw(245, (27 + (22 * itr)), m_shared_pict_segs[(7 + itr)]);
-            Set_Font_Colors_15(3, &Shadow_Colors[0]);
+            Set_Font_Colors_15(3, shadow_colors);
             Print_Centered(279, (31 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
-            Set_Font_Colors_15(3, &Font_Colors[0]);
+            Set_Font_Colors_15(3, font_colors);
             Print_Centered(278, (30 + (22 * itr)), _wizard_presets_table[(7 + itr)].name);
         }
 
@@ -2509,33 +2391,33 @@ void Newgame_Screen_1_2_Draw(void)
     if(
         (_wizard_presets_table[m_displayed_wizard].special != ST_UNDEFINED)
         &&
-        (NEWG_PortraitSelType == 8)  // defaulted to 8 and god is not Intro so didn't get reduced to 7;  second has 7 wizards + custom
+        (m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM)  // defaulted to 8 and god is not Intro so didn't get reduced to 7;  second has 7 wizards + custom
         &&
         (m_displayed_wizard < 14)  // "Custom" is not the mouse-over
     )
     {
         Set_Font_Style(0, 15, ST_NULL, ST_NULL);
-        Set_Font_Colors_15(0, &Font_Colors[0]);
-        stu_strcpy(Retort_String, wsa_names[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
-        stu_strcat(Retort_String, cnst_DOT__ovr050);
-        Print(13, 181, Retort_String);
-        Set_Font_Colors_15(0, &Retort_Text_Color[0]);
-        Print(12, 180, Retort_String);
+        Set_Font_Colors_15(0, font_colors);
+        stu_strcpy(retort_string, wsa_names[_wizard_presets_table[m_displayed_wizard].special]);  // 1 + {-1,0,1,2,...}
+        stu_strcat(retort_string, cnst_DOT__ovr050);
+        Print(13, 181, retort_string);
+        Set_Font_Colors_15(0, retort_text_colors);
+        Print(12, 180, retort_string);
     }
 
-    if(NEWG_PortraitSelType == 8)
+    if(m_right_column_rows == RIGHT_COLUMN_ROWS_CUSTOM)
     {
-        NEWG_DrawDefShelf__WIP(m_displayed_wizard);
+        Draw_Default_Bookshelf(m_displayed_wizard);
     }
 
     /* Print Wizard Name */
     if(m_displayed_wizard < 14)  // "Custom"
     {
         Set_Font_Style(4, 15, ST_NULL, ST_NULL);
-        Set_Font_Colors_15(4, &Shadow_Colors[0]);
+        Set_Font_Colors_15(4, shadow_colors);
         Print_Centered(78, 120, _wizard_presets_table[m_displayed_wizard].name);
         Print_Centered(77, 120, _wizard_presets_table[m_displayed_wizard].name);
-        Set_Font_Colors_15(4, &Font_Colors[0]);
+        Set_Font_Colors_15(4, font_colors);
         Print_Centered(77, 119, _wizard_presets_table[m_displayed_wizard].name);
     }
 
@@ -2553,7 +2435,7 @@ void Newgame_Screen_1_2_Draw(void)
  * 1) Loads background, 15 button background images, and portrait-screen
  *    right-side overlay art.
  * 2) Sets mouse list, clears fields, resets local loop state, and initializes
- *    display globals (`m_displayed_wizard`, `NEWG_PortraitSelType`).
+ *    display globals (`m_displayed_wizard`, `m_right_column_rows`).
  * 3) Creates clickable hidden fields for two columns of wizard entries
  *    (7 + 7 selectable slots in current implementation).
  * 4) Installs ESC hotkey, assigns `Newgame_Screen_1_2_Draw` as auto draw
@@ -2579,13 +2461,13 @@ void Newgame_Screen_1_2_Draw(void)
  * @see Newgame_Screen_1_2_Draw
  * @see Set_Newgame_Screen_2_Help_List
  */
-int16_t Newgame_Screen_2__WIP(void)
+int16_t Newgame_Screen_2(void)
 {
-    int16_t hotkey_ESC = 0;
-    int16_t itr = 0;
     int16_t input_field_idx = 0;
-    int16_t leave_screen = 0;
-    int16_t First_Draw_Done = 0;
+    int16_t itr = 0;
+    int16_t hotkey_esc = 0;
+    int16_t leave_screen = 0;  // _SI_
+    int16_t first_draw_done = 0;  // _DI_
 
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
 
@@ -2606,7 +2488,7 @@ int16_t Newgame_Screen_2__WIP(void)
     NEWGAME.LBX, 022  NEWGMWBT     Wizards button14
     NEWGAME.LBX, 023  NEWGMWBT     Wizards button15
     */
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < NUM_WIZARD_PRESETS; itr++)
     {
         m_shared_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (9 + itr), _screen_seg);
     }
@@ -2620,23 +2502,23 @@ int16_t Newgame_Screen_2__WIP(void)
 
     leave_screen = ST_FALSE;
 
-    First_Draw_Done = ST_FALSE;
+    first_draw_done = ST_FALSE;
 
     m_displayed_wizard = 0;
 
-    NEWG_PortraitSelType = 7;
+    m_right_column_rows = WIZARD_COLUMN_ROWS;
 
-    for(itr = 0; itr < 7; itr++)
+    for(itr = 0; itr < WIZARD_COLUMN_ROWS; itr++)
     {
-        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[itr] = Add_Hidden_Field(168, (26 + (22 * itr)), 237, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
     }
 
-    for(itr = 0; itr < 7; itr++)
+    for(itr = 0; itr < WIZARD_COLUMN_ROWS; itr++)
     {
-        m_newgame_fields[(7 + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[(WIZARD_COLUMN_ROWS + itr)] = Add_Hidden_Field(244, (26 + (22 * itr)), 313, (42 + (22 * itr)), empty_string__ovr050, ST_UNDEFINED);
     }
 
-    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_esc = Add_Hot_Key(str_ESC__ovr050);
 
     Assign_Auto_Function(Newgame_Screen_1_2_Draw, 1);
 
@@ -2651,19 +2533,19 @@ int16_t Newgame_Screen_2__WIP(void)
 
         Mark_Time();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
             return ngscr_Wizard;
         }
 
-        for(itr = 0; itr < 14; itr++)
+        for(itr = 0; itr < NUM_PRESET_WIZARDS; itr++)
         {
             if(m_newgame_fields[itr] == input_field_idx)
             {
                 Deactivate_Auto_Function();
                 Deactivate_Help_List();
-                _players[0].wizard_id = (uint8_t)itr;
-                stu_strcpy(_players[0].name, _wizard_presets_table[itr].name);
+                _players[HUMAN_PLAYER_IDX].wizard_id = itr;
+                stu_strcpy(_players[HUMAN_PLAYER_IDX].name, _wizard_presets_table[itr].name);
                 leave_screen = ST_TRUE;
             }
         }
@@ -2673,9 +2555,9 @@ int16_t Newgame_Screen_2__WIP(void)
             Newgame_Screen_1_2_Draw();
             Apply_Palette();
             Toggle_Pages();
-            if(First_Draw_Done == ST_FALSE)
+            if(first_draw_done == ST_FALSE)
             {
-                First_Draw_Done = ST_TRUE;
+                first_draw_done = ST_TRUE;
                 Copy_On_To_Off_Page();
             }
             Release_Time(2);
@@ -2700,7 +2582,7 @@ int16_t Newgame_Screen_2__WIP(void)
  * Processing steps:
  * 1) Loads background and name-box overlay assets.
  * 2) Sets mouse list, clears fields, and registers/draws
- *    `Newgame_Screen_3_Draw__WIP`.
+ *    `Newgame_Screen_3_Draw`.
  * 3) Applies palette/pages, configures input font style, and calls
  *    `Setup_Input_Box_Popup(...)` with a 10-character limit.
  * 4) Trims the resulting string and restores prior name when the trimmed input
@@ -2712,17 +2594,17 @@ int16_t Newgame_Screen_2__WIP(void)
  *
  * @return int16_t
  * @retval 0 Name accepted (continue forward).
- * @retval 1 Input cancelled (go back one screen).
+ * @retval ST_UNDEFINED Input cancelled with Esc (go back one screen).
  *
  * @note Mutates `_players[0].name` and uses global UI/draw state for the New
  *       Game flow.
  *
- * @see Newgame_Screen_3_Draw__WIP
+ * @see Newgame_Screen_3_Draw
  */
-int16_t Newgame_Screen_3__WIP(void)
+int16_t Newgame_Screen_3(void)
 {
-    char name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     int16_t input_box_return_value = 0;
+    char name[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     // NEWGAME.LBX, 000  BACKGRND    Main screen back
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
@@ -2734,9 +2616,9 @@ int16_t Newgame_Screen_3__WIP(void)
 
     Clear_Fields();
 
-    Assign_Auto_Function(Newgame_Screen_3_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen_3_Draw, 1);
 
-    Newgame_Screen_3_Draw__WIP();
+    Newgame_Screen_3_Draw();
 
     Apply_Palette();
 
@@ -2744,28 +2626,28 @@ int16_t Newgame_Screen_3__WIP(void)
 
     Set_Font_Style(3, 8, 8, ST_NULL);
 
-    stu_strcpy(name, _players[0].name);
+    stu_strcpy(name, _players[HUMAN_PLAYER_IDX].name);
 
-    input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, name, 10, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
+    input_box_return_value = Setup_Input_Box_Popup(195, 36, 80, name, WIZARD_NAME_INPUT_MAX, 0, 0, 1, wziards_name_colors, ST_UNDEFINED);
 
     Trim(name);
 
     if(strlen(name) < 1)
     {
-        stu_strcpy(name, _players[0].name);
+        stu_strcpy(name, _players[HUMAN_PLAYER_IDX].name);
     }
 
-    stu_strcpy(_players[0].name, name);
+    stu_strcpy(_players[HUMAN_PLAYER_IDX].name, name);
 
     Deactivate_Auto_Function();
 
-    if(input_box_return_value == -1)  // cancelled
+    if(input_box_return_value == ST_SUCCESS)  /* Esc */
     {
-        return 1;  // cancelled, go back a screen
+        return ST_UNDEFINED;  /* back a screen */
     }
     else
     {
-        return 0;  // ok
+        return 0;
     }
 
 }
@@ -2778,7 +2660,7 @@ int16_t Newgame_Screen_3__WIP(void)
  * @details
  * Renders the name-entry screen background, title area, wizard portrait, and
  * the current wizard name with shadow/highlight layering. When portrait shelf
- * content is pending (`NEWG_PortraitSelType == 7`), it also triggers drawing of
+ * content is pending (`m_right_column_rows != WIZARD_COLUMN_ROWS`), it also triggers drawing of
  * the default spellbook shelf and special abilities summary.
  *
  * Render/update flow:
@@ -2786,8 +2668,8 @@ int16_t Newgame_Screen_3__WIP(void)
  * 2) Draws background and right-side name box overlay.
  * 3) Draws "Select Name" title and selected wizard portrait.
  * 4) Draws wizard name text with shadow then foreground colors.
- * 5) If `NEWG_PortraitSelType == 7`, clears that flag and draws additional
- *    profile summary elements (`NEWG_DrawDefShelf__WIP`,
+ * 5) If `m_right_column_rows != WIZARD_COLUMN_ROWS`, clears that flag and draws additional
+ *    profile summary elements (`Draw_Default_Bookshelf`,
  *    `Draw_Special_Abilities_String`).
  *
  * @param void This function accepts no parameters.
@@ -2796,34 +2678,32 @@ int16_t Newgame_Screen_3__WIP(void)
  *
  * @note This function is draw-focused and intended to be called from the
  *       enclosing screen logic while name input is active.
- * @note Mutates global `NEWG_PortraitSelType` when the deferred shelf/ability
+ * @note Mutates global `m_right_column_rows` when the deferred shelf/ability
  *       draw path is executed.
  *
- * @see Newgame_Screen_3__WIP
- * @see NEWG_DrawDefShelf__WIP
+ * @see Newgame_Screen_3
+ * @see Draw_Default_Bookshelf
  * @see Draw_Special_Abilities_String
  */
-void Newgame_Screen_3_Draw__WIP(void)
+void Newgame_Screen_3_Draw(void)
 {
-    uint8_t colors1[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
-    uint8_t Shadow_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0, };
-    memcpy(Shadow_Colors, RP_COL_NEWG_FontShadow2, 8);
-    memcpy(colors1, RP_COL_NEWG_Font2, 8);
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31, 31, 31 };
+    uint8_t text_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187, 187, 187, 187 };
     FLIC_Draw(0, 0, newgame_background_seg);
     FLIC_Draw(181, 17, IMG_NewG_RgtOverlay);
     Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
     Print_Centered(242, 1, cnst_Name_Select);
-    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[HUMAN_PLAYER_IDX].wizard_id]);
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(4, &Shadow_Colors[0]);
-    Print_Centered(78, 120, _players[0].name);
-    Print_Centered(77, 120, _players[0].name);
-    Set_Font_Colors_15(4, &colors1[0]);
-    Print_Centered(77, 119, _players[0].name);
-    if(NEWG_PortraitSelType == 7)
+    Set_Font_Colors_15(4, shadow_colors);
+    Print_Centered(78, 120, _players[HUMAN_PLAYER_IDX].name);
+    Print_Centered(77, 120, _players[HUMAN_PLAYER_IDX].name);
+    Set_Font_Colors_15(4, text_colors);
+    Print_Centered(77, 119, _players[HUMAN_PLAYER_IDX].name);
+    if(m_right_column_rows != WIZARD_COLUMN_ROWS)
     {
-        NEWG_PortraitSelType = 0;
-        NEWG_DrawDefShelf__WIP(_players[0].wizard_id);
+        m_right_column_rows = 0;
+        Draw_Default_Bookshelf(_players[HUMAN_PLAYER_IDX].wizard_id);
         Draw_Special_Abilities_String();
     }
 }
@@ -2860,19 +2740,17 @@ void Newgame_Screen_3_Draw__WIP(void)
  *       player profile state (`_players[0].banner_id`).
  * @note Requires LBX resources and shared New Game globals to be initialized.
  *
- * @see Newgame_Screen_7_Draw__WIP
+ * @see Newgame_Screen_7_Draw
  * @see Set_Newgame_Screen_7_Help_List
  */
-int16_t Newgame_Screen_7__WIP(void)
+int16_t Newgame_Screen_7(void)
 {
-    int16_t hotkey_ESC = 0;
-    uint8_t Dest_Struct[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t first_draw_done = 0;
     int16_t input_field_idx = 0;
-    int16_t First_Draw_Done = 0;
+    uint8_t niu_colors[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };  /* OGBUG  dead store: initialised (SCOPY@ from RP_COL_NEWG_Font3) and never read */
+    int16_t hotkey_esc = 0;
     int16_t leave_screen = 0;  // _DI_
     int16_t itr = 0;  // _SI_
-
-    memcpy(Dest_Struct, RP_COL_NEWG_Font3, 8);
 
     // NEWGAME.LBX, 000  BACKGRND    Main screen back
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
@@ -2880,7 +2758,7 @@ int16_t Newgame_Screen_7__WIP(void)
     // NEWGAME.LBX, 046  FLAGSNEW
     IMG_NewG_RgtOverlay = LBX_Reload_Next(newgame_lbx_file__ovr050, 46, _screen_seg);
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < (NUM_MAGIC_TYPES * NUM_BOOK_PICTS_PER_REALM); itr++)
     {
 
         /*
@@ -2905,7 +2783,6 @@ int16_t Newgame_Screen_7__WIP(void)
 
     }
 
-    // odd? this gets drawn in Init_New_Game()
     // NEWGAME.LBX, 053  BUILDWOR   map build bar
     newgame_BUILDWOR_map_build_bar_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 53, _screen_seg);
 
@@ -2915,21 +2792,21 @@ int16_t Newgame_Screen_7__WIP(void)
 
     leave_screen = ST_FALSE;
 
-    First_Draw_Done = ST_FALSE;
+    first_draw_done = ST_FALSE;
 
-    m_newgame_fields[0] = Add_Hidden_Field(175, 21, 313, 55, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[0] = Add_Hidden_Field(175, 21, 313, 55, empty_string__ovr050, ST_UNDEFINED);
 
-    m_newgame_fields[1] = Add_Hidden_Field(175, 56, 313, 93, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[1] = Add_Hidden_Field(175, 56, 313, 93, empty_string__ovr050, ST_UNDEFINED);
 
-    m_newgame_fields[2] = Add_Hidden_Field(175, 94, 313, 128, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[2] = Add_Hidden_Field(175, 94, 313, 128, empty_string__ovr050, ST_UNDEFINED);
 
-    m_newgame_fields[3] = Add_Hidden_Field(175, 129, 313, 162, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[3] = Add_Hidden_Field(175, 129, 313, 162, empty_string__ovr050, ST_UNDEFINED);
 
-    m_newgame_fields[4] = Add_Hidden_Field(175, 163, 313, 199, (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[4] = Add_Hidden_Field(175, 163, 313, 199, empty_string__ovr050, ST_UNDEFINED);
 
-    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_esc = Add_Hot_Key(str_ESC__ovr050);
 
-    Assign_Auto_Function(Newgame_Screen_7_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen_7_Draw, 1);
 
     Set_Newgame_Screen_7_Help_List();
 
@@ -2940,7 +2817,7 @@ int16_t Newgame_Screen_7__WIP(void)
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
 
             return ngscr_Race;
@@ -2957,26 +2834,26 @@ int16_t Newgame_Screen_7__WIP(void)
                 {
                     case 0:
                     {
-                        _players[0].banner_id = BNR_Green;
+                        _players[HUMAN_PLAYER_IDX].banner_id = BNR_Green;
                     } break;
                     case 1:
                     {
-                        _players[0].banner_id = BNR_Blue;
+                        _players[HUMAN_PLAYER_IDX].banner_id = BNR_Blue;
 
                     } break;
                     case 2:
                     {
-                        _players[0].banner_id = BNR_Red;
+                        _players[HUMAN_PLAYER_IDX].banner_id = BNR_Red;
 
                     } break;
                     case 3:
                     {
-                        _players[0].banner_id = BNR_Purple;
+                        _players[HUMAN_PLAYER_IDX].banner_id = BNR_Purple;
 
                     } break;
                     case 4:
                     {
-                        _players[0].banner_id = BNR_Yellow;
+                        _players[HUMAN_PLAYER_IDX].banner_id = BNR_Yellow;
 
                     } break;
 
@@ -2988,26 +2865,25 @@ int16_t Newgame_Screen_7__WIP(void)
 
         }
 
-
         if(leave_screen == ST_FALSE)
         {
 
-            Newgame_Screen_7_Draw__WIP();
+            Newgame_Screen_7_Draw();
 
             Apply_Palette();
 
             Toggle_Pages();
 
-            if(First_Draw_Done == ST_FALSE)
+            if(first_draw_done == ST_FALSE)
             {
                 
-                First_Draw_Done = ST_TRUE;
+                first_draw_done = ST_TRUE;
 
                 Copy_On_To_Off_Page();
 
             }
 
-            Release_Time(1);
+            Release_Time(2);
 
         }
 
@@ -3017,7 +2893,7 @@ int16_t Newgame_Screen_7__WIP(void)
 
     Deactivate_Help_List();
 
-    return 99;
+    return ngscr_DONE;
 
 }
 
@@ -3052,16 +2928,12 @@ int16_t Newgame_Screen_7__WIP(void)
  *
  * @see Draw_Special_Abilities_String
  */
-void Newgame_Screen_7_Draw__WIP(void)
+void Newgame_Screen_7_Draw(void)
 {
-    uint8_t text_colors[5] = { 0, 0, 0, 0, 0 };
-    uint8_t shadow_colors[5] = { 0, 0, 0, 0, 0 };
-    int16_t start_X = 0;
-    int16_t itr = 0;
-
-    memcpy(shadow_colors, RP_COL_NEWG_5Shadow, 5);
-
-    memcpy(text_colors, RP_COL_NEWG_5Font, 5);
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31 };
+    uint8_t text_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187 };
+    int16_t itr = 0;  // _SI_
+    int16_t bookshelf_x = 0;  // _DI_
 
     FLIC_Draw(0, 0, newgame_background_seg);
 
@@ -3071,51 +2943,51 @@ void Newgame_Screen_7_Draw__WIP(void)
 
     Print_Centered(242, 1, cnst_Banner_Select);  // "Select Banner"
 
-    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[HUMAN_PLAYER_IDX].wizard_id]);
 
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
 
-    Set_Font_Colors_15(4, &shadow_colors[0]);
-    Print_Centered(78, 120, _players[0].name);
-    Print_Centered(77, 120, _players[0].name);
+    Set_Font_Colors_15(4, shadow_colors);
+    Print_Centered(78, 120, _players[HUMAN_PLAYER_IDX].name);
+    Print_Centered(77, 120, _players[HUMAN_PLAYER_IDX].name);
 
-    Set_Font_Colors_15(4, &text_colors[0]);
-    Print_Centered(77, 119, _players[0].name);
+    Set_Font_Colors_15(4, text_colors);
+    Print_Centered(77, 119, _players[HUMAN_PLAYER_IDX].name);
 
     /*
         BEGIN: same on Screen 6 & 7
     */
 
-    start_X = 36;
+    bookshelf_x = BOOKSHELF_X;
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(LIFE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(SORCERY_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(NATURE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(DEATH_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(CHAOS_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
 
     Draw_Special_Abilities_String();
@@ -3170,7 +3042,7 @@ Module: RACESEL
  *      (`_players[0].alchemy[rtt_Myrran] == 1`); otherwise shows warning
  *      dialog (`Warn0(cnst_Race_Error)`) and resumes draw/help handlers.
  * 4) While waiting for selection, performs manual frame updates
- *    (`Newgame_Screen_6_Draw__WIP`, palette apply, page toggle, timing).
+ *    (`Newgame_Screen_6_Draw`, palette apply, page toggle, timing).
  * 5) After selection, redraws selected race label in a short 4-step blink
  *    sequence, then deactivates auto/help handlers.
  *
@@ -3184,36 +3056,25 @@ Module: RACESEL
  *       and active draw/help callbacks.
  * @note Requires initialized wizard/profile globals and valid LBX resources.
  *
- * @see Newgame_Screen_6_Draw__WIP
+ * @see Newgame_Screen_6_Draw
  * @see Set_Newgame_Screen_6_Help_List
  */
-int16_t Newgame_Screen_6__WIP(void)
+// Newgame_Screen_6__WIP()
+int16_t Newgame_Screen_6(void)
 {
-    int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  // TODO  DEDU  check Dasm for 1-byte, signed
-    int16_t hotkey_ESC = 0;
-    int8_t * wsa_ptr = 0;
-    uint8_t * Shadow_Color = 0;
-    uint8_t * Available_Color = 0;
-    uint8_t * Not_Available_Color = 0;
-    uint8_t Font_Colors[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
-    int16_t input_field_idx = 0;
+    int16_t first_draw_done = 0;
     int16_t leave_screen = 0;
-    int16_t First_Draw_Done = 0;
-    int16_t itr = 0;
-    int16_t itr2 = 0;
-
-    memcpy(Arcanus_Races, TBL_Arcanian_Races, sizeof(TBL_Arcanian_Races));
-
-    memcpy(Myrran_Races, TBL_Myrran_Races, sizeof(TBL_Myrran_Races));
-
-    memcpy(Font_Colors, RP_COL_NEWG_Font4, 8);
-
-    Not_Available_Color = COL_NEWG_Highlight;
-
-    Available_Color = COL_Available;
-
-    Shadow_Color = COL_NEWG_RacesShadow;
+    int16_t input_field_idx = 0;
+    int16_t arcanus_races[NUM_RACES_ARCANUS] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
+    int16_t myrran_races[NUM_RACES_MYRROR] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
+    uint8_t niu_font_colors[8] = { 187, 187, 187, 187, 187, 187, 187, 187 };  /* OGBUG  dead store: initialised and never read */
+    uint8_t highlight_colors[COLOR_SET_COUNT] = { 20, 176 };
+    uint8_t normal_colors[COLOR_SET_COUNT] = { 25, 50 };
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 2, 2 };
+    int8_t * retorts_ptr = 0;
+    int16_t hotkey_esc = 0;
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
 
     // NEWGAME.LBX, 000  BACKGRND    Main screen back
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
@@ -3226,7 +3087,7 @@ int16_t Newgame_Screen_6__WIP(void)
     // NEWGAME.LBX, 045  WARNBACK   Warning box buttom
     m_warning_box_bottom_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 45, _screen_seg);
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < (NUM_MAGIC_TYPES * NUM_BOOK_PICTS_PER_REALM); itr++)
     {
         m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
@@ -3237,23 +3098,23 @@ int16_t Newgame_Screen_6__WIP(void)
 
     leave_screen = ST_FALSE;
 
-    First_Draw_Done = ST_NULL;
+    first_draw_done = ST_NULL;
 
-    wsa_ptr = &_players[0].alchemy;
+    retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
 
-    for(itr = 0; itr < 9; itr++)
+    for(itr = 0; itr < NUM_RACES_ARCANUS; itr++)
     {
-        m_newgame_fields[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[itr] = Add_Hidden_Field(211, (38 + (itr * 10)), 270, (45 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
     }
 
-    for(itr = 0; itr < 5; itr++)
+    for(itr = 0; itr < NUM_RACES_MYRROR; itr++)
     {
-        m_newgame_fields[(9 + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+        m_newgame_fields[(NUM_RACES_ARCANUS + itr)] = Add_Hidden_Field(211, (147 + (itr * 10)), 270, (154 + (itr * 10)), empty_string__ovr050, ST_UNDEFINED);
     }
 
-    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_esc = Add_Hot_Key(str_ESC__ovr050);
 
-    Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen_6_Draw, 1);
 
     Set_Newgame_Screen_6_Help_List();
 
@@ -3264,31 +3125,31 @@ int16_t Newgame_Screen_6__WIP(void)
 
         input_field_idx = Get_Input();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
 
             return ST_UNDEFINED;
 
         }
 
-        for(itr = 0; itr < 9; itr++)
+        for(itr = 0; itr < NUM_RACES_ARCANUS; itr++)
         {
             if(m_newgame_fields[itr] == input_field_idx)
             {
-                NEWG_Clicked_Race = Arcanus_Races[itr];
+                NEWG_Clicked_Race = arcanus_races[itr];
                 leave_screen = ST_TRUE;
             }
         }
 
-        for(itr = 9; itr < 14; itr++)
+        for(itr = NUM_RACES_ARCANUS; itr < NUM_RACES; itr++)
         {
 
-            if(wsa_ptr[rtt_Myrran] == 1)
+            if(retorts_ptr[rtt_Myrran] == 1)
             {
 
                 if(m_newgame_fields[itr] == input_field_idx)
                 {
-                    NEWG_Clicked_Race = Myrran_Races[(itr - 9)];
+                    NEWG_Clicked_Race = myrran_races[(itr - NUM_RACES_ARCANUS)];
                     leave_screen = ST_TRUE;
                 }
 
@@ -3305,9 +3166,9 @@ int16_t Newgame_Screen_6__WIP(void)
 
                     Warn0(cnst_Race_Error);  // "You can not select a Myrran race unless you have the Myrran special."
 
-                    Assign_Auto_Function(Newgame_Screen_6_Draw__WIP, 1);
+                    Assign_Auto_Function(Newgame_Screen_6_Draw, 1);
 
-                    Set_Help_List(_help_entries, 14);
+                    Set_Help_List(_help_entries, NUM_RACES);  /* one help entry per race field, as Set_Newgame_Screen_6_Help_List() */
 
                 }
 
@@ -3318,16 +3179,16 @@ int16_t Newgame_Screen_6__WIP(void)
         if(leave_screen == ST_FALSE)
         {
 
-            Newgame_Screen_6_Draw__WIP();
+            Newgame_Screen_6_Draw();
 
             Apply_Palette();
 
             Toggle_Pages();
 
-            if(First_Draw_Done == ST_FALSE)
+            if(first_draw_done == ST_FALSE)
             {
                 
-                First_Draw_Done = ST_TRUE;
+                first_draw_done = ST_TRUE;
 
                 Copy_On_To_Off_Page();
 
@@ -3341,76 +3202,37 @@ int16_t Newgame_Screen_6__WIP(void)
 
     for(itr = 0; itr < 4; itr++)
     {
-
-        for(itr2 = 0; itr2 < 9; itr2++)
+        Mark_Time();
+        for(itr2 = 0; itr2 < NUM_RACES_ARCANUS; itr2++)
         {
-
-            if(Arcanus_Races[itr2] == NEWG_Clicked_Race)
+            if(arcanus_races[itr2] == NEWG_Clicked_Race)
             {
-
-                Set_Font_Colors_15(2, &Shadow_Color[0]);
-
-                Print(221, (39 + (itr2 * 10)), *_race_type_table[Arcanus_Races[itr2]].name);
-
-                if(
-                    (itr == 0)
-                    ||
-                    (itr == 2)
-                )
-                {
-                    Set_Font_Colors_15(2, &Available_Color[0]);
-
-                }
-                else
-                {
-                    
-                    Set_Font_Colors_15(2, &Not_Available_Color[0]);
-
-                }
-
-                Print(220, (38 + (itr2 * 10)), *_race_type_table[Arcanus_Races[itr2]].name);
-
-                itr2 = 9;
-
+                Set_Font_Colors_15(2, shadow_colors);
+                Print(221, ((itr2 * 10) + 39), *_race_type_table[arcanus_races[itr2]].name);
+                Set_Font_Colors_15(2, (((itr == 0) || (itr == 2)) ? normal_colors : highlight_colors));
+                Print(220, ((itr2 * 10) + 38), *_race_type_table[arcanus_races[itr2]].name);
+                itr2 = NUM_RACES_ARCANUS;
             }
-
         }
-
-        for(itr2 = 9; itr2 < 14; itr2++)
+        for(itr2 = NUM_RACES_ARCANUS; itr2 < NUM_RACES; itr2++)
         {
-
-            if(Arcanus_Races[itr2] == NEWG_Clicked_Race)
+            if(myrran_races[(itr2 - NUM_RACES_ARCANUS)] == NEWG_Clicked_Race)
             {
-
-                Set_Font_Colors_15(2, &Shadow_Color[0]);
-
-                Print(221, (148 + ((itr2 - 9) * 10)), *_race_type_table[Myrran_Races[(itr2 - 9)]].name);
-
-                if(
-                    (itr == 0)
-                    ||
-                    (itr == 2)
-                )
-                {
-                    Set_Font_Colors_15(2, &Available_Color[0]);
-
-                }
-                else
-                {
-                    
-                    Set_Font_Colors_15(2, &Not_Available_Color[0]);
-
-                }
-
-                Print(220, (147 + ((itr2 - 9) * 10)), *_race_type_table[Myrran_Races[(itr2 - 9)]].name);
-
-                itr2 = 14;
-
+                Set_Font_Colors_15(2, shadow_colors);
+                Print(221, (((itr2 - NUM_RACES_ARCANUS) * 10) + 148), *_race_type_table[myrran_races[(itr2 - NUM_RACES_ARCANUS)]].name);
+                Set_Font_Colors_15(2, (((itr == 0) || (itr == 2)) ? highlight_colors : normal_colors));
+                Print(220, (((itr2 - NUM_RACES_ARCANUS) * 10) + 147), *_race_type_table[myrran_races[(itr2 - NUM_RACES_ARCANUS)]].name);
+                itr2 = NUM_RACES;
             }
-
         }
-
-
+        Apply_Palette();
+        Toggle_Pages();
+        if(first_draw_done == ST_FALSE)
+        {
+            first_draw_done = ST_TRUE;
+            Copy_On_To_Off_Page();
+        }
+        Release_Time(1);
     }
 
     Deactivate_Auto_Function();
@@ -3453,196 +3275,111 @@ int16_t Newgame_Screen_6__WIP(void)
  *
  * @see Draw_Special_Abilities_String
  */
-void Newgame_Screen_6_Draw__WIP(void)
+void Newgame_Screen_6_Draw(void)
 {
-    int16_t Arcanus_Races[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t * wsa_ptr = 0;
-    uint8_t * Shadow_Color = 0;
-    uint8_t * Not_Available_Color = 0;
-    uint8_t * Available_Color = 0;
-    uint8_t * Race_Highlight_Color = 0;
-    uint8_t Race_Title_Colors[5] = { 0, 0, 0, 0, 0 };
-    uint8_t Font_Colors[5] = { 0, 0, 0, 0, 0 };
-    uint8_t FontShadow_Colors[5] = { 0, 0, 0, 0, 0 };
-    int16_t Myrran_Races[5] = { 0, 0, 0, 0, 0 };
-    int16_t Moused_Control = 0;
-    int16_t start_X = 0;
+    int16_t bookshelf_x = 0;
+    int16_t moused_control = 0;
+    int16_t arcanus_races[NUM_RACES_ARCANUS] = { R_Barbarian, R_Gnoll, R_Halfling, R_High_Elf, R_High_Man, R_Klackon, R_Lizardman, R_Nomad, R_Orc };
+    int16_t myrran_races[NUM_RACES_MYRROR] = { R_Beastman, R_Dark_Elf, R_Draconian, R_Dwarf, R_Troll };
+    uint8_t name_shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31 };
+    uint8_t name_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187 };
+    uint8_t race_title_colors[COLOR_SET_COUNT] = { 180, 180, 180, 180, 180 };
+    uint8_t highlight_colors[COLOR_SET_COUNT] = { 20, 176 };
+    uint8_t available_colors[COLOR_SET_COUNT] = { 25, 50 };
+    uint8_t unavailable_colors[COLOR_SET_COUNT] = { 25, 22 };
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 2, 2 };
+    int8_t * retorts_ptr = 0;
     int16_t itr = 0;
-    int16_t itr2 = 0;
-    int16_t DBG_race_type = 0;
-    char * DBG_race_name_string = 0;
-
-    memcpy(Arcanus_Races, RP_TBL_Arcanian_Races_2, 18);
-
-    memcpy(Myrran_Races, RP_TBL_Myrran_Races_2, 10);
-
-    memcpy(FontShadow_Colors, RP_COL_NEWG_5Shadow2, 5);
-
-    memcpy(Font_Colors, RP_COL_NEWG_5Font2, 5);
-
-    memcpy(Race_Title_Colors, COL_NEWG_RaceTitles, 5);
-
-    Race_Highlight_Color = COL_NEWG_Highlight2;
-
-    Available_Color = COL_Available_2;
-
-    Not_Available_Color = COL_NEWG_NA;
-
-    Shadow_Color = COL_NEWG_RacesShdw2;
-
+    int16_t itr_races = 0;
     FLIC_Draw(0, 0, newgame_background_seg);
-
     FLIC_Draw(164, 18, IMG_NewG_RgtOverlay);
-
-    FLIC_Draw(208, 34, m_shared_pict_segs[0]);  // IDGI
-
+    /* NEWGAME.LBX 055 RACES "Races dark region", loaded into m_shared_pict_segs[0] by Newgame_Screen_6(): the dark panel behind the race lists */
+    FLIC_Draw(208, 34, m_shared_pict_segs[0]);
     Set_Font_Style_Shadow_Down(5, 5, ST_NULL, ST_NULL);
-
     Print_Centered(242, 1, cnst_Race_Select);  // "Select Race"
-
-    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
-
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[HUMAN_PLAYER_IDX].wizard_id]);
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
-
-    Set_Font_Colors_15(4, &FontShadow_Colors[0]);
-
-    Print_Centered(78, 120, _players[0].name);
-
-    Print_Centered(77, 120, _players[0].name);
-
-    Set_Font_Colors_15(4, &Font_Colors[0]);
-
-    Print_Centered(77, 119, _players[0].name);
-
-    Moused_Control = Scan_Input();
-
-    wsa_ptr = &_players[0].alchemy;
-
+    Set_Font_Colors_15(4, name_shadow_colors);
+    Print_Centered(78, 120, _players[HUMAN_PLAYER_IDX].name);
+    Print_Centered(77, 120, _players[HUMAN_PLAYER_IDX].name);
+    Set_Font_Colors_15(4, name_colors);
+    Print_Centered(77, 119, _players[HUMAN_PLAYER_IDX].name);
+    moused_control = Scan_Input();
+    retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
     /*
         BEGIN: same on Screen 6 & 7
     */
-
-    start_X = 36;
-
-    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
+    bookshelf_x = BOOKSHELF_X;
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(LIFE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
-
-    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(SORCERY_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
-
-    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(NATURE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
-
-    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(DEATH_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
-
-    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos]; itr++)
     {
-        FLIC_Draw(start_X, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
-        start_X += 8;
+        FLIC_Draw(bookshelf_x, BOOKSHELF_Y, m_spellbook_pict_segs[(CHAOS_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += BOOKSHELF_BOOK_WIDTH;
     }
-
     Draw_Special_Abilities_String();
-
     /*
         END: same on Screen 6 & 7
     */
-
-    Set_Font_Colors_15(3, &Race_Title_Colors[0]);
-
+    Set_Font_Colors_15(3, race_title_colors);
     Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
-
     Print(198, 25, cnst_Arcanian_Races);  // "Arcanian Races:"
-
-    for(itr2 = 0; itr2 < 9; itr2++)
+    for(itr_races = 0; itr_races < NUM_RACES_ARCANUS; itr_races++)
     {
-
-        Set_Font_Colors_15(2, Shadow_Color);
-
-        // Print(221, (39 + (10 * itr2)), _race_type_table[Arcanus_Races[itr2]].name);
-        DBG_race_type = Arcanus_Races[itr2];
-        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
-        Print(221, (39 + (10 * itr2)), DBG_race_name_string);
-
-        if(m_newgame_fields[itr2] == Moused_Control)
+        Set_Font_Colors_15(2, shadow_colors);
+        Print(221, (39 + (10 * itr_races)), *_race_type_table[arcanus_races[itr_races]].name);
+        if(m_newgame_fields[itr_races] == moused_control)
         {
-
-            Set_Font_Colors_15(2, Race_Highlight_Color);
-
+            Set_Font_Colors_15(2, highlight_colors);
         }
         else
         {
-
-            Set_Font_Colors_15(2, Available_Color);
-
+            Set_Font_Colors_15(2, available_colors);
         }
-
-        // Print(220, (38 + (10 * itr2)), _race_type_table[Arcanus_Races[itr2]].name);
-        DBG_race_type = Arcanus_Races[itr2];
-        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
-        Print(220, (38 + (10 * itr2)), DBG_race_name_string);
-
+        Print(220, (38 + (10 * itr_races)), *_race_type_table[arcanus_races[itr_races]].name);
     }
-
-    Set_Font_Colors_15(3, &Race_Title_Colors[0]);
-
+    Set_Font_Colors_15(3, race_title_colors);
     Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
-
     Print(202, 134, cnst_Myrran_Races);  // "Myrran Races:"
-
-    for(itr2 = 0; itr2 < 5; itr2++)
+    for(itr_races = 0; itr_races < NUM_RACES_MYRROR; itr_races++)
     {
-
-        Set_Font_Colors_15(2, Shadow_Color);
-
-        // Print(221, (148 + (10 * itr2)), _race_type_table[Myrran_Races[itr2]].name);
-        DBG_race_type = Myrran_Races[itr2];
-        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
-        Print(221, (148 + (10 * itr2)), DBG_race_name_string);
-
-        if(wsa_ptr[rtt_Myrran] == 1)
+        Set_Font_Colors_15(2, shadow_colors);
+        Print(221, (148 + (10 * itr_races)), *_race_type_table[myrran_races[itr_races]].name);
+        if(retorts_ptr[rtt_Myrran] == ST_TRUE)
         {
-
-            if(m_newgame_fields[(9 + itr2)] == Moused_Control)
+            if(m_newgame_fields[(NUM_RACES_ARCANUS + itr_races)] == moused_control)
             {
-
-                Set_Font_Colors_15(2, Race_Highlight_Color);
-
+                Set_Font_Colors_15(2, highlight_colors);
             }
             else
             {
-
-                Set_Font_Colors_15(2, Available_Color);
-
+                Set_Font_Colors_15(2, available_colors);
             }
-
         }
         else
         {
-
-            Set_Font_Colors_15(2, Not_Available_Color);
-
+            Set_Font_Colors_15(2, unavailable_colors);
         }
-
-        // Print(220, (147 + (10 * itr2)), _race_type_table[Myrran_Races[itr2]].name);
-        DBG_race_type = Myrran_Races[itr2];
-        DBG_race_name_string = *_race_type_table[DBG_race_type].name;
-        Print(220, (147 + (10 * itr2)), DBG_race_name_string);
-
+        Print(220, (147 + (10 * itr_races)), *_race_type_table[myrran_races[itr_races]].name);
     }
-
 }
 
 
@@ -3661,7 +3398,7 @@ void Newgame_Screen_6_Draw__WIP(void)
  *    as the contiguous special ability-flag array.
  * 3) Counts enabled special abilities (`== 1`) into `retort_count`.
  * 4) Rebuilds `string` by iterating enabled special abilities and calling
- *    `String_List_Builer(...)` before each appended special ability name from
+ *    `Add_Comma_Or_And_MGC(...)` before each appended special ability name from
  *    `wsa_names[itr]`.
  * 5) Appends `cnst_DOT__ovr050` when at least one special ability is present.
  * 6) Selects paragraph Y origin (`start_y`) based on line-density heuristic:
@@ -3672,7 +3409,7 @@ void Newgame_Screen_6_Draw__WIP(void)
  * Key local variables:
  * - `string[126]`: composed output paragraph buffer.
  * - `retort_count`: number of active special abilities.
- * - `list_size`: running count used by `String_List_Builer` formatting.
+ * - `list_size`: running count used by `Add_Comma_Or_And_MGC` formatting.
  * - `colors1` / `colors2`: palette ramps used for layered text draw.
  * - `start_y`: chosen Y origin for paragraph rendering.
  *
@@ -3684,33 +3421,30 @@ void Newgame_Screen_6_Draw__WIP(void)
  * @note Relies on contiguous special ability storage beginning at `_players[0].alchemy`
  *       and on global string/color assets used by the New Game screen.
  *
- * @see String_List_Builer
+ * @see Add_Comma_Or_And_MGC
  */
 void Draw_Special_Abilities_String(void)
 {
-    uint8_t l_niu_array[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char string[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t start_y = 0;
-    int16_t list_size = 0;
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187 };
+    uint8_t text_colors[COLOR_SET_COUNT] = { 183, 178 };
+    int8_t * retorts_ptr = 0;
     int16_t niu_flag = 0;
-    int8_t * wsa_ptr = 0;
-    uint8_t * colors2 = 0;
-    uint8_t * colors1 = 0;
-    int16_t ability_count = 0;
-    int16_t itr = 0;
+    int16_t list_size = 0;
+    int16_t start_y = 0;
+    char string[126] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t niu_list[6] = { -1, -1, -1, -1, -1, -1 };  /* OGBUG  dead store: initialised and never read */
+    int16_t itr = 0;  // _SI_
+    int16_t ability_count = 0;  // _DI_
 
-    colors1 = string_colors1;  /* DEDU  why is string_colors1 a far pointer and string_colors2 is not? */
-    colors2 = string_colors2;
-    memcpy(l_niu_array, m_niu_array, 12);
     niu_flag = 0;
     list_size = 0;
     string[0] = 0;
-    wsa_ptr = &_players[0].alchemy;
+    retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
     ability_count = 0;
 
-    for(itr = 0; itr < 18; itr++)
+    for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
-        if(wsa_ptr[itr] == 1)
+        if(retorts_ptr[itr] == 1)
         {
             ability_count++;
         }
@@ -3719,9 +3453,9 @@ void Draw_Special_Abilities_String(void)
     list_size = 0;
     for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
-        if(wsa_ptr[itr] == 1)
+        if(retorts_ptr[itr] == 1)
         {
-            String_List_Builer(&list_size, ability_count, &string[0]);
+            Add_Comma_Or_And_MGC(&list_size, ability_count, &string[0]);
             stu_strcat(string, wsa_names[itr]);
         }
     }
@@ -3738,10 +3472,10 @@ void Draw_Special_Abilities_String(void)
         start_y = 180;
     }
     Set_Font_Style(0, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(0, &colors1[0]);
+    Set_Font_Colors_15(0, shadow_colors);
     Set_Font_LF(1);
     Print_Paragraph(13, (start_y + 1), 138, &string[0], 0);
-    Set_Font_Colors_15(0, &colors2[0]);
+    Set_Font_Colors_15(0, text_colors);
     Set_Font_LF(1);
     Print_Paragraph(12, start_y, 138, &string[0], 0);
 }
@@ -3770,67 +3504,66 @@ void Draw_Special_Abilities_String(void)
  *
  * @return void
  *
- * @note Current WIP behavior only tracks/draws the first two non-zero realms.
- *       Additional non-zero realms in the preset are ignored by this function.
+ * @note Only the first two realms with books are drawn; a later realm with books replaces the second (no preset has more than two).
  * @note Assumes `m_spellbook_pict_segs` is already loaded and `wizard_id`
  *       references a valid preset record.
  */
-void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
+void Draw_Default_Bookshelf(int16_t wizard_id)
 {
-    int16_t Second_Book_Realm = 0;
-    int16_t First_Book_Realm = 0;
-    int16_t Second_Book_Count = 0;
-    int16_t First_Book_Count = 0;
-    int16_t * Profile_Books_Offset = 0;
-    int16_t Second_Realm_Books_Index = 0;
-    int16_t First_Realm_Books_Index = 0;
+    int16_t first_book_picts = 0;
+    int16_t second_book_picts = 0;
+    int16_t * preset_book_counts = 0;
+    int16_t first_book_count = 0;
+    int16_t second_book_count = 0;
+    int16_t niu_first_book_realm = 0;  /* OGBUG  dead store: set and never read */
+    int16_t niu_second_book_realm = 0;  /* OGBUG  dead store: set and never read */
     int16_t itr = 0;  // _SI_
-    int16_t IDK = 0;  // _DI_
+    int16_t book_x = 0;  // _DI_
 
-    First_Realm_Books_Index = ST_UNDEFINED;
-    Second_Realm_Books_Index = ST_UNDEFINED;
-    First_Book_Count = 0;
-    Second_Book_Count = 0;
-    IDK = 36;
-    First_Book_Realm = ST_UNDEFINED;
-    Second_Book_Realm = ST_UNDEFINED;
+    first_book_picts = ST_UNDEFINED;
+    second_book_picts = ST_UNDEFINED;
+    first_book_count = 0;
+    second_book_count = 0;
+    book_x = BOOKSHELF_X;
+    niu_first_book_realm = ST_UNDEFINED;
+    niu_second_book_realm = ST_UNDEFINED;
 
-    Profile_Books_Offset = &_wizard_presets_table[wizard_id].life;
+    preset_book_counts = &_wizard_presets_table[wizard_id].life;
 
-    for(itr = 0; itr < 5; itr++)
+    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
     {
-        if(Profile_Books_Offset[itr] > 0)
+        if(preset_book_counts[itr] > 0)
         {
-            if(First_Realm_Books_Index == ST_UNDEFINED)
+            if(first_book_picts == ST_UNDEFINED)
             {
-                First_Realm_Books_Index = (itr * 3);
-                First_Book_Count += Profile_Books_Offset[itr];
-                First_Book_Realm = itr;
+                first_book_picts = (itr * NUM_BOOK_PICTS_PER_REALM);
+                first_book_count += preset_book_counts[itr];
+                niu_first_book_realm = itr;
             }
             else
             {
-                Second_Realm_Books_Index = (itr * 3);
-                Second_Book_Count += Profile_Books_Offset[itr];
-                Second_Book_Realm = itr;
+                second_book_picts = (itr * NUM_BOOK_PICTS_PER_REALM);
+                second_book_count += preset_book_counts[itr];
+                niu_second_book_realm = itr;
             }
         }
     }
 
-    if(First_Realm_Books_Index != ST_UNDEFINED)
+    if(first_book_picts != ST_UNDEFINED)
     {
-        for(itr = 0; itr < First_Book_Count; itr++)
+        for(itr = 0; itr < first_book_count; itr++)
         {
-            FLIC_Draw(IDK, 135, m_spellbook_pict_segs[(First_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
-            IDK += 8;
+            FLIC_Draw(book_x, BOOKSHELF_Y, m_spellbook_pict_segs[(first_book_picts + TBL_Bookshelf_Books[itr])]);
+            book_x += BOOKSHELF_BOOK_WIDTH;
         }
     }
 
-    if(Second_Realm_Books_Index != ST_UNDEFINED)
+    if(second_book_picts != ST_UNDEFINED)
     {
-        for(itr = 0; itr < Second_Book_Count; itr++)
+        for(itr = 0; itr < second_book_count; itr++)
         {
-            FLIC_Draw(IDK, 135, m_spellbook_pict_segs[(Second_Realm_Books_Index + TBL_Bookshelf_Books[itr])]);
-            IDK += 8;
+            FLIC_Draw(book_x, BOOKSHELF_Y, m_spellbook_pict_segs[(second_book_picts + TBL_Bookshelf_Books[itr])]);
+            book_x += BOOKSHELF_BOOK_WIDTH;
         }
     }
 
@@ -3854,10 +3587,10 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
  *    label hitboxes, ESC hotkey, and OK field).
  * 3) Resets mutable state for this screen, including spell ranks, special ability flags,
  *    remaining picks, and error state.
- * 4) Registers `Newgame_Screen_4_Draw__WIP` as auto draw/update callback.
+ * 4) Registers `Newgame_Screen_4_Draw` as auto draw/update callback.
  * 5) Runs input loop until exit:
  *    - ESC returns `ngscr_Name`.
- *    - OK leaves only when `NEWG_ProfileComplete` is true.
+ *    - OK leaves only when `m_all_picks_made` is true.
  *    - Slider/special ability input updates profile picks and may set `NEWG_PickError`.
  *    - On error, builds warning text, shows `Warn0()`, and restores draw/help.
  * 6) Deactivates auto/help handlers and returns `ngscr_Spells`.
@@ -3876,28 +3609,25 @@ void NEWG_DrawDefShelf__WIP(int16_t wizard_id)
  * @note This function mutates global new-game creation state and UI globals and
  *       depends on loaded resource segments and input/draw subsystems.
  *
- * @see Newgame_Screen_4_Draw__WIP
+ * @see Newgame_Screen_4_Draw
  */
-int16_t Newgame_Screen_4__WIP(void)
+// Newgame_Screen_4__WIP()
+int16_t Newgame_Screen_4(void)
 {
-    char l_realm_name_character_array[5][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
-    char message[LEN_MESSAGE_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t hotkey_ESC = 0;
-    int16_t DoublePick_Retort_Labels[5] = { 0, 0, 0, 0, 0 };
-    char buffer[6] = { 0, 0, 0, 0, 0, 0 };
-    int8_t * wsa_ptr = 0;
-    int16_t Realms_Added = 0;
-    int16_t (*p_wsa_prerequisites)[7] = 0;
-    int16_t ability_count = 0;
-    int16_t input_field_idx = 0;
+    int16_t first_draw_done = 0;
     int16_t leave_screen = 0;
-    int16_t First_Draw_Done = 0;
-    int16_t itr = 0;
-    int16_t itr2 = 0;
-    int16_t some_flag = 0;
-
-    memcpy(&l_realm_name_character_array, realm_name_character_array, 50);
-    memcpy(&DoublePick_Retort_Labels, TBL_2pickRetort_Lbls, 10);
+    int16_t input_field_idx = 0;
+    int16_t ability_count = 0;
+    int16_t (*p_wsa_prerequisites)[7] = 0;
+    int16_t realms_added = 0;
+    int8_t * retorts_ptr = 0;
+    char buffer[6] = { 0, 0, 0, 0, 0, 0 };
+    int16_t two_pick_label_indices[NUM_TWO_PICK_ABILITIES] = { 1, 2, 8, 9, 15 };
+    int16_t hotkey_esc = 0;
+    char message[LEN_MESSAGE_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char realm_names[NUM_MAGIC_TYPES][10] = { "Life", "Death", "Chaos", "Nature", "Sorcery" };
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
 
     // NEWGAME.LBX, 041  NEWSPELL   Magic pick screen
     // NEWGAME.LBX, 042  MAGICPIK   ok button
@@ -3906,7 +3636,7 @@ int16_t Newgame_Screen_4__WIP(void)
     newgame_ok_button_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 42, _screen_seg);
     _ok_inactive_seg = LBX_Reload_Next(newgame_lbx_file__ovr050, 43, _screen_seg);
 
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < (NUM_MAGIC_TYPES * NUM_BOOK_PICTS_PER_REALM); itr++)
     {
         // NEWGAME.LBX, 024  BOOKS      White book 1
         // NEWGAME.LBX, 025  BOOKS      White book 2
@@ -3941,60 +3671,58 @@ int16_t Newgame_Screen_4__WIP(void)
 
     Disable_Cancel();
 
-    wsa_ptr = &_players[0].alchemy;
+    retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
 
     leave_screen = ST_FALSE;
 
-    First_Draw_Done = ST_FALSE;
+    first_draw_done = ST_FALSE;
 
     m_displayed_wizard = 0;
 
-    spellpicks_count = 11;
+    spellpicks_count = CUSTOM_WIZARD_PICKS;
 
-    NEWG_ProfileComplete = 0;
+    m_all_picks_made = 0;
 
-    _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED);
+    _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050, ST_UNDEFINED);
 
     m_bookshelf_life = 0;
     m_bookshelf_death = 0;
     m_bookshelf_chaos = 0;
     m_bookshelf_nature = 0;
     m_bookshelf_sorcery = 0;
-    NEWG_PickError = 0;
+    NEWG_PickError = PICK_ERROR_NONE;
     selected_load_game_slot_idx = 0;
     p_wsa_prerequisites = &wsa_prerequisites[0];
 
     for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
-        wsa_ptr[itr] = 0;
+        retorts_ptr[itr] = 0;
     }
 
-    m_newgame_fields[0] = Add_Scroll_Field(190,  47, 0, 96, 0, 95, 96, 22, &m_bookshelf_life, empty_string__ovr050[0], ST_UNDEFINED);
-    m_newgame_fields[1] = Add_Scroll_Field(190,  73, 0, 96, 0, 95, 96, 22, &m_bookshelf_death, empty_string__ovr050[0], ST_UNDEFINED);
-    m_newgame_fields[2] = Add_Scroll_Field(190,  99, 0, 96, 0, 95, 96, 22, &m_bookshelf_chaos, empty_string__ovr050[0], ST_UNDEFINED);
-    m_newgame_fields[3] = Add_Scroll_Field(190, 125, 0, 96, 0, 95, 96, 22, &m_bookshelf_nature, empty_string__ovr050[0], ST_UNDEFINED);
-    m_newgame_fields[4] = Add_Scroll_Field(190, 151, 0, 96, 0, 95, 96, 22, &m_bookshelf_sorcery, empty_string__ovr050[0], ST_UNDEFINED);
+    m_newgame_fields[0] = Add_Scroll_Field(190,  47, 0, 96, 0, 95, 96, 22, &m_bookshelf_life, empty_string__ovr050, ST_UNDEFINED);
+    m_newgame_fields[1] = Add_Scroll_Field(190,  73, 0, 96, 0, 95, 96, 22, &m_bookshelf_death, empty_string__ovr050, ST_UNDEFINED);
+    m_newgame_fields[2] = Add_Scroll_Field(190,  99, 0, 96, 0, 95, 96, 22, &m_bookshelf_chaos, empty_string__ovr050, ST_UNDEFINED);
+    m_newgame_fields[3] = Add_Scroll_Field(190, 125, 0, 96, 0, 95, 96, 22, &m_bookshelf_nature, empty_string__ovr050, ST_UNDEFINED);
+    m_newgame_fields[4] = Add_Scroll_Field(190, 151, 0, 96, 0, 95, 96, 22, &m_bookshelf_sorcery, empty_string__ovr050, ST_UNDEFINED);
 
     for(itr = 0; itr < (NUM_WIZARD_SPECIAL_ABILITIES / 3); itr++)
     {
-        wsa_picklist_fields[( 0 + itr)] = Add_Hidden_Field(164, (5 + (itr * 7)), 202, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
-        wsa_picklist_fields[( 6 + itr)] = Add_Hidden_Field(203, (5 + (itr * 7)), 252, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
-        wsa_picklist_fields[(12 + itr)] = Add_Hidden_Field(253, (5 + (itr * 7)), 319, (10 + (itr * 7)), empty_string__ovr050[0], ST_UNDEFINED);
+        wsa_picklist_fields[( 0 + itr)] = Add_Hidden_Field(164, (5 + (itr * 7)), 202, (10 + (itr * 7)), empty_string__ovr050, ST_UNDEFINED);
+        wsa_picklist_fields[( 6 + itr)] = Add_Hidden_Field(203, (5 + (itr * 7)), 252, (10 + (itr * 7)), empty_string__ovr050, ST_UNDEFINED);
+        wsa_picklist_fields[(12 + itr)] = Add_Hidden_Field(253, (5 + (itr * 7)), 319, (10 + (itr * 7)), empty_string__ovr050, ST_UNDEFINED);
     }
 
-    hotkey_ESC = Add_Hot_Key((int16_t)str_ESC__ovr050[0]);
+    hotkey_esc = Add_Hot_Key(str_ESC__ovr050);
 
-    _players[0].spellranks[0] = 0;
-    _players[0].spellranks[1] = 0;
-    _players[0].spellranks[2] = 0;
-    _players[0].spellranks[3] = 0;
-    _players[0].spellranks[4] = 0;
+    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature] = 0;
+    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery] = 0;
+    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos] = 0;
+    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] = 0;
+    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] = 0;
 
-    Assign_Auto_Function(Newgame_Screen_4_Draw__WIP, 1);
+    Assign_Auto_Function(Newgame_Screen_4_Draw, 1);
 
     Set_Newgame_Screen_4_Help_List();
-
-    // BUGBUG  DNE  Set_Input_Delay(2);?
 
     while(leave_screen == ST_FALSE)
     {
@@ -4003,14 +3731,14 @@ int16_t Newgame_Screen_4__WIP(void)
 
         Mark_Time();
 
-        if(input_field_idx == hotkey_ESC)
+        if(input_field_idx == hotkey_esc)
         {
             return ngscr_Name;
         }
 
         if(input_field_idx == _ok_button)
         {
-            if(NEWG_ProfileComplete != ST_FALSE)
+            if(m_all_picks_made != ST_FALSE)
             {
                 leave_screen = ST_TRUE;
             }
@@ -4019,7 +3747,7 @@ int16_t Newgame_Screen_4__WIP(void)
         ability_count = 0;
         for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
         {
-            if(wsa_ptr[itr] == 1)
+            if(retorts_ptr[itr] == ST_TRUE)
             {
                 ability_count++;
             }
@@ -4029,26 +3757,26 @@ int16_t Newgame_Screen_4__WIP(void)
             (
                 (input_field_idx == m_newgame_fields[0])
                 &&
-                (_players[0].spellranks[sbr_Death] != 0)
+                (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] != 0)
             )
             ||
             (
                 (input_field_idx == m_newgame_fields[1])
                 &&
-                (_players[0].spellranks[sbr_Life] != 0)
+                (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] != 0)
             )
         )
         {
-            NEWG_PickError = 4;
+            NEWG_PickError = PICK_ERROR_LIFE_AND_DEATH;
         }
 
-        if(NEWG_PickError > 0)
+        if(NEWG_PickError > PICK_ERROR_NONE)
         {
             switch(NEWG_PickError)
             {
-                case 1: { stu_strcpy(message, cnst_Pick_Error_0); } break;
-                case 2: { stu_strcpy(message, cnst_Pick_Error_1); } break;
-                case 3: {
+                case PICK_ERROR_PICKS_LEFT: { stu_strcpy(message, cnst_Pick_Error_0); } break;
+                case PICK_ERROR_TOO_MANY_ABILITIES: { stu_strcpy(message, cnst_Pick_Error_1); } break;
+                case PICK_ERROR_PREREQUISITES: {
                     stu_strcpy(message, cnst_Pick_Error_20);  /* "To select " */
                     stu_strcat(message, wsa_names[NEWG_PickAttempt]);
                     stu_strcat(message, cnst_Pick_Error_21);  /* " you need:   " */
@@ -4058,54 +3786,34 @@ int16_t Newgame_Screen_4__WIP(void)
                         (wsa_prerequisites[NEWG_PickAttempt][0] == 0)  // Any_Realm
                     )
                     {
-                        for(itr = 0; itr < 5; itr++)
+                        for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
                         {
                             if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)] > 0)
                             {
                                 stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr)], buffer, 10);
                                 stu_strcat(message, buffer);
                                 stu_strcat(message, cnst_Pick_Error_22);  /* " picks in " */
-                                stu_strcat(message, l_realm_name_character_array[itr]);
+                                stu_strcat(message, realm_names[itr]);
                                 stu_strcat(message, cnst_Pick_Error_23);  /* " Magic" */
                             }
                         }
                     }
                     else
                     {
-                        if(wsa_prerequisites[NEWG_PickAttempt][0] <= 0)  // Any_Realm
-                        {
-                            Realms_Added = 0;
-                            for(itr2 = 0; itr2 < 5; itr2++)
-                            {
-                                if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)] > 0)
-                                {
-                                    if(Realms_Added > 0)
-                                    {
-                                        stu_strcat(message, cnst_Pick_Error_29);
-                                    }
-                                    stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
-                                    stu_strcat(message, buffer);
-                                    stu_strcat(message, cnst_Pick_Error_2A);
-                                    stu_strcat(message, l_realm_name_character_array[itr2]);
-                                    stu_strcat(message, cnst_Pick_Error_23);
-                                    Realms_Added++;
-                                }
-                            }
-                        }
-                        else
+                        if(wsa_prerequisites[NEWG_PickAttempt][0] > 0)  // Any_Realm
                         {
                             stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][0], buffer, 10);
                             stu_strcat(message, buffer);
                             stu_strcat(message, cnst_Pick_Error_24);  /* " pick"*/
                             if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
                             {
-                                stu_strcat(message, cnst_Pick_Error_25);  /* "s" */
+                                stu_strcat(message, cnst_Pick_Error_25);  /* "s in any " */
                             }
                             else
                             {
                                 stu_strcat(message, cnst_Pick_Error_26);  /* " in any " */
                             }
-                            if(p_wsa_prerequisites[NEWG_PickAttempt][0] > 1)
+                            if(p_wsa_prerequisites[NEWG_PickAttempt][1] > 1)
                             {
                                 stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][1], buffer, 10);
                                 stu_strcat(message, buffer);
@@ -4116,77 +3824,99 @@ int16_t Newgame_Screen_4__WIP(void)
                                 stu_strcat(message, cnst_Pick_Error_28);
                             }
                         }
+                        else
+                        {
+                            realms_added = 0;
+                            for(itr2 = 0; itr2 < NUM_MAGIC_TYPES; itr2++)
+                            {
+                                if(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)] > 0)
+                                {
+                                    if(realms_added > 0)
+                                    {
+                                        stu_strcat(message, cnst_Pick_Error_29);
+                                    }
+                                    stu_itoa(p_wsa_prerequisites[NEWG_PickAttempt][(2 + itr2)], buffer, 10);
+                                    stu_strcat(message, buffer);
+                                    stu_strcat(message, cnst_Pick_Error_2A);
+                                    stu_strcat(message, realm_names[itr2]);
+                                    stu_strcat(message, cnst_Pick_Error_23);
+                                    realms_added++;
+                                }
+                            }
+                        }
                     }
                 } break;
-                case 4: { stu_strcpy(message, cnst_Pick_Error_3); } break;
-                case 5: { stu_strcpy(message, cnst_Pick_Error_4); } break;
-                case 6: { stu_strcpy(message, cnst_Pick_Error_5); } break;
+                case PICK_ERROR_LIFE_AND_DEATH: { stu_strcpy(message, cnst_Pick_Error_3); } break;
+                case PICK_ERROR_NO_PICKS_LEFT: { stu_strcpy(message, cnst_Pick_Error_4); } break;
+                case PICK_ERROR_NOT_ENOUGH_PICKS: { stu_strcpy(message, cnst_Pick_Error_5); } break;
             }
             Deactivate_Auto_Function();
             Deactivate_Help_List();
             Warn0(message);
-            Assign_Auto_Function(Newgame_Screen_4_Draw__WIP, 1);
-            Set_Help_List(_help_entries, 25);
-            NEWG_PickError = 0;
+            Assign_Auto_Function(Newgame_Screen_4_Draw, 1);
+            Set_Help_List(_help_entries, NUM_NEWGAME_SCREEN_4_HELP_ENTRIES);
+            NEWG_PickError = PICK_ERROR_NONE;
         }
 
         for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
         {
             if(wsa_picklist_fields[itr] == input_field_idx)
             {
-                if(wsa_ptr[wsa_picklist_order[itr]] == ST_TRUE)  // selected
+                if(retorts_ptr[wsa_picklist_order[itr]] == ST_TRUE)  // selected
                 {
-                    wsa_ptr[wsa_picklist_order[itr]] = ST_FALSE;  // deselect
+                    retorts_ptr[wsa_picklist_order[itr]] = ST_FALSE;  // deselect
                 }
                 else  // unselected
                 {
                     if(spellpicks_count <= 0)
                     {
-                        NEWG_PickError = 5;
+                        NEWG_PickError = PICK_ERROR_NO_PICKS_LEFT;
                     }
                     else
                     {
-                        if(ability_count > 5)
+                        if(ability_count > (MAX_SPECIAL_ABILITIES - 1))
                         {
-                            NEWG_PickError = 2;
+                            NEWG_PickError = PICK_ERROR_TOO_MANY_ABILITIES;
                         }
                         else
                         {
-                            some_flag = ST_FALSE;
-                            for(itr2 = 0; itr2 < 5; itr2++)
+                            leave_screen = ST_FALSE;
+                            for(itr2 = 0; itr2 < NUM_MAGIC_TYPES; itr2++)
                             {
-                                if(DoublePick_Retort_Labels[itr2] == itr)
+                                if(two_pick_label_indices[itr2] == itr)
                                 {
-                                    if(spellpicks_count < 2)
+                                    if(spellpicks_count < TWO_PICK_ABILITY_COST)
                                     {
-                                        NEWG_PickError = 6;
+                                        NEWG_PickError = PICK_ERROR_NOT_ENOUGH_PICKS;
                                     }
                                     else
                                     {
-                                        wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
+                                        retorts_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
                                     }
-                                    some_flag = ST_TRUE;
+                                    leave_screen = ST_TRUE;
                                 }
                             }
-                            if(some_flag == ST_FALSE)
+                            if(leave_screen == ST_FALSE)
                             {
-                                if(itr == 7)  // Myrran 3-picks
+                                if(itr == MYRRAN_PICKLIST_SLOT)  // Myrran 3-picks
                                 {
-                                    if(spellpicks_count < 3)
+                                    if(spellpicks_count < MYRRAN_PICK_COST)
                                     {
-                                        NEWG_PickError = 6;
+                                        /* OGBUG  the message for this error says "You need 2 picks"; Myrran needs 3 */
+                                        NEWG_PickError = PICK_ERROR_NOT_ENOUGH_PICKS;
                                     }
                                     else
                                     {
-                                        wsa_ptr[wsa_Myrran] = ST_TRUE; // select Myrran
+                                        retorts_ptr[wsa_Myrran] = ST_TRUE; // select Myrran
                                     }
-                                    some_flag = ST_TRUE;
+                                    leave_screen = ST_TRUE;
                                 }
                             }
-                            if(some_flag == ST_FALSE)
+                            if(leave_screen == ST_FALSE)
                             {
-                                wsa_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
+                                retorts_ptr[wsa_picklist_order[itr]] = ST_TRUE;  // select
                             }
+                            leave_screen = ST_FALSE;
                         }
                     }
                 }
@@ -4195,12 +3925,12 @@ int16_t Newgame_Screen_4__WIP(void)
 
         if(leave_screen == ST_FALSE)
         {
-            Newgame_Screen_4_Draw__WIP();
+            Newgame_Screen_4_Draw();
             Apply_Palette();
             Toggle_Pages();
-            if(First_Draw_Done == ST_FALSE)
+            if(first_draw_done == ST_FALSE)
             {
-                First_Draw_Done = ST_TRUE;
+                first_draw_done = ST_TRUE;
                 Copy_On_To_Off_Page();
             }
             Release_Time(2);
@@ -4236,7 +3966,7 @@ int16_t Newgame_Screen_4__WIP(void)
  * 6) Rebuilds local special ability availability map from spell-rank prerequisites and
  *    remaining picks, then draws special ability labels in available/known/unavailable
  *    colors, auto-clearing now-invalid selected special abilities.
- * 7) Updates `NEWG_ProfileComplete` and draws picks-left + wizard name labels.
+ * 7) Updates `m_all_picks_made` and draws picks-left + wizard name labels.
  * 8) Finishes by drawing special ability description text (`Draw_Special_Abilities_String`).
  *
  * Key data:
@@ -4253,98 +3983,85 @@ int16_t Newgame_Screen_4__WIP(void)
  * @note Designed to be called repeatedly (auto-function draw callback) while
  *       the Spells & Special Abilities screen is active.
  *
- * @see Newgame_Screen_4__WIP
+ * @see Newgame_Screen_4
  * @see Draw_Special_Abilities_String
  */
-void Newgame_Screen_4_Draw__WIP(void)
+void Newgame_Screen_4_Draw(void)
 {
-    int8_t l_wsa_picklist_start[NUM_WIZARD_SPECIAL_ABILITIES] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char spellpicks_count_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int8_t * wsa_ptr = NULL;
-    uint8_t * Retort_Shadow_Color = 0;
-    uint8_t * Known_Retort_Color = 0;
-    uint8_t * Unavailable_Retort_Color = 0;
-    uint8_t * Available_Retort_Color = 0;
-    uint8_t WizName_Font_Colors[5] = { 0, 0, 0, 0, 0 };
-    uint8_t WizName_Shadow_Colors[5] = { 0, 0, 0, 0, 0 };
-    int16_t TwoPick_Label_Indices[5] = { 0, 0, 0, 0, 0 };
-    int16_t Retorts_Cost_Total = 0;
-    int16_t Possessed_Realm_Count = 0;
-    int16_t Two_Book_Realm_Count = 0;
-    int16_t ability_count = 0;
+    int16_t mouse_focus_control = 0;
+    int16_t picks_before_slider_check = 0;
     int16_t bookshelf_start_x = 0;
-    int16_t Picks_Before_Slider_Check = 0;
-    int16_t Mouse_Focus_Control = 0;
-    int16_t itr = 0;
-    int16_t itr2 = 0;
+    int16_t ability_count = 0;
+    int16_t two_book_realm_count = 0;
+    int16_t possessed_realm_count = 0;
+    int16_t retorts_cost_total = 0;
+    int16_t two_pick_label_indices[5] = { 1, 2, 8, 9, 15 };
+    uint8_t wizard_name_shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31 };
+    uint8_t wizard_name_font_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187 };
+    uint8_t available_retort_colors[COLOR_SET_COUNT] = { 25, 50 };
+    uint8_t unavailable_retort_colors[COLOR_SET_COUNT] = { 25, 22 };
+    uint8_t known_retort_colors[COLOR_SET_COUNT] = { 22, 178 };
+    uint8_t retort_shadow_colors[COLOR_SET_COUNT] = { 16, 16 };
+    int8_t * retorts_ptr = NULL;
+    char spellpicks_count_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int8_t picklist[NUM_WIZARD_SPECIAL_ABILITIES] = { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_
+    int16_t itr2 = 0;  // _DI_
 
-    memcpy(&TwoPick_Label_Indices, RP_TBL_2pickRet_Lbls, 10);
+    retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
 
-    memcpy(&WizName_Shadow_Colors, COL_NEWG_5Shadow3, 5);
+    mouse_focus_control = Auto_Input();
 
-    memcpy(&WizName_Font_Colors, COL_NEWG_5Font3, 5);
-
-    Available_Retort_Color = COL_Available_3;
-    Unavailable_Retort_Color = COL_NEWG_NA2;
-    Known_Retort_Color = COL_NewG_Ret_Known;
-    Retort_Shadow_Color = COL_NewG_Ret_Shdw;
-
-    memcpy(l_wsa_picklist_start, wsa_picklist_start, NUM_WIZARD_SPECIAL_ABILITIES);
-
-    wsa_ptr = &_players[0].alchemy;
-
-    Mouse_Focus_Control = Auto_Input();
-
-    bookshelf_start_x = 36;
+    bookshelf_start_x = BOOKSHELF_X;
 
     FLIC_Draw(0, 0, newgame_background_seg);
 
-    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[HUMAN_PLAYER_IDX].wizard_id]);
 
     Fill(251, 181, 282, 196, 0);
 
     ability_count = 0;
     for(itr = 0; itr < NUM_WIZARD_SPECIAL_ABILITIES; itr++)
     {
-        if(wsa_ptr[itr] == 1) { ability_count += 1; }
+        if(retorts_ptr[itr] == ST_TRUE) { ability_count += 1; }
     }
-    Retorts_Cost_Total = ability_count;
-    for(itr = 0; itr < 5; itr++)
+    retorts_cost_total = ability_count;
+    for(itr = 0; itr < NUM_TWO_PICK_ABILITIES; itr++)
     {
-        if(wsa_ptr[TwoPick_Label_Indices[itr]] == ST_TRUE)
+        if(retorts_ptr[wsa_picklist_order[two_pick_label_indices[itr]]] == ST_TRUE)
         {
-            Retorts_Cost_Total += 1;
+            retorts_cost_total += (TWO_PICK_ABILITY_COST - 1);
         }
     }
-    if(wsa_ptr[wsa_Myrran] == ST_TRUE)
+    if(retorts_ptr[wsa_Myrran] == ST_TRUE)
     {
-        Retorts_Cost_Total += 2;
+        retorts_cost_total += (MYRRAN_PICK_COST - 1);
     }
 
     spellpicks_count = (
-        11
-        - Retorts_Cost_Total
-        - _players[0].spellranks[3]
-        - _players[0].spellranks[4]
-        - _players[0].spellranks[2]
-        - _players[0].spellranks[0]
-        - _players[0].spellranks[1]
+        CUSTOM_WIZARD_PICKS
+        - retorts_cost_total
+        - _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life]
+        - _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death]
+        - _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos]
+        - _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature]
+        - _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery]
     );
 
-    Picks_Before_Slider_Check = spellpicks_count;
+    picks_before_slider_check = spellpicks_count;
 
-    for(itr = 0; itr < 5; itr++)
+    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
     {
-        if(m_newgame_fields[itr] == Mouse_Focus_Control)
+        if(m_newgame_fields[itr] == mouse_focus_control)
         {
             switch(itr)
             {
                 case 0:
                 {
-                    spellpicks_count += _players[0].spellranks[sbr_Life];
-                    for(itr2 = 0; ((m_bookshelf_life / 8) > itr2); itr2++)  /* spellbook count = scroll position / spellbook picture width */
+                    spellpicks_count += _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life];
+                    for(itr2 = 0; ((m_bookshelf_life / BOOKSHELF_BOOK_WIDTH) > itr2); itr2++)  /* spellbook count = scroll position / spellbook picture width */
                     {
-                        if(_players[0].spellranks[sbr_Death] != 0)
+                        if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] != 0)
                         {
                             break;
                         }
@@ -4354,24 +4071,24 @@ void Newgame_Screen_4_Draw__WIP(void)
                         }
                         spellpicks_count -= 1;
                     }
-                    _players[0].spellranks[sbr_Life] = itr2;  /* update spell rank based on slider position */
-                    if((m_bookshelf_life / 8) == itr2)
+                    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] = itr2;  /* update spell rank based on slider position */
+                    if((m_bookshelf_life / BOOKSHELF_BOOK_WIDTH) == itr2)
                     {
-                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        if(spellpicks_count == picks_before_slider_check)
                         {
-                            if(spellpicks_count != 0)
+                            if(spellpicks_count == 0)
                             {
-                                spellpicks_count -= 1;
+                                spellpicks_count = -1;
                             }
                         }
                     }
                 } break;
                 case 1:
                 {
-                    spellpicks_count += _players[0].spellranks[sbr_Death];
-                    for(itr2 = 0; ((m_bookshelf_death / 8) > itr2); itr2++)
+                    spellpicks_count += _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death];
+                    for(itr2 = 0; ((m_bookshelf_death / BOOKSHELF_BOOK_WIDTH) > itr2); itr2++)
                     {
-                        if(_players[0].spellranks[sbr_Life] != 0)
+                        if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] != 0)
                         {
                             break;
                         }
@@ -4381,22 +4098,22 @@ void Newgame_Screen_4_Draw__WIP(void)
                         }
                         spellpicks_count -= 1;
                     }
-                    _players[0].spellranks[sbr_Death] = itr2;
-                    if((m_bookshelf_death / 8) == itr2)
+                    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] = itr2;
+                    if((m_bookshelf_death / BOOKSHELF_BOOK_WIDTH) == itr2)
                     {
-                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        if(spellpicks_count == picks_before_slider_check)
                         {
-                            if(spellpicks_count != 0)
+                            if(spellpicks_count == 0)
                             {
-                                spellpicks_count -= 1;
+                                spellpicks_count = -1;
                             }
                         }
                     }
                 } break;
                 case 2:
                 {
-                    spellpicks_count += _players[0].spellranks[sbr_Chaos];
-                    for(itr2 = 0; ((m_bookshelf_chaos / 8) > itr2); itr2++)
+                    spellpicks_count += _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos];
+                    for(itr2 = 0; ((m_bookshelf_chaos / BOOKSHELF_BOOK_WIDTH) > itr2); itr2++)
                     {
                         if(spellpicks_count == 0)
                         {
@@ -4404,22 +4121,22 @@ void Newgame_Screen_4_Draw__WIP(void)
                         }
                         spellpicks_count -= 1;
                     }
-                    _players[0].spellranks[sbr_Chaos] = itr2;
-                    if((m_bookshelf_chaos / 8) == itr2)
+                    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos] = itr2;
+                    if((m_bookshelf_chaos / BOOKSHELF_BOOK_WIDTH) == itr2)
                     {
-                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        if(spellpicks_count == picks_before_slider_check)
                         {
-                            if(spellpicks_count != 0)
+                            if(spellpicks_count == 0)
                             {
-                                spellpicks_count -= 1;
+                                spellpicks_count = -1;
                             }
                         }
                     }
                 } break;
                 case 3:
                 {
-                    spellpicks_count += _players[0].spellranks[sbr_Nature];
-                    for(itr2 = 0; ((m_bookshelf_nature / 8) > itr2); itr2++)
+                    spellpicks_count += _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature];
+                    for(itr2 = 0; ((m_bookshelf_nature / BOOKSHELF_BOOK_WIDTH) > itr2); itr2++)
                     {
                         if(spellpicks_count == 0)
                         {
@@ -4427,22 +4144,22 @@ void Newgame_Screen_4_Draw__WIP(void)
                         }
                         spellpicks_count -= 1;
                     }
-                    _players[0].spellranks[sbr_Nature] = itr2;
-                    if((m_bookshelf_nature / 8) == itr2)
+                    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature] = itr2;
+                    if((m_bookshelf_nature / BOOKSHELF_BOOK_WIDTH) == itr2)
                     {
-                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        if(spellpicks_count == picks_before_slider_check)
                         {
-                            if(spellpicks_count != 0)
+                            if(spellpicks_count == 0)
                             {
-                                spellpicks_count -= 1;
+                                spellpicks_count = -1;
                             }
                         }
                     }
                 } break;
                 case 4:
                 {
-                    spellpicks_count += _players[0].spellranks[sbr_Sorcery];
-                    for(itr2 = 0; ((m_bookshelf_sorcery / 8) > itr2); itr2++)
+                    spellpicks_count += _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery];
+                    for(itr2 = 0; ((m_bookshelf_sorcery / BOOKSHELF_BOOK_WIDTH) > itr2); itr2++)
                     {
                         if(spellpicks_count == 0)
                         {
@@ -4450,58 +4167,72 @@ void Newgame_Screen_4_Draw__WIP(void)
                         }
                         spellpicks_count -= 1;
                     }
-                    _players[0].spellranks[sbr_Sorcery] = itr2;
-                    if((m_bookshelf_sorcery / 8) == itr2)
+                    _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery] = itr2;
+                    if((m_bookshelf_sorcery / BOOKSHELF_BOOK_WIDTH) == itr2)
                     {
-                        if(spellpicks_count == Picks_Before_Slider_Check)
+                        if(spellpicks_count == picks_before_slider_check)
                         {
-                            if(spellpicks_count != 0)
+                            if(spellpicks_count == 0)
                             {
-                                spellpicks_count -= 1;
+                                spellpicks_count = -1;
                             }
                         }
                     }
                 } break;
             }
+            if(
+                (spellpicks_count == 0)
+                &&
+                (picks_before_slider_check == spellpicks_count)
+                &&
+                (selected_load_game_slot_idx != mouse_focus_control)
+            )
+            {
+                NEWG_PickError = PICK_ERROR_NO_PICKS_LEFT;
+            }
+            if(spellpicks_count < 0)
+            {
+                spellpicks_count = 0;
+            }
         }
     }
 
-    selected_load_game_slot_idx = Mouse_Focus_Control;
+    selected_load_game_slot_idx = mouse_focus_control;
 
-    for(itr = 0; itr < _players[0].spellranks[sbr_Life]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life]; itr++)
     {
-        FLIC_Draw((197 + (8 * itr)), (49 + (0 * 26)), m_spellbook_pict_segs[( 0 + TBL_Realm1_Books[itr])]);
-        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(0 + TBL_Bookshelf_Books[itr])]);
-        bookshelf_start_x += 8;
+        FLIC_Draw((197 + (8 * itr)), (49 + (0 * 26)), m_spellbook_pict_segs[(LIFE_BOOK_PICTS + TBL_Realm1_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, BOOKSHELF_Y, m_spellbook_pict_segs[(LIFE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += BOOKSHELF_BOOK_WIDTH;
     }
-    for(itr = 0; itr < _players[0].spellranks[sbr_Death]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death]; itr++)
     {
-        FLIC_Draw((197 + (8 * itr)), (49 + (1 * 26)), m_spellbook_pict_segs[(9 + TBL_Realm1_Books[itr])]);
-        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
-        bookshelf_start_x += 8;
+        FLIC_Draw((197 + (8 * itr)), (49 + (1 * 26)), m_spellbook_pict_segs[(DEATH_BOOK_PICTS + TBL_Realm0_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, BOOKSHELF_Y, m_spellbook_pict_segs[(DEATH_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += BOOKSHELF_BOOK_WIDTH;
     }
-    for(itr = 0; itr < _players[0].spellranks[sbr_Chaos]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos]; itr++)
     {
-        FLIC_Draw((197 + (8 * itr)), (49 + (2 * 26)), m_spellbook_pict_segs[(12 + TBL_Realm1_Books[itr])]);
-        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
-        bookshelf_start_x += 8;
+        FLIC_Draw((197 + (8 * itr)), (49 + (2 * 26)), m_spellbook_pict_segs[(CHAOS_BOOK_PICTS + TBL_Realm4_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, BOOKSHELF_Y, m_spellbook_pict_segs[(CHAOS_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += BOOKSHELF_BOOK_WIDTH;
     }
-    for(itr = 0; itr < _players[0].spellranks[sbr_Nature]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature]; itr++)
     {
-        FLIC_Draw((197 + (8 * itr)), (49 + (3 * 26)), m_spellbook_pict_segs[(6 + TBL_Realm1_Books[itr])]);
-        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
-        bookshelf_start_x += 8;
+        FLIC_Draw((197 + (8 * itr)), (49 + (3 * 26)), m_spellbook_pict_segs[(NATURE_BOOK_PICTS + TBL_Realm2_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, BOOKSHELF_Y, m_spellbook_pict_segs[(NATURE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += BOOKSHELF_BOOK_WIDTH;
     }
-    for(itr = 0; itr < _players[0].spellranks[sbr_Sorcery]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery]; itr++)
     {
-        FLIC_Draw((197 + (8 * itr)), (49 + (4 * 26)), m_spellbook_pict_segs[(3 + TBL_Realm1_Books[itr])]);
-        FLIC_Draw(bookshelf_start_x, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
-        bookshelf_start_x += 8;
+        FLIC_Draw((197 + (8 * itr)), (49 + (4 * 26)), m_spellbook_pict_segs[(SORCERY_BOOK_PICTS + TBL_Realm3_Books[itr])]);
+        FLIC_Draw(bookshelf_start_x, BOOKSHELF_Y, m_spellbook_pict_segs[(SORCERY_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_start_x += BOOKSHELF_BOOK_WIDTH;
     }
 
-    if(NEWG_ProfileComplete != ST_FALSE)
+    if(m_all_picks_made != ST_FALSE)
     {
-        if(Mouse_Focus_Control == _ok_button)
+        if(mouse_focus_control == _ok_button)
         {
             FLIC_Draw(253, 183, newgame_ok_button_seg);
         }
@@ -4513,94 +4244,94 @@ void Newgame_Screen_4_Draw__WIP(void)
     else
     {
         FLIC_Draw(252, 182, _ok_inactive_seg);
-        if(Mouse_Focus_Control == _ok_button)
+        if(mouse_focus_control == _ok_button)
         {
-            NEWG_PickError = 1;
+            NEWG_PickError = PICK_ERROR_PICKS_LEFT;
         }
     }
 
-    if(_players[0].spellranks[sbr_Nature] > 3)
+    if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature] > 3)
     {
-        l_wsa_picklist_start[13] = 1;
-        l_wsa_picklist_start[3] = 1;
-        l_wsa_picklist_start[16] = 1;
+        picklist[13] = 1;
+        picklist[3] = 1;
+        picklist[16] = 1;
     }
-    if(_players[0].spellranks[sbr_Sorcery] > 3)
+    if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery] > 3)
     {
-        l_wsa_picklist_start[14] = 1;
-        l_wsa_picklist_start[3] = 1;
-        l_wsa_picklist_start[16] = 1;
+        picklist[14] = 1;
+        picklist[3] = 1;
+        picklist[16] = 1;
     }
-    if(_players[0].spellranks[sbr_Chaos] > 3)
+    if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos] > 3)
     {
-        l_wsa_picklist_start[12] = 1;
-        l_wsa_picklist_start[3] = 1;
-        l_wsa_picklist_start[16] = 1;
+        picklist[12] = 1;
+        picklist[3] = 1;
+        picklist[16] = 1;
     }
-    if(_players[0].spellranks[sbr_Death] > 3)
+    if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Death] > 3)
     {
-        l_wsa_picklist_start[15] = 1;
-        l_wsa_picklist_start[3] = 1;
-        l_wsa_picklist_start[16] = 1;
+        picklist[15] = 1;
+        picklist[3] = 1;
+        picklist[16] = 1;
     }
-    if(_players[0].spellranks[sbr_Life] > 3)
+    if(_players[HUMAN_PLAYER_IDX].spellranks[sbr_Life] > 3)
     {
-        l_wsa_picklist_start[8] = 1;
-        l_wsa_picklist_start[3] = 1;
-        l_wsa_picklist_start[16] = 1;
+        picklist[8] = 1;
+        picklist[3] = 1;
+        picklist[16] = 1;
     }
-    Possessed_Realm_Count = 0;
-    Two_Book_Realm_Count = 0;
-    for(itr = 0; itr < 5; itr++)
+    possessed_realm_count = 0;
+    two_book_realm_count = 0;
+    for(itr = 0; itr < NUM_MAGIC_TYPES; itr++)
     {
-        if(_players[0].spellranks[itr] > 0)
+        if(_players[HUMAN_PLAYER_IDX].spellranks[itr] > 0)
         {
-            Possessed_Realm_Count++;
+            possessed_realm_count++;
         }
-        if(_players[0].spellranks[itr] > 1)
+        if(_players[HUMAN_PLAYER_IDX].spellranks[itr] > 1)
         {
-            Two_Book_Realm_Count++;
+            two_book_realm_count++;
         }   
     }
 
-    if(Possessed_Realm_Count > 1)
+    if(possessed_realm_count > 1)
     {
-        l_wsa_picklist_start[6] = ST_TRUE;
+        picklist[6] = ST_TRUE;
     }
 
-    if(Two_Book_Realm_Count > 2)  /* 2+ picks in 3+ realms */
+    if(two_book_realm_count > 2)  /* 2+ picks in 3+ realms */
     {
-        l_wsa_picklist_start[10] = ST_TRUE;
+        picklist[10] = ST_TRUE;
     }
 
-    for(itr = 0; itr < 5; itr++)
+    for(itr = 0; itr < NUM_TWO_PICK_ABILITIES; itr++)
     {
-        if(wsa_ptr[wsa_picklist_order[TwoPick_Label_Indices[itr]]] != ST_TRUE)
+        if(retorts_ptr[wsa_picklist_order[two_pick_label_indices[itr]]] != ST_TRUE)
         {
-            if(spellpicks_count < 2)
+            if(spellpicks_count < TWO_PICK_ABILITY_COST)
             {
-                l_wsa_picklist_start[TwoPick_Label_Indices[itr]] = ST_FALSE;
+                picklist[two_pick_label_indices[itr]] = ST_FALSE;
             }
         }
     }
 
-    if(wsa_ptr[wsa_Myrran] != ST_TRUE)
+    if(retorts_ptr[wsa_Myrran] != ST_TRUE)
     {
-        if(spellpicks_count < 3)
+        if(spellpicks_count < MYRRAN_PICK_COST)
         {
-            l_wsa_picklist_start[7] = ST_FALSE;
+            picklist[MYRRAN_PICKLIST_SLOT] = ST_FALSE;
         }
     }
 
     if(
-        (_players[0].spellranks[sbr_Chaos] > 0)
+        (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos] > 0)
         &&
-        (_players[0].spellranks[sbr_Sorcery] > 0)
+        (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery] > 0)
         &&
-        (_players[0].spellranks[sbr_Nature] > 0)
+        (_players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature] > 0)
     )
     {
-        l_wsa_picklist_start[17] = ST_TRUE;
+        picklist[17] = ST_TRUE;
     }
 
     Set_Font_Style(0, 15, ST_NULL, ST_NULL);
@@ -4610,49 +4341,53 @@ void Newgame_Screen_4_Draw__WIP(void)
         for(itr = 0; itr < 6; itr++)
         {
             if(
-                (wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] != ST_TRUE)
-                ||
-                (l_wsa_picklist_start[(itr + (itr2 * 6))] != ST_TRUE)
-                ||
-                (spellpicks_count < 0)
+                (retorts_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] == ST_TRUE)
+                &&
+                (picklist[(itr + (itr2 * 6))] == ST_TRUE)
+                &&
+                (spellpicks_count >= 0)
             )
             {
-                if(wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] == ST_TRUE)
+                Set_Font_Colors_15(0, retort_shadow_colors);
+                Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                Set_Font_Colors_15(0, known_retort_colors);
+                Print((171 + (itr2 * 39)), (5 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
+                FLIC_Draw((165 + (itr2 * 39)), (6 + (itr * 7)), _selection_marker_seg);  // check mark
+            }
+            else
+            {
+                if(retorts_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] == ST_TRUE)
                 {
-                    if(l_wsa_picklist_start[(itr + (itr2 * 6))] == ST_FALSE)
+                    if(picklist[(itr + (itr2 * 6))] == ST_FALSE)
                     {
-                        NEWG_PickError = 3;
+                        NEWG_PickError = PICK_ERROR_PREREQUISITES;
                         NEWG_PickAttempt = wsa_picklist_order[(itr + (itr2 * 6))];
                     }
-                    wsa_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] = ST_FALSE;
+                    retorts_ptr[wsa_picklist_order[(itr + (itr2 * 6))]] = ST_FALSE;
                 }
                 if(
-                    (l_wsa_picklist_start[(itr + (itr2 * 6))] == ST_TRUE)
+                    (picklist[(itr + (itr2 * 6))] == ST_TRUE)
                     &&
-                    (ability_count < 6)
+                    (ability_count < MAX_SPECIAL_ABILITIES)
                     &&
                     (spellpicks_count > 0)
                 )
                 {
-                    Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                    Set_Font_Colors_15(0, retort_shadow_colors);
                     Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
-                    Set_Font_Colors_15(0, &Available_Retort_Color[0]);
+                    Set_Font_Colors_15(0, available_retort_colors);
                 }
                 else
                 {
-                    Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                    if(picklist[(itr + (itr2 * 6))] == ST_TRUE)
+                    {
+                        picklist[(itr + (itr2 * 6))] = ST_FALSE;
+                    }
+                    Set_Font_Colors_15(0, retort_shadow_colors);
                     Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
-                    Set_Font_Colors_15(0, &Unavailable_Retort_Color[0]);
+                    Set_Font_Colors_15(0, unavailable_retort_colors);
                 }
                 Print((171 + (itr2 * 39)), (5 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
-            }
-            else
-            {
-                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
-                Print((172 + (itr2 * 39)), (6 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
-                Set_Font_Colors_15(0, &Known_Retort_Color[0]);
-                Print((171 + (itr2 * 39)), (5 + (itr * 7)), wsa_names[wsa_picklist_order[(itr + (itr2 * 6))]]);
-                FLIC_Draw((165 + (itr2 * 39)), (6 + (itr * 7)), _selection_marker_seg);  // check mark
             }
         }
     }
@@ -4660,49 +4395,53 @@ void Newgame_Screen_4_Draw__WIP(void)
     for(itr = 0; itr < 6; itr++)
     {
         if(
-            (wsa_ptr[wsa_picklist_order[(12 + itr)]] != ST_TRUE)
-            ||
-            (l_wsa_picklist_start[(12 + itr)] != ST_TRUE)
-            ||
-            (spellpicks_count < 0)
+            (retorts_ptr[wsa_picklist_order[(12 + itr)]] == ST_TRUE)
+            &&
+            (picklist[(12 + itr)] == ST_TRUE)
+            &&
+            (spellpicks_count >= 0)
         )
         {
-            if(wsa_ptr[wsa_picklist_order[(12 + itr)]] == ST_TRUE)
+            Set_Font_Colors_15(0, retort_shadow_colors);
+            Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+            Set_Font_Colors_15(0, known_retort_colors);
+            Print(260, (5 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
+            FLIC_Draw(254, (6 + (itr * 7)), _selection_marker_seg);  // check mark
+        }
+        else
+        {
+            if(retorts_ptr[wsa_picklist_order[(12 + itr)]] == ST_TRUE)
             {
-                if(l_wsa_picklist_start[(12 + itr)] == ST_FALSE)
+                if(picklist[(12 + itr)] == ST_FALSE)
                 {
-                    NEWG_PickError = 3;
+                    NEWG_PickError = PICK_ERROR_PREREQUISITES;
                     NEWG_PickAttempt = wsa_picklist_order[(12 + itr)];
                 }
-                wsa_ptr[wsa_picklist_order[(12 + itr)]] = ST_FALSE;
+                retorts_ptr[wsa_picklist_order[(12 + itr)]] = ST_FALSE;
             }
             if(
-                (l_wsa_picklist_start[(12 + itr)] == ST_TRUE)
+                (picklist[(12 + itr)] == ST_TRUE)
                 &&
-                (ability_count < 6)
+                (ability_count < MAX_SPECIAL_ABILITIES)
                 &&
                 (spellpicks_count > 0)
             )
             {
-                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                Set_Font_Colors_15(0, retort_shadow_colors);
                 Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
-                Set_Font_Colors_15(0, &Available_Retort_Color[0]);
+                Set_Font_Colors_15(0, available_retort_colors);
             }
             else
             {
-                Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
+                if(picklist[(12 + itr)] == ST_TRUE)
+                {
+                    picklist[(12 + itr)] = ST_FALSE;
+                }
+                Set_Font_Colors_15(0, retort_shadow_colors);
                 Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
-                Set_Font_Colors_15(0, &Unavailable_Retort_Color[0]);
+                Set_Font_Colors_15(0, unavailable_retort_colors);
             }
                 Print(260, (5 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
-        }
-        else
-        {
-            Set_Font_Colors_15(0, &Retort_Shadow_Color[0]);
-            Print(261, (6 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
-            Set_Font_Colors_15(0, &Known_Retort_Color[0]);
-            Print(260, (5 + (itr * 7)), wsa_names[wsa_picklist_order[(12 + itr)]]);
-            FLIC_Draw(254, (6 + (itr * 7)), _selection_marker_seg);  // check mark
         }
     }
 
@@ -4712,27 +4451,27 @@ void Newgame_Screen_4_Draw__WIP(void)
 
     if(spellpicks_count == 0)
     {
-        NEWG_ProfileComplete = ST_TRUE;
+        m_all_picks_made = ST_TRUE;
     }
     else
     {
-        NEWG_ProfileComplete = ST_FALSE;
+        m_all_picks_made = ST_FALSE;
     }
 
     Set_Font_Style(3, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(3, WizName_Font_Colors);
+    Set_Font_Colors_15(3, wizard_name_font_colors);
     Print_Centered(222, 186, spellpicks_count_string);
 
-    Set_Font_Colors_15(3, WizName_Shadow_Colors);
+    Set_Font_Colors_15(3, wizard_name_shadow_colors);
     Print_Centered(221, 185, spellpicks_count_string);
 
     Set_Font_Style(4, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(4, &WizName_Shadow_Colors[0]);
-    Print_Centered(78, 120, _players[0].name);
-    Print_Centered(77, 120, _players[0].name);
+    Set_Font_Colors_15(4, wizard_name_shadow_colors);
+    Print_Centered(78, 120, _players[HUMAN_PLAYER_IDX].name);
+    Print_Centered(77, 120, _players[HUMAN_PLAYER_IDX].name);
 
-    Set_Font_Colors_15(4, &WizName_Font_Colors[0]);
-    Print_Centered(77, 119, _players[0].name);
+    Set_Font_Colors_15(4, wizard_name_font_colors);
+    Print_Centered(77, 119, _players[HUMAN_PLAYER_IDX].name);
 
     Draw_Special_Abilities_String();
     
@@ -4758,7 +4497,7 @@ void Newgame_Screen_4_Draw__WIP(void)
  *    slots from `_default_spells` according to `TBL_SpellsPerBook_*`.
  * 5) Runs input loop:
  *    - ESC returns `ngscr_Creation`.
- *    - OK exits loop only when `NEWG_ProfileComplete` is true.
+ *    - OK exits loop only when `m_all_picks_made` is true.
  *    - Handles common-spell label clicks (toggle/add/remove) and raises
  *      `NEWG_PickError` when selection constraints fail.
  *    - Repeatedly calls `Newgame_Screen_5_Draw`, palette/page updates, and
@@ -4766,10 +4505,10 @@ void Newgame_Screen_4_Draw__WIP(void)
  *
  * @param void This function accepts no parameters.
  *
- * @return void
+ * @return int16_t  ngscr_Creation (4) on Esc, ngscr_Race (6) when every realm is done
  *
- * @note This function is WIP; uncommon/rare click handlers and some error
- *       message paths are currently stub/incomplete in source.
+ * @note The common, uncommon and rare click handlers are all reconstructed; the error
+ *       messages are cnst_Pick_Error_0 (1) and cnst_Pick_Error_6 (2).
  * @note Mutates global New Game state, including spell selection buffers,
  *       active input fields, and profile-complete/error flags.
  *
@@ -4778,25 +4517,23 @@ void Newgame_Screen_4_Draw__WIP(void)
  */
 int16_t Newgame_Screen_5(void)
 {
-    char message[150] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    int16_t Realm_Order_Array[5] = { 0, 0, 0, 0, 0 };
-    int16_t * p_default_spells = 0;
-    int16_t Click_Processed = 0;
-    int16_t * p_start_spells = 0;
-    int16_t spell_idx = 0;
-    int16_t Selection_Realm = 0;
-    int16_t spellrank_idx = 0;
-    int16_t spellrank_cnt = 0;
-    int16_t section_idx = 0;
-    int16_t itr2 = 0;
-    int16_t itr3 = 0;  /* only use for per column spell count?*/
-    int16_t input_field_idx = 0;
+    int16_t first_draw_done = 0;
     int16_t leave_screen = 0;
-    int16_t First_Draw_Done = 0;
-    int16_t itr = 0;  /* used for column count */
-    int16_t itr4 = 0;
-
-    memcpy(&Realm_Order_Array, TBL_Realm_Order, 10);
+    int16_t input_field_idx = 0;
+    int16_t itr_rows = 0;  /* the 5 spell labels in a column */
+    int16_t itr_realms = 0;
+    int16_t section_idx = 0;
+    int16_t spellrank_cnt = 0;
+    int16_t spellrank_idx = 0;
+    int16_t selection_realm = 0;
+    int16_t spell_idx = 0;
+    int16_t * p_start_spells = 0;
+    int16_t click_processed = 0;
+    int16_t * p_default_spells = 0;
+    int16_t realm_order[NUM_MAGIC_TYPES] = { sbr_Life, sbr_Death, sbr_Chaos, sbr_Nature, sbr_Sorcery };
+    char message[LEN_MESSAGE_STRING] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _SI_  the 2 columns of spell labels, and the setup loops
+    int16_t itr_picks = 0;  // _DI_  the realm's pick slots of one rarity
 
     // NEWGAME.LBX, 000  BACKGRND    Main screen back
     newgame_background_seg = LBX_Reload(newgame_lbx_file__ovr050, 0, _screen_seg);
@@ -4834,7 +4571,7 @@ int16_t Newgame_Screen_5(void)
     NEWGAME.LBX, 037  BOOKS      Red book 2
     NEWGAME.LBX, 038  BOOKS      Red book 3
     */
-    for(itr = 0; itr < 15; itr++)
+    for(itr = 0; itr < (NUM_MAGIC_TYPES * NUM_BOOK_PICTS_PER_REALM); itr++)
     {
         m_spellbook_pict_segs[itr] = LBX_Reload_Next(newgame_lbx_file__ovr050, (24 + itr), _screen_seg);
     }
@@ -4849,38 +4586,38 @@ int16_t Newgame_Screen_5(void)
 
     spellpicks_count = 0;
 
-    NEWG_PickError = 0;
+    NEWG_PickError = PICK_ERROR_NONE;
 
     Assign_Auto_Function(Newgame_Screen_5_Draw, 1);
 
-    for(itr = 0; itr < 13; itr++)
+    for(itr = 0; itr < NUM_START_SPELLS; itr++)
     {
-        _player_start_spells[0].realms[sbr_Nature].spells[itr] = 0;
-        _player_start_spells[0].realms[sbr_Sorcery].spells[itr] = 0;
-        _player_start_spells[0].realms[sbr_Chaos].spells[itr] = 0;
-        _player_start_spells[0].realms[sbr_Life].spells[itr] = 0;
-        _player_start_spells[0].realms[sbr_Death].spells[itr] = 0;
+        _player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Chaos].spells[itr] = 0;
+        _player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Nature].spells[itr] = 0;
+        _player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Sorcery].spells[itr] = 0;
+        _player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Life].spells[itr] = 0;
+        _player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Death].spells[itr] = 0;
     }
 
     // HLPENTRY.LBX, 036  ""  "Select Spells Help"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 36, (SAMB_ptr)_help_entries, 0, 30, 10);
 
-    for(itr2 = 0; itr2 < 5; itr2++)
+    for(itr_realms = 0; itr_realms < NUM_MAGIC_TYPES; itr_realms++)
     {
             
         leave_screen = ST_TRUE;
 
-        m_select_spells_realm = Realm_Order_Array[itr2];  // WTF
+        m_select_spells_realm = realm_order[itr_realms];
 
-        NEWG_ProfileComplete = ST_FALSE;
+        m_all_picks_made = ST_FALSE;
 
         Clear_Fields();
 
-        _quit_button = Add_Hot_Key(str_ESC__ovr050[0]);
+        _quit_button = Add_Hot_Key(str_ESC__ovr050);
 
-        _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050[0], ST_UNDEFINED);
+        _ok_button = Add_Hidden_Field(251, 181, 282, 196, empty_string__ovr050, ST_UNDEFINED);
 
-        for(itr = 0; itr < 30; itr++)
+        for(itr = 0; itr < NUM_SPELL_LIST_FIELDS; itr++)
         {
             m_newgame_fields[itr] = INVALID_FIELD;
         }
@@ -4889,46 +4626,46 @@ int16_t Newgame_Screen_5(void)
             NOTE: The normal screen-loop is inside this magic realms spellrank loop
             "Select [Magic Realm] Spells"
         */
-        if(_players[0].spellranks[m_select_spells_realm] > 1)
+        if(_players[HUMAN_PLAYER_IDX].spellranks[m_select_spells_realm] > 1)
         {
 
             Newgame_Screen_5_Spell_Fields();
 
             leave_screen = ST_FALSE;
 
-            First_Draw_Done = ST_FALSE;
+            first_draw_done = ST_FALSE;
 
             if(m_select_spells_realm == sbr_Chaos)
             {
-                p_start_spells = &_player_start_spells[0].realms[sbr_Chaos].spells[0];
+                p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Chaos].spells[0];
                 p_default_spells = &_default_spells[sbr_Chaos].spells[0];
-                Selection_Realm = sbr_Chaos;
+                selection_realm = sbr_Chaos;
             }
             if(m_select_spells_realm == sbr_Sorcery)
             {
-                p_start_spells = &_player_start_spells[0].realms[sbr_Sorcery].spells[0];
+                p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Sorcery].spells[0];
                 p_default_spells = &_default_spells[sbr_Sorcery].spells[0];
-                Selection_Realm = sbr_Sorcery;
+                selection_realm = sbr_Sorcery;
             }
             if(m_select_spells_realm == sbr_Nature)
             {
-                p_start_spells = &_player_start_spells[0].realms[sbr_Nature].spells[0];
+                p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Nature].spells[0];
                 p_default_spells = &_default_spells[sbr_Nature].spells[0];
-                Selection_Realm = sbr_Nature;
+                selection_realm = sbr_Nature;
             }
             if(m_select_spells_realm == sbr_Life)
             {
-                p_start_spells = &_player_start_spells[0].realms[sbr_Life].spells[0];
+                p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Life].spells[0];
                 p_default_spells = &_default_spells[sbr_Life].spells[0];
-                Selection_Realm = sbr_Life;
+                selection_realm = sbr_Life;
             }
             if(m_select_spells_realm == sbr_Death)
             {
-                p_start_spells = &_player_start_spells[0].realms[sbr_Death].spells[0];
+                p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Death].spells[0];
                 p_default_spells = &_default_spells[sbr_Death].spells[0];
-                Selection_Realm = sbr_Death;
+                selection_realm = sbr_Death;
             }
-            spellrank_cnt = (_players[0].spellranks[m_select_spells_realm] - 1);
+            spellrank_cnt = (_players[HUMAN_PLAYER_IDX].spellranks[m_select_spells_realm] - 1);
             spellrank_idx = (spellrank_cnt - 1);
             for(itr = 0; m_select_count_common[spellrank_idx] > itr; itr++)
             {
@@ -4936,11 +4673,11 @@ int16_t Newgame_Screen_5(void)
             }
             for(itr = 0; m_select_count_uncommon[spellrank_idx] > itr; itr++)
             {
-                p_start_spells[(10 + itr)] = p_default_spells[(10 + itr)];
+                p_start_spells[(START_SPELLS_UNCOMMON + itr)] = p_default_spells[(START_SPELLS_UNCOMMON + itr)];
             }
             for(itr = 0; m_select_count_rare[spellrank_idx] > itr; itr++)
             {
-                p_start_spells[(12 + itr)] = p_default_spells[(12 + itr)];
+                p_start_spells[(START_SPELLS_RARE + itr)] = p_default_spells[(START_SPELLS_RARE + itr)];
             }
 
         }
@@ -4955,14 +4692,14 @@ int16_t Newgame_Screen_5(void)
             }
             if(input_field_idx == _ok_button)
             {
-                if(NEWG_ProfileComplete != ST_FALSE)
+                if(m_all_picks_made != ST_FALSE)
                 {
                     leave_screen = ST_TRUE;
                 }
             }
             if(spellrank_cnt > 0)
             {
-                if(First_Draw_Done != ST_FALSE)
+                if(first_draw_done != ST_FALSE)
                 {
                     if(input_field_idx != 0)
                     {
@@ -4971,50 +4708,50 @@ int16_t Newgame_Screen_5(void)
                         if(
                             (m_select_count_common[spellrank_idx] > 0)
                             &&
-                            (m_select_count_common[spellrank_idx] < 10)
+                            (m_select_count_common[spellrank_idx] < NUM_START_SPELLS_COMMON)
                         )
                         {
-                            for(itr = 0; itr < 2; itr++)
+                            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
                             {
-                                for(itr3 = 0; itr3 < 5; itr3++)
+                                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                                 {
-                                    spell_idx = ( 0 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
-                                    if(m_newgame_fields[((itr * 5) + itr3)] == input_field_idx)
+                                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + 1);
+                                    if(m_newgame_fields[((itr * SPELL_LIST_ROWS) + itr_rows)] == input_field_idx)
                                     {
-                                        Click_Processed = ST_FALSE;
-                                        for(itr4 = 0; m_select_count_common[spellrank_idx] > itr4; itr4++)
+                                        click_processed = ST_FALSE;
+                                        for(itr_picks = 0; m_select_count_common[spellrank_idx] > itr_picks; itr_picks++)
                                         {
-                                            if(p_start_spells[itr4] == spell_idx)
+                                            if(p_start_spells[itr_picks] == spell_idx)
                                             {
-                                                if(Click_Processed == ST_FALSE)
+                                                if(click_processed == ST_FALSE)
                                                 {
-                                                    p_start_spells[itr4] = spl_NONE;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[itr_picks] = spl_NONE;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            for(itr4 = 0; m_select_count_common[spellrank_idx] > itr4; itr4++)
+                                            for(itr_picks = 0; m_select_count_common[spellrank_idx] > itr_picks; itr_picks++)
                                             {
                                                 if(
                                                     (
-                                                        (p_start_spells[itr4] == spl_NONE)
+                                                        (p_start_spells[itr_picks] == spl_NONE)
                                                         &&
-                                                        (Click_Processed == ST_FALSE)
+                                                        (click_processed == ST_FALSE)
                                                     )
                                                     ||
-                                                    (m_select_count_common[spellrank_idx] == ST_TRUE)
+                                                    (m_select_count_common[spellrank_idx] == 1)
                                                 )
                                                 {
-                                                    p_start_spells[itr4] = spell_idx;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[itr_picks] = spell_idx;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            NEWG_PickError = 2;
+                                            NEWG_PickError = SPELL_PICK_ERROR_SECTION_FULL;
                                         }
                                     }
                                 }
@@ -5026,47 +4763,47 @@ int16_t Newgame_Screen_5(void)
                         */
                         if(m_select_count_uncommon[spellrank_idx] > 0)
                         {
-                            for(itr = 0; itr < 2; itr++)
+                            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
                             {
-                                for(itr3 = 0; itr3 < 5; itr3++)
+                                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                                 {
-                                    spell_idx = (10 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
-                                    if(m_newgame_fields[((section_idx * 10) + (itr * 5) + itr3)] == input_field_idx)
+                                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + NUM_SPELLS_PER_MAGIC_RARITY + 1);
+                                    if(m_newgame_fields[((section_idx * SPELL_LIST_FIELDS_PER_SECTION) + (itr * SPELL_LIST_ROWS) + itr_rows)] == input_field_idx)
                                     {
-                                        Click_Processed = ST_FALSE;
-                                        for(itr4 = 0; m_select_count_uncommon[spellrank_idx] > itr4; itr4++)
+                                        click_processed = ST_FALSE;
+                                        for(itr_picks = 0; m_select_count_uncommon[spellrank_idx] > itr_picks; itr_picks++)
                                         {
-                                            if(p_start_spells[(10 + itr4)] == spell_idx)
+                                            if(p_start_spells[(START_SPELLS_UNCOMMON + itr_picks)] == spell_idx)
                                             {
-                                                if(Click_Processed == ST_FALSE)
+                                                if(click_processed == ST_FALSE)
                                                 {
-                                                    p_start_spells[(10 + itr4)] = spl_NONE;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[(START_SPELLS_UNCOMMON + itr_picks)] = spl_NONE;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            for(itr4 = 0; m_select_count_uncommon[spellrank_idx] > itr4; itr4++)
+                                            for(itr_picks = 0; m_select_count_uncommon[spellrank_idx] > itr_picks; itr_picks++)
                                             {
                                                 if(
                                                     (
-                                                        (p_start_spells[(10 + itr4)] == spl_NONE)
+                                                        (p_start_spells[(START_SPELLS_UNCOMMON + itr_picks)] == spl_NONE)
                                                         &&
-                                                        (Click_Processed == ST_FALSE)
+                                                        (click_processed == ST_FALSE)
                                                     )
                                                     ||
-                                                    (m_select_count_uncommon[spellrank_idx] == ST_TRUE)
+                                                    (m_select_count_uncommon[spellrank_idx] == 1)  /* CLAUDE */  /* a count of 1, not a flag (IDA labels the immediate e_ST_TRUE): with one pick, a click replaces it */
                                                 )
                                                 {
-                                                    p_start_spells[(10 + itr4)] = spell_idx;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[(START_SPELLS_UNCOMMON + itr_picks)] = spell_idx;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            NEWG_PickError = 2;
+                                            NEWG_PickError = SPELL_PICK_ERROR_SECTION_FULL;
                                         }
                                     }
                                 }
@@ -5081,47 +4818,47 @@ int16_t Newgame_Screen_5(void)
                         */
                         if(m_select_count_rare[spellrank_idx] > 0)
                         {
-                            for(itr = 0; itr < 2; itr++)
+                            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
                             {
-                                for(itr3 = 0; itr3 < 5; itr3++)
+                                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                                 {
-                                    spell_idx = (20 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr3 + 1);
-                                    if(m_newgame_fields[((section_idx * 10) + (itr * 5) + itr3)] == input_field_idx)
+                                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + (2 * NUM_SPELLS_PER_MAGIC_RARITY) + 1);
+                                    if(m_newgame_fields[((section_idx * SPELL_LIST_FIELDS_PER_SECTION) + (itr * SPELL_LIST_ROWS) + itr_rows)] == input_field_idx)
                                     {
-                                        Click_Processed = ST_FALSE;
-                                        for(itr4 = 0; m_select_count_rare[spellrank_idx] > itr4; itr4++)
+                                        click_processed = ST_FALSE;
+                                        for(itr_picks = 0; m_select_count_rare[spellrank_idx] > itr_picks; itr_picks++)
                                         {
-                                            if(p_start_spells[(12 + itr4)] == spell_idx)
+                                            if(p_start_spells[(START_SPELLS_RARE + itr_picks)] == spell_idx)
                                             {
-                                                if(Click_Processed == ST_FALSE)
+                                                if(click_processed == ST_FALSE)
                                                 {
-                                                    p_start_spells[(12 + itr4)] = spl_NONE;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[(START_SPELLS_RARE + itr_picks)] = spl_NONE;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            for(itr4 = 0; m_select_count_rare[spellrank_idx] > itr4; itr4++)
+                                            for(itr_picks = 0; m_select_count_rare[spellrank_idx] > itr_picks; itr_picks++)
                                             {
                                                 if(
                                                     (
-                                                        (p_start_spells[(12 + itr4)] == spl_NONE)
+                                                        (p_start_spells[(START_SPELLS_RARE + itr_picks)] == spl_NONE)
                                                         &&
-                                                        (Click_Processed == ST_FALSE)
+                                                        (click_processed == ST_FALSE)
                                                     )
                                                     ||
-                                                    (m_select_count_rare[spellrank_idx] == ST_TRUE)
+                                                    (m_select_count_rare[spellrank_idx] == 1)  /* CLAUDE */  /* a count of 1, not a flag (IDA labels the immediate e_ST_TRUE): with one pick, a click replaces it */
                                                 )
                                                 {
-                                                    p_start_spells[(12 + itr4)] = spell_idx;
-                                                    Click_Processed = ST_TRUE;
+                                                    p_start_spells[(START_SPELLS_RARE + itr_picks)] = spell_idx;
+                                                    click_processed = ST_TRUE;
                                                 }
                                             }
                                         }
-                                        if(Click_Processed == ST_FALSE)
+                                        if(click_processed == ST_FALSE)
                                         {
-                                            NEWG_PickError = 2;
+                                            NEWG_PickError = SPELL_PICK_ERROR_SECTION_FULL;
                                         }
                                     }
                                 }
@@ -5137,17 +4874,17 @@ int16_t Newgame_Screen_5(void)
 
 // ; display and clear the stored error
 
-            if(NEWG_PickError > 0)
+            if(NEWG_PickError > PICK_ERROR_NONE)
             {
                 switch(NEWG_PickError)
                 {
-                    case 1: { stu_strcpy(message, cnst_Pick_Error_0); } break;
-                    case 2: { stu_strcpy(message, cnst_Pick_Error_6); } break;
+                    case SPELL_PICK_ERROR_PICKS_LEFT: { stu_strcpy(message, cnst_Pick_Error_0); } break;
+                    case SPELL_PICK_ERROR_SECTION_FULL: { stu_strcpy(message, cnst_Pick_Error_6); } break;
                 }
                 Deactivate_Auto_Function();
                 Warn0(message);
                 Assign_Auto_Function(Newgame_Screen_5_Draw, 1);
-                NEWG_PickError = 0;
+                NEWG_PickError = PICK_ERROR_NONE;
             }
 
             if(leave_screen == ST_FALSE)
@@ -5155,9 +4892,9 @@ int16_t Newgame_Screen_5(void)
                 Newgame_Screen_5_Draw();
                 Apply_Palette();
                 Toggle_Pages();
-                if(First_Draw_Done == ST_FALSE)
+                if(first_draw_done == ST_FALSE)
                 {
-                    First_Draw_Done = ST_TRUE;
+                    first_draw_done = ST_TRUE;
                     Copy_On_To_Off_Page();
                 }
                 Release_Time(2);
@@ -5165,27 +4902,11 @@ int16_t Newgame_Screen_5(void)
 
         }  /* while(leave_screen == ST_FALSE) */
 
-    }  /* for(itr2 = 0; itr2 < 5; itr2++) */
+    }  /* for(itr_realms = 0; itr_realms < NUM_MAGIC_TYPES; itr_realms++) */
 
     Deactivate_Auto_Function();
 
-    /* CLAUDE */
-    /* Diagnostic dump of the realm-slot ordering, so the next reader can see exactly how this screen lays out the
-       human's picks. Realm slots are dumped in this function's own (sbr / identity) order: 0=Nature, 1=Sorcery,
-       2=Chaos, 3=Life, 4=Death. Compare against Init_Computer_Players_Spell_Library, which reads realms[] in pssr
-       order — see doc/NewGame/NEWGAME-Newgame_Screen_5.md "Cross-function observation (DEDU)". Remove once settled. */
-    {
-        int16_t dbg_realm = 0;
-        static const char * dbg_realm_names[5] = { "Nature", "Sorcery", "Chaos", "Life", "Death" };
-        LOG_INFO(LOG_CAT_NEWGAME, "Newgame_Screen_5 end: _players[0].spellranks[0..4] = %d, %d, %d, %d, %d", _players[0].spellranks[0], _players[0].spellranks[1], _players[0].spellranks[2], _players[0].spellranks[3], _players[0].spellranks[4]);
-        for(dbg_realm = 0; dbg_realm < 5; dbg_realm++)
-        {
-            LOG_INFO(LOG_CAT_NEWGAME, "  slot %d (%-7s) _player_start_spells[0].realms[%d].spells[0..12] = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", dbg_realm, dbg_realm_names[dbg_realm], dbg_realm, _player_start_spells[0].realms[dbg_realm].spells[0], _player_start_spells[0].realms[dbg_realm].spells[1], _player_start_spells[0].realms[dbg_realm].spells[2], _player_start_spells[0].realms[dbg_realm].spells[3], _player_start_spells[0].realms[dbg_realm].spells[4], _player_start_spells[0].realms[dbg_realm].spells[5], _player_start_spells[0].realms[dbg_realm].spells[6], _player_start_spells[0].realms[dbg_realm].spells[7], _player_start_spells[0].realms[dbg_realm].spells[8], _player_start_spells[0].realms[dbg_realm].spells[9], _player_start_spells[0].realms[dbg_realm].spells[10], _player_start_spells[0].realms[dbg_realm].spells[11], _player_start_spells[0].realms[dbg_realm].spells[12]);
-            LOG_INFO(LOG_CAT_NEWGAME, "  slot %d (%-7s) _default_spells[%d].spells[0..12]            = %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", dbg_realm, dbg_realm_names[dbg_realm], dbg_realm, _default_spells[dbg_realm].spells[0], _default_spells[dbg_realm].spells[1], _default_spells[dbg_realm].spells[2], _default_spells[dbg_realm].spells[3], _default_spells[dbg_realm].spells[4], _default_spells[dbg_realm].spells[5], _default_spells[dbg_realm].spells[6], _default_spells[dbg_realm].spells[7], _default_spells[dbg_realm].spells[8], _default_spells[dbg_realm].spells[9], _default_spells[dbg_realm].spells[10], _default_spells[dbg_realm].spells[11], _default_spells[dbg_realm].spells[12]);
-        }
-    }
-
-    // NOTE(drake178); BUG: prevents moving backwards if there are no spells to select
+    /* OGBUG  with no realm of 2+ books every pass of the realm loop leaves leave_screen ST_TRUE, so the screen loop never runs and this returns ngscr_Race at once; Newgame_Control() sends Esc on the race screen back to ngscr_Spells for a custom wizard, so Esc bounces between the two and the custom picks screen (ngscr_Creation) cannot be reached again */
     return ngscr_Race;
 
 }
@@ -5288,7 +5009,7 @@ void Newgame_Screen_5_Spell_Fields(void)
             {
                 for(itr2 = 0; itr2 < 5; itr2++)
                 {
-                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), empty_string__ovr050, ST_UNDEFINED);
                     field_idx++;
                 }
             }
@@ -5306,7 +5027,7 @@ void Newgame_Screen_5_Spell_Fields(void)
             {
                 for(itr2 = 0; itr2 < 5; itr2++)
                 {
-                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), empty_string__ovr050, ST_UNDEFINED);
                     field_idx++;
                 }
             }
@@ -5324,7 +5045,7 @@ void Newgame_Screen_5_Spell_Fields(void)
             {
                 for(itr2 = 0; itr2 < 5; itr2++)
                 {
-                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), (int16_t)empty_string__ovr050[0], ST_UNDEFINED);
+                    m_newgame_fields[field_idx] = Add_Hidden_Field((170 + (74 * itr)), (start_y + (7 * itr2)), (240 + (78 * itr)), (start_y + 5 + (7 * itr2)), empty_string__ovr050, ST_UNDEFINED);
                     field_idx++;
                 }
             }
@@ -5342,6 +5063,8 @@ void Newgame_Screen_5_Spell_Fields(void)
 }
 
 
+// MGC o050p23
+// BinAlgo: SelectSpells_Redraw
 /**
  * @brief Draws one frame of custom-wizard screen 5 (spell selection).
  *
@@ -5355,10 +5078,10 @@ void Newgame_Screen_5_Spell_Fields(void)
  * 2) Draws background, right overlay, and lower panel/button art.
  * 3) Draws wizard name text with shadow/foreground color layers.
  * 4) Draws bookshelf books from `_players[0].spellranks[]` across realms.
- * 5) Draws active/inactive OK button based on `NEWG_ProfileComplete`; if
+ * 5) Draws active/inactive OK button based on `m_all_picks_made`; if
  *    incomplete and hovered over OK, sets `NEWG_PickError = 1`.
  * 6) Builds and prints picks-remaining text from `spellpicks_count` and
- *    updates `NEWG_ProfileComplete` when picks reach zero.
+ *    updates `m_all_picks_made` when picks reach zero.
  * 7) Draws selected-abilities summary and delegates extra screen-5 detail draw
  *    to `Newgame_Screen_5_Draw_Spells()`.
  *
@@ -5376,13 +5099,11 @@ void Newgame_Screen_5_Spell_Fields(void)
  */
 void Newgame_Screen_5_Draw(void)
 {
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 31, 31, 31, 31, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t text_colors[COLOR_SET_COUNT] = { 187, 187, 187, 187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     char buffer[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t light_colors[5] = { 0, 0, 0, 0, 0 };
-    uint8_t dark_colors[5] = { 0, 0, 0, 0, 0 };
-    int16_t x_start = 0;
-    int16_t itr = 0;
-    memcpy(dark_colors, m_dark_colors, 5);
-    memcpy(light_colors, m_light_colors, 5);
+    int16_t bookshelf_x = 0;  // _DI_
+    int16_t itr = 0;  // _SI_
     auto_input_field_idx = Auto_Input();
     FLIC_Draw(0, 0, newgame_background_seg);
     FLIC_Draw(181, 18, IMG_NewG_RgtOverlay);  /* ((360 / 2) + 1); 18 is the start of the rope */
@@ -5391,52 +5112,52 @@ void Newgame_Screen_5_Draw(void)
     /*
         BEGIN:  Player Name
     */
-    Set_Font_Style(0, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(4, &dark_colors[0]);
-    Print_Centered(78, 120, _players[0].name);
-    Print_Centered(77, 120, _players[0].name);
-    Set_Font_Colors_15(4, &light_colors[0]);
-    Print_Centered(77, 119, _players[0].name);
+    Set_Font_Style(4, 15, ST_NULL, ST_NULL);
+    Set_Font_Colors_15(4, shadow_colors);
+    Print_Centered(78, 120, _players[HUMAN_PLAYER_IDX].name);
+    Print_Centered(77, 120, _players[HUMAN_PLAYER_IDX].name);
+    Set_Font_Colors_15(4, text_colors);
+    Print_Centered(77, 119, _players[HUMAN_PLAYER_IDX].name);
     /*
         END:  Player Name
     */
     /*
         BEGIN:  Bookshelf
     */
-    x_start = 36;
-    for(itr = 0; itr < _players[0].spellranks[3]; itr++)
+    bookshelf_x = 36;
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Life]; itr++)
     {
-        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[( 0 + TBL_Bookshelf_Books[itr])]);
-        x_start += 8;
+        FLIC_Draw(bookshelf_x, 135, m_spellbook_pict_segs[(LIFE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += 8;
     }
-    for(itr = 0; itr < _players[0].spellranks[4]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Death]; itr++)
     {
-        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(9 + TBL_Bookshelf_Books[itr])]);
-        x_start += 8;
+        FLIC_Draw(bookshelf_x, 135, m_spellbook_pict_segs[(DEATH_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += 8;
     }
-    for(itr = 0; itr < _players[0].spellranks[2]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Chaos]; itr++)
     {
-        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(12 + TBL_Bookshelf_Books[itr])]);
-        x_start += 8;
+        FLIC_Draw(bookshelf_x, 135, m_spellbook_pict_segs[(CHAOS_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += 8;
     }
-    for(itr = 0; itr < _players[0].spellranks[0]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Nature]; itr++)
     {
-        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(6 + TBL_Bookshelf_Books[itr])]);
-        x_start += 8;
+        FLIC_Draw(bookshelf_x, 135, m_spellbook_pict_segs[(NATURE_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += 8;
     }
-    for(itr = 0; itr < _players[0].spellranks[1]; itr++)
+    for(itr = 0; itr < _players[HUMAN_PLAYER_IDX].spellranks[sbr_Sorcery]; itr++)
     {
-        FLIC_Draw(x_start, 135, m_spellbook_pict_segs[(3 + TBL_Bookshelf_Books[itr])]);
-        x_start += 8;
+        FLIC_Draw(bookshelf_x, 135, m_spellbook_pict_segs[(SORCERY_BOOK_PICTS + TBL_Bookshelf_Books[itr])]);
+        bookshelf_x += 8;
     }
     /*
         END:  Bookshelf
     */
-    if(NEWG_ProfileComplete != ST_FALSE)
+    if(m_all_picks_made != ST_FALSE)
     {
         if(auto_input_field_idx == _ok_button)
         {
-            FLIC_Draw(253, 183, newgame_ok_button_seg);  // BUGBUG  shoudl be up/down, but probably should just let Fields, Push Down handle it?
+            FLIC_Draw(253, 183, newgame_ok_button_seg);
         }
         else
         {
@@ -5448,23 +5169,23 @@ void Newgame_Screen_5_Draw(void)
         FLIC_Draw(252, 182, _ok_inactive_seg);
         if(auto_input_field_idx == _ok_button)
         {
-            NEWG_PickError = 1;
+            NEWG_PickError = SPELL_PICK_ERROR_PICKS_LEFT;
         }
     }
     stu_itoa(spellpicks_count, buffer, 10);
     stu_strcat(buffer, cnst_Picks);
-/* WTF */    if(spellpicks_count == 0)
-/* WTF */    {
-/* WTF */        NEWG_ProfileComplete = ST_TRUE;
-/* WTF */    }
-/* WTF */    else
-/* WTF */    {
-/* WTF */        NEWG_ProfileComplete = ST_FALSE;
-/* WTF */    }
+    if(spellpicks_count == 0)
+    {
+        m_all_picks_made = ST_TRUE;
+    }
+    else
+    {
+        m_all_picks_made = ST_FALSE;
+    }
     Set_Font_Style(3, 15, ST_NULL, ST_NULL);
-    Set_Font_Colors_15(3, &light_colors[0]);
+    Set_Font_Colors_15(3, text_colors);
     Print_Centered(222, 186, buffer);
-    Set_Font_Colors_15(3, &dark_colors[0]);
+    Set_Font_Colors_15(3, shadow_colors);
     Print_Centered(221, 185, buffer);
 
     Draw_Special_Abilities_String();
@@ -5477,73 +5198,66 @@ void Newgame_Screen_5_Draw(void)
 // MGC  o50p24
 void Newgame_Screen_5_Draw_Spells(void)
 {
-    char section_title_string[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    char realm_strings[5][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
-    char rarity_strings[4][10] = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
-    int16_t selected_spells[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    uint8_t realm_color = 0;
-    uint8_t realm_colors[5] = { 0, 0, 0, 0, 0 };
-    char buffer[4] = { 0, 0, 0, 0 };
-    uint8_t * l_shadow_colors = NULL;
-    uint8_t * l_selected_colors = NULL;
-    uint8_t * l_deselected_colors = NULL;
-    int16_t section_box_start_y[3] = { 0, 0, 0 };
-    int16_t section_title_start_y[3] = { 0, 0, 0 };
-    int16_t Display_Type = 0;
-    int16_t niu_selection_count = 0;  // OGBUG: always written, never read
-    int16_t * p_start_spells = NULL;
-    int16_t spell_idx = 0;
-    int16_t Label_Box_Height = 0;
-    int16_t Selection_Realm = 0;
-    int16_t spellrank_idx = 0;
-    int16_t section_idx = 0;
+    int16_t itr_rows = 0;
+    int16_t selection_idx = 0;
     int16_t spellrank_cnt = 0;
-    int16_t Selection_Index = 0;
-    int16_t itr2 = 0;
-    int16_t itr = 0;
+    int16_t section_idx = 0;
+    int16_t spellrank_idx = 0;
+    int16_t selection_realm = 0;
+    int16_t label_box_y = 0;
+    int16_t spell_idx = 0;
+    int16_t * p_start_spells = NULL;
+    int16_t niu_selection_count = 0;  // OGBUG: always written, never read
+    int16_t display_type = 0;
+    int16_t section_title_start_y[3] = { 26, 77, 128 };
+    int16_t section_box_start_y[3] = { 37, 88, 139 };
+    uint8_t deselected_colors[COLOR_SET_COUNT] = { 25, 50 };
+    uint8_t selected_colors[COLOR_SET_COUNT] = { 22, 178 };
+    uint8_t shadow_colors[COLOR_SET_COUNT] = { 16, 16 };
+    char buffer[4] = { 0, 0, 0, 0 };
+    uint8_t realm_colors[COLOR_SET_COUNT] = { 0, 0, 0, 0, 0 };
+    uint8_t realm_color = 0;
+    int16_t selected_spells[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char rarity_strings[4][10] = { "Common", "Uncommon", "Rare", "Very Rare" };
+    char realm_strings[5][10] = { "Nature", "Sorcery", "Chaos", "Life", "Death" };
+    char section_title_string[30] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t itr = 0;  // _DI_
     
-    memcpy(section_title_start_y, Label_Box_TitleTops2, 6);
-    memcpy(section_box_start_y, Label_Box_TextTops2, 6);
-    l_deselected_colors = m_select_spells_deselected_colors;
-    l_selected_colors = m_select_spells_selected_colors;
-    l_shadow_colors = m_select_spells_shadow_colors;
-    memcpy(rarity_strings, m_rarity_strings, 40);
-    memcpy(realm_strings, m_realm_strings, 50);
-
 // Severity	Code	Description	Project	File	Line	Suppression State	Details
 // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5618		
 // selected_spells[itr] = p_start_spells[(10 + itr)];
-    p_start_spells = &_player_start_spells[0].realms[0].spells[0]; // set it to something non-NULL to avoid dereferencing NULL pointer warnings, but it will be properly set below before use
+    /* HACK */  /* no such store in the asm: it only quiets MSVC /analyze C6011; one of the five realm tests below always sets p_start_spells */
+    p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[0].spells[0]; // set it to something non-NULL to avoid dereferencing NULL pointer warnings, but it will be properly set below before use
 
     if(m_select_spells_realm == sbr_Chaos)
     {
-        p_start_spells = &_player_start_spells[0].realms[sbr_Chaos].spells[0];
+        p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Chaos].spells[0];
         realm_color = CHAOS_RED;
-        Selection_Realm = sbr_Chaos;
+        selection_realm = sbr_Chaos;
     }
     if(m_select_spells_realm == sbr_Sorcery)
     {
-        p_start_spells = &_player_start_spells[0].realms[sbr_Sorcery].spells[0];
+        p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Sorcery].spells[0];
         realm_color = SORCERY_BLUE;
-        Selection_Realm = sbr_Sorcery;
+        selection_realm = sbr_Sorcery;
     }
     if(m_select_spells_realm == sbr_Nature)
     {
-        p_start_spells = &_player_start_spells[0].realms[sbr_Nature].spells[0];
+        p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Nature].spells[0];
         realm_color = NATURE_GREEN;
-        Selection_Realm = sbr_Nature;
+        selection_realm = sbr_Nature;
     }
     if(m_select_spells_realm == sbr_Life)
     {
-        p_start_spells = &_player_start_spells[0].realms[sbr_Life].spells[0];
+        p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Life].spells[0];
         realm_color = LIFE_WHITE;
-        Selection_Realm = sbr_Life;
+        selection_realm = sbr_Life;
     }
     if(m_select_spells_realm == sbr_Death)
     {
-        p_start_spells = &_player_start_spells[0].realms[sbr_Death].spells[0];
+        p_start_spells = &_player_start_spells[HUMAN_PLAYER_IDX].realms[sbr_Death].spells[0];
         realm_color = DEATH_PURPLE;
-        Selection_Realm = sbr_Death;
+        selection_realm = sbr_Death;
     }
 
     for(itr = 0; itr < 5; itr++)
@@ -5552,19 +5266,19 @@ void Newgame_Screen_5_Draw_Spells(void)
     }
 
     stu_strcpy(section_title_string, cnst_Spell_Select_0);
-    stu_strcat(section_title_string, realm_strings[Selection_Realm]);
+    stu_strcat(section_title_string, realm_strings[selection_realm]);
     stu_strcat(section_title_string, cnst_Spell_Select_1);
     Set_Font_Colors_15(4, &realm_colors[0]);
     Set_Font_Style_Shadow_Down(4, 15, ST_NULL, ST_NULL);
     Print_Centered(241, 6, section_title_string);  /* "Select " [] " Spells" */
 
-    FLIC_Draw(24, 10, wizard_portrait_segs[_players[0].wizard_id]);
+    FLIC_Draw(24, 10, wizard_portrait_segs[_players[HUMAN_PLAYER_IDX].wizard_id]);
 
-    spellrank_cnt = (_players[0].spellranks[m_select_spells_realm] - 1);
+    spellrank_cnt = (_players[HUMAN_PLAYER_IDX].spellranks[m_select_spells_realm] - 1);
 
     section_idx = 0;
 
-    Label_Box_Height = 39;
+    label_box_y = SPELL_SECTION_FIRST_Y;
 
     spellpicks_count = 0;
 
@@ -5576,25 +5290,14 @@ void Newgame_Screen_5_Draw_Spells(void)
         /*
             BEGIN:  Common
         */
-        if(m_select_count_common[spellrank_idx] < 10)
+        if(m_select_count_common[spellrank_idx] < NUM_START_SPELLS_COMMON)
         {
-            // p_start_spells[m_select_count_common[spellrank_idx]] = 0;
-            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5505		
-            if(p_start_spells)
-            {
-                p_start_spells[m_select_count_common[spellrank_idx]] = spl_NONE;
-            }
+            p_start_spells[m_select_count_common[spellrank_idx]] = spl_NONE;
         }
-// ; copy the common spell selection to the display array,
-// ; marking empty slots as -1s instead of 0s
-        for(itr = 0; itr < 10; itr++)
+        // ; copy the common spell selection to the display array, marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < NUM_START_SPELLS_COMMON; itr++)
         {
-            // selected_spells[itr] = p_start_spells[itr];
-            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5577		
-            if(p_start_spells)
-            {
-                selected_spells[itr] = p_start_spells[itr];
-            }
+            selected_spells[itr] = p_start_spells[itr];
             if(selected_spells[itr] == spl_NONE)
             {
                 selected_spells[itr] = ST_UNDEFINED;
@@ -5603,7 +5306,7 @@ void Newgame_Screen_5_Draw_Spells(void)
         if(
             (m_select_count_common[spellrank_idx] > 0)
             &&
-            (m_select_count_common[spellrank_idx] < 10)
+            (m_select_count_common[spellrank_idx] < NUM_START_SPELLS_COMMON)
         )
         {
             spellpicks_count += m_select_count_common[spellrank_idx];
@@ -5616,38 +5319,36 @@ void Newgame_Screen_5_Draw_Spells(void)
             Print(167, section_title_start_y[section_idx], section_title_string);
             FLIC_Draw(167, section_box_start_y[section_idx], m_shared_pict_segs[section_idx]);
             niu_selection_count = 0;
-            for(itr = 0; itr < 2; itr++)
+            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
             {
-                for(itr2 = 0; itr2 < 5; itr2++)
+                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                 {
-                    spell_idx = ( 0 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
-                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
-                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
-                    Display_Type = ST_UNDEFINED;
-                    // ; if the spell is in the display array, remove it from
-                    // ; there, change the display type, and increase the
-                    // ; selection count
-                    for(Selection_Index = 0; (m_select_count_common[spellrank_idx] > Selection_Index); Selection_Index++)
+                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + 1);
+                    Set_Font_Colors_15(0, shadow_colors);
+                    Print_Far((176 + (74 * itr)), (label_box_y + (7 * itr_rows) + 1), spell_data_table[spell_idx].name);
+                    display_type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from there, change the display type, and increase the selection count
+                    for(selection_idx = 0; (m_select_count_common[spellrank_idx] > selection_idx); selection_idx++)
                     {
-                        if(selected_spells[Selection_Index] == spell_idx)
+                        if(selected_spells[selection_idx] == spell_idx)
                         {
                             niu_selection_count++;
-                            Display_Type = 1;
-                            selected_spells[Selection_Index] = ST_UNDEFINED;
-                            Selection_Index = m_select_count_common[spellrank_idx];
+                            display_type = 1;
+                            selected_spells[selection_idx] = ST_UNDEFINED;
+                            selection_idx = m_select_count_common[spellrank_idx];
                         }
                     }
-                    if(Display_Type != ST_UNDEFINED)
+                    if(display_type != ST_UNDEFINED)
                     {
-                        Set_Font_Colors_15(0, &l_selected_colors[0]);
-                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        Set_Font_Colors_15(0, selected_colors);
+                        FLIC_Draw((169 + (74 * itr)), (label_box_y + (itr_rows * 7) + 1), _selection_marker_seg);
                         spellpicks_count--;
                     }
                     else
                     {
-                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                        Set_Font_Colors_15(0, deselected_colors);
                     }
-                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Print_Far((175 + (74 * itr)), (label_box_y + (7 * itr_rows)), spell_data_table[spell_idx].name);
                 }
             }
             section_idx++;
@@ -5658,31 +5359,24 @@ void Newgame_Screen_5_Draw_Spells(void)
         /*
             BEGIN:  Uncommon
         */
-        if(m_select_count_uncommon[spellrank_idx] < 2)
+        if(m_select_count_uncommon[spellrank_idx] < NUM_START_SPELLS_UNCOMMON)
         {
-            // p_start_spells[(10 + m_select_count_uncommon[spellrank_idx])] = 0;
-            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5603		
-            if(p_start_spells)
-            {
-                p_start_spells[(10 + m_select_count_uncommon[spellrank_idx])] = 0;
-            }
+            p_start_spells[(START_SPELLS_UNCOMMON + m_select_count_uncommon[spellrank_idx])] = spl_NONE;
         }
-// ; copy the uncommon spell selection to the display
-// ; array, marking empty slots as -1s instead of 0s
-        for(itr = 0; itr < 2; itr++)
+        // ; copy the uncommon spell selection to the display array, marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < NUM_START_SPELLS_UNCOMMON; itr++)
         {
-            selected_spells[itr] = p_start_spells[(10 + itr)];
-            if(selected_spells[itr] == 0)
+            selected_spells[itr] = p_start_spells[(START_SPELLS_UNCOMMON + itr)];
+            if(selected_spells[itr] == spl_NONE)
             {
                 selected_spells[itr] = ST_UNDEFINED;
             }
         }
         if(m_select_count_uncommon[spellrank_idx] > 0)
         {
-// ; draw the uncommon spell selection box complete with
-// ; the current selection highlights and tick marks
+            // ; draw the uncommon spell selection box complete with the current selection highlights and tick marks
             spellpicks_count += m_select_count_uncommon[spellrank_idx];
-            Label_Box_Height = (39 + (section_idx * 51));
+            label_box_y = (SPELL_SECTION_FIRST_Y + (section_idx * SPELL_SECTION_HEIGHT));
             stu_strcpy(section_title_string, rarity_strings[1]);
             stu_strcat(section_title_string, cnst_Spell_Select_2);
             stu_itoa(m_select_count_uncommon[spellrank_idx], buffer, 10);
@@ -5690,40 +5384,38 @@ void Newgame_Screen_5_Draw_Spells(void)
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
             Print(167, section_title_start_y[section_idx], section_title_string);
-            FLIC_Draw(167, section_title_start_y[section_idx], m_shared_pict_segs[section_idx]);
+            FLIC_Draw(167, section_box_start_y[section_idx], m_shared_pict_segs[section_idx]);
             niu_selection_count = 0;
-            for(itr = 0; itr < 2; itr++)
+            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
             {
-                for(itr2 = 0; itr2 < 5; itr2++)
+                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                 {
-                    spell_idx = (10 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
-                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
-                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
-                    Display_Type = ST_UNDEFINED;
-                    // ; if the spell is in the display array, remove it from
-                    // ; there, change the display type, and increase the
-                    // ; selection count
-                    for(Selection_Index = 0; (m_select_count_uncommon[spellrank_idx] > Selection_Index); Selection_Index++)
+                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + (NUM_SPELLS_PER_MAGIC_RARITY + 1));
+                    Set_Font_Colors_15(0, shadow_colors);
+                    Print_Far((176 + (74 * itr)), (label_box_y + (7 * itr_rows) + 1), spell_data_table[spell_idx].name);
+                    display_type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from there, change the display type, and increase the selection count
+                    for(selection_idx = 0; (m_select_count_uncommon[spellrank_idx] > selection_idx); selection_idx++)
                     {
-                        if(selected_spells[Selection_Index] == spell_idx)
+                        if(selected_spells[selection_idx] == spell_idx)
                         {
                             niu_selection_count++;
-                            Display_Type = 1;
-                            selected_spells[Selection_Index] = ST_UNDEFINED;
-                            Selection_Index = m_select_count_uncommon[spellrank_idx];
+                            display_type = 1;
+                            selected_spells[selection_idx] = ST_UNDEFINED;
+                            selection_idx = m_select_count_uncommon[spellrank_idx];
                         }
                     }
-                    if(Display_Type != ST_UNDEFINED)
+                    if(display_type != ST_UNDEFINED)
                     {
-                        Set_Font_Colors_15(0, &l_selected_colors[0]);
-                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        Set_Font_Colors_15(0, selected_colors);
+                        FLIC_Draw((169 + (74 * itr)), (label_box_y + (itr_rows * 7) + 1), _selection_marker_seg);
                         spellpicks_count--;
                     }
                     else
                     {
-                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                        Set_Font_Colors_15(0, deselected_colors);
                     }
-                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Print_Far((175 + (74 * itr)), (label_box_y + (7 * itr_rows)), spell_data_table[spell_idx].name);
                 }
             }
             section_idx++;
@@ -5734,31 +5426,24 @@ void Newgame_Screen_5_Draw_Spells(void)
         /*
             BEGIN:  Rare
         */
-        if(m_select_count_rare[spellrank_idx] < 1)
+        if(m_select_count_rare[spellrank_idx] < NUM_START_SPELLS_RARE)
         {
-            // p_start_spells[(12 + m_select_count_rare[spellrank_idx])] = 0;
-            // Warning	C6011	Dereferencing NULL pointer 'p_start_spells'. 	003_MoM	C:\STU\devel\ReMoM\MoM\src\NewGame.c	5624		
-            if(p_start_spells)
-            {
-                p_start_spells[(12 + m_select_count_rare[spellrank_idx])] = 0;
-            }
+            p_start_spells[(START_SPELLS_RARE + m_select_count_rare[spellrank_idx])] = spl_NONE;
         }
-// ; copy the rare spell selection to the display array,
-// ; marking empty slots as -1s instead of 0s
-        for(itr = 0; itr < 1; itr++)
+        // ; copy the rare spell selection to the display array, marking empty slots as -1s instead of 0s
+        for(itr = 0; itr < NUM_START_SPELLS_RARE; itr++)
         {
-            selected_spells[itr] = p_start_spells[(12 + itr)];
-            if(selected_spells[itr] == 0)
+            selected_spells[itr] = p_start_spells[(START_SPELLS_RARE + itr)];
+            if(selected_spells[itr] == spl_NONE)
             {
                 selected_spells[itr] = ST_UNDEFINED;
             }
         }
         if(m_select_count_rare[spellrank_idx] > 0)
         {
-// ; draw the rare spell selection box complete with
-// ; the current selection highlights and tick marks
+            // ; draw the rare spell selection box complete with the current selection highlights and tick marks
             spellpicks_count += m_select_count_rare[spellrank_idx];
-            Label_Box_Height = (39 + (section_idx * 51));
+            label_box_y = (SPELL_SECTION_FIRST_Y + (section_idx * SPELL_SECTION_HEIGHT));
             stu_strcpy(section_title_string, rarity_strings[2]);
             stu_strcat(section_title_string, cnst_Spell_Select_2);
             stu_itoa(m_select_count_rare[spellrank_idx], buffer, 10);
@@ -5766,40 +5451,38 @@ void Newgame_Screen_5_Draw_Spells(void)
             Set_Font_Colors_15(3, &realm_colors[0]);
             Set_Font_Style_Shadow_Down(3, 15, ST_NULL, ST_NULL);
             Print(167, section_title_start_y[section_idx], section_title_string);
-            FLIC_Draw(167, section_title_start_y[section_idx], m_shared_pict_segs[section_idx]);
+            FLIC_Draw(167, section_box_start_y[section_idx], m_shared_pict_segs[section_idx]);
             niu_selection_count = 0;
-            for(itr = 0; itr < 2; itr++)
+            for(itr = 0; itr < SPELL_LIST_COLUMNS; itr++)
             {
-                for(itr2 = 0; itr2 < 5; itr2++)
+                for(itr_rows = 0; itr_rows < SPELL_LIST_ROWS; itr_rows++)
                 {
-                    spell_idx = (20 + (Selection_Realm * NUM_SPELLS_PER_MAGIC_REALM) + (itr * 5) + itr2 + 1);
-                    Set_Font_Colors_15(0, &l_shadow_colors[0]);
-                    Print_Far((176 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
-                    Display_Type = ST_UNDEFINED;
-                    // ; if the spell is in the display array, remove it from
-                    // ; there, change the display type, and increase the
-                    // ; selection count
-                    for(Selection_Index = 0; (m_select_count_rare[spellrank_idx] > Selection_Index); Selection_Index++)
+                    spell_idx = ((selection_realm * NUM_SPELLS_PER_MAGIC_REALM) + itr_rows + (itr * SPELL_LIST_ROWS) + ((2 * NUM_SPELLS_PER_MAGIC_RARITY) + 1));
+                    Set_Font_Colors_15(0, shadow_colors);
+                    Print_Far((176 + (74 * itr)), (label_box_y + (7 * itr_rows) + 1), spell_data_table[spell_idx].name);
+                    display_type = ST_UNDEFINED;
+                    // ; if the spell is in the display array, remove it from there, change the display type, and increase the selection count
+                    for(selection_idx = 0; (m_select_count_rare[spellrank_idx] > selection_idx); selection_idx++)
                     {
-                        if(selected_spells[Selection_Index] == spell_idx)
+                        if(selected_spells[selection_idx] == spell_idx)
                         {
                             niu_selection_count++;
-                            Display_Type = 1;
-                            selected_spells[Selection_Index] = ST_UNDEFINED;
-                            Selection_Index = m_select_count_rare[spellrank_idx];
+                            display_type = 1;
+                            selected_spells[selection_idx] = ST_UNDEFINED;
+                            selection_idx = m_select_count_rare[spellrank_idx];
                         }
                     }
-                    if(Display_Type != ST_UNDEFINED)
+                    if(display_type != ST_UNDEFINED)
                     {
-                        Set_Font_Colors_15(0, &l_selected_colors[0]);
-                        FLIC_Draw((169 + (74 * itr)), (Label_Box_Height + (itr2 * 7) + 1), _selection_marker_seg);
+                        Set_Font_Colors_15(0, selected_colors);
+                        FLIC_Draw((169 + (74 * itr)), (label_box_y + (itr_rows * 7) + 1), _selection_marker_seg);
                         spellpicks_count--;
                     }
                     else
                     {
-                        Set_Font_Colors_15(0, &l_deselected_colors[0]);
+                        Set_Font_Colors_15(0, deselected_colors);
                     }
-                    Print_Far((175 + (74 * itr)), (Label_Box_Height + (7 * itr2) + 1), spell_data_table[spell_idx].name);
+                    Print_Far((175 + (74 * itr)), (label_box_y + (7 * itr_rows)), spell_data_table[spell_idx].name);
                 }
             }
             section_idx++;
@@ -5882,85 +5565,86 @@ void Human_Player_Wizard_Profile(int16_t wizard_id)
     spellranks = _players[0].spellranks[sbr_Nature];
     if(spellranks > 1)
     {
-        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        /* OGBUG  a preset reads the count tables one entry late ([spellranks - 1]; Newgame_Screen_5() reads [spellranks - 2]): b books store b commons instead of b - 1, and 10 books store all 10 commons, 2 uncommons and 1 rare (the 11-book set); latent: below 11 books Init_Computer_Players_Spell_Library() makes known only picks 0 .. spellranks - 2 */
+        for(itr = 0; m_select_count_common[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Nature].spells[( 0 + itr)] = _default_spells[sbr_Nature].spells[(0 + itr)];
         }
-        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_uncommon[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Nature].spells[(10 + itr)] = _default_spells[sbr_Nature].spells[(10 + itr)];
         }
-        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        if(m_select_count_rare[(spellranks - 1)] > 0)
         {
-            _player_start_spells[0].realms[sbr_Nature].spells[(12 + itr)] = _default_spells[sbr_Nature].spells[(12 + itr)];
+            _player_start_spells[0].realms[sbr_Nature].spells[12] = _default_spells[sbr_Nature].spells[12];
         }
     }
 
     spellranks = _players[0].spellranks[sbr_Sorcery];
     if(spellranks > 1)
     {
-        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_common[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Sorcery].spells[( 0 + itr)] = _default_spells[sbr_Sorcery].spells[(0 + itr)];
         }
-        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_uncommon[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Sorcery].spells[(10 + itr)] = _default_spells[sbr_Sorcery].spells[(10 + itr)];
         }
-        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        if(m_select_count_rare[(spellranks - 1)] > 0)
         {
-            _player_start_spells[0].realms[sbr_Sorcery].spells[(12 + itr)] = _default_spells[sbr_Sorcery].spells[(12 + itr)];
+            _player_start_spells[0].realms[sbr_Sorcery].spells[12] = _default_spells[sbr_Sorcery].spells[12];
         }
     }
 
     spellranks = _players[0].spellranks[sbr_Chaos];
     if(spellranks > 1)
     {
-        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_common[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Chaos].spells[( 0 + itr)] = _default_spells[sbr_Chaos].spells[(0 + itr)];
         }
-        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_uncommon[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Chaos].spells[(10 + itr)] = _default_spells[sbr_Chaos].spells[(10 + itr)];
         }
-        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        if(m_select_count_rare[(spellranks - 1)] > 0)
         {
-            _player_start_spells[0].realms[sbr_Chaos].spells[(12 + itr)] = _default_spells[sbr_Chaos].spells[(12 + itr)];
+            _player_start_spells[0].realms[sbr_Chaos].spells[12] = _default_spells[sbr_Chaos].spells[12];
         }
     }
 
     spellranks = _players[0].spellranks[sbr_Life];
     if(spellranks > 1)
     {
-        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_common[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Life].spells[( 0 + itr)] = _default_spells[sbr_Life].spells[(0 + itr)];
         }
-        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_uncommon[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Life].spells[(10 + itr)] = _default_spells[sbr_Life].spells[(10 + itr)];
         }
-        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        if(m_select_count_rare[(spellranks - 1)] > 0)
         {
-            _player_start_spells[0].realms[sbr_Life].spells[(12 + itr)] = _default_spells[sbr_Life].spells[(12 + itr)];
+            _player_start_spells[0].realms[sbr_Life].spells[12] = _default_spells[sbr_Life].spells[12];
         }
     }
 
     spellranks = _players[0].spellranks[sbr_Death];
     if(spellranks > 1)
     {
-        for(itr = 0; (m_select_count_common[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_common[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Death].spells[( 0 + itr)] = _default_spells[sbr_Death].spells[(0 + itr)];
         }
-        for(itr = 0; (m_select_count_uncommon[spellranks] - 2) > itr; itr++)
+        for(itr = 0; m_select_count_uncommon[(spellranks - 1)] > itr; itr++)
         {
             _player_start_spells[0].realms[sbr_Death].spells[(10 + itr)] = _default_spells[sbr_Death].spells[(10 + itr)];
         }
-        if((m_select_count_uncommon[spellranks] - 2) > 0)
+        if(m_select_count_rare[(spellranks - 1)] > 0)
         {
-            _player_start_spells[0].realms[sbr_Death].spells[(12 + itr)] = _default_spells[sbr_Death].spells[(12 + itr)];
+            _player_start_spells[0].realms[sbr_Death].spells[12] = _default_spells[sbr_Death].spells[12];
         }
     }
 
@@ -5972,85 +5656,48 @@ void Human_Player_Wizard_Profile(int16_t wizard_id)
 // MGC  o50p26
 // Fade_Out()
 
+
 // MGC  o50p27
 // VGA_Fade_In()
+
 
 // MGC  o50p28
 // Set_Load_Screen_Help_List_MGC()
 
+
 // MGC  o50p29
-// drake178: HLP_Load_NewGOptions()
-/*
-loads and sets the GUI help entry area array for the
-new game options selection screen
-*/
-/*
-
-¿ Set_Options_Screen_Help_List ?
-
-*/
 void Set_Newgame_Screen_0_Help_List(void)
 {
-
     // HLPENTRY.LBX, 29  Options Screen Help
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 29, (SAMB_ptr)_help_entries, 0, 6, 10);
-
     Set_Help_List(_help_entries, 6);
-
 }
 
 
 // MGC  o50p30
-// HLP_Load_BannerSel()
-/*
-
-*/
 void Set_Newgame_Screen_7_Help_List(void)
 {
-
     // HLPENTRY.LBX, 030  ""  "Banner Selection Help"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 30, (SAMB_ptr)_help_entries, 0, 1, 10);
-
     Set_Help_List(_help_entries, 1);
-
 }
 
+
 // MGC  o50p31
-// HLP_Load_PortraitSel()
-/* 
-; loads and sets the GUI help entry area array for the
-; wizard portrait selection screen
-*/
 void Set_Newgame_Screen_2_Help_List(void)
 {
-
     // HLPENTRY.LBX, 031  ""  "Wizard Picture Select"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 31, (SAMB_ptr)_help_entries, 0, 1, 10);
-
     Set_Help_List(_help_entries, 1);
-
 }
 
 
 // MGC  o50p32
-/*
-; loads and sets the GUI help entry area array for the
-; wizard selection screen
-*/
-/*
-
-*/
 void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 {
-
     // HLPENTRY.LBX, 032  ""  "Wizard Selection Help"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 32, (SAMB_ptr)_help_entries, 0, 15, 10);
-
-    if(has_custom != ST_FALSE)
-    {
-        _help_entries[14].help_idx = HLP_CUSTOM;
-    }
-
+    if(has_custom != ST_FALSE) { _help_entries[14].help_idx = HLP_CUSTOM; }
     Set_Help_List(_help_entries, 15);
 
 }
@@ -6059,23 +5706,17 @@ void Set_Newgame_Screen_1_Help_List(int16_t has_custom)
 // MGC  o50p33
 void Set_Newgame_Screen_4_Help_List(void)
 {
-
     // HLPENTRY.LBX, 033  ""  "Wizard Creation Help"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 33, (SAMB_ptr)_help_entries, 0, 25, 10);
-
     Set_Help_List(_help_entries, 25);
-
 }
 
 // MGC  o50p34
 void Set_Newgame_Screen_6_Help_List(void)
 {
-
     // HLPENTRY.LBX, 035  ""  "Wizard Race Help"
     LBX_Load_Data_Static(hlpentry_lbx_file__MGC_ovr050, 35, (SAMB_ptr)_help_entries, 0, 14, 10);
-
     Set_Help_List(_help_entries, 14);
-
 }
 
 // MGC  o50p35
@@ -6084,58 +5725,95 @@ void Set_Newgame_Screen_6_Help_List(void)
  *
  * @details
  * Increments the running item counter and appends either a comma separator or
- * the final "and" separator into `Dest`, depending on whether the current item
+ * the final "and" separator into `list`, depending on whether the current item
  * is the last element in the list.
  *
  * Behavior:
- * - Increments `*List_Size` by 1.
- * - If `*List_Size == Total` and there is more than one item, appends
+ * - Increments `*size` by 1.
+ * - If `*size == count` and there is more than one item, appends
  *   `cnst_And__ovr050`.
- * - If `*List_Size < Total` and there is more than one item, appends
+ * - If `*size < count` and there is more than one item, appends
  *   `cnst_Pick_Error_29` (comma-style list separator).
  * - Appends nothing for the first item.
  *
- * @param List_Size Pointer to running count of items already processed; updated
+ * @param size Pointer to running count of items already processed; updated
  *                  in place.
- * @param Total Total number of items expected in the final formatted list.
- * @param Dest Destination C string buffer receiving the separator text via
+ * @param count Total number of items expected in the final formatted list.
+ * @param list Destination C string buffer receiving the separator text via
  *             `stu_strcat`.
  *
  * @return void
  *
- * @note `Dest` must reference a writable, NUL-terminated buffer with enough
+ * @note `list` must reference a writable, NUL-terminated buffer with enough
  *       remaining capacity for appended separator text.
  */
-void String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
+void Add_Comma_Or_And_MGC(int16_t * size, int16_t count, char * list)
 {
-
-    *List_Size += 1;
-
-    if(*List_Size == Total)
+    *size = (*size + 1);
+    if(*size == count)
     {
-        if(*List_Size > 1)
+        if(*size > 1)
         {
-            stu_strcat(Dest, &cnst_And__ovr050[0]);
+            stu_strcat(list, " and ");
         }
-
     }
     else
     {
-        if(*List_Size > 1)
+        if(*size > 1)
         {
-            stu_strcat(Dest, &cnst_Pick_Error_29[0]);
+            stu_strcat(list, ", ");
         }
-
     }
-
 }
 
 
 // MGC  o50p36
-// CRP_Empty_Dialog_Fn2()
+// drake178: CRP_Empty_Dialog_Fn2()
+/*
+appears to be a copy of s01p12_empty_function() from the seg001 code for WIZARDS.EXE
+so other code in the MAGIC.EXE can use the same function name
+FYI, s01p11 and s01p12 are part of the 'Expanding Help'
+*/
+void s01p12_empty_function_MGC(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
+
 
 // MGC  o50p37
-// CRP_Empty_Dialog_Fn1()
+// drake178: CRP_Empty_Dialog_Fn1()
+/*
+appears to be a copy of s01p11_empty_function() from the seg001 code for WIZARDS.EXE
+so other code in the MAGIC.EXE can use the same function name
+FYI, s01p11 and s01p12 are part of the 'Expanding Help'
+*/
+void s01p11_empty_function_MGC(void)
+{
+// push    bp
+// mov     bp, sp
+// pop     bp
+// retf
+}
+
 
 // MGC  o50p38
-// Do_Toggle_Pages()
+// AKA Do_Toggle_Pages()
+/*
+appears to be a stripped down replacement for PageFlip_FX() in the code for WIZARDS.EXE
+so other code in the MAGIC.EXE can use the same function name
+*/
+/*
+XREF:
+PageFlip_FX_MGC
+    |-> j_PageFlip_FX_MGC()
+        |-> UU_GUI_Confirm_Dialog()
+        |-> UU_GUI_ListSelect_Dlg()
+        |-> Hall_Of_Fame_Screen()
+*/
+void PageFlip_FX_MGC(void)
+{
+    Toggle_Pages();
+}

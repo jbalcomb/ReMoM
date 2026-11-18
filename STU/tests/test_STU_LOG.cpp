@@ -1,5 +1,13 @@
 #include <gtest/gtest.h>
 
+/* the CALL_TRACE contract test runs in every config, not only where STU_DEBUG turns STU_CALL_TRACE on */
+#undef STU_CALL_TRACE
+#define STU_CALL_TRACE 1
+
+/* these tests read TRACE and DEBUG output, so they run with no severity floor in every config (Release sets STU_LOG_MIN_SEVERITY=LOG_SEV_INFO) */
+#undef STU_LOG_MIN_SEVERITY
+#define STU_LOG_MIN_SEVERITY 0  /* LOG_SEV_TRACE */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -118,6 +126,48 @@ TEST(stu_log_test, AllSixSeveritiesProduceOutput)
 	EXPECT_NE(contents.find("[ERROR]"), std::string::npos);
 	EXPECT_NE(contents.find("trace msg"), std::string::npos);
 	EXPECT_NE(contents.find("error msg"), std::string::npos);
+}
+
+/* the [FN-ENTER]/[FN-EXIT] text is a contract with merge-remom-trace.py / compare-call-paths.py (ReMoM-CallTrace-PRD.md F3) -- pin it exactly */
+static void traced_function(void)
+{
+	TRACE_ENTER();
+	g_random_call_count += 3;
+	TRACE_EXIT_NOTE("(early)");
+	TRACE_EXIT();
+}
+
+TEST(stu_log_test, CallTraceMacrosEmitTheContractText)
+{
+	g_random_call_count = 41;
+	STU_Log_Startup(NULL);
+	traced_function();
+	TRACE_ENTER_NAMED("fopen");
+	TRACE_EXIT_NAMED("fopen");
+	STU_Log_Shutdown();
+
+	std::vector<std::string> fn_lines;
+	for (const std::string & line : split_lines(slurp_log_file("remom_log_new.txt")))
+	{
+		std::string::size_type p = line.find("[FN-E");
+		if(p != std::string::npos)
+		{
+			EXPECT_TRUE(std::regex_search(line, std::regex(R"(\[CALL_TRACE\s*\] test_STU_LOG\.cpp:\d+ )"))) << line;
+			std::string event = line.substr(p);
+			if(!event.empty() && event.back() == '\r')
+			{
+				event.pop_back();   /* the log is written in text mode -- CRLF on Windows, and slurp_log_file reads binary */
+			}
+			fn_lines.push_back(event);
+		}
+	}
+	ASSERT_EQ(fn_lines.size(), 5u);
+	EXPECT_EQ(fn_lines[0], "[FN-ENTER] name=traced_function rng_call=41");
+	EXPECT_EQ(fn_lines[1], "[FN-EXIT]  name=traced_function rng_call=44 (early)");
+	EXPECT_EQ(fn_lines[2], "[FN-EXIT]  name=traced_function rng_call=44");
+	EXPECT_EQ(fn_lines[3], "[FN-ENTER] name=fopen rng_call=44");
+	EXPECT_EQ(fn_lines[4], "[FN-EXIT]  name=fopen rng_call=44");
+	g_random_call_count = 0;
 }
 
 TEST(stu_log_test, LogFatalFlushesWithoutPump)

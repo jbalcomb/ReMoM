@@ -25,6 +25,9 @@ Notify
 #include "MOX_DEF.h"
 #include "MOX_SET.h"  /* magic_set */
 #include "MOX_TYPE.h"
+#include "Allocate.h"  /* Mark_Block(); Allocate_Next_Block(); Release_Block() */
+#include "capture.h"  /* Capture_Screen_Block() */
+#include "EMS/EMS.h"  /* _VGAFILEH_seg */
 #include "Fields.h"
 #include "FLIC_Draw.h"
 #include "Fonts.h"
@@ -33,6 +36,8 @@ Notify
 #include "Input.h"
 #include "LBX_Load.h"
 #include "paragrph.h"
+#include "random.h"  /* Get_Random_Seed(); Set_Random_Seed(); Random() */
+#include "Timer.h"  /* Mark_Time(); Release_Time() */
 #include "Util.h"
 #include "Video.h"
 
@@ -177,23 +182,23 @@ SAMB_ptr notify_magic_picts_seg[6];
 // WZD dseg:CA8E                                                 BEGIN:  ovr149  GENDRAW - Uninitialized Data
 
 // WZD dseg:CA8E
-int16_t _draw_expanding_box;
+int16_t _draw_expanding_box;  /* MoO2  MOX.C _draw_expanding_box */
 // WZD dseg:CA90
-int16_t HLP_ExpandOrigBottom;
+int16_t expanding_origin_y2;  /* HLP_ExpandOrigBottom */
 // WZD dseg:CA92
-int16_t HLP_ExpandOrigRight;
+int16_t expanding_origin_x2;  /* HLP_ExpandOrigRight */
 // WZD dseg:CA94
-int16_t HLP_ExpandOrigTop;
+int16_t expanding_origin_y1;  /* HLP_ExpandOrigTop */
 // WZD dseg:CA96
-int16_t HLP_ExpandOrigLeft;
+int16_t expanding_origin_x1;  /* HLP_ExpandOrigLeft */
 // WZD dseg:CA98
-int16_t HLP_ExpandTgtBottom;
+int16_t expanding_box_y2;  /* HLP_ExpandTgtBottom */
 // WZD dseg:CA9A
-int16_t HLP_ExpandTgtRight;
+int16_t expanding_box_x2;  /* HLP_ExpandTgtRight */
 // WZD dseg:CA9C
-int16_t HLP_ExpandTgtTop;
+int16_t expanding_box_y1;  /* HLP_ExpandTgtTop */
 // WZD dseg:CA9E
-int16_t HLP_ExpandTgtLeft;
+int16_t expanding_box_x1;  /* HLP_ExpandTgtLeft */
 
 // WZD dseg:CAA0                                                 BEGIN:  Selection Box
 /*
@@ -274,13 +279,13 @@ int16_t notify_color_slide_cycle;  // {0, ..., 7}
 /*
 NEWGAME.LBX, 044  WARNBACK   Warning box top
 NEWGAME.LBX, 045  WARNBACK   Warning box buttom
-// MGC  dseg:90C2 00 00                                           _warning2_bottom_seg dw 0               ; DATA XREF: Warning_Message+68w ...
+// MGC  dseg:90C2 00 00                                           _warning2_bottom_seg dw 0               ; DATA XREF: Warning_Message+68vw ...
 // MGC  dseg:90C2                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C4 00 00                                           _warning2_top_seg dw 0                  ; DATA XREF: Warning_Message+51w ...
+// MGC  dseg:90C4 00 00                                           _warning2_top_seg dw 0                  ; DATA XREF: Warning_Message+51vw ...
 // MGC  dseg:90C4                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C6 00 00                                           _warning_bottom_seg dw 0                ; DATA XREF: Newgame_Screen_6__WIP+BFw ...
+// MGC  dseg:90C6 00 00                                           _warning_bottom_seg dw 0                ; DATA XREF: Newgame_Screen_6__WIP+BFvw ...
 // MGC  dseg:90C6                                                                                         ; appended into the LBX_Sandbox_Segment
-// MGC  dseg:90C8 00 00                                           _warning_top_seg dw 0                   ; DATA XREF: Newgame_Screen_6__WIP+A8w ...
+// MGC  dseg:90C8 00 00                                           _warning_top_seg dw 0                   ; DATA XREF: Newgame_Screen_6__WIP+A8vw ...
 // MGC  dseg:90C8                                                                                         ; LBXE_LoadReplace into the LBX_Sandbox_Segment
 */
 // WZD dseg:CB02
@@ -388,8 +393,11 @@ int16_t Confirmation_Box(char * text_string)
     // RESOURCE.LBX, 4  CONFMBUT    no
     confirmation_button_no_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 4, _screen_seg);
 
+    Copy_On_To_Off_Page();
+
     message_box_text = text_string;
 
+    /* OGBUG  the asm pushes only 15, 4, 4 (`add sp, 6`): Set_Font_Style()'s color3 is the caller's stack word, not 0 */
     Set_Font_Style(4, 4, 15, 0);
 
     paragraph_height = Get_Paragraph_Max_Height(166, text_string);
@@ -400,13 +408,13 @@ int16_t Confirmation_Box(char * text_string)
 
     Clear_Fields();
 
-    confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_yes_seg, str_hotkey_Y__ovr149[0], ST_UNDEFINED);
+    confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_yes_seg, str_hotkey_Y__ovr149, ST_UNDEFINED);
 
-    confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_no_seg, str_hotkey_N__ovr149[0], ST_UNDEFINED);
+    confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_no_seg, str_hotkey_N__ovr149, ST_UNDEFINED);
 
-    Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), str_empty_string__ovr149[0], ST_UNDEFINED);
+    Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), str_empty_string__ovr149, ST_UNDEFINED);
 
-    hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED);
+    hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149, ST_UNDEFINED);
 
     Assign_Auto_Function(Confirmation_Box_Draw, 1);
 
@@ -416,6 +424,7 @@ int16_t Confirmation_Box(char * text_string)
     {
 
         // NOTE: This `abs()` means right-clicking on a Confirmation Box is equivalent to left-clicking
+        /* OGBUG  abs() turns Get_Input()'s -1 into 1, so the ST_UNDEFINED test below never fires, and the full-screen hotkey_ESC field is never tested: Esc or a click outside the box does not close it; only Yes / No do */
         input_field_idx = abs(Get_Input());
 
         if( (input_field_idx == ST_UNDEFINED) || (input_field_idx == confirmation_button_no) )
@@ -771,7 +780,7 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
                 y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg) + FLIC_Get_Width(selectbd_scroll_seg);
 
-                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
+                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149, ST_UNDEFINED);
             }
             else
             {
@@ -780,7 +789,7 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
                 y1 = selectbox_y1 + FLIC_Get_Height(selectbd_top_seg) + (FLIC_Get_Height(selectbk_buttons_seg[0]) * itr);
                 x1 = selectbox_x1 + FLIC_Get_Width(selectbd_left_seg);
 
-                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149[0], ST_UNDEFINED);
+                selectbox_fields[itr] = Add_Hidden_Field(x1, y1, x2, y2, str_empty_string__ovr149, ST_UNDEFINED);
             }
         }
 
@@ -848,9 +857,9 @@ int16_t Selection_Box(int16_t item_count, char ** list_text, int16_t multi_page,
 
         }
 
-        selectbox_window = Add_Hidden_Field(selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, str_empty_string__ovr149[0], ST_UNDEFINED);
+        selectbox_window = Add_Hidden_Field(selectbox_x1, selectbox_y1, selectbox_x2, selectbox_y2, str_empty_string__ovr149, ST_UNDEFINED);
 
-        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149[0], ST_UNDEFINED);
+        hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149, ST_UNDEFINED);
 
         PageFlip_FX();
 
@@ -1394,12 +1403,12 @@ void Notify1_Draw(void)
 
     if(notify_color_slide == 1)
     {
-        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        Rotate_Palette_Colors(244, 11, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
     if(notify_color_slide == 2)
     {
-        // TODO  VGA_SlideColors(247, 8, notify_color_slide_cycle);
+        Rotate_Palette_Colors(247, 8, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 8);
     }
 
@@ -1468,12 +1477,12 @@ void Notify1_Draw(void)
 
     if(notify_color_slide == 1)
     {
-        // VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        Rotate_Palette_Colors(244, 11, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
     if(notify_color_slide == 2)
     {
-        // VGA_SlideColors(247, 8, notify_color_slide_cycle);
+        Rotate_Palette_Colors(247, 8, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 8);
     }
 
@@ -1506,6 +1515,7 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     Notify_Load(type, pict1);
 
+    /* OGBUG  overwrites the do_dim_back argument, so the Gradient_Fill darken branch below never runs */
     do_dim_back = ST_FALSE;
 
     notify_magic_idx = sbr_Life;
@@ -1532,6 +1542,18 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
 
     switch(notify_magic_idx)
     {
+        case sbr_Chaos:
+        {
+            notify_magic_idx = mr_Chaos;
+        } break;
+        case sbr_Death:
+        {
+            notify_magic_idx = mr_Death;
+        } break;
+        case sbr_Life:
+        {
+            notify_magic_idx = mr_Life;
+        } break;
         case sbr_Nature:
         {
             notify_magic_idx = mr_Nature;
@@ -1539,18 +1561,6 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
         case sbr_Sorcery:
         {
             notify_magic_idx = mr_Sorcery;
-        } break;
-        case sbr_Chaos:
-        {
-            notify_magic_idx = mr_Chaos;
-        } break;
-        case sbr_Life:
-        {
-            notify_magic_idx = mr_Life;
-        } break;
-        case sbr_Death:
-        {
-            notify_magic_idx = mr_Death;
         } break;
     }
 
@@ -1624,7 +1634,8 @@ void Notify2(int16_t UU_box_center_x, int16_t box_top_y, int16_t type, char * me
     if(notify_draw_offscr == 1)
     {
         Set_Page_Off();
-        Notify1_Draw();  /* OGBUG  should be Notify2_Draw() - hot sloppy copy pasta */
+        /* OGBUG  in notify_draw_offscr mode 1 it draws with the centred box's Notify1_Draw(), not its own Notify2_Draw() */
+        Notify1_Draw();
     }
     else
     {
@@ -1654,7 +1665,7 @@ void Notify2_Draw(void)
 
     if(notify_color_slide == 1)
     {
-        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        Rotate_Palette_Colors(244, 11, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
 
@@ -1675,7 +1686,6 @@ void Notify2_Draw(void)
     FLIC_Draw((message_box_x + notify2_mascot_x1[notify_magic_idx] - 1), (message_box_y + notify2_mascot_y1[notify_magic_idx]), notify_magic_picts_seg[notify_magic_idx]);
 
     Reset_Window();
-
 
     /*
         BEGIN:  'Pict Box'
@@ -1707,7 +1717,6 @@ void Notify2_Draw(void)
         END:  'Pict Box'
     */
 
-
     // draw outline/shadow
     Set_Font_Colors_15(4, notify_shadow_colors[notify_type]);
     Set_Font_Style(4, 15, 15, ST_NULL);
@@ -1719,10 +1728,9 @@ void Notify2_Draw(void)
     Set_Font_Colors_15(4, notify_text_colors[notify_type]);
     Print_Paragraph((message_box_x + notify2_text_x1[notify_magic_idx]    ), (message_box_y + 8), (max_para_width + 1), message_box_text, 0);
 
-
     if(notify_color_slide == 1)
     {
-        // TODO  VGA_SlideColors(244, 11, notify_color_slide_cycle);
+        Rotate_Palette_Colors(244, 11, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 11);
     }
 
@@ -1730,135 +1738,565 @@ void Notify2_Draw(void)
 
 
 // WZD o149p15
+// drake178: HLP_NoResizeExpand()
 /*
+grows box (box_x1, box_y1, box_x2, box_y2) out of origin (origin_x1, origin_y1, origin_x2, origin_y2): Draw_Expanding_Box_Picture() with the box as its own picture area
+draw_expanding_box  ST_TRUE also draws the growth lines (and keeps them for Redraw_Expanding_Box_Lines())
+
 XREF:
     Mirror_Screen()
-    Unit_List_Window_Pup()
-    IDK_Spell_Cityscape_1()
-
-Mirror_Screen()         expand_flag = ST_TRUE
-Unit_List_Window_Pup()  expand_flag = ST_TRUE
-IDK_Spell_Cityscape_1()  expand_flag = ST_FALSE
-
-
-Mirror_Screen()
-    j_HLP_NoResizeExpand(mirror_start_x, mirror_start_y, (mirror_start_x + 179), (mirror_start_y + 195), OL, OT, OR, OB, ST_TRUE)
-
-Unit_List_Window_Pup()
-    j_HLP_NoResizeExpand(ULW_start_x, ULW_start_y, (ULW_start_x + 238), (ULW_IDK_upper_height + 5), OL, OT, (OL + 19), (OT + 16), ST_TRUE)
-
-IDK_Spell_Cityscape_1()
-    j_HLP_NoResizeExpand(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), ST_FALSE)
-
+        Draw_Expanding_Box(mirror_start_x, mirror_start_y, (mirror_start_x + 179), (mirror_start_y + 195), OL, OT, OR, OB, ST_TRUE)
+    Unit_List_Window()
+        Draw_Expanding_Box(m_ulw_start_x, m_ulw_start_y, (m_ulw_start_x + 238), (m_ulw_height + 5), x, y, (x + 19), (y + 16), ST_TRUE)
+    City_Enchantment_Anim_1__WIP()
+        Draw_Expanding_Box(53, 38, 268, 162, OL, OT, (OL + 20), (OT + 18), ST_FALSE)
 */
-void HLP_NoResizeExpand__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag)
+void Draw_Expanding_Box(int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t draw_expanding_box)
 {
-    HLP_DrawExpanding__TODO(TL, TT, TR, TB, TL, TT, TR, TB, OL, OT, OR, OB, expand_flag);
+
+    Draw_Expanding_Box_Picture(box_x1, box_y1, box_x2, box_y2, box_x1, box_y1, box_x2, box_y2, origin_x1, origin_y1, origin_x2, origin_y2, draw_expanding_box);
+
 }
 
+
 // WZD o149p16
+// drake178: HLP_DrawExpanding()
 /*
-; if expanding help is enabled, "grows" an area of the
-; current draw frame out of the current display frame
-; using both EMM_VGAFILE_H and a sandbox buffer, and
-; sets up the global variables used for redrawing the
-; growth lines afterwards, if necessary
+if 'Expanding Help' is on: captures the picture area (picture_x1, picture_y1, picture_x2, picture_y2) of the off page and grows it out of the origin rectangle into the box rectangle, in EXPANDING_BOX_STAGES page flips
+    the picture is kept in the VGAFILEH EMS pages and copied back over the scaled one before each stage
+saves both rectangles and draw_expanding_box for Redraw_Expanding_Box_Lines()
+returns 0 when 'Expanding Help' is off; otherwise the OG returns whatever AX holds (no return value)
 
+XREF:
+    Draw_Expanding_Box()
+    Unit_Statistics_Popup()
 */
-void HLP_DrawExpanding__TODO(int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t FL, int16_t FT, int16_t FR, int16_t FB, int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t expand_flag)
+int16_t Draw_Expanding_Box_Picture(int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t picture_x1, int16_t picture_y1, int16_t picture_x2, int16_t picture_y2, int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t draw_expanding_box)
 {
-    _draw_expanding_box = expand_flag;
+    int16_t full_height = 0;
+    int16_t full_width = 0;
+    uint16_t full_picture_size = 0;  /* asm: Full_IMG_Size - a word; the Mirror (179 x 195) and Unit View (282 x 184) sizes are over 32767 */
+    int16_t stage_y2 = 0;
+    int16_t stage_x2 = 0;
+    int16_t stage_y1 = 0;
+    int16_t stage_x1 = 0;
+    int16_t vertical_percent = 0;
+    int16_t horizontal_percent = 0;
+    SAMB_ptr page_frame = 0;
+    int16_t working_width = 0;
+    int16_t working_height = 0;
+    SAMB_ptr box_picture = 0;  // _DI_
+    int16_t itr_stages = 0;  // _SI_
 
-    HLP_ExpandTgtLeft = TL;
-    HLP_ExpandTgtTop = TT;
-    HLP_ExpandTgtRight = TR;
-    HLP_ExpandTgtBottom = TB;
+    _draw_expanding_box = draw_expanding_box;
 
-    HLP_ExpandOrigLeft = OL;
-    HLP_ExpandOrigTop = OT;
-    HLP_ExpandOrigRight = OR;
-    HLP_ExpandOrigBottom = OB;
+    expanding_box_x1 = box_x1;
+    expanding_box_y1 = box_y1;
+    expanding_box_x2 = box_x2;
+    expanding_box_y2 = box_y2;
 
-    if(magic_set.expanding_help != ST_FALSE)
+    expanding_origin_x1 = origin_x1;
+    expanding_origin_y1 = origin_y1;
+    expanding_origin_x2 = origin_x2;
+    expanding_origin_y2 = origin_y2;
+
+    if(magic_set.expanding_help == ST_FALSE)
     {
 
-        if(FL > FR)
-        {
-            Swap_Short(&FL, &FR);
-        }
+        s01p11_empty_function();
 
-        if(FT > FB)
-        {
-            Swap_Short(&FT, &FB);
-        }
-
-        if(OL > OR)
-        {
-            Swap_Short(&OL, &OR);
-        }
-
-        if(OT > OB)
-        {
-            Swap_Short(&OT, &OB);
-        }
-
-
-
+        return 0;  /* asm: xor ax, ax / jmp @@Done */
 
     }
 
+    Clear_Fields();
+
+    if(picture_x1 > picture_x2)
+    {
+
+        Swap_Short(&picture_x1, &picture_x2);
+
+    }
+
+    if(picture_y1 > picture_y2)
+    {
+
+        Swap_Short(&picture_y1, &picture_y2);
+
+    }
+
+    if(origin_x1 > origin_x2)
+    {
+
+        Swap_Short(&origin_x1, &origin_x2);
+
+    }
+
+    if(origin_y1 > origin_y2)
+    {
+
+        Swap_Short(&origin_y1, &origin_y2);
+
+    }
+
+    /* PLATFORM */  page_frame = _VGAFILEH_seg;  /* asm: EMM_MapFourPages(_VGAFILEH_seg, 0) / mov ax, [EMS_PFBA] - logical pages 0-3 of the VGAFILEH handle */
+
+    Mark_Block(_screen_seg);
+
+    box_picture = Allocate_Next_Block(_screen_seg, 3125);
+
+    /* OGBUG  (h - 1) x (w - 1) + 32 is short of the w x h + 16 picture once w + h > 17: each stage's restore misses the tail of the picture */
+    full_picture_size = (((picture_y2 - picture_y1) * (picture_x2 - picture_x1)) + 32);
+
+    working_width = ((picture_x2 - picture_x1) + 1);
+
+    working_height = ((picture_y2 - picture_y1) + 1);
+
+    Create_Picture(working_width, working_height, box_picture);
+
+    full_width = ((picture_x2 - picture_x1) + 1);
+
+    full_height = ((picture_y2 - picture_y1) + 1);
+
+    Set_Page_Off();
+
+    Capture_Screen_Block((box_picture + SZ_PARAGRAPH_B), picture_x1, picture_y1, picture_x2, picture_y2);
+
+    memcpy(page_frame, box_picture, full_picture_size);  /* asm: _fmemcpy(PageFrame_Seg:0, box_picture:0, Full_IMG_Size) */
+
+    Copy_On_To_Off_Page();
+
+    Copy_Off_To_Back();
+
+    s01p12_empty_function();
+
+    for(itr_stages = 0; itr_stages < EXPANDING_BOX_STAGES; itr_stages++)
+    {
+
+        Mark_Time();
+
+        Copy_Back_To_Off();
+
+        stage_x1 = ((((picture_x1 - origin_x1) * itr_stages) / EXPANDING_BOX_STAGES) + origin_x1);
+
+        stage_y1 = ((((picture_y1 - origin_y1) * itr_stages) / EXPANDING_BOX_STAGES) + origin_y1);
+
+        stage_x2 = ((((picture_x2 - origin_x2) * itr_stages) / EXPANDING_BOX_STAGES) + origin_x2);
+
+        stage_y2 = ((((picture_y2 - origin_y2) * itr_stages) / EXPANDING_BOX_STAGES) + origin_y2);
+
+        if(stage_x1 > stage_x2)
+        {
+
+            Swap_Short(&stage_x1, &stage_x2);
+
+        }
+
+        if(stage_y1 > stage_y2)
+        {
+
+            Swap_Short(&stage_y1, &stage_y2);
+
+        }
+
+        working_width = ((stage_x2 - stage_x1) + 1);
+
+        working_height = ((stage_y2 - stage_y1) + 1);
+
+        horizontal_percent = ((working_width * 100) / full_width);  /* asm: imul / xor dx, dx / div - an unsigned divide */
+
+        vertical_percent = ((working_height * 100) / full_height);  /* asm: imul / xor dx, dx / div - an unsigned divide */
+
+        Scale_Bitmap(box_picture, horizontal_percent, vertical_percent);
+
+        Set_Page_Off();
+
+        stage_x1 = ((((box_x1 - origin_x1) * itr_stages) / EXPANDING_BOX_STAGES) + origin_x1);
+
+        stage_y1 = ((((box_y1 - origin_y1) * itr_stages) / EXPANDING_BOX_STAGES) + origin_y1);
+
+        stage_x2 = ((((box_x2 - origin_x2) * itr_stages) / EXPANDING_BOX_STAGES) + origin_x2);
+
+        stage_y2 = ((((box_y2 - origin_y2) * itr_stages) / EXPANDING_BOX_STAGES) + origin_y2);
+
+        if(stage_x1 > stage_x2)
+        {
+
+            Swap_Short(&stage_x1, &stage_x2);
+
+        }
+
+        if(stage_y1 > stage_y2)
+        {
+
+            Swap_Short(&stage_y1, &stage_y2);
+
+        }
+
+        /* OGBUG  dead stores - working_width and working_height are not read again before the next stage overwrites them */
+        working_width = ((stage_x2 - stage_x1) + 1);
+
+        working_height = ((stage_y2 - stage_y1) + 1);
+
+        if(
+            (itr_stages != 0)
+            &&
+            (_draw_expanding_box != ST_FALSE)
+        )
+        {
+
+            Draw_Expanding_Box_Lines(origin_x1, origin_y1, origin_x2, origin_y2, stage_x1, stage_y1, stage_x2, stage_y2, 180, 181, 185, 186, 187, 186);
+
+        }
+
+        Draw_Picture(stage_x1, stage_y1, box_picture);
+
+        Toggle_Pages();
+
+        if(itr_stages != (EXPANDING_BOX_STAGES - 1))
+        {
+
+            memcpy(box_picture, page_frame, full_picture_size);  /* asm: _fmemcpy(box_picture:0, PageFrame_Seg:0, Full_IMG_Size) */
+
+        }
+
+        Release_Time(1);
+
+    }
+
+    Release_Block(_screen_seg);
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with whatever AX holds */
 
 }
 
 
 // WZD o149p17
+// drake178: G_USW_DrawEHLines()
 /*
+redraws the growth lines of the last Draw_Expanding_Box_Picture(), if it drew them, onto the off page
+returns 0 when it did not; otherwise the OG returns whatever AX holds (no return value)
+
 XREF:
     Unit_Statistics_Popup_Do_Draw()
     Mirror_Screen_Draw()
-    Draw_Unit_List_Window_Pup()
-
-
-C32 = 186
-C31 = 187
-C22 = 186
-C21 = 185
-C12 = 181
-C11 = 180
-
+    Unit_List_Window_Draw()
 */
-void G_USW_DrawEHLines__TODO(void)
+int16_t Redraw_Expanding_Box_Lines(void)
 {
-    if(_draw_expanding_box)
+
+    if(_draw_expanding_box == ST_FALSE)
     {
-        Set_Page_Off();
-        HLP_DrawExpandLines__TODO(HLP_ExpandOrigLeft, HLP_ExpandOrigTop, HLP_ExpandOrigRight, HLP_ExpandOrigBottom, HLP_ExpandTgtLeft, HLP_ExpandTgtTop, HLP_ExpandTgtRight, HLP_ExpandTgtBottom, 180, 181, 185, 186, 187, 186);
+
+        return 0;  /* asm: xor ax, ax / jmp short @@Done */
+
     }
+
+    Set_Page_Off();
+
+    Draw_Expanding_Box_Lines(expanding_origin_x1, expanding_origin_y1, expanding_origin_x2, expanding_origin_y2, expanding_box_x1, expanding_box_y1, expanding_box_x2, expanding_box_y2, 180, 181, 185, 186, 187, 186);
+
+    /* HACK */  return 0;  /* OG: no return value - falls off the end with whatever AX holds */
+
 }
 
 
 // WZD o149p18
+// drake178: HLP_DrawExpandLines()
 /*
+draws the growth lines between the origin rectangle and the box rectangle on the off page: every second column (or row) of the sweep gets a dashed outline
+    each dash table is 4 rows of 12 colors, picked from a color pair (1 in 4 the second color), the pairs swapped half the time; the random seed is fixed (100589) and put back after
+    which edges are drawn depends on where the origin is: above, below or level with the box, then left, right or inside it
+
 XREF:
     NX_j_HLP_DrawExpandLines()
-    HLP_DrawExpanding()
-    G_USW_DrawEHLines()
-
-G_USW_DrawEHLines()
-    HLP_DrawExpandLines(HLP_ExpandOrigLeft, HLP_ExpandOrigTop, HLP_ExpandOrigRight, HLP_ExpandOrigBottom, HLP_ExpandTgtLeft, HLP_ExpandTgtTop, HLP_ExpandTgtRight, HLP_ExpandTgtBottom, 180, 181, 185, 186, 187, 186);
-
-HLP_DrawExpanding()
-    HLP_DrawExpandLines(OL, OT, OR, OB, StageSize_Left, StageSize_Top, StageSize_Right, StageSize_Bottom, 180, 181, 185, 186, 187, 186);
-
-
+    Draw_Expanding_Box_Picture()
+    Redraw_Expanding_Box_Lines()
 */
-void HLP_DrawExpandLines__TODO(int16_t OL, int16_t OT, int16_t OR, int16_t OB, int16_t TL, int16_t TT, int16_t TR, int16_t TB, int16_t C11, int16_t C12, int16_t C21, int16_t C22, int16_t C31, int16_t C32)
+void Draw_Expanding_Box_Lines(int16_t origin_x1, int16_t origin_y1, int16_t origin_x2, int16_t origin_y2, int16_t box_x1, int16_t box_y1, int16_t box_x2, int16_t box_y2, int16_t color_1a, int16_t color_1b, int16_t color_2a, int16_t color_2b, int16_t color_3a, int16_t color_3b)
 {
+    uint8_t pair_1_colors[4][12] = { { 0 }, { 0 }, { 0 }, { 0 } };
+    uint8_t pair_2_colors[4][12] = { { 0 }, { 0 }, { 0 }, { 0 } };
+    uint8_t pair_3_colors[4][12] = { { 0 }, { 0 }, { 0 }, { 0 } };
+    uint32_t random_seed_save = 0;
+    int16_t line_y = 0;
+    int16_t itr_colors = 0;
+    int16_t itr_rows = 0;
+    int16_t stage_y2 = 0;
+    int16_t stage_x2 = 0;
+    int16_t stage_y1 = 0;
+    int16_t stage_x1 = 0;
+    int16_t line_x = 0;  // _SI_
+
+    Set_Page_Off();
+
+    random_seed_save = Get_Random_Seed();
+
+    Set_Random_Seed(100589);  /* asm: mov ax, 1 / mov dx, 88EDh - 0x000188ED */
+
+    for(itr_rows = 0; itr_rows < 4; itr_rows++)
+    {
+
+        for(itr_colors = 0; itr_colors < 12; itr_colors++)
+        {
+
+            if(Random(2) == 1)
+            {
+
+                Swap_Short(&color_1b, &color_1a);
+
+                Swap_Short(&color_2b, &color_2a);
+
+                Swap_Short(&color_3b, &color_3a);
+
+            }
+
+            if(Random(4) == 1)
+            {
+
+                pair_1_colors[itr_rows][itr_colors] = color_1b;
+
+            }
+            else
+            {
+
+                pair_1_colors[itr_rows][itr_colors] = color_1a;
+
+            }
+
+            /* OGBUG  dead stores - no line is drawn with pair_2_colors[][] (#377) */
+            if(Random(4) == 1)
+            {
+
+                pair_2_colors[itr_rows][itr_colors] = color_2b;
+
+            }
+            else
+            {
+
+                pair_2_colors[itr_rows][itr_colors] = color_2a;
+
+            }
+
+            if(Random(4) == 1)
+            {
+
+                pair_3_colors[itr_rows][itr_colors] = color_3b;
+
+            }
+            else
+            {
+
+                pair_3_colors[itr_rows][itr_colors] = color_3a;
+
+            }
+
+        }
+
+    }
+
+    if(origin_y1 < box_y1)
+    {
+
+        if(origin_x1 < box_x1)
+        {
+
+            for(line_x = origin_x1; line_x < box_x1; line_x += 2)
+            {
+
+                stage_y1 = ((((line_x - origin_x1) * (box_y1 - origin_y1)) / (box_x1 - origin_x1)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x1) * (box_y2 - origin_y2)) / (box_x1 - origin_x1)) + origin_y2);
+
+                stage_x2 = ((((box_x2 - origin_x2) * (line_x - origin_x1)) / (box_x1 - origin_x1)) + origin_x2);
+
+                Multi_Colored_Line(stage_x2, stage_y1, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y2, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, stage_x2, stage_y1, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+        else if(origin_x2 > box_x2)
+        {
+
+            for(line_x = (origin_x2 - 2); line_x > box_x2; line_x -= 2)
+            {
+
+                stage_y1 = ((((line_x - origin_x2) * (box_y1 - origin_y1)) / (box_x2 - origin_x2)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x2) * (box_y2 - origin_y2)) / (box_x2 - origin_x2)) + origin_y2);
+
+                stage_x1 = ((((box_x1 - origin_x1) * (line_x - origin_x2)) / (box_x2 - origin_x2)) + origin_x1);
+
+                Multi_Colored_Line(stage_x1, stage_y1, stage_x1, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x1, stage_y2, line_x, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                /* OGBUG  the same line as the first one (the left edge); the top edge is never drawn on this branch (#391) */
+                Multi_Colored_Line(stage_x1, stage_y1, stage_x1, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+        else
+        {
+
+            for(line_y = origin_y1; line_y < box_y1; line_y += 2)
+            {
+
+                stage_x1 = ((((line_y - origin_y1) * (box_x1 - origin_x1)) / (box_y1 - origin_y1)) + origin_x1);
+
+                stage_x2 = ((((line_y - origin_y1) * (box_x2 - origin_x2)) / (box_y1 - origin_y1)) + origin_x2);
+
+                stage_y2 = ((((box_y2 - origin_y2) * (line_y - origin_y1)) / (box_y1 - origin_y1)) + origin_y2);
+
+                Multi_Colored_Line(stage_x1, line_y, stage_x1, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x2, line_y, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x1, line_y, stage_x2, line_y, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+
+    }
+    else if(origin_y2 > box_y2)
+    {
+
+        if(origin_x1 < box_x1)
+        {
+
+            for(line_x = origin_x1; line_x < box_x1; line_x += 2)
+            {
+
+                stage_y1 = ((((line_x - origin_x1) * (box_y1 - origin_y1)) / (box_x1 - origin_x1)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x1) * (box_y2 - origin_y2)) / (box_x1 - origin_x1)) + origin_y2);
+
+                stage_x2 = ((((box_x2 - origin_x2) * (line_x - origin_x1)) / (box_x1 - origin_x1)) + origin_x2);
+
+                Multi_Colored_Line(stage_x2, stage_y1, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, stage_x2, stage_y1, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y2, stage_x2, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+        else if(origin_x2 > box_x2)
+        {
+
+            for(line_x = (origin_x2 - 2); line_x > box_x2; line_x -= 2)
+            {
+
+                /* OGBUG  copied from the origin-left branch: the y edges divide by (box_x1 - origin_x1), which is 0 or negative here (origin_x1 >= box_x1) - a divide by zero when origin_x1 == box_x1 */
+                stage_y1 = ((((line_x - origin_x1) * (box_y1 - origin_y1)) / (box_x1 - origin_x1)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x1) * (box_y2 - origin_y2)) / (box_x1 - origin_x1)) + origin_y2);
+
+                stage_x1 = ((((box_x1 - origin_x1) * (line_x - origin_x2)) / (box_x2 - origin_x2)) + origin_x1);
+
+                Multi_Colored_Line(stage_x1, stage_y1, stage_x1, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x1, stage_y1, line_x, stage_y1, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                /* OGBUG  a zero-length line (line_x, stage_y1) to (line_x, stage_y1); the bottom edge is never drawn on this branch (#391) */
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y1, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+        else
+        {
+
+            for(line_y = (origin_y2 - 2); line_y > box_y2; line_y -= 2)
+            {
+
+                stage_x1 = ((((line_y - origin_y2) * (box_x1 - origin_x1)) / (box_y2 - origin_y2)) + origin_x1);
+
+                stage_x2 = ((((line_y - origin_y2) * (box_x2 - origin_x2)) / (box_y2 - origin_y2)) + origin_x2);
+
+                stage_y1 = ((((box_y1 - origin_y1) * (line_y - origin_y2)) / (box_y2 - origin_y2)) + origin_y1);
+
+                Multi_Colored_Line(stage_x1, stage_y1, stage_x1, line_y, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x2, stage_y1, stage_x2, line_y, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x1, line_y, stage_x2, line_y, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+
+    }
+    else
+    {
+
+        if(origin_x1 < box_x1)
+        {
+
+            for(line_x = origin_x1; line_x < box_x1; line_x += 2)
+            {
+
+                stage_y1 = ((((line_x - origin_x1) * (box_y1 - origin_y1)) / (box_x1 - origin_x1)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x1) * (box_y2 - origin_y2)) / (box_x1 - origin_x1)) + origin_y2);
+
+                stage_x2 = ((((box_x2 - origin_x2) * (line_x - origin_x1)) / (box_x1 - origin_x1)) + origin_x2);
+
+                Multi_Colored_Line(line_x, stage_y1, stage_x2, stage_y1, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y2, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y1, line_x, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+        else
+        {
+
+            for(line_x = (origin_x2 - 2); line_x > box_x2; line_x -= 2)
+            {
+
+                stage_y1 = ((((line_x - origin_x2) * (box_y1 - origin_y1)) / (box_x2 - origin_x2)) + origin_y1);
+
+                stage_y2 = ((((line_x - origin_x2) * (box_y2 - origin_y2)) / (box_x2 - origin_x2)) + origin_y2);
+
+                stage_x2 = ((((box_x2 - origin_x2) * (line_x - origin_x2)) / (box_x2 - origin_x2)) + origin_x2);
+
+                Multi_Colored_Line(line_x, stage_y1, stage_x2, stage_y1, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(line_x, stage_y2, stage_x2, stage_y2, pair_3_colors[(Random(4) - 1)], 12, 0);
+
+                Multi_Colored_Line(stage_x2, stage_y1, stage_x2, stage_y2, pair_1_colors[(Random(4) - 1)], 12, 0);
+
+            }
+
+        }
+
+    }
+
+    Set_Random_Seed(random_seed_save);
 
 }
 
 
 // WZD o149p19
+// drake178: ITEM_GetViewDrawPos()
 /*
 ; calculates and sets the return pointer values to the
 ; Left and Top drawing coordinates of the item view
@@ -1866,9 +2304,11 @@ void HLP_DrawExpandLines__TODO(int16_t OL, int16_t OT, int16_t OR, int16_t OB, i
 ; resizes the image during the initial "grow out"
 ; animation
 
-ITEM_GetViewDrawPos(ITEM_ViewLeft, ITEM_ViewTop, item_view_popup_bitm, 5, &IView_Draw_Left, &IView_Draw_Top);
+the picture is placed centered above (start_x, start_y), kept 5 pixels inside the screen; until m_item_view_grow_stage reaches stages, it is scaled to stage / stages and moved that far out of the start point
+
+Expanding_Picture_Position(ITEM_ViewLeft, ITEM_ViewTop, item_view_popup_bitm, 5, &IView_Draw_Left, &IView_Draw_Top);
 */
-void ITEM_GetViewDrawPos(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg, int16_t stages, int16_t * draw_x, int16_t * draw_y)
+void Expanding_Picture_Position(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg, int16_t stages, int16_t * draw_x, int16_t * draw_y)
 {
     int16_t scale_percentage = 0;
     int16_t y2 = 0;
@@ -1878,38 +2318,37 @@ void ITEM_GetViewDrawPos(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg,
     int16_t height = 0;
     int16_t x1 = 0;  // _DI_
 
-    // TODO  width = farpeekw(picture_seg, 0);
-    // TODO  height = farpeekw(picture_seg, 2);
     width = FLIC_GET_WIDTH(picture_seg);
     height = FLIC_GET_HEIGHT(picture_seg);
 
     x1 = (start_x - (width / 2));
     y1 = (start_y - height);
-    x2 = (x1 + width);
-    y2 = (y1 + height);
+    x2 = (x1 + width - 1);
+    y2 = (y1 + height - 1);
 
-    if(x1 < 5)
+    if(x1 < (SCREEN_XMIN + 5))
     {
-        x1 = 5;
+        x1 = (SCREEN_XMIN + 5);
         x2 = (4 + (width / 2));
     }
 
-    if(y1 < 5)
+    if(y1 < (SCREEN_YMIN + 5))
     {
-        y1 = 5;
+        y1 = (SCREEN_YMIN + 5);
         y2 = (4 + (height / 2));
     }
 
-    if(x2 > 315)
+    if(x2 > (SCREEN_XMAX - 4))
     {
-        x2 = 315;
-        x1 = ((315 - width) + 1);
+        x2 = (SCREEN_XMAX - 4);
+        x1 = (((SCREEN_XMAX - 4) - width) + 1);
     }
 
-    // BUG: should be 195  (200 - 5)(SCREENYMAX - item view window margin)
-    if(y2 > 315)
+    /* OGBUG  the bottom edge is clamped at 315, the right-edge limit, not 195 (SCREEN_YMAX - 4) */
+    if(y2 > (SCREEN_XMAX - 4))
     {
-        y1 = ((315 - height) + 1);
+        y2 = (SCREEN_XMAX - 4);
+        y1 = (((SCREEN_XMAX - 4) - height) + 1);
     }
 
     if(m_item_view_grow_stage > stages)
@@ -1924,8 +2363,8 @@ void ITEM_GetViewDrawPos(int16_t start_x, int16_t start_y, SAMB_ptr picture_seg,
     }
     else
     {
-        *draw_x = (start_x + (((x1 - start_x) * m_item_view_grow_stage) / stages));
-        *draw_y = (start_y + (((y1 - start_y) * m_item_view_grow_stage) / stages));
+        *draw_x = (start_x + (((x1 - start_x) * m_item_view_grow_stage) / stages));  /* asm: LXMUL@ / LDIV@ - a long multiply and divide */
+        *draw_y = (start_y + (((y1 - start_y) * m_item_view_grow_stage) / stages));  /* asm: LXMUL@ / LDIV@ - a long multiply and divide */
         scale_percentage = ((m_item_view_grow_stage * 100) / stages);
         Scale_Bitmap(picture_seg, scale_percentage, scale_percentage);
     }

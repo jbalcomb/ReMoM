@@ -1,0 +1,38 @@
+module_num=25
+module=D:\MOX\OTHERS\COMBAT1.C
+source=0025-combat1.c.md
+range[0]=1:0x000329EE linear=0x000429EE size=20136
+range[1]=2:0x00000E18 linear=0x00170E18 size=28
+range[2]=2:0x00023574 linear=0x00193574 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                               SYMBOL                              CHUNK
+m025f001  1    -      0x000429EE  1:0x000329EE  code         Get_Number_Of_Ships_In_Stasis      Get_Number_Of_Ships_In_Stasis_      regions/07-object-1/000C7E54-000C8653.txt
+m025f002  2    -      0x00042A27  1:0x00032A27  code         Combat_Ship_Is_Functional          Combat_Ship_Is_Functional_          regions/07-object-1/000C7E54-000C8653.txt
+m025f003  3    -      0x00042A61  1:0x00032A61  code         Enemy_Dissipator_Exists            Enemy_Dissipator_Exists_            regions/07-object-1/000C7E54-000C8653.txt
+m025f004  4    -      0x00042ABF  1:0x00032ABF  code         Ship_Controlled_By_Computer        Ship_Controlled_By_Computer_        regions/07-object-1/000C7E54-000C8653.txt
+m025f005  5    -      0x00042B0F  1:0x00032B0F  code         Send_Tactical_Combat_Message       Send_Tactical_Combat_Message_       regions/07-object-1/000C7E54-000C8653.txt
+m025f006  6    -      0x00042B70  1:0x00032B70  code         Init_Ship_For_Start_Of_Turn        Init_Ship_For_Start_Of_Turn_        regions/07-object-1/000C7E54-000C8653.txt
+m025f007  7    -      0x00042DE8  1:0x00032DE8  code         Set_Ocv_Dcv_For_All                Set_Ocv_Dcv_For_All_                regions/07-object-1/000C7E54-000C8653.txt
+m025f008  8    -      0x00042E66  1:0x00032E66  static,code  Ship_Initiative_Value              Ship_Initiative_Value_              regions/07-object-1/000C7E54-000C8653.txt
+m025f009  9    -      0x00042E9C  1:0x00032E9C  static,code  qsort_ship_initiative              qsort_ship_initiative_              regions/07-object-1/000C7E54-000C8653.txt
+m025f010  10   -      0x00042F7F  1:0x00032F7F  code         Do_Combat_Turn                     Do_Combat_Turn_                     regions/07-object-1/000C7E54-000C8653.txt
+m025f011  11   -      0x00044EA4  1:0x00034EA4  code         Seeking_Missiles                   Seeking_Missiles_                   regions/07-object-1/000C9E54-000CA653.txt
+m025f012  12   -      0x0004528F  1:0x0003528F  code         Calc_Current_Speed                 Calc_Current_Speed_                 regions/07-object-1/000CA654-000CAE53.txt
+m025f013  13   -      0x0004545B  1:0x0003545B  code         Check_For_Winner                   Check_For_Winner_                   regions/07-object-1/000CA654-000CAE53.txt
+m025f014  14   -      0x00045507  1:0x00035507  code         Set_Cur_Ship_To                    Set_Cur_Ship_To_                    regions/07-object-1/000CA654-000CAE53.txt
+m025f015  15   -      0x000455A4  1:0x000355A4  code         Next_Ship                          Next_Ship_                          regions/07-object-1/000CA654-000CAE53.txt
+m025f016  16   -      0x0004584C  1:0x0003584C  code         Weapon_Is_On                       Weapon_Is_On_                       regions/07-object-1/000CAE54-000CB653.txt
+m025f017  17   -      0x0004586C  1:0x0003586C  code         Weapon_Is_Off                      Weapon_Is_Off_                      regions/07-object-1/000CAE54-000CB653.txt
+m025f018  18   -      0x0004588C  1:0x0003588C  code         Remove_Continuing_Effect_Specials  Remove_Continuing_Effect_Specials_  regions/07-object-1/000CAE54-000CB653.txt
+m025f019  19   -      0x0004590D  1:0x0003590D  code         Ship_Done_Check                    Ship_Done_Check_                    regions/07-object-1/000CAE54-000CB653.txt
+m025f020  20   -      0x00045964  1:0x00035964  code         Retreat_Ship                       Retreat_Ship_                       regions/07-object-1/000CAE54-000CB653.txt
+m025f021  21   -      0x000459E7  1:0x000359E7  code         Initiate_Boarding_Action           Initiate_Boarding_Action_           regions/07-object-1/000CAE54-000CB653.txt
+m025f022  22   -      0x00045EA7  1:0x00035EA7  code         Add_Missile_Fields                 Add_Missile_Fields_                 regions/07-object-1/000CAE54-000CB653.txt
+m025f023  23   -      0x0004602A  1:0x0003602A  code         Set_Combat_Help_Fields             Set_Combat_Help_Fields_             regions/07-object-1/000CB654-000CBE53.txt
+m025f024  24   -      0x000465D0  1:0x000365D0  code         Add_Tactical_Combat_Fields         Add_Tactical_Combat_Fields_         regions/07-object-1/000CB654-000CBE53.txt
+m025f025  25   -      0x00046CC8  1:0x00036CC8  code         Assign_Combat_Grids                Assign_Combat_Grids_                regions/07-object-1/000CBE54-000CC653.txt
+m025f026  26   -      0x00046F42  1:0x00036F42  code         Assign_Mouse_Images                Assign_Mouse_Images_                regions/07-object-1/000CBE54-000CC653.txt
+m025f027  27   -      0x0004752F  1:0x0003752F  code         Set_Legal_Moves                    Set_Legal_Moves_                    regions/07-object-1/000CC654-000CCE53.txt
+-         -    -      0x00193574  2:0x00023574  static,data  _end_of_turn_button                _end_of_turn_button                 -
+-         -    -      0x00193578  2:0x00023578  data         _start_of_turn                     _start_of_turn                      -

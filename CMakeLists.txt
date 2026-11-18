@@ -133,7 +133,7 @@ endif()
 # All executables and DLLs go to one directory (per-config on multi-config generators).
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
 
-# Single asset-staging step.  All executables (HeMoM, ReMoM, savedump,
+# Single asset-staging step.  All executables (DeMoM, ReMoM, savedump,
 # rmr2hms, tests, ...) share the same bin/$<CONFIG> directory, so the asset
 # tree is copied there exactly once per build instead of being copied
 # redundantly by each executable's POST_BUILD.
@@ -196,6 +196,34 @@ if(WIN32 AND NOT USE_WIN32)
 endif()
 
 add_compile_definitions($<$<CONFIG:Debug>:STU_DEBUG>)
+
+# Release logging floor (doc/@AI_Plans/PRD-Logging-System-And-Curator-Agent.md, story 9): every non-Debug config compiles LOG_TRACE / LOG_DEBUG
+# to a sizeof-noop -- no call, no argument evaluation.  The CALL_TRACE stream (STU_CALL_TRACE) and the [GD] capture (STU_GD_CAPTURE) have their
+# own write paths, so this floor does not strip them.  See doc/@Devel/Logging-And-Instrumentation.md.
+add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:STU_LOG_MIN_SEVERITY=LOG_SEV_INFO>)
+
+# CALL_TRACE ([FN-ENTER] / [FN-EXIT]) for OG-matchup runs: its own compile switch, STU_CALL_TRACE (STU/src/STU_LOG.h).  It defaults on with STU_DEBUG,
+# so Debug always has it; this option builds it into every config, so a matchup can run on the faster Release build.  Independent of STU_LOG_MIN_SEVERITY.
+# See doc/@Devel/Logging-And-Instrumentation.md.
+option(REMOM_CALL_TRACE "Build the CALL_TRACE [FN-ENTER]/[FN-EXIT] stream into every config, Release included (Debug has it regardless)" OFF)
+if(REMOM_CALL_TRACE)
+    add_compile_definitions(STU_CALL_TRACE=1)
+    message(STATUS "REMOM_CALL_TRACE: CALL_TRACE built into every config")
+endif()
+
+# Catalog logging (input-field / picture / drawing catalogs): its own compile switch, STU_CLOG (STU/src/STU_CLOG.h).  It defaults on with STU_DEBUG;
+# this option builds it into every config, so a catalog run can use the faster Release build.  See doc/@Devel/Logging-And-Instrumentation.md.
+option(REMOM_GD_CAPTURE "Build the [GD] game-data capture (STU_GD_CAPTURE) into every config, Release included (Debug has it regardless); still needs REMOM_GD_CAPTURE=1 at run time" OFF)
+if(REMOM_GD_CAPTURE)
+    add_compile_definitions(STU_GD_CAPTURE=1)
+    message(STATUS "REMOM_GD_CAPTURE: [GD] capture built into every config")
+endif()
+
+option(REMOM_CLOG "Build the STU_CLOG catalog logging into every config, Release included (Debug has it regardless)" OFF)
+if(REMOM_CLOG)
+    add_compile_definitions(STU_CLOG=1)
+    message(STATUS "REMOM_CLOG: catalog logging built into every config")
+endif()
 
 # Performance instrumentation (doc/@AI_Plans/PRD-Performance-Management.md FR6).
 #
@@ -344,7 +372,7 @@ add_subdirectory(demo)
 # Public releases are ENGINE-ONLY: we install just the player executable plus a
 # couple of docs / templates.  The player supplies their own original Master of
 # Magic data files (every *.LBX plus CONFIG.MOM) at runtime — those are NOT
-# shipped.  The dev/QA tools (HeMoM, savedump, rmr2hms, check_*, compare_*) stay
+# shipped.  The dev/QA tools (DeMoM, savedump, rmr2hms, check_*, compare_*) stay
 # buildable but are deliberately excluded from the installed/packaged set.
 # GNUInstallDirs gives CMAKE_INSTALL_BINDIR (default "bin"), so a plain
 # `cmake --install --prefix /usr/local` lands ReMoM in /usr/local/bin, matching

@@ -35,16 +35,18 @@ extern uint8_t * draw_page;
 */
 
 
-// WZD s26p01
+/* CLAUDE */  /* moved here from between the WZD s26p01 id tag and PageFlip_Dissolve(), so the tag sits on its function */
 /* CLAUDE: per-pass delay (ms) for PageFlip_Dissolve; 0 = original instant behavior */
 extern int16_t g_pageflip_dissolve_pass_delay;
+
+// WZD s26p01
 void PageFlip_Dissolve(void);
 
 // WZD s26p02
 // UU_VGA_SlowMosaicFlip()
 
 // WZD s26p03
-// RP_VGA_CutRight()
+void PageFlip_Wipe_Right(void);
 
 // WZD s26p04
 // UU_VGA_InterleaveOut()

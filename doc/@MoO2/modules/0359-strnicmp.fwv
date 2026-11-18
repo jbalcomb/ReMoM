@@ -1,0 +1,9 @@
+module_num=359
+module=strnicmp
+source=0359-strnicmp.md
+range[0]=1:0x0015023E linear=0x0016023E size=83
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME       SYMBOL      CHUNK
+m359f001    1    1/2    0x0016023E  1:0x0015023E  code  strnicmp   strnicmp_   regions/07-object-1/001E5654-001E5E53.txt
+m359f001_2  1    2/2    0x0016023E  1:0x0015023E  code  _strnicmp  _strnicmp_  regions/07-object-1/001E5654-001E5E53.txt

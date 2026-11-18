@@ -17,7 +17,7 @@
 
 void Platform_Show_Error(const char * title, const char * message)
 {
-    /* No GUI in headless mode -- stderr is the channel HeMoM / CI observes. */
+    /* No GUI in headless mode -- stderr is the channel DeMoM / CI observes. */
     fprintf(stderr, "%s: %s\n", title, message);
 }
 
@@ -28,7 +28,7 @@ void Platform_Show_Error(const char * title, const char * message)
 
 /**
  * Optional per-frame callback for synthetic input injection.
- * Registered by HeMoM via Platform_Register_Frame_Callback().
+ * Registered by DeMoM via Platform_Register_Frame_Callback().
  * Called once per Platform_Event_Handler() when no replay is active.
  */
 static void (*platform_frame_callback)(void) = NULL;
@@ -172,8 +172,8 @@ void Platform_Set_Window_Title(const char * title)
 /* CLAUDE: Stubs for the Win32-only pump entry points referenced from MoX
  * Input.c / Video.c under #ifdef _STU_WIN.  These are needed when MoX is
  * built with _STU_WIN defined (because the windowed backend in this build is
- * Win32) but HeMoM links against the headless platform — without these the
- * link of HeMoM fails on unresolved Pump_Events / Pump_Paints. */
+ * Win32) but DeMoM links against the headless platform — without these the
+ * link of DeMoM fails on unresolved Pump_Events / Pump_Paints. */
 void Pump_Events(void) { /* no-op */ }
 void Pump_Paints(void) { /* no-op */ }
 

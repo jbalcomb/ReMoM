@@ -34,8 +34,8 @@ wait 4000ms
 # # click 144 168
 # # click 145 169
 # click 146 170
-# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Artificial_Human_Player.c:1092 HeMoM_Player_Frame: [HeMoM Player] t=151474 ms click (146, 170)
-# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Artificial_Human_Player.c:928 HeMoM_Log_Field_Hit: [HeMoM Player] t=151474 ms   -> hits field[1] rect=(144,168)-(169,177) type=0 selectable=0
+# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Automation_Driver.c:1092 Automation_Driver_Frame: [Automation Driver] t=151474 ms click (146, 170)
+# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Automation_Driver.c:928 Driver_Log_Field_Hit: [Automation Driver] t=151474 ms   -> hits field[1] rect=(144,168)-(169,177) type=0 selectable=0
 # wait 3000ms
 # # Spellbook - Forward
 # type f
@@ -228,8 +228,8 @@ wait 20000ms
 # # click 144 168
 # # click 145 169
 # click 146 170
-# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Artificial_Human_Player.c:1092 HeMoM_Player_Frame: [HeMoM Player] t=151474 ms click (146, 170)
-# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Artificial_Human_Player.c:928 HeMoM_Log_Field_Hit: [HeMoM Player] t=151474 ms   -> hits field[1] rect=(144,168)-(169,177) type=0 selectable=0
+# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Automation_Driver.c:1092 Automation_Driver_Frame: [Automation Driver] t=151474 ms click (146, 170)
+# # [2026-07-29T09:11:50Z] [INFO ] [ARTIFICIAL_HUMAN_PLAYER] Automation_Driver.c:928 Driver_Log_Field_Hit: [Automation Driver] t=151474 ms   -> hits field[1] rect=(144,168)-(169,177) type=0 selectable=0
 # wait 3000ms
 # # Spellbook - Forward
 # type f

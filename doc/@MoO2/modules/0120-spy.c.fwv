@@ -1,0 +1,21 @@
+module_num=120
+module=D:\MOX\OTHERS\SPY.C
+source=0120-spy.c.md
+range[0]=1:0x000F0A36 linear=0x00100A36 size=4108
+range[1]=2:0x00034E78 linear=0x001A4E78 size=32
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                     SYMBOL                    CHUNK
+m120f001  1    -      0x00100A3E  1:0x000F0A3E  static,code  Tech_Spy_Bonus           Tech_Spy_Bonus_           regions/07-object-1/00185E54-00186653.txt
+m120f002  2    -      0x00100A83  1:0x000F0A83  code         Compute_Spy_Bonuses      Compute_Spy_Bonuses_      regions/07-object-1/00185E54-00186653.txt
+m120f003  3    -      0x00100BC5  1:0x000F0BC5  static,code  Frame_Another            Frame_Another_            regions/07-object-1/00185E54-00186653.txt
+m120f004  4    -      0x00100D19  1:0x000F0D19  code         Allocate_AI_Spies        Allocate_AI_Spies_        regions/07-object-1/00185E54-00186653.txt
+m120f005  5    -      0x0010119C  1:0x000F119C  static,code  Steal_App                Steal_App_                regions/07-object-1/00186654-00186E53.txt
+m120f006  6    -      0x0010130A  1:0x000F130A  static,code  Destroy_Random_Building  Destroy_Random_Building_  regions/07-object-1/00186654-00186E53.txt
+m120f007  7    -      0x00101483  1:0x000F1483  static,code  N_Spies_Bonus            N_Spies_Bonus_            regions/07-object-1/00186654-00186E53.txt
+m120f008  8    -      0x001014A4  1:0x000F14A4  static,code  Resolve_Player_Spies     Resolve_Player_Spies_     regions/07-object-1/00186654-00186E53.txt
+m120f009  9    -      0x00101768  1:0x000F1768  static,code  Leader_Assassinates      Leader_Assassinates_      regions/07-object-1/00186654-00186E53.txt
+m120f010  10   -      0x001018A3  1:0x000F18A3  static,code  Resolve_Assassins        Resolve_Assassins_        regions/07-object-1/00186E54-00187653.txt
+m120f011  11   -      0x0010192B  1:0x000F192B  code         Resolve_Spies            Resolve_Spies_            regions/07-object-1/00186E54-00187653.txt
+m120f012  12   -      0x001019F0  1:0x000F19F0  code         Bring_Home_Spies_Vs      Bring_Home_Spies_Vs_      regions/07-object-1/00186E54-00187653.txt
+-         -    -      0x001A4E78  2:0x00034E78  static,data  _spy_bonuses             _spy_bonuses              -

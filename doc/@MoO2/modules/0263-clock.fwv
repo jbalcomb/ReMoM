@@ -1,0 +1,12 @@
+module_num=263
+module=clock
+source=0263-clock.md
+range[0]=1:0x00138468 linear=0x00148468 size=142
+range[1]=2:0x0004BC08 linear=0x001BBC08 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME          SYMBOL         CHUNK
+m263f001  1    -      0x00148468  1:0x00138468  static,code  clock_value   clock_value_   regions/07-object-1/001CD654-001CDE53.txt
+m263f002  2    -      0x001484C3  1:0x001384C3  code         __clock_init  __clock_init_  regions/07-object-1/001CD654-001CDE53.txt
+m263f003  3    -      0x001484CE  1:0x001384CE  code         __clock       __clock_       regions/07-object-1/001CD654-001CDE53.txt
+-         -    -      0x001BBC08  2:0x0004BC08  static,data  _clock_start  _clock_start   -

@@ -1,0 +1,1409 @@
+module_num=138
+module=F:\WLIBS\sound\sound.c
+source=0138-sound.c.md
+range[0]=1:0x0010190B linear=0x0011190B size=9276
+range[1]=2:0x0000251C linear=0x0017251C size=92
+range[2]=2:0x0000C380 linear=0x0017C380 size=224
+range[3]=2:0x00035854 linear=0x001A5854 size=11940
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                      SYMBOL                    CHUNK
+m138f001  1    -      0x0011190B  1:0x0010190B  code  Set_Sound_File            Set_Sound_File_           regions/07-object-1/00196E54-00197653.txt
+m138f002  2    -      0x00111932  1:0x00101932  code  Set_Music_File            Set_Music_File_           regions/07-object-1/00196E54-00197653.txt
+m138f003  3    -      0x00111959  1:0x00101959  code  Set_Audio_Buffer          Set_Audio_Buffer_         regions/07-object-1/00196E54-00197653.txt
+m138f004  4    -      0x001119BE  1:0x001019BE  code  sampleCallback            _sampleCallback           regions/07-object-1/00196E54-00197653.txt
+m138f005  5    -      0x00111A82  1:0x00101A82  code  xmiCallback               _xmiCallback              regions/07-object-1/00196E54-00197653.txt
+m138f006  6    -      0x00111ACD  1:0x00101ACD  code  Ail_Timer                 _Ail_Timer                regions/07-object-1/00196E54-00197653.txt
+m138f007  7    -      0x00111AE2  1:0x00101AE2  code  getFreeSampleHandle       getFreeSampleHandle_      regions/07-object-1/00196E54-00197653.txt
+m138f008  8    -      0x00111B77  1:0x00101B77  code  getFreeSoundIndex         getFreeSoundIndex_        regions/07-object-1/00196E54-00197653.txt
+m138f009  9    -      0x00111BD6  1:0x00101BD6  code  mergeFreeBlocks           mergeFreeBlocks_          regions/07-object-1/00196E54-00197653.txt
+m138f010  10   -      0x00111CA3  1:0x00101CA3  code  mergeDoneBlocks           mergeDoneBlocks_          regions/07-object-1/00196E54-00197653.txt
+m138f011  11   -      0x00111D70  1:0x00101D70  code  allocateSoundBlock        allocateSoundBlock_       regions/07-object-1/00196E54-00197653.txt
+m138f012  12   -      0x00111F3E  1:0x00101F3E  code  Audio_Init                Audio_Init_               regions/07-object-1/00196E54-00197653.txt
+m138f013  13   -      0x0011215B  1:0x0010215B  code  Audio_Uninit              Audio_Uninit_             regions/07-object-1/00197654-00197E53.txt
+m138f014  14   -      0x001121BA  1:0x001021BA  code  Audio_Clear_Cache         Audio_Clear_Cache_        regions/07-object-1/00197654-00197E53.txt
+m138f015  15   -      0x00112269  1:0x00102269  code  Sound_On                  Sound_On_                 regions/07-object-1/00197654-00197E53.txt
+m138f016  16   -      0x0011229C  1:0x0010229C  code  Sound_Off                 Sound_Off_                regions/07-object-1/00197654-00197E53.txt
+m138f017  17   -      0x001122C0  1:0x001022C0  code  Play_Sound_Buffer         Play_Sound_Buffer_        regions/07-object-1/00197654-00197E53.txt
+m138f018  18   -      0x00112399  1:0x00102399  code  Play_Sound                Play_Sound_               regions/07-object-1/00197654-00197E53.txt
+m138f019  19   -      0x00112656  1:0x00102656  code  Get_Sound_Max_Volume      Get_Sound_Max_Volume_     regions/07-object-1/00197654-00197E53.txt
+m138f020  20   -      0x00112686  1:0x00102686  code  Set_Sound_Max_Volume      Set_Sound_Max_Volume_     regions/07-object-1/00197654-00197E53.txt
+m138f021  21   -      0x0011275E  1:0x0010275E  code  Restart_Sound             Restart_Sound_            regions/07-object-1/00197654-00197E53.txt
+m138f022  22   -      0x001127A3  1:0x001027A3  code  Stop_Sound                Stop_Sound_               regions/07-object-1/00197654-00197E53.txt
+m138f023  23   -      0x00112816  1:0x00102816  code  Stop_All_Sounds           Stop_All_Sounds_          regions/07-object-1/00197E54-00198653.txt
+m138f024  24   -      0x00112857  1:0x00102857  code  Resume_Sound              Resume_Sound_             regions/07-object-1/00197E54-00198653.txt
+m138f025  25   -      0x001128A9  1:0x001028A9  code  Resume_All_Sounds         Resume_All_Sounds_        regions/07-object-1/00197E54-00198653.txt
+m138f026  26   -      0x001128EA  1:0x001028EA  code  Is_Sound_Playing          Is_Sound_Playing_         regions/07-object-1/00197E54-00198653.txt
+m138f027  27   -      0x0011299D  1:0x0010299D  code  Get_Sound_Volume          Get_Sound_Volume_         regions/07-object-1/00197E54-00198653.txt
+m138f028  28   -      0x001129FA  1:0x001029FA  code  Set_Sound_Volume          Set_Sound_Volume_         regions/07-object-1/00197E54-00198653.txt
+m138f029  29   -      0x00112A5C  1:0x00102A5C  code  Set_Sound_Volume_All      Set_Sound_Volume_All_     regions/07-object-1/00197E54-00198653.txt
+m138f030  30   -      0x00112B06  1:0x00102B06  code  Get_Sound_Pan             Get_Sound_Pan_            regions/07-object-1/00197E54-00198653.txt
+m138f031  31   -      0x00112B5C  1:0x00102B5C  code  Set_Sound_Pan             Set_Sound_Pan_            regions/07-object-1/00197E54-00198653.txt
+m138f032  32   -      0x00112BBE  1:0x00102BBE  code  Set_Sound_Pan_All         Set_Sound_Pan_All_        regions/07-object-1/00197E54-00198653.txt
+m138f033  33   -      0x00112C29  1:0x00102C29  code  Loop_Sound                Loop_Sound_               regions/07-object-1/00197E54-00198653.txt
+m138f034  34   -      0x00112C96  1:0x00102C96  code  Fadeout_Sound             Fadeout_Sound_            regions/07-object-1/00197E54-00198653.txt
+m138f035  35   -      0x00112CD9  1:0x00102CD9  code  Pitch_Bend_Sound          Pitch_Bend_Sound_         regions/07-object-1/00197E54-00198653.txt
+m138f036  36   -      0x00112D4F  1:0x00102D4F  code  Music_On                  Music_On_                 regions/07-object-1/00197E54-00198653.txt
+m138f037  37   -      0x00112D82  1:0x00102D82  code  Music_Off                 Music_Off_                regions/07-object-1/00197E54-00198653.txt
+m138f038  38   -      0x00112DA6  1:0x00102DA6  code  Play_Music_Buffer         Play_Music_Buffer_        regions/07-object-1/00197E54-00198653.txt
+m138f039  39   -      0x00112E0F  1:0x00102E0F  code  Play_Music                Play_Music_               regions/07-object-1/00197E54-00198653.txt
+m138f040  40   -      0x00112FD4  1:0x00102FD4  code  Stop_Music                Stop_Music_               regions/07-object-1/00197E54-00198653.txt
+m138f041  41   -      0x00113000  1:0x00103000  code  Resume_Music              Resume_Music_             regions/07-object-1/00198654-00198E53.txt
+m138f042  42   -      0x0011302C  1:0x0010302C  code  Set_Music_Volume          Set_Music_Volume_         regions/07-object-1/00198654-00198E53.txt
+m138f043  43   -      0x0011307E  1:0x0010307E  code  Get_Music_Volume          Get_Music_Volume_         regions/07-object-1/00198654-00198E53.txt
+m138f044  44   -      0x001130BB  1:0x001030BB  code  Loop_Music                Loop_Music_               regions/07-object-1/00198654-00198E53.txt
+m138f045  45   -      0x001130F0  1:0x001030F0  code  Fade_Music_Down           Fade_Music_Down_          regions/07-object-1/00198654-00198E53.txt
+m138f046  46   -      0x0011312B  1:0x0010312B  code  Fade_Music_Up             Fade_Music_Up_            regions/07-object-1/00198654-00198E53.txt
+m138f047  47   -      0x00113166  1:0x00103166  code  Is_Music_Playing          Is_Music_Playing_         regions/07-object-1/00198654-00198E53.txt
+m138f048  48   -      0x001131BB  1:0x001031BB  code  Register_Music_Callback   Register_Music_Callback_  regions/07-object-1/00198654-00198E53.txt
+m138f049  49   -      0x001131F0  1:0x001031F0  code  Sound_Update              Sound_Update_             regions/07-object-1/00198654-00198E53.txt
+m138f050  50   -      0x00113475  1:0x00103475  code  Play_Sound_File           Play_Sound_File_          regions/07-object-1/00198654-00198E53.txt
+m138f051  51   -      0x001136CA  1:0x001036CA  code  Loop_Sound_File           Loop_Sound_File_          regions/07-object-1/00198654-00198E53.txt
+m138f052  52   -      0x001136EC  1:0x001036EC  code  Set_Stream_Filename       Set_Stream_Filename_      regions/07-object-1/00198654-00198E53.txt
+m138f053  53   -      0x00113765  1:0x00103765  code  Play_Stream_Vol           Play_Stream_Vol_          regions/07-object-1/00198654-00198E53.txt
+m138f054  54   -      0x00113A20  1:0x00103A20  code  Play_Stream               Play_Stream_              regions/07-object-1/00198E54-00199653.txt
+m138f055  55   -      0x00113A4E  1:0x00103A4E  code  Stop_Stream               Stop_Stream_              regions/07-object-1/00198E54-00199653.txt
+m138f056  56   -      0x00113AF2  1:0x00103AF2  code  Set_Stream_Volume         Set_Stream_Volume_        regions/07-object-1/00198E54-00199653.txt
+m138f057  57   -      0x00113B56  1:0x00103B56  code  Get_Stream_Volume         Get_Stream_Volume_        regions/07-object-1/00198E54-00199653.txt
+m138f058  58   -      0x00113BAC  1:0x00103BAC  code  Loop_Stream               Loop_Stream_              regions/07-object-1/00198E54-00199653.txt
+m138f059  59   -      0x00113BCE  1:0x00103BCE  code  Is_Stream_Playing         Is_Stream_Playing_        regions/07-object-1/00198E54-00199653.txt
+m138f060  60   -      0x00113C28  1:0x00103C28  code  Fade_Stream_Down          Fade_Stream_Down_         regions/07-object-1/00198E54-00199653.txt
+m138f061  61   -      0x00113C6B  1:0x00103C6B  code  Set_Stream_Max_Volume     Set_Stream_Max_Volume_    regions/07-object-1/00198E54-00199653.txt
+m138f062  62   -      0x00113C9B  1:0x00103C9B  code  Get_Stream_Max_Volume     Get_Stream_Max_Volume_    regions/07-object-1/00198E54-00199653.txt
+m138f063  63   -      0x00113CBD  1:0x00103CBD  code  Fade_Stream_Up            Fade_Stream_Up_           regions/07-object-1/00198E54-00199653.txt
+m138f064  64   -      0x00113CFB  1:0x00103CFB  code  Stream_On                 Stream_On_                regions/07-object-1/00198E54-00199653.txt
+m138f065  65   -      0x00113D23  1:0x00103D23  code  Stream_Off                Stream_Off_               regions/07-object-1/00198E54-00199653.txt
+-         -    -      0x0017C380  2:0x0000C380  data  _soundOn                  _soundOn                  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C384  2:0x0000C384  data  _musicOn                  _musicOn                  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C388  2:0x0000C388  data  _AIL_dig_driver           _AIL_dig_driver           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C38C  2:0x0000C38C  data  _AIL_mdi_driver           _AIL_mdi_driver           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C390  2:0x0000C390  data  _currentIndex             _currentIndex             regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C394  2:0x0000C394  data  _soundBuffer              _soundBuffer              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C398  2:0x0000C398  data  _soundBufferSize          _soundBufferSize          regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C39C  2:0x0000C39C  data  _audioInitialized         _audioInitialized         regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3A0  2:0x0000C3A0  data  _current_tick             _current_tick             regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3A4  2:0x0000C3A4  data  _globalSoundVolume        _globalSoundVolume        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3A5  2:0x0000C3A5  data  _globalSoundPan           _globalSoundPan           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3A6  2:0x0000C3A6  data  _globalMusicVolume        _globalMusicVolume        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3A7  2:0x0000C3A7  data  _globalMaxSoundVolume     _globalMaxSoundVolume     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3AB  2:0x0000C3AB  data  _fadeStreamUp             _fadeStreamUp             regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3AF  2:0x0000C3AF  data  _default_sound_file_name  _default_sound_file_name  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3D7  2:0x0000C3D7  data  _default_music_file_name  _default_music_file_name  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C3FF  2:0x0000C3FF  data  _stream_file_name         _stream_file_name         regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C427  2:0x0000C427  data  _doubleBufferEnabled      _doubleBufferEnabled      regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C42B  2:0x0000C42B  data  _doubleBufferSample       _doubleBufferSample       regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C42F  2:0x0000C42F  data  _doubleBufferFile         _doubleBufferFile         regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C433  2:0x0000C433  data  _doubleBufferSize         _doubleBufferSize         regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C437  2:0x0000C437  data  _doubleBuffering          _doubleBuffering          regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C43B  2:0x0000C43B  data  _doubleBufferLoops        _doubleBufferLoops        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C43F  2:0x0000C43F  data  _doubleBufferDataSize     _doubleBufferDataSize     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C443  2:0x0000C443  data  _doubleBufferLBXentry     _doubleBufferLBXentry     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C447  2:0x0000C447  data  _doubleBufferHandle       _doubleBufferHandle       regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C44B  2:0x0000C44B  data  _global_stream_volume     _global_stream_volume     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C44F  2:0x0000C44F  data  _streamIncVal             _streamIncVal             regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C453  2:0x0000C453  data  _streaming_enabled        _streaming_enabled        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C457  2:0x0000C457  data  _soundsPlayed             _soundsPlayed             regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C45B  2:0x0000C45B  data  _soundCallbacks           _soundCallbacks           regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001A5854  2:0x00035854  data  _streamLBX                _streamLBX                -
+-         -    -      0x001A6054  2:0x00036054  data  _doubleBufferFilename     _doubleBufferFilename     -
+-         -    -      0x001A60A4  2:0x000360A4  data  _doubleBuffers            _doubleBuffers            -
+-         -    -      0x001A60AC  2:0x000360AC  data  _soundIndices             _soundIndices             -
+-         -    -      0x001A65D4  2:0x000365D4  data  _soundLBX                 _soundLBX                 -
+-         -    -      0x001A7620  2:0x00037620  data  _musicLBX                 _musicLBX                 -
+-         -    -      0x001A866C  2:0x0003866C  data  _xmi                      _xmi                      -
+-         -    -      0x001A8670  2:0x00038670  data  _samples                  _samples                  -
+-         -    -      0x001A86B4  2:0x000386B4  data  _fades                    _fades                    -
+
+[Module variables]
+LINEAR      SEGOFF        NAME                     TYPE
+0x001A5854  2:0x00035854  streamLBX                lbxHeader
+0x0017C3D7  2:0x0000C3D7  default_music_file_name  char[40]
+0x0017C3AF  2:0x0000C3AF  default_sound_file_name  char[40]
+0x001A6054  2:0x00036054  doubleBufferFilename     char[80]
+0x0017C3FF  2:0x0000C3FF  stream_file_name         char[40]
+0x001A60A4  2:0x000360A4  doubleBuffers            char *[2]
+0x001A60AC  2:0x000360AC  soundIndices             SoundIndex[33]
+0x0017C44F  2:0x0000C44F  streamIncVal             int
+0x0017C45B  2:0x0000C45B  soundCallbacks           int
+0x0017C443  2:0x0000C443  doubleBufferLBXentry     int
+0x0017C43F  2:0x0000C43F  doubleBufferDataSize     long
+0x0017C44B  2:0x0000C44B  global_stream_volume     int
+0x0017C453  2:0x0000C453  streaming_enabled        int
+0x0017C447  2:0x0000C447  doubleBufferHandle       int
+0x0017C457  2:0x0000C457  soundsPlayed             int
+0x0017C39C  2:0x0000C39C  audioInitialized         int
+0x0017C394  2:0x0000C394  soundBuffer              char *
+0x0017C3A7  2:0x0000C3A7  globalMaxSoundVolume     int
+0x0017C437  2:0x0000C437  doubleBuffering          int
+0x0017C433  2:0x0000C433  doubleBufferSize         int
+0x001A65D4  2:0x000365D4  soundLBX                 LBX
+0x0017C3AB  2:0x0000C3AB  fadeStreamUp             int
+0x0017C3A0  2:0x0000C3A0  current_tick             unsigned int
+0x001A7620  2:0x00037620  musicLBX                 LBX
+0x0017C42B  2:0x0000C42B  doubleBufferSample       HSAMPLE
+0x0017C42F  2:0x0000C42F  doubleBufferFile         FILE *
+0x0017C43B  2:0x0000C43B  doubleBufferLoops        int
+0x0017C398  2:0x0000C398  soundBufferSize          int
+0x0017C427  2:0x0000C427  doubleBufferEnabled      int
+0x0017C390  2:0x0000C390  currentIndex             int
+0x001A866C  2:0x0003866C  xmi                      HSEQUENCE
+0x0017C380  2:0x0000C380  soundOn                  int
+0x0017C388  2:0x0000C388  AIL_dig_driver           DIG_DRIVER *
+0x001A8670  2:0x00038670  samples                  HSAMPLE[17]
+0x001A86B4  2:0x000386B4  fades                    SDWORD[17]
+0x0017C384  2:0x0000C384  musicOn                  int
+0x0017C38C  2:0x0000C38C  AIL_mdi_driver           MDI_DRIVER *
+0x0017C3A4  2:0x0000C3A4  globalSoundVolume        char
+0x0017C3A5  2:0x0000C3A5  globalSoundPan           char
+0x0017C3A6  2:0x0000C3A6  globalMusicVolume        char
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS   NAME                     TYPE                                     CHUNK
+m138f001  0x0011190B  1:0x0010190B  39    14        9         0x18     -    EAX          Set_Sound_File           void (char *)                            regions/07-object-1/00196E54-00197653.txt
+m138f002  0x00111932  1:0x00101932  39    14        9         0x18     -    EAX          Set_Music_File           void (char *)                            regions/07-object-1/00196E54-00197653.txt
+m138f003  0x00111959  1:0x00101959  101   14        9         0x18     -    EAX          Set_Audio_Buffer         void (void *)                            regions/07-object-1/00196E54-00197653.txt
+m138f004  0x001119BE  1:0x001019BE  196   11        6         0xC      -    -            sampleCallback           void (HSAMPLE)                           regions/07-object-1/00196E54-00197653.txt
+m138f005  0x00111A82  1:0x00101A82  75    11        6         0xC      -    -            xmiCallback              void (HSEQUENCE)                         regions/07-object-1/00196E54-00197653.txt
+m138f006  0x00111ACD  1:0x00101ACD  21    11        4         0xC      -    -            Ail_Timer                void (void)                              regions/07-object-1/00196E54-00197653.txt
+m138f007  0x00111AE2  1:0x00101AE2  149   14        9         0x18     -    -            getFreeSampleHandle      int (void); returns in EAX               regions/07-object-1/00196E54-00197653.txt
+m138f008  0x00111B77  1:0x00101B77  95    14        9         0x18     -    -            getFreeSoundIndex        int (void); returns in EAX               regions/07-object-1/00196E54-00197653.txt
+m138f009  0x00111BD6  1:0x00101BD6  205   14        9         0x18     -    -            mergeFreeBlocks          void (void)                              regions/07-object-1/00196E54-00197653.txt
+m138f010  0x00111CA3  1:0x00101CA3  205   14        9         0x18     -    -            mergeDoneBlocks          void (void)                              regions/07-object-1/00196E54-00197653.txt
+m138f011  0x00111D70  1:0x00101D70  462   12        7         0x10     -    EAX,EDX,EBX  allocateSoundBlock       char * (int, int, int); returns in EAX   regions/07-object-1/00196E54-00197653.txt
+m138f012  0x00111F3E  1:0x00101F3E  541   14        9         0x18     -    -            Audio_Init               void (void)                              regions/07-object-1/00196E54-00197653.txt
+m138f013  0x0011215B  1:0x0010215B  95    14        7         0x18     -    -            Audio_Uninit             void (void)                              regions/07-object-1/00197654-00197E53.txt
+m138f014  0x001121BA  1:0x001021BA  175   14        9         0x18     -    -            Audio_Clear_Cache        void (void)                              regions/07-object-1/00197654-00197E53.txt
+m138f015  0x00112269  1:0x00102269  51    14        7         0x18     -    -            Sound_On                 void (void)                              regions/07-object-1/00197654-00197E53.txt
+m138f016  0x0011229C  1:0x0010229C  36    14        7         0x18     -    -            Sound_Off                void (void)                              regions/07-object-1/00197654-00197E53.txt
+m138f017  0x001122C0  1:0x001022C0  217   14        9         0x18     -    EAX          Play_Sound_Buffer        SampleHandle (void *); returns in EAX    regions/07-object-1/00197654-00197E53.txt
+m138f018  0x00112399  1:0x00102399  701   14        9         0x18     -    EAX          Play_Sound               SampleHandle (int); returns in EAX       regions/07-object-1/00197654-00197E53.txt
+m138f019  0x00112656  1:0x00102656  48    14        9         0x18     -    -            Get_Sound_Max_Volume     long (void); returns in EAX              regions/07-object-1/00197654-00197E53.txt
+m138f020  0x00112686  1:0x00102686  216   14        9         0x18     -    EAX          Set_Sound_Max_Volume     void (long)                              regions/07-object-1/00197654-00197E53.txt
+m138f021  0x0011275E  1:0x0010275E  69    14        9         0x18     -    EAX          Restart_Sound            void (SampleHandle)                      regions/07-object-1/00197654-00197E53.txt
+m138f022  0x001127A3  1:0x001027A3  115   14        9         0x18     -    EAX          Stop_Sound               void (SampleHandle)                      regions/07-object-1/00197654-00197E53.txt
+m138f023  0x00112816  1:0x00102816  65    14        9         0x18     -    -            Stop_All_Sounds          void (void)                              regions/07-object-1/00197E54-00198653.txt
+m138f024  0x00112857  1:0x00102857  82    14        9         0x18     -    EAX          Resume_Sound             void (SampleHandle)                      regions/07-object-1/00197E54-00198653.txt
+m138f025  0x001128A9  1:0x001028A9  65    14        9         0x18     -    -            Resume_All_Sounds        void (void)                              regions/07-object-1/00197E54-00198653.txt
+m138f026  0x001128EA  1:0x001028EA  179   14        9         0x18     -    EAX          Is_Sound_Playing         int (int); returns in EAX                regions/07-object-1/00197E54-00198653.txt
+m138f027  0x0011299D  1:0x0010299D  93    14        9         0x18     -    EAX          Get_Sound_Volume         int (SampleHandle); returns in EAX       regions/07-object-1/00197E54-00198653.txt
+m138f028  0x001129FA  1:0x001029FA  98    13        8         0x14     -    EAX,EDX      Set_Sound_Volume         void (SampleHandle, int)                 regions/07-object-1/00197E54-00198653.txt
+m138f029  0x00112A5C  1:0x00102A5C  170   14        9         0x18     -    EAX          Set_Sound_Volume_All     void (int)                               regions/07-object-1/00197E54-00198653.txt
+m138f030  0x00112B06  1:0x00102B06  86    14        9         0x18     -    EAX          Get_Sound_Pan            int (SampleHandle); returns in EAX       regions/07-object-1/00197E54-00198653.txt
+m138f031  0x00112B5C  1:0x00102B5C  98    13        8         0x14     -    EAX,EDX      Set_Sound_Pan            void (SampleHandle, int)                 regions/07-object-1/00197E54-00198653.txt
+m138f032  0x00112BBE  1:0x00102BBE  107   14        9         0x18     -    EAX          Set_Sound_Pan_All        void (int)                               regions/07-object-1/00197E54-00198653.txt
+m138f033  0x00112C29  1:0x00102C29  109   13        8         0x14     -    EAX,EDX      Loop_Sound               void (SampleHandle, int)                 regions/07-object-1/00197E54-00198653.txt
+m138f034  0x00112C96  1:0x00102C96  67    13        8         0x14     -    EAX,EDX      Fadeout_Sound            void (SampleHandle, int)                 regions/07-object-1/00197E54-00198653.txt
+m138f035  0x00112CD9  1:0x00102CD9  118   13        8         0x14     -    EAX,EDX      Pitch_Bend_Sound         void (SampleHandle, int)                 regions/07-object-1/00197E54-00198653.txt
+m138f036  0x00112D4F  1:0x00102D4F  51    14        7         0x18     -    -            Music_On                 void (void)                              regions/07-object-1/00197E54-00198653.txt
+m138f037  0x00112D82  1:0x00102D82  36    14        7         0x18     -    -            Music_Off                void (void)                              regions/07-object-1/00197E54-00198653.txt
+m138f038  0x00112DA6  1:0x00102DA6  105   14        9         0x18     -    EAX          Play_Music_Buffer        void (void *)                            regions/07-object-1/00197E54-00198653.txt
+m138f039  0x00112E0F  1:0x00102E0F  453   14        9         0x18     -    EAX          Play_Music               void (int)                               regions/07-object-1/00197E54-00198653.txt
+m138f040  0x00112FD4  1:0x00102FD4  44    14        7         0x18     -    -            Stop_Music               void (void)                              regions/07-object-1/00197E54-00198653.txt
+m138f041  0x00113000  1:0x00103000  44    14        7         0x18     -    -            Resume_Music             void (void)                              regions/07-object-1/00198654-00198E53.txt
+m138f042  0x0011302C  1:0x0010302C  82    14        9         0x18     -    EAX          Set_Music_Volume         void (int)                               regions/07-object-1/00198654-00198E53.txt
+m138f043  0x0011307E  1:0x0010307E  61    14        9         0x18     -    -            Get_Music_Volume         int (void); returns in EAX               regions/07-object-1/00198654-00198E53.txt
+m138f044  0x001130BB  1:0x001030BB  53    14        9         0x18     -    EAX          Loop_Music               void (int)                               regions/07-object-1/00198654-00198E53.txt
+m138f045  0x001130F0  1:0x001030F0  59    14        9         0x18     -    EAX          Fade_Music_Down          void (int)                               regions/07-object-1/00198654-00198E53.txt
+m138f046  0x0011312B  1:0x0010312B  59    14        9         0x18     -    EAX          Fade_Music_Up            void (int)                               regions/07-object-1/00198654-00198E53.txt
+m138f047  0x00113166  1:0x00103166  85    14        9         0x18     -    -            Is_Music_Playing         int (void); returns in EAX               regions/07-object-1/00198654-00198E53.txt
+m138f048  0x001131BB  1:0x001031BB  53    14        9         0x18     -    EAX          Register_Music_Callback  void (CALLBACK)                          regions/07-object-1/00198654-00198E53.txt
+m138f049  0x001131F0  1:0x001031F0  645   14        9         0x18     -    -            Sound_Update             void (void)                              regions/07-object-1/00198654-00198E53.txt
+m138f050  0x00113475  1:0x00103475  597   14        9         0x18     -    EAX          Play_Sound_File          SampleHandle (char *); returns in EAX    regions/07-object-1/00198654-00198E53.txt
+m138f051  0x001136CA  1:0x001036CA  34    14        9         0x18     -    EAX          Loop_Sound_File          void (int)                               regions/07-object-1/00198654-00198E53.txt
+m138f052  0x001136EC  1:0x001036EC  121   14        9         0x18     -    EAX          Set_Stream_Filename      void (char *)                            regions/07-object-1/00198654-00198E53.txt
+m138f053  0x00113765  1:0x00103765  699   13        8         0x14     -    EAX,EDX      Play_Stream_Vol          SampleHandle (int, int); returns in EAX  regions/07-object-1/00198654-00198E53.txt
+m138f054  0x00113A20  1:0x00103A20  46    14        9         0x18     -    EAX          Play_Stream              SampleHandle (int); returns in EAX       regions/07-object-1/00198E54-00199653.txt
+m138f055  0x00113A4E  1:0x00103A4E  164   14        7         0x18     -    -            Stop_Stream              void (void)                              regions/07-object-1/00198E54-00199653.txt
+m138f056  0x00113AF2  1:0x00103AF2  100   14        9         0x18     -    EAX          Set_Stream_Volume        void (int)                               regions/07-object-1/00198E54-00199653.txt
+m138f057  0x00113B56  1:0x00103B56  86    14        9         0x18     -    -            Get_Stream_Volume        int (void); returns in EAX               regions/07-object-1/00198E54-00199653.txt
+m138f058  0x00113BAC  1:0x00103BAC  34    14        9         0x18     -    EAX          Loop_Stream              void (int)                               regions/07-object-1/00198E54-00199653.txt
+m138f059  0x00113BCE  1:0x00103BCE  90    14        9         0x18     -    -            Is_Stream_Playing        int (void); returns in EAX               regions/07-object-1/00198E54-00199653.txt
+m138f060  0x00113C28  1:0x00103C28  67    14        9         0x18     -    EAX          Fade_Stream_Down         void (int)                               regions/07-object-1/00198E54-00199653.txt
+m138f061  0x00113C6B  1:0x00103C6B  48    14        9         0x18     -    EAX          Set_Stream_Max_Volume    void (long)                              regions/07-object-1/00198E54-00199653.txt
+m138f062  0x00113C9B  1:0x00103C9B  34    14        9         0x18     -    -            Get_Stream_Max_Volume    long (void); returns in EAX              regions/07-object-1/00198E54-00199653.txt
+m138f063  0x00113CBD  1:0x00103CBD  62    14        9         0x18     -    EAX          Fade_Stream_Up           void (int)                               regions/07-object-1/00198E54-00199653.txt
+m138f064  0x00113CFB  1:0x00103CFB  40    14        7         0x18     -    -            Stream_On                void (void)                              regions/07-object-1/00198E54-00199653.txt
+m138f065  0x00113D23  1:0x00103D23  36    14        7         0x18     -    -            Stream_Off               void (void)                              regions/07-object-1/00198E54-00199653.txt
+
+[Locals]
+KEY       ROUTINE                  BLOCK           LOCAL           LOCATION    TYPE
+m138f001  Set_Sound_File           -               filename        [EBP-0x4]   char *
+m138f002  Set_Music_File           -               filename        [EBP-0x4]   char *
+m138f003  Set_Audio_Buffer         -               buffer          [EBP-0x4]   void *
+m138f004  sampleCallback           -               sample          [EBP+0x10]  HSAMPLE
+m138f004  sampleCallback           -               i               [EBP-0xC]   int
+m138f004  sampleCallback           -               j               [EBP-0x8]   int
+m138f004  sampleCallback           -               state           [EBP-0x4]   int
+m138f005  xmiCallback              -               sequence        [EBP+0x10]  HSEQUENCE
+m138f005  xmiCallback              -               i               [EBP-0x4]   int
+m138f007  getFreeSampleHandle      -               i               [EBP-0x8]   int
+m138f008  getFreeSoundIndex        -               i               [EBP-0x8]   int
+m138f009  mergeFreeBlocks          -               i               [EBP-0xC]   int
+m138f009  mergeFreeBlocks          -               si              [EBP-0x8]   SoundIndex *
+m138f009  mergeFreeBlocks          -               nextSi          [EBP-0x4]   SoundIndex *
+m138f010  mergeDoneBlocks          -               i               [EBP-0xC]   int
+m138f010  mergeDoneBlocks          -               si              [EBP-0x8]   SoundIndex *
+m138f010  mergeDoneBlocks          -               nextSi          [EBP-0x4]   SoundIndex *
+m138f011  allocateSoundBlock       -               handle          [EBP-0x20]  int
+m138f011  allocateSoundBlock       -               num             [EBP-0x1C]  int
+m138f011  allocateSoundBlock       -               size            [EBP-0x18]  int
+m138f011  allocateSoundBlock       -               x               [EBP-0x14]  int
+m138f011  allocateSoundBlock       -               i               [EBP-0x10]  int
+m138f011  allocateSoundBlock       -               si              [EBP-0xC]   SoundIndex *
+m138f011  allocateSoundBlock       -               siNum           [EBP-0x8]   int
+m138f012  Audio_Init               -               i               [EBP-0x8]   int
+m138f012  Audio_Init               -               h               [EBP-0x4]   HTIMER
+m138f014  Audio_Clear_Cache        -               i               [EBP-0x4]   int
+m138f017  Play_Sound_Buffer        -               voc             [EBP-0xC]   void *
+m138f017  Play_Sound_Buffer        -               handle          [EBP-0x8]   int
+m138f018  Play_Sound               -               num             [EBP-0x18]  int
+m138f018  Play_Sound               -               i               [EBP-0x14]  int
+m138f018  Play_Sound               -               recordSize      [EBP-0x10]  int
+m138f018  Play_Sound               -               playBlock       [EBP-0xC]   char *
+m138f018  Play_Sound               -               handle          [EBP-0x8]   int
+m138f020  Set_Sound_Max_Volume     -               volume_percent  [EBP-0x8]   long
+m138f020  Set_Sound_Max_Volume     -               i               [EBP-0x4]   SDWORD
+m138f021  Restart_Sound            -               handle          [EBP-0x4]   SampleHandle
+m138f022  Stop_Sound               -               handle          [EBP-0x4]   SampleHandle
+m138f023  Stop_All_Sounds          -               i               [EBP-0x4]   int
+m138f024  Resume_Sound             -               handle          [EBP-0x4]   SampleHandle
+m138f025  Resume_All_Sounds        -               i               [EBP-0x4]   int
+m138f026  Is_Sound_Playing         -               num             [EBP-0x10]  int
+m138f026  Is_Sound_Playing         -               i               [EBP-0xC]   int
+m138f026  Is_Sound_Playing         -               j               [EBP-0x8]   int
+m138f027  Get_Sound_Volume         -               handle          [EBP-0x8]   SampleHandle
+m138f028  Set_Sound_Volume         -               handle          [EBP-0x8]   SampleHandle
+m138f028  Set_Sound_Volume         -               volume          [EBP-0x4]   int
+m138f029  Set_Sound_Volume_All     -               volume          [EBP-0x8]   int
+m138f029  Set_Sound_Volume_All     -               i               [EBP-0x4]   int
+m138f030  Get_Sound_Pan            -               handle          [EBP-0x8]   SampleHandle
+m138f031  Set_Sound_Pan            -               handle          [EBP-0x8]   SampleHandle
+m138f031  Set_Sound_Pan            -               potpos          [EBP-0x4]   int
+m138f032  Set_Sound_Pan_All        -               potpos          [EBP-0x8]   int
+m138f032  Set_Sound_Pan_All        -               i               [EBP-0x4]   int
+m138f033  Loop_Sound               -               s               [EBP-0x8]   SampleHandle
+m138f033  Loop_Sound               -               num_loops       [EBP-0x4]   int
+m138f034  Fadeout_Sound            -               s               [EBP-0x8]   SampleHandle
+m138f034  Fadeout_Sound            -               dec_val         [EBP-0x4]   int
+m138f035  Pitch_Bend_Sound         -               s               [EBP-0xC]   SampleHandle
+m138f035  Pitch_Bend_Sound         -               bend            [EBP-0x8]   int
+m138f035  Pitch_Bend_Sound         -               rate            [EBP-0x4]   SDWORD
+m138f038  Play_Music_Buffer        -               buffer          [EBP-0x8]   void *
+m138f038  Play_Music_Buffer        -               error           [EBP-0x4]   int
+m138f039  Play_Music               -               num             [EBP-0x10]  int
+m138f039  Play_Music               -               i               [EBP-0xC]   int
+m138f039  Play_Music               -               recordSize      [EBP-0x8]   int
+m138f039  Play_Music               -               playBlock       [EBP-0x4]   char *
+m138f042  Set_Music_Volume         -               volume          [EBP-0x4]   int
+m138f044  Loop_Music               -               num_loops       [EBP-0x4]   int
+m138f045  Fade_Music_Down          -               seconds         [EBP-0x4]   int
+m138f046  Fade_Music_Up            -               seconds         [EBP-0x4]   int
+m138f048  Register_Music_Callback  -               callback        [EBP-0x4]   CALLBACK
+m138f049  Sound_Update             -               i               [EBP-0x14]  int
+m138f049  Sound_Update             -               vol             [EBP-0x10]  int
+m138f049  Sound_Update             -               len             [EBP-0xC]   int
+m138f049  Sound_Update             -               b               [EBP-0x8]   int
+m138f049  Sound_Update             -               done            [EBP-0x4]   int
+m138f050  Play_Sound_File          -               filename        [EBP-0x10]  char *
+m138f050  Play_Sound_File          -               alt_path        [EBP-0x60]  char[80]
+m138f050  Play_Sound_File          -               t               [EBP-0xC]   HTIMER
+m138f050  Play_Sound_File          -               s               [EBP-0x8]   int
+m138f051  Loop_Sound_File          -               loops           [EBP-0x4]   int
+m138f052  Set_Stream_Filename      -               filename        [EBP-0x8]   char *
+m138f052  Set_Stream_Filename      -               i               [EBP-0x4]   SDWORD
+m138f053  Play_Stream_Vol          0x001137C5+162  multiplier      [EBP-0x68]  int
+m138f053  Play_Stream_Vol          -               num             [EBP-0x10]  int
+m138f053  Play_Stream_Vol          -               vol             [EBP-0x14]  int
+m138f053  Play_Stream_Vol          -               alt_path        [EBP-0x64]  char[80]
+m138f053  Play_Stream_Vol          -               t               [EBP-0xC]   HTIMER
+m138f053  Play_Stream_Vol          -               s               [EBP-0x8]   int
+m138f054  Play_Stream              -               num             [EBP-0x8]   int
+m138f056  Set_Stream_Volume        -               volume          [EBP-0x4]   int
+m138f057  Get_Stream_Volume        -               volume          [EBP-0x8]   int
+m138f058  Loop_Stream              -               num_loops       [EBP-0x4]   int
+m138f060  Fade_Stream_Down         -               dec_val         [EBP-0x4]   int
+m138f061  Set_Stream_Max_Volume    -               volume_percent  [EBP-0x4]   long
+m138f063  Fade_Stream_Up           -               inc_val         [EBP-0x4]   int
+
+[Types]
+NUM  KIND       NAME                DETAILS
+-    cue table  -                   source file table (C++)
+1    scope      struct              -
+2    scope      union               -
+3    scope      enum                -
+4    scalar     signed char         int 1 bytes
+5    scalar     unsigned char       unsigned 1 bytes
+6    scalar     short               int 2 bytes
+7    scalar     unsigned short      unsigned 2 bytes
+8    scalar     int                 int 4 bytes
+9    scalar     unsigned int        unsigned 4 bytes
+10   typedef    char                name for unsigned char (#5)
+11   typedef    char                name for unsigned char (#5)
+12   typedef    SampleHandle        name for int (#8)
+13   typedef    BYTE                name for unsigned char (#5)
+14   typedef    SBYTE               name for signed char (#4)
+15   typedef    UBYTE               name for unsigned char (#5)
+16   typedef    WORD                name for unsigned short (#7)
+17   typedef    SWORD               name for short (#6)
+18   typedef    UWORD               name for unsigned short (#7)
+19   typedef    DWORD               name for unsigned int (#9)
+20   typedef    SDWORD              name for int (#8)
+21   typedef    UDWORD              name for unsigned int (#9)
+22   typedef    BOOL                name for unsigned char (#5)
+23   typedef    size_t              name for unsigned int (#9)
+24   scalar     unsigned long       unsigned 4 bytes
+25   typedef    ULONG               name for unsigned long (#24)
+26   scalar     long                int 4 bytes
+27   typedef    LONG                name for long (#26)
+28   scalar     void                void 1 bytes
+29   pointer    CALLBACK            near386; of void (#28)
+30   typedef    CALLBACK            name for void * (#29)
+31   typedef    REALFAR             name for ULONG (#25)
+32   typedef    HTIMER              name for LONG (#27)
+33   pointer    -                   near386; of char (#10)
+34   array      __va_list           0..0; of char * (#33)
+35   typedef    __va_list           name for char *[1] (#34)
+36   typedef    fpos_t              name for long (#26)
+37   typedef    fpos_t              name for long (#26)
+38   typedef    wchar_t             name for unsigned short (#7)
+39   typedef    wchar_t             name for unsigned short (#7)
+40   procedure  -                   near386; returns void ()
+41   pointer    onexit_t            near386; of void (void) (#40)
+42   typedef    onexit_t            name for void (void) * (#41)
+43   array      -                   0..509; of long (#26)
+44   struct     lbxHeader           5 fields, 2048 bytes
+45   typedef    lbxHeader           name for struct #44 (#44)
+46   array      -                   0..39; of char (#10)
+47   array      -                   0..39; of char (#10)
+48   array      -                   0..79; of char (#10)
+49   array      -                   0..39; of char (#10)
+50   array      -                   0..1; of char * (#33)
+51   array      -                   0..15; of char (#10)
+52   struct     SoundIndex          7 fields, 40 bytes
+53   typedef    SoundIndex          name for struct #52 (#52)
+54   array      -                   0..32; of SoundIndex (#53)
+55   pointer    -                   near386; of unsigned char (#5)
+56   struct     struct __iobuf      8 fields, 26 bytes
+57   typedef    __iobuf             struct name for struct #56 (#56)
+58   typedef    FILE                name for struct __iobuf (#57)
+59   pointer    -                   near386; of FILE (#58)
+60   struct     LBX_Index           2 fields, 8 bytes
+61   typedef    LBX_Index           name for struct #60 (#60)
+62   array      -                   0..509; of LBX_Index (#61)
+63   array      -                   0..79; of char (#10)
+64   struct     LBX                 7 fields, 4172 bytes
+65   typedef    LBX                 name for struct #64 (#64)
+66   array      -                   0..7; of BYTE (#13)
+67   array      -                   0..3; of LONG (#27)
+68   struct     IO_PARMS            5 fields, 24 bytes
+69   typedef    IO_PARMS            name for struct #68 (#68)
+70   array      -                   0..127; of BYTE (#13)
+71   array      -                   0..79; of BYTE (#13)
+72   struct     VDI_HDR             13 fields, 266 bytes
+73   typedef    VDI_HDR             name for struct #72 (#72)
+74   pointer    -                   near386; of VDI_HDR (#73)
+75   procedure  -                   near386; returns void (void *)
+76   pointer    -                   near386; of void (void *) (#75)
+77   struct     AIL_DRIVER          10 fields, 40 bytes
+78   typedef    AIL_DRIVER          name for struct #77 (#77)
+79   pointer    -                   near386; of AIL_DRIVER (#78)
+80   array      -                   0..15; of UBYTE (#15)
+81   struct     DIG_MODE            6 fields, 14 bytes
+82   typedef    DIG_MODE            name for struct #81 (#81)
+83   array      -                   0..15; of DIG_MODE (#82)
+84   struct     DIG_DDT             2 fields, 240 bytes
+85   typedef    DIG_DDT             name for struct #84 (#84)
+86   pointer    -                   near386; of DIG_DDT (#85)
+87   struct     DIG_DST             3 fields, 10 bytes
+88   typedef    DIG_DST             name for struct #87 (#87)
+89   pointer    -                   near386; of DIG_DST (#88)
+90   array      -                   0..1; of void * (#29)
+91   pointer    -                   near386; of WORD (#16)
+92   pointer    -                   near386; of LONG (#27)
+93   typedef    SAMPLE              name for struct _SAMPLE (#108)
+94   pointer    -                   near386; of SAMPLE (#93)
+95   array      -                   0..7; of LONG (#27)
+96   struct     struct _DIG_DRIVER  26 fields, 136 bytes
+97   typedef    _DIG_DRIVER         struct name for struct #96 (#96)
+98   pointer    -                   near386; of struct _DIG_DRIVER (#97)
+99   array      -                   0..1; of void * (#29)
+100  array      -                   0..1; of ULONG (#25)
+101  array      -                   0..1; of ULONG (#25)
+102  array      -                   0..1; of ULONG (#25)
+103  array      -                   0..255; of LONG (#27)
+104  array      -                   0..1; of LONG[256] (#103)
+105  array      -                   0..7; of LONG (#27)
+106  array      -                   0..7; of LONG (#27)
+107  struct     struct _SAMPLE      20 fields, 2196 bytes
+108  typedef    _SAMPLE             struct name for struct #107 (#107)
+109  pointer    HSAMPLE             near386; of SAMPLE (#93)
+110  typedef    HSAMPLE             name for SAMPLE * (#109)
+111  struct     MDI_DDT             6 fields, 16 bytes
+112  typedef    MDI_DDT             name for struct #111 (#111)
+113  pointer    -                   near386; of MDI_DDT (#112)
+114  array      -                   0..127; of BYTE (#13)
+115  array      -                   0..127; of BYTE (#13)
+116  array      -                   0..511; of BYTE (#13)
+117  struct     MDI_DST             3 fields, 768 bytes
+118  typedef    MDI_DST             name for struct #117 (#117)
+119  pointer    -                   near386; of MDI_DST (#118)
+120  typedef    SEQUENCE            name for struct #161 (#161)
+121  pointer    -                   near386; of SEQUENCE (#120)
+122  array      -                   0..15; of LONG (#27)
+123  typedef    HSEQUENCE           name for SEQUENCE * (#162)
+124  array      -                   0..15; of HSEQUENCE (#123)
+125  array      -                   0..15; of HSEQUENCE (#123)
+126  array      -                   0..15; of HSEQUENCE (#123)
+127  array      -                   0..15; of LONG (#27)
+128  array      -                   0..15; of LONG (#27)
+129  array      -                   0..7; of LONG (#27)
+130  struct     struct _MDI_DRIVER  19 fields, 464 bytes
+131  typedef    _MDI_DRIVER         struct name for struct #130 (#130)
+132  pointer    -                   near386; of struct _MDI_DRIVER (#131)
+133  pointer    -                   near386; of BYTE (#13)
+134  array      -                   0..3; of void * (#29)
+135  array      -                   0..3; of LONG (#27)
+136  array      -                   0..15; of LONG (#27)
+137  array      -                   0..15; of LONG (#27)
+138  array      -                   0..15; of LONG (#27)
+139  array      -                   0..15; of LONG (#27)
+140  array      -                   0..15; of LONG (#27)
+141  array      -                   0..15; of LONG (#27)
+142  array      -                   0..15; of LONG (#27)
+143  array      -                   0..15; of LONG (#27)
+144  array      -                   0..15; of LONG (#27)
+145  array      -                   0..15; of LONG (#27)
+146  array      -                   0..15; of LONG (#27)
+147  array      -                   0..15; of LONG (#27)
+148  array      -                   0..15; of LONG (#27)
+149  array      -                   0..15; of LONG (#27)
+150  array      -                   0..15; of LONG (#27)
+151  array      -                   0..15; of LONG (#27)
+152  array      -                   0..15; of LONG (#27)
+153  array      -                   0..15; of LONG (#27)
+154  struct     CTRL_LOG            17 fields, 1088 bytes
+155  typedef    CTRL_LOG            name for struct #154 (#154)
+156  array      -                   0..31; of LONG (#27)
+157  array      -                   0..31; of LONG (#27)
+158  array      -                   0..31; of LONG (#27)
+159  array      -                   0..7; of LONG (#27)
+160  array      -                   0..7; of LONG (#27)
+161  struct     SEQUENCE            38 fields, 1748 bytes
+162  pointer    HSEQUENCE           near386; of SEQUENCE (#120)
+163  typedef    DIG_DRIVER          name for struct _DIG_DRIVER (#97)
+164  pointer    -                   near386; of DIG_DRIVER (#163)
+165  array      -                   0..16; of HSAMPLE (#110)
+166  array      -                   0..16; of SDWORD (#20)
+167  typedef    MDI_DRIVER          name for struct _MDI_DRIVER (#131)
+168  pointer    -                   near386; of MDI_DRIVER (#167)
+169  procedure  -                   near386; returns void (char *)
+170  procedure  -                   near386; returns void (void *)
+171  procedure  -                   near386; returns void (HSAMPLE)
+172  procedure  -                   near386; returns void (HSEQUENCE)
+173  procedure  -                   near386; returns void (void)
+174  procedure  -                   near386; returns int ()
+175  pointer    -                   near386; of SoundIndex (#53)
+176  procedure  -                   near386; returns char * (int, int, int)
+177  procedure  -                   near386; returns SampleHandle (void *)
+178  procedure  -                   near386; returns SampleHandle (int)
+179  procedure  -                   near386; returns long ()
+180  procedure  -                   near386; returns void (long)
+181  procedure  -                   near386; returns void (SampleHandle)
+182  procedure  -                   near386; returns int (int)
+183  procedure  -                   near386; returns int (SampleHandle)
+184  procedure  -                   near386; returns void (SampleHandle, int)
+185  procedure  -                   near386; returns void (int)
+186  procedure  -                   near386; returns void (CALLBACK)
+187  procedure  -                   near386; returns void (void)
+188  procedure  -                   near386; returns SampleHandle (char *)
+189  array      -                   0..79; of char (#10)
+190  procedure  -                   near386; returns SampleHandle (int, int)
+191  array      -                   0..79; of char (#10)
+192  procedure  -                   near386; returns int (void)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER                        OFFSET_VALUE  TYPE                  TYPE_NAME
+44        field        entries                       0             short                 lbxHeader
+44        field        magic_number                  2             unsigned short        lbxHeader
+44        field        file_type                     4             short                 lbxHeader
+44        field        dummy                         6             short                 lbxHeader
+44        field        offsets                       8             long[510]             lbxHeader
+52        field        location                      0             int                   SoundIndex
+52        field        length                        4             int                   SoundIndex
+52        field        state                         8             int                   SoundIndex
+52        field        handle                        12            char[16]              SoundIndex
+52        field        soundNum                      28            int                   SoundIndex
+52        field        next                          32            int                   SoundIndex
+52        field        prev                          36            int                   SoundIndex
+56        field        _ptr                          0             unsigned char *       struct __iobuf
+56        field        _cnt                          4             int                   struct __iobuf
+56        field        _base                         8             unsigned char *       struct __iobuf
+56        field        _flag                         12            unsigned int          struct __iobuf
+56        field        _handle                       16            int                   struct __iobuf
+56        field        _bufsize                      20            unsigned int          struct __iobuf
+56        field        _ungotten                     24            unsigned char         struct __iobuf
+56        field        _tmpfchar                     25            unsigned char         struct __iobuf
+60        field        location                      0             long                  LBX_Index
+60        field        length                        4             long                  LBX_Index
+64        field        entries                       0             short                 LBX
+64        field        magic_number                  2             unsigned short        LBX
+64        field        file_type                     4             short                 LBX
+64        field        dummy                         6             short                 LBX
+64        field        f                             8             FILE *                LBX
+64        field        indices                       12            LBX_Index[510]        LBX
+64        field        filename                      4092          char[80]              LBX
+68        field        IO                            0             WORD                  IO_PARMS
+68        field        IRQ                           2             WORD                  IO_PARMS
+68        field        DMA_8_bit                     4             WORD                  IO_PARMS
+68        field        DMA_16_bit                    6             WORD                  IO_PARMS
+68        field        IO_reserved                   8             LONG[4]               IO_PARMS
+72        field        ID                            0             BYTE[8]               VDI_HDR
+72        field        driver_version                8             ULONG                 VDI_HDR
+72        field        common_IO_configurations      12            REALFAR               VDI_HDR
+72        field        num_IO_configurations         16            UWORD                 VDI_HDR
+72        field        environment_string            18            REALFAR               VDI_HDR
+72        field        IO                            22            IO_PARMS              VDI_HDR
+72        field        service_rate                  46            WORD                  VDI_HDR
+72        field        busy                          48            UWORD                 VDI_HDR
+72        field        driver_num                    50            UWORD                 VDI_HDR
+72        field        this_ISR                      52            UWORD                 VDI_HDR
+72        field        prev_ISR                      54            REALFAR               VDI_HDR
+72        field        scratch                       58            BYTE[128]             VDI_HDR
+72        field        dev_name                      186           BYTE[80]              VDI_HDR
+77        field        seg                           0             REALFAR               AIL_DRIVER
+77        field        sel                           4             ULONG                 AIL_DRIVER
+77        field        buf                           8             void *                AIL_DRIVER
+77        field        VHDR                          12            VDI_HDR *             AIL_DRIVER
+77        field        type                          16            LONG                  AIL_DRIVER
+77        field        initialized                   20            LONG                  AIL_DRIVER
+77        field        PM_ISR                        24            LONG                  AIL_DRIVER
+77        field        server                        28            HTIMER                AIL_DRIVER
+77        field        destructor                    32            void (void *) *       AIL_DRIVER
+77        field        descriptor                    36            void *                AIL_DRIVER
+81        field        minimum_physical_sample_rate  0             UWORD                 DIG_MODE
+81        field        nominal_physical_sample_rate  2             UWORD                 DIG_MODE
+81        field        maximum_physical_sample_rate  4             UWORD                 DIG_MODE
+81        field        minimum_DMA_half_buffer_size  6             UWORD                 DIG_MODE
+81        field        maximum_DMA_half_buffer_size  8             UWORD                 DIG_MODE
+81        field        flags                         10            ULONG                 DIG_MODE
+84        field        format_supported              0             UBYTE[16]             DIG_DDT
+84        field        format_data                   16            DIG_MODE[16]          DIG_DDT
+87        field        DMA_buffer_A                  0             REALFAR               DIG_DST
+87        field        DMA_buffer_B                  4             REALFAR               DIG_DST
+87        field        active_buffer                 8             WORD                  DIG_DST
+96        field        drvr                          0             AIL_DRIVER *          struct _DIG_DRIVER
+96        field        DDT                           4             DIG_DDT *             struct _DIG_DRIVER
+96        field        DST                           8             DIG_DST *             struct _DIG_DRIVER
+96        field        timer                         12            HTIMER                struct _DIG_DRIVER
+96        field        half_buffer_size              16            LONG                  struct _DIG_DRIVER
+96        field        DMA_rate                      20            LONG                  struct _DIG_DRIVER
+96        field        hw_format                     24            LONG                  struct _DIG_DRIVER
+96        field        hw_mode_flags                 28            ULONG                 struct _DIG_DRIVER
+96        field        DMA_seg                       32            REALFAR               struct _DIG_DRIVER
+96        field        DMA_sel                       36            ULONG                 struct _DIG_DRIVER
+96        field        DMA_buf                       40            void *                struct _DIG_DRIVER
+96        field        DMA                           44            void *[2]             struct _DIG_DRIVER
+96        field        buffer_flag                   52            WORD *                struct _DIG_DRIVER
+96        field        last_buffer                   56            LONG                  struct _DIG_DRIVER
+96        field        channels_per_sample           60            LONG                  struct _DIG_DRIVER
+96        field        bytes_per_channel             64            LONG                  struct _DIG_DRIVER
+96        field        channels_per_buffer           68            LONG                  struct _DIG_DRIVER
+96        field        samples_per_buffer            72            LONG                  struct _DIG_DRIVER
+96        field        build_size                    76            LONG                  struct _DIG_DRIVER
+96        field        build_buffer                  80            LONG *                struct _DIG_DRIVER
+96        field        playing                       84            LONG                  struct _DIG_DRIVER
+96        field        quiet                         88            LONG                  struct _DIG_DRIVER
+96        field        samples                       92            SAMPLE *              struct _DIG_DRIVER
+96        field        n_samples                     96            LONG                  struct _DIG_DRIVER
+96        field        n_active_samples              100           LONG                  struct _DIG_DRIVER
+96        field        system_data                   104           LONG[8]               struct _DIG_DRIVER
+107       field        driver                        0             struct _DIG_DRIVER *  struct _SAMPLE
+107       field        status                        4             ULONG                 struct _SAMPLE
+107       field        start                         8             void *[2]             struct _SAMPLE
+107       field        len                           16            ULONG[2]              struct _SAMPLE
+107       field        pos                           24            ULONG[2]              struct _SAMPLE
+107       field        done                          32            ULONG[2]              struct _SAMPLE
+107       field        current_buffer                40            LONG                  struct _SAMPLE
+107       field        last_buffer                   44            LONG                  struct _SAMPLE
+107       field        loop_count                    48            LONG                  struct _SAMPLE
+107       field        format                        52            LONG                  struct _SAMPLE
+107       field        flags                         56            ULONG                 struct _SAMPLE
+107       field        playback_rate                 60            LONG                  struct _SAMPLE
+107       field        volume                        64            LONG                  struct _SAMPLE
+107       field        pan                           68            LONG                  struct _SAMPLE
+107       field        vol_scale                     72            LONG[256][2]          struct _SAMPLE
+107       field        SOB                           2120          CALLBACK              struct _SAMPLE
+107       field        EOB                           2124          CALLBACK              struct _SAMPLE
+107       field        EOS                           2128          CALLBACK              struct _SAMPLE
+107       field        user_data                     2132          LONG[8]               struct _SAMPLE
+107       field        system_data                   2164          LONG[8]               struct _SAMPLE
+111       field        library_environment           0             REALFAR               MDI_DDT
+111       field        GTL_suffix                    4             REALFAR               MDI_DDT
+111       field        num_voices                    8             UWORD                 MDI_DDT
+111       field        max_melodic_channel           10            UWORD                 MDI_DDT
+111       field        min_melodic_channel           12            UWORD                 MDI_DDT
+111       field        percussion_channel            14            UWORD                 MDI_DDT
+117       field        library_directory             0             BYTE[128]             MDI_DST
+117       field        GTL_filename                  128           BYTE[128]             MDI_DST
+117       field        MIDI_data                     256           BYTE[512]             MDI_DST
+130       field        drvr                          0             AIL_DRIVER *          struct _MDI_DRIVER
+130       field        DDT                           4             MDI_DDT *             struct _MDI_DRIVER
+130       field        DST                           8             MDI_DST *             struct _MDI_DRIVER
+130       field        timer                         12            HTIMER                struct _MDI_DRIVER
+130       field        interval_time                 16            LONG                  struct _MDI_DRIVER
+130       field        disable                       20            LONG                  struct _MDI_DRIVER
+130       field        sequences                     24            SEQUENCE *            struct _MDI_DRIVER
+130       field        n_sequences                   28            LONG                  struct _MDI_DRIVER
+130       field        lock                          32            LONG[16]              struct _MDI_DRIVER
+130       field        locker                        96            HSEQUENCE[16]         struct _MDI_DRIVER
+130       field        owner                         160           HSEQUENCE[16]         struct _MDI_DRIVER
+130       field        user                          224           HSEQUENCE[16]         struct _MDI_DRIVER
+130       field        state                         288           LONG[16]              struct _MDI_DRIVER
+130       field        notes                         352           LONG[16]              struct _MDI_DRIVER
+130       field        event_trap                    416           CALLBACK              struct _MDI_DRIVER
+130       field        timbre_trap                   420           CALLBACK              struct _MDI_DRIVER
+130       field        message_count                 424           LONG                  struct _MDI_DRIVER
+130       field        offset                        428           LONG                  struct _MDI_DRIVER
+130       field        system_data                   432           LONG[8]               struct _MDI_DRIVER
+154       field        program                       0             LONG[16]              CTRL_LOG
+154       field        pitch_l                       64            LONG[16]              CTRL_LOG
+154       field        pitch_h                       128           LONG[16]              CTRL_LOG
+154       field        c_lock                        192           LONG[16]              CTRL_LOG
+154       field        c_prot                        256           LONG[16]              CTRL_LOG
+154       field        c_v_prot                      320           LONG[16]              CTRL_LOG
+154       field        bank                          384           LONG[16]              CTRL_LOG
+154       field        indirect                      448           LONG[16]              CTRL_LOG
+154       field        callback                      512           LONG[16]              CTRL_LOG
+154       field        mod                           576           LONG[16]              CTRL_LOG
+154       field        vol                           640           LONG[16]              CTRL_LOG
+154       field        pan                           704           LONG[16]              CTRL_LOG
+154       field        exp                           768           LONG[16]              CTRL_LOG
+154       field        sus                           832           LONG[16]              CTRL_LOG
+154       field        reverb                        896           LONG[16]              CTRL_LOG
+154       field        chorus                        960           LONG[16]              CTRL_LOG
+154       field        bend_range                    1024          LONG[16]              CTRL_LOG
+161       field        driver                        0             struct _MDI_DRIVER *  SEQUENCE
+161       field        status                        4             ULONG                 SEQUENCE
+161       field        TIMB                          8             void *                SEQUENCE
+161       field        RBRN                          12            void *                SEQUENCE
+161       field        EVNT                          16            void *                SEQUENCE
+161       field        EVNT_ptr                      20            BYTE *                SEQUENCE
+161       field        ICA                           24            BYTE *                SEQUENCE
+161       field        prefix_callback               28            CALLBACK              SEQUENCE
+161       field        trigger_callback              32            CALLBACK              SEQUENCE
+161       field        EOS                           36            CALLBACK              SEQUENCE
+161       field        loop_count                    40            LONG                  SEQUENCE
+161       field        interval_count                44            LONG                  SEQUENCE
+161       field        interval_num                  48            LONG                  SEQUENCE
+161       field        volume                        52            LONG                  SEQUENCE
+161       field        volume_target                 56            LONG                  SEQUENCE
+161       field        volume_accum                  60            LONG                  SEQUENCE
+161       field        volume_period                 64            LONG                  SEQUENCE
+161       field        tempo_percent                 68            LONG                  SEQUENCE
+161       field        tempo_target                  72            LONG                  SEQUENCE
+161       field        tempo_accum                   76            LONG                  SEQUENCE
+161       field        tempo_period                  80            LONG                  SEQUENCE
+161       field        tempo_error                   84            LONG                  SEQUENCE
+161       field        beat_count                    88            LONG                  SEQUENCE
+161       field        measure_count                 92            LONG                  SEQUENCE
+161       field        time_numerator                96            LONG                  SEQUENCE
+161       field        time_fraction                 100           LONG                  SEQUENCE
+161       field        beat_fraction                 104           LONG                  SEQUENCE
+161       field        time_per_beat                 108           LONG                  SEQUENCE
+161       field        FOR_ptrs                      112           void *[4]             SEQUENCE
+161       field        FOR_loop_count                128           LONG[4]               SEQUENCE
+161       field        chan_map                      144           LONG[16]              SEQUENCE
+161       field        shadow                        208           CTRL_LOG              SEQUENCE
+161       field        note_count                    1296          LONG                  SEQUENCE
+161       field        note_chan                     1300          LONG[32]              SEQUENCE
+161       field        note_num                      1428          LONG[32]              SEQUENCE
+161       field        note_time                     1556          LONG[32]              SEQUENCE
+161       field        user_data                     1684          LONG[8]               SEQUENCE
+161       field        system_data                   1716          LONG[8]               SEQUENCE
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m138f001  86    0x0011190B  1:0x0010190B  0x00196F5F
+m138f001  88    0x0011191C  1:0x0010191C  0x00196F70
+m138f001  89    0x00111929  1:0x00101929  0x00196F7D
+m138f002  92    0x00111932  1:0x00101932  0x00196F86
+m138f002  94    0x00111943  1:0x00101943  0x00196F97
+m138f002  95    0x00111950  1:0x00101950  0x00196FA4
+m138f003  98    0x00111959  1:0x00101959  0x00196FAD
+m138f003  100   0x0011196A  1:0x0010196A  0x00196FBE
+m138f003  102   0x00111970  1:0x00101970  0x00196FC4
+m138f003  104   0x0011197D  1:0x0010197D  0x00196FD1
+m138f003  105   0x00111986  1:0x00101986  0x00196FDA
+m138f003  106   0x0011198E  1:0x0010198E  0x00196FE2
+m138f003  107   0x00111990  1:0x00101990  0x00196FE4
+m138f003  109   0x0011199A  1:0x0010199A  0x00196FEE
+m138f003  111   0x0011199C  1:0x0010199C  0x00196FF0
+m138f003  112   0x001119A6  1:0x001019A6  0x00196FFA
+m138f003  115   0x001119B0  1:0x001019B0  0x00197004
+m138f003  116   0x001119B5  1:0x001019B5  0x00197009
+m138f004  119   0x001119BE  1:0x001019BE  0x00197012
+m138f004  126   0x001119C9  1:0x001019C9  0x0019701D
+m138f004  127   0x001119CF  1:0x001019CF  0x00197023
+m138f004  128   0x001119E9  1:0x001019E9  0x0019703D
+m138f004  129   0x00111A0C  1:0x00101A0C  0x00197060
+m138f004  131   0x00111A29  1:0x00101A29  0x0019707D
+m138f004  133   0x00111A36  1:0x00101A36  0x0019708A
+m138f004  134   0x00111A49  1:0x00101A49  0x0019709D
+m138f004  136   0x00111A63  1:0x00101A63  0x001970B7
+m138f004  137   0x00111A65  1:0x00101A65  0x001970B9
+m138f004  139   0x00111A73  1:0x00101A73  0x001970C7
+m138f004  140   0x00111A75  1:0x00101A75  0x001970C9
+m138f004  141   0x00111A7C  1:0x00101A7C  0x001970D0
+m138f005  144   0x00111A82  1:0x00101A82  0x001970D6
+m138f005  148   0x00111A8D  1:0x00101A8D  0x001970E1
+m138f005  149   0x00111AA4  1:0x00101AA4  0x001970F8
+m138f005  150   0x00111AB7  1:0x00101AB7  0x0019710B
+m138f005  151   0x00111AC7  1:0x00101AC7  0x0019711B
+m138f006  154   0x00111ACD  1:0x00101ACD  0x00197121
+m138f006  156   0x00111AD8  1:0x00101AD8  0x0019712C
+m138f006  157   0x00111ADE  1:0x00101ADE  0x00197132
+m138f007  160   0x00111AE2  1:0x00101AE2  0x00197136
+m138f007  164   0x00111AF0  1:0x00101AF0  0x00197144
+m138f007  165   0x00111B07  1:0x00101B07  0x0019715B
+m138f007  166   0x00111B20  1:0x00101B20  0x00197174
+m138f007  168   0x00111B2A  1:0x00101B2A  0x0019717E
+m138f007  169   0x00111B41  1:0x00101B41  0x00197195
+m138f007  170   0x00111B5A  1:0x00101B5A  0x001971AE
+m138f007  172   0x00111B64  1:0x00101B64  0x001971B8
+m138f007  173   0x00111B6B  1:0x00101B6B  0x001971BF
+m138f008  176   0x00111B77  1:0x00101B77  0x001971CB
+m138f008  180   0x00111B85  1:0x00101B85  0x001971D9
+m138f008  181   0x00111B9C  1:0x00101B9C  0x001971F0
+m138f008  182   0x00111BB8  1:0x00101BB8  0x0019720C
+m138f008  184   0x00111BC2  1:0x00101BC2  0x00197216
+m138f008  185   0x00111BC3  1:0x00101BC3  0x00197217
+m138f008  186   0x00111BCA  1:0x00101BCA  0x0019721E
+m138f009  189   0x00111BD6  1:0x00101BD6  0x0019722A
+m138f009  191   0x00111BE4  1:0x00101BE4  0x00197238
+m138f009  195   0x00111BEB  1:0x00101BEB  0x0019723F
+m138f009  197   0x00111C03  1:0x00101C03  0x00197257
+m138f009  198   0x00111C11  1:0x00101C11  0x00197265
+m138f009  200   0x00111C22  1:0x00101C22  0x00197276
+m138f009  202   0x00111C36  1:0x00101C36  0x0019728A
+m138f009  203   0x00111C42  1:0x00101C42  0x00197296
+m138f009  204   0x00111C4E  1:0x00101C4E  0x001972A2
+m138f009  205   0x00111C58  1:0x00101C58  0x001972AC
+m138f009  206   0x00111C5F  1:0x00101C5F  0x001972B3
+m138f009  208   0x00111C69  1:0x00101C69  0x001972BD
+m138f009  209   0x00111C78  1:0x00101C78  0x001972CC
+m138f009  210   0x00111C82  1:0x00101C82  0x001972D6
+m138f009  213   0x00111C8C  1:0x00101C8C  0x001972E0
+m138f009  214   0x00111C95  1:0x00101C95  0x001972E9
+m138f009  215   0x00111C9A  1:0x00101C9A  0x001972EE
+m138f010  218   0x00111CA3  1:0x00101CA3  0x001972F7
+m138f010  220   0x00111CB1  1:0x00101CB1  0x00197305
+m138f010  224   0x00111CB8  1:0x00101CB8  0x0019730C
+m138f010  226   0x00111CD0  1:0x00101CD0  0x00197324
+m138f010  227   0x00111CDE  1:0x00101CDE  0x00197332
+m138f010  229   0x00111CEF  1:0x00101CEF  0x00197343
+m138f010  231   0x00111D03  1:0x00101D03  0x00197357
+m138f010  232   0x00111D0F  1:0x00101D0F  0x00197363
+m138f010  233   0x00111D1B  1:0x00101D1B  0x0019736F
+m138f010  234   0x00111D25  1:0x00101D25  0x00197379
+m138f010  235   0x00111D2C  1:0x00101D2C  0x00197380
+m138f010  237   0x00111D36  1:0x00101D36  0x0019738A
+m138f010  238   0x00111D45  1:0x00101D45  0x00197399
+m138f010  239   0x00111D4F  1:0x00101D4F  0x001973A3
+m138f010  242   0x00111D59  1:0x00101D59  0x001973AD
+m138f010  243   0x00111D62  1:0x00101D62  0x001973B6
+m138f010  244   0x00111D67  1:0x00101D67  0x001973BB
+m138f011  247   0x00111D70  1:0x00101D70  0x001973C4
+m138f011  252   0x00111D85  1:0x00101D85  0x001973D9
+m138f011  253   0x00111D8C  1:0x00101D8C  0x001973E0
+m138f011  255   0x00111D93  1:0x00101D93  0x001973E7
+m138f011  256   0x00111D9E  1:0x00101D9E  0x001973F2
+m138f011  258   0x00111DAA  1:0x00101DAA  0x001973FE
+m138f011  260   0x00111DAF  1:0x00101DAF  0x00197403
+m138f011  263   0x00111DC9  1:0x00101DC9  0x0019741D
+m138f011  265   0x00111E25  1:0x00101E25  0x00197479
+m138f011  266   0x00111E2D  1:0x00101E2D  0x00197481
+m138f011  267   0x00111E33  1:0x00101E33  0x00197487
+m138f011  269   0x00111E3F  1:0x00101E3F  0x00197493
+m138f011  270   0x00111E4C  1:0x00101E4C  0x001974A0
+m138f011  271   0x00111E5C  1:0x00101E5C  0x001974B0
+m138f011  272   0x00111E6E  1:0x00101E6E  0x001974C2
+m138f011  273   0x00111E81  1:0x00101E81  0x001974D5
+m138f011  274   0x00111E8F  1:0x00101E8F  0x001974E3
+m138f011  275   0x00111E9A  1:0x00101E9A  0x001974EE
+m138f011  277   0x00111EA8  1:0x00101EA8  0x001974FC
+m138f011  278   0x00111EB1  1:0x00101EB1  0x00197505
+m138f011  279   0x00111EBA  1:0x00101EBA  0x0019750E
+m138f011  280   0x00111EC3  1:0x00101EC3  0x00197517
+m138f011  281   0x00111ECC  1:0x00101ECC  0x00197520
+m138f011  283   0x00111ED6  1:0x00101ED6  0x0019752A
+m138f011  286   0x00111EE8  1:0x00101EE8  0x0019753C
+m138f011  288   0x00111EF1  1:0x00101EF1  0x00197545
+m138f011  289   0x00111EF8  1:0x00101EF8  0x0019754C
+m138f011  291   0x00111EFF  1:0x00101EFF  0x00197553
+m138f011  292   0x00111F05  1:0x00101F05  0x00197559
+m138f011  294   0x00111F0A  1:0x00101F0A  0x0019755E
+m138f011  298   0x00111F0C  1:0x00101F0C  0x00197560
+m138f011  299   0x00111F15  1:0x00101F15  0x00197569
+m138f011  301   0x00111F23  1:0x00101F23  0x00197577
+m138f011  303   0x00111F2D  1:0x00101F2D  0x00197581
+m138f011  304   0x00111F34  1:0x00101F34  0x00197588
+m138f012  307   0x00111F3E  1:0x00101F3E  0x00197592
+m138f012  312   0x00111F4C  1:0x00101F4C  0x001975A0
+m138f012  315   0x00111F59  1:0x00101F59  0x001975AD
+m138f012  317   0x00111F63  1:0x00101F63  0x001975B7
+m138f012  318   0x00111F74  1:0x00101F74  0x001975C8
+m138f012  319   0x00111F85  1:0x00101F85  0x001975D9
+m138f012  321   0x00111F96  1:0x00101F96  0x001975EA
+m138f012  323   0x00111F9B  1:0x00101F9B  0x001975EF
+m138f012  325   0x00111FAC  1:0x00101FAC  0x00197600
+m138f012  327   0x00111FB2  1:0x00101FB2  0x00197606
+m138f012  328   0x00111FC0  1:0x00101FC0  0x00197614
+m138f012  329   0x00111FC5  1:0x00101FC5  0x00197619
+m138f012  332   0x00111FCF  1:0x00101FCF  0x00197623
+m138f012  333   0x00111FDD  1:0x00101FDD  0x00197631
+m138f012  335   0x00111FE9  1:0x00101FE9  0x0019763D
+m138f012  336   0x00111FF5  1:0x00101FF5  0x00197649
+m138f012  337   0x00112001  1:0x00102001  0x00197655
+m138f012  338   0x00112010  1:0x00102010  0x00197664
+m138f012  340   0x0011201C  1:0x0010201C  0x00197670
+m138f012  343   0x00112028  1:0x00102028  0x0019767C
+m138f012  345   0x00112032  1:0x00102032  0x00197686
+m138f012  347   0x0011203F  1:0x0010203F  0x00197693
+m138f012  349   0x0011204E  1:0x0010204E  0x001976A2
+m138f012  351   0x0011205F  1:0x0010205F  0x001976B3
+m138f012  353   0x00112076  1:0x00102076  0x001976CA
+m138f012  354   0x00112090  1:0x00102090  0x001976E4
+m138f012  355   0x001120A4  1:0x001020A4  0x001976F8
+m138f012  356   0x001120A6  1:0x001020A6  0x001976FA
+m138f012  359   0x001120B0  1:0x001020B0  0x00197704
+m138f012  361   0x001120B9  1:0x001020B9  0x0019770D
+m138f012  363   0x001120C8  1:0x001020C8  0x0019771C
+m138f012  366   0x001120DA  1:0x001020DA  0x0019772E
+m138f012  367   0x001120EB  1:0x001020EB  0x0019773F
+m138f012  369   0x00112102  1:0x00102102  0x00197756
+m138f012  370   0x00112110  1:0x00102110  0x00197764
+m138f012  371   0x0011211E  1:0x0010211E  0x00197772
+m138f012  373   0x00112120  1:0x00102120  0x00197774
+m138f012  374   0x0011212A  1:0x0010212A  0x0019777E
+m138f012  375   0x00112134  1:0x00102134  0x00197788
+m138f012  376   0x0011213E  1:0x0010213E  0x00197792
+m138f012  377   0x00112148  1:0x00102148  0x0019779C
+m138f012  378   0x00112152  1:0x00102152  0x001977A6
+m138f013  381   0x0011215B  1:0x0010215B  0x001977AF
+m138f013  383   0x00112169  1:0x00102169  0x001977BD
+m138f013  386   0x00112172  1:0x00102172  0x001977C6
+m138f013  388   0x0011217C  1:0x0010217C  0x001977D0
+m138f013  389   0x00112181  1:0x00102181  0x001977D5
+m138f013  391   0x00112186  1:0x00102186  0x001977DA
+m138f013  392   0x00112190  1:0x00102190  0x001977E4
+m138f013  394   0x0011219A  1:0x0010219A  0x001977EE
+m138f013  396   0x0011219F  1:0x0010219F  0x001977F3
+m138f013  397   0x001121A9  1:0x001021A9  0x001977FD
+m138f013  398   0x001121B3  1:0x001021B3  0x00197807
+m138f014  401   0x001121BA  1:0x001021BA  0x0019780E
+m138f014  405   0x001121C8  1:0x001021C8  0x0019781C
+m138f014  407   0x001121CD  1:0x001021CD  0x00197821
+m138f014  408   0x001121D6  1:0x001021D6  0x0019782A
+m138f014  410   0x001121E8  1:0x001021E8  0x0019783C
+m138f014  411   0x001121F9  1:0x001021F9  0x0019784D
+m138f014  413   0x00112210  1:0x00102210  0x00197864
+m138f014  414   0x0011221E  1:0x0010221E  0x00197872
+m138f014  415   0x0011222C  1:0x0010222C  0x00197880
+m138f014  417   0x0011222E  1:0x0010222E  0x00197882
+m138f014  418   0x00112238  1:0x00102238  0x0019788C
+m138f014  419   0x00112242  1:0x00102242  0x00197896
+m138f014  420   0x0011224C  1:0x0010224C  0x001978A0
+m138f014  421   0x00112256  1:0x00102256  0x001978AA
+m138f014  422   0x00112260  1:0x00102260  0x001978B4
+m138f015  425   0x00112269  1:0x00102269  0x001978BD
+m138f015  427   0x00112277  1:0x00102277  0x001978CB
+m138f015  428   0x0011228B  1:0x0010228B  0x001978DF
+m138f015  429   0x00112295  1:0x00102295  0x001978E9
+m138f016  432   0x0011229C  1:0x0010229C  0x001978F0
+m138f016  434   0x001122AA  1:0x001022AA  0x001978FE
+m138f016  435   0x001122AF  1:0x001022AF  0x00197903
+m138f016  436   0x001122B9  1:0x001022B9  0x0019790D
+m138f017  439   0x001122C0  1:0x001022C0  0x00197914
+m138f017  443   0x001122D1  1:0x001022D1  0x00197925
+m138f017  444   0x001122DA  1:0x001022DA  0x0019792E
+m138f017  446   0x001122E6  1:0x001022E6  0x0019793A
+m138f017  448   0x001122EE  1:0x001022EE  0x00197942
+m138f017  449   0x001122F4  1:0x001022F4  0x00197948
+m138f017  451   0x00112300  1:0x00102300  0x00197954
+m138f017  452   0x00112314  1:0x00102314  0x00197968
+m138f017  453   0x00112330  1:0x00102330  0x00197984
+m138f017  455   0x0011234C  1:0x0010234C  0x001979A0
+m138f017  456   0x0011236A  1:0x0010236A  0x001979BE
+m138f017  458   0x00112373  1:0x00102373  0x001979C7
+m138f017  460   0x00112387  1:0x00102387  0x001979DB
+m138f017  461   0x0011238D  1:0x0010238D  0x001979E1
+m138f018  464   0x00112399  1:0x00102399  0x001979ED
+m138f018  471   0x001123AA  1:0x001023AA  0x001979FE
+m138f018  472   0x001123B3  1:0x001023B3  0x00197A07
+m138f018  474   0x001123BF  1:0x001023BF  0x00197A13
+m138f018  476   0x001123C7  1:0x001023C7  0x00197A1B
+m138f018  477   0x001123E9  1:0x001023E9  0x00197A3D
+m138f018  479   0x001123F5  1:0x001023F5  0x00197A49
+m138f018  480   0x0011240F  1:0x0010240F  0x00197A63
+m138f018  482   0x00112430  1:0x00102430  0x00197A84
+m138f018  484   0x0011243D  1:0x0010243D  0x00197A91
+m138f018  485   0x0011244B  1:0x0010244B  0x00197A9F
+m138f018  487   0x00112458  1:0x00102458  0x00197AAC
+m138f018  489   0x00112467  1:0x00102467  0x00197ABB
+m138f018  490   0x0011247E  1:0x0010247E  0x00197AD2
+m138f018  492   0x00112488  1:0x00102488  0x00197ADC
+m138f018  493   0x0011248A  1:0x0010248A  0x00197ADE
+m138f018  495   0x0011248F  1:0x0010248F  0x00197AE3
+m138f018  496   0x001124A3  1:0x001024A3  0x00197AF7
+m138f018  497   0x001124BF  1:0x001024BF  0x00197B13
+m138f018  499   0x001124DB  1:0x001024DB  0x00197B2F
+m138f018  500   0x001124F5  1:0x001024F5  0x00197B49
+m138f018  501   0x0011251E  1:0x0010251E  0x00197B72
+m138f018  503   0x00112532  1:0x00102532  0x00197B86
+m138f018  504   0x00112538  1:0x00102538  0x00197B8C
+m138f018  505   0x00112543  1:0x00102543  0x00197B97
+m138f018  507   0x00112548  1:0x00102548  0x00197B9C
+m138f018  509   0x00112558  1:0x00102558  0x00197BAC
+m138f018  510   0x0011255E  1:0x0010255E  0x00197BB2
+m138f018  512   0x0011256A  1:0x0010256A  0x00197BBE
+m138f018  514   0x0011257B  1:0x0010257B  0x00197BCF
+m138f018  515   0x00112581  1:0x00102581  0x00197BD5
+m138f018  517   0x0011258D  1:0x0010258D  0x00197BE1
+m138f018  519   0x0011259D  1:0x0010259D  0x00197BF1
+m138f018  520   0x001125B1  1:0x001025B1  0x00197C05
+m138f018  521   0x001125CD  1:0x001025CD  0x00197C21
+m138f018  523   0x001125E9  1:0x001025E9  0x00197C3D
+m138f018  524   0x00112607  1:0x00102607  0x00197C5B
+m138f018  526   0x00112610  1:0x00102610  0x00197C64
+m138f018  528   0x0011262A  1:0x0010262A  0x00197C7E
+m138f018  529   0x0011263E  1:0x0010263E  0x00197C92
+m138f018  531   0x00112644  1:0x00102644  0x00197C98
+m138f018  532   0x0011264A  1:0x0010264A  0x00197C9E
+m138f019  535   0x00112656  1:0x00102656  0x00197CAA
+m138f019  537   0x00112664  1:0x00102664  0x00197CB8
+m138f019  538   0x0011267A  1:0x0010267A  0x00197CCE
+m138f020  541   0x00112686  1:0x00102686  0x00197CDA
+m138f020  545   0x00112697  1:0x00102697  0x00197CEB
+m138f020  546   0x001126F3  1:0x001026F3  0x00197D47
+m138f020  548   0x001126FD  1:0x001026FD  0x00197D51
+m138f020  549   0x00112714  1:0x00102714  0x00197D68
+m138f020  550   0x00112743  1:0x00102743  0x00197D97
+m138f020  551   0x00112755  1:0x00102755  0x00197DA9
+m138f021  554   0x0011275E  1:0x0010275E  0x00197DB2
+m138f021  556   0x0011276F  1:0x0010276F  0x00197DC3
+m138f021  559   0x00112778  1:0x00102778  0x00197DCC
+m138f021  560   0x00112786  1:0x00102786  0x00197DDA
+m138f021  561   0x0011279A  1:0x0010279A  0x00197DEE
+m138f022  564   0x001127A3  1:0x001027A3  0x00197DF7
+m138f022  566   0x001127B4  1:0x001027B4  0x00197E08
+m138f022  569   0x001127BD  1:0x001027BD  0x00197E11
+m138f022  570   0x001127C3  1:0x001027C3  0x00197E17
+m138f022  571   0x001127C8  1:0x001027C8  0x00197E1C
+m138f022  573   0x001127E5  1:0x001027E5  0x00197E39
+m138f022  574   0x001127F9  1:0x001027F9  0x00197E4D
+m138f022  576   0x0011280D  1:0x0010280D  0x00197E61
+m138f023  579   0x00112816  1:0x00102816  0x00197E6A
+m138f023  583   0x00112824  1:0x00102824  0x00197E78
+m138f023  586   0x0011282D  1:0x0010282D  0x00197E81
+m138f023  587   0x00112844  1:0x00102844  0x00197E98
+m138f023  588   0x0011284E  1:0x0010284E  0x00197EA2
+m138f024  591   0x00112857  1:0x00102857  0x00197EAB
+m138f024  593   0x00112868  1:0x00102868  0x00197EBC
+m138f024  596   0x00112871  1:0x00102871  0x00197EC5
+m138f024  597   0x00112877  1:0x00102877  0x00197ECB
+m138f024  598   0x0011287C  1:0x0010287C  0x00197ED0
+m138f024  599   0x0011288C  1:0x0010288C  0x00197EE0
+m138f024  600   0x001128A0  1:0x001028A0  0x00197EF4
+m138f025  603   0x001128A9  1:0x001028A9  0x00197EFD
+m138f025  607   0x001128B7  1:0x001028B7  0x00197F0B
+m138f025  610   0x001128C0  1:0x001028C0  0x00197F14
+m138f025  611   0x001128D7  1:0x001028D7  0x00197F2B
+m138f025  612   0x001128E1  1:0x001028E1  0x00197F35
+m138f026  615   0x001128EA  1:0x001028EA  0x00197F3E
+m138f026  620   0x001128FB  1:0x001028FB  0x00197F4F
+m138f026  621   0x00112904  1:0x00102904  0x00197F58
+m138f026  623   0x00112910  1:0x00102910  0x00197F64
+m138f026  624   0x00112916  1:0x00102916  0x00197F6A
+m138f026  626   0x00112922  1:0x00102922  0x00197F76
+m138f026  627   0x00112939  1:0x00102939  0x00197F8D
+m138f026  628   0x00112946  1:0x00102946  0x00197F9A
+m138f026  629   0x00112966  1:0x00102966  0x00197FBA
+m138f026  630   0x0011297D  1:0x0010297D  0x00197FD1
+m138f026  632   0x0011298A  1:0x0010298A  0x00197FDE
+m138f026  633   0x00112991  1:0x00102991  0x00197FE5
+m138f027  636   0x0011299D  1:0x0010299D  0x00197FF1
+m138f027  639   0x001129AE  1:0x001029AE  0x00198002
+m138f027  640   0x001129B7  1:0x001029B7  0x0019800B
+m138f027  642   0x001129C0  1:0x001029C0  0x00198014
+m138f027  643   0x001129CE  1:0x001029CE  0x00198022
+m138f027  645   0x001129E7  1:0x001029E7  0x0019803B
+m138f027  646   0x001129EE  1:0x001029EE  0x00198042
+m138f028  649   0x001129FA  1:0x001029FA  0x0019804E
+m138f028  652   0x00112A0D  1:0x00102A0D  0x00198061
+m138f028  655   0x00112A16  1:0x00102A16  0x0019806A
+m138f028  656   0x00112A1C  1:0x00102A1C  0x00198070
+m138f028  657   0x00112A24  1:0x00102A24  0x00198078
+m138f028  658   0x00112A3C  1:0x00102A3C  0x00198090
+m138f028  659   0x00112A54  1:0x00102A54  0x001980A8
+m138f029  662   0x00112A5C  1:0x00102A5C  0x001980B0
+m138f029  666   0x00112A6D  1:0x00102A6D  0x001980C1
+m138f029  669   0x00112A7A  1:0x00102A7A  0x001980CE
+m138f029  670   0x00112A80  1:0x00102A80  0x001980D4
+m138f029  671   0x00112A87  1:0x00102A87  0x001980DB
+m138f029  672   0x00112A8F  1:0x00102A8F  0x001980E3
+m138f029  674   0x00112A96  1:0x00102A96  0x001980EA
+m138f029  675   0x00112ACE  1:0x00102ACE  0x00198122
+m138f029  676   0x00112AE5  1:0x00102AE5  0x00198139
+m138f029  677   0x00112AF0  1:0x00102AF0  0x00198144
+m138f029  678   0x00112AFD  1:0x00102AFD  0x00198151
+m138f030  681   0x00112B06  1:0x00102B06  0x0019815A
+m138f030  683   0x00112B17  1:0x00102B17  0x0019816B
+m138f030  684   0x00112B30  1:0x00102B30  0x00198184
+m138f030  686   0x00112B49  1:0x00102B49  0x0019819D
+m138f030  687   0x00112B50  1:0x00102B50  0x001981A4
+m138f031  690   0x00112B5C  1:0x00102B5C  0x001981B0
+m138f031  692   0x00112B6F  1:0x00102B6F  0x001981C3
+m138f031  695   0x00112B78  1:0x00102B78  0x001981CC
+m138f031  696   0x00112B7E  1:0x00102B7E  0x001981D2
+m138f031  697   0x00112B86  1:0x00102B86  0x001981DA
+m138f031  698   0x00112B9E  1:0x00102B9E  0x001981F2
+m138f031  699   0x00112BB6  1:0x00102BB6  0x0019820A
+m138f032  702   0x00112BBE  1:0x00102BBE  0x00198212
+m138f032  706   0x00112BCF  1:0x00102BCF  0x00198223
+m138f032  709   0x00112BD8  1:0x00102BD8  0x0019822C
+m138f032  710   0x00112BDE  1:0x00102BDE  0x00198232
+m138f032  711   0x00112BE5  1:0x00102BE5  0x00198239
+m138f032  712   0x00112BED  1:0x00102BED  0x00198241
+m138f032  714   0x00112BF4  1:0x00102BF4  0x00198248
+m138f032  716   0x00112BFC  1:0x00102BFC  0x00198250
+m138f032  717   0x00112C13  1:0x00102C13  0x00198267
+m138f032  718   0x00112C20  1:0x00102C20  0x00198274
+m138f033  721   0x00112C29  1:0x00102C29  0x0019827D
+m138f033  723   0x00112C3C  1:0x00102C3C  0x00198290
+m138f033  724   0x00112C5B  1:0x00102C5B  0x001982AF
+m138f033  726   0x00112C5D  1:0x00102C5D  0x001982B1
+m138f033  727   0x00112C63  1:0x00102C63  0x001982B7
+m138f033  729   0x00112C6A  1:0x00102C6A  0x001982BE
+m138f033  730   0x00112C76  1:0x00102C76  0x001982CA
+m138f033  731   0x00112C8E  1:0x00102C8E  0x001982E2
+m138f034  734   0x00112C96  1:0x00102C96  0x001982EA
+m138f034  736   0x00112CA9  1:0x00102CA9  0x001982FD
+m138f034  737   0x00112CC0  1:0x00102CC0  0x00198314
+m138f034  739   0x00112CC2  1:0x00102CC2  0x00198316
+m138f034  740   0x00112CD1  1:0x00102CD1  0x00198325
+m138f035  743   0x00112CD9  1:0x00102CD9  0x0019832D
+m138f035  747   0x00112CEC  1:0x00102CEC  0x00198340
+m138f035  748   0x00112D03  1:0x00102D03  0x00198357
+m138f035  750   0x00112D05  1:0x00102D05  0x00198359
+m138f035  752   0x00112D1C  1:0x00102D1C  0x00198370
+m138f035  754   0x00112D22  1:0x00102D22  0x00198376
+m138f035  755   0x00112D28  1:0x00102D28  0x0019837C
+m138f035  757   0x00112D2F  1:0x00102D2F  0x00198383
+m138f035  758   0x00112D47  1:0x00102D47  0x0019839B
+m138f036  761   0x00112D4F  1:0x00102D4F  0x001983A3
+m138f036  763   0x00112D5D  1:0x00102D5D  0x001983B1
+m138f036  764   0x00112D71  1:0x00102D71  0x001983C5
+m138f036  765   0x00112D7B  1:0x00102D7B  0x001983CF
+m138f037  768   0x00112D82  1:0x00102D82  0x001983D6
+m138f037  770   0x00112D90  1:0x00102D90  0x001983E4
+m138f037  771   0x00112D95  1:0x00102D95  0x001983E9
+m138f037  772   0x00112D9F  1:0x00102D9F  0x001983F3
+m138f038  775   0x00112DA6  1:0x00102DA6  0x001983FA
+m138f038  779   0x00112DB7  1:0x00102DB7  0x0019840B
+m138f038  782   0x00112DC0  1:0x00102DC0  0x00198414
+m138f038  784   0x00112DD7  1:0x00102DD7  0x0019842B
+m138f038  787   0x00112DDD  1:0x00102DDD  0x00198431
+m138f038  789   0x00112DF8  1:0x00102DF8  0x0019844C
+m138f038  790   0x00112E06  1:0x00102E06  0x0019845A
+m138f039  793   0x00112E0F  1:0x00102E0F  0x00198463
+m138f039  800   0x00112E20  1:0x00102E20  0x00198474
+m138f039  801   0x00112E2F  1:0x00102E2F  0x00198483
+m138f039  803   0x00112E34  1:0x00102E34  0x00198488
+m138f039  804   0x00112E4E  1:0x00102E4E  0x001984A2
+m138f039  806   0x00112E75  1:0x00102E75  0x001984C9
+m138f039  807   0x00112E82  1:0x00102E82  0x001984D6
+m138f039  808   0x00112E90  1:0x00102E90  0x001984E4
+m138f039  809   0x00112E9F  1:0x00102E9F  0x001984F3
+m138f039  810   0x00112EA9  1:0x00102EA9  0x001984FD
+m138f039  811   0x00112EAB  1:0x00102EAB  0x001984FF
+m138f039  813   0x00112EAD  1:0x00102EAD  0x00198501
+m138f039  814   0x00112EBB  1:0x00102EBB  0x0019850F
+m138f039  815   0x00112ECF  1:0x00102ECF  0x00198523
+m138f039  816   0x00112EF0  1:0x00102EF0  0x00198544
+m138f039  817   0x00112F0B  1:0x00102F0B  0x0019855F
+m138f039  819   0x00112F19  1:0x00102F19  0x0019856D
+m138f039  820   0x00112F1E  1:0x00102F1E  0x00198572
+m138f039  822   0x00112F23  1:0x00102F23  0x00198577
+m138f039  824   0x00112F33  1:0x00102F33  0x00198587
+m138f039  827   0x00112F3D  1:0x00102F3D  0x00198591
+m138f039  829   0x00112F56  1:0x00102F56  0x001985AA
+m138f039  832   0x00112F5C  1:0x00102F5C  0x001985B0
+m138f039  834   0x00112F6C  1:0x00102F6C  0x001985C0
+m138f039  835   0x00112F7A  1:0x00102F7A  0x001985CE
+m138f039  836   0x00112F8E  1:0x00102F8E  0x001985E2
+m138f039  837   0x00112FA9  1:0x00102FA9  0x001985FD
+m138f039  838   0x00112FBD  1:0x00102FBD  0x00198611
+m138f039  839   0x00112FCB  1:0x00102FCB  0x0019861F
+m138f040  842   0x00112FD4  1:0x00102FD4  0x00198628
+m138f040  844   0x00112FE2  1:0x00102FE2  0x00198636
+m138f040  847   0x00112FEB  1:0x00102FEB  0x0019863F
+m138f040  848   0x00112FF9  1:0x00102FF9  0x0019864D
+m138f041  851   0x00113000  1:0x00103000  0x00198654
+m138f041  853   0x0011300E  1:0x0010300E  0x00198662
+m138f041  856   0x00113017  1:0x00103017  0x0019866B
+m138f041  857   0x00113025  1:0x00103025  0x00198679
+m138f042  860   0x0011302C  1:0x0010302C  0x00198680
+m138f042  862   0x0011303D  1:0x0010303D  0x00198691
+m138f042  863   0x00113054  1:0x00103054  0x001986A8
+m138f042  865   0x00113056  1:0x00103056  0x001986AA
+m138f042  867   0x0011305E  1:0x0010305E  0x001986B2
+m138f042  868   0x00113075  1:0x00103075  0x001986C9
+m138f043  871   0x0011307E  1:0x0010307E  0x001986D2
+m138f043  873   0x0011308C  1:0x0010308C  0x001986E0
+m138f043  874   0x00113095  1:0x00103095  0x001986E9
+m138f043  876   0x0011309E  1:0x0010309E  0x001986F2
+m138f043  877   0x001130AF  1:0x001030AF  0x00198703
+m138f044  880   0x001130BB  1:0x001030BB  0x0019870F
+m138f044  882   0x001130CC  1:0x001030CC  0x00198720
+m138f044  885   0x001130D5  1:0x001030D5  0x00198729
+m138f044  886   0x001130E7  1:0x001030E7  0x0019873B
+m138f045  889   0x001130F0  1:0x001030F0  0x00198744
+m138f045  891   0x00113101  1:0x00103101  0x00198755
+m138f045  894   0x0011310A  1:0x0010310A  0x0019875E
+m138f045  895   0x00113122  1:0x00103122  0x00198776
+m138f046  898   0x0011312B  1:0x0010312B  0x0019877F
+m138f046  900   0x0011313C  1:0x0010313C  0x00198790
+m138f046  903   0x00113145  1:0x00103145  0x00198799
+m138f046  904   0x0011315D  1:0x0010315D  0x001987B1
+m138f047  907   0x00113166  1:0x00103166  0x001987BA
+m138f047  909   0x00113174  1:0x00103174  0x001987C8
+m138f047  910   0x0011317D  1:0x0010317D  0x001987D1
+m138f047  912   0x00113186  1:0x00103186  0x001987DA
+m138f047  914   0x001131AF  1:0x001031AF  0x00198803
+m138f048  917   0x001131BB  1:0x001031BB  0x0019880F
+m138f048  919   0x001131CC  1:0x001031CC  0x00198820
+m138f048  922   0x001131D5  1:0x001031D5  0x00198829
+m138f048  923   0x001131E7  1:0x001031E7  0x0019883B
+m138f049  926   0x001131F0  1:0x001031F0  0x00198844
+m138f049  934   0x001131FE  1:0x001031FE  0x00198852
+m138f049  937   0x0011320B  1:0x0010320B  0x0019885F
+m138f049  938   0x00113225  1:0x00103225  0x00198879
+m138f049  940   0x00113242  1:0x00103242  0x00198896
+m138f049  942   0x00113280  1:0x00103280  0x001988D4
+m138f049  944   0x0011328B  1:0x0010328B  0x001988DF
+m138f049  946   0x00113291  1:0x00103291  0x001988E5
+m138f049  947   0x00113299  1:0x00103299  0x001988ED
+m138f049  949   0x001132A9  1:0x001032A9  0x001988FD
+m138f049  951   0x001132AE  1:0x001032AE  0x00198902
+m138f049  952   0x001132C0  1:0x001032C0  0x00198914
+m138f049  954   0x001132C5  1:0x001032C5  0x00198919
+m138f049  956   0x001132CE  1:0x001032CE  0x00198922
+m138f049  958   0x001132DE  1:0x001032DE  0x00198932
+m138f049  960   0x001132E9  1:0x001032E9  0x0019893D
+m138f049  961   0x001132F1  1:0x001032F1  0x00198945
+m138f049  964   0x001132FB  1:0x001032FB  0x0019894F
+m138f049  967   0x00113303  1:0x00103303  0x00198957
+m138f049  968   0x0011332C  1:0x0010332C  0x00198980
+m138f049  970   0x0011333D  1:0x0010333D  0x00198991
+m138f049  972   0x00113347  1:0x00103347  0x0019899B
+m138f049  973   0x00113355  1:0x00103355  0x001989A9
+m138f049  975   0x0011335F  1:0x0010335F  0x001989B3
+m138f049  977   0x00113384  1:0x00103384  0x001989D8
+m138f049  978   0x001133A6  1:0x001033A6  0x001989FA
+m138f049  980   0x001133AF  1:0x001033AF  0x00198A03
+m138f049  982   0x001133D1  1:0x001033D1  0x00198A25
+m138f049  984   0x001133E0  1:0x001033E0  0x00198A34
+m138f049  985   0x001133E8  1:0x001033E8  0x00198A3C
+m138f049  986   0x001133F6  1:0x001033F6  0x00198A4A
+m138f049  987   0x00113400  1:0x00103400  0x00198A54
+m138f049  988   0x0011340A  1:0x0010340A  0x00198A5E
+m138f049  989   0x00113414  1:0x00103414  0x00198A68
+m138f049  990   0x0011341E  1:0x0010341E  0x00198A72
+m138f049  991   0x00113428  1:0x00103428  0x00198A7C
+m138f049  993   0x00113432  1:0x00103432  0x00198A86
+m138f049  995   0x0011343B  1:0x0010343B  0x00198A8F
+m138f049  996   0x00113444  1:0x00103444  0x00198A98
+m138f049  997   0x0011344E  1:0x0010344E  0x00198AA2
+m138f049  998   0x00113450  1:0x00103450  0x00198AA4
+m138f049  1000  0x0011345D  1:0x0010345D  0x00198AB1
+m138f049  1001  0x00113466  1:0x00103466  0x00198ABA
+m138f049  1005  0x0011346C  1:0x0010346C  0x00198AC0
+m138f050  1010  0x00113475  1:0x00103475  0x00198AC9
+m138f050  1016  0x00113486  1:0x00103486  0x00198ADA
+m138f050  1017  0x00113498  1:0x00103498  0x00198AEC
+m138f050  1019  0x001134A4  1:0x001034A4  0x00198AF8
+m138f050  1021  0x001134AC  1:0x001034AC  0x00198B00
+m138f050  1022  0x001134B2  1:0x001034B2  0x00198B06
+m138f050  1024  0x001134BE  1:0x001034BE  0x00198B12
+m138f050  1026  0x001134C7  1:0x001034C7  0x00198B1B
+m138f050  1028  0x001134E4  1:0x001034E4  0x00198B38
+m138f050  1029  0x001134F3  1:0x001034F3  0x00198B47
+m138f050  1031  0x00113502  1:0x00103502  0x00198B56
+m138f050  1032  0x00113514  1:0x00103514  0x00198B68
+m138f050  1034  0x0011351E  1:0x0010351E  0x00198B72
+m138f050  1037  0x00113528  1:0x00103528  0x00198B7C
+m138f050  1038  0x00113531  1:0x00103531  0x00198B85
+m138f050  1040  0x0011353F  1:0x0010353F  0x00198B93
+m138f050  1041  0x00113553  1:0x00103553  0x00198BA7
+m138f050  1043  0x0011355D  1:0x0010355D  0x00198BB1
+m138f050  1044  0x00113567  1:0x00103567  0x00198BBB
+m138f050  1046  0x00113571  1:0x00103571  0x00198BC5
+m138f050  1047  0x00113583  1:0x00103583  0x00198BD7
+m138f050  1049  0x00113595  1:0x00103595  0x00198BE9
+m138f050  1051  0x001135A1  1:0x001035A1  0x00198BF5
+m138f050  1052  0x001135AE  1:0x001035AE  0x00198C02
+m138f050  1054  0x001135B9  1:0x001035B9  0x00198C0D
+m138f050  1055  0x001135C5  1:0x001035C5  0x00198C19
+m138f050  1057  0x001135D1  1:0x001035D1  0x00198C25
+m138f050  1059  0x001135E3  1:0x001035E3  0x00198C37
+m138f050  1060  0x001135E5  1:0x001035E5  0x00198C39
+m138f050  1062  0x001135F7  1:0x001035F7  0x00198C4B
+m138f050  1064  0x00113600  1:0x00103600  0x00198C54
+m138f050  1065  0x00113616  1:0x00103616  0x00198C6A
+m138f050  1068  0x0011361E  1:0x0010361E  0x00198C72
+m138f050  1069  0x00113638  1:0x00103638  0x00198C8C
+m138f050  1071  0x00113646  1:0x00103646  0x00198C9A
+m138f050  1072  0x0011364F  1:0x0010364F  0x00198CA3
+m138f050  1074  0x00113658  1:0x00103658  0x00198CAC
+m138f050  1076  0x00113665  1:0x00103665  0x00198CB9
+m138f050  1077  0x0011366F  1:0x0010366F  0x00198CC3
+m138f050  1078  0x00113680  1:0x00103680  0x00198CD4
+m138f050  1079  0x0011368E  1:0x0010368E  0x00198CE2
+m138f050  1080  0x001136A0  1:0x001036A0  0x00198CF4
+m138f050  1081  0x001136B3  1:0x001036B3  0x00198D07
+m138f050  1083  0x001136B8  1:0x001036B8  0x00198D0C
+m138f050  1084  0x001136BE  1:0x001036BE  0x00198D12
+m138f051  1087  0x001136CA  1:0x001036CA  0x00198D1E
+m138f051  1089  0x001136DB  1:0x001036DB  0x00198D2F
+m138f051  1090  0x001136E3  1:0x001036E3  0x00198D37
+m138f052  1107  0x001136EC  1:0x001036EC  0x00198D40
+m138f052  1111  0x001136FD  1:0x001036FD  0x00198D51
+m138f052  1112  0x00113705  1:0x00103705  0x00198D59
+m138f052  1114  0x00113712  1:0x00103712  0x00198D66
+m138f052  1115  0x00113730  1:0x00103730  0x00198D84
+m138f052  1117  0x00113742  1:0x00103742  0x00198D96
+m138f052  1118  0x0011374B  1:0x0010374B  0x00198D9F
+m138f052  1119  0x0011374D  1:0x0010374D  0x00198DA1
+m138f052  1121  0x0011374F  1:0x0010374F  0x00198DA3
+m138f052  1122  0x0011375C  1:0x0010375C  0x00198DB0
+m138f053  1125  0x00113765  1:0x00103765  0x00198DB9
+m138f053  1131  0x00113778  1:0x00103778  0x00198DCC
+m138f053  1132  0x00113792  1:0x00103792  0x00198DE6
+m138f053  1134  0x0011379E  1:0x0010379E  0x00198DF2
+m138f053  1136  0x001137A6  1:0x001037A6  0x00198DFA
+m138f053  1137  0x001137AC  1:0x001037AC  0x00198E00
+m138f053  1139  0x001137B8  1:0x001037B8  0x00198E0C
+m138f053  1141  0x001137C5  1:0x001037C5  0x00198E19
+m138f053  1143  0x001137CC  1:0x001037CC  0x00198E20
+m138f053  1144  0x001137D6  1:0x001037D6  0x00198E2A
+m138f053  1146  0x001137E0  1:0x001037E0  0x00198E34
+m138f053  1148  0x001137FC  1:0x001037FC  0x00198E50
+m138f053  1150  0x0011381D  1:0x0010381D  0x00198E71
+m138f053  1151  0x0011382C  1:0x0010382C  0x00198E80
+m138f053  1152  0x0011383B  1:0x0010383B  0x00198E8F
+m138f053  1153  0x0011383F  1:0x0010383F  0x00198E93
+m138f053  1155  0x00113841  1:0x00103841  0x00198E95
+m138f053  1156  0x00113853  1:0x00103853  0x00198EA7
+m138f053  1158  0x0011385D  1:0x0010385D  0x00198EB1
+m138f053  1159  0x00113867  1:0x00103867  0x00198EBB
+m138f053  1162  0x00113870  1:0x00103870  0x00198EC4
+m138f053  1164  0x0011387E  1:0x0010387E  0x00198ED2
+m138f053  1165  0x00113887  1:0x00103887  0x00198EDB
+m138f053  1167  0x00113891  1:0x00103891  0x00198EE5
+m138f053  1168  0x0011389B  1:0x0010389B  0x00198EEF
+m138f053  1170  0x001138A3  1:0x001038A3  0x00198EF7
+m138f053  1171  0x001138B5  1:0x001038B5  0x00198F09
+m138f053  1173  0x001138C7  1:0x001038C7  0x00198F1B
+m138f053  1175  0x001138D5  1:0x001038D5  0x00198F29
+m138f053  1176  0x001138E2  1:0x001038E2  0x00198F36
+m138f053  1178  0x001138EF  1:0x001038EF  0x00198F43
+m138f053  1179  0x001138FB  1:0x001038FB  0x00198F4F
+m138f053  1181  0x00113907  1:0x00103907  0x00198F5B
+m138f053  1183  0x00113919  1:0x00103919  0x00198F6D
+m138f053  1184  0x0011391B  1:0x0010391B  0x00198F6F
+m138f053  1186  0x0011392F  1:0x0010392F  0x00198F83
+m138f053  1187  0x00113938  1:0x00103938  0x00198F8C
+m138f053  1189  0x00113944  1:0x00103944  0x00198F98
+m138f053  1191  0x0011395E  1:0x0010395E  0x00198FB2
+m138f053  1193  0x00113976  1:0x00103976  0x00198FCA
+m138f053  1194  0x00113990  1:0x00103990  0x00198FE4
+m138f053  1196  0x0011399D  1:0x0010399D  0x00198FF1
+m138f053  1198  0x001139AC  1:0x001039AC  0x00199000
+m138f053  1199  0x001139B6  1:0x001039B6  0x0019900A
+m138f053  1200  0x001139C7  1:0x001039C7  0x0019901B
+m138f053  1201  0x001139CF  1:0x001039CF  0x00199023
+m138f053  1202  0x001139DD  1:0x001039DD  0x00199031
+m138f053  1203  0x001139EF  1:0x001039EF  0x00199043
+m138f053  1205  0x00113A02  1:0x00103A02  0x00199056
+m138f053  1207  0x00113A0A  1:0x00103A0A  0x0019905E
+m138f053  1209  0x00113A0F  1:0x00103A0F  0x00199063
+m138f053  1210  0x00113A15  1:0x00103A15  0x00199069
+m138f054  1213  0x00113A20  1:0x00103A20  0x00199074
+m138f054  1215  0x00113A31  1:0x00103A31  0x00199085
+m138f054  1216  0x00113A42  1:0x00103A42  0x00199096
+m138f055  1219  0x00113A4E  1:0x00103A4E  0x001990A2
+m138f055  1221  0x00113A5C  1:0x00103A5C  0x001990B0
+m138f055  1224  0x00113A69  1:0x00103A69  0x001990BD
+m138f055  1226  0x00113A72  1:0x00103A72  0x001990C6
+m138f055  1227  0x00113A80  1:0x00103A80  0x001990D4
+m138f055  1228  0x00113A92  1:0x00103A92  0x001990E6
+m138f055  1229  0x00113A9C  1:0x00103A9C  0x001990F0
+m138f055  1230  0x00113AA5  1:0x00103AA5  0x001990F9
+m138f055  1231  0x00113AAF  1:0x00103AAF  0x00199103
+m138f055  1232  0x00113AB9  1:0x00103AB9  0x0019910D
+m138f055  1233  0x00113AC3  1:0x00103AC3  0x00199117
+m138f055  1234  0x00113ACD  1:0x00103ACD  0x00199121
+m138f055  1235  0x00113AD7  1:0x00103AD7  0x0019912B
+m138f055  1236  0x00113AE1  1:0x00103AE1  0x00199135
+m138f055  1238  0x00113AEB  1:0x00103AEB  0x0019913F
+m138f056  1241  0x00113AF2  1:0x00103AF2  0x00199146
+m138f056  1243  0x00113B03  1:0x00103B03  0x00199157
+m138f056  1246  0x00113B0C  1:0x00103B0C  0x00199160
+m138f056  1247  0x00113B17  1:0x00103B17  0x0019916B
+m138f056  1249  0x00113B1F  1:0x00103B1F  0x00199173
+m138f056  1251  0x00113B32  1:0x00103B32  0x00199186
+m138f056  1252  0x00113B3B  1:0x00103B3B  0x0019918F
+m138f056  1253  0x00113B4D  1:0x00103B4D  0x001991A1
+m138f057  1256  0x00113B56  1:0x00103B56  0x001991AA
+m138f057  1260  0x00113B64  1:0x00103B64  0x001991B8
+m138f057  1262  0x00113B6D  1:0x00103B6D  0x001991C1
+m138f057  1263  0x00113B7E  1:0x00103B7E  0x001991D2
+m138f057  1264  0x00113B91  1:0x00103B91  0x001991E5
+m138f057  1267  0x00113B99  1:0x00103B99  0x001991ED
+m138f057  1268  0x00113BA0  1:0x00103BA0  0x001991F4
+m138f058  1271  0x00113BAC  1:0x00103BAC  0x00199200
+m138f058  1273  0x00113BBD  1:0x00103BBD  0x00199211
+m138f058  1274  0x00113BC5  1:0x00103BC5  0x00199219
+m138f059  1277  0x00113BCE  1:0x00103BCE  0x00199222
+m138f059  1279  0x00113BDC  1:0x00103BDC  0x00199230
+m138f059  1280  0x00113BE5  1:0x00103BE5  0x00199239
+m138f059  1282  0x00113BEE  1:0x00103BEE  0x00199242
+m138f059  1283  0x00113C0C  1:0x00103C0C  0x00199260
+m138f059  1285  0x00113C15  1:0x00103C15  0x00199269
+m138f059  1286  0x00113C1C  1:0x00103C1C  0x00199270
+m138f060  1289  0x00113C28  1:0x00103C28  0x0019927C
+m138f060  1291  0x00113C39  1:0x00103C39  0x0019928D
+m138f060  1294  0x00113C42  1:0x00103C42  0x00199296
+m138f060  1296  0x00113C4B  1:0x00103C4B  0x0019929F
+m138f060  1297  0x00113C55  1:0x00103C55  0x001992A9
+m138f060  1299  0x00113C62  1:0x00103C62  0x001992B6
+m138f061  1302  0x00113C6B  1:0x00103C6B  0x001992BF
+m138f061  1304  0x00113C7C  1:0x00103C7C  0x001992D0
+m138f061  1305  0x00113C8A  1:0x00103C8A  0x001992DE
+m138f061  1306  0x00113C92  1:0x00103C92  0x001992E6
+m138f062  1309  0x00113C9B  1:0x00103C9B  0x001992EF
+m138f062  1311  0x00113CA9  1:0x00103CA9  0x001992FD
+m138f062  1312  0x00113CB1  1:0x00103CB1  0x00199305
+m138f063  1315  0x00113CBD  1:0x00103CBD  0x00199311
+m138f063  1317  0x00113CCE  1:0x00103CCE  0x00199322
+m138f063  1318  0x00113CE0  1:0x00103CE0  0x00199334
+m138f063  1319  0x00113CE8  1:0x00103CE8  0x0019933C
+m138f063  1320  0x00113CF2  1:0x00103CF2  0x00199346
+m138f064  1323  0x00113CFB  1:0x00103CFB  0x0019934F
+m138f064  1325  0x00113D09  1:0x00103D09  0x0019935D
+m138f064  1326  0x00113D12  1:0x00103D12  0x00199366
+m138f064  1327  0x00113D1C  1:0x00103D1C  0x00199370
+m138f065  1330  0x00113D23  1:0x00103D23  0x00199377
+m138f065  1332  0x00113D31  1:0x00103D31  0x00199385
+m138f065  1333  0x00113D36  1:0x00103D36  0x0019938A
+m138f065  1334  0x00113D40  1:0x00103D40  0x00199394

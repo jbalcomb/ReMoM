@@ -1,0 +1,32 @@
+module_num=129
+module=D:\MOX\SCIENCE.C
+source=0129-science.c.md
+range[0]=1:0x000FD041 linear=0x0010D041 size=2774
+range[1]=2:0x0000238C linear=0x0017238C size=20
+range[2]=2:0x0000C0D0 linear=0x0017C0D0 size=168
+range[3]=2:0x00035598 linear=0x001A5598 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                      SYMBOL                     CHUNK
+m129f001  1    -      0x0010D041  1:0x000FD041  code         Show_Off_Stolen_Tech      Show_Off_Stolen_Tech_      regions/07-object-1/00192654-00192E53.txt
+m129f002  2    -      0x0010D0DA  1:0x000FD0DA  code         Show_Off_Captured_Tech    Show_Off_Captured_Tech_    regions/07-object-1/00192654-00192E53.txt
+m129f003  3    -      0x0010D167  1:0x000FD167  code         Scientist_With_Tech       Scientist_With_Tech_       regions/07-object-1/00192654-00192E53.txt
+m129f004  4    -      0x0010D1FC  1:0x000FD1FC  code         Show_Off_Researched_Tech  Show_Off_Researched_Tech_  regions/07-object-1/00192654-00192E53.txt
+m129f005  5    -      0x0010D31C  1:0x000FD31C  static,code  Science_Room              Science_Room_              regions/07-object-1/00192654-00192E53.txt
+m129f006  6    -      0x0010DA98  1:0x000FDA98  code         Update_Science_Anims      Update_Science_Anims_      regions/07-object-1/00192E54-00193653.txt
+m129f007  7    -      0x0010DB16  1:0x000FDB16  code         Draw_Science_Room         Draw_Science_Room_         regions/07-object-1/00192E54-00193653.txt
+-         -    -      0x0017C0D0  2:0x0000C0D0  data         _science_room_lbx         _science_room_lbx          regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C0DC  2:0x0000C0DC  data         _tech_item_anim_fmt       _tech_item_anim_fmt        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C0EB  2:0x0000C0EB  data         _scientist_anim_fmt       _scientist_anim_fmt        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C0F9  2:0x0000C0F9  data         _spy_anim_fmt             _spy_anim_fmt              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C107  2:0x0000C107  data         _trooper_anim_fmt         _trooper_anim_fmt          regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C115  2:0x0000C115  data         _scientist_anim_find_pat  _scientist_anim_find_pat   regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C122  2:0x0000C122  data         _spy_anim_find_pat        _spy_anim_find_pat         regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C12F  2:0x0000C12F  data         _trooper_anim_find_pat    _trooper_anim_find_pat     regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C13C  2:0x0000C13C  data         _science_high_color       _science_high_color        regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C144  2:0x0000C144  data         _science_normal_color     _science_normal_color      regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C14C  2:0x0000C14C  static,data  _bm_scale_x               _bm_scale_x                regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C158  2:0x0000C158  static,data  _bm_scale_y               _bm_scale_y                regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C164  2:0x0000C164  static,data  _bm_scaled_x1             _bm_scaled_x1              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C16E  2:0x0000C16E  static,data  _bm_scaled_y1             _bm_scaled_y1              regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x001A5598  2:0x00035598  data         _science_mouse_bitmap     _science_mouse_bitmap      -

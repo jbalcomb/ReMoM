@@ -20,12 +20,12 @@ It is consumed by:
          v
   tools/fields/_static.csv             <-- every Add_*Field call site
          |
-         |  tools/fields_merge.py <TRACE.LOG>
+         |  tools/fields_merge.py <remom_clog_fields.tsv>
          |         ^
          |         |  runtime capture
          |         |
-         |  game built with STU_DEBUG, with g_dbg_fields_trace = 1,
-         |  emits FIELDADD + FIELDSNAPSHOT lines to TRACE.LOG via trc_prn()
+         |  game built with STU_CLOG (Debug, or -DREMOM_CLOG=ON), with g_clog_fields_trace = 1,
+         |  run with REMOM_CLOG_FIELDS=1: writes FIELDADD + FIELDSNAPSHOT rows to remom_clog_fields.tsv
          v
   tools/fields/<Screen>.csv            <-- merged catalog per screen
 ```
@@ -34,14 +34,15 @@ It is consumed by:
 
 ```sh
 # 1. static side (fast, no game run needed)
-python tools/fields_extract.py
+python3 tools/fields_extract.py
 
-# 2. runtime side: run the game with STU_DEBUG build and g_dbg_fields_trace=1
-#    (currently set from a debugger, or add a temporary assignment in the
-#    screen you are capturing). Exit cleanly so TRACE.LOG is flushed.
+# 2. runtime side: run an STU_CLOG build (Debug, or -DREMOM_CLOG=ON) with REMOM_CLOG_FIELDS=1.
+#    g_clog_fields_trace switches on when Main_Screen first adds its fields (MainScr.c).
+#    Rows go to remom_clog_fields.tsv in the log directory; exit cleanly so it is flushed.
+REMOM_CLOG_FIELDS=1 ./ReMoM.exe
 
 # 3. merge
-python tools/fields_merge.py path/to/TRACE.LOG
+python3 tools/fields_merge.py path/to/remom_clog_fields.tsv
 ```
 
 ## CSV schema (`<Screen>.csv`)
@@ -86,7 +87,7 @@ python tools/fields_merge.py path/to/TRACE.LOG
 All `rt_*` coordinates are in the original game's **320x200 logical framebuffer**
 space. The SDL3 platform layer scales mouse input down to this space before
 dispatching, so as long as your injected clicks go through the same platform
-entry points that real mouse events use (`Platform_Push_Mouse_*` / the HeMoM
+entry points that real mouse events use (`Platform_Push_Mouse_*` / the DeMoM
 input injection path), you should pass these coordinates verbatim. Do **not**
 multiply by window scale yourself.
 
@@ -120,7 +121,7 @@ Some fields are registered inside a `for` loop, so the static CSV has one row
 but the runtime will produce up to N FIELDADD records with the same
 `src_file:src_line` key. The merger reports this as `rt_hit_count > 1` and
 currently shows the **first** runtime hit's coordinates. To get all instances,
-grep `TRACE.LOG` directly for the `<basename>:<line>` of that row.
+grep `remom_clog_fields.tsv` directly for the `<basename>:<line>` of that row.
 
 Example: `g_unit_window_fields[itr_stack]` in `Add_Unit_Window_Fields` —
 one static row, up to 9 runtime instances (one per unit in the stack).
@@ -140,5 +141,4 @@ opens a popup, capture the popup's own field set separately.
   into `<Screen>.csv`. Add them if the scenario agent needs them directly.
 - `helper_to_screen` in `fields_merge.py` is seeded for Main Screen only.
   Extend it as other screens are captured.
-- No `ReMoM.ini` toggle for `g_dbg_fields_trace` yet — flip it from a debugger
-  or temporarily in source.
+- No `ReMoM.ini` toggle; the run-time switch is the `REMOM_CLOG_FIELDS` environment variable.

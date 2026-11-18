@@ -711,7 +711,7 @@ void Powergraph_Screen(void)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_esc__ovr076[0], ST_UNDEFINED);
+        full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_esc__ovr076, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc_field)
         {
@@ -824,6 +824,7 @@ void Powergraph_Screen_Draw(void)
     Set_Outline_Color(254);
     Print_Integer(10, 186, (1400 + year));  // the actual/first year on the time-line
     months_count = 1;
+    /* OGBUG  from turn 288 on the count is 287 and Powergraph_Draw_Wizard_History() draws samples [month, 287), so the newest sample (slot 287) is never drawn */
     if(_turn < 288)
     {
         turns_count = _turn;
@@ -841,7 +842,8 @@ void Powergraph_Screen_Draw(void)
             Line(x2, y1, x2, (2 + y1), 180);
             if(((year + (months_count / 12)) % 5) == 0)
             {
-                Print_Integer((22 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
+                // Print_Integer((22 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
+                Print_Integer((10 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));  /* CLAUDE */  /* REBUG */  /* asm 363-369: (months_count / 12) * 12 / add ax, 10 */
             }
         }
         months_count++;
@@ -869,6 +871,7 @@ void Powergraph_Screen_Draw(void)
     Print(10, 23, _players[HUMAN_PLAYER_IDX].name);
     for(itr_players = 1; itr_players < _num_players; itr_players++)
     {
+        /* OGBUG  the name list tests only Contacted, not _FORTRESSES[].active as the graph loop above does, so an eliminated wizard's name is still listed (with no graph line) */
         if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
         {
             colors[0] = banner_colors[(_players[itr_players].banner_id)];
@@ -921,8 +924,9 @@ void Powergraph_Draw_Wizard_History(int16_t player_idx, int16_t last_turn, int16
     {
         x2 = (16 + x2_itr);
         y2 = (181 - _players[player_idx].history[itr_turn_data]);  // 181 is 2 pixels up from the time-line
-        ptr_player = &_players[player_idx];
-        ptr_Historian = &_players[player_idx].history[0];
+        // ptr_player = &_players[player_idx];
+        // ptr_Historian = &_players[player_idx].history[0];
+        /* CLAUDE */  /* REBUG */  /* asm 31-46: x2 / y2 / the y2 clamp only - no counterpart for the two pointer stores */
 
         SETMIN(y2, 22);
         if(itr_turn_data > first_turn)
@@ -993,7 +997,7 @@ void Status_Screen(void)
 
         Clear_Fields();
 
-        full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_esc__ovr076[0], ST_UNDEFINED);
+        full_screen_esc_field = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_esc__ovr076, ST_UNDEFINED);
 
         input_field_idx = Get_Input();
 
@@ -1067,8 +1071,10 @@ void Status_Screen_Draw(void)
     Set_Alias_Color(246);
     Set_Outline_Color(254);
     var_12 = 0;
-    for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    // for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
+    for(itr_players = 0; itr_players < _num_players; itr_players++)  /* CLAUDE */  /* REBUG */  // asm: cmp ax, [_num_players]
     {
+        /* OGBUG  only Contacted is tested, so an eliminated wizard is still listed (no _FORTRESSES[].active test) */
         if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
         {
             var_8 = 35;
@@ -1127,11 +1133,11 @@ void Cartographer_Screen(void)
 
         Clear_Fields();
 
-        hotkey_next = Add_Hidden_Field(285, 180, 314, 199, str_hotkey_N__ovr076[0], ST_UNDEFINED);
+        hotkey_next = Add_Hidden_Field(285, 180, 314, 199, str_hotkey_N__ovr076, ST_UNDEFINED);
 
-        hotkey_close = Add_Hidden_Field(265, 143, 299, 169, str_hotkey_C__ovr076[0], ST_UNDEFINED);
+        hotkey_close = Add_Hidden_Field(265, 143, 299, 169, str_hotkey_C__ovr076, ST_UNDEFINED);
 
-        hotkey_escape = Add_Hot_Key(str_hotkey_esc__ovr076[0]);
+        hotkey_escape = Add_Hot_Key(str_hotkey_esc__ovr076);
 
         /* MainScr.C#L2147  Main_Screen_Add_Fields() */  // _main_map_grid_field = Add_Grid_Field(MAP_SCREEN_X, MAP_SCREEN_Y, SQUARE_WIDTH, SQUARE_HEIGHT, MAP_WIDTH, MAP_HEIGHT, &_main_map_grid_x, &_main_map_grid_y, ST_UNDEFINED);
         cartograph_dot_grid = Add_Grid_Field(m_cartograph_x, m_cartograph_y, 4, 4, WORLD_WIDTH, WORLD_HEIGHT, &grid_column, &grid_row, ST_UNDEFINED);
@@ -1165,6 +1171,7 @@ void Cartographer_Screen(void)
 
             _map_y = (int16_t)grid_row;
 
+            /* OGBUG  clicking the Cartographer map sets _unit_stack_count = 0, dropping the active stack selection */
             _unit_stack_count = 0;
 
             /* MainScr.C@L1333  Main_Screen() */  // Center_Map(&_map_x, &_map_y, _UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
@@ -1456,6 +1463,7 @@ void Cartograph_Screen_Draw_Map(int16_t flag)
                     }
                     else if(_UNITS[itr_units].owner_idx == NEUTRAL_PLAYER_IDX)
                     {
+                        /* OGBUG  neutral units are never drawn on the Cartographer map: this branch is empty (asm: jnz short loc_669D9; jmp short loc_66A1B) */
                         /* nada, nunca, zero, ... jumps to end of loops (NOTE: this really is in the ASM - empty if block) */
                     }
                     else
@@ -1479,7 +1487,8 @@ void Cartograph_Screen_Draw_Map(int16_t flag)
             (_CITIES[itr_cities].wp == 2)  /* IDGI, but *means* city is *accessible* from both planes/either plane */
         )
         {
-            if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, flag) != UNEXPLORED)
+            // if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, flag) != UNEXPLORED)
+            if(GET_SQUARE_EXPLORED(_CITIES[itr_cities].wx, _CITIES[itr_cities].wy, _CITIES[itr_cities].wp) != UNEXPLORED)  /* CLAUDE */  /* REBUG */  // asm: [_square_explored] + (s_CITY.wp * e_WORLD_SIZE)
             {
                 x = (m_cartograph_x + (_CITIES[itr_cities].wx * 4));
                 y = (m_cartograph_y + (_CITIES[itr_cities].wy * 4));

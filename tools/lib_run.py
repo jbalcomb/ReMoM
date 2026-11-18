@@ -1,4 +1,4 @@
-"""tools/lib_run.py — Shared launchers for HeMoM and ReMoM.
+"""tools/lib_run.py — Shared launchers for DeMoM and ReMoM.
 
 Scope (deliberately narrow): run a binary, capture stderr, verify the
 expected SAVE*.GAM was rewritten this run. Both binaries accept either
@@ -6,16 +6,16 @@ expected SAVE*.GAM was rewritten this run. Both binaries accept either
 exclusive). Headless by default; pass `headless=False` to run windowed.
 
 Out of scope — stays in parity_check.py:
-    - snapshotting bin/Debug → analysis/{hemom,remom}/
+    - snapshotting bin/Debug → analysis/{demom,remom}/
     - filtering [RNG-CALL] lines out of stderr.log
     - comparison, struct decode, reporting
 
 Public API:
-    REPO_ROOT, ASSETS_DIR, BUILD_DIR, HEMOM_EXE, REMOM_EXE
+    REPO_ROOT, ASSETS_DIR, BUILD_DIR, DEMOM_EXE, REMOM_EXE
     read_seed_from_ini(ini_path) -> int
     slot_to_save_filename(slot)  -> "SAVE<N+1>.GAM"
     RunResult                                          (dataclass)
-    run_hemom(*, ini, seed, hms=None, rmr=None, save_slot=None, ...)
+    run_demom(*, ini, seed, hms=None, rmr=None, save_slot=None, ...)
     run_remom(*, seed, hms=None, rmr=None, save_slot=None, ...)
 """
 
@@ -34,7 +34,7 @@ from typing import Iterable, Optional
 REPO_ROOT    = Path(__file__).resolve().parent.parent
 ASSETS_DIR   = REPO_ROOT / "assets"
 BUILD_DIR    = REPO_ROOT / "out/build/clang-debug/bin/Debug"
-HEMOM_EXE    = BUILD_DIR / "HeMoM"
+DEMOM_EXE    = BUILD_DIR / "DeMoM"
 REMOM_EXE = BUILD_DIR / "ReMoM"
 
 
@@ -137,8 +137,11 @@ def _driver_args(hms: Optional[Path], rmr: Optional[Path]) -> list[str]:
 def _spawn(cmd: list[str], cwd: Path, stderr_path: Path,
            headless: bool) -> tuple[int, float, float]:
     """subprocess wrapper: capture stderr to file, time the run,
-    set SDL_VIDEODRIVER=offscreen iff `headless`."""
+    set SDL_VIDEODRIVER=offscreen iff `headless`, and turn on [GD] game-data
+    capture (REMOM_GD_CAPTURE=1; Debug builds only, see STU/src/STU_GD.h)
+    unless the caller's environment already sets it."""
     env = os.environ.copy()
+    env.setdefault("REMOM_GD_CAPTURE", "1")
     if headless:
         env.setdefault("SDL_VIDEODRIVER", "offscreen")
     stderr_path.parent.mkdir(parents=True, exist_ok=True)
@@ -159,7 +162,7 @@ def _spawn(cmd: list[str], cwd: Path, stderr_path: Path,
 # ----------------------------------------------------------------------
 # Launchers
 # ----------------------------------------------------------------------
-def run_hemom(*,
+def run_demom(*,
               ini: Path,
               seed: int,
               hms: Optional[Path] = None,
@@ -169,32 +172,32 @@ def run_hemom(*,
               save_slot: Optional[int] = None,
               extra_args: Iterable[str] = (),
               headless: bool = True) -> RunResult:
-    """Drive HeMoM --newgame against `ini`, with an optional input driver.
+    """Drive DeMoM --newgame against `ini`, with an optional input driver.
 
     Args:
-        ini: HeMoM .ini (the [Game] seed is informational only; the actual
+        ini: DeMoM .ini (the [Game] seed is informational only; the actual
             seed used is the `seed=` argument).
         seed: RNG seed; passed as `--seed N`.
         hms / rmr: input driver, mutually exclusive. Pass either, or neither
-            (HeMoM --newgame exits after writing the save anyway).
-        cwd: working directory for HeMoM (defaults to bin/Debug/; SAVE*.GAM
+            (DeMoM --newgame exits after writing the save anyway).
+        cwd: working directory for DeMoM (defaults to bin/Debug/; SAVE*.GAM
             files are written here).
-        stderr_path: where to capture HeMoM's stderr (defaults to cwd/stderr.log).
+        stderr_path: where to capture DeMoM's stderr (defaults to cwd/stderr.log).
         save_slot: if set, the launcher derives the expected SAVE*.GAM path
             and reports whether it was rewritten this run via
             `RunResult.save_written_fresh`.
-        extra_args: forwarded to HeMoM verbatim.
+        extra_args: forwarded to DeMoM verbatim.
         headless: when True, sets SDL_VIDEODRIVER=offscreen.
     """
-    if not HEMOM_EXE.is_file():
-        raise FileNotFoundError(f"HeMoM binary missing: {HEMOM_EXE}")
+    if not DEMOM_EXE.is_file():
+        raise FileNotFoundError(f"DeMoM binary missing: {DEMOM_EXE}")
     if not ini.is_file():
         raise FileNotFoundError(f"INI not found: {ini}")
     if stderr_path is None:
         stderr_path = cwd / "stderr.log"
 
     cmd = [
-        str(HEMOM_EXE),
+        str(DEMOM_EXE),
         "--newgame", str(ini),
         "--seed1", str(seed),
         *_driver_args(hms, rmr),

@@ -1,6 +1,6 @@
 # test_l61_second_game.hms -- L61: the second game in the same process.
 #
-#   HeMoM --menu --seed1 12345 --scenario test_l61_second_game.hms --dump-save SAVE1.GAM
+#   DeMoM --menu --seed1 12345 --scenario test_l61_second_game.hms --dump-save SAVE1.GAM
 #
 # Game 1: New Game through the UI, play 3 turns, then back to the Main Menu (Game -> Quit), as a player would.
 # Game 2: the same New Game, then save to slot 1 and quit.

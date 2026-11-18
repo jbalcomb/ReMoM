@@ -4,6 +4,7 @@
 */
 
 #include "../../STU/src/STU_DBG.h"
+#include "../../STU/src/STU_GARB.h"
 
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
@@ -94,6 +95,7 @@ void Apply_Warp_Creature(int16_t battle_unit_idx)
 {
     int16_t warp = 0;
     warp = -2;
+    /* OGBUG  never exits if the unit already has all three warp flags; the AI target scan skips warped units, but the human target picker doesn't, so a 4th human Warp Creature on the same unit that fails resistance hangs */
     while(warp < 0)
     {
         warp = Random(3);
@@ -171,16 +173,17 @@ void Apply_Wrack(int16_t player_idx)
     Mark_Block(_screen_seg);
     anim_size = Spell_Animation_Load_Graphics(spl_Wrack);
     // perform a resistance check for each figure of every enemy unit, storing the results into the local arrays
-    // BUGs: Wraith Form grants immunity, and the damaged unit array is filled out fundamentally wrong
     for(itr1 = 0; itr1 < _combat_total_unit_count; itr1++)
     {
         enchantments = (_UNITS[battle_units[itr1].unit_idx].enchantments | battle_units[itr1].enchantments | battle_units[itr1].item_enchantments);
+        /* OGBUG  a unit with Wraith Form (UE_WRAITH_FORM, 0x20, the bit the Magic Immunity ability has in Attribs_1) in its unit / battle / item enchantments is skipped, so Wraith Form shields it from Wrack */
         if(
             (battle_units[itr1].controller_idx != player_idx)
             &&
             (battle_units[itr1].status == bus_Active)
             &&
-            ((battle_units[itr1].enchantments & UE_WRAITH_FORM) == 0)  /* ; BUG: this enchantment should not help here */
+            // ((battle_units[itr1].enchantments & UE_WRAITH_FORM) == 0)  /* ; BUG: this enchantment should not help here */
+            ((enchantments & UE_WRAITH_FORM) == 0)  /* CLAUDE */  /* REBUG */  /* asm: tests the OR of the three enchantment sets */
             &&
             ((battle_units[itr1].Attribs_1 & USA_IMMUNITY_DEATH) == 0)
         )
@@ -189,7 +192,17 @@ void Apply_Wrack(int16_t player_idx)
             {
                 if(Combat_Resistance_Check(battle_units[itr1], 1, sbr_Death) > 0)
                 {
-                    Damaged_Unit_Array[figure_ctr] = (int8_t)itr1;
+                    /* OGBUG  Damaged_Unit_Array has 36 entries and no bound: failures 37 .. 40 are written over screen_y / screen_x (rewritten before use), the 41st over the low byte of figure_ctr, which drops back to this unit's index + 1 and later entries overwrite the start of the list */
+                    // Damaged_Unit_Array[figure_ctr] = (int8_t)itr1;
+                    /* HACK */  /* CLAUDE */  /* OG: entry 36 .. 39 is screen_y / screen_x, entry 40 is figure_ctr's low byte */
+                    if(figure_ctr < MAX_BATTLE_UNIT_SLOT_COUNT)
+                    {
+                        Damaged_Unit_Array[figure_ctr] = (int8_t)itr1;
+                    }
+                    else if(figure_ctr == (MAX_BATTLE_UNIT_SLOT_COUNT + 4))
+                    {
+                        figure_ctr = itr1;
+                    }
                     Damage_Per_Unit_Array[itr1] += 1;
                     figure_ctr++;
                 }
@@ -200,7 +213,7 @@ void Apply_Wrack(int16_t player_idx)
     {
         if(((FLIC_Get_FrameCount(spell_animation_seg) + figure_ctr) / 2) == itr1)
         {
-            // BUG: overwriting the damage array causes the actual damage done to be the square of what was intended
+            /* OGBUG  the list holds one entry per failed figure, and each entry deals the unit's whole failure count, so a unit with k failed figures takes k x k damage instead of k */
             for(itr2 = 0; itr2 < figure_ctr; itr2++)
             {
                 if(Damage_Per_Unit_Array[Damaged_Unit_Array[itr2]] > 0)
@@ -209,9 +222,36 @@ void Apply_Wrack(int16_t player_idx)
                     Battle_Unit_Commit_Damage(Damaged_Unit_Array[itr2], &damage_types[0]);
                 }
             }
-            Set_Page_Off();
-            Combat_Screen_Draw();
-            for(itr3 = 0; itr3 < figure_ctr; itr3++)
+        // Set_Page_Off();
+        // Combat_Screen_Draw();
+        // for(itr3 = 0; itr3 < figure_ctr; itr3++)
+        // {
+        //     Combat_Grid_Screen_Coordinates(battle_units[Damaged_Unit_Array[itr3]].cgx, battle_units[Damaged_Unit_Array[itr3]].cgy, 4, 4, &screen_x, &screen_y);
+        //     if(anim_size == 0)
+        //     {
+        //         screen_x -= 14;
+        //         screen_y -= 21;
+        //     }
+        //     else
+        //     {
+        //         screen_x -= 28;
+        //         screen_y -= 30;
+        //     }
+        //     Set_Animation_Frame(spell_animation_seg, (itr1 - itr3));
+        //     Clipped_Draw(screen_x, screen_y, spell_animation_seg);
+        // }
+        // PageFlip_FX();
+        }
+        /* CLAUDE */  /* REBUG */  /* asm: the draw runs for every frame, not only the damage frame, and each figure's animation is drawn only while itr3 <= itr1 <= itr3 + frame count */
+        Set_Page_Off();
+        Combat_Screen_Draw();
+        for(itr3 = 0; itr3 < figure_ctr; itr3++)
+        {
+            if(
+                (itr3 <= itr1)
+                &&
+                ((itr3 + FLIC_Get_FrameCount(spell_animation_seg)) >= itr1)
+            )
             {
                 Combat_Grid_Screen_Coordinates(battle_units[Damaged_Unit_Array[itr3]].cgx, battle_units[Damaged_Unit_Array[itr3]].cgy, 4, 4, &screen_x, &screen_y);
                 if(anim_size == 0)
@@ -227,8 +267,8 @@ void Apply_Wrack(int16_t player_idx)
                 Set_Animation_Frame(spell_animation_seg, (itr1 - itr3));
                 Clipped_Draw(screen_x, screen_y, spell_animation_seg);
             }
-            PageFlip_FX();
         }
+        PageFlip_FX();
     }
     Release_Block(_screen_seg);
 }
@@ -251,22 +291,26 @@ void Apply_Call_Lightning(int16_t player_idx)
     Combat_Load_Spell_Sound_Effect(spl_Lightning_Bolt);
     bolts = (Random(3) + 2);
     tries = 0;
+    /* OGBUG  each bolt picks Random(_combat_total_unit_count) up to 30 times and needs a living enemy plus Random(2) == 1, so with many dead or friendly entries in the battle list bolts are silently lost */
     while((bolts > 0) && (tries < 30))
     {
         tries++;
         itr = (Random(_combat_total_unit_count) -1);
         enchantments = (_UNITS[battle_units[itr].unit_idx].enchantments | battle_units[itr].enchantments | battle_units[itr].item_enchantments);
+        /* OGBUG  a unit with Wraith Form (UE_WRAITH_FORM, 0x20, the bit the Magic Immunity ability has in Attribs_1) in its unit / battle / item enchantments is never picked; Magic Immune units are */
         if(
             (battle_units[itr].controller_idx != player_idx)
             &&
             (battle_units[itr].status == bus_Active)
             &&
-            ((battle_units[itr].enchantments & UE_WRAITH_FORM) == 0)
+            // ((battle_units[itr].enchantments & UE_WRAITH_FORM) == 0)
+            ((enchantments & UE_WRAITH_FORM) == 0)  /* CLAUDE */  /* REBUG */  /* asm: tests the OR of the three enchantment sets */
             &&
             (Random(2) == 1)
         )
         {
             Mark_Time();
+            /* OGBUG  the bolt's damage comes from spell_data_table[spl_Wall_Of_Stone] (spell 3), not from Call Lightning's own record */
             Compute_Battle_Unit_Damage_From_Spell(spl_Wall_Of_Stone, itr, &damage_types[0], 0);
             Animate_Lightning_Bolt(battle_units[itr].cgx, battle_units[itr].cgy, ST_UNDEFINED);
             Battle_Unit_Commit_Damage(itr, &damage_types[0]);
@@ -278,11 +322,30 @@ void Apply_Call_Lightning(int16_t player_idx)
     Mark_Time();
     Release_Time(12);
     Release_Block(_screen_seg);
+    /* OGBUG  no matching Mark_Block() here: Combat_Load_Spell_Sound_Effect() marks World_Data only when sound effects are on, so with them off this rolls World_Data's used size back to whatever older mark it holds, and later allocations from it can overwrite live data */
     Release_Block(World_Data);
 }
 
 
 // WZD o133p04
+/*
+MoM Spellbook
+Page 22  (PDF Page 24)
+"""
+Life Drain:
+Death. Instant Combat. Casting Cost: 10+ mana. Common.
+Siphons life from a target unit and gives it to the spell caster (if
+the spell caster is a hero) or converts the drained life into mana (if
+the spell caster is a wizard) at an exchange rate of three mana
+gained for one hit point drained. Note that if the spell caster is a
+hero, his or her hit points are allowed to rise above their normal
+limit for the duration of the battle! This spell is classified as a lifestealing
+attack (see Special Unit Abilities). When additional mana
+is spent on this spell, the target unit has a harder time resisting the
+attack (every additional five mana spent on the spell lowers the
+target’s resistance by one).
+"""
+*/
 void Apply_Life_Drain(int16_t target_idx, int16_t damage_types[], int16_t caster_idx, int16_t mana)
 {
     int16_t itr = 0;
@@ -305,7 +368,8 @@ void Apply_Life_Drain(int16_t target_idx, int16_t damage_types[], int16_t caster
         damage_types[dt_Drain] = damage;
         if(caster_idx >= CASTER_IDX_BASE)
         {
-            _players[(caster_idx - CASTER_IDX_BASE)].spell_casting_skill += (damage * 3);
+            /* OGBUG: should use `_players[].mana_reserve`, not `_players[].spell_casting_skill` */
+            _players[(caster_idx - CASTER_IDX_BASE)].spell_casting_skill += (damage * LIFE_DRAIN_MANA_PER_HIT_POINT);
         }
         else
         {
@@ -358,10 +422,12 @@ void Wall_Rise(int16_t spell_idx, int16_t caster_idx)
         } break;
         case 1:
         {
+            /* OGBUG  sets only battlefield->wall_of_fire, no battlefield->city_enchantments slot; Combat_Cast_Disenchant() finds walls only through that slot, so a Wall of Fire cast in the battle is never dispelled */
             battlefield->wall_of_fire = ST_TRUE;
         } break;
         case 2:
         {
+            /* OGBUG  sets only battlefield->wall_of_darkness, no battlefield->city_enchantments slot; Combat_Cast_Disenchant() finds walls only through that slot, so a Wall of Darkness cast in the battle is never dispelled */
             battlefield->wall_of_darkness = ST_TRUE;
         } break;
     }
@@ -1259,58 +1325,90 @@ void Vortex_Combat_Round(void)
             next_cgx = curr_cgx;
             next_cgy = curr_cgy;
 
+            // tries = 0;
+            // while(tries < 50)
+            // {
+
+            //     if(
+            //         (next_cgx != curr_cgx)
+            //         ||
+            //         (next_cgy != curr_cgy)
+            //     )
+            //     {
+
+            //         if(
+            //             (battlefield->MoveCost_Teleport[((next_cgy * COMBAT_GRID_WIDTH) + next_cgx)] != INF)  /* CLAUDE: was `!= ST_UNDEFINED` (== -1); MoveCost_Teleport is now uint8_t */
+            //             &&
+            //             (next_cgx >= 0)
+            //             &&
+            //             (next_cgx <= COMBAT_GRID_WIDTH)
+            //             &&
+            //             (next_cgy >= 0)
+            //             &&
+            //             (next_cgy <= COMBAT_GRID_HEIGHT)
+            //         )
+            //         {
+
+            //             // ¿ BUGBUG  typo, should be 2 ...same or 1 adjacent in all 8 directions ...adjacent unit check does x<=1 and y<=1 separently ?
+            //             if(DIST(next_cgx, _vortexes[vortex_idx].move_cgx, next_cgy, _vortexes[vortex_idx].move_cgy) > 1)
+            //             {
+
+            //                 break;
+
+            //             }
+
+            //         }
+
+            //     }
+
+            //     tries++;
+
+            //     // Generate random next position
+            //     // ... {1,2,3} - 2 = {-1,0,+1}
+            //     // 3^2  {{-1,-1},{0,-1},{+1,-1}
+            //     //      {{-1, 0},{0, 0},{+1, 0}
+            //     //      {{-1,+1},{0,+1},{+1,+1}
+            //     next_cgx = (curr_cgx + (Random(3) - 2));
+            //     next_cgy = (curr_cgy + (Random(3) - 2));
+
+            // }
+
+            // assert( (next_cgx >= (curr_cgx - 1)) && (next_cgx <= (curr_cgx + 1)) );
+            // assert( (next_cgy >= (curr_cgy - 1)) && (next_cgy <= (curr_cgy + 1)) );
+
+            // // ¿ Do it, even if we never got valid values ?
+            // Vortex_Move_And_Attack(vortex_idx, next_cgx, next_cgy);
+            /* CLAUDE */  /* REBUG */  /* asm: one loop that re-rolls until the square differs from curr, is not INF in MoveCost_Teleport, passes the bounds tests, and is more than 1 (Manhattan) from move_cgx / move_cgy - only that last test gives up after 50 tries */
             tries = 0;
-            while(tries < 50)
-            {
-
-                if(
-                    (next_cgx != curr_cgx)
-                    ||
-                    (next_cgy != curr_cgy)
+            /* OGBUG  MoveCost_Teleport[] is read before the bounds tests, and the tests are > COMBAT_GRID_WIDTH / > COMBAT_GRID_HEIGHT, so column COMBAT_GRID_WIDTH and row COMBAT_GRID_HEIGHT (one past the grid) are accepted and the vortex can move off the grid */
+            while(
+                (
+                    (next_cgx == curr_cgx)
+                    &&
+                    (next_cgy == curr_cgy)
                 )
-                {
-
-                    if(
-                        (battlefield->MoveCost_Teleport[((next_cgy * COMBAT_GRID_WIDTH) + next_cgx)] != INF)  /* CLAUDE: was `!= ST_UNDEFINED` (== -1); MoveCost_Teleport is now uint8_t */
-                        &&
-                        (next_cgx >= 0)
-                        &&
-                        (next_cgx <= COMBAT_GRID_WIDTH)
-                        &&
-                        (next_cgy >= 0)
-                        &&
-                        (next_cgy <= COMBAT_GRID_HEIGHT)
-                    )
-                    {
-
-                        // ¿ BUGBUG  typo, should be 2 ...same or 1 adjacent in all 8 directions ...adjacent unit check does x<=1 and y<=1 separently ?
-                        if(DIST(next_cgx, _vortexes[vortex_idx].move_cgx, next_cgy, _vortexes[vortex_idx].move_cgy) > 1)
-                        {
-
-                            break;
-
-                        }
-
-                    }
-
-                }
-
+                ||
+                (battlefield->MoveCost_Teleport[((next_cgy * COMBAT_GRID_WIDTH) + next_cgx)] == INF)
+                ||
+                (next_cgx < 0)
+                ||
+                (next_cgx > COMBAT_GRID_WIDTH)
+                ||
+                (next_cgy < 0)
+                ||
+                (next_cgy > COMBAT_GRID_HEIGHT)
+                ||
+                (
+                    (DIST(next_cgx, _vortexes[vortex_idx].move_cgx, next_cgy, _vortexes[vortex_idx].move_cgy) <= 1)
+                    &&
+                    (tries < 50)
+                )
+            )
+            {
                 tries++;
-
-                // Generate random next position
-                // ... {1,2,3} - 2 = {-1,0,+1}
-                // 3^2  {{-1,-1},{0,-1},{+1,-1}
-                //      {{-1, 0},{0, 0},{+1, 0}
-                //      {{-1,+1},{0,+1},{+1,+1}
                 next_cgx = (curr_cgx + (Random(3) - 2));
                 next_cgy = (curr_cgy + (Random(3) - 2));
-
             }
-
-            assert( (next_cgx >= (curr_cgx - 1)) && (next_cgx <= (curr_cgx + 1)) );
-            assert( (next_cgy >= (curr_cgy - 1)) && (next_cgy <= (curr_cgy + 1)) );
-
-            // ¿ Do it, even if we never got valid values ?
             Vortex_Move_And_Attack(vortex_idx, next_cgx, next_cgy);
 
         }
@@ -1463,6 +1561,11 @@ void Cast_Call_Chaos(int16_t caster_idx, int16_t anims_on)
     int16_t highest_frame_count = 0;
     int16_t frame = 0;
     int16_t battle_unit_idx = 0;
+    /* OGBUG  effects[] is uninitialized; the anims-off path passes it to Apply_Call_Chaos() before it is filled */
+    /* HACK */  for(battle_unit_idx = 0; battle_unit_idx < MAX_BATTLE_UNIT_SLOT_COUNT; battle_unit_idx++)
+    /* HACK */  {
+    /* HACK */      effects[battle_unit_idx] = Stack_Garbage();
+    /* HACK */  }
     // MONSTER.LBX, 047  "BLANK"    ""
     // SPECFX.LBX, 003  "UNCHANT2"  "Life"
     // SPECFX.LBX, 002  "CHAOS"     "Chaos"
@@ -1607,8 +1710,12 @@ nothing, healing of five hits of damage, chaos channels, warp creature, fire bol
 void Apply_Call_Chaos(int16_t player_idx, int16_t effects[])
 {
     int16_t resist_fails = 0;
-    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };
+    int16_t damage_types[NUM_DAMAGE_TYPES] = { 0, 0, 0 };  /* OGBUG  damage_types[] is uninitialized */
     int16_t battle_unit_idx = 0;
+    /* OGBUG  damage_types[] is uninitialized */
+    /* HACK */  damage_types[0] = Stack_Garbage();
+    /* HACK */  damage_types[1] = Stack_Garbage();
+    /* HACK */  damage_types[2] = Stack_Garbage();
     for(battle_unit_idx = 0; battle_unit_idx < _combat_total_unit_count; battle_unit_idx++)
     {
         if(
@@ -1662,6 +1769,7 @@ void Apply_Call_Chaos(int16_t player_idx, int16_t effects[])
                 } break;
                 case cce_Disintegrate:
                 {
+                    /* OGBUG  a resisting unit still gets Battle_Unit_Commit_Damage(), with whatever damage_types[] the previous fire bolt / warp lightning / doom bolt in this cast left (or never-initialized stack, if none) */
                     if(Combat_Effective_Resistance(battle_units[battle_unit_idx], sbr_Chaos) < 10)
                     {
                         damage_types[dt_Normal] = 0;
@@ -1670,10 +1778,6 @@ void Apply_Call_Chaos(int16_t player_idx, int16_t effects[])
                     }
                     Battle_Unit_Commit_Damage(battle_unit_idx, damage_types);
                 } break;
-                default:
-                {
-                    STU_DEBUG_BREAK();
-                }
             }
         }
     }

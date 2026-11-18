@@ -138,7 +138,7 @@ USW_LoadHireScreen+92 call    j_USW_LoadFigureImage           ; appends a figure
 
 
 
-WZD dseg:97BA 00 00                                           IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dw ...
+WZD dseg:97BA 00 00                                           IMG_USW_UnitHire_BG@ dw 0               ; DATA XREF: GFX_Swap_AppendUView+5Dvw ...
 Down w GFX_Swap_AppendUView+5D       mov     [IMG_USW_UnitHire_BG@], ax      ; appended reserved EMM header in GFX_Swap_Seg
 Down r Production_Screen+1CB         push    [IMG_USW_UnitHire_BG@]          ; picture                                     
 Down r Unit_Statistics_Popup_Draw+54 push    [IMG_USW_UnitHire_BG@]          ; picture                                     
@@ -148,7 +148,7 @@ Down r Unit_Statistics_Popup_Draw+54 push    [IMG_USW_UnitHire_BG@]          ; p
 
 
 
-dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_Abilities USWICONS <0>          ; DATA XREF: GFX_Swap_AppendUView+1Dw ...
+dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_USW_Abilities USWICONS <0>          ; DATA XREF: GFX_Swap_AppendUView+1Dvw ...
 dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; array of 145 appended reserved EMM headers in
 dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; GFX_Swap_Seg, each with one image
 dseg:97F8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+                                        ; UU_Guises@ is also used to hold the diplomacy mirror

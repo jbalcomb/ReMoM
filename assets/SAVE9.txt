@@ -1,4 +1,4 @@
-# HeMoM Save Dump
+# DeMoM Save Dump
 # Source: SAVE9.GAM
 
 hero[0][0].level = 0

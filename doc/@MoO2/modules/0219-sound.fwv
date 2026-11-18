@@ -1,0 +1,9 @@
+module_num=219
+module=sound
+source=0219-sound.md
+range[0]=1:0x0012F270 linear=0x0013F270 size=92
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME     SYMBOL    CHUNK
+m219f001  1    -      0x0013F270  1:0x0012F270  code  sound    sound_    regions/07-object-1/001C4654-001C4E53.txt
+m219f002  2    -      0x0013F2BA  1:0x0012F2BA  code  nosound  nosound_  regions/07-object-1/001C4654-001C4E53.txt

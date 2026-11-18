@@ -1,0 +1,101 @@
+# assert_ai_dead_units.txt -- Field assertions for the DeMoM_AI_Dead_Units test (BUGS_AND_QUIRKS #137).
+#
+#   DeMoM --ai-dead-units 21,75,300,776 --seed1 12345
+#
+# Fixture: SAVECMBT.GAM (842 units, 4 active AI players).  DeMoM kills four units with the real Kill_Unit() and does NOT compact, so the dead records sit in the
+# middle of _UNITS[]:
+#   21  Sage (hero, player 3, hero slot 0)      at (23,23,0)
+#   75  Amazon (hero, human player, hero slot 1) at (14,13,0)
+#   300 Halfling Shaman (normal, player 4)       at (39,25,0)
+#   776 Klackon Settlers (normal, player 2)      at (11,26,1)  -- Myrror, the only unit on its square
+#
+# AI_Player_Calculate_Target_Values() processes every record below _units like the OG, dead ones included, and counts each as an enemy stack at its last square.
+# Dead records reach Effective_Unit_Strength() and its _players[-1] / _HEROES2[-1] reads, which are bounded by the HACK Stack_Garbage stand-ins.  This test is the
+# no-crash / no-OOB coverage for those paths (heroes included) plus the observable effect on the AI's enemy-stack list.
+#
+#   probe_b  real AI_Player_Calculate_Target_Values(1) on state (b): owner -1, wp -1 as Kill_Unit() leaves it (a unit killed by an earlier AI player inside
+#            the same AI_Next_Turn()).  wp -1 matches no city, so each dead record starts its own enemy stack on plane -1 (s_AI_TARGET.wp is uint8_t: 255).
+#   turn     the real AI_Next_Turn(), RNG pinned.  Its entry sanity loop turns the four kills into state (a): wp 0, owner -1.  All four AI players run.
+#   probe_a  real AI_Player_Calculate_Target_Values(1) after the turn, on state (a).  776 (killed on Myrror) now counts as an enemy stack on ARCANUS at
+#            (11,26,0), a square with no live unit and no city -- the stack exists only because the dead record was visited.  21/75/300 are on city squares
+#            after the turn, so they fold into the city check (no stack of their own).
+#
+# Stack values come from Effective_Unit_Strength() of dead units, which depends on the Stack_Garbage stand-ins (own PRNG, not random_seed); they are
+# deterministic for this fixture and seed.  Characterization: re-capture if Stack_Garbage or the strength code changes.
+#
+# Re-captured after BQ wave 2 (AIMOVE.c 1:1 fixes, bq-M): probe_a.enemy_stack_count 95 -> 93; the other 58 fields and turn.rng_calls are unchanged.
+# Re-captured after Make_Move_Path 1:1 (AI move-path cache read + boxed search, 2026-11-10): probe_a.enemy_stack_count 93 -> 96; the other 58 fields are unchanged.
+
+# --- precondition: four kills, two heroes, records in the middle of _UNITS[] ---
+ai_dead.units_before = 842
+ai_dead.dead_count = 4
+ai_dead.heroes_killed = 2
+dead[0].unit_idx = 21
+dead[0].hero_slot = 0
+dead[1].unit_idx = 75
+dead[1].hero_slot = 1
+dead[2].unit_idx = 300
+dead[2].hero_slot = -1
+dead[3].unit_idx = 776
+dead[3].hero_slot = -1
+dead[3].wp_before = 1
+
+# --- Kill_Unit() leaves owner -1, wp -1 and keeps Hero_Slot ---
+dead[0].wp_after_kill = -1
+dead[1].wp_after_kill = -1
+dead[2].wp_after_kill = -1
+dead[3].wp_after_kill = -1
+
+# --- probe (b): dead records with wp -1 are visited and start enemy stacks on plane -1 ---
+probe_b.player_idx = 1
+probe_b.units_visited = 842
+probe_b.dead_units_visited = 4
+probe_b.dead_units_visited_wp_undefined = 4
+probe_b.enemy_stacks_on_plane_undefined = 4
+probe_b.dead[0].has_enemy_stack = 1
+probe_b.dead[1].has_enemy_stack = 1
+probe_b.dead[2].has_enemy_stack = 1
+probe_b.dead[3].has_enemy_stack = 1
+probe_b.dead[0].live_others_on_square = 0
+probe_b.dead[1].live_others_on_square = 0
+probe_b.dead[2].live_others_on_square = 0
+probe_b.dead[3].live_others_on_square = 0
+probe_b.enemy_stack_count = 90
+probe_b.enemy_stacks_on_plane_undefined_value = 9314
+probe_b.dead[0].stack_value = 7428
+probe_b.dead[1].stack_value = 1412
+probe_b.dead[2].stack_value = 474
+# Klackon Settlers: UA_CREATEOUTPOST zeroes the strength
+probe_b.dead[3].stack_value = 0
+
+# --- the real AI turn ran to completion for every AI player ---
+turn.active_ai_players = 4
+turn.magic_master_idx = -1
+check.ai_turn_completed = 1
+
+# --- AI_Next_Turn()'s sanity loop turned the pre-turn kills into state (a): wp 0, owner -1, Hero_Slot kept ---
+dead[0].owner_after_turn = -1
+dead[0].wp_after_turn = 0
+dead[0].hero_slot_after_turn = 0
+dead[1].owner_after_turn = -1
+dead[1].wp_after_turn = 0
+dead[1].hero_slot_after_turn = 1
+dead[2].owner_after_turn = -1
+dead[2].wp_after_turn = 0
+dead[3].owner_after_turn = -1
+dead[3].wp_after_turn = 0
+
+# --- deaths inside the turn (characterization for seed 12345) ---
+turn.rng_calls = 1579
+turn.units_after = 843
+turn.dead_records_after = 18
+turn.killed_in_turn_wp_undefined = 4
+
+# --- probe (a): the Myrror kill counts as an enemy stack on Arcanus at its last square, with nothing else there ---
+probe_a.units_visited = 843
+probe_a.dead_units_visited = 18
+probe_a.dead_units_visited_wp_zero = 14
+probe_a.dead[3].has_enemy_stack = 1
+probe_a.dead[3].live_others_on_square = 0
+probe_a.dead[3].city_on_square = 0
+probe_a.enemy_stack_count = 96

@@ -50,7 +50,7 @@ void Diplomacy_Screen__WIP(void);
 // static void Diplomacy_Screen_Draw__WIP(void);
 
 // WZD o84p01
-// IDK_Diplo_Add_Spell_Or_Gold_To_Message()
+// int16_t Diplomacy_Add_Incentive_To_Message(int16_t spell_idx, int16_t gold);
 
 // WZD o84p02
 // sub_6ED5D()
@@ -62,13 +62,13 @@ void Diplomacy_Screen__WIP(void);
 // static void Diplomacy_Propose_Treaty__STUB(void);
 
 // WZD o84p05
-// static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx);
+// static int16_t Diplomacy_Choose_Other_Wizard(int16_t break_alliance);
 
 // WZD o84p06
 // static void IDK_Diplo_Response(int16_t diplomatic_order, int16_t IDK2);
 
 // WZD o84p07
-// static int16_t IDK_Npc_Counteroffer__STUB(int16_t arg_0);
+// static int16_t Diplomacy_Ask_For_Sweetener(int16_t diplomacy_test_result);
 
 // WZD o84p08
 // static void _sub_6F90E_Draw(void);
@@ -158,7 +158,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // static void Diplomacy_Exchange_Spell__STUB(void);
 
 // WZD o85p18
-// static int16_t IDK_Npc_Target_Player__STUB(int16_t player_idx, int16_t type);
+// static int16_t Diplomacy_Choose_Other_Wizard(int16_t break_alliance);
 
 
 
@@ -170,7 +170,7 @@ void Break_Treaties(int16_t attacker_idx, int16_t defender_idx);
 // static void Npc_Diplomacy_Screen(void);
 
 // WZD o86p02
-void NPC_To_NPC_Treaty_Negotiations(void);
+int16_t NPC_To_NPC_Treaty_Negotiations(void);
 
 // WZD o86p03
 // static int16_t DIPL_sub_72DB6__STUB(void);
@@ -233,11 +233,11 @@ void Modifier_Diplomacy_Adjustments(void);
 // WZD o88p04
 int16_t s88p04_empty_function(int16_t player);
 
-// WZD o88p05
-// sub_74E38()
+// /* CLAUDE */  WZD o88p05  (not an id tag: defined and declared file-local in DIPLOMAC.c, NIU)
+// sub_74E38()  Army_Strength_Random_Difference__NIU()
 
-// WZD o88p06
-// sub_74F4A()
+// /* CLAUDE */  WZD o88p06  (not an id tag: defined and declared file-local in DIPLOMAC.c, NIU)
+// sub_74F4A()  Population_Random_Difference__NIU()
 
 
 

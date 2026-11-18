@@ -311,12 +311,19 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
 
         // DOMSDOS  Play_Background_Music();
         Play_Background_Music();
+
+        /* CLAUDE */  /* REBUG */  // asm: the cancel test is inside the human block; mov ax, 99; jmp @@Done
+        if(Encounter_Outcome == ST_FALSE)
+        {
+            return 99;  // ~ LAIR_CONFIRM_CANCEL
+        }
+
     }
 
-    if(Encounter_Outcome == ST_FALSE)
-    {
-        goto Done_Cancel;
-    }
+    // if(Encounter_Outcome == ST_FALSE)
+    // {
+    //     goto Done_Cancel;
+    // }
 
     treasure_window_y = 100;  // unused and changed to 60 below; only used for Lair_Treasure_Popup()
 
@@ -394,11 +401,10 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         )
         {
             Set_Draw_Active_Stack_Always();
-            // drake178: ; BUG: can push a unit out of the capital when a prisoner is found also has some inherited BUGs, and handles the USW not completely through its own functions
             // int16_t Hire_Hero_Popup(int16_t hero_slot_idx, int16_t unit_type_idx, int16_t hire_type)
+            /* OGBUG  Hire_Hero() creates the prisoner at the fortress and Hire_Hero_Popup() (hire_type 2, not moved to the summon circle) runs Evict_Weakest_From_Full_Stack() there: a fortress holding 9 units gets a unit (or the new hero itself) bumped out before the hero is moved to the lair square below */
             if(Hire_Hero_Popup(Hero_Slot, Reward_Hero, 2) == ST_TRUE)
             {
-                // drake178: ; BUG: this needs to be done when hiring the hero
                 _UNITS[(_units - 1)].wx = (int8_t)_combat_wx;
                 _UNITS[(_units - 1)].wy = (int8_t)_combat_wy;
                 _UNITS[(_units - 1)].wp = (int8_t)_combat_wp;
@@ -413,6 +419,7 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         /*
             BEGIN:  Item Treasure
         */
+        /* OGBUG  only the human gets the item pool: for an AI, Lair_Generate_Treasure() has already created the items (and flagged their prefabs as used), but nothing here gives them to anyone, so the item records leak */
         if(
             (_LAIRS[lair_idx].Item_Count > 0)
             &&
@@ -474,12 +481,12 @@ int16_t Lair_Combat__WIP(int16_t lair_idx, int16_t player_idx)
         Check_Research_Spell_Is_Known(0);
     }
 
-    goto Done;
-
-Done_Cancel:
-    Encounter_Outcome = 99;  // ~ LAIR_CONFIRM_CANCEL
-
-Done:
+    // goto Done;
+//
+// Done_Cancel:
+//     Encounter_Outcome = 99;  // ~ LAIR_CONFIRM_CANCEL
+//
+// Done:
     return Encounter_Outcome;
 }
 
@@ -608,7 +615,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
 
     List_Count = 0;
 
-    // ¿ ; BUG: ignores 1 ?
+    /* OGBUG  '> 1': a treasure of exactly 1 gold is granted (Lair_Loot_Gold_And_Mana()) but not listed */
     if(_LAIRS[lair_idx].Loot_Gold > 1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
@@ -617,7 +624,7 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
         stu_strcat(lair_message_box_text, cnst_Reward_Msg_3);  // " gold"
     }
 
-    // ¿ ; BUG: ignores 1 ?
+    /* OGBUG  '> 1': a treasure of exactly 1 mana is granted (Lair_Loot_Gold_And_Mana()) but not listed */
     if(_LAIRS[lair_idx].Loot_Mana > 1)
     {
         Add_Comma_Or_And(&List_Count, Total_Rewards, lair_message_box_text);
@@ -684,7 +691,8 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
                             Severity	Code	Description	Project	File	Line	Suppression State
                     TODO    Warning	C6385	Reading invalid data from '_wizard_abilities_names':  the readable size is '144' bytes, but 'Reward_Specials[itr]' bytes may be read.	ReMoM	C:\STU\devel\ReMoM\src\Lair.C	645
                 */
-                stu_strcat(lair_message_box_text, _wizard_abilities_names[Reward_Specials[itr]]);
+                // stu_strcat(lair_message_box_text, _wizard_abilities_names[Reward_Specials[itr]]);
+                stu_strcat(lair_message_box_text, _wizard_abilities_names[(Reward_Specials[itr] - 100)]);  /* CLAUDE */  /* REBUG */  /* asm: _wizard_abilities_names[bx-(2*64h)], the retort is stored as (100 + retort_idx) */
             }
         }
     }
@@ -702,6 +710,43 @@ void Lair_Treasure_Popup(int16_t lair_idx, int16_t window_y, int16_t item_list[]
         {
             amount[itr] = 1;
             stu_strcpy(Item_Type_Names[itr], Get_Item_Type_Name(item_list[itr]));
+        }
+
+        /* CLAUDE */  /* asm loc_6DDB8 .. loc_6DE34: same-type items are merged into one entry, and each merged-away entry takes one off Total_Rewards */
+        if(amount[1] != -1)
+        {
+            if(stu_stricmp(Item_Type_Names[0], Item_Type_Names[1]) == 0)
+            {
+                amount[0]++;
+                amount[1] = -1;
+            }
+        }
+        if(amount[2] != -1)
+        {
+            if(stu_stricmp(Item_Type_Names[0], Item_Type_Names[2]) == 0)
+            {
+                amount[0]++;
+                amount[2] = -1;
+            }
+        }
+        if(
+            (amount[1] != -1)
+            &&
+            (amount[2] != -1)
+        )
+        {
+            if(stu_stricmp(Item_Type_Names[1], Item_Type_Names[2]) == 0)
+            {
+                amount[1]++;
+                amount[2] = -1;
+            }
+        }
+        for(itr = 0; itr < lair_item_count; itr++)
+        {
+            if(amount[itr] == -1)
+            {
+                Total_Rewards--;
+            }
         }
 
         for(itr = 0; itr < lair_item_count; itr++)
@@ -745,11 +790,9 @@ void Lair_Loot_Gold_And_Mana(int16_t lair_idx, int16_t player_idx)
 
 
 // WZD o83p08
-// drake178: String_List_Builer()
 void Add_Comma_Or_And(int16_t * size, int16_t count, char * list)
 {
-    *size += 1;
-
+    *size = (*size + 1);
     if(*size == count)
     {
         if(*size > 1)
@@ -764,7 +807,6 @@ void Add_Comma_Or_And(int16_t * size, int16_t count, char * list)
             stu_strcat(list, ", ");
         }
     }
-
 }
 
 
@@ -829,6 +871,7 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
     int16_t Mana_Reward = 0;
     int16_t Gold_Reward = 0;
     int16_t itr = 0;
+    int16_t rewards_count = 0;  /* CLAUDE */  // asm: _DI_total_rewards, stored to *total_rewards once at the end
 
 
     Gold_Reward = _LAIRS[lair_idx].Loot_Gold;
@@ -844,7 +887,7 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
 
     for(itr = 0; itr < lair_item_count; itr++)
     {
-        // ¿ drake178:  ; BUG: parameter mismatch ?
+        /* OGBUG  the lair's stored item value is passed as Make_Item()'s Power (the item kind) and its Value (cost limit) is 0, so the value is never used as a cost and any prefab the wizard's books allow can be picked */
         items[itr] = Make_Item(_LAIRS[lair_idx].Item_Values[itr], _players[player_idx].spellranks, 0);
     }
 
@@ -861,7 +904,7 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
             case 4:
             {
                 *spell = WIZ_RollSpellReward(player_idx, Spell_Or_Special);
-                if(*spell < 1)  /* First Spell Index (Earth_to_Mud) */
+                if(*spell < spl_Earth_To_Mud)  /* First Spell Index (Earth_to_Mud) */
                 {
                     Spell_Or_Special = 0;
                     *spell = -1;
@@ -876,11 +919,13 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
                     {
                         _LAIRS[lair_idx].Item_Count += 1;
                         lair_item_count = _LAIRS[lair_idx].Item_Count;
-                        items[lair_item_count] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);
+                        // items[lair_item_count] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);
+                        items[(lair_item_count - 1)] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);  /* CLAUDE */  /* REBUG */  // asm: mov dx, [bp+lair_item_count]; dec dx
                     }
                     else
                     {
-                        _LAIRS[lair_idx].Loot_Mana = 1000;
+                        // _LAIRS[lair_idx].Loot_Mana = 1000;
+                        _LAIRS[lair_idx].Loot_Mana += 1000;  /* CLAUDE */  /* REBUG */  // asm: add [es:bx+s_LAIR.mana], 1000
                     }
                 }
             } break;
@@ -893,11 +938,13 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
                     {
                         _LAIRS[lair_idx].Item_Count += 1;
                         lair_item_count = _LAIRS[lair_idx].Item_Count;
-                        items[lair_item_count] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);
+                        // items[lair_item_count] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);
+                        items[(lair_item_count - 1)] = Make_Item(0, &_players[player_idx].spellranks[0], 1200);  /* CLAUDE */  /* REBUG */  // asm: mov dx, [bp+lair_item_count]; dec dx
                     }
                     else
                     {
-                        _LAIRS[lair_idx].Loot_Mana = 1000;
+                        // _LAIRS[lair_idx].Loot_Mana = 1000;
+                        _LAIRS[lair_idx].Loot_Mana += 1000;  /* CLAUDE */  /* REBUG */  // asm: add [es:bx+s_LAIR.mana], 1000
                     }
                 }
             } break;
@@ -937,25 +984,46 @@ void Lair_Generate_Treasure(int16_t player_idx, int16_t lair_idx, int16_t items[
     }
 
 
-    *total_rewards = 0;
+    // *total_rewards = 0;
+    // if(Gold_Reward > 0)  // DEDU  ¿ this is SimTex for (!INVALID && !FALSE) ?  ...positive,non-zero
+    // {
+    //     *total_rewards += 1;
+    // }
+    // if(Mana_Reward > 0)
+    // {
+    //     *total_rewards += 1;
+    // }
+    // if(Spell_Or_Special > 0)
+    // {
+    //     *total_rewards += 1;
+    // }
+    // if(Prisoner_Reward > 0)
+    // {
+    //     *total_rewards += 1;
+    // }
+    // *total_rewards += lair_item_count;
+    // *total_rewards += *reward_special_count;
+    /* CLAUDE */  /* REBUG */  // asm: counted in DI, one store through total_rewards at the end
+    rewards_count = 0;
     if(Gold_Reward > 0)  // DEDU  ¿ this is SimTex for (!INVALID && !FALSE) ?  ...positive,non-zero
     {
-        *total_rewards += 1;
+        rewards_count++;
     }
     if(Mana_Reward > 0)
     {
-        *total_rewards += 1;
+        rewards_count++;
     }
     if(Spell_Or_Special > 0)
     {
-        *total_rewards += 1;
+        rewards_count++;
     }
     if(Prisoner_Reward > 0)
     {
-        *total_rewards += 1;
+        rewards_count++;
     }
-    *total_rewards += lair_item_count;
-    *total_rewards += *reward_special_count;
+    rewards_count += lair_item_count;
+    rewards_count += *reward_special_count;
+    *total_rewards = rewards_count;
 
 }
 
@@ -1002,6 +1070,7 @@ int16_t Lair_Confirm(int16_t UU_lair_confirm_start_x, int16_t UU_lair_confirm_st
 
     notify_color_slide = lair_is_node;
 
+    /* OGBUG  the asm pushes only 15, 4, 4 (`add sp, 6`): Set_Font_Style()'s color3 is the caller's stack word, not 0 */
     Set_Font_Style(4, 4, 15, ST_NULL);
 
     Set_Paragraph_Exclusion_Area(0, 0, 57, 45);
@@ -1035,18 +1104,18 @@ int16_t Lair_Confirm(int16_t UU_lair_confirm_start_x, int16_t UU_lair_confirm_st
     {
 
         // yes_button = Add_Button_Field((message_box_x + 100), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_yes_seg, cnst_HOTKEY_Y_2, -1);
-        yes_button = Add_Button_Field((message_box_x + 100), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_yes_seg, 'Y', -1);
+        yes_button = Add_Button_Field((message_box_x + 100), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_yes_seg, "Y", -1);
 
         // no_buttom = Add_Button_Field((message_box_x + 17), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_no_seg, cnst_HOTKEY_N_3, -1);
-        no_button = Add_Button_Field((message_box_x + 17), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_no_seg, 'N', -1);
+        no_button = Add_Button_Field((message_box_x + 17), (tmp_text_y2 + 5), cnst_ZeroString_0, confirmation_button_no_seg, "N", -1);
 
         // Label_Ctrl_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 184), (tmp_text_y2 + 28), cnst_ZeroString_0, -1);
-        Label_Ctrl_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 184), (tmp_text_y2 + 28), 0, -1);
+        Label_Ctrl_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 184), (tmp_text_y2 + 28), "", -1);
 
     }
 
     // hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, cnst_HOTKEY_EscE, -1);
-    hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, '\x1B', -1);
+    hotkey_ESC = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, "\x1B", -1);
 
     Assign_Auto_Function(Lair_Confirm_Draw, 1);
 
@@ -1164,7 +1233,7 @@ void Lair_Confirm_Draw(void)
     if(notify_color_slide == ST_TRUE)
     {
         // TODO  VGA_SlideColors(247, 8, notify_color_slide_cycle);
-        VGA_SlideColors__STUB(247, 8, notify_color_slide_cycle);
+        Rotate_Palette_Colors(247, 8, notify_color_slide_cycle);
         notify_color_slide_cycle = ((notify_color_slide_cycle + 1) % 8);
     }
 
@@ -1241,9 +1310,15 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
             Book_Count += _players[player_idx].spellranks[itr];
         }
 
+        // if(
+        //     (Retort_Count > 5)
+        //     ||
+        //     (Book_Count > 12)
+        // )
+        /* CLAUDE */  /* REBUG */  // asm: cmp Retort_Count, 5; jle -> skip; cmp Book_Count, 12; jle -> skip
         if(
             (Retort_Count > 5)
-            ||
+            &&
             (Book_Count > 12)
         )
         {
@@ -1300,6 +1375,7 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                         {
                             Valid_Reward = ST_FALSE;
                         }
+                        /* OGBUG  Infernal Power, Divine Power and Famous are in DoublePick_Retorts[], so they always take this branch, which has no Life / Death book check and no +10 fame; those checks sit in the single-pick branch below and never fire */
                         if(Valid_Reward == ST_TRUE)
                         {
                             if(
@@ -1323,7 +1399,6 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                             {
                                 Valid_Reward = ST_FALSE;
                             }
-                            // ¿ drake178: ; BUG: not a single pick reward ?
                             if(
                                 (retort_idx == rtt_Infernal_Power)
                                 &&
@@ -1332,7 +1407,6 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                             {
                                 Valid_Reward = ST_FALSE;
                             }
-                            // ¿ drake178: ; BUG: not a single pick reward ?
                             if(
                                 (retort_idx == rtt_Divine_Power)
                                 &&
@@ -1346,7 +1420,6 @@ void EZ_SpecialTreasure(int16_t player_idx, int16_t lair_idx, int16_t points, in
                                 wsa_ptr[retort_idx] = 1;
                                 reward_specials[*reward_special_count] = (100 + retort_idx);
                                 *reward_special_count += 1;
-                                // ¿ drake178: ; BUG: not a single pick reward ?
                                 if(retort_idx == rtt_Famous)
                                 {
                                     _players[player_idx].fame += 10;

@@ -1,0 +1,13 @@
+module_num=321
+module=iomode
+source=0321-iomode.md
+range[0]=1:0x0014C594 linear=0x0015C594 size=106
+range[1]=2:0x00012554 linear=0x00182554 size=88
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME          SYMBOL        CHUNK
+m321f001  1    -      0x0015C594  1:0x0014C594  code  __IOMode      __IOMode_     regions/07-object-1/001E1654-001E1E53.txt
+m321f002  2    -      0x0015C5E9  1:0x0014C5E9  code  __SetIOMode   __SetIOMode_  regions/07-object-1/001E1654-001E1E53.txt
+-         -    -      0x00182554  2:0x00012554  data  ___NFiles     ___NFiles     regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x00182558  2:0x00012558  data  ___init_mode  ___init_mode  regions/08-object-2/00200654-00200E53.txt
+-         -    -      0x001825A8  2:0x000125A8  data  __iomode      __iomode      regions/08-object-2/00200654-00200E53.txt

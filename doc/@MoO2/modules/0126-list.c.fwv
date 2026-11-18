@@ -1,0 +1,22 @@
+module_num=126
+module=D:\MOX\LIST.C
+source=0126-list.c.md
+range[0]=1:0x000FA0A7 linear=0x0010A0A7 size=1561
+range[1]=2:0x00002300 linear=0x00172300 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                      SYMBOL                                     CHUNK
+m126f001  1    -      0x0010A0A7  1:0x000FA0A7  code  Init_List_Data                            Init_List_Data_                            regions/07-object-1/0018F654-0018FE53.txt
+m126f002  2    -      0x0010A188  1:0x000FA188  code  Add_Fields_To_List_Page                   Add_Fields_To_List_Page_                   regions/07-object-1/0018F654-0018FE53.txt
+m126f003  3    -      0x0010A21D  1:0x000FA21D  code  Display_Selected_List_Text                Display_Selected_List_Text_                regions/07-object-1/0018F654-0018FE53.txt
+m126f004  4    -      0x0010A345  1:0x000FA345  code  Display_Selected_List_Text_For_Tech_List  Display_Selected_List_Text_For_Tech_List_  regions/07-object-1/0018F654-0018FE53.txt
+m126f005  5    -      0x0010A3AD  1:0x000FA3AD  code  Display_List_Text                         Display_List_Text_                         regions/07-object-1/0018F654-0018FE53.txt
+m126f006  6    -      0x0010A4A7  1:0x000FA4A7  code  Display_List_Page                         Display_List_Page_                         regions/07-object-1/0018F654-0018FE53.txt
+m126f007  7    -      0x0010A4E2  1:0x000FA4E2  code  Set_List_Page_Pointer                     Set_List_Page_Pointer_                     regions/07-object-1/0018F654-0018FE53.txt
+m126f008  8    -      0x0010A527  1:0x000FA527  code  Next_List_Page                            Next_List_Page_                            regions/07-object-1/0018F654-0018FE53.txt
+m126f009  9    -      0x0010A540  1:0x000FA540  code  Previous_List_Page                        Previous_List_Page_                        regions/07-object-1/0018F654-0018FE53.txt
+m126f010  10   -      0x0010A554  1:0x000FA554  code  Goto_Page_With_Entry                      Goto_Page_With_Entry_                      regions/07-object-1/0018F654-0018FE53.txt
+m126f011  11   -      0x0010A5A3  1:0x000FA5A3  code  Select_And_Page_By_Head_ID                Select_And_Page_By_Head_ID_                regions/07-object-1/0018F654-0018FE53.txt
+m126f012  12   -      0x0010A5E3  1:0x000FA5E3  code  Set_Selected_List_Entry                   Set_Selected_List_Entry_                   regions/07-object-1/0018F654-0018FE53.txt
+m126f013  13   -      0x0010A659  1:0x000FA659  code  Get_Selected_List_Entry                   Get_Selected_List_Entry_                   regions/07-object-1/0018F654-0018FE53.txt
+m126f014  14   -      0x0010A689  1:0x000FA689  code  Set_List_Up_Down_Field_Drawing            Set_List_Up_Down_Field_Drawing_            regions/07-object-1/0018F654-0018FE53.txt

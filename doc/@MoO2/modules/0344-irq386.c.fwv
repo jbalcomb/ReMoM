@@ -1,0 +1,18 @@
+module_num=344
+module=C:\GCL520\C_386\IRQ386.C
+source=0344-irq386.c.md
+range[0]=1:0x0014E3F0 linear=0x0015E3F0 size=1440
+range[1]=2:0x00012CDC linear=0x00182CDC size=8
+range[2]=2:0x00051C70 linear=0x001C1C70 size=80
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                SYMBOL               CHUNK
+m344f001  1    -      0x0015E3F0  1:0x0014E3F0  code         HookInterrupt       HookInterrupt_       regions/07-object-1/001E3654-001E3E53.txt
+m344f002  2    -      0x0015E650  1:0x0014E650  code         CalcRR16Address     CalcRR16Address_     regions/07-object-1/001E3654-001E3E53.txt
+m344f003  3    -      0x0015E68C  1:0x0014E68C  code         RelocateIsrData     RelocateIsrData_     regions/07-object-1/001E3654-001E3E53.txt
+m344f004  4    -      0x0015E7C8  1:0x0014E7C8  static,code  _unhook_everything  _unhook_everything_  regions/07-object-1/001E3654-001E3E53.txt
+m344f005  5    -      0x0015E814  1:0x0014E814  code         UnHookInterrupt     UnHookInterrupt_     regions/07-object-1/001E3E54-001E4653.txt
+m344f006  6    -      0x0015E918  1:0x0014E918  code         _GetInterruptData   _GetInterruptData_   regions/07-object-1/001E3E54-001E4653.txt
+-         -    -      0x001C1C70  2:0x00051C70  data         _IrqDataPtr32       _IrqDataPtr32        -
+-         -    -      0x001C1CAC  2:0x00051CAC  data         _RealBlockPtr16     _RealBlockPtr16      -
+-         -    -      0x001C1CB2  2:0x00051CB2  data         _RealBlockPtr32     _RealBlockPtr32      -

@@ -40,7 +40,7 @@ were already on real land, so they aren't touched by pass 1.)
 
 | Caller | Site | Notes |
 |---|---|---|
-| `Init_New_Game` / MAPGEN | [MAPGEN.c:600](../../MoM/src/MAPGEN.c#L600) | Followed by `gd_dump_landmasses("23_…")` and `gd_dump_world_map("24_…")` ([601-602](../../MoM/src/MAPGEN.c#L601-L602)). |
+| `Init_New_Game` / MAPGEN | [MAPGEN.c:449](../../MoM/src/MAPGEN.c#L449) | Followed by `STU_GD_Dump_Landmasses("124_…")` and `STU_GD_Dump_World_Map("125_…")` ([450-451](../../MoM/src/MAPGEN.c#L450-L451)). |
 
 ## How it works
 

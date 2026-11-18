@@ -56,22 +56,22 @@ extern int16_t m_magic_winner_idx;
 
 
 // MGC dseg:3BEE 0A 3C 15 3C 1E 3C 29 3C 34 3C 3C 3C 43 3C 4D 3C+TBL_HoF_RaceStrings@ dw offset cnst_Race00,offset cnst_Race01,offset cnst_Race02,offset cnst_Race03,offset cnst_Race04,offset cnst_Race05,offset cnst_Race06,offset cnst_Race07,offset cnst_Race08,offset cnst_Race09,offset cnst_Race0A,offset cnst_Race0B,offset cnst_Race0C,offset cnst_Race0D
-// MGC dseg:3BEE 58 3C 61 3C 6A 3C 74 3C 7B 3C 80 3C                                                     ; DATA XREF: Draw_Hall_Of_Fame_Screen+1CBr
+// MGC dseg:3BEE 58 3C 61 3C 6A 3C 74 3C 7B 3C 80 3C                                                     ; DATA XREF: Draw_Hall_Of_Fame_Screen+1CBvr
 // MGC dseg:3BEE                                                                                         ; "Barbarians"
-// MGC dseg:3C0A 42 61 72 62 61 72 69 61 6E 73 00                cnst_Race00 db 'Barbarians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C15 42 65 61 73 74 6D 65 6E 00                      cnst_Race01 db 'Beastmen',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C1E 44 61 72 6B 20 45 6C 76 65 73 00                cnst_Race02 db 'Dark Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C29 44 72 61 63 6F 6E 69 61 6E 73 00                cnst_Race03 db 'Draconians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C34 44 77 61 72 76 65 73 00                         cnst_Race04 db 'Dwarves',0              ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C3C 47 6E 6F 6C 6C 73 00                            cnst_Race05 db 'Gnolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C43 48 61 6C 66 6C 69 6E 67 73 00                   cnst_Race06 db 'Halflings',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C4D 48 69 67 68 20 45 6C 76 65 73 00                cnst_Race07 db 'High Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C58 48 69 67 68 20 4D 65 6E 00                      cnst_Race08 db 'High Men',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C61 4B 6C 61 63 6B 6F 6E 73 00                      cnst_Race09 db 'Klackons',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C6A 4C 69 7A 61 72 64 6D 65 6E 00                   cnst_Race0A db 'Lizardmen',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C74 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C7B 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// MGC dseg:3C80 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
+// MGC dseg:3C0A 42 61 72 62 61 72 69 61 6E 73 00                cnst_Race00 db 'Barbarians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C15 42 65 61 73 74 6D 65 6E 00                      cnst_Race01 db 'Beastmen',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C1E 44 61 72 6B 20 45 6C 76 65 73 00                cnst_Race02 db 'Dark Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C29 44 72 61 63 6F 6E 69 61 6E 73 00                cnst_Race03 db 'Draconians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C34 44 77 61 72 76 65 73 00                         cnst_Race04 db 'Dwarves',0              ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C3C 47 6E 6F 6C 6C 73 00                            cnst_Race05 db 'Gnolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C43 48 61 6C 66 6C 69 6E 67 73 00                   cnst_Race06 db 'Halflings',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C4D 48 69 67 68 20 45 6C 76 65 73 00                cnst_Race07 db 'High Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C58 48 69 67 68 20 4D 65 6E 00                      cnst_Race08 db 'High Men',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C61 4B 6C 61 63 6B 6F 6E 73 00                      cnst_Race09 db 'Klackons',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C6A 4C 69 7A 61 72 64 6D 65 6E 00                   cnst_Race0A db 'Lizardmen',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C74 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C7B 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// MGC dseg:3C80 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
 char TBL_HoF_RaceStrings[NUM_RACES][LEN_RACE_NAME] =
 {
     "Barbarians",
@@ -100,7 +100,7 @@ char TBL_HoF_RaceStrings[NUM_RACES][LEN_RACE_NAME] =
 char halofam_lbx_file__ovr106[] = "HALOFAM";
 
 // MGC  dseg:3C8F
-char str_hotkey_ESC__ovr106 = '\x1B';
+char str_hotkey_ESC__ovr106[] = "\x1B";
 
 // MGC  dseg:3C91
 char str_SPACE__ovr106[] = " ";
@@ -140,38 +140,38 @@ char cnst_HoF_String_E[] = "%)";
 // WZD dseg:59B4                                                 BEGIN:  ovr106 - Initialized Data
 
 // WZD dseg:59B4 D0 59 DB 59 E4 59 EF 59 FA 59 02 5A 09 5A 13 5A+TBL_HoF_RaceStrings@ dw offset cnst_Race00, offset cnst_Race01, offset cnst_Race02, offset cnst_Race03, offset cnst_Race04, offset cnst_Race05, offset cnst_Race06, offset cnst_Race07, offset cnst_Race08, offset cnst_Race09, offset cnst_Race0A, offset cnst_Race0B, offset cnst_Race0C
-// WZD dseg:59B4 1E 5A 27 5A 30 5A 3A 5A 41 5A 46 5A                                                     ; DATA XREF: Hall_Of_Fame_Screen_Draw+1CBr
+// WZD dseg:59B4 1E 5A 27 5A 30 5A 3A 5A 41 5A 46 5A                                                     ; DATA XREF: Hall_Of_Fame_Screen_Draw+1CBvr
 // WZD dseg:59B4                                                 dw offset cnst_Race0D                   ; "Barbarians"
-// WZD dseg:59D0 42 61 72 62 61 72 69 61 6E 73 00                cnst_Race00 db 'Barbarians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:59DB 42 65 61 73 74 6D 65 6E 00                      cnst_Race01 db 'Beastmen',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:59E4 44 61 72 6B 20 45 6C 76 65 73 00                cnst_Race02 db 'Dark Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:59EF 44 72 61 63 6F 6E 69 61 6E 73 00                cnst_Race03 db 'Draconians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:59FA 44 77 61 72 76 65 73 00                         cnst_Race04 db 'Dwarves',0              ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A02 47 6E 6F 6C 6C 73 00                            cnst_Race05 db 'Gnolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A09 48 61 6C 66 6C 69 6E 67 73 00                   cnst_Race06 db 'Halflings',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A13 48 69 67 68 20 45 6C 76 65 73 00                cnst_Race07 db 'High Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A1E 48 69 67 68 20 4D 65 6E 00                      cnst_Race08 db 'High Men',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A27 4B 6C 61 63 6B 6F 6E 73 00                      cnst_Race09 db 'Klackons',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A30 4C 69 7A 61 72 64 6D 65 6E 00                   cnst_Race0A db 'Lizardmen',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A3A 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A41 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A46 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@o
-// WZD dseg:5A4D 48 41 4C 4F 46 41 4D 00                         hof_lbx_file db 'HALOFAM',0             ; DATA XREF: Hall_Of_Fame_Screen+54o
-// WZD dseg:5A55 1B 00                                           cnst_HOTKEY_Esc14 db 1Bh,0              ; DATA XREF: Hall_Of_Fame_Screen+C8o
+// WZD dseg:59D0 42 61 72 62 61 72 69 61 6E 73 00                cnst_Race00 db 'Barbarians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:59DB 42 65 61 73 74 6D 65 6E 00                      cnst_Race01 db 'Beastmen',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:59E4 44 61 72 6B 20 45 6C 76 65 73 00                cnst_Race02 db 'Dark Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:59EF 44 72 61 63 6F 6E 69 61 6E 73 00                cnst_Race03 db 'Draconians',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:59FA 44 77 61 72 76 65 73 00                         cnst_Race04 db 'Dwarves',0              ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A02 47 6E 6F 6C 6C 73 00                            cnst_Race05 db 'Gnolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A09 48 61 6C 66 6C 69 6E 67 73 00                   cnst_Race06 db 'Halflings',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A13 48 69 67 68 20 45 6C 76 65 73 00                cnst_Race07 db 'High Elves',0           ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A1E 48 69 67 68 20 4D 65 6E 00                      cnst_Race08 db 'High Men',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A27 4B 6C 61 63 6B 6F 6E 73 00                      cnst_Race09 db 'Klackons',0             ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A30 4C 69 7A 61 72 64 6D 65 6E 00                   cnst_Race0A db 'Lizardmen',0            ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A3A 4E 6F 6D 61 64 73 00                            cnst_Race0B db 'Nomads',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A41 4F 72 63 73 00                                  cnst_Race0C db 'Orcs',0                 ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A46 54 72 6F 6C 6C 73 00                            cnst_Race0D db 'Trolls',0               ; DATA XREF: dseg:TBL_HoF_RaceStrings@^o
+// WZD dseg:5A4D 48 41 4C 4F 46 41 4D 00                         hof_lbx_file db 'HALOFAM',0             ; DATA XREF: Hall_Of_Fame_Screen+54vo
+// WZD dseg:5A55 1B 00                                           cnst_HOTKEY_Esc14 db 1Bh,0              ; DATA XREF: Hall_Of_Fame_Screen+C8vo
 // WZD dseg:5A55                                                                                         ; should use dseg:2c56
-// WZD dseg:5A57 20 00                                           cnst_HoF_Space db ' ',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw:loc_86C0Ao
+// WZD dseg:5A57 20 00                                           cnst_HoF_Space db ' ',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw:loc_86C0Avo
 // WZD dseg:5A57                                                                                         ; (could use dseg:2ad9)
-// WZD dseg:5A59 48 61 6C 6C 00                                  cnst_HoF_String_B db 'Hall',0           ; DATA XREF: Hall_Of_Fame_Screen_Draw+95o
-// WZD dseg:5A5E 4F 66 00                                        cnst_Of db 'Of',0                       ; DATA XREF: Hall_Of_Fame_Screen_Draw+B3o
-// WZD dseg:5A61 46 61 6D 65 00                                  cnst_Fame_2 db 'Fame',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw+D1o
+// WZD dseg:5A59 48 61 6C 6C 00                                  cnst_HoF_String_B db 'Hall',0           ; DATA XREF: Hall_Of_Fame_Screen_Draw+95vo
+// WZD dseg:5A5E 4F 66 00                                        cnst_Of db 'Of',0                       ; DATA XREF: Hall_Of_Fame_Screen_Draw+B3vo
+// WZD dseg:5A61 46 61 6D 65 00                                  cnst_Fame_2 db 'Fame',0                 ; DATA XREF: Hall_Of_Fame_Screen_Draw+D1vo
 // WZD dseg:5A61                                                                                         ; should use dseg:367b
-// WZD dseg:5A66 4D 61 73 74 65 72 00                            cnst_HoF_String_C db 'Master',0         ; DATA XREF: Hall_Of_Fame_Screen_Draw+154o
-// WZD dseg:5A6D 29 00                                           cnst_ClosingBrace_5 db ')',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+17Do
+// WZD dseg:5A66 4D 61 73 74 65 72 00                            cnst_HoF_String_C db 'Master',0         ; DATA XREF: Hall_Of_Fame_Screen_Draw+154vo
+// WZD dseg:5A6D 29 00                                           cnst_ClosingBrace_5 db ')',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+17Dvo
 // WZD dseg:5A6D                                                                                         ; should use dseg:3428
-// WZD dseg:5A6F 20 6F 66 20 74 68 65 20 00                      cnst_HoF_String_D db ' of the ',0       ; DATA XREF: Hall_Of_Fame_Screen_Draw+1B2o
-// WZD dseg:5A78 28 00                                           cnst_OpeningBrace_3 db '(',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+241o
+// WZD dseg:5A6F 20 6F 66 20 74 68 65 20 00                      cnst_HoF_String_D db ' of the ',0       ; DATA XREF: Hall_Of_Fame_Screen_Draw+1B2vo
+// WZD dseg:5A78 28 00                                           cnst_OpeningBrace_3 db '(',0            ; DATA XREF: Hall_Of_Fame_Screen_Draw+241vo
 // WZD dseg:5A78                                                                                         ; should use dseg:3426
-// WZD dseg:5A7A 25 29 00                                        cnst_HoF_String_E db '%)',0             ; DATA XREF: Hall_Of_Fame_Screen_Draw+25Fo
+// WZD dseg:5A7A 25 29 00                                        cnst_HoF_String_E db '%)',0             ; DATA XREF: Hall_Of_Fame_Screen_Draw+25Fvo
 
 // WZD dseg:5A7D 00                                              align 2
 
@@ -297,7 +297,8 @@ void Hall_Of_Fame_Screen(void)
         if(leave_screen_flag == ST_FALSE)
         {
             Hall_Of_Fame_Screen_Draw();
-            PageFlip_FX();
+            /* MGC */  //  PageFlip_FX_MGC();
+            /* WZD */  PageFlip_FX();
             Release_Time(2);
         }
     }
@@ -505,7 +506,7 @@ void End_Of_Game_Score(void)
     {
         Mark_Time();
         Clear_Fields();
-        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, (int16_t)str_hotkey_ESC__ovr107[0], ST_UNDEFINED);
+        full_screen_esc = Add_Hidden_Field(SCREEN_XMIN, SCREEN_YMIN, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr107, ST_UNDEFINED);
         input_field_idx = Get_Input();
         if(input_field_idx == full_screen_esc)
         {
@@ -576,7 +577,8 @@ void End_Of_Game_Score_Draw(void)
     int16_t itr = 0;
     int16_t score = 0;
     int16_t temp_val = 0;
-    int16_t quotient = 0;
+    // int16_t quotient = 0;
+    /* CLAUDE */  /* REBUG */  /* asm: no quotient; (itr + 1) / 25 is recomputed for each test (idiv bx at 293, 300, 307) */
     stu_strcpy(Bonus_Pts_String, cnst_HoF_String_0);  // ": "
     stu_strcpy(space, str_SPACE__ovr107);  // " "
     for(itr = 0; itr < 4; itr++)
@@ -633,7 +635,9 @@ void End_Of_Game_Score_Draw(void)
     {
         if(_CITIES[itr].owner_idx == _current_player_idx)
         {
-            temp_val += _CITIES[itr].population;
+            // temp_val += _CITIES[itr].population;
+            /* CLAUDE */  /* REBUG */  /* asm: mov dx, si / add dx, ax / mov si, dx */
+            temp_val = temp_val + _CITIES[itr].population;
         }
     }
     stu_itoa(temp_val, GUI_String_2, 10);
@@ -654,8 +658,10 @@ void End_Of_Game_Score_Draw(void)
         draw_x += 9;
         if(itr > 0 && (itr + 1) % 25 == 0)
         {
-            quotient = (itr + 1) / 25;
-            if(quotient == 1 || quotient == 3)
+            // quotient = (itr + 1) / 25;
+            // if(quotient == 1 || quotient == 3)
+            /* CLAUDE */  /* REBUG */  /* asm: inc ax / mov bx, 19h / cwd / idiv bx / cmp ax, 1 ... (same idiv again) / cmp ax, 3 */
+            if(((itr + 1) / 25) == 1 || ((itr + 1) / 25) == 3)
             {
                 draw_x = xstart + 4;
             }
@@ -666,6 +672,9 @@ void End_Of_Game_Score_Draw(void)
             draw_y += 5;
         }
     }
+    /* OGBUG  dead store: temp_val is set to 0 here and overwritten with conquests_count before it is read */
+    /* CLAUDE */  /* REBUG */  /* asm: xor si, si (missing in the reconstruction) */
+    temp_val = 0;
     conquests_count = 0;
     for(itr = 0; itr < _num_players; itr++)
     {
@@ -731,17 +740,24 @@ void End_Of_Game_Score_Draw(void)
         )
     )
     {
+        /* OGBUG  the turn bonus 2000 - 2 x _turn has no floor: after turn 1000 it is negative and subtracts from the final score */
         temp_val = (2000 - (_turn * 2));
     }
     if(temp_val >= 0)
     {
         stu_strcat(GUI_String_1, cnst_HoF_String_1);
     }
+    /* CLAUDE */  /* REBUG */  /* asm: jmp short $+2 (an empty else; BCC 3.1 emits it for else { }) */
+    else
+    {
+    }
     stu_itoa(temp_val, GUI_String_2, 10);
     stu_strcat(GUI_String_1, GUI_String_2);
     FLIC_Draw(xstart, 142, IMG_GAME_HoF_Time);
     Print(xstart + 18, 147, GUI_String_1);
-    score += temp_val;
+    // score += temp_val;
+    /* CLAUDE */  /* REBUG */  /* asm: mov ax, total_score / add ax, si / mov total_score, ax */
+    score = score + temp_val;
     stu_strcpy(GUI_String_1, cnst_Spell_3);
     stu_strcat(GUI_String_1, space);
     stu_strcat(GUI_String_1, cnst_Of_2);
@@ -774,8 +790,9 @@ void End_Of_Game_Score_Draw(void)
         case god_Impossible:
             score = score * 3;
             break;
-        default:
-            break;
+        // default:
+        //     break;
+        /* CLAUDE */  /* REBUG */  /* asm: no default (ja short loc_87958 straight past the switch; default: break; adds a jmp) */
     }
     stu_strcpy(GUI_String_1, cnst_HoF_String_A);
     stu_strcat(GUI_String_1, space);

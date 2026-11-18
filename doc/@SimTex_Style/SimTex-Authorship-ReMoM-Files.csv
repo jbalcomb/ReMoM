@@ -1,0 +1,115 @@
+remom_file,n_functions,n_matched,pct_matched,top_moo2_modules,top_moo2_groups,P_MoO2_Jim,P_MoO2_Ken,P_MoO2_Harold,P_MoO2_Eric,P_MoO2_Russ,P_MoO2_Bill,P_MoO2_Evan,P_MoO2_Other,P_MoM_Jim,P_MoM_Ken,P_MoM_Steve,P_MoM_Grissel
+MoM/src/AIBUILD.c,5,2,40,colcalc.c:1 aibuild.c:1,D:\MOX\OTHERS:2,0.00,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/AIDATA.c,8,2,25,aimove.c:1 aidata.c:1,D:\MOX\OTHERS:2,0.00,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/AIDUDES.c,18,1,6,aidata.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/AIMOVE.c,51,0,0,,,,,,,,,,,,,,
+MoM/src/AISPELL.c,59,0,0,,,,,,,,,,,,,,
+MoM/src/ALLOC.c,1,1,100,alloc.c:1,L:\MOX:1,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoM/src/AdvsrScr.c,11,0,0,,,,,,,,,,,,,,
+MoM/src/ArmyList.c,11,0,0,,,,,,,,,,,,,,
+MoM/src/CITYCALC.c,58,5,9,colcalc.c:2 officer.c:1 ericnet.c:1 bill.c:1,D:\MOX\OTHERS:3 L:\MOX:1 D:\MOX:1,0.00,0.00,0.20,0.20,0.40,0.20,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/CITYSCAP.c,14,1,7,coldraw.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/CMBMAGIC.c,12,0,0,,,,,,,,,,,,,,
+MoM/src/CMBTAI.c,9,0,0,,,,,,,,,,,,,,
+MoM/src/CMBTMVPT.c,2,0,0,,,,,,,,,,,,,,
+MoM/src/CMBTTST.c,8,0,0,,,,,,,,,,,,,,
+MoM/src/CMBTTSTU.c,6,0,0,,,,,,,,,,,,,,
+MoM/src/COMBINIT.c,12,4,33,combinit.c:3 ericnet.c:1,D:\MOX\OTHERS:3 L:\MOX:1,0.00,0.68,0.00,0.25,0.03,0.00,0.00,0.04,0.15,0.55,0.15,0.15
+MoM/src/CONQUEST.c,16,0,0,,,,,,,,,,,,,,
+MoM/src/CREDITS.c,2,2,100,mainmenu.c:2,D:\MOX\OTHERS:2,0.00,0.00,0.86,0.00,0.00,0.00,0.00,0.13,0.25,0.25,0.25,0.25
+MoM/src/CityList.c,8,1,12,colsum.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/CityScr.c,17,6,35,colony.c:3 namestar.c:1 mainscr.c:1 cmbtdrw1.c:1,D:\MOX\OTHERS:6,0.00,0.17,0.27,0.50,0.00,0.00,0.03,0.03,0.23,0.33,0.22,0.22
+MoM/src/City_ovr55.c,39,6,15,invasion.c:1 cmbtfire.c:1 ericnet.c:1 maintain.c:1,D:\MOX\OTHERS:5 L:\MOX:1,0.01,0.13,0.00,0.40,0.34,0.01,0.01,0.11,0.23,0.31,0.23,0.23
+MoM/src/Combat.c,203,16,8,combat1.c:6 combinit.c:3 combfind.c:2 combat.c:2,D:\MOX\OTHERS:15 WLIBS:1,0.01,0.80,0.01,0.01,0.14,0.01,0.01,0.02,0.13,0.61,0.13,0.13
+MoM/src/DIPLOMAC.c,55,26,47,diplomac.c:14 dip-scrn.c:9 npcdiplo.c:3,D:\MOX:26,0.44,0.42,0.01,0.01,0.01,0.01,0.01,0.10,0.39,0.37,0.12,0.12
+MoM/src/EVENTS.c,7,5,71,events.c:5,D:\MOX:5,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.70,0.10,0.10,0.10
+MoM/src/Explore.c,8,0,0,,,,,,,,,,,,,,
+MoM/src/HIRE.c,9,0,0,,,,,,,,,,,,,,
+MoM/src/INITGAME.c,15,5,33,diplomac.c:2 initgame.c:2 report.c:1,D:\MOX:2 L:\MOX:2 D:\MOX\OTHERS:1,0.01,0.33,0.00,0.00,0.54,0.02,0.01,0.08,0.20,0.40,0.20,0.20
+MoM/src/INTRO.c,6,1,17,jim.c:1,D:\MOX:1,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.70,0.10,0.10,0.10
+MoM/src/Init.c,2,1,50,init.c:1,WLIBS:1,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoM/src/Integrity_Check.c,6,0,0,,,,,,,,,,,,,,
+MoM/src/ItemMake.c,16,0,0,,,,,,,,,,,,,,
+MoM/src/ItemScrn.c,13,0,0,,,,,,,,,,,,,,
+MoM/src/ItemView.c,7,0,0,,,,,,,,,,,,,,
+MoM/src/Items.c,5,0,0,,,,,,,,,,,,,,
+MoM/src/LOADER.c,27,0,0,,,,,,,,,,,,,,
+MoM/src/LVLMAKE.c,3,0,0,,,,,,,,,,,,,,
+MoM/src/Lair.c,14,1,7,dip-scrn.c:1,D:\MOX:1,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.70,0.10,0.10,0.10
+MoM/src/LoadScr.c,7,0,0,,,,,,,,,,,,,,
+MoM/src/MAPGEN.c,56,1,2,initgame.c:1,L:\MOX:1,0.01,0.04,0.00,0.00,0.84,0.03,0.03,0.06,0.25,0.26,0.24,0.24
+MoM/src/MOM_SCR.c,3,1,33,mox2.c:1,L:\MOX:1,0.01,0.01,0.17,0.01,0.49,0.01,0.01,0.28,0.25,0.25,0.25,0.25
+MoM/src/MagicScr.c,8,0,0,,,,,,,,,,,,,,
+MoM/src/MainMenu.c,5,1,20,mainmenu.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.86,0.00,0.00,0.00,0.00,0.13,0.25,0.25,0.25,0.25
+MoM/src/MainScr.c,66,2,3,mainscr.c:1 jim.c:1,D:\MOX\OTHERS:1 D:\MOX:1,0.50,0.00,0.50,0.00,0.00,0.00,0.00,0.00,0.47,0.17,0.17,0.17
+MoM/src/MainScr_Maps.c,41,2,5,mainscr.c:1 plntsum.c:1,D:\MOX\OTHERS:2,0.00,0.00,1.00,0.00,0.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/MovePath.c,5,0,0,,,,,,,,,,,,,,
+MoM/src/NEXTTURN.c,55,11,20,nextturn.c:3 colcalc.c:3 colbldg.c:1 events.c:1,D:\MOX\OTHERS:7 L:\MOX:3 D:\MOX:1,0.09,0.07,0.00,0.36,0.46,0.00,0.00,0.02,0.28,0.27,0.23,0.23
+MoM/src/NewGame.c,32,0,0,,,,,,,,,,,,,,
+MoM/src/Outpost.c,9,1,11,namestar.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.64,0.00,0.00,0.00,0.17,0.19,0.25,0.25,0.25,0.25
+MoM/src/OverSpel.c,6,0,0,,,,,,,,,,,,,,
+MoM/src/ProdScr.c,12,3,25,mainscr.c:1 colbldg.c:1 colcalc.c:1,D:\MOX\OTHERS:3,0.00,0.00,0.33,0.33,0.33,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/REPORT.c,4,0,0,,,,,,,,,,,,,,
+MoM/src/Roads.c,9,0,0,,,,,,,,,,,,,,
+MoM/src/SBookScr.c,12,0,0,,,,,,,,,,,,,,
+MoM/src/SCORE.c,4,2,50,score.c:2,D:\MOX\OTHERS:2,0.00,0.00,0.00,0.98,0.00,0.00,0.00,0.02,0.25,0.25,0.25,0.25
+MoM/src/SCastScr.c,14,1,7,combat1.c:1,D:\MOX\OTHERS:1,0.00,1.00,0.00,0.00,0.00,0.00,0.00,0.00,0.10,0.70,0.10,0.10
+MoM/src/SETTLE.c,11,1,9,aimove.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.00,0.00,1.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/SPLMASTR.c,23,0,0,,,,,,,,,,,,,,
+MoM/src/Settings.c,7,1,14,initgame.c:1,L:\MOX:1,0.01,0.04,0.00,0.00,0.84,0.03,0.03,0.06,0.25,0.26,0.24,0.24
+MoM/src/Spellbook.c,25,2,8,colcalc.c:1 tech.c:1,D:\MOX\OTHERS:1 D:\MOX:1,0.00,0.00,0.00,0.00,0.50,0.50,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/Spells128.c,10,2,20,newtech.c:1 npcdiplo.c:1,D:\MOX\OTHERS:1 D:\MOX:1,0.40,0.01,0.01,0.01,0.44,0.01,0.01,0.12,0.43,0.19,0.19,0.19
+MoM/src/Spells129.c,16,0,0,,,,,,,,,,,,,,
+MoM/src/Spells130.c,18,0,0,,,,,,,,,,,,,,
+MoM/src/Spells131.c,10,0,0,,,,,,,,,,,,,,
+MoM/src/Spells132.c,18,1,6,officer.c:1,D:\MOX\OTHERS:1,0.00,0.00,1.00,0.00,0.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/Spells133.c,21,0,0,,,,,,,,,,,,,,
+MoM/src/Spells137.c,13,0,0,,,,,,,,,,,,,,
+MoM/src/Surveyor.c,11,0,0,,,,,,,,,,,,,,
+MoM/src/Terrain.c,41,1,2,initship.c:1,D:\MOX\OTHERS:1,0.01,0.78,0.01,0.01,0.01,0.01,0.01,0.15,0.14,0.60,0.13,0.13
+MoM/src/UNITSTK.c,18,0,0,,,,,,,,,,,,,,
+MoM/src/UnitList.c,3,0,0,,,,,,,,,,,,,,
+MoM/src/UnitMove.c,22,0,0,,,,,,,,,,,,,,
+MoM/src/UnitStat.c,19,0,0,,,,,,,,,,,,,,
+MoM/src/UnitView.c,13,0,0,,,,,,,,,,,,,,
+MoM/src/WIZVIEW.c,3,0,0,,,,,,,,,,,,,,
+MoM/src/WZD_o059.c,18,1,6,officer.c:1,D:\MOX\OTHERS:1,0.00,0.00,1.00,0.00,0.00,0.00,0.00,0.00,0.25,0.25,0.25,0.25
+MoM/src/WZD_o108.c,3,0,0,,,,,,,,,,,,,,
+MoM/src/WZD_o143.c,20,0,0,,,,,,,,,,,,,,
+MoM/src/WZD_o146.c,6,0,0,,,,,,,,,,,,,,
+MoX/src/AIL.c,67,0,0,,,,,,,,,,,,,,
+MoX/src/Allocate.c,18,10,56,allocate.c:10,WLIBS:10,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Allocate_Pool.c,16,0,0,,,,,,,,,,,,,,
+MoX/src/CFG.c,3,0,0,,,,,,,,,,,,,,
+MoX/src/DOS.c,2,2,100,dos.c:2,WLIBS:2,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/EMS/EMS.c,27,0,0,,,,,,,,,,,,,,
+MoX/src/EXIT.c,7,4,57,exit.c:2 init.c:1 video.c:1,WLIBS:4,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/FLIC_Draw.c,62,38,61,bitmap.c:17 animate.c:7 shear.asm:7 file_ani.c:4,WLIBS:38,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Fields.c,50,34,68,fields.c:34,WLIBS:34,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Fonts.c,95,63,66,fonts.c:52 palette.c:5 fontdraw.asm:2 palstore.asm:2,WLIBS:63,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/GENDRAW.c,22,1,5,gendraw.c:1,D:\MOX\OTHERS:1,0.01,0.01,0.78,0.01,0.01,0.01,0.01,0.15,0.25,0.25,0.25,0.25
+MoX/src/GFILE.c,5,0,0,,,,,,,,,,,,,,
+MoX/src/Graphics.c,20,13,65,graphics.c:9 line.c:2 fields.c:1 strings.c:1,WLIBS:13,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Help.c,24,1,4,evanhelp.c:1,D:\MOX\OTHERS:1,0.00,0.00,0.00,0.00,0.00,0.00,1.00,0.00,0.25,0.25,0.25,0.25
+MoX/src/IO_Buffer.c,1,1,100,init.c:1,WLIBS:1,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Input.c,28,16,57,fields.c:12 namestar.c:3 video.c:1,WLIBS:13 D:\MOX\OTHERS:3,0.10,0.10,0.22,0.10,0.10,0.10,0.13,0.16,0.28,0.28,0.22,0.22
+MoX/src/Keyboard.c,4,3,75,key.c:2 fields.c:1,WLIBS:3,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/LBX_Load.c,14,3,21,farload.c:3,WLIBS:3,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/LOADSAVE.c,4,0,0,,,,,,,,,,,,,,
+MoX/src/MOM_DAT.c,1,0,0,,,,,,,,,,,,,,
+MoX/src/MOX2.c,1,0,0,,,,,,,,,,,,,,
+MoX/src/MOX_T4.c,13,0,0,,,,,,,,,,,,,,
+MoX/src/Mouse.c,39,29,74,mouse.c:27 mouse2.asm:2,WLIBS:29,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/SOUND.c,11,5,45,sound.c:5,WLIBS:5,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/TEXTBOX.c,3,0,0,,,,,,,,,,,,,,
+MoX/src/Timer.c,3,2,67,timer.asm:2,WLIBS:2,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Util.c,22,11,50,strings.c:6 struct.asm:5,WLIBS:11,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Video.c,17,4,24,video.c:4,WLIBS:4,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/Video2.c,16,15,94,video.c:9 setvesa.asm:3 mouse2.asm:2 mouse.c:1,WLIBS:15,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/angle.c,6,4,67,angle.c:3 bitmap.c:1,WLIBS:4,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/capture.c,8,5,62,capture.c:4 shear.asm:1,WLIBS:5,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/compat.c,1,0,0,,,,,,,,,,,,,,
+MoX/src/file_ani.c,3,0,0,,,,,,,,,,,,,,
+MoX/src/paragrph.c,10,8,80,paragrph.c:8,WLIBS:8,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21
+MoX/src/random.c,10,9,90,random.c:5 ken.c:4,WLIBS:5 D:\MOX\OTHERS:4,0.07,0.51,0.07,0.07,0.07,0.07,0.07,0.08,0.20,0.47,0.16,0.16
+MoX/src/special.c,7,4,57,special.c:4,WLIBS:4,0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.15,0.29,0.29,0.21,0.21

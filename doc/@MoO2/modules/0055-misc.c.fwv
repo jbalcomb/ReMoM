@@ -1,0 +1,78 @@
+module_num=55
+module=D:\MOX\OTHERS\MISC.C
+source=0055-misc.c.md
+range[0]=1:0x0007E4C3 linear=0x0008E4C3 size=7544
+range[1]=2:0x00001994 linear=0x00171994 size=228
+range[2]=2:0x0000A248 linear=0x0017A248 size=48
+range[3]=2:0x0002431C linear=0x0019431C size=12
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                               SYMBOL                              CHUNK
+m055f001  1    -      0x0008E4E0  1:0x0007E4E0  code         Font_Colors                        Font_Colors_                        regions/07-object-1/00113654-00113E53.txt
+m055f002  2    -      0x0008E5C5  1:0x0007E5C5  code         Font_Colors2                       Font_Colors2_                       regions/07-object-1/00113654-00113E53.txt
+m055f003  3    -      0x0008E6DE  1:0x0007E6DE  code         Get_Comma_String                   Get_Comma_String_                   regions/07-object-1/00113654-00113E53.txt
+m055f004  4    -      0x0008E822  1:0x0007E822  code         Min_Font_Colors                    Min_Font_Colors_                    regions/07-object-1/00113E54-00114653.txt
+m055f005  5    -      0x0008E94D  1:0x0007E94D  code         Bit_Value_To_Num                   Bit_Value_To_Num_                   regions/07-object-1/00113E54-00114653.txt
+m055f006  6    -      0x0008E98D  1:0x0007E98D  code         Box_Clipping_Window                Box_Clipping_Window_                regions/07-object-1/00113E54-00114653.txt
+m055f007  7    -      0x0008E9EB  1:0x0007E9EB  code         CHECK_PARAM_DRAW                   CHECK_PARAM_DRAW_                   regions/07-object-1/00113E54-00114653.txt
+m055f008  8    -      0x0008EA70  1:0x0007EA70  code         CHECK_PARAM_PRINT                  CHECK_PARAM_PRINT_                  regions/07-object-1/00113E54-00114653.txt
+m055f009  9    -      0x0008EB08  1:0x0007EB08  code         CHECK_PARAM_PRINT_INTEGER          CHECK_PARAM_PRINT_INTEGER_          regions/07-object-1/00113E54-00114653.txt
+m055f010  10   -      0x0008EBBB  1:0x0007EBBB  code         Change_Font_Style                  Change_Font_Style_                  regions/07-object-1/00113E54-00114653.txt
+m055f011  11   -      0x0008EBFE  1:0x0007EBFE  code         Decrease_Font_Color_Range          Decrease_Font_Color_Range_          regions/07-object-1/00113E54-00114653.txt
+m055f012  12   -      0x0008EC70  1:0x0007EC70  code         Diagonal_Line_Fill                 Diagonal_Line_Fill_                 regions/07-object-1/00113E54-00114653.txt
+m055f013  13   -      0x0008EFE1  1:0x0007EFE1  code         Draw_Advancing_Fill_Message        Draw_Advancing_Fill_Message_        regions/07-object-1/00113E54-00114653.txt
+m055f014  14   -      0x0008F055  1:0x0007F055  code         Draw_Darkened_Box                  Draw_Darkened_Box_                  regions/07-object-1/00114654-00114E53.txt
+m055f015  15   -      0x0008F0BD  1:0x0007F0BD  code         Draw_Highlight_Box                 Draw_Highlight_Box_                 regions/07-object-1/00114654-00114E53.txt
+m055f016  16   -      0x0008F1C4  1:0x0007F1C4  code         Fade_Into_Screen                   Fade_Into_Screen_                   regions/07-object-1/00114654-00114E53.txt
+m055f017  17   -      0x0008F26E  1:0x0007F26E  code         Fade_To_Black                      Fade_To_Black_                      regions/07-object-1/00114654-00114E53.txt
+m055f018  18   -      0x0008F299  1:0x0007F299  code         Fade_To_Palette                    Fade_To_Palette_                    regions/07-object-1/00114654-00114E53.txt
+m055f019  19   -      0x0008F2DC  1:0x0007F2DC  code         Fill_Bitmap                        Fill_Bitmap_                        regions/07-object-1/00114654-00114E53.txt
+m055f020  20   -      0x0008F328  1:0x0007F328  code         Fill_Bitmap_Unbounded              Fill_Bitmap_Unbounded_              regions/07-object-1/00114654-00114E53.txt
+m055f021  21   -      0x0008F399  1:0x0007F399  static,code  Get_Advancing_Bitmap_String_Range  Get_Advancing_Bitmap_String_Range_  regions/07-object-1/00114654-00114E53.txt
+m055f022  22   -      0x0008F4BA  1:0x0007F4BA  code         Get_Bitmap_Dimensions              Get_Bitmap_Dimensions_              regions/07-object-1/00114654-00114E53.txt
+m055f023  23   -      0x0008F4CA  1:0x0007F4CA  code         Get_Bitmap_String_Range            Get_Bitmap_String_Range_            regions/07-object-1/00114654-00114E53.txt
+m055f024  24   -      0x0008F548  1:0x0007F548  code         Get_File_Name                      Get_File_Name_                      regions/07-object-1/00114654-00114E53.txt
+m055f025  25   -      0x0008F625  1:0x0007F625  code         Get_Font_Colors                    Get_Font_Colors_                    regions/07-object-1/00114654-00114E53.txt
+m055f026  26   -      0x0008F645  1:0x0007F645  code         Get_Font_Spacing                   Get_Font_Spacing_                   regions/07-object-1/00114654-00114E53.txt
+m055f027  27   -      0x0008F64C  1:0x0007F64C  code         Get_Font_Style                     Get_Font_Style_                     regions/07-object-1/00114654-00114E53.txt
+m055f028  28   -      0x0008F653  1:0x0007F653  code         Get_Furthest_Endpoint              Get_Furthest_Endpoint_              regions/07-object-1/00114654-00114E53.txt
+m055f029  29   -      0x0008F6DF  1:0x0007F6DF  code         Get_LBX_Message                    Get_LBX_Message_                    regions/07-object-1/00114654-00114E53.txt
+m055f030  30   -      0x0008F6F8  1:0x0007F6F8  code         Get_Mox_Font_Colors                Get_Mox_Font_Colors_                regions/07-object-1/00114654-00114E53.txt
+m055f031  31   -      0x0008F716  1:0x0007F716  code         Get_Mox_Min_Font_Colors            Get_Mox_Min_Font_Colors_            regions/07-object-1/00114654-00114E53.txt
+m055f032  32   -      0x0008F72D  1:0x0007F72D  code         Get_Time_Stamp                     Get_Time_Stamp_                     regions/07-object-1/00114654-00114E53.txt
+m055f033  33   -      0x0008F76D  1:0x0007F76D  code         Get_Time_Stamp_Int                 Get_Time_Stamp_Int_                 regions/07-object-1/00114654-00114E53.txt
+m055f034  34   -      0x0008F7D7  1:0x0007F7D7  code         HCLS                               HCLS_                               regions/07-object-1/00114654-00114E53.txt
+m055f035  35   -      0x0008F7DF  1:0x0007F7DF  code         Increase_Font_Color_Range          Increase_Font_Color_Range_          regions/07-object-1/00114654-00114E53.txt
+m055f036  36   -      0x0008F855  1:0x0007F855  code         Increment_Mouse_Clock_Image        Increment_Mouse_Clock_Image_        regions/07-object-1/00114E54-00115653.txt
+m055f037  37   -      0x0008F891  1:0x0007F891  code         Is_First_Letter_A_Vowel            Is_First_Letter_A_Vowel_            regions/07-object-1/00114E54-00115653.txt
+m055f038  38   -      0x0008F8DC  1:0x0007F8DC  code         Is_Vowel                           Is_Vowel_                           regions/07-object-1/00114E54-00115653.txt
+m055f039  39   -      0x0008F950  1:0x0007F950  code         Move_Range                         Move_Range_                         regions/07-object-1/00114E54-00115653.txt
+m055f040  40   -      0x0008F99A  1:0x0007F99A  code         Next_File_Name                     Next_File_Name_                     regions/07-object-1/00114E54-00115653.txt
+m055f041  41   -      0x0008FACF  1:0x0007FACF  code         Next_Multiple                      Next_Multiple_                      regions/07-object-1/00114E54-00115653.txt
+m055f042  42   -      0x0008FAF6  1:0x0007FAF6  code         Occluded                           Occluded_                           regions/07-object-1/00114E54-00115653.txt
+m055f043  43   -      0x0008FB65  1:0x0007FB65  code         Ratio_Value                        Ratio_Value_                        regions/07-object-1/00114E54-00115653.txt
+m055f044  44   -      0x0008FB79  1:0x0007FB79  code         Read_Data_File                     Read_Data_File_                     regions/07-object-1/00114E54-00115653.txt
+m055f045  45   -      0x0008FBEF  1:0x0007FBEF  code         Remove_Chars                       Remove_Chars_                       regions/07-object-1/00114E54-00115653.txt
+m055f046  46   -      0x0008FC82  1:0x0007FC82  code         Replace_Bitmap_Colors              Replace_Bitmap_Colors_              regions/07-object-1/00114E54-00115653.txt
+m055f047  47   -      0x0008FD21  1:0x0007FD21  code         Replace_Char                       Replace_Char_                       regions/07-object-1/00114E54-00115653.txt
+m055f048  48   -      0x0008FD56  1:0x0007FD56  code         Restore_Window_Status              Restore_Window_Status_              regions/07-object-1/00114E54-00115653.txt
+m055f049  49   -      0x0008FD71  1:0x0007FD71  code         Save_Window_Status                 Save_Window_Status_                 regions/07-object-1/00114E54-00115653.txt
+m055f050  50   -      0x0008FD84  1:0x0007FD84  code         Scale                              Scale_                              regions/07-object-1/00114E54-00115653.txt
+m055f051  51   -      0x0008FDA1  1:0x0007FDA1  code         Set_Fitted_Font_Style              Set_Fitted_Font_Style_              regions/07-object-1/00114E54-00115653.txt
+m055f052  52   -      0x0008FE0A  1:0x0007FE0A  code         Set_Font_Colors                    Set_Font_Colors_                    regions/07-object-1/00114E54-00115653.txt
+m055f053  53   -      0x0008FE2E  1:0x0007FE2E  code         Set_Font_Default_Spacing           Set_Font_Default_Spacing_           regions/07-object-1/00114E54-00115653.txt
+m055f054  54   -      0x0008FE44  1:0x0007FE44  code         Stat_Pct                           Stat_Pct_                           regions/07-object-1/00114E54-00115653.txt
+m055f055  55   -      0x0008FE65  1:0x0007FE65  code         Substring                          Substring_                          regions/07-object-1/00114E54-00115653.txt
+m055f056  56   -      0x0008FE88  1:0x0007FE88  code         Swap_Bitmap_Colors                 Swap_Bitmap_Colors_                 regions/07-object-1/00114E54-00115653.txt
+m055f057  57   -      0x0008FF08  1:0x0007FF08  code         Tint_Bitmap_Colors                 Tint_Bitmap_Colors_                 regions/07-object-1/00114E54-00115653.txt
+m055f058  58   -      0x0008FF7E  1:0x0007FF7E  code         Tint_Bitmap_Colors_In_Range        Tint_Bitmap_Colors_In_Range_        regions/07-object-1/00114E54-00115653.txt
+m055f059  59   -      0x0008FFF8  1:0x0007FFF8  code         Valid_Star_Index                   Valid_Star_Index_                   regions/07-object-1/00114E54-00115653.txt
+m055f060  60   -      0x00090006  1:0x00080006  code         _Darken_Fill                       _Darken_Fill_                       regions/07-object-1/00115654-00115E53.txt
+m055f061  61   -      0x00090061  1:0x00080061  code         _Print_Centered                    _Print_Centered_                    regions/07-object-1/00115654-00115E53.txt
+m055f062  62   -      0x00090089  1:0x00080089  code         _Print_Centered_Shadow_Down        _Print_Centered_Shadow_Down_        regions/07-object-1/00115654-00115E53.txt
+m055f063  63   -      0x000900B2  1:0x000800B2  code         _Print_Right_Shadow_Down           _Print_Right_Shadow_Down_           regions/07-object-1/00115654-00115E53.txt
+m055f064  64   -      0x000900CE  1:0x000800CE  code         _Print_Shadow_Down                 _Print_Shadow_Down_                 regions/07-object-1/00115654-00115E53.txt
+m055f065  65   -      0x00090184  1:0x00080184  code         _Tri_Interlaced_Fill               _Tri_Interlaced_Fill_               regions/07-object-1/00115654-00115E53.txt
+-         -    -      0x0017A248  2:0x0000A248  data         _mouse_list_clock                  _mouse_list_clock                   regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0019431C  2:0x0002431C  data         _mox_font_colors                   _mox_font_colors                    -
+-         -    -      0x00194324  2:0x00024324  static,data  _mouse_clock_image_num             _mouse_clock_image_num              -

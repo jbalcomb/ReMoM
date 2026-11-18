@@ -1,0 +1,37 @@
+module_num=269
+module=D:\DEVEL\PROJECTS\SMACK\sndmss.c
+source=0269-sndmss.c.md
+range[0]=1:0x00139840 linear=0x00149840 size=2000
+range[1]=2:0x00003FE8 linear=0x00173FE8 size=40
+range[2]=2:0x0001113C linear=0x0018113C size=24
+range[3]=2:0x0004BC10 linear=0x001BBC10 size=32
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                            SYMBOL                          CHUNK
+m269f001  1    -      0x00149840  1:0x00139840  code         SMACKSOUNDMSSLITEDONE           SMACKSOUNDMSSLITEDONE           regions/07-object-1/001CEE54-001CF653.txt
+m269f002  2    -      0x00149860  1:0x00139860  code         SMACKSOUNDMSSLITEINITWITHSTART  SMACKSOUNDMSSLITEINITWITHSTART  regions/07-object-1/001CEE54-001CF653.txt
+m269f003  3    -      0x00149890  1:0x00139890  code         SMACKSOUNDUSEMSS                SMACKSOUNDUSEMSS                regions/07-object-1/001CEE54-001CF653.txt
+m269f004  4    -      0x00149950  1:0x00139950  static,code  MSSLOWSOUNDVOLPAN               MSSLOWSOUNDVOLPAN               regions/07-object-1/001CEE54-001CF653.txt
+m269f005  5    -      0x001499C0  1:0x001399C0  static,code  MSSSMACKTIMERDONE               MSSSMACKTIMERDONE               regions/07-object-1/001CEE54-001CF653.txt
+m269f006  6    -      0x00149A20  1:0x00139A20  static,code  MSSSMACKTIMERSETUP              MSSSMACKTIMERSETUP              regions/07-object-1/001CEE54-001CF653.txt
+m269f007  7    -      0x00149B10  1:0x00139B10  static,code  MSSWINSMACKTIMERREAD            MSSWINSMACKTIMERREAD            regions/07-object-1/001CEE54-001CF653.txt
+m269f008  8    -      0x00149B30  1:0x00139B30  static,code  MSSSMACKTIMERREAD               MSSSMACKTIMERREAD               regions/07-object-1/001CEE54-001CF653.txt
+m269f009  9    -      0x00149BB0  1:0x00139BB0  static,code  MSS_INT                         MSS_INT                         regions/07-object-1/001CEE54-001CF653.txt
+m269f010  10   -      0x00149BC0  1:0x00139BC0  static,code  MSSLOWSOUNDCLOSE                MSSLOWSOUNDCLOSE                regions/07-object-1/001CEE54-001CF653.txt
+m269f011  11   -      0x00149C40  1:0x00139C40  static,code  MSSLOWSOUNDPURGE                MSSLOWSOUNDPURGE                regions/07-object-1/001CEE54-001CF653.txt
+m269f012  12   -      0x00149C80  1:0x00139C80  static,code  MSSLOWSOUNDOPEN                 MSSLOWSOUNDOPEN                 regions/07-object-1/001CEE54-001CF653.txt
+m269f013  13   -      0x00149E40  1:0x00139E40  static,code  doinit                          doinit_                         regions/07-object-1/001CEE54-001CF653.txt
+m269f014  14   -      0x00149ED0  1:0x00139ED0  static,code  MSSLOWSOUNDPLAYED               MSSLOWSOUNDPLAYED               regions/07-object-1/001CEE54-001CF653.txt
+m269f015  15   -      0x00149F20  1:0x00139F20  static,code  MSSLOWSOUNDCHECK                MSSLOWSOUNDCHECK                regions/07-object-1/001CEE54-001CF653.txt
+-         -    -      0x0018113C  2:0x0001113C  static,data  _fss                            _fss                            regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181140  2:0x00011140  static,data  _SmackMSSDigDriver              _SmackMSSDigDriver              regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181144  2:0x00011144  static,data  _LiteInit                       _LiteInit                       regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181148  2:0x00011148  static,data  _count                          _count                          regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x0018114C  2:0x0001114C  static,data  _sndinit                        _sndinit                        regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x00181150  2:0x00011150  static,data  _lasttimer                      _lasttimer                      regions/08-object-2/001FF654-001FFE53.txt
+-         -    -      0x001BBC10  2:0x0004BC10  static,data  _msstimer                       _msstimer                       -
+-         -    -      0x001BBC14  2:0x0004BC14  data         _junkmsstimer                   _junkmsstimer                   -
+-         -    -      0x001BBC18  2:0x0004BC18  static,data  _MSSTimerPeriod                 _MSSTimerPeriod                 -
+-         -    -      0x001BBC1C  2:0x0004BC1C  static,data  _MSSSpeed                       _MSSSpeed                       -
+-         -    -      0x001BBC22  2:0x0004BC22  static,data  _mssaddr                        _mssaddr                        -
+-         -    -      0x001BBC28  2:0x0004BC28  data         _junkmssaddr                    _junkmssaddr                    -

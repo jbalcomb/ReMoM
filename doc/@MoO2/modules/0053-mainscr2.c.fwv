@@ -1,0 +1,29 @@
+module_num=53
+module=D:\MOX\OTHERS\MAINSCR2.C
+source=0053-mainscr2.c.md
+range[0]=1:0x0007A83B linear=0x0008A83B size=4862
+range[1]=2:0x000017E0 linear=0x001717E0 size=4
+range[2]=2:0x0000A1CC linear=0x0017A1CC size=120
+range[3]=2:0x000241A0 linear=0x001941A0 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                 SYMBOL                                CHUNK
+m053f001  1    -      0x0008A84B  1:0x0007A84B  static,code  Begin_Of_Turn                        Begin_Of_Turn_                        regions/07-object-1/0010FE54-00110653.txt
+m053f002  2    -      0x0008A97A  1:0x0007A97A  code         Building_Outposts_In_Main_Screen     Building_Outposts_In_Main_Screen_     regions/07-object-1/0010FE54-00110653.txt
+m053f003  3    -      0x0008AB43  1:0x0007AB43  static,code  Check_Fleet_Movement_Box_Status      Check_Fleet_Movement_Box_Status_      regions/07-object-1/0010FE54-00110653.txt
+m053f004  4    -      0x0008AB6D  1:0x0007AB6D  code         Distance_Between_Stars_Screen        Distance_Between_Stars_Screen_        regions/07-object-1/0010FE54-00110653.txt
+m053f005  5    -      0x0008AD82  1:0x0007AD82  static,code  Do_Begin_Of_Turn                     Do_Begin_Of_Turn_                     regions/07-object-1/0010FE54-00110653.txt
+m053f006  6    -      0x0008AF4E  1:0x0007AF4E  static,code  Draw_Main_Screen_For_Star_Distances  Draw_Main_Screen_For_Star_Distances_  regions/07-object-1/0010FE54-00110653.txt
+m053f007  7    -      0x0008B17B  1:0x0007B17B  static,code  Main_Screen_Report_Handler           Main_Screen_Report_Handler_           regions/07-object-1/00110654-00110E53.txt
+m053f008  8    -      0x0008B2DE  1:0x0007B2DE  code         Planet_Colonization_In_Main_Screen   Planet_Colonization_In_Main_Screen_   regions/07-object-1/00110654-00110E53.txt
+m053f009  9    -      0x0008B4CC  1:0x0007B4CC  static,code  Redraw_Main_Screen_After_Popups      Redraw_Main_Screen_After_Popups_      regions/07-object-1/00110654-00110E53.txt
+m053f010  10   -      0x0008B4E5  1:0x0007B4E5  static,code  Restore_Fleet_Box_Palette            Restore_Fleet_Box_Palette_            regions/07-object-1/00110654-00110E53.txt
+m053f011  11   -      0x0008B519  1:0x0007B519  code         Scrap_Freighters                     Scrap_Freighters_                     regions/07-object-1/00110654-00110E53.txt
+m053f012  12   -      0x0008B7A5  1:0x0007B7A5  code         Unloading_Transports_In_Main_Screen  Unloading_Transports_In_Main_Screen_  regions/07-object-1/00110654-00110E53.txt
+m053f013  13   -      0x0008B956  1:0x0007B956  code         Reports_Screen                       Reports_Screen_                       regions/07-object-1/00110E54-00111653.txt
+m053f014  14   -      0x0008BAB9  1:0x0007BAB9  code         Show_Command_Points_Screen           Show_Command_Points_Screen_           regions/07-object-1/00110E54-00111653.txt
+-         -    -      0x0017A1CC  2:0x0000A1CC  static,data  _mouse_list_from                     _mouse_list_from                      regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A208  2:0x0000A208  static,data  _mouse_list_to                       _mouse_list_to                        regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x001941A0  2:0x000241A0  data         _main_screen_fade_in_flag            _main_screen_fade_in_flag             -
+-         -    -      0x001941A1  2:0x000241A1  data         _in_reports_phase                    _in_reports_phase                     -
+-         -    -      0x001941A2  2:0x000241A2  data         _force_main_screen_fade              _force_main_screen_fade               -

@@ -1,0 +1,96 @@
+module_num=110
+module=D:\MOX\OTHERS\MSG.C
+source=0110-msg.c.md
+range[0]=1:0x000DE4A1 linear=0x000EE4A1 size=5553
+range[1]=2:0x00002038 linear=0x00172038 size=20
+range[2]=2:0x000323F4 linear=0x001A23F4 size=2144
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                           SYMBOL                                         CHUNK
+m110f001  1    -      0x000EE4A1  1:0x000DE4A1  code         Load_Msg_Strings                               Load_Msg_Strings_                              regions/07-object-1/00173654-00173E53.txt
+m110f002  2    -      0x000EEB3A  1:0x000DEB3A  code         Allocate_Msg_Slots                             Allocate_Msg_Slots_                            regions/07-object-1/00173E54-00174653.txt
+m110f003  3    -      0x000EEBF8  1:0x000DEBF8  code         First_Msg_For_Player                           First_Msg_For_Player_                          regions/07-object-1/00173E54-00174653.txt
+m110f004  4    -      0x000EEC02  1:0x000DEC02  code         N_Msgs_For_Player                              N_Msgs_For_Player_                             regions/07-object-1/00173E54-00174653.txt
+m110f005  5    -      0x000EEC98  1:0x000DEC98  code         sprintf_msg                                    sprintf_msg_                                   regions/07-object-1/00173E54-00174653.txt
+m110f006  6    -      0x000EF629  1:0x000DF629  code         Add_Msg                                        Add_Msg_                                       regions/07-object-1/00174654-00174E53.txt
+m110f007  7    -      0x000EF6BE  1:0x000DF6BE  code         Add_Msg_All                                    Add_Msg_All_                                   regions/07-object-1/00174654-00174E53.txt
+m110f008  8    -      0x000EF6F0  1:0x000DF6F0  code         Goto_Msg_Colony                                Goto_Msg_Colony_                               regions/07-object-1/00174654-00174E53.txt
+m110f009  9    -      0x000EF766  1:0x000DF766  static,code  Add_Diplomacy_Msg                              Add_Diplomacy_Msg_                             regions/07-object-1/00174654-00174E53.txt
+m110f010  10   -      0x000EF7FD  1:0x000DF7FD  code         Add_War_Msg                                    Add_War_Msg_                                   regions/07-object-1/00174654-00174E53.txt
+m110f011  11   -      0x000EF807  1:0x000DF807  code         Add_Peace_Msg                                  Add_Peace_Msg_                                 regions/07-object-1/00174E54-00175653.txt
+m110f012  12   -      0x000EF80F  1:0x000DF80F  code         Add_Alliance_Msg                               Add_Alliance_Msg_                              regions/07-object-1/00174E54-00175653.txt
+m110f013  13   -      0x000EF817  1:0x000DF817  code         Add_Nonaggression_Msg                          Add_Nonaggression_Msg_                         regions/07-object-1/00174E54-00175653.txt
+m110f014  14   -      0x000EF81F  1:0x000DF81F  code         Add_Peace_Ended_Msg                            Add_Peace_Ended_Msg_                           regions/07-object-1/00174E54-00175653.txt
+m110f015  15   -      0x000EF827  1:0x000DF827  code         Add_Ongoing_Event_Msgs                         Add_Ongoing_Event_Msgs_                        regions/07-object-1/00174E54-00175653.txt
+-         -    -      0x001A23F4  2:0x000323F4  static,data  _lost_colony_reason_strings                    _lost_colony_reason_strings                    -
+-         -    -      0x001A2404  2:0x00032404  static,data  _msg_colony_or_outpost                         _msg_colony_or_outpost                         -
+-         -    -      0x001A240C  2:0x0003240C  data         _first_msg                                     _first_msg                                     -
+-         -    -      0x001A2414  2:0x00032414  data         _msgs                                          _msgs                                          -
+-         -    -      0x001A2B1C  2:0x00032B1C  data         _n_msgs                                        _n_msgs                                        -
+-         -    -      0x001A2B24  2:0x00032B24  data         _max_msgs                                      _max_msgs                                      -
+-         -    -      0x001A2B2C  2:0x00032B2C  static,data  _msg_april1_fmt                                _msg_april1_fmt                                -
+-         -    -      0x001A2B30  2:0x00032B30  static,data  _msg_defensive_spy_fmt                         _msg_defensive_spy_fmt                         -
+-         -    -      0x001A2B34  2:0x00032B34  static,data  _msg_eel_spawned_fmt                           _msg_eel_spawned_fmt                           -
+-         -    -      0x001A2B38  2:0x00032B38  static,data  _msg_d_ships_killed_retreating_fmt             _msg_d_ships_killed_retreating_fmt             -
+-         -    -      0x001A2B3C  2:0x00032B3C  static,data  _msg_offensive_spy_fmt                         _msg_offensive_spy_fmt                         -
+-         -    -      0x001A2B40  2:0x00032B40  static,data  _msg_artifacts_fmt                             _msg_artifacts_fmt                             -
+-         -    -      0x001A2B44  2:0x00032B44  static,data  _msg_scrap_leader_fmt                          _msg_scrap_leader_fmt                          -
+-         -    -      0x001A2B48  2:0x00032B48  static,data  _msg_diplomacy_strings                         _msg_diplomacy_strings                         -
+-         -    -      0x001A2B5C  2:0x00032B5C  static,data  _failed_retreat_reason_strings                 _failed_retreat_reason_strings                 -
+-         -    -      0x001A2B68  2:0x00032B68  static,data  _msg_failed_retreat_leader_fmt                 _msg_failed_retreat_leader_fmt                 -
+-         -    -      0x001A2B6C  2:0x00032B6C  static,data  _msg_spy_assassinated_fmt                      _msg_spy_assassinated_fmt                      -
+-         -    -      0x001A2B70  2:0x00032B70  static,data  _leader_fate_strings                           _leader_fate_strings                           -
+-         -    -      0x001A2B7C  2:0x00032B7C  static,data  _msg_anomaly_fmt                               _msg_anomaly_fmt                               -
+-         -    -      0x001A2B80  2:0x00032B80  static,data  _msg_eel_vanished_fmt                          _msg_eel_vanished_fmt                          -
+-         -    -      0x001A2B84  2:0x00032B84  static,data  _msg_1_ship_killed_retreating_fmt              _msg_1_ship_killed_retreating_fmt              -
+-         -    -      0x001A2B88  2:0x00032B88  static,data  _msg_spy_assassinated_victim_fmt               _msg_spy_assassinated_victim_fmt               -
+-         -    -      0x001A2B8C  2:0x00032B8C  static,data  _msg_colony_1_rebel_won_fmt                    _msg_colony_1_rebel_won_fmt                    -
+-         -    -      0x001A2B90  2:0x00032B90  static,data  _msg_hyperspace_beast_ate_other_ship_fmt       _msg_hyperspace_beast_ate_other_ship_fmt       -
+-         -    -      0x001A2B94  2:0x00032B94  static,data  _msg_colony_android_killed_organic_fmt         _msg_colony_android_killed_organic_fmt         -
+-         -    -      0x001A2B98  2:0x00032B98  static,data  _msg_colony_boom_fmt                           _msg_colony_boom_fmt                           -
+-         -    -      0x001A2B9C  2:0x00032B9C  static,data  _msg_colony_d_rebels_won_fmt                   _msg_colony_d_rebels_won_fmt                   -
+-         -    -      0x001A2BA0  2:0x00032BA0  static,data  _msg_artemis_leader_fmt                        _msg_artemis_leader_fmt                        -
+-         -    -      0x001A2BA4  2:0x00032BA4  static,data  _msg_lost_defending_spies_fmt                  _msg_lost_defending_spies_fmt                  -
+-         -    -      0x001A2BA8  2:0x00032BA8  static,data  _msg_colony_plague_fmt                         _msg_colony_plague_fmt                         -
+-         -    -      0x001A2BAC  2:0x00032BAC  static,data  _msg_colony_1_rebel_lost_fmt                   _msg_colony_1_rebel_lost_fmt                   -
+-         -    -      0x001A2BB0  2:0x00032BB0  static,data  _msg_colony_1_settler_arrived_fmt              _msg_colony_1_settler_arrived_fmt              -
+-         -    -      0x001A2BB4  2:0x00032BB4  static,data  _msg_hyperspace_flux_fmt                       _msg_hyperspace_flux_fmt                       -
+-         -    -      0x001A2BB8  2:0x00032BB8  static,data  _msg_colony_no_room_for_android_fmt            _msg_colony_no_room_for_android_fmt            -
+-         -    -      0x001A2BBC  2:0x00032BBC  static,data  _msg_hyperspace_beast_ate_your_ship_fmt        _msg_hyperspace_beast_ate_your_ship_fmt        -
+-         -    -      0x001A2BC0  2:0x00032BC0  static,data  _msg_colony_d_settlers_arrived_over_limit_fmt  _msg_colony_d_settlers_arrived_over_limit_fmt  -
+-         -    -      0x001A2BC4  2:0x00032BC4  static,data  _msg_colony_d_settlers_arrived_fmt             _msg_colony_d_settlers_arrived_fmt             -
+-         -    -      0x001A2BC8  2:0x00032BC8  static,data  _msg_lost_attacking_spy_fmt                    _msg_lost_attacking_spy_fmt                    -
+-         -    -      0x001A2BCC  2:0x00032BCC  static,data  _msg_lost_defending_spy_fmt                    _msg_lost_defending_spy_fmt                    -
+-         -    -      0x001A2BD0  2:0x00032BD0  static,data  _msg_colony_your_rebellion_won_fmt             _msg_colony_your_rebellion_won_fmt             -
+-         -    -      0x001A2BD4  2:0x00032BD4  static,data  _msg_colony_your_rebellion_lost_fmt            _msg_colony_your_rebellion_lost_fmt            -
+-         -    -      0x001A2BD8  2:0x00032BD8  static,data  _msg_hyperspace_beast_hungry_fmt               _msg_hyperspace_beast_hungry_fmt               -
+-         -    -      0x001A2BDC  2:0x00032BDC  static,data  _msg_artemis_fmt                               _msg_artemis_fmt                               -
+-         -    -      0x001A2BE0  2:0x00032BE0  static,data  _msg_colony_settlers_arrived_blockaded_fmt     _msg_colony_settlers_arrived_blockaded_fmt     -
+-         -    -      0x001A2BE4  2:0x00032BE4  static,data  _msg_colony_comet_fmt                          _msg_colony_comet_fmt                          -
+-         -    -      0x001A2BE8  2:0x00032BE8  static,data  _msg_colony_d_rebels_lost_fmt                  _msg_colony_d_rebels_lost_fmt                  -
+-         -    -      0x001A2BEC  2:0x00032BEC  static,data  _msg_colony_1_settler_arrived_over_limit_fmt   _msg_colony_1_settler_arrived_over_limit_fmt   -
+-         -    -      0x001A2BF0  2:0x00032BF0  static,data  _msg_colony_built_ship_fmt                     _msg_colony_built_ship_fmt                     -
+-         -    -      0x001A2BF4  2:0x00032BF4  static,data  _msg_colony_built_auto_build_fmt               _msg_colony_built_auto_build_fmt               -
+-         -    -      0x001A2BF8  2:0x00032BF8  static,data  _msg_scrap_ship_bc_fmt                         _msg_scrap_ship_bc_fmt                         -
+-         -    -      0x001A2BFC  2:0x00032BFC  static,data  _s_and_s_declare_war_fmt                       _s_and_s_declare_war_fmt                       -
+-         -    -      0x001A2C00  2:0x00032C00  static,data  _msg_colony_starvation_both_fmt                _msg_colony_starvation_both_fmt                -
+-         -    -      0x001A2C04  2:0x00032C04  static,data  _msg_colony_built_android_farmer_fmt           _msg_colony_built_android_farmer_fmt           -
+-         -    -      0x001A2C08  2:0x00032C08  static,data  _msg_colony_starvation_food_fmt                _msg_colony_starvation_food_fmt                -
+-         -    -      0x001A2C0C  2:0x00032C0C  static,data  _msg_lost_colony_leader_fmt                    _msg_lost_colony_leader_fmt                    -
+-         -    -      0x001A2C10  2:0x00032C10  static,data  _msg_colony_built_refit_fmt                    _msg_colony_built_refit_fmt                    -
+-         -    -      0x001A2C14  2:0x00032C14  static,data  _msg_colony_assimilation_fmt                   _msg_colony_assimilation_fmt                   -
+-         -    -      0x001A2C18  2:0x00032C18  static,data  _msg_colony_built_android_scientist_fmt        _msg_colony_built_android_scientist_fmt        -
+-         -    -      0x001A2C1C  2:0x00032C1C  static,data  _msg_colony_built_next_queue_fmt               _msg_colony_built_next_queue_fmt               -
+-         -    -      0x001A2C20  2:0x00032C20  static,data  _msg_colony_built_android_worker_fmt           _msg_colony_built_android_worker_fmt           -
+-         -    -      0x001A2C24  2:0x00032C24  static,data  _msg_lost_ship_fmt                             _msg_lost_ship_fmt                             -
+-         -    -      0x001A2C28  2:0x00032C28  static,data  _s_and_s_declare_alliance_fmt                  _s_and_s_declare_alliance_fmt                  -
+-         -    -      0x001A2C2C  2:0x00032C2C  static,data  _msg_colony_built_spy_fmt                      _msg_colony_built_spy_fmt                      -
+-         -    -      0x001A2C30  2:0x00032C30  static,data  _msg_colony_built_freighter_fmt                _msg_colony_built_freighter_fmt                -
+-         -    -      0x001A2C34  2:0x00032C34  static,data  _msg_lost_colony_fmt                           _msg_lost_colony_fmt                           -
+-         -    -      0x001A2C38  2:0x00032C38  static,data  _msg_financial_fmt                             _msg_financial_fmt                             -
+-         -    -      0x001A2C3C  2:0x00032C3C  static,data  _msg_colony_built_building_fmt                 _msg_colony_built_building_fmt                 -
+-         -    -      0x001A2C40  2:0x00032C40  static,data  _msg_scrap_ship_hyperspace_fmt                 _msg_scrap_ship_hyperspace_fmt                 -
+-         -    -      0x001A2C44  2:0x00032C44  static,data  _msg_colony_scrap_building_fmt                 _msg_colony_scrap_building_fmt                 -
+-         -    -      0x001A2C48  2:0x00032C48  static,data  _msg_colony_starvation_ind_fmt                 _msg_colony_starvation_ind_fmt                 -
+-         -    -      0x001A2C4C  2:0x00032C4C  static,data  _msg_colony_genocide_fmt                       _msg_colony_genocide_fmt                       -
+-         -    -      0x001A2C50  2:0x00032C50  static,data  _native_msg                                    _native_msg                                    -

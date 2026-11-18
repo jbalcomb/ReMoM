@@ -50,10 +50,10 @@ extern "C" {
 */
 
 // WZD o54p01
-void City_Screen__WIP(void);
+void City_Screen(void);
 
 // WZD o54p02
-void City_Screen_Draw__WIP(void);
+void City_Screen_Draw(void);
 
 // WZD o54p03
 void City_Screen_Draw2__WIP(void);

@@ -1,0 +1,71 @@
+module_num=145
+module=F:\WLIBS\dos\exit.c
+source=0145-exit.c.md
+range[0]=1:0x0011643D linear=0x0012643D size=228
+range[1]=2:0x0000264C linear=0x0017264C size=40
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME               SYMBOL              CHUNK
+m145f001  1    -      0x0012643D  1:0x0011643D  code  Exit_With_Size     Exit_With_Size_     regions/07-object-1/001AB654-001ABE53.txt
+m145f002  2    -      0x00126487  1:0x00116487  code  Exit_With_Message  Exit_With_Message_  regions/07-object-1/001AB654-001ABE53.txt
+m145f003  3    -      0x001264CC  1:0x001164CC  code  Exit_With_Value    Exit_With_Value_    regions/07-object-1/001AB654-001ABE53.txt
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS  NAME               TYPE           CHUNK
+m145f001  0x0012643D  1:0x0011643D  74    24        9         0x18     -    -           Exit_With_Size     void (void)    regions/07-object-1/001AB654-001ABE53.txt
+m145f002  0x00126487  1:0x00116487  69    24        9         0x18     -    EAX         Exit_With_Message  void (char *)  regions/07-object-1/001AB654-001ABE53.txt
+m145f003  0x001264CC  1:0x001164CC  85    24        9         0x18     -    EAX         Exit_With_Value    void (int)     regions/07-object-1/001AB654-001ABE53.txt
+
+[Locals]
+KEY       ROUTINE            BLOCK  LOCAL   LOCATION    TYPE
+m145f001  Exit_With_Size     -      i       [EBP-0x8]   int
+m145f001  Exit_With_Size     -      hello   [EBP-0x4]   char *
+m145f002  Exit_With_Message  -      string  [EBP-0x4]   char *
+m145f003  Exit_With_Value    -      value   [EBP-0x4]   int
+m145f003  Exit_With_Value    -      string  [EBP-0x2C]  char[40]
+
+[Types]
+NUM  KIND       NAME            DETAILS
+-    cue table  -               source file table (C++)
+1    scope      struct          -
+2    scope      union           -
+3    scope      enum            -
+4    scalar     signed char     int 1 bytes
+5    scalar     unsigned char   unsigned 1 bytes
+6    scalar     short           int 2 bytes
+7    scalar     unsigned short  unsigned 2 bytes
+8    scalar     int             int 4 bytes
+9    scalar     unsigned int    unsigned 4 bytes
+10   typedef    char            name for unsigned char (#5)
+11   typedef    char            name for unsigned char (#5)
+12   typedef    size_t          name for unsigned int (#9)
+13   pointer    -               near386; of char (#10)
+14   array      __va_list       0..0; of char * (#13)
+15   typedef    __va_list       name for char *[1] (#14)
+16   scalar     long            int 4 bytes
+17   typedef    fpos_t          name for long (#16)
+18   typedef    fpos_t          name for long (#16)
+19   scalar     void            void 1 bytes
+20   procedure  -               near386; returns void ()
+21   procedure  -               near386; returns void (char *)
+22   procedure  -               near386; returns void (int)
+23   array      -               0..39; of char (#10)
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m145f001  3     0x0012643D  1:0x0011643D  0x001ABA91
+m145f001  8     0x00126455  1:0x00116455  0x001ABAA9
+m145f001  9     0x0012645A  1:0x0011645A  0x001ABAAE
+m145f001  10    0x00126474  1:0x00116474  0x001ABAC8
+m145f001  11    0x0012647E  1:0x0011647E  0x001ABAD2
+m145f002  13    0x00126487  1:0x00116487  0x001ABADB
+m145f002  15    0x001264A2  1:0x001164A2  0x001ABAF6
+m145f002  16    0x001264A7  1:0x001164A7  0x001ABAFB
+m145f002  17    0x001264B9  1:0x001164B9  0x001ABB0D
+m145f002  18    0x001264C3  1:0x001164C3  0x001ABB17
+m145f003  20    0x001264CC  1:0x001164CC  0x001ABB20
+m145f003  24    0x001264E7  1:0x001164E7  0x001ABB3B
+m145f003  25    0x001264F7  1:0x001164F7  0x001ABB4B
+m145f003  26    0x001264FC  1:0x001164FC  0x001ABB50
+m145f003  27    0x0012650E  1:0x0011650E  0x001ABB62
+m145f003  28    0x00126518  1:0x00116518  0x001ABB6C

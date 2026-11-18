@@ -1,0 +1,45 @@
+module_num=45
+module=D:\MOX\OTHERS\FLT2.C
+source=0045-flt2.c.md
+range[0]=1:0x000653D6 linear=0x000753D6 size=8269
+range[1]=2:0x000012E8 linear=0x001712E8 size=76
+range[2]=2:0x0000A078 linear=0x0017A078 size=24
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                             SYMBOL                            CHUNK
+m045f001  1    -      0x000753F2  1:0x000653F2  code         Crew_Description_String          Crew_Description_String_          regions/07-object-1/000FA654-000FAE53.txt
+m045f002  2    -      0x0007545C  1:0x0006545C  code         Add_Fltscrn_Big_Icon_Fields      Add_Fltscrn_Big_Icon_Fields_      regions/07-object-1/000FA654-000FAE53.txt
+m045f003  3    -      0x000755D2  1:0x000655D2  code         Add_Fltscrn_Small_Icon_Fields    Add_Fltscrn_Small_Icon_Fields_    regions/07-object-1/000FA654-000FAE53.txt
+m045f004  4    -      0x0007563F  1:0x0006563F  code         Build_Fltscrn_Big_Icon_Fields    Build_Fltscrn_Big_Icon_Fields_    regions/07-object-1/000FA654-000FAE53.txt
+m045f005  5    -      0x00075802  1:0x00065802  static,code  Move_Ship_To_Front_Of_List       Move_Ship_To_Front_Of_List_       regions/07-object-1/000FAE54-000FB653.txt
+m045f006  6    -      0x0007585D  1:0x0006585D  code         Build_Fltscrn_Ship_List          Build_Fltscrn_Ship_List_          regions/07-object-1/000FAE54-000FB653.txt
+m045f007  7    -      0x000758D9  1:0x000658D9  code         Button_Underneath                Button_Underneath_                regions/07-object-1/000FAE54-000FB653.txt
+m045f008  8    -      0x00075943  1:0x00065943  code         Create_Blank_Fleet_Icon          Create_Blank_Fleet_Icon_          regions/07-object-1/000FAE54-000FB653.txt
+m045f009  9    -      0x00075970  1:0x00065970  code         Crew_Efficiency                  Crew_Efficiency_                  regions/07-object-1/000FAE54-000FB653.txt
+m045f010  10   -      0x00075999  1:0x00065999  code         Crew_Quality                     Crew_Quality_                     regions/07-object-1/000FAE54-000FB653.txt
+m045f011  11   -      0x000759D3  1:0x000659D3  code         Defensive_Bonus                  Defensive_Bonus_                  regions/07-object-1/000FAE54-000FB653.txt
+m045f012  12   -      0x000759D9  1:0x000659D9  code         Draw_Captains_Picture            Draw_Captains_Picture_            regions/07-object-1/000FAE54-000FB653.txt
+m045f013  13   -      0x00075B5F  1:0x00065B5F  code         Fix_Palette                      Fix_Palette_                      regions/07-object-1/000FAE54-000FB653.txt
+m045f014  14   -      0x00075B80  1:0x00065B80  code         Fleet_Screen_Big_Icon_Fields     Fleet_Screen_Big_Icon_Fields_     regions/07-object-1/000FAE54-000FB653.txt
+m045f015  15   -      0x00075D48  1:0x00065D48  code         Fltscrn_Move_Ships               Fltscrn_Move_Ships_               regions/07-object-1/000FAE54-000FB653.txt
+m045f016  16   -      0x00075EE8  1:0x00065EE8  code         Fltscrn_Ships_To_Be_Displayed    Fltscrn_Ships_To_Be_Displayed_    regions/07-object-1/000FAE54-000FB653.txt
+m045f017  17   -      0x00075F79  1:0x00065F79  code         Get_2_Selected_Fields            Get_2_Selected_Fields_            regions/07-object-1/000FAE54-000FB653.txt
+m045f018  18   -      0x00075FE2  1:0x00065FE2  code         Get_Filter_Button_Status         Get_Filter_Button_Status_         regions/07-object-1/000FAE54-000FB653.txt
+m045f019  19   -      0x00076028  1:0x00066028  code         Get_Fltscrn_Big_Icon_XY          Get_Fltscrn_Big_Icon_XY_          regions/07-object-1/000FB654-000FBE53.txt
+m045f020  20   -      0x0007608A  1:0x0006608A  code         Is_Other_Players_Stack           Is_Other_Players_Stack_           regions/07-object-1/000FB654-000FBE53.txt
+m045f021  21   -      0x000760B4  1:0x000660B4  code         Max_Crew                         Max_Crew_                         regions/07-object-1/000FB654-000FBE53.txt
+m045f022  22   -      0x000760D1  1:0x000660D1  code         Max_Marines                      Max_Marines_                      regions/07-object-1/000FB654-000FBE53.txt
+m045f023  23   -      0x00076127  1:0x00066127  static,code  Ok_To_Add_Ship                   Ok_To_Add_Ship_                   regions/07-object-1/000FB654-000FBE53.txt
+m045f024  24   -      0x000761A5  1:0x000661A5  code         Print_Fltscrn_Scanned_Star_Name  Print_Fltscrn_Scanned_Star_Name_  regions/07-object-1/000FB654-000FBE53.txt
+m045f025  25   -      0x0007670E  1:0x0006670E  code         Print_Scanned_Ship_Data          Print_Scanned_Ship_Data_          regions/07-object-1/000FB654-000FBE53.txt
+m045f026  26   -      0x00076F22  1:0x00066F22  code         Scan_Fltscrn_Big_Icons           Scan_Fltscrn_Big_Icons_           regions/07-object-1/000FBE54-000FC653.txt
+m045f027  27   -      0x00077014  1:0x00067014  code         Set_Fleet_Screen_Stack_Owner     Set_Fleet_Screen_Stack_Owner_     regions/07-object-1/000FC654-000FCE53.txt
+m045f028  28   -      0x00077048  1:0x00067048  code         Set_Fltscrn_Small_Ship_Icon_XYs  Set_Fltscrn_Small_Ship_Icon_XYs_  regions/07-object-1/000FC654-000FCE53.txt
+m045f029  29   -      0x000772BF  1:0x000672BF  code         Set_Initial_Stack_Pointer        Set_Initial_Stack_Pointer_        regions/07-object-1/000FC654-000FCE53.txt
+m045f030  30   -      0x000772C4  1:0x000672C4  code         Set_Small_Ship_Stack_Pointer     Set_Small_Ship_Stack_Pointer_     regions/07-object-1/000FC654-000FCE53.txt
+m045f031  31   -      0x00077392  1:0x00067392  code         Write_Fltscrn_Big_Icon_Data      Write_Fltscrn_Big_Icon_Data_      regions/07-object-1/000FC654-000FCE53.txt
+m045f032  32   -      0x00077393  1:0x00067393  code         Clear_All_Selection_Status       Clear_All_Selection_Status_       regions/07-object-1/000FC654-000FCE53.txt
+m045f033  33   -      0x000773B7  1:0x000673B7  static,code  Get_Small_Icon_Animation_Size    Get_Small_Icon_Animation_Size_    regions/07-object-1/000FC654-000FCE53.txt
+-         -    -      0x0017A078  2:0x0000A078  static,data  _normal_colors                   _normal_colors                    regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A080  2:0x0000A080  static,data  _red_colors                      _red_colors                       regions/08-object-2/001F8654-001F8E53.txt
+-         -    -      0x0017A088  2:0x0000A088  static,data  _neutral_colors                  _neutral_colors                   regions/08-object-2/001F8654-001F8E53.txt

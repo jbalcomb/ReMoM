@@ -58,7 +58,7 @@ Line numbers below are the item's line in the TODO file (`L10` = line 10). Code 
 [x] | L54 | `Notify2` box past x = 319 with the Chaos mascot | OGBUG | `OGBUG` note in place |
 [x] | L57 | `Load_WZD_Resources` on every Load/Save visit | Architecture | fixed (load once) |
 [x] | L58 | `Open_File_Animation__HACK` leaks a pool arena per call | Architecture | fixed (streamed through VGAFILEH, as the original); zap checked in game |
-[x] | L61 | New Game in the same process keeps the old game's data | Architecture | fixed (per-game reset); `HeMoM_L61_*` passes on MSVC and clang |
+[x] | L61 | New Game in the same process keeps the old game's data | Architecture | fixed (per-game reset); `DeMoM_L61_*` passes on MSVC and clang |
 
 ### Also found
 
@@ -566,7 +566,7 @@ In the asm the special-button test is nested inside `_unit_stack_count > 0`; ReM
 
 Not the reporter's version (explored squares in minimap colours). Also fixed in the caller while matching it to the asm: tower dot colour 140 (`ST_GREEN`, was 7), unit owner test against `_current_player_idx` (`[_human_player_idx]` in the Dasm), and `var_8` split into `legend_row` / `uu_drew_neutral_city`.
 
-Builds and passes HeMoM; screen confirmed in game. All four Cartographer functions (`Cartographer_Screen`, `Cartographer_Screen_Draw`, `Cartograph_Screen_Draw_Map`, `Cartograph_Screen_Draw_Map_Terrain`) match the asm; `Cartographer_Screen_Draw` also gained the asm's early return after drawing the hovered city name.
+Builds and passes DeMoM; screen confirmed in game. All four Cartographer functions (`Cartographer_Screen`, `Cartographer_Screen_Draw`, `Cartograph_Screen_Draw_Map`, `Cartograph_Screen_Draw_Map_Terrain`) match the asm; `Cartographer_Screen_Draw` also gained the asm's early return after drawing the hovered city name.
 
 ### L51 — History header always "September"; menu label — **ReMoM**
 
@@ -635,7 +635,7 @@ The original streams the animation: `Open_File_Animation` loads up to 16300 byte
 - The seg009 DOS wrappers (`lbx_seek`, `lbx_read_sgmt`) are direct `fseek`/`fread`, as everywhere else in `LBX_Load.c`.
 - The size check is `>= 65536` (the asm errors once the high word is 1).
 
-Exercised by `demo_vga conquest <winner> <loser>` ([effect_conquest.c](../../demo/effect_conquest.c)), whose stages 11-18 stream and draw the ZAP file animation (CONQUEST.LBX 17); headless runs reach stage 31 without error. Building it found AF10. The drawn zap was checked in the game and works.
+Exercised by `demo_vga conquest <winner> <loser>` ([effect_conquest.c](../../demo/effect_conquest.c)), whose stages 11-18 stream and draw the ZAP file animation (CONQUEST.LBX 17); windowless runs reach stage 31 without error. Building it found AF10. The drawn zap was checked in the game and works.
 
 ### L61 — New Game without restarting keeps the previous game's data — **Architecture**
 
@@ -653,18 +653,18 @@ The original reached a new game through a fresh `MAGIC.EXE` / `WIZARDS.EXE`, so 
 | `_CITIES`, `_LAIRS`, `_UNITS`, `_ITEMS` | `POOL_SENTINEL_BYTE` (0xCC) | neutral-city creation ([MAPGEN.c:5693-5734](../../MoM/src/MAPGEN.c#L5693-L5734)) never writes `farmer_count` / `food_units` / `production_units`, which the first city calculation reads; lairs 99-101 are never generated but `Set_Upper_Lair_Guardian_Count` rescales all `NUM_LAIRS`; units and items past this game's count kept game 1's |
 | first 16 bytes of `_UNITS`, `_ITEMS`, `_LAIRS` | the `Allocate_Space` block header | those pointers *are* the block header ([Allocate.c:349-370](../../MoX/src/Allocate.c#L349-L370)), so element 0 starts on it; saved at the first Main Menu entry ([MOM_SCR.c:172-178](../../MoM/src/MOM_SCR.c#L172-L178)) and copied back after the fill |
 
-**Test:** `HeMoM_L61_*` ([tests/CMakeLists.txt](../../tests/CMakeLists.txt)). Two runs, both `HeMoM --menu --seed1 12345`, both creating their games through the New Game screens:
+**Test:** `DeMoM_L61_*` ([tests/CMakeLists.txt](../../tests/CMakeLists.txt)). Two runs, both `DeMoM --menu --seed1 12345`, both creating their games through the New Game screens:
 
-- [test_l61_fresh.hms](../../assets/test_l61_fresh.hms): one game, saved at turn 0. `HeMoM_L61_Fresh_Assertions` ([assert_l61_fresh.txt](../../tests/assert_l61_fresh.txt)) checks the scripted game really happened — HeMoM exits 0 even when a dropped click sends the script onto the wrong screens.
+- [test_l61_fresh.hms](../../assets/test_l61_fresh.hms): one game, saved at turn 0. `DeMoM_L61_Fresh_Assertions` ([assert_l61_fresh.txt](../../tests/assert_l61_fresh.txt)) checks the scripted game really happened — DeMoM exits 0 even when a dropped click sends the script onto the wrong screens.
 - [test_l61_second_game.hms](../../assets/test_l61_second_game.hms): a game played 3 turns (enough for the AI to set non-zero AF8 war targets on both planes), Game → Quit → Main Menu, then the same game, saved at turn 0.
 
-`HeMoM_L61_Compare` checks every field of the second run's SAVE1 dump against the fresh run's: 66068 of 66068 match, on MSVC and clang. Anything a later change leaves stale between games shows up there.
+`DeMoM_L61_Compare` checks every field of the second run's SAVE1 dump against the fresh run's: 66068 of 66068 match, on MSVC and clang. Anything a later change leaves stale between games shows up there.
 
 ### AF8 — `_ai_landmass_war_targets` survives into the next game — **Architecture**
 
 [MOM_DAT.c:906](../../MoX/src/MOM_DAT.c#L906)
 
-Split out of L24. The original ran `MAGIC.EXE` (new game) and then a fresh `WIZARDS.EXE`, so this WIZARDS.EXE data started from its load image every game. ReMoM is one process, and nothing resets the array between games, so an AI war target from the previous map can name a landmass that does not exist on the new one — which is how the reporter reached the zero dock-square count in L24. One instance of L61. Fixed by L61's per-game reset: the array lives inside `_players[5].spells_list` ([ALLOC.c:300-301](../../MoM/src/ALLOC.c#L300-L301)), which the reset zeroes with the rest of `_players`. `HeMoM_L61_Compare` covers it — game 1 plays 3 turns, after which players 1-4 have non-zero targets on both planes.
+Split out of L24. The original ran `MAGIC.EXE` (new game) and then a fresh `WIZARDS.EXE`, so this WIZARDS.EXE data started from its load image every game. ReMoM is one process, and nothing resets the array between games, so an AI war target from the previous map can name a landmass that does not exist on the new one — which is how the reporter reached the zero dock-square count in L24. One instance of L61. Fixed by L61's per-game reset: the array lives inside `_players[5].spells_list` ([ALLOC.c:300-301](../../MoM/src/ALLOC.c#L300-L301)), which the reset zeroes with the rest of `_players`. `DeMoM_L61_Compare` covers it — game 1 plays 3 turns, after which players 1-4 have non-zero targets on both planes.
 
 ### AF9 — AI crafting cost formula drops `remaining -` — **ReMoM**
 
@@ -713,4 +713,4 @@ The asm returns only when the winner is a wizard and the loser is neutral. ReMoM
 
 [MainScr.c:88](../../MoM/src/MainScr.c#L88), [1934-1951](../../MoM/src/MainScr.c#L1934-L1951)
 
-Found by the L61 feasibility run (game 1 → Quit → Main Menu → New Game through the UI, headless). `Main_Screen` offers the rename popup when `_turn == 0` and this flag is `ST_FALSE`, then sets it `ST_TRUE`. It starts `ST_FALSE` only from the load image, and nothing clears it, so in the second game the popup never appears. One instance of L61. Fixed by L61's per-game reset, which sets it back to `ST_FALSE` (and `_turn` back to 0, which the popup also needs).
+Found by the L61 feasibility run (game 1 → Quit → Main Menu → New Game through the UI, windowless). `Main_Screen` offers the rename popup when `_turn == 0` and this flag is `ST_FALSE`, then sets it `ST_TRUE`. It starts `ST_FALSE` only from the load image, and nothing clears it, so in the second game the popup never appears. One instance of L61. Fixed by L61's per-game reset, which sets it back to `ST_FALSE` (and `_turn` back to 0, which the popup also needs).

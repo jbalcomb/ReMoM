@@ -1,0 +1,8 @@
+module_num=280
+module=unlnk
+source=0280-unlnk.md
+range[0]=1:0x001409D8 linear=0x001509D8 size=33
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME    SYMBOL   CHUNK
+m280f001  1    -      0x001509D8  1:0x001409D8  code  unlink  unlink_  regions/07-object-1/001D5E54-001D6653.txt

@@ -39,7 +39,7 @@ Combat_Screen_Map_Compose_Figures()
     Set_Animation_Frame()
     Draw_Picture_To_Bitmap()
     Combat_Figure_Banner_Color()
-    Combat_Unit_Enchantment_Outline_Draw()
+    Draw_Combat_Enchantment_Outline()
     Combat_Figure_Effect()
     Combat_Figure_Active_Red_Outline()
 
@@ -50,14 +50,14 @@ Combat_Figure_Compose()
     Set_Animation_Frame()
     Draw_Picture_To_Bitmap()
     Combat_Figure_Banner_Color()
-    Combat_Unit_Enchantment_Outline_Draw()
+    Draw_Combat_Enchantment_Outline()
 
 Battle_Unit_Compose_Bitmap()
-    Combat_Unit_Enchantment_Outline_Set()
+    Set_Combat_Enchantment_Outline()
     Battle_Unit_Set_Animation_Flags()
     Battle_Unit_Set_Invisibility_Effect()
     Combat_Figure_Banner_Color()
-    Combat_Unit_Enchantment_Outline_Draw()
+    Draw_Combat_Enchantment_Outline()
     Combat_Figure_Effect()
     Battle_Unit_Figure_Position()
     Clipped_Copy_Bitmap()
@@ -79,11 +79,11 @@ Battle_Unit_Teleport()
 Battle_Unit_Tunnel()
 Battle_Unit_Summon_Animation()
     |-> Battle_Unit_Compose_Bitmap()
-        |-> Combat_Unit_Enchantment_Outline_Set()
+        |-> Set_Combat_Enchantment_Outline()
         |-> Battle_Unit_Set_Animation_Flags()
         |-> Battle_Unit_Set_Invisibility_Effect()
         |-> Combat_Figure_Banner_Color()
-        |-> Combat_Unit_Enchantment_Outline_Draw()
+        |-> Draw_Combat_Enchantment_Outline()
         |-> Combat_Figure_Effect()
         |-> Battle_Unit_Figure_Position()
 
@@ -280,13 +280,13 @@ The two arms also end in genuinely different calls — `Draw_Picture` (asm:133) 
 
 `Draw_Active_Unit_Stats_And_Icons` (`ovr099`, 167 lines) and `Draw_Active_Unit_Damage_Bar` (`ovr099`, 122 lines) are called from `Draw_Active_Unit_Window` but draw HUD stats and a damage bar, not figures — they belong with the active-unit panel, not here. `Combat_Screen_Draw`, the sole caller of `Draw_Active_Unit_Window`, is covered in [Combat-Combat_Screen.md](Combat-Combat_Screen.md).
 
-The helpers every composer calls — `Combat_Figure_Banner_Color`, `Combat_Unit_Enchantment_Outline_Set` and `_Draw`, `Combat_Figure_Effect`, `Combat_Figure_Active_Red_Outline`, `Battle_Unit_Set_Animation_Flags`, `Battle_Unit_Set_Invisibility_Effect`, `Battle_Unit_Figure_Position` — were all reviewed in [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) and are not re-derived here.
+The helpers every composer calls — `Combat_Figure_Banner_Color`, `Set_Combat_Enchantment_Outline` and `_Draw`, `Combat_Figure_Effect`, `Combat_Figure_Active_Red_Outline`, `Battle_Unit_Set_Animation_Flags`, `Battle_Unit_Set_Invisibility_Effect`, `Battle_Unit_Figure_Position` — were all reviewed in [Combat-Combat_Screen_Map_Draw.md](Combat-Combat_Screen_Map_Draw.md) and are not re-derived here.
 
 ## Build state
 
-`cmake --build --preset MSVC-debug` and `cmake --build --preset MSVC-release` both clean — every target links, `ReMoM`, `HeMoM`, `MOM_tests` and `MOX_tests` included. `ctest -C Debug`: 362 of 363 pass, 9 disabled.
+`cmake --build --preset MSVC-debug` and `cmake --build --preset MSVC-release` both clean — every target links, `ReMoM`, `DeMoM`, `MOM_tests` and `MOX_tests` included. `ctest -C Debug`: 362 of 363 pass, 9 disabled.
 
-The single failure, `HeMoM_Combat_Strategic_Assertions`, is **pre-existing at HEAD and unrelated to this review**. It diverges on `combat.rng_calls` (30 vs 24) and the unit outcomes that cascade from it. Nothing in this review's scope can cause that: none of the seven functions calls `Random()`, `HeMoM` is headless so the figure-composition path does not render, and the working-tree diff for `Combat.c` contains only renames plus constant substitutions of equal value (`ST_REMAP_COLOR` = 232, `ST_BLACK` = 1). The golden `tests/assert_combat_strategic.txt` was last updated 2026-07-15, while combat logic has been committed as recently as `7669b2c4` (2026-08-08 18:20) — the drift is in committed code and needs its own attribution pass.
+The single failure, `DeMoM_Combat_Strategic_Assertions`, is **pre-existing at HEAD and unrelated to this review**. It diverges on `combat.rng_calls` (30 vs 24) and the unit outcomes that cascade from it. Nothing in this review's scope can cause that: none of the seven functions calls `Random()`, `DeMoM` is windowless so the figure-composition path does not render, and the working-tree diff for `Combat.c` contains only renames plus constant substitutions of equal value (`ST_REMAP_COLOR` = 232, `ST_BLACK` = 1). The golden `tests/assert_combat_strategic.txt` was last updated 2026-07-15, while combat logic has been committed as recently as `7669b2c4` (2026-08-08 18:20) — the drift is in committed code and needs its own attribution pass.
 
 ---
 

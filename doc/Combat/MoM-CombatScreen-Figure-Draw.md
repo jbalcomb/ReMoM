@@ -639,7 +639,7 @@ Combat_Screen_Map_Compose_Figures()
     GfxBuf_2400B = battle_unit_picts_seg[battle_units[itr].bufpi];
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
-    Combat_Unit_Enchantment_Outline_Draw(UE_Rlm);
+    Draw_Combat_Enchantment_Outline(UE_Rlm);
     Combat_Figure_Effect(IMG_Effect);
     Combat_Figure_Active_Red_Outline(itr);
 

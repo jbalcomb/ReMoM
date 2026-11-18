@@ -1,0 +1,8 @@
+module_num=354
+module=read
+source=0354-read.md
+range[0]=1:0x0014FF11 linear=0x0015FF11 size=251
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME  SYMBOL  CHUNK
+m354f001  1    -      0x0015FF11  1:0x0014FF11  code  read  read_   regions/07-object-1/001E4E54-001E5653.txt

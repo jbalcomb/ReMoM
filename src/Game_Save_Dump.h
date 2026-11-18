@@ -6,8 +6,8 @@
  * reference to identify exactly which field changed.
  */
 
-#ifndef HEMOM_SAVEDUMP_H
-#define HEMOM_SAVEDUMP_H
+#ifndef DEMOM_SAVEDUMP_H
+#define DEMOM_SAVEDUMP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,4 +25,4 @@ int Game_Save_Dump(const char *save_filepath, const char *text_filepath);
 }
 #endif
 
-#endif /* HEMOM_SAVEDUMP_H */
+#endif /* DEMOM_SAVEDUMP_H */

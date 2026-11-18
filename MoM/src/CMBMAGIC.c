@@ -44,7 +44,6 @@
 #include "LOADER.h"
 #include "MainScr.h"
 #include "MainScr_Maps.h"
-#include "MOM_DBG.h"
 #include "NEXTTURN.h"
 #include "RACETYPE.h"
 #include "SBookScr.h"
@@ -85,7 +84,7 @@ char hlpentry_lbx_file__ovr112[] = "hlpentry";
 char str_hotkey_F__ovr112[] = "F";
 // WZD dseg:5B0B
 char str_hotkey_B__ovr112[] = "B";
-// WZD dseg:5B0D 1B 00                                           str_hotkey_ESC__ovr112 db 1Bh,0              ; DATA XREF: Combat_Spellbook_Screen+6E0o
+// WZD dseg:5B0D 1B 00                                           str_hotkey_ESC__ovr112 db 1Bh,0              ; DATA XREF: Combat_Spellbook_Screen+6E0vo
 // WZD dseg:5B0F
 char message_lbx_file__ovr112[] = "message";
 // WZD dseg:5B17 00                                              align 2
@@ -286,7 +285,9 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 spell_idx = spl_Healing;
                 is_spell_like_ability = ST_TRUE;
             }
-            if((battle_units[caster_idx].Attribs_2 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
+            // if((battle_units[caster_idx].Attribs_2 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
+            /* CLAUDE */  /* REBUG */  /* asm 119: test [es:bx+s_BATTLE_UNIT.Attribs_1], USA_SUMMON_DEMON_1 or USA_SUMMON_DEMON_2 */
+            if((battle_units[caster_idx].Attribs_1 & (USA_SUMMON_DEMON_1 | USA_SUMMON_DEMON_2)) != 0)
             {
                 if(_units < MAX_UNIT_COUNT)
                 {
@@ -382,25 +383,152 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
         /*
             BEGIN:  ¿ effective_cost ?
         */
+        // if(
+            // (spell_data_table[spell_idx].type < scc_Infusable_Spell)
+            // ||
+            // (is_spell_like_ability != ST_FALSE)
+        // )
+        // {
+            // // if(caster_idx > CASTER_IDX_BASE)
+            // /* CLAUDE */  /* REBUG */  /* asm loc_8D4A0: cmp caster_idx, e_CASTER_IDX_BASE_sub1 / jle */
+            // if(caster_idx >= CASTER_IDX_BASE)
+            // {
+                // /* OGBUG: causes counters to use the effective cost */
+                // available_mana_pool = Casting_Cost(player_idx, spell_idx, 1);
+            // }
+            // else
+            // {
+                // /* OGBUG: ignores Evil Omens */
+                // available_mana_pool = spell_data_table[spell_idx].casting_cost;
+            // }
+            // effective_cost = available_mana_pool;
+        // }
+        // else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (is_spell_like_ability == ST_FALSE) */
+        // {
+            // if(
+                // (player_idx == HUMAN_PLAYER_IDX)
+                // &&
+                // (_auto_combat_flag == ST_FALSE)
+            // )
+            // {
+                // saved_casting_cost_remaining = _players[HUMAN_PLAYER_IDX].casting_cost_remaining;
+                // overland_spell_idx_saved = _players[HUMAN_PLAYER_IDX].casting_spell_idx;
+                // _players[HUMAN_PLAYER_IDX].casting_spell_idx = spell_idx;
+                // if(caster_idx >= CASTER_IDX_BASE)
+                // {
+                    // _players[HUMAN_PLAYER_IDX].casting_cost_remaining = Casting_Cost(HUMAN_PLAYER_IDX, spell_idx, 1);
+                // }
+                // else
+                // {
+                    // /* OGBUG: ignores Evil Omens */
+                    // _players[HUMAN_PLAYER_IDX].casting_cost_remaining = spell_data_table[spell_idx].casting_cost;
+                // }
+                // available_mana_pool = Combat_Spellbook_Mana_Adder_Screen(spell_idx, selected_page_slot, caster_idx);
+                // if(caster_idx >= CASTER_IDX_BASE)
+                // {
+                    // effective_cost = (available_mana_pool - ((available_mana_pool * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                // }
+                // else
+                // {
+                    // effective_cost = available_mana_pool;
+                // }
+                // _players[HUMAN_PLAYER_IDX].casting_cost_remaining = saved_casting_cost_remaining;
+                // _players[HUMAN_PLAYER_IDX].casting_spell_idx = overland_spell_idx_saved;
+                // Combat_Compose_Background();  // ... |-> Copy_Off_To_Back();
+                // Set_Page_Off();
+                // Combat_Screen_Draw();
+                // PageFlip_FX();
+            // }
+            // else  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
+            // {
+                // if(caster_idx >= CASTER_IDX_BASE)
+                // {
+                    // /* OGBUG: ignores the base casting cost */
+                    // available_mana_pool = _players[player_idx].Cmbt_Skill_Left;
+                    // /* OGBUG: ignores casting cost modifiers */
+                    // // if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // // {
+                    // //     available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                    // // }
+                    // /* CLAUDE */  /* REBUG */  /* asm 375-394: the cap is 4 x the casting cost (mov cl, 2 / shl ax, cl) */
+                    // if((spell_data_table[spell_idx].casting_cost * 4) < available_mana_pool)
+                    // {
+                        // available_mana_pool = (spell_data_table[spell_idx].casting_cost * 4);
+                    // }
+                    // extra_mana_cost = Combat_Casting_Cost_Multiplier(player_idx);
+                    // /* OGBUG: ignores casting cost modifiers */
+                    // // if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < spell_data_table[spell_idx].casting_cost)
+                    // /* CLAUDE */  /* REBUG */  /* asm 399-461: compared with the pool + the casting cost */
+                    // if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < (available_mana_pool + spell_data_table[spell_idx].casting_cost))
+                    // {
+                        // /* OGBUG: ignores casting cost modifiers */
+                        // available_mana_pool = (((_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
+                    // }
+                // }
+                // else
+                // {
+                    // /* OGBUG: ignores Evil Omens */
+                    // /* OGBUG: infusable item charges will be automatically countered if the user has no mana */
+                    // available_mana_pool = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
+                    // // if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // // {
+                    // //     available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                    // // }
+                    // /* CLAUDE */  /* REBUG */  /* asm loc_8D3B6: the cap is 4 x the casting cost (mov cl, 2 / shl ax, cl) */
+                    // if((spell_data_table[spell_idx].casting_cost * 4) < available_mana_pool)
+                    // {
+                        // available_mana_pool = (spell_data_table[spell_idx].casting_cost * 4);
+                    // }
+                // }
+                // base_mana_cost = spell_data_table[spell_idx].casting_cost;
+                // extra_mana_cost = 0;
+                // /* OGBUG: Banish has an effective gain of 1/15 mana, not 5 */
+                // if(
+                    // (spell_idx == spl_Life_Drain)
+                    // ||
+                    // (spell_idx == spl_Banish)
+                // )
+                // {
+                    // extra_mana_cost = ((Random(((available_mana_pool / 5) + 1)) - 1) * 5);
+                // }
+                // else if(spell_idx == spl_Counter_Magic)
+                // {
+                    // extra_mana_cost = ((Random(((available_mana_pool / 5) + 1)) - 1) * 5);
+                // }
+                // else
+                // {
+                    // extra_mana_cost = available_mana_pool;
+                // }
+                // // total_mana_cost = (base_mana_cost + extra_mana_cost);
+                // // if(caster_idx > CASTER_IDX_BASE)
+                // // {
+                // //     /* OGBUG: ignores Evil Omens */
+                // //     effective_cost = (total_mana_cost - ((total_mana_cost * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                // // }
+                // // else
+                // // {
+                // //     effective_cost = total_mana_cost;
+                // // }
+                // /* CLAUDE */  /* REBUG */  /* asm loc_8D45E: the total goes back into DI, the same register as the pool, which the counter rolls, the node cost and Combat_Cast_Apply_Spell_Effect() read; cmp caster_idx, e_CASTER_IDX_BASE_sub1 / jle */
+                // total_mana_cost = (base_mana_cost + extra_mana_cost);
+                // available_mana_pool = total_mana_cost;
+                // if(caster_idx >= CASTER_IDX_BASE)
+                // {
+                    // /* OGBUG: ignores Evil Omens */
+                    // effective_cost = (available_mana_pool - ((available_mana_pool * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                // }
+                // else
+                // {
+                    // effective_cost = available_mana_pool;
+                // }
+            // }  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm 277-292: cmp type, scc_Infusable_Spell / jge short loc_8D21B / jmp loc_8D4A0, then cmp Spell_Like_Ability, e_ST_FALSE / jz short loc_8D224 / jmp loc_8D4A0 - the infusable branch comes first, loc_8D4A0 is the else */
         if(
-            (spell_data_table[spell_idx].type < scc_Infusable_Spell)
-            ||
-            (is_spell_like_ability != ST_FALSE)
+            (spell_data_table[spell_idx].type >= scc_Infusable_Spell)
+            &&
+            (is_spell_like_ability == ST_FALSE)
         )
-        {
-            if(caster_idx > CASTER_IDX_BASE)
-            {
-                /* OGBUG: causes counters to use the effective cost */
-                available_mana_pool = Casting_Cost(player_idx, spell_idx, 1);
-            }
-            else
-            {
-                /* OGBUG: ignores Evil Omens */
-                available_mana_pool = spell_data_table[spell_idx].casting_cost;
-            }
-            effective_cost = available_mana_pool;
-        }
-        else  /* (spell_data_table[spell_idx].type >= scc_Infusable_Spell) && (is_spell_like_ability == ST_FALSE) */
         {
             if(
                 (player_idx == HUMAN_PLAYER_IDX)
@@ -443,16 +571,28 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     /* OGBUG: ignores the base casting cost */
                     available_mana_pool = _players[player_idx].Cmbt_Skill_Left;
                     /* OGBUG: ignores casting cost modifiers */
-                    if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // {
+                    //     available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                    // }
+                    /* CLAUDE */  /* REBUG */  /* asm 375-394: the cap is 4 x the casting cost (mov cl, 2 / shl ax, cl) */
+                    if((spell_data_table[spell_idx].casting_cost * 4) < available_mana_pool)
                     {
-                        available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                        available_mana_pool = (spell_data_table[spell_idx].casting_cost * 4);
                     }
                     extra_mana_cost = Combat_Casting_Cost_Multiplier(player_idx);
                     /* OGBUG: ignores casting cost modifiers */
-                    if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < spell_data_table[spell_idx].casting_cost)
+                    // if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < spell_data_table[spell_idx].casting_cost)
+                    /* CLAUDE */  /* REBUG */  /* asm 399-461: compared with the pool + the casting cost */
+                    // if(((_players[player_idx].mana_reserve * 10) / extra_mana_cost) < (available_mana_pool + spell_data_table[spell_idx].casting_cost))
+                    /* CLAUDE */  /* REBUG */  /* asm 402-432: LXMUL@ / LDIV@, then push ax / cmp dx, ax - only the low word of the quotient is compared, as a signed 16-bit value */
+                    /* OGBUG  the 32-bit quotient mana_reserve * 10 / multiplier is compared and used as a 16-bit int: at 32,768 or more (a reserve over 16,383 at multiplier 5) it wraps negative, the test passes, and the pool becomes that negative value minus the casting cost */
+                    if((int16_t)(((int32_t)_players[player_idx].mana_reserve * 10) / extra_mana_cost) < (available_mana_pool + spell_data_table[spell_idx].casting_cost))
                     {
                         /* OGBUG: ignores casting cost modifiers */
-                        available_mana_pool = (((_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
+                        // available_mana_pool = (((_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
+                        /* CLAUDE */  /* REBUG */  /* asm 433-461: LDIV@ / push ax / ... / pop ax / sub ax, casting_cost - the low word of the quotient */
+                        available_mana_pool = ((int16_t)(((int32_t)_players[player_idx].mana_reserve * 10) / extra_mana_cost) - spell_data_table[spell_idx].casting_cost);
                     }
                 }
                 else
@@ -460,9 +600,14 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     /* OGBUG: ignores Evil Omens */
                     /* OGBUG: infusable item charges will be automatically countered if the user has no mana */
                     available_mana_pool = (battle_unit_mana - spell_data_table[spell_idx].casting_cost);
-                    if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // if(spell_data_table[spell_idx].casting_cost < available_mana_pool)
+                    // {
+                    //     available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                    // }
+                    /* CLAUDE */  /* REBUG */  /* asm loc_8D3B6: the cap is 4 x the casting cost (mov cl, 2 / shl ax, cl) */
+                    if((spell_data_table[spell_idx].casting_cost * 4) < available_mana_pool)
                     {
-                        available_mana_pool = spell_data_table[spell_idx].casting_cost;
+                        available_mana_pool = (spell_data_table[spell_idx].casting_cost * 4);
                     }
                 }
                 base_mana_cost = spell_data_table[spell_idx].casting_cost;
@@ -484,21 +629,50 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 {
                     extra_mana_cost = available_mana_pool;
                 }
+                // total_mana_cost = (base_mana_cost + extra_mana_cost);
+                // if(caster_idx > CASTER_IDX_BASE)
+                // {
+                //     /* OGBUG: ignores Evil Omens */
+                //     effective_cost = (total_mana_cost - ((total_mana_cost * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                // }
+                // else
+                // {
+                //     effective_cost = total_mana_cost;
+                // }
+                /* CLAUDE */  /* REBUG */  /* asm loc_8D45E: the total goes back into DI, the same register as the pool, which the counter rolls, the node cost and Combat_Cast_Apply_Spell_Effect() read; cmp caster_idx, e_CASTER_IDX_BASE_sub1 / jle */
                 total_mana_cost = (base_mana_cost + extra_mana_cost);
-                if(caster_idx > CASTER_IDX_BASE)
+                available_mana_pool = total_mana_cost;
+                if(caster_idx >= CASTER_IDX_BASE)
                 {
                     /* OGBUG: ignores Evil Omens */
-                    effective_cost = (total_mana_cost - ((total_mana_cost * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
+                    effective_cost = (available_mana_pool - ((available_mana_pool * Casting_Cost_Reduction(player_idx, spell_idx)) / 100));
                 }
                 else
                 {
-                    effective_cost = total_mana_cost;
+                    effective_cost = available_mana_pool;
                 }
             }  /* (player_idx != HUMAN_PLAYER_IDX) || (_auto_combat_flag != ST_FALSE) */
+        }
+        else
+        {
+            // if(caster_idx > CASTER_IDX_BASE)
+            /* CLAUDE */  /* REBUG */  /* asm loc_8D4A0: cmp caster_idx, e_CASTER_IDX_BASE_sub1 / jle */
+            if(caster_idx >= CASTER_IDX_BASE)
+            {
+                /* OGBUG: causes counters to use the effective cost */
+                available_mana_pool = Casting_Cost(player_idx, spell_idx, 1);
+            }
+            else
+            {
+                /* OGBUG: ignores Evil Omens */
+                available_mana_pool = spell_data_table[spell_idx].casting_cost;
+            }
+            effective_cost = available_mana_pool;
         }
         /*
             END:  ¿ effective_cost ?
         */
+        /* OGBUG  the only counters here are Counter Magic and the node auras; the city's Spell Ward slots, which Apply_Automatic_Spell_Counters() tests for overland spells at the city, are read by no combat code, so in a battle at a warded city spells of the warded realm are cast freely */
         /*
             BEGIN:  ¿ Counter Magic ?
         */
@@ -511,13 +685,15 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             if(player_idx == _combat_attacker_player)
             {
                 // counter_magic_idx__target_cgx = combat_enchantments[COUNTER_MAGIC_ATTKR];
-                counter_magic_idx__target_cgx = COUNTER_MAGIC_ATTKR;
+                // counter_magic_idx__target_cgx = COUNTER_MAGIC_ATTKR;
+                /* CLAUDE */  /* REBUG */  counter_magic_idx__target_cgx = COUNTER_MAGIC_DFNDR;  /* the opponent's Counter Magic (asm: 15h when player_idx == _combat_attacker_player) */
                 counter_player_idx = _combat_defender_player;
             }
             else
             {
                 // counter_magic_idx__target_cgx = combat_enchantments[COUNTER_MAGIC_DFNDR];
-                counter_magic_idx__target_cgx = COUNTER_MAGIC_DFNDR;
+                // counter_magic_idx__target_cgx = COUNTER_MAGIC_DFNDR;
+                /* CLAUDE */  /* REBUG */  counter_magic_idx__target_cgx = COUNTER_MAGIC_ATTKR;  /* the opponent's Counter Magic (asm: s_COMBAT_ENCHANTMENTS.Counter_Magic, 14h) */
                 counter_player_idx = _combat_attacker_player;
             }
             if(combat_enchantments[counter_magic_idx__target_cgx] > 0)
@@ -531,14 +707,73 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                     Combat_Spell_Counter_Message(caster_idx, counter_player_idx, spell_idx, cnst_Counter_Magic);  // "Counter Magic"
                     if(caster_idx >= CASTER_IDX_BASE)
                     {
-                        /* OGBUG: counter_magic_idx__target_cgx is still in use and needed below; This code is the same as the 'pay the cost' for when it actually gets cast, below? This bug could be because it was a macro? */
+                        /* OGBUG  reuses the Counter Magic slot index for the casting cost multiplier, so the 'slot -= 5, clear at < 0' below hits combat_enchantments[multiplier] (5 / 10 / 15 / 20 / 25 / 30 by the caster's range: WARP_REALITY_DFNDR, METAL_FIRES_ATTKR, HIGH_PRAYER_DFNDR, COUNTER_MAGIC_ATTKR, ENTANGLE_DFNDR, or the byte after the array) instead of the Counter Magic that stopped the spell */
                         counter_magic_idx__target_cgx = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
                         _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
-                        _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (counter_magic_idx__target_cgx / 10);
+                        // _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (counter_magic_idx__target_cgx / 10);
+                        // /* CLAUDE */  /* REBUG */  _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((effective_cost * counter_magic_idx__target_cgx) / 10);
+                        /* CLAUDE */  /* REBUG */  /* asm 663-667: imul [bp+Target_X] / cwd / idiv bx - a 16-bit product */
+                        _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((int16_t)(effective_cost * counter_magic_idx__target_cgx) / 10);
                     }
                     else
                     {
-                        if(is_spell_like_ability != ST_TRUE)
+                        // if(is_spell_like_ability != ST_TRUE)
+                        // {
+                        //     /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
+                        //     if(
+                        //         (battle_units[caster_idx].item_charges > 0)
+                        //         &&
+                        //         (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                        //     )
+                        //     {
+                        //         battle_units[caster_idx].item_charges -= 1;
+                        //     }
+                        //     else
+                        //     {
+                        //         // effective_cost -= battle_unit_mana;
+                        //         /* CLAUDE */  /* REBUG */  battle_unit_mana -= effective_cost;  /* asm: mov ax, [bp+Effective_Cost] / sub [bp+battle_unit_mana], ax */
+                        //     }
+                        //     if(battle_unit_mana < 0)
+                        //     {
+                        //         battle_unit_mana = 0;
+                        //     }
+                        // }
+                        // else
+                        // {
+                        //     if(spell_idx == spl_Doom_Bolt)
+                        //     {
+                        //         battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
+                        //     }
+                        //     if(spell_idx == spl_Web)
+                        //     {
+                        //         battle_units[caster_idx].Attribs_2 ^= USA_WEB;
+                        //     }
+                        //     if(spell_idx == spl_Fireball)
+                        //     {
+                        //         battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
+                        //     }
+                        //     if(spell_idx == spl_Healing)
+                        //     {
+                        //         battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
+                        //     }
+                        // }
+                        /* CLAUDE */  /* REBUG */  /* asm 677-679: cmp Spell_Like_Ability, e_ST_TRUE / jz short loc_8D5B2 / jmp loc_8D63C - the ability branch comes first; asm 681-733 test Doom Bolt, Fireball and Healing only, no Web */
+                        if(is_spell_like_ability == ST_TRUE)
+                        {
+                            if(spell_idx == spl_Doom_Bolt)
+                            {
+                                battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
+                            }
+                            if(spell_idx == spl_Fireball)
+                            {
+                                battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
+                            }
+                            if(spell_idx == spl_Healing)
+                            {
+                                battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
+                            }
+                        }
+                        else
                         {
                             /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
                             if(
@@ -551,30 +786,11 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                             }
                             else
                             {
-                                effective_cost -= battle_unit_mana;
+                                battle_unit_mana -= effective_cost;
                             }
                             if(battle_unit_mana < 0)
                             {
                                 battle_unit_mana = 0;
-                            }
-                        }
-                        else
-                        {
-                            if(spell_idx == spl_Doom_Bolt)
-                            {
-                                battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
-                            }
-                            if(spell_idx == spl_Web)
-                            {
-                                battle_units[caster_idx].Attribs_2 ^= USA_WEB;
-                            }
-                            if(spell_idx == spl_Fireball)
-                            {
-                                battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
-                            }
-                            if(spell_idx == spl_Healing)
-                            {
-                                battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
                             }
                         }
                         battle_units[caster_idx].movement_points = 0;
@@ -631,12 +847,74 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 if(caster_idx >= CASTER_IDX_BASE)
                 {
                     cost_multiplier = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
-                    _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
-                    _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (cost_multiplier / 10);
+                    // _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
+                    // _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= (cost_multiplier / 10);
+                    /* CLAUDE */  /* REBUG */  /* asm 911-930: a spell the node dispels costs the pool (DI), not the effective cost, and the mana is pool x multiplier / 10 */
+                    /* OGBUG  the node's dispel charges the uncut pool (no casting-cost reduction), where a Counter Magic dispel and a cast charge the reduced effective cost */
+                    _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= available_mana_pool;
+                    // _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((available_mana_pool * cost_multiplier) / 10);
+                    /* CLAUDE */  /* REBUG */  /* asm 919-923: imul [bp+Target_X] / cwd / idiv bx - a 16-bit product */
+                    _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((int16_t)(available_mana_pool * cost_multiplier) / 10);
                 }
                 else
                 {
-                    if(is_spell_like_ability != ST_TRUE)
+                    // if(is_spell_like_ability != ST_TRUE)
+                    // {
+                    //     /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
+                    //     if(
+                    //         (battle_units[caster_idx].item_charges > 0)
+                    //         &&
+                    //         (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                    //     )
+                    //     {
+                    //         battle_units[caster_idx].item_charges -= 1;
+                    //     }
+                    //     else
+                    //     {
+                    //         // effective_cost -= battle_unit_mana;
+                    //         /* CLAUDE */  /* REBUG */  battle_unit_mana -= effective_cost;  /* asm: mov ax, [bp+Effective_Cost] / sub [bp+battle_unit_mana], ax */
+                    //     }
+                    //     if(battle_unit_mana < 0)
+                    //     {
+                    //         battle_unit_mana = 0;
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     if(spell_idx == spl_Doom_Bolt)
+                    //     {
+                    //         battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
+                    //     }
+                    //     if(spell_idx == spl_Web)
+                    //     {
+                    //         battle_units[caster_idx].Attribs_2 ^= USA_WEB;
+                    //     }
+                    //     if(spell_idx == spl_Fireball)
+                    //     {
+                    //         battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
+                    //     }
+                    //     if(spell_idx == spl_Healing)
+                    //     {
+                    //         battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
+                    //     }
+                    // }
+                    /* CLAUDE */  /* REBUG */  /* asm 933-935: cmp Spell_Like_Ability, e_ST_TRUE / jz short loc_8D84C / jmp loc_8D8D6 - the ability branch comes first; asm 937-989 test Doom Bolt, Fireball and Healing only, no Web */
+                    if(is_spell_like_ability == ST_TRUE)
+                    {
+                        if(spell_idx == spl_Doom_Bolt)
+                        {
+                            battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
+                        }
+                        if(spell_idx == spl_Fireball)
+                        {
+                            battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
+                        }
+                        if(spell_idx == spl_Healing)
+                        {
+                            battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
+                        }
+                    }
+                    else
                     {
                         /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
                         if(
@@ -649,30 +927,11 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                         }
                         else
                         {
-                            effective_cost -= battle_unit_mana;
+                            battle_unit_mana -= effective_cost;
                         }
                         if(battle_unit_mana < 0)
                         {
                             battle_unit_mana = 0;
-                        }
-                    }
-                    else
-                    {
-                        if(spell_idx == spl_Doom_Bolt)
-                        {
-                            battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
-                        }
-                        if(spell_idx == spl_Web)
-                        {
-                            battle_units[caster_idx].Attribs_2 ^= USA_WEB;
-                        }
-                        if(spell_idx == spl_Fireball)
-                        {
-                            battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
-                        }
-                        if(spell_idx == spl_Healing)
-                        {
-                            battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
                         }
                     }
                     battle_units[caster_idx].movement_points = 0;
@@ -693,23 +952,54 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     // @@Target_And_Effect:
     if(spell_idx > spl_NONE)
     {
+        // if(
+            // (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
+            // ||
+            // (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
+            // ||
+            // (spell_data_table[spell_idx].type == scc_Disenchants)
+            // ||
+            // (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive)
+            // ||
+            // (spell_idx == spl_Animate_Dead)
+        // )
+        // {
+            // target = 99;
+            // counter_magic_idx__target_cgx = 0;
+            // target_cgy = 0;
+        // }
+        // else
+        // {
+            // if(
+                // (player_idx == HUMAN_PLAYER_IDX)
+                // &&
+                // (_auto_combat_flag == ST_FALSE)
+            // )
+            // {
+                // target = Combat_Spell_Target_Screen(spell_idx, &counter_magic_idx__target_cgx, &target_cgy);
+            // }
+            // else
+            // {
+                // target = AITP_Combat_Spell(spell_idx, player_idx, &counter_magic_idx__target_cgx, &target_cgy);
+                // if(target != 99)
+                // {
+                    // counter_magic_idx__target_cgx = battle_units[target].cgx;
+                    // target_cgy = battle_units[target].cgy;
+                // }
+            // }
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm 1068-1103: each type / spell test that matches jumps to @@Target_And_Effect__NoN_Targetable, which is placed after the targeting code - the targeting branch comes first */
         if(
-            (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
-            ||
-            (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
-            ||
-            (spell_data_table[spell_idx].type == scc_Disenchants)
-            ||
-            (spell_data_table[spell_idx].type == scc_City_Enchantment_Positive)
-            ||
-            (spell_idx == spl_Animate_Dead)
+            (spell_data_table[spell_idx].type != scc_Battlefield_Spell)
+            &&
+            (spell_data_table[spell_idx].type != scc_Combat_Counter_Magic)
+            &&
+            (spell_data_table[spell_idx].type != scc_Disenchants)
+            &&
+            (spell_data_table[spell_idx].type != scc_City_Enchantment_Positive)
+            &&
+            (spell_idx != spl_Animate_Dead)
         )
-        {
-            target = 99;
-            counter_magic_idx__target_cgx = 0;
-            target_cgy = 0;
-        }
-        else
         {
             if(
                 (player_idx == HUMAN_PLAYER_IDX)
@@ -729,6 +1019,12 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                 }
             }
         }
+        else
+        {
+            target = 99;
+            counter_magic_idx__target_cgx = 0;
+            target_cgy = 0;
+        }
         if(target != 999)
         {
             // ... |-> Tactical_Combat_Draw() |-> CMB_DrawMap__WIP() |-> Copy_Back_To_Off()  // 'combat background' from Combat_Screen_Compose_Background()
@@ -741,31 +1037,54 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
             {
                 counter_magic_idx__target_cgx = Combat_Casting_Cost_Multiplier((caster_idx - CASTER_IDX_BASE));
                 _players[(caster_idx - CASTER_IDX_BASE)].Cmbt_Skill_Left -= effective_cost;
-                _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((effective_cost * counter_magic_idx__target_cgx) / 10);
+                // _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((effective_cost * counter_magic_idx__target_cgx) / 10);
+                /* CLAUDE */  /* REBUG */  /* asm 1181-1185: imul [bp+Target_X] / cwd / idiv bx - a 16-bit product */
+                _players[(caster_idx - CASTER_IDX_BASE)].mana_reserve -= ((int16_t)(effective_cost * counter_magic_idx__target_cgx) / 10);
             }
             else  /* caster_idx < CASTER_IDX_BASE */
             {
-                if(is_spell_like_ability != ST_TRUE)
-                {
-                    /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
-                    if(
-                        (battle_units[caster_idx].item_charges > 0)
-                        &&
-                        (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
-                    )
-                    {
-                        battle_units[caster_idx].item_charges -= 1;
-                    }
-                    else
-                    {
-                        effective_cost -= battle_unit_mana;
-                    }
-                    if(battle_unit_mana < 0)
-                    {
-                        battle_unit_mana = 0;
-                    }
-                }
-                else
+                // if(is_spell_like_ability != ST_TRUE)
+                // {
+                    // /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
+                    // if(
+                        // (battle_units[caster_idx].item_charges > 0)
+                        // &&
+                        // (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                    // )
+                    // {
+                        // battle_units[caster_idx].item_charges -= 1;
+                    // }
+                    // else
+                    // {
+                        // // effective_cost -= battle_unit_mana;
+                        // /* CLAUDE */  /* REBUG */  battle_unit_mana -= effective_cost;  /* asm: mov ax, [bp+Effective_Cost] / sub [bp+battle_unit_mana], ax */
+                    // }
+                    // if(battle_unit_mana < 0)
+                    // {
+                        // battle_unit_mana = 0;
+                    // }
+                // }
+                // else
+                // {
+                    // if(spell_idx == spl_Doom_Bolt)
+                    // {
+                        // battle_units[caster_idx].Attribs_2 ^= USA_DOOMBOLT;
+                    // }
+                    // if(spell_idx == spl_Web)
+                    // {
+                        // battle_units[caster_idx].Attribs_2 ^= USA_WEB;
+                    // }
+                    // if(spell_idx == spl_Fireball)
+                    // {
+                        // battle_units[caster_idx].Attribs_2 ^= USA_FIREBALL;
+                    // }
+                    // if(spell_idx == spl_Healing)
+                    // {
+                        // battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
+                    // }
+                // }
+                /* CLAUDE */  /* REBUG */  /* asm 1195-1197: cmp Spell_Like_Ability, e_ST_TRUE / jz short loc_8DAE6 / jmp loc_8DB9D - the ability branch comes first */
+                if(is_spell_like_ability == ST_TRUE)
                 {
                     if(spell_idx == spl_Doom_Bolt)
                     {
@@ -784,6 +1103,26 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
                         battle_units[caster_idx].Attribs_2 ^= USA_HEALING;
                     }
                 }
+                else
+                {
+                    /* OGBUG: this may not be the hero's original owner - should use owner_idx, not player_idx */
+                    if(
+                        (battle_units[caster_idx].item_charges > 0)
+                        &&
+                        (_ITEMS[_players[player_idx].Heroes[_UNITS[battle_units[caster_idx].unit_idx].Hero_Slot].Items[0]].embed_spell_idx == spell_idx)
+                    )
+                    {
+                        battle_units[caster_idx].item_charges -= 1;
+                    }
+                    else
+                    {
+                        battle_unit_mana -= effective_cost;
+                    }
+                    if(battle_unit_mana < 0)
+                    {
+                        battle_unit_mana = 0;
+                    }
+                }
                 battle_units[caster_idx].movement_points = 0;
             }  /* caster_idx < CASTER_IDX_BASE */
         }
@@ -795,9 +1134,16 @@ int16_t Combat_Cast_Spell(int16_t caster_idx, int16_t wx, int16_t wy, int16_t wp
     if(caster_idx < CASTER_IDX_BASE)
     {
         battle_units[caster_idx].mana = (int8_t)battle_unit_mana;
+        // if(
+        //     (battle_unit_mana < 3)
+        //     ||
+        //     (battle_units[caster_idx].ammo == 0)
+        // )
+        /* CLAUDE */  /* REBUG */  /* asm loc_8DC4D: mana >= 3 skips (jge), ammo != 0 skips (jnz) - both must hold */
+        /* OGBUG  meant for the magic ranged attack that runs on mana, but thrown / breath / gaze attacks (ranged_type >= srat_Thrown) have no ammo either, so a unit with one loses it for the rest of the battle when it casts down below 3 mana */
         if(
             (battle_unit_mana < 3)
-            ||
+            &&
             (battle_units[caster_idx].ammo == 0)
         )
         {
@@ -851,15 +1197,16 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
     y_start = 12;
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
+        spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
     }
     for(itr = 0; itr < 6; itr++)
     {
-        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
+        spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
     }
-    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, ST_UNDEFINED, ST_UNDEFINED);
-    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
-    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
+    /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+    hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183, "", ST_UNDEFINED);
+    hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, str_hotkey_F__ovr112, ST_UNDEFINED);
+    hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, str_hotkey_B__ovr112, ST_UNDEFINED);
     leave_screen = ST_FALSE;
     while(leave_screen == ST_FALSE)
     {
@@ -1039,15 +1386,16 @@ int16_t Combat_Spellbook_Screen(int16_t caster_idx, int16_t * selected_spell)
             y_start = 12;
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
+                spellbook_pages[(itr + 0)] = Add_Hidden_Field((x_start + 16), (y_start + (itr * 22) + 17), (x_start + 137), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
             }
             for(itr = 0; itr < 6; itr++)
             {
-                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), (int16_t)str_empty_string__ovr112[0], ST_UNDEFINED);
+                spellbook_pages[(itr + 6)] = Add_Hidden_Field((x_start + 148), (y_start + (itr * 22) + 17), (x_start + 268), (y_start + (itr * 22) + 34), str_empty_string__ovr112, ST_UNDEFINED);
             }
-            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183,                     ST_UNDEFINED, ST_UNDEFINED);
-            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, (int16_t)str_hotkey_F__ovr112[0], ST_UNDEFINED);
-            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, (int16_t)str_hotkey_B__ovr112[0], ST_UNDEFINED);
+            /* OGBUG  the asm passes -1 (ST_UNDEFINED) as the hotkey string: Add_*_Field() reads the byte at DS:FFFF */
+            hotkey_esc = Add_Hidden_Field(x_start + 159, y_start + 154, x_start + 177, y_start + 183,                     "", ST_UNDEFINED);
+            hotkey_f   = Add_Hidden_Field(x_start + 259, y_start +   2, x_start + 272, y_start +  15, str_hotkey_F__ovr112, ST_UNDEFINED);
+            hotkey_b   = Add_Hidden_Field(x_start +  13, y_start +   2, x_start +  26, y_start +  14, str_hotkey_B__ovr112, ST_UNDEFINED);
             Set_Page_Off();
             Combat_Spellbook_Screen_Draw();
             PageFlip_FX();
@@ -1104,6 +1452,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
+    /* OGBUG  Word of Recall is refused only while Spell of Return is being cast, not in a battle at the summoning circle (Recall Hero is refused there), so it can be wasted on a unit that is already where it would be sent */
     if(spell_idx == spl_Word_Of_Recall)
     {
         if(_players[HUMAN_PLAYER_IDX].casting_spell_idx == spl_Spell_Of_Return)
@@ -1146,15 +1495,23 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
                 {
                     legal_target_found = ST_TRUE;
                 }
-                if(legal_target_found == ST_FALSE)
-                {
-                    LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 78, 1, 150);  // "There are no heroes left to recall"
-                    Warn1(GUI_NearMsgString);
-                    illegal = ST_TRUE;
-                }
+                // if(legal_target_found == ST_FALSE)
+                // {
+                //     LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 78, 1, 150);  // "There are no heroes left to recall"
+                //     Warn1(GUI_NearMsgString);
+                //     illegal = ST_TRUE;
+                // }
+            }
+            /* CLAUDE */  /* asm 161-182: the 'no heroes' warning is after the loop, not inside it */
+            if(legal_target_found == ST_FALSE)
+            {
+                LBX_Load_Data_Static(message_lbx_file__ovr112, 0, (SAMB_ptr)&GUI_NearMsgString[0], 78, 1, 150);  // "There are no heroes left to recall"
+                Warn1(GUI_NearMsgString);
+                illegal = ST_TRUE;
             }
         }
     }
+    /* OGBUG  no status test: a dead, fled or recalled enemy Chaos / Death unit counts, so Star Fires can pass here and then find no target */
     if(spell_idx == spl_Star_Fires)
     {
         legal_target_found = ST_FALSE;
@@ -1185,7 +1542,9 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
     {
         legal_target_found = ST_FALSE;
         controlled_unit_count = 0;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
+        // for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
+        /* CLAUDE */  /* REBUG */  /* asm 337-341: this loop runs over every unit (the own-unit count needs them all) */
+        for(itr = 0; itr < _combat_total_unit_count; itr++)
         {
                 if(
                     (battle_units[itr].status == bus_Active)
@@ -1202,9 +1561,15 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
                     &&
                     (battle_units[itr].race != rt_Death)
                     &&
-                    ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
-                    &&
-                    (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    // ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                    // &&
+                    // (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    /* CLAUDE */  /* REBUG */  /* asm 300-309: not magic immune, or the human's own (test / jz pass; cmp controller_idx / jnz fail) */
+                    (
+                        ((battle_units[itr].Attribs_1 & USA_IMMUNITY_MAGIC) == 0)
+                        ||
+                        (battle_units[itr].controller_idx == HUMAN_PLAYER_IDX)
+                    )
                     &&
                     (_UNITS[battle_units[itr].unit_idx].Hero_Slot == ST_UNDEFINED)
                     &&
@@ -1238,7 +1603,9 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
     {
         legal_target_found = ST_FALSE;
         controlled_unit_count = 0;
-        for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
+        // for(itr = 0; ((itr < _combat_total_unit_count) && (legal_target_found == ST_FALSE)); itr++)
+        /* CLAUDE */  /* REBUG */  /* asm 455-459: this loop runs over every unit (the own-unit count needs them all) */
+        for(itr = 0; itr < _combat_total_unit_count; itr++)
         {
                 if(
                     (battle_units[itr].status == bus_Active)
@@ -1278,17 +1645,19 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
     }
     /* OGBUG: the exclusions fail to include Mass Healing, which then can't be cast with True Light active */
     if(
-        (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
-        ||
-        (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
-        ||
-        (spell_idx == spl_Holy_Word)
-        ||
-        (spell_idx == spl_Death_Spell)
-        ||
-        (spell_idx == spl_Flame_Strike)
-        ||
-        (spell_idx == spl_Call_Chaos)
+        (
+            (spell_data_table[spell_idx].type == scc_Battlefield_Spell)
+            ||
+            (spell_data_table[spell_idx].type == scc_Combat_Counter_Magic)
+        )
+        &&
+        (spell_idx != spl_Holy_Word)
+        &&
+        (spell_idx != spl_Death_Spell)
+        &&
+        (spell_idx != spl_Flame_Strike)
+        &&
+        (spell_idx != spl_Call_Chaos)
     )
     {
         if(_combat_attacker_player == HUMAN_PLAYER_IDX)
@@ -1328,6 +1697,7 @@ int16_t Do_Legal_Spell_Check(int16_t spell_idx)
             illegal = ST_TRUE;
         }
     }
+    /* OGBUG  no status test: a dead, fled or recalled enemy normal unit counts, so the curse can pass here and then find no target */
     if(spell_data_table[spell_idx].type == scc_Mundane_Curse)
     {
         legal_target_found = ST_FALSE;
@@ -1818,6 +2188,7 @@ int16_t AITP_RecallHero(int16_t player_idx)
     struct s_BATTLE_UNIT * bu_ptr = NULL;
     highest_danger = 0;
     selected_target_idx = ST_UNDEFINED;
+    /* OGBUG  tests the FORTRESS square, not the summoning circle Recall Hero sends the hero to, so with a moved summoning circle the AI can cast Recall Hero in a battle right at the circle */
     if(
         (_FORTRESSES[player_idx].wx == _combat_wx)
         &&
@@ -1841,6 +2212,7 @@ int16_t AITP_RecallHero(int16_t player_idx)
         if(current_hp != 0)
         {
             /* OGBUG: `imul max_hp` followed by `cwd` - the product is truncated to 16 bits before the divide */
+            /* OGBUG  over 32767 the product wraps, so a strong hero can come out negative and never be picked */
             unit_danger = ((int16_t)(unit_danger * max_hp) / current_hp);
         }
         if(unit_danger > highest_danger)

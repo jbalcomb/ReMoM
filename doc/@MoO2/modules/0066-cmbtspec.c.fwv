@@ -1,0 +1,33 @@
+module_num=66
+module=D:\MOX\OTHERS\CMBTSPEC.C
+source=0066-cmbtspec.c.md
+range[0]=1:0x0009B756 linear=0x000AB756 size=15852
+range[1]=2:0x0000A760 linear=0x0017A760 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                             CHUNK
+m066f001  1    -      0x000AB850  1:0x0009B850  static,code  Draw_Anti_Missile_Rocket_Picture  Draw_Anti_Missile_Rocket_Picture_  regions/07-object-1/00130E54-00131653.txt
+m066f002  2    -      0x000AB8BF  1:0x0009B8BF  static,code  Draw_Anti_Missile_Rockets         Draw_Anti_Missile_Rockets_         regions/07-object-1/00130E54-00131653.txt
+m066f003  3    -      0x000ABA09  1:0x0009BA09  code         Anti_Missile_Rockets              Anti_Missile_Rockets_              regions/07-object-1/00130E54-00131653.txt
+m066f004  4    -      0x000ABC5D  1:0x0009BC5D  static,code  Draw_Gyro_Special_Effect          Draw_Gyro_Special_Effect_          regions/07-object-1/00130E54-00131653.txt
+m066f005  5    -      0x000ABFF3  1:0x0009BFF3  code         Teleport_Enemy_Ship               Teleport_Enemy_Ship_               regions/07-object-1/00130E54-00131653.txt
+m066f006  6    -      0x000AC136  1:0x0009C136  code         Gyro_Destablizer                  Gyro_Destablizer_                  regions/07-object-1/00131654-00131E53.txt
+m066f007  7    -      0x000AC472  1:0x0009C472  code         Lightning_Field                   Lightning_Field_                   regions/07-object-1/00131654-00131E53.txt
+m066f008  8    -      0x000AC619  1:0x0009C619  code         Draw_Stasis_Ball                  Draw_Stasis_Ball_                  regions/07-object-1/00131654-00131E53.txt
+m066f009  9    -      0x000AC87A  1:0x0009C87A  code         Draw_Stasis_Beam                  Draw_Stasis_Beam_                  regions/07-object-1/00131E54-00132653.txt
+m066f010  10   -      0x000ACB4A  1:0x0009CB4A  code         Draw_Cloak                        Draw_Cloak_                        regions/07-object-1/00131E54-00132653.txt
+m066f011  11   -      0x000ACCDB  1:0x0009CCDB  code         Draw_Continuing_Tractor           Draw_Continuing_Tractor_           regions/07-object-1/00131E54-00132653.txt
+m066f012  12   -      0x000ACE08  1:0x0009CE08  code         Draw_Moving_Tractor               Draw_Moving_Tractor_               regions/07-object-1/00131E54-00132653.txt
+m066f013  13   -      0x000ACF83  1:0x0009CF83  code         Plasma_Web                        Plasma_Web_                        regions/07-object-1/00131E54-00132653.txt
+m066f014  14   -      0x000AD3CA  1:0x0009D3CA  code         Tractor_Beam                      Tractor_Beam_                      regions/07-object-1/00132654-00132E53.txt
+m066f015  15   -      0x000AD580  1:0x0009D580  code         Draw_Plasma_Web                   Draw_Plasma_Web_                   regions/07-object-1/00132654-00132E53.txt
+m066f016  16   -      0x000AD7F5  1:0x0009D7F5  code         Draw_Transporter_Bomb_Beam        Draw_Transporter_Bomb_Beam_        regions/07-object-1/00132654-00132E53.txt
+m066f017  17   -      0x000AD98A  1:0x0009D98A  code         Stellar_Converter                 Stellar_Converter_                 regions/07-object-1/00132E54-00133653.txt
+m066f018  18   -      0x000ADCFF  1:0x0009DCFF  code         Start_Ship_Engine_SFX             Start_Ship_Engine_SFX_             regions/07-object-1/00132E54-00133653.txt
+m066f019  19   -      0x000ADD24  1:0x0009DD24  code         End_Ship_Engine_SFX               End_Ship_Engine_SFX_               regions/07-object-1/00132E54-00133653.txt
+m066f020  20   -      0x000ADD40  1:0x0009DD40  code         Draw_Ship_Collapsing              Draw_Ship_Collapsing_              regions/07-object-1/00132E54-00133653.txt
+m066f021  21   -      0x000ADE18  1:0x0009DE18  code         Do_Spherical_SFX                  Do_Spherical_SFX_                  regions/07-object-1/00132E54-00133653.txt
+m066f022  22   -      0x000AEC0B  1:0x0009EC0B  code         Play_Ship_Explosion_SFX           Play_Ship_Explosion_SFX_           regions/07-object-1/00133E54-00134653.txt
+m066f023  23   -      0x000AEC7B  1:0x0009EC7B  code         Destroy_Ship_FX                   Destroy_Ship_FX_                   regions/07-object-1/00133E54-00134653.txt
+m066f024  24   -      0x000AF37E  1:0x0009F37E  code         Missile_Launch_FX                 Missile_Launch_FX_                 regions/07-object-1/00134654-00134E53.txt
+-         -    -      0x0017A760  2:0x0000A760  static,data  _g_engine_sfx_handle              _g_engine_sfx_handle               regions/08-object-2/001F8654-001F8E53.txt

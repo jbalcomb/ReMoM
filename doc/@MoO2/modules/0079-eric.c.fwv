@@ -1,0 +1,68 @@
+module_num=79
+module=D:\MOX\OTHERS\ERIC.C
+source=0079-eric.c.md
+range[0]=1:0x000B5A84 linear=0x000C5A84 size=3326
+range[1]=2:0x00001E18 linear=0x00171E18 size=4
+range[2]=2:0x0000B19C linear=0x0017B19C size=8
+range[3]=2:0x000288F4 linear=0x001988F4 size=16
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                          SYMBOL                                         CHUNK
+m079f001    1    -      0x000C5A84  1:0x000B5A84  code         Sint_Is_In_List                               Sint_Is_In_List_                               regions/07-object-1/0014AE54-0014B653.txt
+m079f002    2    -      0x000C5AA7  1:0x000B5AA7  code         Get_Sint_Index_From_List                      Get_Sint_Index_From_List_                      regions/07-object-1/0014AE54-0014B653.txt
+m079f003    3    -      0x000C5AC8  1:0x000B5AC8  code         String_Builder2                               String_Builder2_                               regions/07-object-1/0014AE54-0014B653.txt
+m079f004    4    -      0x000C5B51  1:0x000B5B51  code         Max                                           Max_                                           regions/07-object-1/0014AE54-0014B653.txt
+m079f005    5    -      0x000C5B58  1:0x000B5B58  code         Min                                           Min_                                           regions/07-object-1/0014AE54-0014B653.txt
+m079f006    6    -      0x000C5B5F  1:0x000B5B5F  code         Help                                          Help_                                          regions/07-object-1/0014AE54-0014B653.txt
+m079f007    7    -      0x000C5B64  1:0x000B5B64  code         Set_Refresh_Mode                              Set_Refresh_Mode_                              regions/07-object-1/0014AE54-0014B653.txt
+m079f008    8    -      0x000C5B85  1:0x000B5B85  code         Set_Fade_Speed_Percent                        Set_Fade_Speed_Percent_                        regions/07-object-1/0014AE54-0014B653.txt
+m079f009    9    -      0x000C5B8B  1:0x000B5B8B  code         Get_Fade_Speed_Percent                        Get_Fade_Speed_Percent_                        regions/07-object-1/0014AE54-0014B653.txt
+m079f010    10   -      0x000C5B94  1:0x000B5B94  code         Set_Fade_Percent                              Set_Fade_Percent_                              regions/07-object-1/0014AE54-0014B653.txt
+m079f011    11   -      0x000C5BB0  1:0x000B5BB0  code         Get_Fade_Percent                              Get_Fade_Percent_                              regions/07-object-1/0014AE54-0014B653.txt
+m079f012    12   -      0x000C5BB9  1:0x000B5BB9  code         Fast_Fade_Out                                 Fast_Fade_Out_                                 regions/07-object-1/0014AE54-0014B653.txt
+m079f013    13   -      0x000C5C44  1:0x000B5C44  code         Fast_Fade_In                                  Fast_Fade_In_                                  regions/07-object-1/0014AE54-0014B653.txt
+m079f014    14   -      0x000C5C7F  1:0x000B5C7F  code         Force_Fade_To_Colony_Palette                  Force_Fade_To_Colony_Palette_                  regions/07-object-1/0014AE54-0014B653.txt
+m079f015    15   -      0x000C5C85  1:0x000B5C85  code         Fast_Fade_Out_Needed_For_Colony_Palette       Fast_Fade_Out_Needed_For_Colony_Palette_       regions/07-object-1/0014AE54-0014B653.txt
+m079f016    16   -      0x000C5CFF  1:0x000B5CFF  code         Draw_Centered                                 Draw_Centered_                                 regions/07-object-1/0014AE54-0014B653.txt
+m079f017    17   -      0x000C5D2A  1:0x000B5D2A  code         Remap_Draw_Centered                           Remap_Draw_Centered_                           regions/07-object-1/0014AE54-0014B653.txt
+m079f018    18   -      0x000C5D55  1:0x000B5D55  code         Draw_Bottom_Centered                          Draw_Bottom_Centered_                          regions/07-object-1/0014AE54-0014B653.txt
+m079f019    19   -      0x000C5D75  1:0x000B5D75  code         Draw_Bottom_Centered_No_Glass                 Draw_Bottom_Centered_No_Glass_                 regions/07-object-1/0014AE54-0014B653.txt
+m079f020    20   -      0x000C5D97  1:0x000B5D97  code         Global_Cycler                                 Global_Cycler_                                 regions/07-object-1/0014AE54-0014B653.txt
+m079f021    21   -      0x000C5DB5  1:0x000B5DB5  code         Print_Clicks                                  Print_Clicks_                                  regions/07-object-1/0014AE54-0014B653.txt
+m079f022    22   -      0x000C5DE7  1:0x000B5DE7  code         Pulsing_Box                                   Pulsing_Box_                                   regions/07-object-1/0014AE54-0014B653.txt
+m079f023    23   -      0x000C5E2D  1:0x000B5E2D  code         Pulsing_Rect                                  Pulsing_Rect_                                  regions/07-object-1/0014AE54-0014B653.txt
+m079f024    24   -      0x000C5E9F  1:0x000B5E9F  code         Eric_Defaults                                 Eric_Defaults_                                 regions/07-object-1/0014AE54-0014B653.txt
+m079f025    25   -      0x000C5EA0  1:0x000B5EA0  code         Pulsing_Rect_to_Bitmap                        Pulsing_Rect_to_Bitmap_                        regions/07-object-1/0014AE54-0014B653.txt
+m079f026    26   -      0x000C5ED3  1:0x000B5ED3  code         Print_Paragraph_Centered_Vertically           Print_Paragraph_Centered_Vertically_           regions/07-object-1/0014AE54-0014B653.txt
+m079f027    27   -      0x000C5F14  1:0x000B5F14  code         Print_Paragraph_Centered                      Print_Paragraph_Centered_                      regions/07-object-1/0014AE54-0014B653.txt
+m079f028    28   -      0x000C5F52  1:0x000B5F52  code         Eric_Init                                     Eric_Init_                                     regions/07-object-1/0014AE54-0014B653.txt
+m079f029    29   -      0x000C5F5C  1:0x000B5F5C  code         Pick_Random_Colony                            Pick_Random_Colony_                            regions/07-object-1/0014AE54-0014B653.txt
+m079f030    30   -      0x000C5FB0  1:0x000B5FB0  code         Player_Capitol_World                          Player_Capitol_World_                          regions/07-object-1/0014AE54-0014B653.txt
+m079f031    31   -      0x000C5FF7  1:0x000B5FF7  code         Pick_Random_Player                            Pick_Random_Player_                            regions/07-object-1/0014AE54-0014B653.txt
+m079f032    32   -      0x000C603D  1:0x000B603D  code         Red_If_Negative_Fmt_String                    Red_If_Negative_Fmt_String_                    regions/07-object-1/0014B654-0014BE53.txt
+m079f033    33   -      0x000C6052  1:0x000B6052  code         Player_Has_Leader_With_General_Skill_At_Star  Player_Has_Leader_With_General_Skill_At_Star_  regions/07-object-1/0014B654-0014BE53.txt
+m079f034    34   -      0x000C60E9  1:0x000B60E9  code         Player_Has_Ship_Size_Or_Larger_At_Star        Player_Has_Ship_Size_Or_Larger_At_Star_        regions/07-object-1/0014B654-0014BE53.txt
+m079f035    35   -      0x000C613B  1:0x000B613B  code         Player_Can_Mind_Control_Colony_With_Help      Player_Can_Mind_Control_Colony_With_Help_      regions/07-object-1/0014B654-0014BE53.txt
+m079f036    36   -      0x000C622A  1:0x000B622A  code         Player_Can_Mind_Control_Colony                Player_Can_Mind_Control_Colony_                regions/07-object-1/0014B654-0014BE53.txt
+m079f037    37   -      0x000C6313  1:0x000B6313  static,code  Cinematic_Autofunction                        Cinematic_Autofunction_                        regions/07-object-1/0014B654-0014BE53.txt
+m079f038    38   -      0x000C63BB  1:0x000B63BB  static,code  Do_Cinematic_Popup_Setup                      Do_Cinematic_Popup_Setup_                      regions/07-object-1/0014B654-0014BE53.txt
+m079f039    39   -      0x000C6458  1:0x000B6458  static,code  Do_Cinematic_Popup_Cleanup                    Do_Cinematic_Popup_Cleanup_                    regions/07-object-1/0014B654-0014BE53.txt
+m079f040    40   -      0x000C64AB  1:0x000B64AB  code         Play_Amoeba_Flic                              Play_Amoeba_Flic_                              regions/07-object-1/0014B654-0014BE53.txt
+m079f041    41   -      0x000C6513  1:0x000B6513  code         Play_Planetary_Destruction_Flic               Play_Planetary_Destruction_Flic_               regions/07-object-1/0014B654-0014BE53.txt
+m079f042    42   -      0x000C657B  1:0x000B657B  code         Play_Dimensional_Portal_Flic                  Play_Dimensional_Portal_Flic_                  regions/07-object-1/0014B654-0014BE53.txt
+m079f043    43   -      0x000C65E3  1:0x000B65E3  code         Play_Antarans_Attack_Flic                     Play_Antarans_Attack_Flic_                     regions/07-object-1/0014B654-0014BE53.txt
+m079f044    44   -      0x000C6650  1:0x000B6650  code         Play_Take_Orion_Flic                          Play_Take_Orion_Flic_                          regions/07-object-1/0014B654-0014BE53.txt
+m079f045    45   -      0x000C66BD  1:0x000B66BD  code         Play_Diplomatic_Win_Flic                      Play_Diplomatic_Win_Flic_                      regions/07-object-1/0014B654-0014BE53.txt
+m079f046    46   -      0x000C671B  1:0x000B671B  code         Play_Normal_Win_Flic                          Play_Normal_Win_Flic_                          regions/07-object-1/0014B654-0014BE53.txt
+m079f047    47   1/2    0x000C673D  1:0x000B673D  code         Play_Antaran_Win_Flic                         Play_Antaran_Win_Flic_                         regions/07-object-1/0014B654-0014BE53.txt
+m079f047_2  47   2/2    0x000C673D  1:0x000B673D  code         Play_All_Flics                                Play_All_Flics_                                regions/07-object-1/0014B654-0014BE53.txt
+m079f048    48   -      0x000C6762  1:0x000B6762  code         Play_Loose_Flic                               Play_Loose_Flic_                               regions/07-object-1/0014B654-0014BE53.txt
+-           -    -      0x0017B19C  2:0x0000B19C  data         _fade_percent                                 _fade_percent                                  regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B19D  2:0x0000B19D  data         _fade_speed_in_percent                        _fade_speed_in_percent                         regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B19E  2:0x0000B19E  data         _hacky_need_to_fade_to_colony_palette_flag    _hacky_need_to_fade_to_colony_palette_flag     regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B19F  2:0x0000B19F  data         _saved_sfx_l                                  _saved_sfx_l                                   regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x0017B1A1  2:0x0000B1A1  data         _saved_music_l                                _saved_music_l                                 regions/08-object-2/001F9654-001F9E53.txt
+-           -    -      0x001988F4  2:0x000288F4  data         _cinematic_saved_autofunction                 _cinematic_saved_autofunction                  -
+-           -    -      0x001988F8  2:0x000288F8  static,data  _g_old_time                                   _g_old_time                                    -
+-           -    -      0x001988FC  2:0x000288FC  static,data  _g_time                                       _g_time                                        -
+-           -    -      0x00198900  2:0x00028900  data         _old_cycle                                    _old_cycle                                     -

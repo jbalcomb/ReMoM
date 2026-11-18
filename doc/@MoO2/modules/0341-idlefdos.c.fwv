@@ -1,0 +1,11 @@
+module_num=341
+module=C:\GCL520\C_DOS\IDLEFDOS.C
+source=0341-idlefdos.c.md
+range[0]=1:0x0014E330 linear=0x0015E330 size=32
+range[1]=2:0x00012CD8 linear=0x00182CD8 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                     SYMBOL                    CHUNK
+m341f001  1    -      0x0015E330  1:0x0014E330  static,code  _DOSDefaultIdleFunction  _DOSDefaultIdleFunction_  regions/07-object-1/001E3654-001E3E53.txt
+m341f002  2    -      0x0015E340  1:0x0014E340  code         SetPortIdleFunctionPtr   SetPortIdleFunctionPtr_   regions/07-object-1/001E3654-001E3E53.txt
+-         -    -      0x00182CD8  2:0x00012CD8  data         __PortIdleFunctionPtr    __PortIdleFunctionPtr     regions/08-object-2/00200E54-00201653.txt

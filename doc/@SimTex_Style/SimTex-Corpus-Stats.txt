@@ -1,0 +1,117 @@
+=== 1. OG MoM file names (MoM131) ===
+class counts: {'user_added': 12, 'simtex_lbx': 101, 'runtime': 3, 'third_party': 8, 'publisher': 5, 'simtex_exe': 3, 'user_save': 9}
+LBX files: 101  stem length histogram: {3: 1, 4: 7, 5: 6, 6: 16, 7: 15, 8: 56}  at the 8-char limit: 56
+LBX stems with a digit: ['FIGURE10', 'FIGURE11', 'FIGURE12', 'FIGURE13', 'FIGURE14', 'FIGURE15', 'FIGURE16', 'FIGURES1', 'FIGURES2', 'FIGURES3', 'FIGURES4', 'FIGURES5', 'FIGURES6', 'FIGURES7', 'FIGURES8', 'FIGURES9', 'SPECIAL2', 'UNITS1', 'UNITS2']
+LBX files only in the demo: ['DEMO.LBX']
+MoO2 LBX stems referenced in ORION2.EXE: 142  length histogram: {2: 1, 4: 4, 5: 13, 6: 12, 7: 32, 8: 80}  at 8: 80
+LBX stems shared by MoM and MoO2: ['COMBAT', 'DIPLOMSG', 'EVENTMSG', 'EVENTS', 'FONTS', 'HELP', 'HERODATA', 'INTRO', 'MONSTER', 'MUSIC', 'NEWGAME']
+
+=== 2. LBX entry-name tables ===
+MoM131 LBX files with a name table: 79 / 101  without: ['BUILDDAT.LBX', 'BUILDESC.LBX', 'CITYNAME.LBX', 'CMBTSND.LBX', 'DESC.LBX', 'DIPLOMSG.LBX', 'EVENTMSG.LBX', 'HELP.LBX', 'HERODATA.LBX', 'INTROSFX.LBX', 'ITEMDATA.LBX', 'ITEMPOW.LBX', 'LISTDAT.LBX', 'MESSAGE.LBX', 'NAMES.LBX', 'NEWSOUND.LBX', 'SNDDRV.LBX', 'SOUNDFX.LBX', 'SPELLDAT.LBX', 'TERRAIN.LBX', 'TERRSTAT.LBX', 'TERRTYPE.LBX']
+entries: 5065  with name: 4886  distinct names: 891  with description: 1562
+entry-name case: {'UPPER': 4884, 'Mixed': 2}
+entry-name length histogram: {1: 8, 2: 2, 3: 11, 4: 100, 5: 443, 6: 627, 7: 655, 8: 3040}  at the 8-char limit: 3040
+entry names containing "_": 30  containing a digit: 1128  containing a space: 2
+entries whose name repeats the previous entry (same source file, many records): 3709 / 5065
+entry names used in more than one LBX file: 82  top: [('GRASGRID', 9), ('SETTLERS', 9), ('TREES', 8), ('WRAITH', 5), ('VORTEX2', 4), ('CHAOS', 4), ('MERLIN', 4), ('FREYA', 4), ('ARIEL', 4), ('WEB', 3), ('FIREWALL', 3), ('DARKWALL', 3)]
+entry name == its LBX stem: 45
+description case: {'lower': 1201, 'Mixed': 164, 'Title': 148, 'none': 48, 'UPPER': 1}
+description length histogram (23-byte field => max 22): {1: 46, 2: 26, 3: 74, 4: 131, 5: 117, 6: 147, 7: 68, 8: 68, 9: 103, 10: 117, 11: 115, 12: 107, 13: 77, 14: 61, 15: 87, 16: 70, 17: 59, 18: 69, 19: 4, 20: 5, 21: 4, 22: 7}  at 22: 7
+top description words: [('button', 93), ('help', 40), ('red', 36), ('book', 36), ('green', 33), ('blue', 32), ('item', 26), ('left', 24), ('right', 24), ('magic', 24), ('good', 23), ('sword', 22), ('eyes', 22), ('bad', 22), ('unit', 20), ('purple', 20), ('yellow', 20), ('city', 19), ('tree', 19), ('staff', 19), ('backgrnd', 18), ('gold', 18), ('bow', 17), ('wizards', 17), ('b', 16), ('background', 15), ('spell', 15), ('bottom', 15), ('farmer', 15), ('black', 15)]
+demo vs v1.31: LBX files with a table in both: 42  index positions that differ: 1115  names in a demo file but not in the same v1.31 file: 77  of which in NO v1.31 file: 9
+   names absent from v1.31 entirely: ['DEMOSCR', 'DIPLGARG', 'FLAME99', 'FLAMEF99', 'NULL', 'PLATIN2', 'RIVER', 'SLR06N', 'SLR06P']
+
+=== 3. File-name string literals in the OG executables ===
+WIZARDS: literals: 220  with .ext: 35  stem case: {'UPPER': 132, 'lower': 59, 'Title': 28, 'Mixed': 1}  unreferenced: 0
+MAGIC: literals: 35  with .ext: 17  stem case: {'UPPER': 26, 'lower': 7, 'Title': 2}  unreferenced: 0
+MoO2: LBX literals: 197  personal-text-file literals: 15  stem case: {'UPPER': 111, 'lower': 80, 'Title': 1, 'Mixed': 5}  ext case: {'UPPER': 116, 'lower': 81}
+MoM: stem case vs presence of ".LBX": {('UPPER', True): 45, ('UPPER', False): 113, ('lower', False): 59, ('Title', False): 30, ('lower', True): 7, ('Mixed', False): 1}
+MoM: stems written >=2 times: 55; always the same case: 33; mixed: {'MAGIC': ['Title', 'UPPER'], 'SPECIAL': ['Title', 'UPPER'], 'SPECIAL2': ['UPPER', 'lower'], 'SOUNDFX': ['UPPER', 'lower'], 'MUSIC': ['Title', 'UPPER', 'lower'], 'HELP': ['UPPER', 'lower'], 'LILWIZ': ['Title', 'UPPER'], 'DIPLOMAC': ['Title', 'UPPER'], 'MOODWIZ': ['UPPER', 'lower'], 'WIZLAB': ['Title', 'UPPER', 'lower'], 'VORTEX': ['Title', 'UPPER'], 'CMBTFX': ['UPPER', 'lower'], 'COMPIX': ['UPPER', 'lower'], 'WIZARDS': ['Title', 'UPPER'], 'SPELLSCR': ['Title', 'UPPER', 'lower'], 'SCROLL': ['Title', 'lower'], 'SPECFX': ['Mixed', 'Title', 'UPPER', 'lower'], 'NEWSOUND': ['UPPER', 'lower'], 'COMBAT': ['Title', 'UPPER'], 'HIRE': ['Title', 'UPPER'], 'MONSTER': ['Title', 'lower'], 'INTRO': ['Title', 'UPPER']}
+MoO2: stems written >=2 times: 30; always the same case: 18; mixed: {'DIPLOMAT': ['UPPER', 'lower'], 'RACESTUF': ['UPPER', 'lower'], 'STREAM': ['UPPER', 'lower'], 'COMBAT': ['Title', 'lower'], 'CMBTSFX': ['UPPER', 'lower'], 'SPHERSFX': ['UPPER', 'lower'], 'RACEOPT': ['UPPER', 'lower'], 'RACESEL': ['UPPER', 'lower'], 'FONTS': ['UPPER', 'lower'], 'STARBG': ['UPPER', 'lower'], 'REFITPUP': ['UPPER', 'lower'], 'APP_PICS': ['UPPER', 'lower']}
+
+=== 4. Calibration on MoO2: does literal case follow the programmer? ===
+MoO2 literals usable (owner known with P>=0.5, personal text files excluded): 125
+   Jim     {'lower': 11, 'UPPER': 16}
+   Ken     {'lower': 18, 'Title': 1, 'UPPER': 6}
+   Harold  {'lower': 11, 'UPPER': 18}
+   Eric    {'lower': 8, 'Mixed': 5, 'UPPER': 19}
+   Russ    {'UPPER': 2, 'lower': 1}
+   Bill    {'UPPER': 3, 'lower': 6}
+MoO2 purity by owner: observed 0.632 (n=125); global null 0.555 p=0.0053; same-stem null 0.620 p=0.38
+MoO2 purity by module: observed 0.774 (n=106); global null 0.647 p=5e-05; same-stem null 0.752 p=0.088
+MoO2 lowercase rate differs by owner? chi2 15.21 vs same-stem null mean 12.26; p=0.096;  lower/n: {'Jim': (11, 27), 'Ken': (18, 25), 'Harold': (11, 29), 'Eric': (8, 32), 'Russ': (1, 3), 'Bill': (6, 9)}
+MoO2 Ken vs rest lowercase: chi2 9.94 vs same-stem null mean 8.06; p=0.37;  lower/n: {'rest': (37, 100), 'Ken': (18, 25)}
+
+=== 5. MoM: does literal case cluster by code segment (overlay)? ===
+WIZARDS  purity by segment: observed 0.781 (n=201); global null 0.652 p=5e-05; same-stem null 0.728 p=0.0013
+MAGIC    purity by segment: observed 0.742 (n=31); global null 0.760 p=0.84; same-stem null 0.758 p=1
+both     purity by segment: observed 0.776 (n=232); global null 0.666 p=5e-05; same-stem null 0.735 p=0.0044
+WIZARDS overlays in link order: 58 overlays with literals; case changes between neighbours 18 vs random-order mean 32.4; p(<=obs)=5e-05
+WIZARDS overlay sequence (majority stem case):
+   050:UU  052:UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUl  054:U  055:UUU  056:U  058:U  065:UU  066:UU  072:U  073:U  074:UU  075:UU
+   076:TU  077:U  081:UUU  083:UUU  084:UUUU  086:U  090:UU  093:UUUUUUUUU  094:TT  099:TT  102:UUU  103:U
+   104:l  106:U  107:TTUU  109:l  112:ll  113:llll  115:TUUl  117:TTl  118:TTTTUllll  121:l  122:l  123:lll
+   124:UUUllll  125:TUUl  126:Tl  127:TUUl  128:T  129:TUll  130:lll  131:Ull  132:Ull  133:Ullll  134:TUUUUUlllll  135:Ml
+   136:TUUU  137:TTTTTTUUUllll  138:TUllllll  140:l  143:UU  149:U  154:U  159:Ul  160:UUUl  163:UUUUUUUU
+WIZARDS overlays with literals -> ReMoM file (by `// WZD oNNpMM` comments):
+   ovr050  LOADSAVE.c                   MAGIC.SET SAVE
+   ovr052  LOADER.c MOM_DAT.c           BACKGRND BACKGRND.LBX BUILDDAT.LBX CHRIVER CHRIVER.LBX CITYSCAP CITYSCAP.LBX CITYWALL CITYWALL.LBX CMBMAGIC CMBMAGIC.LBX CMBTCITY CMBTCITY.LBX ITEMISC
+   ovr054  CityScr.c                    MUSIC
+   ovr055  City_ovr55.c                 HELP LISTDAT RELOAD
+   ovr056  ProdScr.c                    BUILDESC
+   ovr058  MainScr.c                    MUSIC
+   ovr065  CityList.c                   ARMYLIST RELOAD
+   ovr066  ArmyList.c                   ARMYLIST PORTRAIT
+   ovr072  UnitStat.c                   PORTRAIT
+   ovr073  MagicScr.c                   LILWIZ
+   ovr074  WIZVIEW.c                    LILWIZ MAGIC
+   ovr075  ItemScrn.c                   ARMYLIST PORTRAIT
+   ovr076  AdvsrScr.c                   Magic RELOAD
+   ovr077  Outpost.c                    MUSIC
+   ovr081  EVENTS.c                     EVENTMSG EVENTS MUSIC
+   ovr083  Lair.c                       MUSIC RELOAD RESOURCE
+   ovr084  DIPLOMAC.c                   BACKGRND DIPLOMAC MOODWIZ MUSIC
+   ovr086  DIPLOMAC.c                   DIPLOMSG
+   ovr090  Combat.c                     MUSIC SOUNDFX
+   ovr093                               CMBTFX CONQUEST LOSE MAGIC.EXE MUSIC SOUNDFX VORTEX WIN WIZLAB
+   ovr094  Surveyor.c                   Desert Tundra
+   ovr099  Combat.c                     Magic Vortex
+   ovr102  LVLMAKE.c                    MUSIC PORTRAIT RELOAD
+   ovr103  Combat.c                     COMPIX
+   ovr104  Help.c                       hlpentry
+   ovr106  SCORE.c                      HALOFAM
+   ovr107  SCORE.c                      HALOFAM MAGIC.SET Spells Wizards
+   ovr109  Items.c                      message
+   ovr112  CMBMAGIC.c                   hlpentry message
+   ovr113  Combat.c                     cmbtfx message message.lbx soundfx
+   ovr115  ItemMake.c                   ITEMPOW Itemdata SPELLSCR message
+   ovr117  Spellbook.c                  Special Spells book
+   ovr118  Spellbook.c                  Desc SPECFX Scroll Spellscr Wizlab book hlpentry music scroll
+   ovr121  NEXTTURN.c                   message
+   ovr122  Combat.c                     message
+   ovr123  Combat.c                     help message scroll
+   ovr124  Combat.c                     NEWSOUND RESOURCE SOUNDFX cmbtsnd compix newsound soundfx
+   ovr125  Settings.c                   Combat LOAD.LBX MAGIC.SET hlpentry.lbx
+   ovr126  REPORT.c                     Scroll scroll
+   ovr127  HIRE.c                       HIRE Hire NAMES hlpentry
+   ovr128  Spells128.c                  Spellscr
+   ovr129  Spells129.c                  BACKGRND Specfx message music
+   ovr130  Spells130.c                  message soundfx specfx
+   ovr131  Spells131.c                  SPECFX message specfx
+   ovr132  Spells132.c                  NAMES message soundfx
+   ovr133  Spells133.c                  SOUNDFX cmbtfx monster soundfx specfx
+   ovr134  SBookScr.c                   CMBTFX MUSIC NEWSOUND SOUNDFX SPECFX Specfx cmbtfx hlpentry message soundfx specfx
+   ovr135  OverSpel.c                   SpEcFx message
+   ovr136  SPLMASTR.c                   Lilwiz MAGIC RESOURCE SPELLSCR
+   ovr137  Spells137.c                  BACKGRND Diplomac Lilwiz MAGIC Monster Music SPELLSCR Specfx Spellscr hlpentry message moodwiz spellscr
+   ovr138  SPLMASTR.c                   MAGIC.EXE Monster cmbtfx music spellose spellscr splmastr wizlab
+   ovr140  NEXTTURN.c                   message
+   ovr143  WZD_o143.c                   CITYNAME TERRTYPE
+   ovr149  GENDRAW.c NewGame.c          RESOURCE
+   ovr154                               COMBAT.TMP
+   ovr159  TEXTBOX.c Fields.c           HELP help
+   ovr160  LoadScr.c                    LOAD.LBX MAGIC.EXE SAVE hlpentry.lbx
+   ovr163                               CMBDESRC CMBDESRT CMBGRASC CMBMOUNC CMBMOUNT CMBTUNDC CMBTUNDR WALLRISE
+MoM literal case vs projected MoM author of the ReMoM file (projection > 0.30 only):
+   Jim      {'UPPER': 13, 'Title': 1, 'lower': 2}
+   Ken      {'UPPER': 10, 'Title': 2, 'lower': 12}

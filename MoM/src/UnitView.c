@@ -30,6 +30,8 @@ USW_Attributes_1
 
 */
 
+#include "../../STU/src/STU_GARB.h"
+
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/GENDRAW.h"
@@ -141,7 +143,7 @@ struct s_ITEM_VIEW_TEXT
 {
 /* 00 */ char * Name;
 /* 02 */ char * Text;
-/* 04 */ uint32_t Flags;  // ~== s_ITEM.Powers
+/* 04 */ uint32_t Flags;  // ~== s_ITEM.powers
 /* 08 */
 };
 
@@ -225,7 +227,7 @@ char cnst_StoningGaze[] = "Stoning Gaze";
 char cnst_DoomGaze[] = "Doom Gaze";
 char cnst_DeathGaze[] = "Death Gaze";
 
-// WZD dseg:4064 4C 61 72 67 65 20 53 68 69 65 6C 64             cnst_LargeShield db 'Large Shield'      ; DATA XREF: dseg:USW_Abilitieso
+// WZD dseg:4064 4C 61 72 67 65 20 53 68 69 65 6C 64             cnst_LargeShield db 'Large Shield'      ; DATA XREF: dseg:USW_Abilities^o
 
 
 
@@ -1144,7 +1146,7 @@ char * USW_HeroLevels[9] =
 
 
 // WZD dseg:3F64
-// ; DATA XREF: ITEM_GetPowerNames+4E4r ...
+// ; DATA XREF: ITEM_GetPowerNames+4E4vr ...
 // ; BUG: there is no swiftness spell in the game
 // ITEM_ViewTexts
 // IVIEW_TEXT <offset cnst_Vampiric, offset cnst_VampiricText, <IP_Vampiric, 0>>
@@ -1356,7 +1358,7 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
 
             if(item_idx > -1)
             {
-                // _fstrcpy(specials_list->names[specials_index], 0, _ITEMS[item_idx].name);
+                // String_Copy_Far(specials_list->names[specials_index], 0, _ITEMS[item_idx].name);
                 stu_strcpy(specials_list->names[specials_index], _ITEMS[item_idx].name);
                 specials_list->flags[specials_index] = -99;
                 specials_list->picts[specials_index] = (SAMB_INT)item_icons_seg[_ITEMS[item_idx].icon_idx];
@@ -1628,9 +1630,11 @@ void USW_Build_Effect_List(int16_t unit_idx, struct s_UV_List * specials_list, i
                 (ranged_attack_group != rag_Magic)
                 ||
                 /* ((battle_units[unit_type].Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) == 0) */
-                /* ; BUG: this is not a battle unit index */
                 /* ¿ typo: ~ combat_data vs. global_combat_data ? */
-                ((global_battle_unit->Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) == 0)
+                // ((global_battle_unit->Attribs_1 & (USA_CASTER_20 | USA_CASTER_40)) == 0)
+                /* OGBUG  the caster test reads battle_units[unit_type] (asm: [bp+unit_type] * size s_BATTLE_UNIT + [battle_units]), indexing the combat battle-unit array with a unit TYPE, so it tests a stale combat record or memory past it, not this unit; whether a non-hero magic shooter gets the "Spell x N" line depends on that leftover data */
+                /* HACK */  /* CLAUDE */  // ReMoM reads the record only inside the largest battle_units allocation (4 * MAX_STACK); past it, or before any battle_units exists, it uses stack-garbage stand-in data
+                (((((battle_units != NULL) && (unit_type < (4 * MAX_STACK))) ? battle_units[unit_type].Attribs_1 : Stack_Garbage()) & (USA_CASTER_20 | USA_CASTER_40)) == 0)
             )
             {
                 if(
@@ -2213,6 +2217,10 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
     stu_strcpy(scout_rank[3], "III");
     stu_strcpy(scout_rank[4], "IV");
 
+    /* OGBUG  dead store: *specials_count is set to 0 here and overwritten with specials_index at the end, with no read in between */
+    /* CLAUDE */  /* REBUG */  /* asm: mov bx, [bp+specials_count@] / mov [word ptr bx], 0 (missing in the reconstruction) */
+    *specials_count = 0;
+
     specials_index = 0;
 
     if(_unit_type_table[unit_type].Construction > 0)
@@ -2290,7 +2298,9 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
 
     for(itr = 0; itr < 8; itr++)
     {
-        if((_unit_type_table[unit_type].Attribs_2 & USW_Attributes_2[itr].bit_idx) != 0)
+        // if((_unit_type_table[unit_type].Attribs_2 & USW_Attributes_2[itr].bit_idx) != 0)
+        /* CLAUDE */  /* REBUG */  /* asm: mov al, [byte ptr _unit_type_table.Attribs_2+bx] / cbw / test [USW_Attributes_2.bit_idx+bx], ax (the byte is sign-extended) */
+        if(((int8_t)_unit_type_table[unit_type].Attribs_2 & USW_Attributes_2[itr].bit_idx) != 0)
         {
             stu_strcpy(specials_list->names[specials_index], *USW_Attributes_2[itr].name);
             specials_list->flags[specials_index] = -1;
@@ -2306,7 +2316,8 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
         {
             stu_strcpy(specials_list->names[specials_index], *USW_ATK_Flags[itr].name);
 
-            if((USW_ATK_Flags[itr].bit_idx & Att_Poison) != 0)  /* Att_Poison */
+            // if((USW_ATK_Flags[itr].bit_idx & Att_Poison) != 0)  /* Att_Poison */
+            /* CLAUDE */  /* REBUG */  if(USW_ATK_Flags[itr].bit_idx == Att_Poison)  /* asm: cmp [USW_ATK_Flags.bit_idx+bx], Att_Poison / jnz */
             {
                 value = global_battle_unit->Poison_Strength;
                 stu_itoa(value, temp_buffer, 10);
@@ -2314,7 +2325,8 @@ void Prod_Build_Specials_List(int16_t unit_type, struct s_UV_List * specials_lis
                 stu_strcat(specials_list->names[specials_index], temp_buffer);
             }
 
-            if((USW_ATK_Flags[itr].bit_idx & Att_StnTouch) != 0)  /* Att_StnTouch */
+            // if((USW_ATK_Flags[itr].bit_idx & Att_StnTouch) != 0)  /* Att_StnTouch */
+            /* CLAUDE */  /* REBUG */  if(USW_ATK_Flags[itr].bit_idx == Att_StnTouch)  /* asm: cmp [USW_ATK_Flags.bit_idx+bx], Att_StnTouch / jnz */
             {
                 value = global_battle_unit->Spec_Att_Attrib;
                 stu_itoa(value, temp_buffer, 10);
@@ -2464,7 +2476,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
 
     if((_ITEMS[item_idx].embed_spell_idx > 0) && (display_count < 5))
     {
-        // TODO  _fstrcpy(Temp_String, 0, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name)
+        // TODO  String_Copy_Far(Temp_String, 0, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name)
         stu_strcpy(Temp_String, spell_data_table[_ITEMS[item_idx].embed_spell_idx].name);
         stu_strcpy(power_names[display_count], Temp_String);
         stu_strcat(power_names[display_count], cnst_TimesSign);
@@ -2476,7 +2488,7 @@ void ITEM_GetPowerNames(int16_t item_idx, char power_names[5][20], char power_de
 
     for(itr = 0; ((itr < 32) && (display_count < 5)); itr++)
     {
-        if((_ITEMS[item_idx].Powers & ITEM_ViewTexts[itr].Flags) != 0)
+        if((_ITEMS[item_idx].powers & ITEM_ViewTexts[itr].Flags) != 0)
         {
             stu_strcpy(power_names[display_count], ITEM_ViewTexts[itr].Name);
             stu_strcpy(power_descriptions[display_count], ITEM_ViewTexts[itr].Text);
@@ -2507,6 +2519,7 @@ void Prod_Load_Battle_Unit(int16_t unit_type, struct s_BATTLE_UNIT * battle_unit
 {
     //MoO2  Module: struct  Copy_Structure_()
     memcpy(battle_unit, &_unit_type_table[unit_type].Melee, sizeof(struct s_UNIT_TYPE));
+    /* OGBUG  melee_tohit / ranged_tohit / toblock (+0x24 / +0x25 / +0x26) are not cleared: the production preview shows whatever To Hit / To Block bonuses the last unit loaded into this battle-unit buffer had */
     battle_unit->front_figure_damage = 0;
     battle_unit->Weapon_Plus1 = 0;
     battle_unit->Gold_Melee = 0;
@@ -2675,11 +2688,11 @@ void Draw_Unit_Figure(int16_t x_start, int16_t y_start, int16_t unit_or_type, in
         Draw_Picture_To_Bitmap(unit_figure_seg, UnitDraw_WorkArea);
 
         // HERE: ~ Combat_Figure_Banner_Color()
-        for(itr_banner_colors = 0; itr_banner_colors < 5; itr_banner_colors++)
+        for(itr_banner_colors = 0; itr_banner_colors < NUM_BANNER_REMAP_COLORS; itr_banner_colors++)
         {
             // Draw_Map_Towers()
             // Replace_Color(map_square_scratchpad_seg, 224 + itr_color_remap, *(COL_Banners + (_players[tower_owner_idx].banner_id * 5)));
-            Replace_Color(UnitDraw_WorkArea, (214 + itr_banner_colors), COL_Banners[((unit_owner_banner_idx * 5) + itr_banner_colors)]);
+            Replace_Color(UnitDraw_WorkArea, (BANNER_REMAP_COLOR_BASE + itr_banner_colors), COL_Banners[((unit_owner_banner_idx * NUM_BANNER_REMAP_COLORS) + itr_banner_colors)]);
         }
 
         if(CalledFromFlag == uvt_Prod)
@@ -2843,6 +2856,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
         if(_unit_enchantment_data[itr].flag == enchantment)
         {
             enchantment_idx = itr;
+            /* CLAUDE */  /* REBUG */  break;  /* asm: mov [bp+enchantment_idx], si / jmp loc_7562A */
         }
     }
 
@@ -2915,6 +2929,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                 }
             }
 
+            /* OGBUG  the keep tests ignore the unit's own movement of the kind being removed: losing Flight is survived only with water travel (Unit_Has_WaterTravel / _Item) or Wind Walking, losing Water Walking only with air travel (Unit_Has_AirTravel / _Item) or Wind Walking, so a natural flyer losing a cast Flight, or a natural swimmer losing Water Walking, is warned 'This unit will die' and dismissed; losing Wind Walking keeps unit_will_die set whatever the unit can do, and after the removal every stack unit without air or water travel is dismissed */
             if(stack_has_windwalking == ST_FALSE)
             {
                 unit_will_die = ST_TRUE;
@@ -2927,7 +2942,8 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                         ||
                         (Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE)
                         ||
-                        (unit_has_windwalking = ST_TRUE)
+                        // (unit_has_windwalking = ST_TRUE)
+                        /* CLAUDE */  /* REBUG */  (unit_has_windwalking == ST_TRUE)  /* asm: cmp [bp+unit_has_windwalking], e_ST_TRUE / jnz */
                     )
                 )
                 {
@@ -2942,14 +2958,16 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                         ||
                         (Unit_Has_AirTravel_Item(unit_idx) == ST_TRUE)
                         ||
-                        (unit_has_windwalking = ST_TRUE)
+                        // (unit_has_windwalking = ST_TRUE)
+                        /* CLAUDE */  /* REBUG */  (unit_has_windwalking == ST_TRUE)  /* asm: cmp [bp+unit_has_windwalking], e_ST_TRUE / jnz */
                     )
                 )
                 {
                     unit_will_die = ST_FALSE;
                 }
 
-                if((enchantment & UE_WATER_WALKING) != 0)
+                // if((enchantment & UE_WATER_WALKING) != 0)
+                /* CLAUDE */  /* REBUG */  if((enchantment & UE_WIND_WALKING) != 0)  /* asm: and ax, UE_WINDWALKING (high word) */
                 {
                     multiple_deaths = ST_TRUE;
                 }
@@ -2960,16 +2978,24 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
 
     }
 
-    // ¿ ; BUG: these conditions don't depend on each other (eg. removing Wind Walking from an otherwise flying unit) ?
     if(unit_will_die == ST_TRUE)
     {
-        if(multiple_deaths != ST_FALSE)
+        // if(multiple_deaths != ST_FALSE)
+        // {
+        //     stu_strcat(message_buffer, cnst_CnclDrown_Msg2);  // "  This unit and other units will die if the spell is removed!"
+        // }
+        // else
+        // {
+        //     stu_strcat(message_buffer, cnst_CnclDrown_Msg1);  // "  This unit will die if the spell is removed!"
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm loc_758B3: cmp [bp+multiple_deaths], e_ST_FALSE / jnz -> Msg2; the fall-through is Msg1 */
+        if(multiple_deaths == ST_FALSE)
         {
-            stu_strcat(message_buffer, cnst_CnclDrown_Msg2);  // "  This unit and other units will die if the spell is removed!"
+            stu_strcat(message_buffer, cnst_CnclDrown_Msg1);  // "  This unit will die if the spell is removed!"
         }
         else
         {
-            stu_strcat(message_buffer, cnst_CnclDrown_Msg1);  // "  This unit will die if the spell is removed!"
+            stu_strcat(message_buffer, cnst_CnclDrown_Msg2);  // "  This unit and other units will die if the spell is removed!"
         }
     }
 
@@ -2977,9 +3003,40 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
     {
         Unit_Remove_Enchantment(unit_idx, enchantment);
 
+        // if(unit_will_die == ST_TRUE)
+        // {
+        //     if(multiple_deaths != ST_FALSE)
+        //     {
+        //         // ¿ BUG: fails to consider natural wind walking as well as non-corporeals of any kind, and will dismiss them too, although the former should prevent entering this branch, so shouldn't cause problems in practice ?
+        //         for(itr = 0; itr < troop_count; itr++)
+        //         {
+        //             if(
+        //                 (Unit_Has_AirTravel(troops[itr]) != ST_TRUE)
+        //                 &&
+        //                 (Unit_Has_AirTravel_Item(troops[itr]) != ST_TRUE)
+        //                 &&
+        //                 (Unit_Has_WaterTravel(troops[itr]) != ST_TRUE)
+        //                 &&
+        //                 (Unit_Has_WaterTravel_Item(troops[itr]) != ST_TRUE)
+        //             )
+        //             {
+        //                 Dismiss_Unit(troops[itr]);
+        //             }
+        //         }
+        //     }
+        //     else
+        //     {
+        //         Dismiss_Unit(unit_idx);
+        //     }
+        // }
+        /* CLAUDE */  /* REBUG */  /* asm loc_758FB: cmp [bp+multiple_deaths], e_ST_FALSE / jnz loop -- the single dismiss is the if-branch; both branches go on to j_Select_Stack_At_Summon (loc_7597D) */
         if(unit_will_die == ST_TRUE)
         {
-            if(multiple_deaths != ST_FALSE)
+            if(multiple_deaths == ST_FALSE)
+            {
+                Dismiss_Unit(unit_idx);
+            }
+            else
             {
                 // ¿ BUG: fails to consider natural wind walking as well as non-corporeals of any kind, and will dismiss them too, although the former should prevent entering this branch, so shouldn't cause problems in practice ?
                 for(itr = 0; itr < troop_count; itr++)
@@ -2998,10 +3055,7 @@ int16_t UV_Remove_Unit_Enchantment(int16_t unit_idx, uint32_t enchantment, char 
                     }
                 }
             }
-            else
-            {
-                Dismiss_Unit(unit_idx);
-            }
+            Select_Stack_At_Summon();
         }
 
     }
@@ -3026,7 +3080,114 @@ void Unit_Remove_Enchantment(int16_t unit_idx, uint32_t enchantment)
 
 // WZD o89p09
 // drake178: sub_759DE()
-// IDK_Drown_Units()
+/*
+Not In-Use
+*/
+void IDK_Drown_Units(int16_t unit_idx)
+{
+    int16_t troops[MAX_STACK] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int16_t var_10 = 0;
+    int16_t var_E = 0;
+    int16_t var_C = 0;
+    int16_t var_A = 0;
+    int16_t stack_has_windwalking = 0;
+    int16_t water_hazard = 0;
+    int16_t troop_count = 0;
+    int16_t drowned = 0;
+    int16_t itr = 0;
+    drowned = ST_FALSE;
+    var_C = ST_FALSE;
+    water_hazard = Square_Is_Sailable(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp);
+    if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
+    {
+        water_hazard = ST_FALSE;
+    }
+    if(water_hazard == ST_TRUE)
+    {
+        Player_Army_At_Square(_UNITS[unit_idx].wx, _UNITS[unit_idx].wy, _UNITS[unit_idx].wp, _UNITS[unit_idx].owner_idx, &troop_count, &troops[0]);
+        var_E = ST_FALSE;
+        for(itr = 0; itr < troop_count; itr++)
+        {
+            if(troops[itr] != unit_idx)
+            {
+                if(_unit_type_table[_UNITS[troops[itr]].type].Transport > 0)
+                {
+                    water_hazard = ST_FALSE;
+                    var_E += _unit_type_table[_UNITS[troops[itr]].type].Transport;
+                }
+            }
+        }
+    }
+    if(water_hazard == ST_TRUE)
+    {
+        var_A = ST_FALSE;
+        if(
+            Unit_Has_WindWalking(unit_idx) == ST_TRUE
+            ||
+            Unit_Has_WindWalkingItem(unit_idx) == ST_TRUE
+        )
+        {
+            var_A = ST_TRUE ;
+        }
+        stack_has_windwalking = ST_FALSE;
+        for(itr = 0; itr < troop_count; itr++)
+        {
+            if(troops[itr] != unit_idx)
+            {
+                if(
+                    (Unit_Has_WindWalking(troops[itr]) == ST_TRUE)
+                    ||
+                    (Unit_Has_WindWalkingItem(troops[itr]) == ST_TRUE)
+                )
+                {
+                    stack_has_windwalking = ST_TRUE ;
+                }
+            }
+        }
+        if(stack_has_windwalking == ST_FALSE && var_A == ST_FALSE)
+        {
+            drowned = ST_TRUE ;
+            if(Unit_Has_WaterTravel(unit_idx) == ST_TRUE ||
+                Unit_Has_WaterTravel_Item(unit_idx) == ST_TRUE ||
+                Unit_Has_AirTravel(unit_idx) == ST_TRUE ||
+                Unit_Has_AirTravel_Item(unit_idx) == ST_TRUE)
+            {
+                drowned = ST_FALSE;
+            }
+        }
+        if(var_E > ST_FALSE)
+        {
+            var_10 = ST_FALSE;
+            for(itr = 0; itr < troop_count; itr++)
+            {
+                if(_UNITS[troops[itr]].type > ut_Chosen &&
+                    _unit_type_table[_UNITS[troops[itr]].type].Transport <= 0)
+                {
+                    if(var_10 > var_E)
+                    {
+                        if(
+                            Unit_Has_WaterTravel(troops[itr]) == ST_TRUE
+                            ||
+                            Unit_Has_WaterTravel_Item(troops[itr]) == ST_TRUE
+                            ||
+                            Unit_Has_AirTravel(troops[itr]) == ST_TRUE
+                            ||
+                            Unit_Has_AirTravel_Item(troops[itr]) == ST_TRUE
+                        )
+                        {
+                            Dismiss_Unit(troops[itr]);
+                        }
+                    }
+                    var_10++;
+                }
+            }
+        }
+    }
+    if(drowned == ST_TRUE)
+    {
+        Dismiss_Unit(unit_idx);
+    }
+}
 
 
 // WZD o89p10
@@ -3046,35 +3207,39 @@ void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t tr
     int16_t On_Ocean_Tile = 0;
     int16_t Unit_Count = 0;
     int16_t itr_Unit_Count = 0;
-
-    Unit_Count = 0;  // DNE in Dasm
-
+    /* OGBUG  Unit_Count and l_troops are never set; OG loops over stack garbage */
+    /* HACK */  Unit_Count = Stack_Garbage_Range(0, MAX_STACK);  /* OGBUG: Unit_Count is uninitialized */
+    /* HACK */  for(itr_Unit_Count = 0; itr_Unit_Count < MAX_STACK; itr_Unit_Count++)
+    /* HACK */  {
+    /* HACK */      l_troops[itr_Unit_Count] = Stack_Garbage_Range(0, (_units - 1));
+    /* HACK */  }
     l_troop_count = 0;
-
     *troop_count = 0;
-
-    if(_UNITS[unit_idx].owner_idx != -1)
+    if(_UNITS[unit_idx].owner_idx != ST_UNDEFINED)
     {
         Have_Dependants = ST_FALSE;
-
-        if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)  /* || (o71p08_Empty_pFxn(unit_idx) == ST_TRUE) */
+        if(
+            (Unit_Has_WindWalking(unit_idx) == ST_TRUE)
+            ||
+            (Unit_Has_WindWalkingItem(unit_idx) == ST_TRUE)
+        )
         {
             On_Ocean_Tile = Square_Is_Sailable(UNITX(), UNITY(), UNITP());
-
             if(_unit_type_table[_UNITS[unit_idx].type].Transport > 0)
             {
                 On_Ocean_Tile = ST_FALSE;
             }
-
             if(On_Ocean_Tile == ST_TRUE)
             {
                 Windwalking_Unit = ST_FALSE;
-
-                if(Unit_Has_WindWalking(unit_idx) == ST_TRUE)  /* || (o71p08_Empty_pFxn(unit_idx) == ST_TRUE) */
+                if(
+                    Unit_Has_WindWalking(unit_idx) == ST_TRUE
+                    ||
+                    Unit_Has_WindWalkingItem(unit_idx) == ST_TRUE
+                )
                 {
                     Windwalking_Unit = ST_TRUE;
                 }
-
                 Stack_Has_WW = ST_FALSE;
 
                 // ovr089:0C94                                                 Unit_Count= word ptr -2
@@ -3090,25 +3255,26 @@ void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t tr
                 {
                     if(l_troops[itr_Unit_Count] != unit_idx)
                     {
-                        if(Unit_Has_WindWalking(l_troops[itr_Unit_Count]) == ST_TRUE)  /* || (o71p08_Empty_pFxn(l_troops[itr_Unit_Count]) == ST_TRUE) */
+                        if(
+                            Unit_Has_WindWalking(l_troops[itr_Unit_Count]) == ST_TRUE
+                            ||
+                            Unit_Has_WindWalkingItem(l_troops[itr_Unit_Count]) == ST_TRUE
+                        )
                         {
                             Stack_Has_WW = ST_TRUE;
                         }
                     }
                 }
-
                 if(
-                    (Stack_Has_WW != ST_FALSE) &&
-                    (Windwalking_Unit != ST_TRUE)
+                    (Stack_Has_WW == ST_FALSE)
+                    &&
+                    (Windwalking_Unit == ST_TRUE)
                 )
                 {
                     Have_Dependants = ST_TRUE;
                 }
-
-
             }
         }
-
         if(Have_Dependants == ST_TRUE)
         {
             for(itr_Unit_Count = 0; itr_Unit_Count < Unit_Count; itr_Unit_Count++)
@@ -3125,8 +3291,6 @@ void UNIT_GetDependants__WIP(int16_t unit_idx, int16_t * troop_count, int16_t tr
                 }
             }
         }
-
         *troop_count = l_troop_count;
     }
-
 }

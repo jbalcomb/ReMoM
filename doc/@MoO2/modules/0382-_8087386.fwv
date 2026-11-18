@@ -1,0 +1,10 @@
+module_num=382
+module=_8087386
+source=0382-_8087386.md
+range[0]=2:0x00012FD0 linear=0x00182FD0 size=4
+range[1]=2:0x0001300A linear=0x0018300A size=6
+
+[Global symbols]
+KEY  ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME      SYMBOL    CHUNK
+-    -    -      0x00182FD0  2:0x00012FD0  data  __8087    __8087    regions/08-object-2/00200E54-00201653.txt
+-    -    -      0x00182FD1  2:0x00012FD1  data  __real87  __real87  regions/08-object-2/00200E54-00201653.txt

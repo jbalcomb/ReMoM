@@ -1,0 +1,11 @@
+module_num=201
+module=nfree
+source=0201-nfree.md
+range[0]=1:0x0012CAF6 linear=0x0013CAF6 size=130
+range[1]=2:0x00047384 linear=0x001B7384 size=4
+
+[Global symbols]
+KEY         ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                  SYMBOL                CHUNK
+m201f001    1    1/2    0x0013CAF6  1:0x0012CAF6  code  _nfree                _nfree_               regions/07-object-1/001C1E54-001C2653.txt
+m201f001_2  1    2/2    0x0013CAF6  1:0x0012CAF6  code  free                  free_                 regions/07-object-1/001C1E54-001C2653.txt
+-           -    -      0x001B7384  2:0x00047384  data  ___MiniHeapFreeRover  ___MiniHeapFreeRover  -

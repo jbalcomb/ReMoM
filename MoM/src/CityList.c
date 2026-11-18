@@ -8,6 +8,7 @@
         Module: ¿ Planets/Colonies Screen ?
 */
 
+#include "../../STU/src/STU_GARB.h"  /* Stack_Garbage_Range() */  /* CLAUDE */
 #include "../../MoX/src/Allocate.h"
 #include "../../MoX/src/FLIC_Draw.h"
 #include "../../MoX/src/Fields.h"
@@ -25,6 +26,7 @@
 #include "MainScr.h"
 #include "MainScr_Maps.h"
 #include "MOM_SCR.h"
+#include "Outpost.h"  /* CLAUDE */  // Outpost_Screen()
 #include "ProdScr.h"
 #include "RACETYPE.h"
 #include "UNITTYPE.h"   // WTFMATE
@@ -42,15 +44,15 @@
 // WZD dseg:31F0                                                 BEGIN: ovr065 - Strings  (CityList Screen)
 
 // WZD dseg:31F0
-char emptystring__ovr065 = '\0';
+char emptystring__ovr065[] = "";
 // WZD dseg:31F1
-char str_citylist_O = 'O';
+char str_citylist_O[] = "O";
 // WZD dseg:31F3
-char str_citylist_ESC = '\x1B';
+char str_citylist_ESC[] = "\x1B";
 // WZD dseg:31F5
-char str_citylist_U = 'U';
+char str_citylist_U[] = "U";
 // WZD dseg:31F7
-char str_citylist_D = 'D';
+char str_citylist_D[] = "D";
 // WZD dseg:31F9
 char reload_lbx_file__ovr065[] = "RELOAD";
 // WZD dseg:3200
@@ -82,7 +84,7 @@ char cnst_MP_2[] = "MP";
 
 
 
-// WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Workers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures+136w ...
+// WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+IMG_CTY_Workers@ dw 0Eh dup(0)          ; DATA XREF: City_Screen_Load_Pictures+136vw ...
 // WZD dseg:94F2 00 00 00 00 00 00 00 00 00 00 00 00                                                     ; array of 14 appended reserved EMM headers in
 // WZD dseg:94F2                                                                                         ; GFX_Swap_Seg, 1 worker image per header
 
@@ -98,7 +100,7 @@ SAMB_ptr citylist_background_seg;
 // WZD dseg:9514                                                 END: CityList_Screen_Load()
 
 // WZD dseg:9516                                                 BEGIN:  Main Screen Pictures
-// WZD dseg:9516 00 00                                           next_turn_button_seg dw 0               ; DATA XREF: Main_Screen_Load_Pictures+299w ...
+// WZD dseg:9516 00 00                                           next_turn_button_seg dw 0               ; DATA XREF: Main_Screen_Load_Pictures+299vw ...
 
 
 
@@ -228,9 +230,11 @@ void CityList_Screen(void)
         /*
             Leave Screen
         */
+        /* OGBUG  the list rows are the first fields added after Clear_Fields() (fields_count = 1), so a right-click on the top row returns -(1) = ST_UNDEFINED and also passes this exit test: for an outpost, Outpost_Screen() runs and then the screen exits to the main map; for a city, the right-click handler below sets scr_Production_Screen over this scr_Main_Screen */
         if((input_field_idx == ST_UNDEFINED) || (input_field_idx == button_citylist_ok) || (input_field_idx == hotkey_ESC))
         {
             // Play_Left_Click();
+            Play_Left_Click();  /* CLAUDE */  /* REBUG */  // asm: @@Do_Leave_Screen: call Play_Left_Click
             leave_screen_flag = ST_TRUE;
             current_screen = scr_Main_Screen;
         }
@@ -248,9 +252,12 @@ void CityList_Screen(void)
                 {
                     list_first_item -= NUM_CITY_LIST_SCROLL;
                 }
+                /* CLAUDE */  /* asm loc_5790B: inside the test (cmp [list_first_item], 0 / jz loc_57915 skips them) */
+                Update_Cities_List();
+                screen_changed = ST_TRUE;
             }
-            Update_Cities_List();
-            screen_changed = ST_TRUE;
+            // Update_Cities_List();
+            // screen_changed = ST_TRUE;
         }
 
         if((input_field_idx == citylist_down_button_left) || (input_field_idx == citylist_down_button_right) || (input_field_idx == hotkey_D))
@@ -258,6 +265,7 @@ void CityList_Screen(void)
             Play_Left_Click();
             if((list_first_item + NUM_CITY_LIST) < m_city_list_count)
             {
+                /* OGBUG  scrolling up moves 5 rows, scrolling down moves 5 only while 14+ rows remain below the first and 1 otherwise, so near the end Down moves one row at a time */
                 if((list_first_item + NUM_CITY_LIST + NUM_CITY_LIST_SCROLL) < m_city_list_count)
                 {
                     list_first_item += NUM_CITY_LIST_SCROLL;
@@ -266,9 +274,12 @@ void CityList_Screen(void)
                 {
                     list_first_item += 1;
                 }
+                /* CLAUDE */  /* asm loc_5794C: inside the test (jge loc_57956 skips them) */
+                Update_Cities_List();
+                screen_changed = ST_TRUE;
             }
-            Update_Cities_List();
-            screen_changed = ST_TRUE;
+            // Update_Cities_List();
+            // screen_changed = ST_TRUE;
         }
 
         for(itr = 0; itr < m_cities_list_field_count; itr++)
@@ -276,6 +287,7 @@ void CityList_Screen(void)
             if(m_cities_list_fields[itr] == input_field_idx)
             {
                 // Play_Left_Click();
+                Play_Left_Click();  /* CLAUDE */  /* REBUG */  // asm: loc_57968: call Play_Left_Click
                 _city_idx = list_cities[itr];
                 if(_CITIES[_city_idx].size == 0)
                 {
@@ -290,6 +302,7 @@ void CityList_Screen(void)
                     current_screen = scr_City_Screen;
                 }
                 leave_screen_flag = ST_TRUE;
+                break;  /* CLAUDE */  /* REBUG */  // asm: loc_57A63: jmp short loc_57A74 (out of the loop)
             }
         }
 
@@ -298,6 +311,7 @@ void CityList_Screen(void)
             if(-(m_cities_list_fields[itr]) == input_field_idx)
             {
                 // Play_Left_Click();
+                Play_Left_Click();  /* CLAUDE */  /* REBUG */  // asm: loc_57A8A: call Play_Left_Click
                 m_citylist_first_item = list_first_item;
                 _city_idx = list_cities[itr];
                 if(_CITIES[_city_idx].size == 0)
@@ -305,9 +319,11 @@ void CityList_Screen(void)
                     // ; displays and processes the outpost screen - if the view type is 1, the header calls for naming the new outpost and does not display the units on the square
                     // ; BUG: fails to draw the altered backgrounds of the Gaia's Blessing, Flying Fortress, Famine, and Cursed Lands enchantments
                     // TODO  Outpost_Screen(0, -1, -1);
+                    Outpost_Screen(0);  /* CLAUDE */  /* REBUG */  // asm: Outpost_Screen(0, -1, -1); ReMoM's Outpost_Screen() takes only the flag
                     Assign_Auto_Function(CityList_Screen_Draw, 1);
                     CityList_Screen_Load();
                     Build_City_List();
+                    Update_Cities_List();  /* CLAUDE */  /* REBUG */  // asm: call near ptr Update_Cities_List
                     Army_At_City(list_first_item, &troop_count, &troops[0]);
                     CityList_Draw_Reduced_Map();
                     screen_changed = ST_TRUE;
@@ -318,7 +334,8 @@ void CityList_Screen(void)
                     production_screen_return_screen = 1;  // {1: CityList Screen, 2: City Screen}
                     leave_screen_flag = ST_TRUE;
                 }
-                
+                break;  /* CLAUDE */  /* REBUG */  // asm: @@Jmp_CityList_ScanField: jmp short @@CityList_ScanField (out of the loop)
+
             }
         }
 
@@ -357,9 +374,15 @@ void CityList_Draw_Reduced_Map(void)
     int16_t city_world_y;
     int16_t city_world_p;
 
-    city_world_x = _CITIES[list_cities[citylist_item_scanned_field]].wx;
-    city_world_y = _CITIES[list_cities[citylist_item_scanned_field]].wy;
-    city_world_p = _CITIES[list_cities[citylist_item_scanned_field]].wp;
+    /* OGBUG  no count test: with an empty list the minimap position is read from whatever list_cities[citylist_item_scanned_field] holds */
+    // city_world_x = _CITIES[list_cities[citylist_item_scanned_field]].wx;
+    // city_world_y = _CITIES[list_cities[citylist_item_scanned_field]].wy;
+    // city_world_p = _CITIES[list_cities[citylist_item_scanned_field]].wp;
+    /* HACK */  /* CLAUDE */  /* with no city the near-buffer word is stale: in-range stand-in for the city index, drawn once (the OG reads the same word three times), so ReMoM does not index _CITIES out of range */
+    int16_t list_city_idx = ((m_city_list_count == 0) ? Stack_Garbage_Range(0, (MAX_CITY_COUNT - 1)) : list_cities[citylist_item_scanned_field]);
+    city_world_x = _CITIES[list_city_idx].wx;
+    city_world_y = _CITIES[list_city_idx].wy;
+    city_world_p = _CITIES[list_city_idx].wp;
 
     List_Screen_Draw_Reduced_Map(CITYLIST_REDUCED_MAP_X, CITYLIST_REDUCED_MAP_Y, CITYLIST_REDUCED_MAP_W, CITYLIST_REDUCED_MAP_H, city_world_p, city_world_x, city_world_y);
 
@@ -372,9 +395,11 @@ void CityList_Draw_Reduced_Map(void)
 void CityList_Screen_Load(void)
 {
 
-    m_city_list_array = Near_Allocate_First(200);  // 100 2-byte ints  ~== sizeof(int) * CITY_COUNT_MAX
+    // m_city_list_array = Near_Allocate_First(200);  // 100 2-byte ints  ~== sizeof(int) * CITY_COUNT_MAX
+    /* CLAUDE */  /* REBUG */  m_city_list_array = (int16_t *)Near_Allocate_First(200);  // 100 2-byte ints  ~== sizeof(int) * CITY_COUNT_MAX
 
-    list_cities = Near_Allocate_Next(18);  // ¿ 9 2-byte ints, for City List of 9 ?
+    // list_cities = Near_Allocate_Next(18);  // ¿ 9 2-byte ints, for City List of 9 ?
+    /* CLAUDE */  /* REBUG */  list_cities = (int16_t *)Near_Allocate_Next(18);  // ¿ 9 2-byte ints, for City List of 9 ?
 
     GUI_String_1 = (char *)Near_Allocate_Next(80);
 
@@ -569,7 +594,7 @@ void CityList_Screen_Draw(void)
         city_construction = _CITIES[city_idx].construction;
         if(city_construction < 100)  /* building */
         {
-            // TODO  _fstrcpy()
+            // TODO  String_Copy_Far()
             stu_strcpy(GUI_String_1, bldg_data_table[city_construction].name);
         }
         else  /* unit */
@@ -597,7 +622,7 @@ void CityList_Screen_Draw(void)
         colors1[2] = 129;
         Set_Font_Colors_15(1, &colors1[0]);
         Set_Font_Style_Shadow_Down(1, 15, 0, 0);
-        // TODO  _fstrcpy()
+        // TODO  String_Copy_Far()
         stu_strcpy(GUI_String_1, _CITIES[city_idx].name);
         String_To_Upper(GUI_String_1);
         Print(99, 158, GUI_String_1);
@@ -631,10 +656,12 @@ void Build_City_List(void)
     {
         if(_CITIES[itr_cities].owner_idx == _current_player_idx)  /* MoO2  _PLAYER_NUM ~== _current_player_idx */
         {
-            m_city_list_array[m_city_list_count] = (unsigned char)itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
+            // m_city_list_array[m_city_list_count] = (unsigned char)itr_cities;  /* MoO2  _g_colony_list_ptr -> l_colony_list[250] */
+            /* CLAUDE */  /* REBUG */  m_city_list_array[m_city_list_count] = itr_cities;  /* asm: mov [bx], cx  (word store) */
 
             m_city_list_count++;
 
+            /* OGBUG  every build of the list (on opening the Cities screen, and again after an outpost right-click) changes every own city / outpost that is producing nothing (bt_NONE) to Housing */
             if(_CITIES[itr_cities].construction == bt_NONE)
             {
                 _CITIES[itr_cities].construction = bt_Housing;

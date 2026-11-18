@@ -1,0 +1,17 @@
+module_num=103
+module=D:\MOX\OTHERS\COLONIZE.C
+source=0103-colonize.c.md
+range[0]=1:0x000D5EB3 linear=0x000E5EB3 size=2421
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                   SYMBOL                                  CHUNK
+m103f001  1    -      0x000E5EB3  1:0x000D5EB3  static,code  Make_New_Colony_Or_Outpost             Make_New_Colony_Or_Outpost_             regions/07-object-1/0016AE54-0016B653.txt
+m103f002  2    -      0x000E6071  1:0x000D6071  code         Make_New_Colony                        Make_New_Colony_                        regions/07-object-1/0016B654-0016BE53.txt
+m103f003  3    -      0x000E607F  1:0x000D607F  code         Make_New_Outpost                       Make_New_Outpost_                       regions/07-object-1/0016B654-0016BE53.txt
+m103f004  4    -      0x000E608B  1:0x000D608B  code         Star_N_Uncolonized_Planets             Star_N_Uncolonized_Planets_             regions/07-object-1/0016B654-0016BE53.txt
+m103f005  5    -      0x000E60C8  1:0x000D60C8  code         Star_N_Colonizable_Planets_For_Player  Star_N_Colonizable_Planets_For_Player_  regions/07-object-1/0016B654-0016BE53.txt
+m103f006  6    -      0x000E6132  1:0x000D6132  code         Star_N_Outpostable_Planets_For_Player  Star_N_Outpostable_Planets_For_Player_  regions/07-object-1/0016B654-0016BE53.txt
+m103f007  7    -      0x000E6170  1:0x000D6170  static,code  Find_Colonize_Players                  Find_Colonize_Players_                  regions/07-object-1/0016B654-0016BE53.txt
+m103f008  8    -      0x000E64F4  1:0x000D64F4  code         Allocate_New_Colony_Slots              Allocate_New_Colony_Slots_              regions/07-object-1/0016B654-0016BE53.txt
+m103f009  9    -      0x000E65F8  1:0x000D65F8  code         AI_Colonize                            AI_Colonize_                            regions/07-object-1/0016B654-0016BE53.txt
+m103f010  10   -      0x000E67F6  1:0x000D67F6  code         All_AI_Colonize                        All_AI_Colonize_                        regions/07-object-1/0016B654-0016BE53.txt

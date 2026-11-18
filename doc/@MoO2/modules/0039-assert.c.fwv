@@ -1,0 +1,11 @@
+module_num=39
+module=D:\MOX\OTHERS\ASSERT.C
+source=0039-assert.c.md
+range[0]=1:0x00054883 linear=0x00064883 size=338
+range[1]=2:0x00001170 linear=0x00171170 size=64
+range[2]=2:0x0002389C linear=0x0019389C size=200
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME        SYMBOL       CHUNK
+m039f001  1    -      0x00064883  1:0x00054883  code  __assertha  __assertha_  regions/07-object-1/000E9E54-000EA653.txt
+m039f002  2    -      0x0006497C  1:0x0005497C  code  hgetch      hgetch_      regions/07-object-1/000E9E54-000EA653.txt

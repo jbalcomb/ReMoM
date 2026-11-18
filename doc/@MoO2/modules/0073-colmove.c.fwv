@@ -1,0 +1,19 @@
+module_num=73
+module=D:\MOX\OTHERS\COLMOVE.C
+source=0073-colmove.c.md
+range[0]=1:0x000A9A8C linear=0x000B9A8C size=3183
+range[1]=2:0x0000A974 linear=0x0017A974 size=4
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                             SYMBOL                           CHUNK
+m073f001  1    -      0x000B9A8C  1:0x000A9A8C  code  Clear_Cluster                    Clear_Cluster_                   regions/07-object-1/0013EE54-0013F653.txt
+m073f002  2    -      0x000B9AD7  1:0x000A9AD7  code  Get_First_Unemployed             Get_First_Unemployed_            regions/07-object-1/0013EE54-0013F653.txt
+m073f003  3    -      0x000B9B0F  1:0x000A9B0F  code  Get_Num_Unemployed               Get_Num_Unemployed_              regions/07-object-1/0013EE54-0013F653.txt
+m073f004  4    -      0x000B9B49  1:0x000A9B49  code  Draw_Cluster                     Draw_Cluster_                    regions/07-object-1/0013EE54-0013F653.txt
+m073f005  5    -      0x000B9C3D  1:0x000A9C3D  code  Get_Cluster                      Get_Cluster_                     regions/07-object-1/0013EE54-0013F653.txt
+m073f006  6    -      0x000B9CE3  1:0x000A9CE3  code  Pops_Identical                   Pops_Identical_                  regions/07-object-1/0013EE54-0013F653.txt
+m073f007  7    -      0x000B9DA2  1:0x000A9DA2  code  Colony_Pop_String                Colony_Pop_String_               regions/07-object-1/0013EE54-0013F653.txt
+m073f008  8    -      0x000B9E94  1:0x000A9E94  code  Send_Cluster                     Send_Cluster_                    regions/07-object-1/0013EE54-0013F653.txt
+m073f009  9    -      0x000BA5DA  1:0x000AA5DA  code  Give_Colonist_New_Job            Give_Colonist_New_Job_           regions/07-object-1/0013F654-0013FE53.txt
+-         -    -      0x0017A974  2:0x0000A974  data  _cluster_colony_n                _cluster_colony_n                regions/08-object-2/001F8E54-001F9653.txt
+-         -    -      0x0017A976  2:0x0000A976  data  _g_hacky_dont_draw_cluster_flag  _g_hacky_dont_draw_cluster_flag  regions/08-object-2/001F8E54-001F9653.txt

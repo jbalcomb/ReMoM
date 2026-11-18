@@ -1,0 +1,17 @@
+module_num=121
+module=D:\MOX\OTHERS\TRADE.C
+source=0121-trade.c.md
+range[0]=1:0x000F1A42 linear=0x00101A42 size=1525
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                                   SYMBOL                                  CHUNK
+m121f001  1    -      0x00101A42  1:0x000F1A42  static,code  Compute_N_Trade_And_Research_Pops      Compute_N_Trade_And_Research_Pops_      regions/07-object-1/00186E54-00187653.txt
+m121f002  2    -      0x00101B3C  1:0x000F1B3C  code         Base_Trade_Agreement_Goal              Base_Trade_Agreement_Goal_              regions/07-object-1/00186E54-00187653.txt
+m121f003  3    -      0x00101BA4  1:0x000F1BA4  static,code  Trade_Agreement_Goal                   Trade_Agreement_Goal_                   regions/07-object-1/00186E54-00187653.txt
+m121f004  4    -      0x00101C93  1:0x000F1C93  code         Base_Research_Agreement_Goal           Base_Research_Agreement_Goal_           regions/07-object-1/00186E54-00187653.txt
+m121f005  5    -      0x00101CC5  1:0x000F1CC5  static,code  Research_Agreement_Goal                Research_Agreement_Goal_                regions/07-object-1/00186E54-00187653.txt
+m121f006  6    -      0x00101D53  1:0x000F1D53  static,code  Process_Trade_Agreement                Process_Trade_Agreement_                regions/07-object-1/00186E54-00187653.txt
+m121f007  7    -      0x00101DE5  1:0x000F1DE5  static,code  Process_Research_Agreement             Process_Research_Agreement_             regions/07-object-1/00186E54-00187653.txt
+m121f008  8    -      0x00101E77  1:0x000F1E77  code         Process_Trade_And_Research_Agreements  Process_Trade_And_Research_Agreements_  regions/07-object-1/00186E54-00187653.txt
+m121f009  9    -      0x00101EE3  1:0x000F1EE3  code         Start_Trade_Agreement                  Start_Trade_Agreement_                  regions/07-object-1/00186E54-00187653.txt
+m121f010  10   -      0x00101F82  1:0x000F1F82  code         Start_Research_Agreement               Start_Research_Agreement_               regions/07-object-1/00186E54-00187653.txt

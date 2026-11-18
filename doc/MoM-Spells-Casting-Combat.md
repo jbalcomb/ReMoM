@@ -149,7 +149,7 @@ BU_CreateImage__SEGRAX()
     FLIC_Set_CurrentFrame(ptr_figure_pointer_seg[figure_set_idx], frame_num);
     Draw_Picture_To_Bitmap(ptr_figure_pointer_seg[figure_set_idx], GfxBuf_2400B);
     Combat_Figure_Banner_Color(player_idx);
-    Combat_Unit_Enchantment_Outline_Draw(enchantment_magic_realm);
+    Draw_Combat_Enchantment_Outline(enchantment_magic_realm);
 
 IMG_CMB_FX_Figure = Allocate_Next_Block(World_Data, 124);  // 124 PR, 1984 B
 
@@ -243,7 +243,7 @@ COMBAT.C
 ¿ ovr103 ?
     cnst_CmbCastError_2 db 'You are unable to throw spells at this time.',0
     cnst_CmbCastError_1 db 'You may only cast once per turn.',0
-    cnst_Cancel_2 db 'Cancel',0             ; DATA XREF: Combat_Cast_Spell_With_Caster+49o
+    cnst_Cancel_2 db 'Cancel',0             ; DATA XREF: Combat_Cast_Spell_With_Caster+49vo
     cnst_CasterSelectMsg db 'Who Will Cast',0
 
 ; shows the combat spell caster selection dialog and,

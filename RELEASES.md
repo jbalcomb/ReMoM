@@ -237,7 +237,7 @@ deferred to a later, separate effort aimed at **developers and game modders**:
   wizard, race, spell books, retorts) without the setup screens.
 - Deterministic worldgen via a fixed RNG `seed` (reproducible maps).
 - Runtime logging control (per-category enables, severity threshold).
-- Headless / replay flags (`--headless`, `--replay game.RMR`) used by the HeMoM
+- Windowless / replay flags (`--headless`, `--replay game.RMR`) used by the DeMoM
   test harness.
 
 Planned later: a Dev/Modder bundle (or docs) that ships the `ReMoM.ini` template

@@ -1,0 +1,411 @@
+file          stem      ext  bytes     date        name_case  class         layout   entries  has_name_table  text_fields  owner   duplicate_of
+adlib.mdi     adlib     mdi     14986  1996-12-24  lower      third_party
+adlibg.mdi    adlibg    mdi     16377  1996-12-24  lower      third_party
+adrv688.dig   adrv688   dig     11278  1996-12-24  lower      third_party
+aildrvr.lst   aildrvr   lst     16073  1996-12-24  lower      third_party
+amebafin.lbx  amebafin  lbx   2252696  1996-12-24  lower      simtex_video  smacker
+anatkfin.lbx  anatkfin  lbx   1331908  1996-12-24  lower      simtex_video  smacker
+ANTARMSG.LBX  ANTARMSG  LBX     11840  1997-02-28  UPPER      simtex_lbx    lbx           48               0           47
+antaroom.lbx  antaroom  lbx  11920316  1996-12-24  lower      simtex_lbx    lbx            2               0
+anwinfin.lbx  anwinfin  lbx   2564092  1996-12-24  lower      simtex_video  smacker
+app_pics.lbx  app_pics  lbx   1579284  1996-12-24  lower      simtex_lbx    lbx          212               0
+BEAMS.LBX     BEAMS     LBX   2813200  1997-02-04  UPPER      simtex_lbx    lbx          153               0
+BILLTEX2.LBX  BILLTEX2  LBX     19520  1997-02-28  UPPER      simtex_lbx    lbx          168               0          141  Bill
+BILLTEXT.LBX  BILLTEXT  LBX     50720  1997-03-19  UPPER      simtex_lbx    lbx          468               0          171  Bill
+bldg0.lbx     bldg0     lbx   1214864  1996-12-24  lower      simtex_lbx    lbx          360               0
+bldg1.lbx     bldg1     lbx   1029504  1996-12-24  lower      simtex_lbx    lbx          360               0
+bldg2.lbx     bldg2     lbx   1029944  1996-12-24  lower      simtex_lbx    lbx          360               0
+bldg3.lbx     bldg3     lbx   1099160  1996-12-24  lower      simtex_lbx    lbx          360               0
+bldg4.lbx     bldg4     lbx    934288  1996-12-24  lower      simtex_lbx    lbx          324               0
+bldg5.lbx     bldg5     lbx      2048  1996-12-24  lower      simtex_lbx    lbx            1               0
+buffer0.lbx   buffer0   lbx   2545704  1996-12-24  lower      simtex_lbx    lbx          288               0
+cmbtfgtr.lbx  cmbtfgtr  lbx     40608  1996-12-24  lower      simtex_lbx    lbx           80               0
+cmbtmisl.lbx  cmbtmisl  lbx    145872  1996-12-24  lower      simtex_lbx    lbx          176               0
+cmbtplnt.lbx  cmbtplnt  lbx    508656  1996-12-24  lower      simtex_lbx    lbx           63               0
+cmbtsfx.lbx   cmbtsfx   lbx   2288680  1996-12-24  lower      simtex_lbx    lbx           79               0
+cmbtshp.lbx   cmbtshp   lbx   3111240  1996-12-24  lower      simtex_lbx    lbx          360               0
+colbldg.lbx   colbldg   lbx    116904  1996-12-24  lower      simtex_lbx    lbx            7               0
+colgcbt.lbx   colgcbt   lbx     86324  1996-12-24  lower      simtex_lbx    lbx           22               0
+colony.lbx    colony    lbx    589320  1996-12-24  lower      simtex_lbx    lbx           19               0
+colony2.lbx   colony2   lbx    191092  1996-12-24  lower      simtex_lbx    lbx           53               0
+colpups.lbx   colpups   lbx    457100  1996-12-24  lower      simtex_lbx    lbx           23               0
+colpusp.lbx   colpusp   lbx    457100  1996-12-24  lower      simtex_lbx    lbx           23               0
+COLREFIT.LBX  COLREFIT  LBX    342280  1996-12-11  UPPER      simtex_lbx    lbx            5               0
+colroads.lbx  colroads  lbx    127376  1996-12-24  lower      simtex_lbx    lbx          156               0
+colsum.lbx    colsum    lbx    353616  1996-12-24  lower      simtex_lbx    lbx           22               0
+COLSYSDI.LBX  COLSYSDI  LBX     90548  1997-03-07  UPPER      simtex_lbx    lbx           66               0
+colveggi.lbx  colveggi  lbx     59064  1996-12-24  lower      simtex_lbx    lbx          104               0
+combat.lbx    combat    lbx   1075288  1996-12-24  lower      simtex_lbx    lbx           90               0
+confirm.lbx   confirm   lbx     79392  1996-12-24  lower      simtex_lbx    lbx            3               0
+council.lbx   council   lbx  12824736  1996-12-24  lower      simtex_lbx    lbx          197               0
+COUNCMSG.LBX  COUNCMSG  LBX     19184  1997-03-21  UPPER      simtex_lbx    lbx           84               0           79
+credits.lbx   credits   lbx     16657  1996-12-24  lower      simtex_lbx    lbx            1               0           59
+custmstr.lbx  custmstr  lbx      3979  1996-12-24  lower      simtex_lbx    lbx            4               0          144
+design.lbx    design    lbx   1005604  1996-12-24  lower      simtex_lbx    lbx           72               0
+dimtvfin.lbx  dimtvfin  lbx   2519064  1996-12-24  lower      simtex_video  smacker
+diplomat.lbx  diplomat  lbx  45930688  1996-12-24  lower      simtex_lbx    lbx           39               0
+diplomse.lbx  diplomse  lbx    939128  1996-12-24  lower      simtex_lbx    lbx          180               0          676
+diplomsf.lbx  diplomsf  lbx    939128  1996-12-24  lower      simtex_lbx    lbx          180               0                       diplomse.lbx
+diplomsg.lbx  diplomsg  lbx    939128  1996-12-24  lower      simtex_lbx    lbx          180               0                       diplomse.lbx
+diplomss.lbx  diplomss  lbx    939128  1996-12-24  lower      simtex_lbx    lbx          180               0                       diplomse.lbx
+dipstars.lbx  dipstars  lbx     10372  1996-12-24  lower      simtex_lbx    lbx           12               0
+engmsg.lbx    engmsg    lbx     23312  1996-12-24  lower      simtex_lbx    lbx            1               0           26
+ESTRINGS.LBX  ESTRINGS  LBX     23052  1997-02-18  UPPER      simtex_lbx    lbx            1               0          577  Eric
+eventmse.lbx  eventmse  lbx     48256  1996-12-24  lower      simtex_lbx    lbx          152               0           71
+eventmsf.lbx  eventmsf  lbx     48256  1996-12-24  lower      simtex_lbx    lbx          152               0                       eventmse.lbx
+eventmsg.lbx  eventmsg  lbx     48256  1996-12-24  lower      simtex_lbx    lbx          152               0                       eventmse.lbx
+eventmss.lbx  eventmss  lbx     48256  1996-12-24  lower      simtex_lbx    lbx          152               0                       eventmse.lbx
+events.lbx    events    lbx   2116204  1996-12-24  lower      simtex_lbx    lbx           38               0
+file_id.di    file_id   di        507  1996-12-24  lower      third_party
+filedata.lbx  filedata  lbx      3511  1996-12-24  lower      simtex_lbx    lbx            2               0
+firepts.lbx   firepts   lbx      9108  1996-12-24  lower      simtex_lbx    lbx            1               0
+fleet.lbx     fleet     lbx    826120  1996-12-24  lower      simtex_lbx    lbx          112               0
+flticons.lbx  flticons  lbx     26260  1996-12-24  lower      simtex_lbx    lbx           13               0
+fonts.lbx     fonts     lbx    212377  1996-12-24  lower      simtex_lbx    lbx           14               0
+GAME.LBX      GAME      LBX    933668  1997-03-25  UPPER      simtex_lbx    lbx           32               0
+genwinfn.lbx  genwinfn  lbx   4739776  1996-12-24  lower      simtex_video  smacker
+gstar.lbx     gstar     lbx    195800  1996-12-24  lower      simtex_lbx    lbx           33               0
+HELP.LBX      HELP      LBX   1014281  1997-03-20  UPPER      simtex_lbx    lbx           17               0         1629
+HERODATA.LBX  HERODATA  LBX      6005  1997-02-21  UPPER      simtex_lbx    lbx            1               0          130
+HESTRNGS.LBX  HESTRNGS  LBX     15573  1997-03-19  UPPER      simtex_lbx    lbx            1               0          373  Harold
+hof.m2        hof       m2        250  1996-12-24  lower      runtime
+ifonts.lbx    ifonts    lbx    102553  1996-12-24  lower      simtex_lbx    lbx            5               0
+inbox.lbx     inbox     lbx     96672  1996-12-24  lower      simtex_lbx    lbx            2               0
+info.lbx      info      lbx    231252  1996-12-24  lower      simtex_lbx    lbx           26               0
+jammer.dig    jammer    dig      3219  1996-12-24  lower      third_party
+JIMTEXT.LBX   JIMTEXT   LBX     53840  1997-03-06  UPPER      simtex_lbx    lbx          498               0          448  Jim
+JIMTEXT2.LBX  JIMTEXT2  LBX     51968  1997-03-19  UPPER      simtex_lbx    lbx          480               0          431  Jim
+KENTEXT.LBX   KENTEXT   LBX     51968  1997-03-24  UPPER      simtex_lbx    lbx          480               0          387  Ken
+KENTEXT1.LBX  KENTEXT1  LBX     20144  1997-03-24  UPPER      simtex_lbx    lbx          174               0          133  Ken
+loadsave.lbx  loadsave  lbx    465568  1996-12-24  lower      simtex_lbx    lbx           16               0
+logo.lbx      logo      lbx   1177276  1996-12-24  lower      simtex_lbx    lbx            2               0
+loserfin.lbx  loserfin  lbx   5762376  1996-12-24  lower      simtex_video  smacker
+mainmenu.lbx  mainmenu  lbx   5767896  1996-12-24  lower      simtex_lbx    lbx           44               0
+mainpups.lbx  mainpups  lbx    885392  1996-12-24  lower      simtex_lbx    lbx           84               0
+MAINTEXT.LBX  MAINTEXT  LBX     10504  1997-01-28  UPPER      simtex_lbx    lbx           14               0           14
+monster.lbx   monster   lbx    440532  1996-12-24  lower      simtex_lbx    lbx           26               0
+mox.set       mox       set       553  1996-12-24  lower      runtime
+mpu401.mdi    mpu401    mdi      1896  1996-12-24  lower      third_party
+MSGENG.LBX    MSGENG    LBX    410244  1997-01-09  UPPER      simtex_lbx    lbx            1               0          388
+mt32mpu.mdi   mt32mpu   mdi      6980  1996-12-24  lower      third_party
+multigm.lbx   multigm   lbx   2673020  1996-12-24  lower      simtex_lbx    lbx          261               0
+ndata.lbx     ndata     lbx      3384  1996-12-24  lower      simtex_lbx    lbx            1               0
+newgame.lbx   newgame   lbx    361108  1996-12-24  lower      simtex_lbx    lbx           30               0
+nextplyr.lbx  nextplyr  lbx    307420  1996-12-24  lower      simtex_lbx    lbx            2               0
+null.mdi      null      mdi      1609  1996-12-24  lower      third_party
+ocpol.lbx     ocpol     lbx     88660  1996-12-24  lower      simtex_lbx    lbx            5               0
+officer.lbx   officer   lbx   2450392  1996-12-24  lower      simtex_lbx    lbx          344               0
+opl3.mdi      opl3      mdi     16387  1996-12-24  lower      third_party
+ORION2.EXE    ORION2    EXE   2612010  1997-03-26  UPPER      simtex_exe
+ORION95.EXE   ORION95   EXE   1564160  1997-03-26  UPPER      simtex_exe
+orioncd.ini   orioncd   ini        51  1996-12-24  lower      runtime
+orionfin.lbx  orionfin  lbx   1992520  1996-12-24  lower      simtex_video  smacker
+pas.mdi       pas       mdi     15425  1996-12-24  lower      third_party
+pasplus.mdi   pasplus   mdi     16458  1996-12-24  lower      third_party
+PATCH13.LBX   PATCH13   LBX     30052  1996-12-12  UPPER      simtex_lbx    lbx            2               0
+pcspkr.mdi    pcspkr    mdi      4705  1996-12-24  lower      third_party
+planets.lbx   planets   lbx   5513320  1996-12-24  lower      simtex_lbx    lbx           30               0
+playspec.lbx  playspec  lbx      3736  1996-12-24  lower      simtex_lbx    lbx            4               0           63
+plntdfin.lbx  plntdfin  lbx    941712  1996-12-24  lower      simtex_video  smacker
+plntsum.lbx   plntsum   lbx    299828  1996-12-24  lower      simtex_lbx    lbx           84               0
+proaudio.dig  proaudio  dig      2127  1996-12-24  lower      third_party
+raceicon.lbx  raceicon  lbx    125276  1996-12-24  lower      simtex_lbx    lbx          171               0
+racename.lbx  racename  lbx      4132  1996-12-24  lower      simtex_lbx    lbx            1               0           97
+raceopt.lbx   raceopt   lbx    657404  1996-12-24  lower      simtex_lbx    lbx            7               0
+racerprt.lbx  racerprt  lbx    155984  1996-12-24  lower      simtex_lbx    lbx           10               0
+RACES.LBX     RACES     LBX    532412  1997-02-24  UPPER      simtex_lbx    lbx           64               0
+racesel.lbx   racesel   lbx   2494928  1996-12-24  lower      simtex_lbx    lbx          138               0
+RACESTUF.LBX  RACESTUF  LBX      9471  1997-03-19  UPPER      simtex_lbx    lbx           14               0          416
+rap10.dig     rap10     dig      2849  1996-12-24  lower      third_party
+Readme.txt    Readme    txt     18735  1997-04-11  Title      publisher
+REFITPUP.LBX  REFITPUP  LBX    342280  1996-12-11  UPPER      simtex_lbx    lbx            5               0
+rkernel.com   rkernel   com     31095  1996-12-24  lower      third_party
+RSTRING0.LBX  RSTRING0  LBX      8552  1997-02-24  UPPER      simtex_lbx    lbx            1               0          176
+sample.ad     sample    ad       3622  1996-12-24  lower      third_party
+sample.bnk    sample    bnk     20320  1996-12-24  lower      third_party
+sample.cat    sample    cat     34826  1996-12-24  lower      third_party
+sample.mt     sample    mt      65026  1996-12-24  lower      third_party
+sample.opl    sample    opl      5591  1996-12-24  lower      third_party
+save10.gam    save10    gam    208000  1996-12-24  lower      runtime
+sb16.dig      sb16      dig      2812  1996-12-24  lower      third_party
+sbawe32.mdi   sbawe32   mdi     32694  1996-12-24  lower      third_party
+sblaster.dig  sblaster  dig      2984  1996-12-24  lower      third_party
+sblaster.mdi  sblaster  mdi     15118  1996-12-24  lower      third_party
+sbpro.dig     sbpro     dig      2763  1996-12-24  lower      third_party
+sbpro1.mdi    sbpro1    mdi     15471  1996-12-24  lower      third_party
+sbpro2.mdi    sbpro2    mdi     16541  1996-12-24  lower      third_party
+science.lbx   science   lbx    965928  1996-12-24  lower      simtex_lbx    lbx            3               0
+score.lbx     score     lbx    656508  1996-12-24  lower      simtex_lbx    lbx           17               0
+setsound.exe  setsound  exe    325221  1996-12-24  lower      third_party
+shipname.lbx  shipname  lbx     12804  1996-12-24  lower      simtex_lbx    lbx            1               0          671
+ships.lbx     ships     lbx    585096  1996-12-24  lower      simtex_lbx    lbx          449               0
+SKILDESC.LBX  SKILDESC  LBX      9967  1997-01-28  UPPER      simtex_lbx    lbx            2               0           54
+sndscape.dig  sndscape  dig      4171  1996-12-24  lower      third_party
+sndscape.mdi  sndscape  mdi      2971  1996-12-24  lower      third_party
+sound.lbx     sound     lbx   4250888  1996-12-24  lower      simtex_lbx    lbx           69               0
+sphersfx.lbx  sphersfx  lbx    534740  1996-12-24  lower      simtex_lbx    lbx            2               0
+sr_r0_sc.lbx  sr_r0_sc  lbx    716764  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r0_sp.lbx  sr_r0_sp  lbx    737188  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r0_tr.lbx  sr_r0_tr  lbx    718212  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r1_sc.lbx  sr_r1_sc  lbx   1013996  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r1_sp.lbx  sr_r1_sp  lbx   1025972  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r1_tr.lbx  sr_r1_tr  lbx    799764  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r2_sc.lbx  sr_r2_sc  lbx   1074820  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r2_sp.lbx  sr_r2_sp  lbx    991592  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r2_tr.lbx  sr_r2_tr  lbx   1202888  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r3_sc.lbx  sr_r3_sc  lbx    624356  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r3_sp.lbx  sr_r3_sp  lbx    552844  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r3_tr.lbx  sr_r3_tr  lbx    485204  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r4_sc.lbx  sr_r4_sc  lbx    651764  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r4_sp.lbx  sr_r4_sp  lbx    644164  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r4_tr.lbx  sr_r4_tr  lbx    594940  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r5_sc.lbx  sr_r5_sc  lbx    705132  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r5_sp.lbx  sr_r5_sp  lbx    730128  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r5_tr.lbx  sr_r5_tr  lbx    499492  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r6_sc.lbx  sr_r6_sc  lbx    865420  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r6_sp.lbx  sr_r6_sp  lbx    779948  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r6_tr.lbx  sr_r6_tr  lbx    754596  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r7_sc.lbx  sr_r7_sc  lbx   1049704  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r7_sp.lbx  sr_r7_sp  lbx    715752  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r7_tr.lbx  sr_r7_tr  lbx    708712  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r8_sc.lbx  sr_r8_sc  lbx    751548  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r8_sp.lbx  sr_r8_sp  lbx    782716  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r8_tr.lbx  sr_r8_tr  lbx    511276  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r9_sc.lbx  sr_r9_sc  lbx    552916  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r9_sp.lbx  sr_r9_sp  lbx    781428  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_r9_tr.lbx  sr_r9_tr  lbx    709828  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_ra_sc.lbx  sr_ra_sc  lbx    919652  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_ra_sp.lbx  sr_ra_sp  lbx    827156  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_ra_tr.lbx  sr_ra_tr  lbx    858748  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rb_sc.lbx  sr_rb_sc  lbx   1496428  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rb_sp.lbx  sr_rb_sp  lbx   1741444  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rb_tr.lbx  sr_rb_tr  lbx   1593788  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rc_sc.lbx  sr_rc_sc  lbx   1867340  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rc_sp.lbx  sr_rc_sp  lbx   1863220  1996-12-24  lower      simtex_lbx    lbx            1               0
+sr_rc_tr.lbx  sr_rc_tr  lbx   1877684  1996-12-24  lower      simtex_lbx    lbx            1               0
+starbg.lbx    starbg    lbx   1104324  1996-12-24  lower      simtex_lbx    lbx           54               0
+starname.lbx  starname  lbx     14686  1996-12-24  lower      simtex_lbx    lbx            2               0          932
+sysdisp.lbx   sysdisp   lbx     88568  1996-12-24  lower      simtex_lbx    lbx           62               0
+tandy.mdi     tandy     mdi      5010  1996-12-24  lower      third_party
+tanm_001.lbx  tanm_001  lbx    286680  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_002.lbx  tanm_002  lbx    685000  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_003.lbx  tanm_003  lbx    396296  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_004.lbx  tanm_004  lbx    513096  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_005.lbx  tanm_005  lbx    273208  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_006.lbx  tanm_006  lbx    225304  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_007.lbx  tanm_007  lbx    205624  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_008.lbx  tanm_008  lbx    206760  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_009.lbx  tanm_009  lbx    411984  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_010.lbx  tanm_010  lbx    290720  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_011.lbx  tanm_011  lbx    189720  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_012.lbx  tanm_012  lbx    162208  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_013.lbx  tanm_013  lbx    272296  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_014.lbx  tanm_014  lbx    315904  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_015.lbx  tanm_015  lbx    483272  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_016.lbx  tanm_016  lbx    371512  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_017.lbx  tanm_017  lbx    175104  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_018.lbx  tanm_018  lbx    254376  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_019.lbx  tanm_019  lbx    352416  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_020.lbx  tanm_020  lbx    455856  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_021.lbx  tanm_021  lbx    266072  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_022.lbx  tanm_022  lbx    424056  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_023.lbx  tanm_023  lbx    605304  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_024.lbx  tanm_024  lbx    756928  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_025.lbx  tanm_025  lbx    395744  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_026.lbx  tanm_026  lbx    202256  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_027.lbx  tanm_027  lbx    353640  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_028.lbx  tanm_028  lbx    675392  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_029.lbx  tanm_029  lbx    334344  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_030.lbx  tanm_030  lbx    390296  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_031.lbx  tanm_031  lbx    141944  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_032.lbx  tanm_032  lbx    396984  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_033.lbx  tanm_033  lbx    415096  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_034.lbx  tanm_034  lbx    347048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_035.lbx  tanm_035  lbx    290592  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_036.lbx  tanm_036  lbx    279200  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_037.lbx  tanm_037  lbx    383648  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_038.lbx  tanm_038  lbx    275640  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_039.lbx  tanm_039  lbx    336048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_040.lbx  tanm_040  lbx    222104  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_041.lbx  tanm_041  lbx    288616  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_042.lbx  tanm_042  lbx    237928  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_043.lbx  tanm_043  lbx    291528  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_044.lbx  tanm_044  lbx    158872  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_045.lbx  tanm_045  lbx    350400  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_046.lbx  tanm_046  lbx    263944  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_047.lbx  tanm_047  lbx    290688  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_048.lbx  tanm_048  lbx    504680  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_049.lbx  tanm_049  lbx    256520  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_050.lbx  tanm_050  lbx    210680  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_051.lbx  tanm_051  lbx    233616  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_052.lbx  tanm_052  lbx    483288  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_053.lbx  tanm_053  lbx    426888  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_054.lbx  tanm_054  lbx    150632  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_055.lbx  tanm_055  lbx    682280  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_056.lbx  tanm_056  lbx    456424  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_057.lbx  tanm_057  lbx    520520  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_058.lbx  tanm_058  lbx    312640  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_059.lbx  tanm_059  lbx    315608  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_060.lbx  tanm_060  lbx    377008  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_061.lbx  tanm_061  lbx    440168  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_062.lbx  tanm_062  lbx    305048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_063.lbx  tanm_063  lbx    364312  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_064.lbx  tanm_064  lbx    544744  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_065.lbx  tanm_065  lbx    467968  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_066.lbx  tanm_066  lbx    185648  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_067.lbx  tanm_067  lbx    237800  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_068.lbx  tanm_068  lbx    439440  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_069.lbx  tanm_069  lbx    315856  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_070.lbx  tanm_070  lbx    165576  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_071.lbx  tanm_071  lbx    228736  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_072.lbx  tanm_072  lbx    169432  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_073.lbx  tanm_073  lbx    158208  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_074.lbx  tanm_074  lbx    392208  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_075.lbx  tanm_075  lbx    295200  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_076.lbx  tanm_076  lbx    222120  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_077.lbx  tanm_077  lbx    254480  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_078.lbx  tanm_078  lbx    266752  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_079.lbx  tanm_079  lbx    186456  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_080.lbx  tanm_080  lbx    283192  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_081.lbx  tanm_081  lbx    476048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_082.lbx  tanm_082  lbx    320480  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_083.lbx  tanm_083  lbx    192840  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_084.lbx  tanm_084  lbx    340672  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_085.lbx  tanm_085  lbx    287784  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_086.lbx  tanm_086  lbx    271136  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_087.lbx  tanm_087  lbx    320880  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_088.lbx  tanm_088  lbx    161416  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_089.lbx  tanm_089  lbx    224736  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_090.lbx  tanm_090  lbx    270064  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_091.lbx  tanm_091  lbx    369592  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_092.lbx  tanm_092  lbx    269864  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_093.lbx  tanm_093  lbx    279320  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_094.lbx  tanm_094  lbx    267432  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_095.lbx  tanm_095  lbx    141776  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_096.lbx  tanm_096  lbx    220248  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_097.lbx  tanm_097  lbx    238376  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_098.lbx  tanm_098  lbx    425632  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_099.lbx  tanm_099  lbx    325528  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_100.lbx  tanm_100  lbx    136128  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_101.lbx  tanm_101  lbx    164112  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_102.lbx  tanm_102  lbx    180576  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_103.lbx  tanm_103  lbx    214768  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_104.lbx  tanm_104  lbx    277456  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_105.lbx  tanm_105  lbx    247840  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_106.lbx  tanm_106  lbx    123960  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_107.lbx  tanm_107  lbx    312800  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_108.lbx  tanm_108  lbx    160976  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_109.lbx  tanm_109  lbx    255240  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_110.lbx  tanm_110  lbx    360336  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_111.lbx  tanm_111  lbx    429144  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_112.lbx  tanm_112  lbx    332152  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_113.lbx  tanm_113  lbx    241120  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_114.lbx  tanm_114  lbx    368120  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_115.lbx  tanm_115  lbx    156144  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_116.lbx  tanm_116  lbx    393128  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_117.lbx  tanm_117  lbx    621272  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_118.lbx  tanm_118  lbx    299864  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_119.lbx  tanm_119  lbx    190432  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_120.lbx  tanm_120  lbx    236616  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_121.lbx  tanm_121  lbx    117888  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_122.lbx  tanm_122  lbx    223616  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_123.lbx  tanm_123  lbx    152208  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_124.lbx  tanm_124  lbx    249112  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_125.lbx  tanm_125  lbx    375312  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_126.lbx  tanm_126  lbx    355808  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_127.lbx  tanm_127  lbx    328560  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_128.lbx  tanm_128  lbx    184464  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_129.lbx  tanm_129  lbx    346968  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_130.lbx  tanm_130  lbx    299592  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_131.lbx  tanm_131  lbx    330680  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_132.lbx  tanm_132  lbx    267328  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_133.lbx  tanm_133  lbx    304912  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_134.lbx  tanm_134  lbx    229512  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_135.lbx  tanm_135  lbx    347416  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_136.lbx  tanm_136  lbx    282768  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_137.lbx  tanm_137  lbx    158896  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_138.lbx  tanm_138  lbx    131600  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_139.lbx  tanm_139  lbx    146112  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_140.lbx  tanm_140  lbx    247096  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_141.lbx  tanm_141  lbx    266696  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_142.lbx  tanm_142  lbx    213192  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_143.lbx  tanm_143  lbx    186464  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_144.lbx  tanm_144  lbx    276264  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_145.lbx  tanm_145  lbx    136464  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_146.lbx  tanm_146  lbx    149608  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_147.lbx  tanm_147  lbx    321176  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_148.lbx  tanm_148  lbx    323696  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_149.lbx  tanm_149  lbx    125648  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_150.lbx  tanm_150  lbx    274296  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_151.lbx  tanm_151  lbx    292528  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_152.lbx  tanm_152  lbx    293528  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_153.lbx  tanm_153  lbx    406880  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_154.lbx  tanm_154  lbx    394736  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_155.lbx  tanm_155  lbx    292280  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_156.lbx  tanm_156  lbx    320064  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_157.lbx  tanm_157  lbx    173080  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_158.lbx  tanm_158  lbx    287168  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_159.lbx  tanm_159  lbx    305704  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_160.lbx  tanm_160  lbx    318912  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_161.lbx  tanm_161  lbx    408936  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_162.lbx  tanm_162  lbx    180992  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_163.lbx  tanm_163  lbx    352872  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_164.lbx  tanm_164  lbx    226448  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_165.lbx  tanm_165  lbx    429984  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_166.lbx  tanm_166  lbx    199344  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_167.lbx  tanm_167  lbx    244024  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_168.lbx  tanm_168  lbx    282256  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_169.lbx  tanm_169  lbx    270752  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_170.lbx  tanm_170  lbx    308136  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_171.lbx  tanm_171  lbx    223824  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_172.lbx  tanm_172  lbx    314064  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_173.lbx  tanm_173  lbx    219408  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_174.lbx  tanm_174  lbx    240200  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_175.lbx  tanm_175  lbx    288800  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_176.lbx  tanm_176  lbx    451544  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_177.lbx  tanm_177  lbx    334432  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_178.lbx  tanm_178  lbx    254528  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_179.lbx  tanm_179  lbx    561920  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_180.lbx  tanm_180  lbx    386384  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_181.lbx  tanm_181  lbx    259664  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_182.lbx  tanm_182  lbx    284712  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_183.lbx  tanm_183  lbx    679344  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_184.lbx  tanm_184  lbx    588128  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_185.lbx  tanm_185  lbx    432264  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_186.lbx  tanm_186  lbx    248216  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_187.lbx  tanm_187  lbx    576048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_188.lbx  tanm_188  lbx    318088  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_189.lbx  tanm_189  lbx    205592  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_190.lbx  tanm_190  lbx    549344  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_191.lbx  tanm_191  lbx    407160  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_192.lbx  tanm_192  lbx    326472  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_193.lbx  tanm_193  lbx    170696  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_194.lbx  tanm_194  lbx    647360  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_195.lbx  tanm_195  lbx    276440  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_196.lbx  tanm_196  lbx    521376  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_197.lbx  tanm_197  lbx    255576  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_198.lbx  tanm_198  lbx    250544  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_199.lbx  tanm_199  lbx    724232  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_200.lbx  tanm_200  lbx    276104  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_201.lbx  tanm_201  lbx    454872  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_202.lbx  tanm_202  lbx    116792  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_203.lbx  tanm_203  lbx    452904  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_204.lbx  tanm_204  lbx    246704  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_205.lbx  tanm_205  lbx    242592  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_206.lbx  tanm_206  lbx    246536  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_207.lbx  tanm_207  lbx    257832  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_208.lbx  tanm_208  lbx    264368  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_209.lbx  tanm_209  lbx    236640  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_210.lbx  tanm_210  lbx    236048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_211.lbx  tanm_211  lbx    262832  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_212.lbx  tanm_212  lbx    236048  1996-12-24  lower      simtex_lbx    lbx            1               0
+tanm_213.lbx  tanm_213  lbx    262832  1996-12-24  lower      simtex_lbx    lbx            1               0
+TECHDESC.LBX  TECHDESC  LBX     12966  1997-02-06  UPPER      simtex_lbx    lbx            4               0          191
+TECHNAME.LBX  TECHNAME  LBX     58451  1997-03-19  UPPER      simtex_lbx    lbx            6               0         2539
+techsel.lbx   techsel   lbx    773144  1996-12-24  lower      simtex_lbx    lbx           28               0
+textbox.lbx   textbox   lbx     43488  1996-12-24  lower      simtex_lbx    lbx            5               0
+turnsum.lbx   turnsum   lbx    141308  1996-12-24  lower      simtex_lbx    lbx            4               0
+ultra.dig     ultra     dig      9478  1996-12-24  lower      third_party
+ultra.mdi     ultra     mdi     49672  1996-12-24  lower      third_party
+warning.lbx   warning   lbx    453528  1996-12-24  lower      simtex_lbx    lbx            1               0
+wininfin.lbx  wininfin  lbx   5540012  1996-12-24  lower      simtex_video  smacker

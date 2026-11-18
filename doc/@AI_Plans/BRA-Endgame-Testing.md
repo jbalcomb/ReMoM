@@ -95,9 +95,9 @@ work will turn green.
 |---|---|
 | **Determinism** | A win/lose test that varies run-to-run under a fixed seed is not a regression test. Endgame paths draw RNG (banishment forfeit rolls, spell awards) — seed pinning is mandatory. |
 | **Automatability** | Can it run pass/fail in CI / pre-push without a human? |
-| **Substrate fidelity** | Logic headless, cutscenes windowed. Do not force a victory animation through `Platform_Headless` (the exact mistake `BRA-Combat-Testing.md` records). |
+| **Substrate fidelity** | Logic windowless, cutscenes windowed. Do not force a victory animation through `Platform_Headless` (the exact mistake `BRA-Combat-Testing.md` records). |
 | **Reachability** | *New for endgame:* how do you get the game into a near-defeat / mid-banishment / about-to-win state cheaply and deterministically? This is the crux (§4). |
-| **Reuse** | HeMoM fixtures, `savedump` + `check_save_fields`, `.hms`/`.RMR`, `refresh_asserts.py`. |
+| **Reuse** | DeMoM fixtures, `savedump` + `check_save_fields`, `.hms`/`.RMR`, `refresh_asserts.py`. |
 | **Observability** | Can a developer *watch* the banishment/victory sequence, not just read a field diff? |
 | **Maintenance cost** | Seed-stream sensitivity; golden churn; brittleness to unrelated RNG-draw changes. |
 
@@ -111,14 +111,14 @@ work will turn green.
 ## 4. The reachability question (the crux)
 
 The decisive new question versus combat testing: **how do we drive the game to each endgame transition,
-headlessly and deterministically, without playing (or rendering) a full game?**
+windowless and deterministically, without playing (or rendering) a full game?**
 
 ### Option A — Patch-and-observe
 Binary-patch a save into the *post-condition* (fortress already inactive, `Defeated_Wizards` bit
 already set), load it, and assert the consumers behave (Magic screen draws a grey gem, next-turn skips
 the wizard, etc.).
 
-- **Pros:** trivial, fully headless, deterministic, no combat needed.
+- **Pros:** trivial, fully windowless, deterministic, no combat needed.
 - **Cons:** tests the *readers* of the state, not the *transition that produces it*. Won't catch a
   regression in `Resolve_Wizard_Conquest` itself.
 
@@ -130,9 +130,9 @@ Patch a wizard down to one city, then script an actual combat that captures it, 
 - **Cons:** needs the tactical/strategic combat substrate (windowed per `BRA-Combat-Testing.md`);
   brittle; slow; couples endgame tests to combat determinism.
 
-### Option C — HeMoM direct-invoke hook (recommended for the logic layer)
-Add a headless entry mode to `HeMoM.c`, **exactly analogous to the existing `--combat` mode**
-([HeMoM.c `--combat`](../../src/HeMoM.c)), that loads a patched save and calls one endgame entry point
+### Option C — DeMoM direct-invoke hook (recommended for the logic layer)
+Add a windowless entry mode to `DeMoM.c`, **exactly analogous to the existing `--combat` mode**
+([DeMoM.c `--combat`](../../src/DeMoM.c)), that loads a patched save and calls one endgame entry point
 directly — `Resolve_Wizard_Conquest`, `Cast_Spell_Of_Return`, `Spell_Of_Mastery`, or `GAME_IsWon__STUB` — then
 dumps the resulting save for `check_save_fields`.
 
@@ -142,7 +142,7 @@ dumps the resulting save for `check_save_fields`.
   precondition (e.g. the loser genuinely owns the city being lost) or the function reads stale state.
   Functions that branch into cutscene draws must be entered with rendering guarded/skipped.
 - **Verdict:** the right harness for the logic layer. Cutscenes stay in the windowed layer (Option-B-ish
-  observation), never asserted headlessly.
+  observation), never asserted windowless.
 
 **Chosen:** **C for the state-transition layer, patch-and-observe (A) where a transition's normal call
 context is too entangled to synthesize, windowed observation for cutscenes.** B is available but not a
@@ -154,7 +154,7 @@ default.
 
 | Layer | Nature tested | Substrate | Harness | Determinism / mode | When run |
 |---|---|---|---|---|---|
-| **Endgame-state regression** | Transition *logic* (banish, defeat, return, mastery flags) | Headless | HeMoM endgame direct-invoke hook + patched save + dump + `check_save_fields` | Seeded, pass/fail | Every build / pre-push / CI |
+| **Endgame-state regression** | Transition *logic* (banish, defeat, return, mastery flags) | Windowless | DeMoM endgame direct-invoke hook + patched save + dump + `check_save_fields` | Seeded, pass/fail | Every build / pre-push / CI |
 | **Endgame-cutscene harness** | *Presentation* (limbo fall, victory anim, SoM sphere, scrolls) | Windowed (real `Platform`) | `demo_vga`-style target / `ReMoM --scenario` | Observed; `.RMR` replay for repro | Development, debugging, visual verification |
 | **Endgame predicates** | Individual decisions (`GAME_IsWon`, banish-vs-defeat) | None (unit test) | GTest, synthesized wizard/city state | Seeded, pass/fail | Every build — *after* the stubs are reconstructed |
 
@@ -207,13 +207,13 @@ State fields and their save offsets (player *i* base `P = 2536 + 1224*i`, all li
 ## 8. What did and did not fit the goal
 
 **Fit:**
-- Endgame-state transitions via a HeMoM direct-invoke hook: deterministic, headless, reuses the whole
+- Endgame-state transitions via a DeMoM direct-invoke hook: deterministic, windowless, reuses the whole
   save-dump/assert pipeline. Clean fit for regression detection of the implemented layer.
 - Windowed cutscene observation modeled on `demo_vga` / `ReMoM --scenario`: clean fit for watching
   the sequences once their finalizers exist.
 
 **Did not fit:**
-- Asserting a terminal "game won/lost" headlessly *today* — blocked by the `End_Of_Game_Score` stubs. Recorded
+- Asserting a terminal "game won/lost" windowless *today* — blocked by the `End_Of_Game_Score` stubs. Recorded
   as blocked, not forced.
 - Driving every endgame via full scripted playthroughs — too slow/brittle; reachability is solved by
   patching + direct-invoke, not by playing the whole game.

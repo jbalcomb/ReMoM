@@ -5,11 +5,11 @@ Disjunct True
 Spell Bind
 
 
-Spell_Target_Global_Enchantment_Screen_Load()
-Spell_Target_Global_Enchantment_Screen_Draw()
-Spell_Target_Global_Enchantment_Screen()
-Spell_Target_Global_Enchantment_Bind__WIP()
-Spell_Target_Global_Enchantment_Disjunct__WIP()
+Load_Global_Enchantment_Screen()
+Draw_Global_Enchantment_Screen()
+Global_Enchantment_Screen()
+Global_Enchantment_Bind__WIP()
+Global_Enchantment_Disjunct__WIP()
 
 
 

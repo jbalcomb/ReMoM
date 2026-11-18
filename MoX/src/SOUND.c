@@ -105,7 +105,7 @@ char BLASTER__tokens[] = "AIDT";
 int16_t BLASTER__base[] = { 16, 10, 10, 10 };
 // WZD dseg:82C6                                                                                         ; BLASTER.C static variable
 // WZD dseg:82CE BE E8 C0 E8 C2 E8 CA E8                         cnst_TARGETS dw offset static_t.default_IO, offset static_t.default_IRQ, offset static_t.default_DMA, offset static_type
-// WZD dseg:82CE                                                                                         ; DATA XREF: _AIL_board_ID+F8r
+// WZD dseg:82CE                                                                                         ; DATA XREF: _AIL_board_ID+F8^r
 // WZD dseg:82CE                                                                                         ; BLASTER.C static variable
 
 // WZD dseg:82D6
@@ -119,12 +119,12 @@ char str_empty_string__seg038[] = "";
 
 // WZD dseg:82E1
 char str_prefix_GTL_filename[] = "FAT.";
-// WZD dseg:82E6 72 62 00                                        cnst_RB8 db 'rb',0                      ; DATA XREF: Play_Sound__WIP:loc_31D5Fo
+// WZD dseg:82E6 72 62 00                                        cnst_RB8 db 'rb',0                      ; DATA XREF: Play_Sound__WIP:loc_31D5F^o
 // WZD dseg:82E6                                                                                         ; should use dseg:28b8
-// WZD dseg:82E9 42 4C 41 53 54 45 52 00                         cnst_BLASTER_envvar db 'BLASTER',0      ; DATA XREF: _AIL_board_ID+9o
+// WZD dseg:82E9 42 4C 41 53 54 45 52 00                         cnst_BLASTER_envvar db 'BLASTER',0      ; DATA XREF: _AIL_board_ID+9^o
 // WZD dseg:82E9                                                                                         ; BLASTER.C character constant
 // WZD dseg:82F1 30 31 32 33 34 35 36 37 38 39 41 42 43 44 45 46+cnst_BLASTER_numbers db '0123456789ABCDEF',0
-// WZD dseg:82F1 00                                                                                      ; DATA XREF: _AIL_board_ID+BCr
+// WZD dseg:82F1 00                                                                                      ; DATA XREF: _AIL_board_ID+BC^r
 // WZD dseg:82F1                                                                                         ; BLASTER.C character constant
 
 // WZD dseg:8302
@@ -163,7 +163,7 @@ static char * audio_error_messages[] =
 
 // WZD dseg:E8B0 00 00                                           STATIC__len dw 0
 
-// WZD dseg:E8B2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+static_t AIL_drvr_desc <0>              ; DATA XREF: dseg:BLASTER__targetso ...
+// WZD dseg:E8B2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00+static_t AIL_drvr_desc <0>              ; DATA XREF: dseg:BLASTER__targets^o ...
 // WZD dseg:E8B2 00 00 00 00 00 00 00 00                                                                 ; BLASTER.C static variable
 
 // WZD dseg:E8CA
@@ -677,7 +677,7 @@ int16_t Audio_Init__WIP(int16_t midi_driver, int16_t sound_channels, int16_t MID
 
     stu_strcpy(GTL_filename, str_prefix_GTL_filename);
 
-    _fstrcpy(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
+    String_Copy_Far(SND_tbank_suffix, SND_MIDI_drvr_desc->data_suffix);
 
     stu_strcat(GTL_filename, SND_tbank_suffix);
 

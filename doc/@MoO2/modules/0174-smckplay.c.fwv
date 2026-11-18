@@ -1,0 +1,233 @@
+module_num=174
+module=F:\WLIBS\smack\smckplay.c
+source=0174-smckplay.c.md
+range[0]=1:0x0012259F linear=0x0013259F size=1285
+range[1]=2:0x0000C5F0 linear=0x0017C5F0 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME                                SYMBOL                               CHUNK
+m174f001  1    -      0x0013259F  1:0x0012259F  code  RADMALLOC                           RADMALLOC                            regions/07-object-1/001B7654-001B7E53.txt
+m174f002  2    -      0x00132614  1:0x00122614  code  RADFREE                             RADFREE                              regions/07-object-1/001B7654-001B7E53.txt
+m174f003  3    -      0x00132646  1:0x00122646  code  Open_Smacker_Animation              Open_Smacker_Animation_              regions/07-object-1/001B7654-001B7E53.txt
+m174f004  4    -      0x0013273E  1:0x0012273E  code  Set_Smacker_Animation_Frame         Set_Smacker_Animation_Frame_         regions/07-object-1/001B7654-001B7E53.txt
+m174f005  5    -      0x00132762  1:0x00122762  code  Get_Smacker_Animation_Height        Get_Smacker_Animation_Height_        regions/07-object-1/001B7654-001B7E53.txt
+m174f006  6    -      0x001327A3  1:0x001227A3  code  Get_Smacker_Animation_Width         Get_Smacker_Animation_Width_         regions/07-object-1/001B7654-001B7E53.txt
+m174f007  7    -      0x001327E4  1:0x001227E4  code  Get_Smacker_Animation_Total_Frames  Get_Smacker_Animation_Total_Frames_  regions/07-object-1/001B7654-001B7E53.txt
+m174f008  8    -      0x00132825  1:0x00122825  code  Get_Smacker_Animation_Frame         Get_Smacker_Animation_Frame_         regions/07-object-1/001B7E54-001B8653.txt
+m174f009  9    -      0x00132869  1:0x00122869  code  Draw_Smacker_Animation              Draw_Smacker_Animation_              regions/07-object-1/001B7E54-001B8653.txt
+m174f010  10   -      0x001329D4  1:0x001229D4  code  Close_Smacker_Animation             Close_Smacker_Animation_             regions/07-object-1/001B7E54-001B8653.txt
+m174f011  11   -      0x00132A11  1:0x00122A11  code  Set_Smacker_Palette                 Set_Smacker_Palette_                 regions/07-object-1/001B7E54-001B8653.txt
+-         -    -      0x0017C5F0  2:0x0000C5F0  data  _smk                                _smk                                 regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C5F4  2:0x0000C5F4  data  _lastkey                            _lastkey                             regions/08-object-2/001FA654-001FAE53.txt
+
+[Module variables]
+LINEAR      SEGOFF        NAME     TYPE
+0x0017C5F0  2:0x0000C5F0  smk      Smack *
+0x0017C5F4  2:0x0000C5F4  lastkey  unsigned int
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS   NAME                                TYPE                                              CHUNK
+m174f001  0x0013259F  1:0x0012259F  117   21        8         0xC      -    -            radmalloc                           void * (unsigned long); returns in EAX            regions/07-object-1/001B7654-001B7E53.txt
+m174f002  0x00132614  1:0x00122614  50    21        6         0xC      -    -            radfree                             void (void *)                                     regions/07-object-1/001B7654-001B7E53.txt
+m174f003  0x00132646  1:0x00122646  248   22        7         0x10     -    EAX,EDX,EBX  Open_Smacker_Animation              char (char *, char, unsigned int); returns in AL  regions/07-object-1/001B7654-001B7E53.txt
+m174f004  0x0013273E  1:0x0012273E  36    24        9         0x18     -    EAX          Set_Smacker_Animation_Frame         void (int)                                        regions/07-object-1/001B7654-001B7E53.txt
+m174f005  0x00132762  1:0x00122762  65    24        9         0x18     -    -            Get_Smacker_Animation_Height        int (void); returns in EAX                        regions/07-object-1/001B7654-001B7E53.txt
+m174f006  0x001327A3  1:0x001227A3  65    24        9         0x18     -    -            Get_Smacker_Animation_Width         int (void); returns in EAX                        regions/07-object-1/001B7654-001B7E53.txt
+m174f007  0x001327E4  1:0x001227E4  65    24        9         0x18     -    -            Get_Smacker_Animation_Total_Frames  int (void); returns in EAX                        regions/07-object-1/001B7654-001B7E53.txt
+m174f008  0x00132825  1:0x00122825  68    24        9         0x18     -    -            Get_Smacker_Animation_Frame         int (void); returns in EAX                        regions/07-object-1/001B7E54-001B8653.txt
+m174f009  0x00132869  1:0x00122869  363   23        8         0x14     -    EAX,EDX      Draw_Smacker_Animation              void (int, int)                                   regions/07-object-1/001B7E54-001B8653.txt
+m174f010  0x001329D4  1:0x001229D4  61    24        7         0x18     -    -            Close_Smacker_Animation             void (void)                                       regions/07-object-1/001B7E54-001B8653.txt
+m174f011  0x00132A11  1:0x00122A11  147   24        9         0x18     -    -            Set_Smacker_Palette                 void (void)                                       regions/07-object-1/001B7E54-001B8653.txt
+
+[Locals]
+KEY       ROUTINE                      BLOCK  LOCAL       LOCATION    TYPE
+m174f001  radmalloc                    -      numbytes    [EBP+0x10]  unsigned long
+m174f001  radmalloc                    -      temp        [EBP-0xC]   unsigned char *
+m174f001  radmalloc                    -      i           [EBP-0x4]   unsigned char
+m174f002  radfree                      -      ptr         [EBP+0x10]  void *
+m174f003  Open_Smacker_Animation       -      name        [EBP-0x14]  char *
+m174f003  Open_Smacker_Animation       -      sound_flag  [EBP-0x8]   char
+m174f003  Open_Smacker_Animation       -      user_flags  [EBP-0x10]  unsigned int
+m174f003  Open_Smacker_Animation       -      flags       [EBP-0xC]   int
+m174f003  Open_Smacker_Animation       -      filename    [EBP-0x78]  char[100]
+m174f004  Set_Smacker_Animation_Frame  -      frame_num   [EBP-0x4]   int
+m174f009  Draw_Smacker_Animation       -      x           [EBP-0x8]   int
+m174f009  Draw_Smacker_Animation       -      y           [EBP-0x4]   int
+m174f011  Set_Smacker_Palette          -      i           [EBP-0x8]   int
+m174f011  Set_Smacker_Palette          -      c           [EBP-0x4]   unsigned char *
+
+[Types]
+NUM  KIND       NAME                 DETAILS
+-    cue table  -                    source file table (C++)
+1    scope      struct               -
+2    scope      union                -
+3    scope      enum                 -
+4    scalar     signed char          int 1 bytes
+5    scalar     unsigned char        unsigned 1 bytes
+6    scalar     short                int 2 bytes
+7    scalar     unsigned short       unsigned 2 bytes
+8    scalar     int                  int 4 bytes
+9    scalar     unsigned int         unsigned 4 bytes
+10   typedef    char                 name for unsigned char (#5)
+11   typedef    char                 name for unsigned char (#5)
+12   typedef    size_t               name for unsigned int (#9)
+13   pointer    -                    near386; of char (#10)
+14   array      __va_list            0..0; of char * (#13)
+15   typedef    __va_list            name for char *[1] (#14)
+16   scalar     long                 int 4 bytes
+17   typedef    fpos_t               name for long (#16)
+18   typedef    fpos_t               name for long (#16)
+19   scalar     void                 void 1 bytes
+20   procedure  -                    near386; returns void (void)
+21   pointer    SmackTimerSetupType  near386; of void (void) (#20)
+22   typedef    SmackTimerSetupType  name for void (void) * (#21)
+23   scalar     unsigned long        unsigned 4 bytes
+24   procedure  -                    near386; returns unsigned long (void)
+25   pointer    SmackTimerReadType   near386; of unsigned long (void) (#24)
+26   typedef    SmackTimerReadType   name for unsigned long (void) * (#25)
+27   pointer    SmackTimerDoneType   near386; of void (void) (#20)
+28   typedef    SmackTimerDoneType   name for void (void) * (#27)
+29   typedef    time_t               name for unsigned long (#23)
+30   typedef    clock_t              name for unsigned long (#23)
+31   typedef    time_t               name for unsigned long (#23)
+32   typedef    UBYTE                name for unsigned char (#5)
+33   typedef    UWORD                name for unsigned short (#7)
+34   typedef    ULONG                name for unsigned long (#23)
+35   typedef    BYTE                 name for char (#10)
+36   typedef    WORD                 name for short (#6)
+37   typedef    LONG                 name for long (#16)
+38   pointer    CALLBACK             near386; of void (#19)
+39   typedef    CALLBACK             name for void * (#38)
+40   typedef    REALFAR              name for ULONG (#34)
+41   typedef    HTIMER               name for LONG (#37)
+42   array      -                    0..6; of unsigned long (#23)
+43   array      -                    0..6; of unsigned long (#23)
+44   array      -                    0..771; of unsigned char (#5)
+45   struct     struct SmackTag      25 fields, 916 bytes
+46   typedef    SmackTag             struct name for struct #45 (#45)
+47   typedef    Smack                name for struct SmackTag (#46)
+48   pointer    -                    near386; of Smack (#47)
+49   procedure  -                    near386; returns void * (unsigned long)
+50   pointer    -                    near386; of unsigned char (#5)
+51   procedure  -                    near386; returns void (void *)
+52   procedure  -                    near386; returns char (char *, char, unsigned int)
+53   array      -                    0..99; of char (#10)
+54   procedure  -                    near386; returns void (int)
+55   procedure  -                    near386; returns int (void)
+56   procedure  -                    near386; returns void (int, int)
+57   procedure  -                    near386; returns void (void)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER          OFFSET_VALUE  TYPE                TYPE_NAME
+45        field        Version         0             unsigned long       struct SmackTag
+45        field        Width           4             unsigned long       struct SmackTag
+45        field        Height          8             unsigned long       struct SmackTag
+45        field        Frames          12            unsigned long       struct SmackTag
+45        field        MSPerFrame      16            unsigned long       struct SmackTag
+45        field        SmackerType     20            unsigned long       struct SmackTag
+45        field        LargestInTrack  24            unsigned long[7]    struct SmackTag
+45        field        tablesize       52            unsigned long       struct SmackTag
+45        field        codesize        56            unsigned long       struct SmackTag
+45        field        absize          60            unsigned long       struct SmackTag
+45        field        detailsize      64            unsigned long       struct SmackTag
+45        field        typesize        68            unsigned long       struct SmackTag
+45        field        TrackType       72            unsigned long[7]    struct SmackTag
+45        field        extra           100           unsigned long       struct SmackTag
+45        field        NewPalette      104           unsigned long       struct SmackTag
+45        field        Palette         108           unsigned char[772]  struct SmackTag
+45        field        FrameNum        880           unsigned long       struct SmackTag
+45        field        LastRectx       884           unsigned long       struct SmackTag
+45        field        LastRecty       888           unsigned long       struct SmackTag
+45        field        LastRectw       892           unsigned long       struct SmackTag
+45        field        LastRecth       896           unsigned long       struct SmackTag
+45        field        OpenFlags       900           unsigned long       struct SmackTag
+45        field        LeftOfs         904           unsigned long       struct SmackTag
+45        field        TopOfs          908           unsigned long       struct SmackTag
+45        field        addr32          912           unsigned long       struct SmackTag
+
+[Line numbers]
+KEY       LINE   LINEAR      SEGOFF        FILEOFS
+m174f001  32769  0x0013259F  1:0x0012259F  0x001B7BF3
+m174f001  32774  0x001325B4  1:0x001225B4  0x001B7C08
+m174f001  32775  0x001325BA  1:0x001225BA  0x001B7C0E
+m174f001  32776  0x001325C3  1:0x001225C3  0x001B7C17
+m174f001  32778  0x001325E6  1:0x001225E6  0x001B7C3A
+m174f001  32779  0x001325F2  1:0x001225F2  0x001B7C46
+m174f001  32780  0x001325FA  1:0x001225FA  0x001B7C4E
+m174f001  32782  0x00132603  1:0x00122603  0x001B7C57
+m174f001  32783  0x00132609  1:0x00122609  0x001B7C5D
+m174f002  32785  0x00132614  1:0x00122614  0x001B7C68
+m174f002  32787  0x00132629  1:0x00122629  0x001B7C7D
+m174f002  32788  0x00132640  1:0x00122640  0x001B7C94
+m174f003  22     0x00132646  1:0x00122646  0x001B7C9A
+m174f003  27     0x00132665  1:0x00122665  0x001B7CB9
+m174f003  28     0x00132670  1:0x00122670  0x001B7CC4
+m174f003  30     0x0013267D  1:0x0012267D  0x001B7CD1
+m174f003  32     0x00132687  1:0x00122687  0x001B7CDB
+m174f003  34     0x0013268E  1:0x0012268E  0x001B7CE2
+m174f003  36     0x00132690  1:0x00122690  0x001B7CE4
+m174f003  39     0x00132697  1:0x00122697  0x001B7CEB
+m174f003  41     0x0013269D  1:0x0012269D  0x001B7CF1
+m174f003  42     0x001326B1  1:0x001226B1  0x001B7D05
+m174f003  44     0x001326BA  1:0x001226BA  0x001B7D0E
+m174f003  46     0x001326C3  1:0x001226C3  0x001B7D17
+m174f003  50     0x001326C9  1:0x001226C9  0x001B7D1D
+m174f003  51     0x001326D6  1:0x001226D6  0x001B7D2A
+m174f003  52     0x001326E1  1:0x001226E1  0x001B7D35
+m174f003  56     0x001326F5  1:0x001226F5  0x001B7D49
+m174f003  58     0x0013270A  1:0x0012270A  0x001B7D5E
+m174f003  62     0x00132721  1:0x00122721  0x001B7D75
+m174f003  64     0x0013272A  1:0x0012272A  0x001B7D7E
+m174f003  66     0x00132730  1:0x00122730  0x001B7D84
+m174f003  67     0x00132734  1:0x00122734  0x001B7D88
+m174f004  68     0x0013273E  1:0x0012273E  0x001B7D92
+m174f004  71     0x00132759  1:0x00122759  0x001B7DAD
+m174f005  72     0x00132762  1:0x00122762  0x001B7DB6
+m174f005  74     0x0013277A  1:0x0012277A  0x001B7DCE
+m174f005  75     0x00132783  1:0x00122783  0x001B7DD7
+m174f005  76     0x0013278C  1:0x0012278C  0x001B7DE0
+m174f005  77     0x00132797  1:0x00122797  0x001B7DEB
+m174f006  78     0x001327A3  1:0x001227A3  0x001B7DF7
+m174f006  80     0x001327BB  1:0x001227BB  0x001B7E0F
+m174f006  81     0x001327C4  1:0x001227C4  0x001B7E18
+m174f006  82     0x001327CD  1:0x001227CD  0x001B7E21
+m174f006  83     0x001327D8  1:0x001227D8  0x001B7E2C
+m174f007  84     0x001327E4  1:0x001227E4  0x001B7E38
+m174f007  86     0x001327FC  1:0x001227FC  0x001B7E50
+m174f007  87     0x00132805  1:0x00122805  0x001B7E59
+m174f007  89     0x0013280E  1:0x0012280E  0x001B7E62
+m174f007  91     0x00132819  1:0x00122819  0x001B7E6D
+m174f008  92     0x00132825  1:0x00122825  0x001B7E79
+m174f008  94     0x0013283D  1:0x0012283D  0x001B7E91
+m174f008  95     0x00132846  1:0x00122846  0x001B7E9A
+m174f008  97     0x0013284F  1:0x0012284F  0x001B7EA3
+m174f008  98     0x0013285D  1:0x0012285D  0x001B7EB1
+m174f009  99     0x00132869  1:0x00122869  0x001B7EBD
+m174f009  102    0x00132886  1:0x00122886  0x001B7EDA
+m174f009  105    0x00132893  1:0x00122893  0x001B7EE7
+m174f009  108    0x001328A2  1:0x001228A2  0x001B7EF6
+m174f009  110    0x001328AD  1:0x001228AD  0x001B7F01
+m174f009  115    0x001328B2  1:0x001228B2  0x001B7F06
+m174f009  116    0x001328DA  1:0x001228DA  0x001B7F2E
+m174f009  119    0x001328E5  1:0x001228E5  0x001B7F39
+m174f009  121    0x001328FA  1:0x001228FA  0x001B7F4E
+m174f009  122    0x00132947  1:0x00122947  0x001B7F9B
+m174f009  124    0x00132995  1:0x00122995  0x001B7FE9
+m174f009  126    0x001329A6  1:0x001229A6  0x001B7FFA
+m174f009  127    0x001329AB  1:0x001229AB  0x001B7FFF
+m174f009  129    0x001329C1  1:0x001229C1  0x001B8015
+m174f009  131    0x001329CC  1:0x001229CC  0x001B8020
+m174f010  132    0x001329D4  1:0x001229D4  0x001B8028
+m174f010  134    0x001329EC  1:0x001229EC  0x001B8040
+m174f010  136    0x001329F5  1:0x001229F5  0x001B8049
+m174f010  137    0x00132A00  1:0x00122A00  0x001B8054
+m174f010  138    0x00132A0A  1:0x00122A0A  0x001B805E
+m174f011  140    0x00132A11  1:0x00122A11  0x001B8065
+m174f011  145    0x00132A29  1:0x00122A29  0x001B807D
+m174f011  146    0x00132A36  1:0x00122A36  0x001B808A
+m174f011  148    0x00132A50  1:0x00122A50  0x001B80A4
+m174f011  149    0x00132A5D  1:0x00122A5D  0x001B80B1
+m174f011  150    0x00132A71  1:0x00122A71  0x001B80C5
+m174f011  151    0x00132A85  1:0x00122A85  0x001B80D9
+m174f011  156    0x00132A99  1:0x00122A99  0x001B80ED
+m174f011  159    0x00132A9B  1:0x00122A9B  0x001B80EF

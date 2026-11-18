@@ -1,0 +1,11 @@
+module_num=377
+module=fpeinth
+source=0377-fpeinth.md
+range[0]=1:0x00153C58 linear=0x00163C58 size=608
+range[1]=2:0x00012DB4 linear=0x00182DB4 size=540
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME           SYMBOL          CHUNK
+m377f001  1    -      0x00163C58  1:0x00153C58  code  __Enable_FPE   __Enable_FPE_   regions/07-object-1/001E8E54-001E9653.txt
+m377f002  2    -      0x00163C6D  1:0x00153C6D  code  __FPEHandler   __FPEHandler_   regions/07-object-1/001E8E54-001E9653.txt
+m377f003  3    -      0x00163C7A  1:0x00153C7A  code  __FPE2Handler  __FPE2Handler_  regions/07-object-1/001E8E54-001E9653.txt

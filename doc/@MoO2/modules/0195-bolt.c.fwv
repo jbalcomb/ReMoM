@@ -1,0 +1,369 @@
+module_num=195
+module=F:\WLIBS\graphics\bolt.c
+source=0195-bolt.c.md
+range[0]=1:0x0012BAFB linear=0x0013BAFB size=3483
+range[1]=2:0x0000C670 linear=0x0017C670 size=768
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND  NAME              SYMBOL            CHUNK
+m195f001  1    -      0x0013BAFB  1:0x0012BAFB  code  Bolt_Line         Bolt_Line_        regions/07-object-1/001C0E54-001C1653.txt
+m195f002  2    -      0x0013BEC4  1:0x0012BEC4  code  Bolt_Segment      Bolt_Segment_     regions/07-object-1/001C0E54-001C1653.txt
+m195f003  3    -      0x0013C22C  1:0x0012C22C  code  Wide_Bolt_Line    Wide_Bolt_Line_   regions/07-object-1/001C1654-001C1E53.txt
+-         -    -      0x0017C670  2:0x0000C670  data  _head_wide_bolts  _head_wide_bolts  regions/08-object-2/001FA654-001FAE53.txt
+-         -    -      0x0017C7F0  2:0x0000C7F0  data  _tail_wide_bolts  _tail_wide_bolts  regions/08-object-2/001FA654-001FAE53.txt
+
+[Module variables]
+LINEAR      SEGOFF        NAME             TYPE
+0x0017C670  2:0x0000C670  head_wide_bolts  struct s_wide_bolts[16]
+0x0017C7F0  2:0x0000C7F0  tail_wide_bolts  struct s_wide_bolts[16]
+
+[Routines]
+KEY       LINEAR      SEGOFF        SIZE  PROLOGUE  EPILOGUE  RET_OFS  FAR  PARAM_REGS       NAME            TYPE                                                                                                                                                      CHUNK
+m195f001  0x0013BAFB  1:0x0012BAFB  969   21        8         0xC      -    EAX,EDX,EBX,ECX  Bolt_Line       void (short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short)                regions/07-object-1/001C0E54-001C1653.txt
+m195f002  0x0013BEC4  1:0x0012BEC4  872   21        8         0xC      -    EAX,EDX,EBX,ECX  Bolt_Segment    void (short, short, short, short, short, short, short, short, short, short, short, short, short, short)                                                   regions/07-object-1/001C0E54-001C1653.txt
+m195f003  0x0013C22C  1:0x0012C22C  1642  21        8         0xC      -    EAX,EDX,EBX,ECX  Wide_Bolt_Line  void (short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short)  regions/07-object-1/001C1654-001C1E53.txt
+
+[Locals]
+KEY       ROUTINE         BLOCK  LOCAL                       LOCATION    TYPE
+m195f001  Bolt_Line       -      x1                          [EBP-0x48]  short
+m195f001  Bolt_Line       -      y1                          [EBP-0x50]  short
+m195f001  Bolt_Line       -      x2                          [EBP-0x44]  short
+m195f001  Bolt_Line       -      y2                          [EBP-0x4C]  short
+m195f001  Bolt_Line       -      start_color                 [EBP+0x10]  short
+m195f001  Bolt_Line       -      color_count                 [EBP+0x14]  short
+m195f001  Bolt_Line       -      random_color_change_chance  [EBP+0x18]  short
+m195f001  Bolt_Line       -      max_random_color_change     [EBP+0x1C]  short
+m195f001  Bolt_Line       -      rotation                    [EBP+0x20]  short
+m195f001  Bolt_Line       -      anti_alias_head_flag        [EBP+0x24]  short
+m195f001  Bolt_Line       -      triangular_shape_flag       [EBP+0x28]  short
+m195f001  Bolt_Line       -      glowing_head_flag           [EBP+0x2C]  short
+m195f001  Bolt_Line       -      fading_intensity_flag       [EBP+0x30]  short
+m195f001  Bolt_Line       -      laser_inter_locking_flag    [EBP+0x34]  short
+m195f001  Bolt_Line       -      no_line_anti_alias_flag     [EBP+0x38]  short
+m195f001  Bolt_Line       -      BOLT_CENTER_MAX_INTENSITY   [EBP+0x3C]  short
+m195f001  Bolt_Line       -      BOLT_CENTER_MIN_INTENSITY   [EBP+0x40]  short
+m195f001  Bolt_Line       -      BOLT_SIDE_MAX_INTENSITY     [EBP+0x44]  short
+m195f001  Bolt_Line       -      BOLT_SIDE_MIN_INTENSITY     [EBP+0x48]  short
+m195f001  Bolt_Line       -      side_color_count            [EBP-0x40]  short
+m195f001  Bolt_Line       -      side_color_start            [EBP-0x3C]  short
+m195f001  Bolt_Line       -      cardinal_color              [EBP-0x38]  short
+m195f001  Bolt_Line       -      corner_color                [EBP-0x34]  short
+m195f001  Bolt_Line       -      center_color_count          [EBP-0x30]  short
+m195f001  Bolt_Line       -      center_color_start          [EBP-0x2C]  short
+m195f001  Bolt_Line       -      line1_x1                    [EBP-0x28]  short
+m195f001  Bolt_Line       -      line2_x1                    [EBP-0x24]  short
+m195f001  Bolt_Line       -      line1_y1                    [EBP-0x20]  short
+m195f001  Bolt_Line       -      line2_y1                    [EBP-0x1C]  short
+m195f001  Bolt_Line       -      line1_x2                    [EBP-0x18]  short
+m195f001  Bolt_Line       -      line2_x2                    [EBP-0x14]  short
+m195f001  Bolt_Line       -      line1_y2                    [EBP-0x10]  short
+m195f001  Bolt_Line       -      line2_y2                    [EBP-0xC]   short
+m195f001  Bolt_Line       -      delta_x_add                 [EBP-0x8]   short
+m195f001  Bolt_Line       -      delta_y_add                 [EBP-0x4]   short
+m195f002  Bolt_Segment    -      x1                          [EBP-0x4]   short
+m195f002  Bolt_Segment    -      y1                          [EBP-0xC]   short
+m195f002  Bolt_Segment    -      x2                          [EBP-0x8]   short
+m195f002  Bolt_Segment    -      y2                          [EBP-0x10]  short
+m195f002  Bolt_Segment    -      start_color                 [EBP+0x10]  short
+m195f002  Bolt_Segment    -      color_count                 [EBP+0x14]  short
+m195f002  Bolt_Segment    -      random_color_change_chance  [EBP+0x18]  short
+m195f002  Bolt_Segment    -      max_random_color_change     [EBP+0x1C]  short
+m195f002  Bolt_Segment    -      first_color                 [EBP+0x20]  short
+m195f002  Bolt_Segment    -      last_color                  [EBP+0x24]  short
+m195f002  Bolt_Segment    -      fading_intensity_flag       [EBP+0x28]  short
+m195f002  Bolt_Segment    -      laser_inter_locking_flag    [EBP+0x2C]  short
+m195f002  Bolt_Segment    -      rotation                    [EBP+0x30]  short
+m195f002  Bolt_Segment    -      head_flag                   [EBP+0x34]  short
+m195f002  Bolt_Segment    -      i                           [EBP-0x14]  int
+m195f002  Bolt_Segment    -      length                      [EBP-0x4C]  int
+m195f002  Bolt_Segment    -      delta_x                     [EBP-0x30]  int
+m195f002  Bolt_Segment    -      delta_y                     [EBP-0x48]  int
+m195f002  Bolt_Segment    -      delta_add                   [EBP-0x2C]  int
+m195f002  Bolt_Segment    -      delta_sum                   [EBP-0x44]  int
+m195f002  Bolt_Segment    -      random_add                  [EBP-0x24]  int
+m195f002  Bolt_Segment    -      min_random                  [EBP-0x3C]  int
+m195f002  Bolt_Segment    -      max_random                  [EBP-0x1C]  int
+m195f002  Bolt_Segment    -      end_color                   [EBP-0x34]  int
+m195f002  Bolt_Segment    -      random_range                [EBP-0x18]  int
+m195f002  Bolt_Segment    -      random_sub                  [EBP-0x40]  int
+m195f002  Bolt_Segment    -      head_color                  [EBP-0x20]  int
+m195f002  Bolt_Segment    -      max_color                   [EBP-0x38]  int
+m195f002  Bolt_Segment    -      old_random_seed             [EBP-0x28]  unsigned long
+m195f003  Wide_Bolt_Line  -      x1                          [EBP-0x6C]  short
+m195f003  Wide_Bolt_Line  -      y1                          [EBP-0x74]  short
+m195f003  Wide_Bolt_Line  -      x2                          [EBP-0x68]  short
+m195f003  Wide_Bolt_Line  -      y2                          [EBP-0x70]  short
+m195f003  Wide_Bolt_Line  -      start_color                 [EBP+0x10]  short
+m195f003  Wide_Bolt_Line  -      color_count                 [EBP+0x14]  short
+m195f003  Wide_Bolt_Line  -      random_color_change_chance  [EBP+0x18]  short
+m195f003  Wide_Bolt_Line  -      max_random_color_change     [EBP+0x1C]  short
+m195f003  Wide_Bolt_Line  -      rotation                    [EBP+0x20]  short
+m195f003  Wide_Bolt_Line  -      anti_alias_head_flag        [EBP+0x24]  short
+m195f003  Wide_Bolt_Line  -      triangular_shape_flag       [EBP+0x28]  short
+m195f003  Wide_Bolt_Line  -      glowing_head_flag           [EBP+0x2C]  short
+m195f003  Wide_Bolt_Line  -      fading_intensity_flag       [EBP+0x30]  short
+m195f003  Wide_Bolt_Line  -      laser_inter_locking_flag    [EBP+0x34]  short
+m195f003  Wide_Bolt_Line  -      no_line_anti_alias_flag     [EBP+0x38]  short
+m195f003  Wide_Bolt_Line  -      BOLT_CENTER_MAX_INTENSITY   [EBP+0x3C]  short
+m195f003  Wide_Bolt_Line  -      BOLT_CENTER_MIN_INTENSITY   [EBP+0x40]  short
+m195f003  Wide_Bolt_Line  -      BOLT_SIDE_MAX_INTENSITY     [EBP+0x44]  short
+m195f003  Wide_Bolt_Line  -      BOLT_SIDE_MIN_INTENSITY     [EBP+0x48]  short
+m195f003  Wide_Bolt_Line  -      BOLT_EDGE_MAX_INTENSITY     [EBP+0x4C]  short
+m195f003  Wide_Bolt_Line  -      BOLT_EDGE_MIN_INTENSITY     [EBP+0x50]  short
+m195f003  Wide_Bolt_Line  -      side_color_count            [EBP-0x64]  short
+m195f003  Wide_Bolt_Line  -      side_color_start            [EBP-0x60]  short
+m195f003  Wide_Bolt_Line  -      cardinal_color              [EBP-0x5C]  short
+m195f003  Wide_Bolt_Line  -      corner_color                [EBP-0x58]  short
+m195f003  Wide_Bolt_Line  -      center_color_count          [EBP-0x54]  short
+m195f003  Wide_Bolt_Line  -      center_color_start          [EBP-0x50]  short
+m195f003  Wide_Bolt_Line  -      line1_x1                    [EBP-0x4C]  short
+m195f003  Wide_Bolt_Line  -      line2_x1                    [EBP-0x48]  short
+m195f003  Wide_Bolt_Line  -      line1_y1                    [EBP-0x44]  short
+m195f003  Wide_Bolt_Line  -      line2_y1                    [EBP-0x40]  short
+m195f003  Wide_Bolt_Line  -      line1_x2                    [EBP-0x3C]  short
+m195f003  Wide_Bolt_Line  -      line2_x2                    [EBP-0x38]  short
+m195f003  Wide_Bolt_Line  -      line1_y2                    [EBP-0x34]  short
+m195f003  Wide_Bolt_Line  -      line2_y2                    [EBP-0x30]  short
+m195f003  Wide_Bolt_Line  -      line3_x1                    [EBP-0x2C]  short
+m195f003  Wide_Bolt_Line  -      line3_x2                    [EBP-0x28]  short
+m195f003  Wide_Bolt_Line  -      line3_y1                    [EBP-0x24]  short
+m195f003  Wide_Bolt_Line  -      line3_y2                    [EBP-0x20]  short
+m195f003  Wide_Bolt_Line  -      line4_x1                    [EBP-0x1C]  short
+m195f003  Wide_Bolt_Line  -      line4_x2                    [EBP-0x18]  short
+m195f003  Wide_Bolt_Line  -      line4_y1                    [EBP-0x14]  short
+m195f003  Wide_Bolt_Line  -      line4_y2                    [EBP-0x10]  short
+m195f003  Wide_Bolt_Line  -      delta_x_add                 [EBP-0xC]   short
+m195f003  Wide_Bolt_Line  -      delta_y_add                 [EBP-0x8]   short
+m195f003  Wide_Bolt_Line  -      angle                       [EBP-0x4]   short
+
+[Types]
+NUM  KIND       NAME                 DETAILS
+-    cue table  -                    source file table (C++)
+1    scope      struct               -
+2    scope      union                -
+3    scope      enum                 -
+4    scalar     signed char          int 1 bytes
+5    scalar     unsigned char        unsigned 1 bytes
+6    scalar     short                int 2 bytes
+7    scalar     unsigned short       unsigned 2 bytes
+8    scalar     int                  int 4 bytes
+9    scalar     unsigned int         unsigned 4 bytes
+10   typedef    char                 name for unsigned char (#5)
+11   typedef    char                 name for unsigned char (#5)
+12   typedef    size_t               name for unsigned int (#9)
+13   pointer    -                    near386; of char (#10)
+14   array      __va_list            0..0; of char * (#13)
+15   typedef    __va_list            name for char *[1] (#14)
+16   scalar     long                 int 4 bytes
+17   typedef    fpos_t               name for long (#16)
+18   typedef    fpos_t               name for long (#16)
+19   typedef    BYTE                 name for unsigned char (#5)
+20   typedef    SBYTE                name for signed char (#4)
+21   typedef    UBYTE                name for unsigned char (#5)
+22   typedef    WORD                 name for unsigned short (#7)
+23   typedef    SWORD                name for short (#6)
+24   typedef    UWORD                name for unsigned short (#7)
+25   typedef    DWORD                name for unsigned int (#9)
+26   typedef    SDWORD               name for int (#8)
+27   typedef    UDWORD               name for unsigned int (#9)
+28   typedef    BOOL                 name for unsigned char (#5)
+29   typedef    SampleHandle         name for int (#8)
+30   struct     struct s_wide_bolts  12 fields, 24 bytes
+31   typedef    s_wide_bolts         struct name for struct #30 (#30)
+32   array      -                    0..15; of struct s_wide_bolts (#31)
+33   array      -                    0..15; of struct s_wide_bolts (#31)
+34   scalar     void                 void 1 bytes
+35   procedure  -                    near386; returns void (short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short)
+36   procedure  -                    near386; returns void (short, short, short, short, short, short, short, short, short, short, short, short, short, short)
+37   scalar     unsigned long        unsigned 4 bytes
+38   procedure  -                    near386; returns void (short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short, short)
+
+[Type members]
+TYPE_NUM  MEMBER_KIND  MEMBER    OFFSET_VALUE  TYPE   TYPE_NAME
+30        field        side_1_x  0             short  struct s_wide_bolts
+30        field        side_1_y  2             short  struct s_wide_bolts
+30        field        side_2_x  4             short  struct s_wide_bolts
+30        field        side_2_y  6             short  struct s_wide_bolts
+30        field        side_3_x  8             short  struct s_wide_bolts
+30        field        side_3_y  10            short  struct s_wide_bolts
+30        field        side_4_x  12            short  struct s_wide_bolts
+30        field        side_4_y  14            short  struct s_wide_bolts
+30        field        edge_1_x  16            short  struct s_wide_bolts
+30        field        edge_1_y  18            short  struct s_wide_bolts
+30        field        edge_2_x  20            short  struct s_wide_bolts
+30        field        edge_2_y  22            short  struct s_wide_bolts
+
+[Line numbers]
+KEY       LINE  LINEAR      SEGOFF        FILEOFS
+m195f001  26    0x0013BAFB  1:0x0012BAFB  0x001C114F
+m195f001  48    0x0013BB1C  1:0x0012BB1C  0x001C1170
+m195f001  50    0x0013BB29  1:0x0012BB29  0x001C117D
+m195f001  51    0x0013BB30  1:0x0012BB30  0x001C1184
+m195f001  53    0x0013BB36  1:0x0012BB36  0x001C118A
+m195f001  55    0x0013BB3F  1:0x0012BB3F  0x001C1193
+m195f001  56    0x0013BB43  1:0x0012BB43  0x001C1197
+m195f001  58    0x0013BB46  1:0x0012BB46  0x001C119A
+m195f001  60    0x0013BB4F  1:0x0012BB4F  0x001C11A3
+m195f001  62    0x0013BB55  1:0x0012BB55  0x001C11A9
+m195f001  64    0x0013BB5E  1:0x0012BB5E  0x001C11B2
+m195f001  68    0x0013BB64  1:0x0012BB64  0x001C11B8
+m195f001  69    0x0013BB7A  1:0x0012BB7A  0x001C11CE
+m195f001  70    0x0013BB8E  1:0x0012BB8E  0x001C11E2
+m195f001  71    0x0013BBA2  1:0x0012BBA2  0x001C11F6
+m195f001  72    0x0013BBB4  1:0x0012BBB4  0x001C1208
+m195f001  73    0x0013BBC6  1:0x0012BBC6  0x001C121A
+m195f001  74    0x0013BBDB  1:0x0012BBDB  0x001C122F
+m195f001  75    0x0013BBF0  1:0x0012BBF0  0x001C1244
+m195f001  76    0x0013BC05  1:0x0012BC05  0x001C1259
+m195f001  78    0x0013BC1A  1:0x0012BC1A  0x001C126E
+m195f001  80    0x0013BC25  1:0x0012BC25  0x001C1279
+m195f001  81    0x0013BC3B  1:0x0012BC3B  0x001C128F
+m195f001  82    0x0013BC4F  1:0x0012BC4F  0x001C12A3
+m195f001  83    0x0013BC63  1:0x0012BC63  0x001C12B7
+m195f001  84    0x0013BC75  1:0x0012BC75  0x001C12C9
+m195f001  85    0x0013BC87  1:0x0012BC87  0x001C12DB
+m195f001  86    0x0013BC9C  1:0x0012BC9C  0x001C12F0
+m195f001  87    0x0013BCB1  1:0x0012BCB1  0x001C1305
+m195f001  88    0x0013BCC6  1:0x0012BCC6  0x001C131A
+m195f001  94    0x0013BCDB  1:0x0012BCDB  0x001C132F
+m195f001  95    0x0013BD0D  1:0x0012BD0D  0x001C1361
+m195f001  108   0x0013BD1D  1:0x0012BD1D  0x001C1371
+m195f001  109   0x0013BD2F  1:0x0012BD2F  0x001C1383
+m195f001  110   0x0013BD41  1:0x0012BD41  0x001C1395
+m195f001  111   0x0013BD53  1:0x0012BD53  0x001C13A7
+m195f001  113   0x0013BD65  1:0x0012BD65  0x001C13B9
+m195f001  117   0x0013BD77  1:0x0012BD77  0x001C13CB
+m195f001  127   0x0013BD84  1:0x0012BD84  0x001C13D8
+m195f001  129   0x0013BD8F  1:0x0012BD8F  0x001C13E3
+m195f001  135   0x0013BDE0  1:0x0012BDE0  0x001C1434
+m195f001  144   0x0013BE31  1:0x0012BE31  0x001C1485
+m195f001  145   0x0013BE3A  1:0x0012BE3A  0x001C148E
+m195f001  147   0x0013BE43  1:0x0012BE43  0x001C1497
+m195f001  149   0x0013BE4A  1:0x0012BE4A  0x001C149E
+m195f001  150   0x0013BE67  1:0x0012BE67  0x001C14BB
+m195f001  153   0x0013BE6E  1:0x0012BE6E  0x001C14C2
+m195f001  157   0x0013BEBC  1:0x0012BEBC  0x001C1510
+m195f002  160   0x0013BEC4  1:0x0012BEC4  0x001C1518
+m195f002  170   0x0013BEE5  1:0x0012BEE5  0x001C1539
+m195f002  172   0x0013BEED  1:0x0012BEED  0x001C1541
+m195f002  173   0x0013BEF7  1:0x0012BEF7  0x001C154B
+m195f002  175   0x0013BEFE  1:0x0012BEFE  0x001C1552
+m195f002  176   0x0013BF0B  1:0x0012BF0B  0x001C155F
+m195f002  178   0x0013BF18  1:0x0012BF18  0x001C156C
+m195f002  179   0x0013BF21  1:0x0012BF21  0x001C1575
+m195f002  181   0x0013BF2A  1:0x0012BF2A  0x001C157E
+m195f002  182   0x0013BF39  1:0x0012BF39  0x001C158D
+m195f002  184   0x0013BF42  1:0x0012BF42  0x001C1596
+m195f002  185   0x0013BF54  1:0x0012BF54  0x001C15A8
+m195f002  187   0x0013BF67  1:0x0012BF67  0x001C15BB
+m195f002  189   0x0013BF6E  1:0x0012BF6E  0x001C15C2
+m195f002  191   0x0013BF7B  1:0x0012BF7B  0x001C15CF
+m195f002  193   0x0013BF94  1:0x0012BF94  0x001C15E8
+m195f002  194   0x0013BFB1  1:0x0012BFB1  0x001C1605
+m195f002  196   0x0013BFB7  1:0x0012BFB7  0x001C160B
+m195f002  197   0x0013BFC9  1:0x0012BFC9  0x001C161D
+m195f002  198   0x0013BFD7  1:0x0012BFD7  0x001C162B
+m195f002  199   0x0013BFE0  1:0x0012BFE0  0x001C1634
+m195f002  200   0x0013BFE2  1:0x0012BFE2  0x001C1636
+m195f002  201   0x0013BFEE  1:0x0012BFEE  0x001C1642
+m195f002  203   0x0013BFFB  1:0x0012BFFB  0x001C164F
+m195f002  205   0x0013C000  1:0x0012C000  0x001C1654
+m195f002  207   0x0013C019  1:0x0012C019  0x001C166D
+m195f002  208   0x0013C031  1:0x0012C031  0x001C1685
+m195f002  210   0x0013C037  1:0x0012C037  0x001C168B
+m195f002  211   0x0013C049  1:0x0012C049  0x001C169D
+m195f002  212   0x0013C057  1:0x0012C057  0x001C16AB
+m195f002  213   0x0013C060  1:0x0012C060  0x001C16B4
+m195f002  214   0x0013C062  1:0x0012C062  0x001C16B6
+m195f002  215   0x0013C06A  1:0x0012C06A  0x001C16BE
+m195f002  218   0x0013C07B  1:0x0012C07B  0x001C16CF
+m195f002  220   0x0013C084  1:0x0012C084  0x001C16D8
+m195f002  221   0x0013C0AA  1:0x0012C0AA  0x001C16FE
+m195f002  225   0x0013C0B6  1:0x0012C0B6  0x001C170A
+m195f002  227   0x0013C0D2  1:0x0012C0D2  0x001C1726
+m195f002  228   0x0013C0EF  1:0x0012C0EF  0x001C1743
+m195f002  229   0x0013C10C  1:0x0012C10C  0x001C1760
+m195f002  232   0x0013C10E  1:0x0012C10E  0x001C1762
+m195f002  234   0x0013C119  1:0x0012C119  0x001C176D
+m195f002  236   0x0013C122  1:0x0012C122  0x001C1776
+m195f002  238   0x0013C128  1:0x0012C128  0x001C177C
+m195f002  239   0x0013C13F  1:0x0012C13F  0x001C1793
+m195f002  242   0x0013C16C  1:0x0012C16C  0x001C17C0
+m195f002  244   0x0013C16E  1:0x0012C16E  0x001C17C2
+m195f002  245   0x0013C185  1:0x0012C185  0x001C17D9
+m195f002  249   0x0013C1B5  1:0x0012C1B5  0x001C1809
+m195f002  250   0x0013C1C2  1:0x0012C1C2  0x001C1816
+m195f002  251   0x0013C1DE  1:0x0012C1DE  0x001C1832
+m195f002  253   0x0013C1FF  1:0x0012C1FF  0x001C1853
+m195f002  255   0x0013C21C  1:0x0012C21C  0x001C1870
+m195f002  256   0x0013C224  1:0x0012C224  0x001C1878
+m195f003  308   0x0013C22C  1:0x0012C22C  0x001C1880
+m195f003  374   0x0013C24D  1:0x0012C24D  0x001C18A1
+m195f003  376   0x0013C27B  1:0x0012C27B  0x001C18CF
+m195f003  378   0x0013C29C  1:0x0012C29C  0x001C18F0
+m195f003  379   0x0013C2A5  1:0x0012C2A5  0x001C18F9
+m195f003  380   0x0013C2AC  1:0x0012C2AC  0x001C1900
+m195f003  381   0x0013C2B5  1:0x0012C2B5  0x001C1909
+m195f003  385   0x0013C2BC  1:0x0012C2BC  0x001C1910
+m195f003  386   0x0013C2CB  1:0x0012C2CB  0x001C191F
+m195f003  387   0x0013C2D1  1:0x0012C2D1  0x001C1925
+m195f003  388   0x0013C2E5  1:0x0012C2E5  0x001C1939
+m195f003  389   0x0013C2F9  1:0x0012C2F9  0x001C194D
+m195f003  390   0x0013C2FF  1:0x0012C2FF  0x001C1953
+m195f003  391   0x0013C305  1:0x0012C305  0x001C1959
+m195f003  392   0x0013C319  1:0x0012C319  0x001C196D
+m195f003  395   0x0013C32D  1:0x0012C32D  0x001C1981
+m195f003  396   0x0013C346  1:0x0012C346  0x001C199A
+m195f003  397   0x0013C35A  1:0x0012C35A  0x001C19AE
+m195f003  398   0x0013C36E  1:0x0012C36E  0x001C19C2
+m195f003  399   0x0013C382  1:0x0012C382  0x001C19D6
+m195f003  400   0x0013C396  1:0x0012C396  0x001C19EA
+m195f003  401   0x0013C3AA  1:0x0012C3AA  0x001C19FE
+m195f003  402   0x0013C3BE  1:0x0012C3BE  0x001C1A12
+m195f003  404   0x0013C3D2  1:0x0012C3D2  0x001C1A26
+m195f003  409   0x0013C3E4  1:0x0012C3E4  0x001C1A38
+m195f003  415   0x0013C435  1:0x0012C435  0x001C1A89
+m195f003  423   0x0013C486  1:0x0012C486  0x001C1ADA
+m195f003  424   0x0013C499  1:0x0012C499  0x001C1AED
+m195f003  425   0x0013C49F  1:0x0012C49F  0x001C1AF3
+m195f003  426   0x0013C4B3  1:0x0012C4B3  0x001C1B07
+m195f003  427   0x0013C4C7  1:0x0012C4C7  0x001C1B1B
+m195f003  428   0x0013C4CD  1:0x0012C4CD  0x001C1B21
+m195f003  429   0x0013C4D3  1:0x0012C4D3  0x001C1B27
+m195f003  430   0x0013C4E7  1:0x0012C4E7  0x001C1B3B
+m195f003  431   0x0013C4FB  1:0x0012C4FB  0x001C1B4F
+m195f003  432   0x0013C501  1:0x0012C501  0x001C1B55
+m195f003  433   0x0013C507  1:0x0012C507  0x001C1B5B
+m195f003  434   0x0013C51B  1:0x0012C51B  0x001C1B6F
+m195f003  435   0x0013C52F  1:0x0012C52F  0x001C1B83
+m195f003  436   0x0013C535  1:0x0012C535  0x001C1B89
+m195f003  437   0x0013C53B  1:0x0012C53B  0x001C1B8F
+m195f003  438   0x0013C54F  1:0x0012C54F  0x001C1BA3
+m195f003  441   0x0013C563  1:0x0012C563  0x001C1BB7
+m195f003  442   0x0013C57C  1:0x0012C57C  0x001C1BD0
+m195f003  443   0x0013C590  1:0x0012C590  0x001C1BE4
+m195f003  444   0x0013C5A4  1:0x0012C5A4  0x001C1BF8
+m195f003  445   0x0013C5B8  1:0x0012C5B8  0x001C1C0C
+m195f003  446   0x0013C5CC  1:0x0012C5CC  0x001C1C20
+m195f003  447   0x0013C5E0  1:0x0012C5E0  0x001C1C34
+m195f003  448   0x0013C5F4  1:0x0012C5F4  0x001C1C48
+m195f003  449   0x0013C608  1:0x0012C608  0x001C1C5C
+m195f003  450   0x0013C61C  1:0x0012C61C  0x001C1C70
+m195f003  451   0x0013C630  1:0x0012C630  0x001C1C84
+m195f003  452   0x0013C644  1:0x0012C644  0x001C1C98
+m195f003  453   0x0013C658  1:0x0012C658  0x001C1CAC
+m195f003  454   0x0013C66C  1:0x0012C66C  0x001C1CC0
+m195f003  455   0x0013C680  1:0x0012C680  0x001C1CD4
+m195f003  456   0x0013C694  1:0x0012C694  0x001C1CE8
+m195f003  460   0x0013C6A8  1:0x0012C6A8  0x001C1CFC
+m195f003  465   0x0013C6BA  1:0x0012C6BA  0x001C1D0E
+m195f003  471   0x0013C70D  1:0x0012C70D  0x001C1D61
+m195f003  478   0x0013C760  1:0x0012C760  0x001C1DB4
+m195f003  484   0x0013C7B3  1:0x0012C7B3  0x001C1E07
+m195f003  495   0x0013C806  1:0x0012C806  0x001C1E5A
+m195f003  496   0x0013C80F  1:0x0012C80F  0x001C1E63
+m195f003  498   0x0013C818  1:0x0012C818  0x001C1E6C
+m195f003  500   0x0013C81F  1:0x0012C81F  0x001C1E73
+m195f003  501   0x0013C83C  1:0x0012C83C  0x001C1E90
+m195f003  504   0x0013C843  1:0x0012C843  0x001C1E97
+m195f003  509   0x0013C88E  1:0x0012C88E  0x001C1EE2

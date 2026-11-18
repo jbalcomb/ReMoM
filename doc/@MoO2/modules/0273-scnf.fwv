@@ -1,0 +1,23 @@
+module_num=273
+module=scnf
+source=0273-scnf.md
+range[0]=1:0x0013D1C2 linear=0x0014D1C2 size=3121
+range[1]=2:0x00004D98 linear=0x00174D98 size=8
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME         SYMBOL        CHUNK
+m273f001  1    -      0x0014D1C2  1:0x0013D1C2  static,code  cget         cget_         regions/07-object-1/001D2654-001D2E53.txt
+m273f002  2    -      0x0014D1C9  1:0x0013D1C9  static,code  uncget       uncget_       regions/07-object-1/001D2654-001D2E53.txt
+m273f003  3    -      0x0014D1D1  1:0x0013D1D1  code         __scnf       __scnf_       regions/07-object-1/001D2654-001D2E53.txt
+m273f004  4    -      0x0014D418  1:0x0013D418  static,code  get_opt      get_opt_      regions/07-object-1/001D2654-001D2E53.txt
+m273f005  5    -      0x0014D50D  1:0x0013D50D  static,code  scan_white   scan_white_   regions/07-object-1/001D2654-001D2E53.txt
+m273f006  6    -      0x0014D54C  1:0x0013D54C  static,code  scan_char    scan_char_    regions/07-object-1/001D2654-001D2E53.txt
+m273f007  7    -      0x0014D5E1  1:0x0013D5E1  static,code  scan_string  scan_string_  regions/07-object-1/001D2654-001D2E53.txt
+m273f008  8    -      0x0014D704  1:0x0013D704  static,code  report_scan  report_scan_  regions/07-object-1/001D2654-001D2E53.txt
+m273f009  9    -      0x0014D762  1:0x0013D762  static,code  makelist     makelist_     regions/07-object-1/001D2654-001D2E53.txt
+m273f010  10   -      0x0014D7A5  1:0x0013D7A5  static,code  scan_arb     scan_arb_     regions/07-object-1/001D2654-001D2E53.txt
+m273f011  11   -      0x0014D89F  1:0x0013D89F  static,code  scan_float   scan_float_   regions/07-object-1/001D2E54-001D3653.txt
+m273f012  12   -      0x0014DBB6  1:0x0013DBB6  static,code  scan_int     scan_int_     regions/07-object-1/001D2E54-001D3653.txt
+m273f013  13   -      0x0014DDA6  1:0x0013DDA6  static,code  radix_value  radix_value_  regions/07-object-1/001D2E54-001D3653.txt
+m273f014  14   -      0x0014DDCD  1:0x0013DDCD  static,code  cgetw        cgetw_        regions/07-object-1/001D2E54-001D3653.txt
+-         -    -      0x00174D98  2:0x00004D98  static,data  _lst_mask    _lst_mask     regions/08-object-2/001F2E54-001F3653.txt

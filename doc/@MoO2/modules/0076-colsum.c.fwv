@@ -1,0 +1,72 @@
+module_num=76
+module=D:\MOX\OTHERS\COLSUM.C
+source=0076-colsum.c.md
+range[0]=1:0x000B221F linear=0x000C221F size=10123
+range[1]=2:0x00001E00 linear=0x00171E00 size=24
+range[2]=2:0x0000B0E8 linear=0x0017B0E8 size=160
+range[3]=2:0x00027A2C linear=0x00197A2C size=2948
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                              SYMBOL                             CHUNK
+m076f001  1    -      0x000C2259  1:0x000B2259  code         Load_Colsum_Strings               Load_Colsum_Strings_               regions/07-object-1/00147654-00147E53.txt
+m076f002  2    -      0x000C248A  1:0x000B248A  code         Clear_First                       Clear_First_                       regions/07-object-1/00147654-00147E53.txt
+m076f003  3    -      0x000C24B1  1:0x000B24B1  static,code  Clear_List_Col_Array              Clear_List_Col_Array_              regions/07-object-1/00147654-00147E53.txt
+m076f004  4    -      0x000C24CA  1:0x000B24CA  code         Load_Col_Sum_Anims                Load_Col_Sum_Anims_                regions/07-object-1/00147654-00147E53.txt
+m076f005  5    -      0x000C2502  1:0x000B2502  static,code  Restore_Control                   Restore_Control_                   regions/07-object-1/00147654-00147E53.txt
+m076f006  6    -      0x000C2539  1:0x000B2539  static,code  Draw_Bar_Indicator                Draw_Bar_Indicator_                regions/07-object-1/00147654-00147E53.txt
+m076f007  7    -      0x000C2685  1:0x000B2685  code         Update_First                      Update_First_                      regions/07-object-1/00147654-00147E53.txt
+m076f008  8    -      0x000C26F4  1:0x000B26F4  static,code  Draw_Empire_Info                  Draw_Empire_Info_                  regions/07-object-1/00147654-00147E53.txt
+m076f009  9    -      0x000C28A8  1:0x000B28A8  static,code  Draw_Info_Pop_For                 Draw_Info_Pop_For_                 regions/07-object-1/00147E54-00148653.txt
+m076f010  10   -      0x000C2994  1:0x000B2994  static,code  Get_Scanned_Pop                   Get_Scanned_Pop_                   regions/07-object-1/00147E54-00148653.txt
+m076f011  11   -      0x000C2A9A  1:0x000B2A9A  static,code  Get_Selected_Pop                  Get_Selected_Pop_                  regions/07-object-1/00147E54-00148653.txt
+m076f012  12   -      0x000C2B72  1:0x000B2B72  static,code  Add_Fields_Pop_For                Add_Fields_Pop_For_                regions/07-object-1/00147E54-00148653.txt
+m076f013  13   -      0x000C2E3E  1:0x000B2E3E  static,code  Update_Fields                     Update_Fields_                     regions/07-object-1/00147E54-00148653.txt
+m076f014  14   -      0x000C2E4D  1:0x000B2E4D  static,code  Add_Fields                        Add_Fields_                        regions/07-object-1/00147E54-00148653.txt
+m076f015  15   -      0x000C3109  1:0x000B3109  code         Event_Good                        Event_Good_                        regions/07-object-1/00148654-00148E53.txt
+m076f016  16   -      0x000C3111  1:0x000B3111  static,code  Draw_Colony_Summary_For_Colony    Draw_Colony_Summary_For_Colony_    regions/07-object-1/00148654-00148E53.txt
+m076f017  17   -      0x000C34DD  1:0x000B34DD  static,code  cmp                               cmp_                               regions/07-object-1/00148654-00148E53.txt
+m076f018  18   -      0x000C34F3  1:0x000B34F3  static,code  cmp_Alpha                         cmp_Alpha_                         regions/07-object-1/00148654-00148E53.txt
+m076f019  19   -      0x000C3555  1:0x000B3555  static,code  Prod_To_Sort_Type                 Prod_To_Sort_Type_                 regions/07-object-1/00148654-00148E53.txt
+m076f020  20   -      0x000C3614  1:0x000B3614  static,code  cmp_Prod                          cmp_Prod_                          regions/07-object-1/00148654-00148E53.txt
+m076f021  21   -      0x000C36F5  1:0x000B36F5  static,code  cmp_Pop                           cmp_Pop_                           regions/07-object-1/00148654-00148E53.txt
+m076f022  22   -      0x000C3737  1:0x000B3737  static,code  cmp_Food                          cmp_Food_                          regions/07-object-1/00148654-00148E53.txt
+m076f023  23   -      0x000C377D  1:0x000B377D  static,code  cmp_Industry                      cmp_Industry_                      regions/07-object-1/00148654-00148E53.txt
+m076f024  24   -      0x000C37C3  1:0x000B37C3  static,code  cmp_Science                       cmp_Science_                       regions/07-object-1/00148654-00148E53.txt
+m076f025  25   -      0x000C3809  1:0x000B3809  static,code  cmp_BC                            cmp_BC_                            regions/07-object-1/00148E54-00149653.txt
+m076f026  26   -      0x000C386B  1:0x000B386B  static,code  Switched_cmp                      Switched_cmp_                      regions/07-object-1/00148E54-00149653.txt
+m076f027  27   -      0x000C3947  1:0x000B3947  static,code  Sort_Col_List                     Sort_Col_List_                     regions/07-object-1/00148E54-00149653.txt
+m076f028  28   -      0x000C3996  1:0x000B3996  static,code  Update_Col_List                   Update_Col_List_                   regions/07-object-1/00148E54-00149653.txt
+m076f029  29   -      0x000C3A07  1:0x000B3A07  static,code  Colsum_Connect_Galaxy_Map_Stars   Colsum_Connect_Galaxy_Map_Stars_   regions/07-object-1/00148E54-00149653.txt
+m076f030  30   -      0x000C3A9A  1:0x000B3A9A  static,code  Colsum_Box_Galaxy_Map_Star        Colsum_Box_Galaxy_Map_Star_        regions/07-object-1/00148E54-00149653.txt
+m076f031  31   -      0x000C3B0F  1:0x000B3B0F  static,code  Draw_Gal_Map                      Draw_Gal_Map_                      regions/07-object-1/00148E54-00149653.txt
+m076f032  32   -      0x000C3B3C  1:0x000B3B3C  code         Draw_Colony_Scan_Info             Draw_Colony_Scan_Info_             regions/07-object-1/00148E54-00149653.txt
+m076f033  33   -      0x000C3CFB  1:0x000B3CFB  code         Draw_Scan_Info                    Draw_Scan_Info_                    regions/07-object-1/00148E54-00149653.txt
+m076f034  34   -      0x000C3D34  1:0x000B3D34  code         Draw_Colony_Summary_Screen        Draw_Colony_Summary_Screen_        regions/07-object-1/00148E54-00149653.txt
+m076f035  35   -      0x000C3F30  1:0x000B3F30  static,code  Evaluate_Col_List_Input           Evaluate_Col_List_Input_           regions/07-object-1/00148E54-00149653.txt
+m076f036  36   -      0x000C4169  1:0x000B4169  static,code  Evaluate_Colony_Pop_Input         Evaluate_Colony_Pop_Input_         regions/07-object-1/00149654-00149E53.txt
+m076f037  37   -      0x000C42B4  1:0x000B42B4  code         Increment_First                   Increment_First_                   regions/07-object-1/00149654-00149E53.txt
+m076f038  38   -      0x000C4302  1:0x000B4302  code         Decrement_First                   Decrement_First_                   regions/07-object-1/00149654-00149E53.txt
+m076f039  39   -      0x000C4343  1:0x000B4343  static,code  Evaluate_Input                    Evaluate_Input_                    regions/07-object-1/00149654-00149E53.txt
+m076f040  40   -      0x000C4562  1:0x000B4562  code         Colony_Summary_Screen             Colony_Summary_Screen_             regions/07-object-1/00149654-00149E53.txt
+m076f041  41   -      0x000C47C1  1:0x000B47C1  code         Check_Galaxy_Map_Fields           Check_Galaxy_Map_Fields_           regions/07-object-1/00149654-00149E53.txt
+m076f042  42   -      0x000C48EF  1:0x000B48EF  static,code  Pick_Best_Planet_To_Goto_At_Star  Pick_Best_Planet_To_Goto_At_Star_  regions/07-object-1/00149E54-0014A653.txt
+-         -    -      0x0017B0E8  2:0x0000B0E8  static,data  _x_fields                         _x_fields                          regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B104  2:0x0000B104  static,data  _g_sort_index                     _g_sort_index                      regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B106  2:0x0000B106  static,data  _anims                            _anims                             regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B15A  2:0x0000B15A  data         _first                            _first                             regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B15C  2:0x0000B15C  data         _slider_bar_position              _slider_bar_position               regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B15E  2:0x0000B15E  static,data  _scroll_draw                      _scroll_draw                       regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B15F  2:0x0000B15F  static,data  _draw_planet_sum                  _draw_planet_sum                   regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B160  2:0x0000B160  static,data  _event_good_lookup                _event_good_lookup                 regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B184  2:0x0000B184  static,data  _colsum_strings_been_loaded       _colsum_strings_been_loaded        regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x00197A2C  2:0x00027A2C  static,data  _wee_event_strings                _wee_event_strings                 -
+-         -    -      0x00197ABC  2:0x00027ABC  static,data  _list_col_pop_ref                 _list_col_pop_ref                  -
+-         -    -      0x00198494  2:0x00028494  static,data  _list_buy_data                    _list_buy_data                     -
+-         -    -      0x001984A8  2:0x000284A8  static,data  _list_col_coord_vars              _list_col_coord_vars               -
+-         -    -      0x001984E4  2:0x000284E4  static,data  _list_buy_fields                  _list_buy_fields                   -
+-         -    -      0x001984F8  2:0x000284F8  static,data  _list_col_job_fields              _list_col_job_fields               -
+-         -    -      0x00198534  2:0x00028534  static,data  _list_col                         _list_col                          -
+-         -    -      0x00198548  2:0x00028548  static,data  _list_col_prod_fields             _list_col_prod_fields              -
+-         -    -      0x0019855C  2:0x0002855C  static,data  _list_col_pop_count               _list_col_pop_count                -
+-         -    -      0x00198598  2:0x00028598  static,data  _list_fields                      _list_fields                       -
+-         -    -      0x001985AC  2:0x000285AC  static,data  _colony_summary_saved_screen      _colony_summary_saved_screen       -

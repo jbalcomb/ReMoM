@@ -1,7 +1,7 @@
 # test_worldgen.hms — Smoke test: create game, run 3 turns, quit
 #
 # Usage:
-#   HeMoM --newgame test_worldgen.ini --scenario test_worldgen.hms
+#   DeMoM --newgame test_worldgen.ini --scenario test_worldgen.hms
 #
 # Actions (durations require an explicit unit suffix):
 #   wait <N>f         wait N frames (1 frame = 55ms)

@@ -1,0 +1,22 @@
+module_num=80
+module=D:\MOX\OTHERS\FAKEBUTS.C
+source=0080-fakebuts.c.md
+range[0]=1:0x000B6782 linear=0x000C6782 size=887
+range[1]=2:0x0000B1A4 linear=0x0017B1A4 size=4
+range[2]=2:0x00028904 linear=0x00198904 size=828
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                          SYMBOL                         CHUNK
+m080f001  1    -      0x000C6782  1:0x000B6782  code         Draw_Fake_Buttons             Draw_Fake_Buttons_             regions/07-object-1/0014B654-0014BE53.txt
+m080f002  2    -      0x000C680E  1:0x000B680E  code         Add_Fake_Button_To_List       Add_Fake_Button_To_List_       regions/07-object-1/0014BE54-0014C653.txt
+m080f003  3    -      0x000C683E  1:0x000B683E  code         Clear_Fake_Buttons            Clear_Fake_Buttons_            regions/07-object-1/0014BE54-0014C653.txt
+m080f004  4    -      0x000C685B  1:0x000B685B  code         Add_Fake_Button_Field         Add_Fake_Button_Field_         regions/07-object-1/0014BE54-0014C653.txt
+m080f005  5    -      0x000C68C4  1:0x000B68C4  code         Draw_Click_Thru_Fields        Draw_Click_Thru_Fields_        regions/07-object-1/0014BE54-0014C653.txt
+m080f006  6    -      0x000C69B6  1:0x000B69B6  code         Add_Click_Thru_Field_To_List  Add_Click_Thru_Field_To_List_  regions/07-object-1/0014BE54-0014C653.txt
+m080f007  7    -      0x000C6A26  1:0x000B6A26  code         Clear_Click_Thru_Fields       Clear_Click_Thru_Fields_       regions/07-object-1/0014BE54-0014C653.txt
+m080f008  8    -      0x000C6A43  1:0x000B6A43  code         Add_Click_Thru_Field          Add_Click_Thru_Field_          regions/07-object-1/0014BE54-0014C653.txt
+m080f009  9    -      0x000C6AA4  1:0x000B6AA4  code         Evaluate_Click_Thru_Fields    Evaluate_Click_Thru_Fields_    regions/07-object-1/0014BE54-0014C653.txt
+-         -    -      0x0017B1A4  2:0x0000B1A4  static,data  _n_fake_buttons               _n_fake_buttons                regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x0017B1A5  2:0x0000B1A5  static,data  _n_click_thru_fields          _n_click_thru_fields           regions/08-object-2/001F9654-001F9E53.txt
+-         -    -      0x00198904  2:0x00028904  data         _fake_buttons                 _fake_buttons                  -
+-         -    -      0x001989FE  2:0x000289FE  data         _click_thru_fields            _click_thru_fields             -

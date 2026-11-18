@@ -57,7 +57,7 @@ Line refs are production [DIPLOMAC.c](../../MoM/src/DIPLOMAC.c); cross-checked a
 ## ReMoM additions (not OG)
 
 - **`LOG_TRACE` FN-ENTER** ([2701](../../MoM/src/DIPLOMAC.c#L2701)) — logs the RNG call count on entry; not in the asm.
-- **`gd_dump_players` capture points 620 / 621** ([2703-2707](../../MoM/src/DIPLOMAC.c#L2703-L2707) entry, [2852-2856](../../MoM/src/DIPLOMAC.c#L2852-L2856) return) — one-shot `_players` snapshots bracketing the pass, added to diagnose the treaty/peace/exchange-modifier divergence. Debug scaffolding, not in the asm; transient.
+- **`STU_GD_Dump_Players` capture points 628 / 629** ([2979](../../MoM/src/DIPLOMAC.c#L2979) entry, [3128](../../MoM/src/DIPLOMAC.c#L3128) return) — one-shot `_players` snapshots bracketing the pass, added to diagnose the treaty/peace/exchange-modifier divergence. Debug scaffolding, not in the asm; transient.
 
 ## Related references
 

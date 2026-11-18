@@ -16,7 +16,7 @@ extern "C" {
 #include <cstring> // Why is this included? For strcat and strcmp functions used in the tests, because C++ here rather than C.
 
 /*
-    String_List_Builer(int16_t * List_Size, int16_t Total, char * Dest)
+    Add_Comma_Or_And_MGC(int16_t * List_Size, int16_t Total, char * Dest)
 
     Builds a human-readable comma-separated list with " and " before the last item.
     - Increments *List_Size each call
@@ -27,7 +27,7 @@ extern "C" {
     Usage pattern (from Draw_Special_Abilities_String):
         Retorts_Added = 0;
         for each retort:
-            String_List_Builer(&Retorts_Added, retort_count, &Retorts_String[0]);
+            Add_Comma_Or_And_MGC(&Retorts_Added, retort_count, &Retorts_String[0]);
             strcat(Retorts_String, retort_name);
 */
 
@@ -40,7 +40,7 @@ TEST(STR_ListSeparator_test, SingleItem_NoSeparator)
     int16_t Total = 1;
 
     // First (and only) item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Alchemy");
 
     EXPECT_EQ(List_Size, 1);
@@ -56,14 +56,14 @@ TEST(STR_ListSeparator_test, TwoItems_AndSeparator)
     int16_t Total = 2;
 
     // First item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Alchemy");
 
     EXPECT_EQ(List_Size, 1);
     EXPECT_STREQ(Dest, "Alchemy");
 
     // Second (last) item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Warlord");
 
     EXPECT_EQ(List_Size, 2);
@@ -79,17 +79,17 @@ TEST(STR_ListSeparator_test, ThreeItems_CommaAndAnd)
     int16_t Total = 3;
 
     // First item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Alchemy");
     EXPECT_EQ(List_Size, 1);
 
     // Second item (not last)
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Warlord");
     EXPECT_EQ(List_Size, 2);
 
     // Third (last) item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Myrran");
     EXPECT_EQ(List_Size, 3);
 
@@ -104,16 +104,16 @@ TEST(STR_ListSeparator_test, FourItems_MultipleCommasThenAnd)
     int16_t List_Size = 0;
     int16_t Total = 4;
 
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Alchemy");
 
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Warlord");
 
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Myrran");
 
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "Channeler");
 
     EXPECT_EQ(List_Size, 4);
@@ -130,7 +130,7 @@ TEST(STR_ListSeparator_test, ListSizeIncrementsCorrectly)
 
     for (int i = 0; i < 5; i++)
     {
-        String_List_Builer(&List_Size, Total, Dest);
+        Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
         strcat(Dest, "X");
         EXPECT_EQ(List_Size, i + 1);
     }
@@ -144,7 +144,7 @@ TEST(STR_ListSeparator_test, FirstItem_DestUnchanged)
     int16_t List_Size = 0;
     int16_t Total = 3;
 
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
 
     // Dest should still be empty after the separator call
     // (no separator prepended before the first item)
@@ -161,11 +161,11 @@ TEST(STR_ListSeparator_test, MiddleItem_CommaAppended)
     int16_t Total = 3;
 
     // First item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "A");
 
     // Second item (middle)
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     // After separator, before appending item name, Dest should have ", "
     EXPECT_STREQ(Dest, "A, ");
 }
@@ -179,11 +179,11 @@ TEST(STR_ListSeparator_test, LastItem_AndAppended)
     int16_t Total = 2;
 
     // First item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     strcat(Dest, "A");
 
     // Second (last) item
-    String_List_Builer(&List_Size, Total, Dest);
+    Add_Comma_Or_And_MGC(&List_Size, Total, Dest);
     // After separator, before appending item name, Dest should have " and "
     EXPECT_STREQ(Dest, "A and ");
 }

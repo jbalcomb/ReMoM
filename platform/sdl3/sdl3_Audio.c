@@ -170,9 +170,7 @@ void sdl3_Audio_Init(void)
     // if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | MIX_INIT_WAVPACK)) == 0)
     if(Mix_Init((MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS | 0x00000080)) == 0)
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_Init():  %s", SDL_GetError());
-#endif
         LOG_INFO(LOG_CAT_SDL3_AUDIO, "ERROR:  Mix_Init():  %s", SDL_GetError());
     }
     else
@@ -181,9 +179,7 @@ void sdl3_Audio_Init(void)
     }
     if(!Mix_OpenAudio(0, NULL))
     {
-#ifdef STU_DEBUG
         LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_OpenAudio():  %s", SDL_GetError());
-#endif
         LOG_INFO(LOG_CAT_SDL3_AUDIO, "ERROR:  Mix_OpenAudio():  %s", SDL_GetError());
     }
     else
@@ -285,24 +281,18 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
             sdl3_rw_ops = SDL_IOFromMem(wav_sound_buffer, wav_sound_buffer_size);
             if(sdl3_rw_ops == NULL)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_PFL, "ERROR:  SDL_IOFromMem()  %s", SDL_GetError());
-#endif
             }
             sdl3_audio_data_chunk = Mix_LoadWAV_IO(sdl3_rw_ops, 0);
             if(sdl3_audio_data_chunk == NULL)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_LoadWAV_IO()  %s", SDL_GetError());
-#endif
             }
             Mix_VolumeChunk(sdl3_audio_data_chunk, (int)(MIX_MAX_VOLUME * 0.75));
             sdl3_play_channel_result = Mix_PlayChannel(0, sdl3_audio_data_chunk, 0);
             if(sdl3_play_channel_result == -1)
             {
-#ifdef STU_DEBUG
                 LOG_DEBUG(LOG_CAT_PFL, "ERROR:  Mix_PlayChannel()  %s", SDL_GetError());
-#endif
             }
         } break;
         default:
@@ -514,7 +504,7 @@ int Convert_VOC_To_WAV(const uint8_t * voc_buf, uint32_t voc_len, uint8_t ** out
         } break;
         default:
         {
-            DLOG("FIXME - BAD/UNKNOWN VOC BLOCK TYPE");
+            LOG_WARN(LOG_CAT_SDL3_AUDIO, "FIXME - BAD/UNKNOWN VOC BLOCK TYPE");  /* CLAUDE: was DLOG() */
             voc_len = 0;
             // STU_DEBUG_BREAK();
         } break;
@@ -854,7 +844,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
         add_extra_bytes = 0;
         skip_extra_bytes = 0;
 
-        switch (*data_in & 0xf0) {
+        switch(*data_in & 0xf0) {
             case 0x90:
                 {
                     uint32_t dt_off = 0;
@@ -890,7 +880,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                         len_event = 0;
                         skip_extra_bytes = 3;
                     }
-                    switch (c) {
+                    switch(c) {
                         case 0x74:  /* AIL loop: FOR loop = 1 to n */
                             if(looppoint >= 0) {
                                 /* log_warning("XMID: nth FOR loop unimpl\n"); */
@@ -960,7 +950,7 @@ static int xmid_convert_evnt(const uint8_t *data_in, uint32_t len_in, const uint
                 len_event = 2;
                 break;
             case 0xf0:
-                switch (*data_in & 0xf) {
+                switch(*data_in & 0xf) {
                     case 0x08:
                     case 0x0a:
                     case 0x0b:

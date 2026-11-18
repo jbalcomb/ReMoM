@@ -2,8 +2,8 @@ AIMOVE-AI_Stacks_Stage_Expedition_Forces.md
 
 C:\STU\devel\STU-Extras\Piethawn\Piethawn\out\WIZARDS\ovr158\AI_Stacks_Stage_Expedition_Forces
 
-AI_Stacks_Survey_Expedition_Forces()
-AI_Stacks_Survey_Expedition_Forces_Stack()
+AI_Survey_Expedition_Forces()
+AI_Survey_Expedition_Stack()
 AI_Stacks_Stage_Expedition_Forces()
 
 
@@ -33,7 +33,7 @@ time scaled minimum stack size
 Source	                Fields
 cp_staged_unit_count	Units currently parked at this landmass's stage point
 cp_enroute_unit_count	Units already ordered to head to the stage point but not yet there
-cp_drafted_unit_count	Pool size — number of units in G_Pushout_* (populated by AI_Stacks_Survey_Expedition_Forces)
+cp_drafted_unit_count	Pool size — number of units in G_Pushout_* (populated by AI_Survey_Expedition_Forces)
 _ai_expedition_size_threshold	    Minimum stack size threshold for triggering stage orders
 
 G_Pushout_CX_IDs[itr]	Pool entry: index into _ai_own_stack_* (the stack this excess unit lives in)
@@ -103,7 +103,7 @@ army_unit_list
 
 ## Purpose
 
-Per-(plane, landmass) helper that **draws from the `G_Pushout_*` pool** — a top-9 secondary index INTO `_ai_own_stack_*` populated by [`AI_Stacks_Survey_Expedition_Forces`](AIMOVE-AI_Stacks_Survey_Expedition_Forces.md) — and orders the referenced units to head to THIS landmass's stage point, gradually assembling a force sized for downstream overseas attacks.
+Per-(plane, landmass) helper that **draws from the `G_Pushout_*` pool** — a top-9 secondary index INTO `_ai_own_stack_*` populated by [`AI_Survey_Expedition_Forces`](AIMOVE-AI_Survey_Expedition_Forces.md) — and orders the referenced units to head to THIS landmass's stage point, gradually assembling a force sized for downstream overseas attacks.
 
 **This is part of the `_ai_own_stack_*` area-of-code, not a separate AI subsystem.** See [MoM-AI-Move-ai_own_stack.md](MoM-AI-Move-ai_own_stack.md) for the full pool structure. In brief: each `G_Pushout_*[i]` entry is a `(stack_idx, list_unit_idx, unit_idx, value)` triple where `stack_idx` and `list_unit_idx` point into `_ai_own_stack_unit_list[stack_idx][list_unit_idx]` — the same per-stack slot the order-issuers in slots 4-11 consume. The pool cherry-picks the top 9 "excess" slots across the whole army.
 
@@ -132,7 +132,7 @@ Called from [`AI_Set_Unit_Orders`](AIMOVE-AI_Set_Unit_Orders.md) at [line 289](.
 |---|---|
 | `cp_staged_unit_count` | Units currently parked at this landmass's stage point |
 | `cp_enroute_unit_count` | Units already ordered to head to the stage point but not yet there |
-| `cp_drafted_unit_count` | Pool size — number of units in `G_Pushout_*` (populated by `AI_Stacks_Survey_Expedition_Forces`) |
+| `cp_drafted_unit_count` | Pool size — number of units in `G_Pushout_*` (populated by `AI_Survey_Expedition_Forces`) |
 | `_ai_expedition_size_threshold` | Minimum stack size threshold for triggering stage orders |
 | `MAX_STACK` (= 9) | Per-square stack cap |
 | `_ai_continents.plane[wp].player[player_idx].type_array[landmass_idx]` | Landmass type — checked for `lmt_Leaveable` and `lmt_NoOwnCity` |
@@ -266,7 +266,7 @@ AI_Stacks_Stage_Expedition_Forces(landmass_idx, wp, player_idx)
 |---|---|---|
 | 1 | [`AI_Stacks_Init_Build_Target_Order`](AIMOVE-AI_Stacks_Init_Build_Target_Order.md) | Always |
 | 2 | [`AI_Stacks_Move_Out_NonMilitary_Garrisoned`](AIMOVE-AI_Stacks_Move_Out_NonMilitary_Garrisoned.md) | Always |
-| 3 | `AI_Stacks_Survey_Expedition_Forces` | Always — populates `G_Pushout_*` pool |
+| 3 | `AI_Survey_Expedition_Forces` | Always — populates `G_Pushout_*` pool |
 | 4-7 | `AI_Stacks_Do_Meld` / `AI_Stacks_Do_Settle` / `AI_Stacks_Do_Purify` / `AI_Stacks_Do_RoadBuild` | Always (per-type internal filters) |
 | 8 | [`AI_Build_Target_List`](AIMOVE-AI_Build_Target_List.md) | Always |
 | 9 | [`AI_Stacks_Roamers_Target_Or_Deploy`](AIMOVE-AI_Stacks_Roamers_Target_Or_Deploy.md) | Always |
@@ -288,6 +288,6 @@ The pushout pool is the cross-landmass bus, riding on top of the `_ai_own_stack_
 - [AIMOVE-AI_Set_Unit_Orders.md](AIMOVE-AI_Set_Unit_Orders.md) — dispatcher; this function is slot 12 (UNGATED)
 - [AIMOVE-AI_Stacks_Relocate_Roamers.md](AIMOVE-AI_Stacks_Relocate_Roamers.md) — slot 11 sibling (sends roamers OUT)
 - [AIMOVE-AI_Reevaluate_Continent.md](AIMOVE-AI_Reevaluate_Continent.md) — periodic call target (Phase A)
-- [`AI_Stacks_Survey_Expedition_Forces`](AIMOVE-AI_Stacks_Survey_Expedition_Forces.md) (slot 3) — populates the `G_Pushout_*` pool this function consumes
+- [`AI_Survey_Expedition_Forces`](AIMOVE-AI_Survey_Expedition_Forces.md) (slot 3) — populates the `G_Pushout_*` pool this function consumes
 - [MoX/src/MOM_DAT.h:524](../../MoX/src/MOM_DAT.h#L524) — `us_*` Status enum
 - [MoM-AI-AIMOVE-Index.md](MoM-AI-AIMOVE-Index.md) — function index

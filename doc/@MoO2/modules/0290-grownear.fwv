@@ -1,0 +1,16 @@
+module_num=290
+module=grownear
+source=0290-grownear.md
+range[0]=1:0x00141765 linear=0x00151765 size=1466
+
+[Global symbols]
+KEY       ORD  ALIAS  LINEAR      SEGOFF        KIND         NAME                SYMBOL               CHUNK
+m290f001  1    -      0x00151765  1:0x00141765  static,code  __unlink            __unlink_            regions/07-object-1/001D6654-001D6E53.txt
+m290f002  2    -      0x001517B6  1:0x001417B6  code         __FreeDPMIBlocks    __FreeDPMIBlocks_    regions/07-object-1/001D6654-001D6E53.txt
+m290f003  3    -      0x00151812  1:0x00141812  code         __ReAllocDPMIBlock  __ReAllocDPMIBlock_  regions/07-object-1/001D6E54-001D7653.txt
+m290f004  4    -      0x00151911  1:0x00141911  static,code  __LinkUpNewMHeap    __LinkUpNewMHeap_    regions/07-object-1/001D6E54-001D7653.txt
+m290f005  5    -      0x00151985  1:0x00141985  code         __LastFree          __LastFree_          regions/07-object-1/001D6E54-001D7653.txt
+m290f006  6    -      0x001519D5  1:0x001419D5  static,code  RationalAlloc       RationalAlloc_       regions/07-object-1/001D6E54-001D7653.txt
+m290f007  7    -      0x00151AA6  1:0x00141AA6  static,code  __CreateNewNHeap    __CreateNewNHeap_    regions/07-object-1/001D6E54-001D7653.txt
+m290f008  8    -      0x00151B56  1:0x00141B56  code         __ExpandDGROUP      __ExpandDGROUP_      regions/07-object-1/001D6E54-001D7653.txt
+m290f009  9    -      0x00151CA2  1:0x00141CA2  static,code  __AdjustAmount      __AdjustAmount_      regions/07-object-1/001D6E54-001D7653.txt

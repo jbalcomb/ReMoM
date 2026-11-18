@@ -28,7 +28,7 @@ Draw_Field()
 So, should be normal_colors, ..., highlight_colors.
 
 Push_Field_Down()
-    if( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].Selectable != ST_FALSE) )
+    if( (p_fields[down_mouse_button].type == ft_StringList) && (p_fields[field_num].active_flag != ST_FALSE) )
         Draw_Field(down_mouse_button, 0);
 
 
