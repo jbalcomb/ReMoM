@@ -234,6 +234,7 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     int32_t file_size = 0;
     int16_t file_size_flag = 0;
     long file_pointer_position = 0;
+    /* CLAUDE */ const char * load_file_name = file_name;  /* the name actually opened: file_name, or the named-save override, which can be longer than LEN_FILE_NAME */
 
     TRACE_ENTER();
 
@@ -255,7 +256,8 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     /* CLAUDE: test-support named-save override (see g_load_save_gam_name_override above). */
     if(g_load_save_gam_name_override != NULL)
     {
-        stu_strcpy(file_name, g_load_save_gam_name_override);
+        // stu_strcpy(file_name, g_load_save_gam_name_override);
+        /* CLAUDE */ load_file_name = g_load_save_gam_name_override;  /* point at it: copying a name or path of LEN_FILE_NAME (20) or more into file_name overran the stack buffer */
         g_load_save_gam_name_override = NULL;
     }
     else
@@ -272,9 +274,9 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
     }
 
     /* CLAUDE: the filename actually resolved, and the index it will be carried alongside. */
-    LOG_INFO(LOG_CAT_LOADSAVE, "[--load] RESOLVED Load_SAVE_GAM: file_name=\"%s\"  save_gam_idx=%d  (override now %s)", file_name, save_gam_idx, (g_load_save_gam_name_override == NULL) ? "consumed/NULL" : "STILL SET");
+    LOG_INFO(LOG_CAT_LOADSAVE, "[--load] RESOLVED Load_SAVE_GAM: file_name=\"%s\"  save_gam_idx=%d  (override now %s)", load_file_name, save_gam_idx, (g_load_save_gam_name_override == NULL) ? "consumed/NULL" : "STILL SET");
 
-    file_size = STU_GRAF_User_LOF(file_name);  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
+    file_size = STU_GRAF_User_LOF(load_file_name);  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
     // DONT  assert(file_size != 0);  crashes if there are no game-save files, like on first run
     
     // dx 1, ax 57764 === 65536 + 57764 = 123300
@@ -285,10 +287,10 @@ void Load_SAVE_GAM(int16_t save_gam_idx)
 
 
     // TODO  gfile_pointer = gfopen(file_name, "rb");
-    file_pointer = STU_GRAF_Open_User(file_name, "rb");  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
+    file_pointer = STU_GRAF_Open_User(load_file_name, "rb");  /* CLAUDE: save -> user-data (WINDOWLESS: CWD) */
     if(file_pointer == NULL)
     {
-        LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", file_name);
+        LOG_FATAL(LOG_CAT_LOADSAVE, "FATAL: Load_SAVE_GAM() failed to open file \"%s\"", load_file_name);
         stu_debugbreak();
     }
 

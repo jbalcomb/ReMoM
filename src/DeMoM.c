@@ -3,7 +3,7 @@
  *
  * An entry point for windowless/automated operation:
  *   --newgame [ReMoM.ini]   Create a new game from config (skip menus)
- *   --load SAVE3.GAM        Load a save file (skip menus)
+ *   --load FILE.GAM         Load a save file (skip menus): SAVE1..SAVE9.GAM keep their slot; any other name or path loads that file
  *   --continue              Same as 'Main Menu ' Continue (loads SAVE9.GAM)
  *   --menu                  Start at the Main Menu with no game (a fresh process, as ReMoM starts)
  *   --replay game.RMR       Replay recorded input
@@ -139,6 +139,26 @@ static char *Trim_Whitespace(char *str)
 static int Str_Equal_CI(const char *a, const char *b)
 {
     return (stu_stricmp(a, b) == 0);
+}
+
+/* --load FILE: the save slot (0..8) when FILE is exactly SAVE1.GAM .. SAVE9.GAM (any case, no
+   directory part) -- the name Load_SAVE_GAM() builds from that slot.  Any other name or path
+   returns ST_UNDEFINED, and the caller loads that exact file through
+   g_load_save_gam_name_override.  (It used to read the slot from the characters after the first
+   four, so "dir/SAVE1.GAM" or "SAVE_FIXTURE.GAM" became slot -1 and silently loaded SAVETEST.GAM.) */
+static int16_t Save_Slot_From_File_Name(const char *name)
+{
+    if(
+        (strlen(name) == 9) &&
+        (stu_strnicmp(name, "SAVE", 4) == 0) &&
+        (name[4] >= '1') &&
+        (name[4] <= '9') &&
+        (stu_stricmp(name + 5, ".GAM") == 0)
+    )
+    {
+        return (int16_t)(name[4] - '1');
+    }
+    return ST_UNDEFINED;
 }
 
 static int Lookup_Wizard_By_Name(const char *name)
@@ -1540,7 +1560,7 @@ static void Print_Usage(const char *program_name)
     LOG_INFO(LOG_CAT_DEMOM, "\nOptions:");
     LOG_INFO(LOG_CAT_DEMOM, "  --newgame [FILE]   Create new game from config (default: ReMoM.ini)");
     LOG_INFO(LOG_CAT_DEMOM, "  --continue         Load SAVE9.GAM (continue from previous --newgame)");
-    LOG_INFO(LOG_CAT_DEMOM, "  --load FILE        Load a save file (SAVE1.GAM .. SAVE9.GAM, SAVETEST.GAM)");
+    LOG_INFO(LOG_CAT_DEMOM, "  --load FILE        Load a save file: SAVE1.GAM .. SAVE9.GAM (that slot), or any other file name or path");
     LOG_INFO(LOG_CAT_DEMOM, "  --menu             Start at the Main Menu with no game loaded (requires --scenario)");
     LOG_INFO(LOG_CAT_DEMOM, "  --scenario FILE    Run Automation Driver from scenario script (.hms)");
     LOG_INFO(LOG_CAT_DEMOM, "  --alias-points F   Named-action points table for `click Screen.Alias` (alias_points.fwv)");
@@ -1838,23 +1858,20 @@ int main(int argc, char *argv[])
     }
     else if(demom_mode == 2)
     {
-        int16_t save_slot;
+        int16_t save_slot = 0;
 
-        if(Str_Equal_CI(demom_file, "SAVETEST.GAM"))
-        {
-            save_slot = ST_UNDEFINED;
-        }
-        else
-        {
-            const char *digit_ptr = demom_file + 4;
-            save_slot = (int16_t)(stu_atoi(digit_ptr) - 1);
-        }
+        save_slot = Save_Slot_From_File_Name(demom_file);
 
         LOG_INFO(LOG_CAT_DEMOM, "[DeMoM] Loading save: %s (slot %d)", demom_file, save_slot);
         /* WIZARDS.EXE-path startup: load WZD resources before Load_SAVE_GAM,
            mirroring WIZARDS.EXE _main's `Load_WZD_Resources` -> `Load_SAVE_GAM`
            -> `Loaded_Game_Update` sequence. */
         Load_WZD_Resources();
+        if(save_slot == ST_UNDEFINED)
+        {
+            /* Not SAVEn.GAM (SAVETEST.GAM, a fixture name, a path): load exactly that file, the way the fixture modes below do. */
+            g_load_save_gam_name_override = demom_file;
+        }
         Load_SAVE_GAM(save_slot);
         Loaded_Game_Update();
         /* CLAUDE: mirror the reset that Screen_Control's scr_Continue / scr_Load_Screen cases do

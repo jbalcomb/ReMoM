@@ -127,7 +127,7 @@ DeMoM --help
 | Flag | Description |
 |------|-------------|
 | `--newgame [FILE]` | Create a new game from config (default: `ReMoM.ini`) |
-| `--load FILE` | Load a save file (`SAVE1.GAM`..`SAVE9.GAM`, `SAVETEST.GAM`) |
+| `--load FILE` | Load a save file: `SAVE1.GAM`..`SAVE9.GAM` load as that slot; any other file name or path (`SAVETEST.GAM`, a fixture such as `SAVE_SPELL_OF_RETURN.GAM`, `dir/FILE.GAM`) loads exactly that file |
 | `--replay FILE` | Replay recorded input from `.RMR` file |
 | `--record FILE` | Record input to `.RMR` file |
 | `--help` | Show usage |
@@ -294,6 +294,16 @@ done
 echo "All world generation smoke tests passed."
 ```
 
+
+### Where CTest runs DeMoM
+
+Each DeMoM test group runs in its own working directory, `out/build/<preset>/tests/demom_work/<Group>/`, set up by a
+`DeMoM_<Group>_Stage` test that wipes the directory and copies in only what the group needs (`MAGIC.SET`, a fixture
+save). DeMoM writes its saves, `--dump-save` text, logs and `MAGIC.SET` there, so look there for a failed test's
+`SAVE1.txt` or `remom_log_new.txt`. The game data (LBX, `CONFIG.MOM`) stays in the bin dir, where `copy_assets` stages
+it, and the tests point `REMOM_DATA_DIR` at it. Before this, every test ran in the bin dir, and any other DeMoM run there
+(another session, a manual run) overwrote `SAVE1.GAM`/`SAVE9.GAM` mid-test. New groups use `demom_stage_workdir()` in
+[tests/CMakeLists.txt](../tests/CMakeLists.txt).
 
 ## File Inventory
 

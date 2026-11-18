@@ -25,6 +25,49 @@ gtest_discover_tests(hello_test
 set(DEMOM_TEST_ASSETS "${PROJECT_SOURCE_DIR}/assets")
 set(DEMOM_TEST_WORKDIR "$<TARGET_FILE_DIR:DeMoM>")
 
+# Each DeMoM test group runs in its own working directory under the test build dir.  DeMoM writes its
+# saves, dumps, logs and MAGIC.SET to the working directory; when every test ran in the bin dir, any
+# other DeMoM run there (another session, a manual run, a parallel test group) overwrote SAVE1.GAM /
+# SAVE9.GAM / the dumps mid-test.  The game data (LBX, CONFIG.MOM) stays in the bin dir, where
+# copy_assets stages it, and REMOM_DATA_DIR points DeMoM at it.
+#
+# demom_stage_workdir(GROUP [DEBUG_ONLY] FILES f...) adds DeMoM_<GROUP>_Stage: wipe the group's
+# directory and copy FILES in (FIXTURES_SETUP DeMoM_<GROUP>_Workdir).  Every DeMoM run in the group
+# requires that fixture.  DEBUG_ONLY matches a group whose tests are CONFIGURATIONS Debug.
+set(DEMOM_TEST_DATA_DIR "$<TARGET_FILE_DIR:DeMoM>")
+set(DEMOM_WORK_ROOT "${CMAKE_CURRENT_BINARY_DIR}/demom_work")
+
+function(demom_stage_workdir group)
+    cmake_parse_arguments(STAGE "DEBUG_ONLY" "" "FILES" ${ARGN})
+    string(REPLACE ";" "|" files "${STAGE_FILES}")
+    if(STAGE_DEBUG_ONLY)
+        set(configurations CONFIGURATIONS Debug)
+    else()
+        set(configurations "")
+    endif()
+    add_test(
+        NAME DeMoM_${group}_Stage
+        ${configurations}
+        COMMAND ${CMAKE_COMMAND}
+            -DWORK_DIR=${DEMOM_WORK_ROOT}/${group}
+            -DFILES=${files}
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/stage_demom_workdir.cmake"
+    )
+    set_tests_properties(DeMoM_${group}_Stage PROPERTIES
+        FIXTURES_SETUP DeMoM_${group}_Workdir
+        LABELS "demom;integration;stage"
+    )
+endfunction()
+
+demom_stage_workdir(WorldGen         FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+demom_stage_workdir(Continue         FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+demom_stage_workdir(NextTurn         FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+demom_stage_workdir(AIBehavior       DEBUG_ONLY FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+demom_stage_workdir(Combat_Strategic FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
+demom_stage_workdir(Cast_Summon      FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
+demom_stage_workdir(AI_Dead_Units    FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
+demom_stage_workdir(L61              FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
+
 # --- Smoke Test: World Generation ---
 # Verifies: engine init, config parsing, wizard profile, world gen,
 #           event init, finalize tables, save file creation, clean exit.
@@ -34,9 +77,11 @@ add_test(
     COMMAND $<TARGET_FILE:DeMoM>
         --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
         --scenario "${DEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/WorldGen"
 )
 set_tests_properties(DeMoM_WorldGen_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_WorldGen_Workdir
     TIMEOUT 30
     FIXTURES_SETUP DeMoM_WorldGen
     LABELS "demom;integration;worldgen"
@@ -45,7 +90,7 @@ set_tests_properties(DeMoM_WorldGen_Run PROPERTIES
 add_test(
     NAME DeMoM_WorldGen_Validate
     COMMAND ${CMAKE_COMMAND}
-        -DSAVE_FILE=${DEMOM_TEST_WORKDIR}/SAVE9.GAM
+        -DSAVE_FILE=${DEMOM_WORK_ROOT}/WorldGen/SAVE9.GAM
         -DEXPECTED_SIZE=123300
         -P "${CMAKE_CURRENT_SOURCE_DIR}/validate_save.cmake"
 )
@@ -71,7 +116,7 @@ set_tests_properties(DeMoM_WorldGen_Validate PROPERTIES
 add_test(
     NAME DeMoM_WorldGen_Golden
     COMMAND ${CMAKE_COMMAND}
-        -DACTUAL=${DEMOM_TEST_WORKDIR}/SAVE9.GAM
+        -DACTUAL=${DEMOM_WORK_ROOT}/WorldGen/SAVE9.GAM
         -DEXPECTED=${CMAKE_CURRENT_SOURCE_DIR}/golden_worldgen_seed12345.GAM
         -P "${CMAKE_CURRENT_SOURCE_DIR}/compare_save.cmake"
 )
@@ -93,7 +138,7 @@ add_executable(check_save_fields check_save_fields.c)
 add_test(
     NAME DeMoM_WorldGen_Fields
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE9.txt
+        ${DEMOM_WORK_ROOT}/WorldGen/SAVE9.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_worldgen.txt
 )
 set_tests_properties(DeMoM_WorldGen_Fields PROPERTIES
@@ -114,7 +159,7 @@ set_tests_properties(DeMoM_WorldGen_Fields PROPERTIES
 add_test(
     NAME DeMoM_OOB_Autotiling
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE9.txt
+        ${DEMOM_WORK_ROOT}/WorldGen/SAVE9.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_oob_autotiling.txt
 )
 set_tests_properties(DeMoM_OOB_Autotiling PROPERTIES
@@ -145,9 +190,11 @@ add_test(
     COMMAND $<TARGET_FILE:DeMoM>
         --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
         --scenario "${DEMOM_TEST_ASSETS}/test_worldgen_smoke.hms"
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Continue"
 )
 set_tests_properties(DeMoM_Continue_Setup PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_Continue_Workdir
     TIMEOUT 30
     FIXTURES_SETUP DeMoM_Continue
     LABELS "demom;integration;continue"
@@ -159,12 +206,13 @@ add_test(
         --continue
         --scenario "${DEMOM_TEST_ASSETS}/test_continue_save.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Continue"
 )
 set_tests_properties(DeMoM_Continue_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
     TIMEOUT 30
     TIMEOUT 60
-    FIXTURES_REQUIRED DeMoM_Continue
+    FIXTURES_REQUIRED "DeMoM_Continue_Workdir;DeMoM_Continue"
     FIXTURES_SETUP DeMoM_Continue_Saved
     LABELS "demom;integration;continue"
 )
@@ -172,7 +220,7 @@ set_tests_properties(DeMoM_Continue_Run PROPERTIES
 add_test(
     NAME DeMoM_Continue_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_WORK_ROOT}/Continue/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_continue_save.txt
 )
 set_tests_properties(DeMoM_Continue_Assertions PROPERTIES
@@ -199,9 +247,11 @@ add_test(
     NAME DeMoM_NextTurn_Setup
     COMMAND $<TARGET_FILE:DeMoM>
         --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/NextTurn"
 )
 set_tests_properties(DeMoM_NextTurn_Setup PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_NextTurn_Workdir
     TIMEOUT 30
     FIXTURES_SETUP DeMoM_NextTurn
     LABELS "demom;integration;nextturn"
@@ -213,11 +263,12 @@ add_test(
         --continue
         --scenario "${DEMOM_TEST_ASSETS}/test_continue_next_turn.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/NextTurn"
 )
 set_tests_properties(DeMoM_NextTurn_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
     TIMEOUT 90
-    FIXTURES_REQUIRED DeMoM_NextTurn
+    FIXTURES_REQUIRED "DeMoM_NextTurn_Workdir;DeMoM_NextTurn"
     FIXTURES_SETUP DeMoM_NextTurn_Saved
     LABELS "demom;integration;nextturn"
 )
@@ -225,7 +276,7 @@ set_tests_properties(DeMoM_NextTurn_Run PROPERTIES
 add_test(
     NAME DeMoM_NextTurn_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_WORK_ROOT}/NextTurn/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_continue_next_turn.txt
 )
 set_tests_properties(DeMoM_NextTurn_Assertions PROPERTIES
@@ -256,15 +307,17 @@ add_test(
     CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:DeMoM>
         --newgame "${DEMOM_TEST_ASSETS}/test_worldgen.ini"
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/AIBehavior"
 )
 # TIMEOUT was 10s when --newgame world-gen took ~0.26s.  A fixed ~1.5s cost was
 # since added to every new game (measured ~1.4-1.75s solo, flat across land sizes
 # -- NOT content-scaled, so it won't creep as worlds grow), and ~5.5s under
 # parallel contention.  10s became flaky under load.  20s = a few x the realistic
-# sequential worst-case (the suite runs serially; it shares SAVE*.GAM), enough to
+# sequential worst-case, enough to
 # absorb slow-CI variance while still catching a real hang promptly.
 set_tests_properties(DeMoM_AIBehavior_Setup PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_AIBehavior_Workdir
     TIMEOUT 60
     FIXTURES_SETUP DeMoM_AIBehavior
     LABELS "demom;integration;ai"
@@ -305,11 +358,12 @@ add_test(
         --ai-metrics
         --dump-save SAVE1.GAM
         --seed1 12345
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/AIBehavior"
 )
 set_tests_properties(DeMoM_AIBehavior_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
     TIMEOUT 120
-    FIXTURES_REQUIRED DeMoM_AIBehavior
+    FIXTURES_REQUIRED "DeMoM_AIBehavior_Workdir;DeMoM_AIBehavior"
     FIXTURES_SETUP DeMoM_AIBehavior_Done
     LABELS "demom;integration;ai"
 )
@@ -318,7 +372,7 @@ add_test(
     NAME DeMoM_AIBehavior_Evaluate
     CONFIGURATIONS Debug
     COMMAND $<TARGET_FILE:check_ai_metrics>
-        "${DEMOM_TEST_WORKDIR}"
+        "${DEMOM_WORK_ROOT}/AIBehavior"
         "${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_5turns.txt"
 )
 set_tests_properties(DeMoM_AIBehavior_Evaluate PROPERTIES
@@ -331,8 +385,8 @@ set_tests_properties(DeMoM_AIBehavior_Evaluate PROPERTIES
 # =========================================================================
 #  Combat: strategic auto-resolve tracer  (PLAN-Combat-Testing.md, phase 1)
 #
-#  Loads the checked-in fixture save SAVECMBT.GAM (staged to the bin dir by
-#  copy_assets), patches diplomacy to war, pins the RNG, and resolves a
+#  Loads the checked-in fixture save SAVECMBT.GAM (staged to the group's work
+#  dir by DeMoM_Combat_Strategic_Stage), patches diplomacy to war, pins the RNG, and resolves a
 #  stack-vs-stack strategic combat by invoking the combat dispatcher
 #  directly: attacker player 2 (units 12,15,17) vs defender player 3
 #  (stack of unit 500).  DeMoM writes DEMOM_COMBAT.txt; the assertion step
@@ -345,9 +399,11 @@ add_test(
     COMMAND $<TARGET_FILE:DeMoM>
         --combat 500 12,15,17
         --seed1 12345
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Combat_Strategic"
 )
 set_tests_properties(DeMoM_Combat_Strategic_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_Combat_Strategic_Workdir
     TIMEOUT 60
     FIXTURES_SETUP DeMoM_Combat_Strategic
     LABELS "demom;integration;combat"
@@ -356,7 +412,7 @@ set_tests_properties(DeMoM_Combat_Strategic_Run PROPERTIES
 add_test(
     NAME DeMoM_Combat_Strategic_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/DEMOM_COMBAT.txt
+        ${DEMOM_WORK_ROOT}/Combat_Strategic/DEMOM_COMBAT.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_combat_strategic.txt
 )
 set_tests_properties(DeMoM_Combat_Strategic_Assertions PROPERTIES
@@ -382,9 +438,11 @@ add_test(
     COMMAND $<TARGET_FILE:DeMoM>
         --cast-summon 201
         --seed1 12345
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/Cast_Summon"
 )
 set_tests_properties(DeMoM_Cast_Summon_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_Cast_Summon_Workdir
     TIMEOUT 60
     FIXTURES_SETUP DeMoM_Cast_Summon
     LABELS "demom;integration;spells"
@@ -393,7 +451,7 @@ set_tests_properties(DeMoM_Cast_Summon_Run PROPERTIES
 add_test(
     NAME DeMoM_Cast_Summon_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/DEMOM_SUMMON.txt
+        ${DEMOM_WORK_ROOT}/Cast_Summon/DEMOM_SUMMON.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_cast_summon.txt
 )
 set_tests_properties(DeMoM_Cast_Summon_Assertions PROPERTIES
@@ -421,10 +479,12 @@ add_test(
     COMMAND $<TARGET_FILE:DeMoM>
         --ai-dead-units 21,75,300,776
         --seed1 12345
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/AI_Dead_Units"
 )
 # TIMEOUT: 60 like the other fixture runs (measured 0.67-0.89s).
 set_tests_properties(DeMoM_AI_Dead_Units_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_AI_Dead_Units_Workdir
     TIMEOUT 60
     FIXTURES_SETUP DeMoM_AI_Dead_Units
     LABELS "demom;integration;ai"
@@ -433,7 +493,7 @@ set_tests_properties(DeMoM_AI_Dead_Units_Run PROPERTIES
 add_test(
     NAME DeMoM_AI_Dead_Units_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/DEMOM_AI_DEAD_UNITS.txt
+        ${DEMOM_WORK_ROOT}/AI_Dead_Units/DEMOM_AI_DEAD_UNITS.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_ai_dead_units.txt
 )
 set_tests_properties(DeMoM_AI_Dead_Units_Assertions PROPERTIES
@@ -466,9 +526,11 @@ add_test(
         --menu --seed1 12345
         --scenario "${DEMOM_TEST_ASSETS}/test_l61_fresh.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/L61"
 )
 set_tests_properties(DeMoM_L61_Fresh_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_L61_Workdir
     TIMEOUT 60
     FIXTURES_SETUP DeMoM_L61_Fresh_Ran
     LABELS "demom;integration;l61"
@@ -478,7 +540,7 @@ set_tests_properties(DeMoM_L61_Fresh_Run PROPERTIES
 add_test(
     NAME DeMoM_L61_Fresh_Assertions
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
+        ${DEMOM_WORK_ROOT}/L61/SAVE1.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/assert_l61_fresh.txt
 )
 set_tests_properties(DeMoM_L61_Fresh_Assertions PROPERTIES
@@ -490,8 +552,8 @@ set_tests_properties(DeMoM_L61_Fresh_Assertions PROPERTIES
 add_test(
     NAME DeMoM_L61_Fresh_Keep
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
-        ${DEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+        ${DEMOM_WORK_ROOT}/L61/SAVE1.txt
+        ${DEMOM_WORK_ROOT}/L61/L61_FRESH_SAVE1.txt
 )
 set_tests_properties(DeMoM_L61_Fresh_Keep PROPERTIES
     FIXTURES_REQUIRED "DeMoM_L61_Fresh_Ran;DeMoM_L61_Fresh_Checked"
@@ -505,11 +567,12 @@ add_test(
         --menu --seed1 12345
         --scenario "${DEMOM_TEST_ASSETS}/test_l61_second_game.hms"
         --dump-save SAVE1.GAM
-    WORKING_DIRECTORY "${DEMOM_TEST_WORKDIR}"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/L61"
 )
 set_tests_properties(DeMoM_L61_Second_Game_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
     TIMEOUT 90
-    FIXTURES_REQUIRED DeMoM_L61_Fresh
+    FIXTURES_REQUIRED "DeMoM_L61_Workdir;DeMoM_L61_Fresh"
     FIXTURES_SETUP DeMoM_L61_Second_Game
     LABELS "demom;integration;l61"
 )
@@ -517,8 +580,8 @@ set_tests_properties(DeMoM_L61_Second_Game_Run PROPERTIES
 add_test(
     NAME DeMoM_L61_Compare
     COMMAND $<TARGET_FILE:check_save_fields>
-        ${DEMOM_TEST_WORKDIR}/SAVE1.txt
-        ${DEMOM_TEST_WORKDIR}/L61_FRESH_SAVE1.txt
+        ${DEMOM_WORK_ROOT}/L61/SAVE1.txt
+        ${DEMOM_WORK_ROOT}/L61/L61_FRESH_SAVE1.txt
 )
 set_tests_properties(DeMoM_L61_Compare PROPERTIES
     FIXTURES_REQUIRED DeMoM_L61_Second_Game
