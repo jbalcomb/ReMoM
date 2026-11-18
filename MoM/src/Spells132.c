@@ -1063,7 +1063,7 @@ int16_t Cast_Plane_Shift(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_PlaneShift_2);
+        return_value = Spell_Casting_Screen(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_PlaneShift_2);
 
         scsv2 = _UNITS[scsv1].wy;
         scsv3 = _UNITS[scsv1].wp;
@@ -1672,7 +1672,7 @@ void Cast_Floating_Island(int16_t player_idx)
         {
 
             // if(valid_cast = IDK_Spell_Casting_Screen_s5C500(4, &wx, &wy, &wp, &var_8, &var_A, aFloatingIsla_0) == ST_TRUE)
-            /* SPELLY */  if((valid_cast = Spell_Casting_Screen__WIP(stt_Map_Square, &wx, &wy, &wp, &target_wx, &target_wy, "Floating Island")) == ST_TRUE)
+            /* SPELLY */  if((valid_cast = Spell_Casting_Screen(stt_Map_Square, &wx, &wy, &wp, &target_wx, &target_wy, "Floating Island")) == ST_TRUE)
             {
 
                 valid_target = ST_TRUE;
@@ -1847,7 +1847,7 @@ int16_t Cast_Lycantrophy(int16_t player_idx)
         while((return_value == ST_TRUE) && (status == ST_FALSE))
         {
             
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aLycanthropy);
+            return_value = Spell_Casting_Screen(stt_Friendly_Unit, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aLycanthropy);
 
             if(return_value == ST_TRUE)
             {
@@ -1960,7 +1960,7 @@ int16_t Cast_Wall_Of_Stone(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aWallOfStone);
+            return_value = Spell_Casting_Screen(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aWallOfStone);
 
             if(return_value == ST_TRUE)
             {
@@ -2049,7 +2049,7 @@ int16_t Cast_Spell_Of_Return(int16_t player_idx)
     {
 
         do {
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aSpellOfReturn);  // "Spell of Return"
+            return_value = Spell_Casting_Screen(stt_Friendly_City, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aSpellOfReturn);  // "Spell of Return"
         } while(return_value == ST_FALSE);
 
     }

@@ -431,7 +431,7 @@ int16_t Cast_Black_Wind(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aBlackWind);
+        return_value = Spell_Casting_Screen(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aBlackWind);
 
         scsv2 = _UNITS[scsv1].wy;
         scsv3 = _UNITS[scsv1].wp;
@@ -580,7 +580,7 @@ int16_t Cast_Earth_Lore(int16_t player_idx)
 
         Mark_Block(_screen_seg);
 
-        return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
+        return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
 
     }
 
@@ -772,7 +772,7 @@ int16_t Cast_Change_Terrain(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aChangeTerrain);
+            return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aChangeTerrain);
 
             if(return_value == ST_TRUE)
             {
@@ -1065,7 +1065,7 @@ int16_t Cast_Raise_Volcano(int16_t player_idx)
 
             status = ST_TRUE;
 
-            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aRaiseVolcano);
+            return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aRaiseVolcano);
 
             if(return_value == ST_TRUE)
             {
@@ -1325,7 +1325,7 @@ int16_t Cast_Transmute(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aTransmute);
+            return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aTransmute);
 
             if(return_value == ST_TRUE)
             {
@@ -1540,7 +1540,7 @@ int16_t Cast_Corruption(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
+            return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aCorruption_0);
 
             if(return_value == ST_TRUE)
             {
@@ -1778,7 +1778,7 @@ int16_t Cast_Word_Of_Recall(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWordOfRecall);
+        return_value = Spell_Casting_Screen(stt_Friendly_Unit, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWordOfRecall);
 
     }
     else
@@ -1863,7 +1863,7 @@ int16_t Cast_Enchant_Road(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aEnchantRoad);
+        return_value = Spell_Casting_Screen(stt_Map_Square, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aEnchantRoad);
 
     }
     else
@@ -2045,7 +2045,7 @@ int16_t Cast_Spell_Ward(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &scsv2, &scsv3, &scsv4, &scsv5, aSpellWard);
+            return_value = Spell_Casting_Screen(stt_Friendly_City, &city_idx, &scsv2, &scsv3, &scsv4, &scsv5, aSpellWard);
 
             if(return_value == ST_TRUE)
             {

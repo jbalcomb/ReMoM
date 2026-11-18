@@ -721,20 +721,15 @@ void Restore_Mouse_On_Page(void)
     uint16_t height;
     uint16_t itr_width;
     uint16_t itr_height;
-
-    /* CLAUDE */  /* REBUG */  /* asm seg035/Restore_Mouse_On_Page.asm: cmp [previous_pointer_image_number], 0 / jnz loc_261A7 - else return */
     if(previous_pointer_image_number == crsr_None)
     {
         return;
     }
-
     mouse_buffer = &mouse_background_buffer[0];
     screen_page_offset = *mouse_buffer++;
     width = *mouse_buffer++;
     height = *mouse_buffer++;
-
     screen_page = video_page_buffer[draw_page_num] + screen_page_offset;
-
     for(itr_height = 0; itr_height < height; itr_height++)
     {
         for(itr_width = 0; itr_width < width; itr_width++)
@@ -742,7 +737,6 @@ void Restore_Mouse_On_Page(void)
             *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width) = (uint8_t)*mouse_buffer++;
         }
     }
-
 }
 
 

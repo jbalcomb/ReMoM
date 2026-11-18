@@ -37,7 +37,7 @@ Line numbers below are the item's line in the TODO file (`L10` = line 10). Code 
 [x] | L31 | `WIZ_HireHero` — clears the human's hero items | ReMoM | fixed |
 [x] | L32 | `Cast_Spell_Overland_Do` crafting — a, c, d (b is AF9) | ReMoM (a, c); OGBUG (d) | a, c fixed; d `OGBUG` note in place (`[136]` restored) |
 [x] | L33 | `Item_Make_Screen` — left-arrow wrap index | ReMoM | fixed |
-[x] | L34 | `Spell_Casting_Screen__WIP` — `screen_changed` never cleared | ReMoM | fixed |
+[x] | L34 | `Spell_Casting_Screen` — `screen_changed` never cleared | ReMoM | fixed |
 [x] | L35 | `Learn_Spell_Animation` — row written to the wrong variable | ReMoM | fixed |
 [x] | L36 | `Cast_Spell_Overland` — summon map focus `_UNITS[_units]` | ReMoM | **fixed in v0.0.9 (#21)** |
 [x] | L37 | `Hero_LevelUp_Popup_Draw` — missing `* 17` | ReMoM | fixed |
@@ -295,7 +295,7 @@ The missing owner test is not a separate bug: Phase 4 matches units on the squar
 
 [OverSpel.c:1127-1146](../../MoM/src/OverSpel.c#L1127-L1146)
 
-After the target is chosen (AI: `AITP_Unit_Enchantment`; human: `Spell_Casting_Screen__WIP`), ReMoM always runs the animation and `_UNITS[spell_target_idx].enchantments |= ...`. The asm checks first:
+After the target is chosen (AI: `AITP_Unit_Enchantment`; human: `Spell_Casting_Screen`), ReMoM always runs the animation and `_UNITS[spell_target_idx].enchantments |= ...`. The asm checks first:
 
 ```
 ovr135/Cast_Spell_Overland.asm   @@After_CastUnitEnch:
@@ -374,12 +374,12 @@ ovr115/Item_Make_Screen.asm   dec     [m_itemmake_item_icon_idx]
 
 The index has just dropped to `start - 1`, so `idx + count` is the last icon of the type. Now `m_itemmake_item_icon_idx += Item_Type_Icon_Ranges[weapon_type_num].count;`.
 
-### L34 — `Spell_Casting_Screen__WIP` never clears `screen_changed` — **ReMoM**
+### L34 — `Spell_Casting_Screen` never clears `screen_changed` — **ReMoM**
 
 [SCastScr.c:729-740](../../MoM/src/SCastScr.c#L729-L740)
 
 ```
-ovr070/Spell_Casting_Screen__WIP.asm   loc_5CD0F:
+ovr070/Spell_Casting_Screen.asm   loc_5CD0F:
                                        mov     [bp+screen_changed], e_ST_FALSE
 ```
 

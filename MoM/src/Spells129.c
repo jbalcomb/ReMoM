@@ -522,7 +522,7 @@ int16_t Cast_Call_The_Void(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aCallTheVoid);
+        return_value = Spell_Casting_Screen(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aCallTheVoid);
 
     }
     else
@@ -1001,7 +1001,7 @@ int16_t Cast_Chaos_Channels(int16_t player_idx)
 
             status = ST_TRUE;
 
-            return_value = Spell_Casting_Screen__WIP(HUMAN_PLAYER_IDX, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aChaosChannels);
+            return_value = Spell_Casting_Screen(HUMAN_PLAYER_IDX, &unit_idx, &scsv2, &scsv3, &scsv4, &scsv5, aChaosChannels);
 
             if(return_value == ST_TRUE)
             {
@@ -1085,7 +1085,7 @@ int16_t Cast_Warp_Node(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Node, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWarpNode);
+            return_value = Spell_Casting_Screen(stt_Node, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aWarpNode);
 
             if(return_value == ST_TRUE)
             {
@@ -1208,7 +1208,7 @@ int16_t Cast_Stasis(int16_t player_idx)
         while((return_value == ST_TRUE) && (status == ST_FALSE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_Stasis_2);
+            return_value = Spell_Casting_Screen(stt_Enemy_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, cnst_Stasis_2);
 
             if(return_value == ST_TRUE)
             {
@@ -1374,7 +1374,7 @@ int16_t Cast_Natures_Cures(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
             
-        return_value = Spell_Casting_Screen__WIP(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aNatureSCures);
+        return_value = Spell_Casting_Screen(stt_Friendly_Group, &scsv1, &scsv2, &scsv3, &scsv4, &scsv5, aNatureSCures);
 
     }
     else
@@ -1482,7 +1482,7 @@ int16_t Cast_Move_Fortress(int16_t player_idx)
         while((status == ST_FALSE) && (return_value == ST_TRUE))
         {
 
-            return_value = Spell_Casting_Screen__WIP(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aMoveFortress);
+            return_value = Spell_Casting_Screen(stt_Friendly_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aMoveFortress);
 
             if(return_value == ST_TRUE)
             {
@@ -1606,7 +1606,7 @@ int16_t Cast_Earthquake(int16_t player_idx)
     if(player_idx == HUMAN_PLAYER_IDX)
     {
 
-        return_value = Spell_Casting_Screen__WIP(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aEarthquake);
+        return_value = Spell_Casting_Screen(stt_Enemy_City, &city_idx, &wy, &wp, &target_wx, &target_wy, aEarthquake);
 
     }
     else

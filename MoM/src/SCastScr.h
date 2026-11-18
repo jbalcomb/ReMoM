@@ -23,7 +23,7 @@ extern "C" {
 */
 
 // WZD o70p01
-int16_t Spell_Casting_Screen__WIP(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * target_wx, int16_t * target_wy, char * spell_name);
+int16_t Spell_Casting_Screen(int16_t spell_target_type, int16_t * wx, int16_t * wy, int16_t * wp, int16_t * target_wx, int16_t * target_wy, char * spell_name);
 
 // WZD o70p02
 void Spell_Casting_Screen_Add_Fields(void);

@@ -18,7 +18,7 @@ UseTab:                  Never
 IndentWidth:             4
 TabWidth:                4
 BreakBeforeBraces:       Allman
-IndentCaseLabels:        false
+IndentCaseLabels:        true
 AccessModifierOffset:    -4
 NamespaceIndentation:    All
 FixNamespaceComments:    false
@@ -67,3 +67,6 @@ AlignConsecutiveDeclarations:  None
 BreakBeforeBinaryOperators:    None
 AlignAfterOpenBracket:         BlockIndent
 AlignOperands:                 DontAlign
+
+# Brace initialisers keep their inner spaces: { 0, 0, 0 }, not {0, 0, 0} (house style for explicit zero-init).
+Cpp11BracedListStyle:          false

@@ -910,7 +910,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                 {
                     if(player_idx == HUMAN_PLAYER_IDX)
                     {
-                        cast_can_continue = Spell_Casting_Screen__WIP(stt_Enemy_Group, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                        cast_can_continue = Spell_Casting_Screen(stt_Enemy_Group, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
                     }
                     else
                     {
@@ -979,7 +979,7 @@ void Cast_Spell_Overland(int16_t player_idx)
 
                             MultiPurpose_Local_Var = ST_TRUE;
 
-                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Friendly_Unit, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            cast_can_continue = Spell_Casting_Screen(stt_Friendly_Unit, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
 
                             if(cast_can_continue == ST_TRUE)
                             {
@@ -1236,7 +1236,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                         while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
                             MultiPurpose_Local_Var = ST_TRUE;
-                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Friendly_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            cast_can_continue = Spell_Casting_Screen(stt_Friendly_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
                             if(cast_can_continue == ST_TRUE)
                             {
                                 // if(
@@ -1390,8 +1390,8 @@ void Cast_Spell_Overland(int16_t player_idx)
 
                         while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
-                            // MultiPurpose_Local_Var = ST_TRUE;  /* CLAUDE */  /* REBUG */  /* asm: loc_BBE4D starts with the Spell_Casting_Screen__WIP call; only loc_BBF68 (the no-error path) sets MultiPurpose_Local_Var */
-                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Enemy_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
+                            // MultiPurpose_Local_Var = ST_TRUE;  /* CLAUDE */  /* REBUG */  /* asm: loc_BBE4D starts with the Spell_Casting_Screen call; only loc_BBF68 (the no-error path) sets MultiPurpose_Local_Var */
+                            cast_can_continue = Spell_Casting_Screen(stt_Enemy_City, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name[0]);
                             if(cast_can_continue == ST_TRUE)
                             {
                                 ptr_enchantments = (uint8_t *)&_CITIES[spell_target_idx].enchantments[0];
@@ -1476,7 +1476,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                         }
                         // Change_Relations_For_Bad_City_Spell(player_idx, spell_idx, spell_target_idx);  /* CLAUDE */  /* REBUG */  /* asm: loc_BBFB0: cmp Cast_Successful, e_ST_TRUE / jz loc_BBFB9 / jmp @@CityEnchantmentNegative_UpdateDiplo -- the call is outside the if */
                     }
-                    /* OGBUG  Change_Relations_For_Bad_City_Spell() is called even when the cast failed: a curse stopped by Apply_Automatic_Spell_Counters() still costs the relations penalty, and a cancelled Spell_Casting_Screen__WIP() leaves spell_target_idx = -1, so the OG reads _CITIES[-1].owner_idx (the bytes before the _CITIES block) as the defender */
+                    /* OGBUG  Change_Relations_For_Bad_City_Spell() is called even when the cast failed: a curse stopped by Apply_Automatic_Spell_Counters() still costs the relations penalty, and a cancelled Spell_Casting_Screen() leaves spell_target_idx = -1, so the OG reads _CITIES[-1].owner_idx (the bytes before the _CITIES block) as the defender */
                     /* HACK */  if((spell_target_idx >= 0) && (spell_target_idx < NUM_CITIES))  /* CLAUDE */  /* bounds the _CITIES[] read; out of range, ReMoM skips the call, where the OG still passes the garbage owner byte on to Change_Relations() */
                     {
                         Change_Relations_For_Bad_City_Spell(player_idx, spell_idx, spell_target_idx);  /* CLAUDE */  /* REBUG */  /* asm: @@CityEnchantmentNegative_UpdateDiplo: push spell_target_idx / push spell_idx / push player_idx / call j_Change_Relations_For_Bad_City_Spell */
@@ -1836,7 +1836,7 @@ void Cast_Spell_Overland(int16_t player_idx)
                         while((MultiPurpose_Local_Var == ST_FALSE) && (cast_can_continue == ST_TRUE))
                         {
 
-                            cast_can_continue = Spell_Casting_Screen__WIP(stt_Map_Square, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name);
+                            cast_can_continue = Spell_Casting_Screen(stt_Map_Square, &spell_target_idx, &wy, &wp, &target_wy, &target_wp, (char *)&spell_name);
 
                             if(cast_can_continue == ST_TRUE)
                             {

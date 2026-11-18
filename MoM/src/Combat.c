@@ -11280,7 +11280,7 @@ void Combat_Screen_Assign_Mouse_Images(void)
 
 // WZD o113p02
 /*
-~== SCastScr  Spell_Casting_Screen__WIP() |-> Spell_Casting_Screen_Assign_Mouse_Images()
+~== SCastScr  Spell_Casting_Screen() |-> Spell_Casting_Screen_Assign_Mouse_Images()
 */
 void Combat_Spell_Target_Screen_Draw(void)
 {

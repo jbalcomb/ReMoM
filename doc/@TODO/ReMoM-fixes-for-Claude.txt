@@ -31,7 +31,7 @@ Platform-only issues (big-endian byte order, Amiga toolchain, memory layout, mus
 - WIZ_HireHero (Spells132.c): clears the item slots of _players[HUMAN_PLAYER_IDX] instead of _players[player_idx]; when an AI hires/summons a hero into slot N, the human's hero in slot N loses all items. [ReMoM]
 - Cast_Spell_Overland_Do (SBookScr.c), Enchant Item / Create Artifact for the human: also runs the AI path (random Make_Item, cost * var_8 where var_8 is never set = 0), so the spell is cancelled at once. Human now keeps the item designed on screen and its cost. [ReMoM]
 - Item_Make_Screen (ItemMake.c): left arrow below the first icon of a type set m_itemmake_item_icon_idx = count instead of start + count - 1 (Axe -> Mace, Misc -> Bow...). [ReMoM]
-- Spell_Casting_Screen__WIP (SCastScr.c): sets screen_changed on minimap/plane clicks but never clears it (Main_Screen does at the end of each loop); the targeting screen stopped redrawing ("freeze"). [ReMoM]
+- Spell_Casting_Screen (SCastScr.c): sets screen_changed on minimap/plane clicks but never clears it (Main_Screen does at the end of each loop); the targeting screen stopped redrawing ("freeze"). [ReMoM]
 - Spellbook new-spell animation (Spellbook.c): row stored in m_spell_list_count, but the animation reads GUI_Multipurpose_Int (same variable in the original, per ReMoM's own note) - wrong row revealed, runes stayed. [ReMoM]
 - After summoning (OverSpel.c): map position/plane taken from _UNITS[_units] (the slot AFTER the new unit) instead of _UNITS[_units - 1] - garbage plane, map drawing never finished (freeze). [ReMoM]
 - Hero_LevelUp_Popup_Draw (LVLMAKE.c): window bottom = base_y + 49 + (n+1)/2, missing "* 17" (row height, present in Hero_LevelUp_Popup) - abilities cut off. [ReMoM]

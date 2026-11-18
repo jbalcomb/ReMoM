@@ -75,7 +75,7 @@ Usages:
 
 
 
-## Spell_Casting_Screen__WIP()
+## Spell_Casting_Screen()
 
 ...uses j_Spell_Casting_Screen_Draw()
 

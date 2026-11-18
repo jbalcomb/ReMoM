@@ -842,8 +842,7 @@ void Powergraph_Screen_Draw(void)
             Line(x2, y1, x2, (2 + y1), 180);
             if(((year + (months_count / 12)) % 5) == 0)
             {
-                // Print_Integer((22 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
-                Print_Integer((10 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));  /* CLAUDE */  /* REBUG */  /* asm 363-369: (months_count / 12) * 12 / add ax, 10 */
+                Print_Integer((10 + ((months_count / 12) * 12)), 186, (1400 + year + (months_count / 12)));
             }
         }
         months_count++;
@@ -852,7 +851,7 @@ void Powergraph_Screen_Draw(void)
     {
         if(_FORTRESSES[itr_players].active == ST_TRUE)
         {
-            if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)  // ¿ current player ?
+            if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)
             {
                 Powergraph_Draw_Wizard_History(itr_players, turns_count, month);
             }
@@ -909,25 +908,17 @@ void Powergraph_Draw_Wizard_History(int16_t player_idx, int16_t last_turn, int16
     int16_t itr_turn_data = 0;  // _SI_
     struct s_WIZARD * ptr_player = 0;
     uint8_t * ptr_Historian = 0;
-
     banner_colors[0] = BANNER_COLOR_BLUE;
     banner_colors[1] = BANNER_COLOR_GREEN;
     banner_colors[2] = BANNER_COLOR_PURPLE;
     banner_colors[3] = BANNER_COLOR_RED;
     banner_colors[4] = BANNER_COLOR_YELLOW;
-
     turns_count = last_turn;
-
     x2_itr = 0;
-
     for(itr_turn_data = first_turn; itr_turn_data < turns_count; itr_turn_data++)
     {
         x2 = (16 + x2_itr);
-        y2 = (181 - _players[player_idx].history[itr_turn_data]);  // 181 is 2 pixels up from the time-line
-        // ptr_player = &_players[player_idx];
-        // ptr_Historian = &_players[player_idx].history[0];
-        /* CLAUDE */  /* REBUG */  /* asm 31-46: x2 / y2 / the y2 clamp only - no counterpart for the two pointer stores */
-
+        y2 = (181 - _players[player_idx].history[itr_turn_data]);
         SETMIN(y2, 22);
         if(itr_turn_data > first_turn)
         {
@@ -944,7 +935,6 @@ void Powergraph_Draw_Wizard_History(int16_t player_idx, int16_t last_turn, int16
         }
         x2_itr++;
     }
-
 }
 
 // WZD o76p06
@@ -1071,8 +1061,7 @@ void Status_Screen_Draw(void)
     Set_Alias_Color(246);
     Set_Outline_Color(254);
     var_12 = 0;
-    // for(itr_players = 0; itr_players < NUM_PLAYERS; itr_players++)
-    for(itr_players = 0; itr_players < _num_players; itr_players++)  /* CLAUDE */  /* REBUG */  // asm: cmp ax, [_num_players]
+    for(itr_players = 0; itr_players < _num_players; itr_players++)
     {
         /* OGBUG  only Contacted is tested, so an eliminated wizard is still listed (no _FORTRESSES[].active test) */
         if(_players[_current_player_idx].Dipl.Contacted[itr_players] == ST_TRUE)

@@ -31,7 +31,7 @@ void IDK_Spell_Cityscape_2(int16_t city_idx, int16_t spell_idx, int16_t player_i
 Cast_Spell_Overland()
     switch(spell_data_table[spell_idx].type)
     case scc_City_Enchantment:  //  2
-    Cast_Successful = Spell_Casting_Screen__WIP(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);
+    Cast_Successful = Spell_Casting_Screen(stt_Friendly_City, &G_Have_Targets, &RetY, &RetP, &var_12, &var_10, &spell_name);
     if(Cast_Successful == ST_TRUE)
     /* SPELLY */  IDK_Spell_Cityscape_1__WIP(G_Have_Targets, spell_idx, player_idx);
     /* SPELLY */  IDK_Spell_Cityscape_2__WIP(G_Have_Targets, spell_idx, player_idx);

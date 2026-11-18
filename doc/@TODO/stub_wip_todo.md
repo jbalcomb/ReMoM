@@ -362,7 +362,7 @@
 - [ ] Spell_Animation_Screen__WIP
 
 ## SCastScr
-- [ ] Spell_Casting_Screen__WIP
+- [ ] Spell_Casting_Screen
 
 ## SCORE
 - [x] End_Of_Game_Score_Draw
