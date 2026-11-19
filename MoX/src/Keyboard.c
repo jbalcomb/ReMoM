@@ -191,7 +191,7 @@ int16_t Interpret_Keyboard_Only_Input(void)
         /* CLAUDE */  /* REBUG */  /* asm: cmp [bp+Input_Key], KP_F11 - a byte compare */
         if(input_key == (int8_t)ST_KEY_F11)
         {
-            F11_Key__WIP();
+            F11_Key();
         }
 
         // if(input_key == ST_KEY_F12)

@@ -65,13 +65,13 @@ char cnst_WB7[] = "wb";
 */
 
 // WZD s24p01
-void F11_Key__WIP(void)
+void F11_Key(void)
 {
     if(release_flag == ST_TRUE)
     {
         return;
     }
-    // TODO  Exit_With_Size();
+    Exit_With_Size();
 }
 
 // WZD s24p02
@@ -284,53 +284,42 @@ void Screen_Flic_Capture(void)
 
 
 // WZD s24p03
-/* COPILOT */
 static void VGA_GetDACBlock(int dac_block, uint8_t *buffer)
 {
     int start_color;
     int offset;
-
     if(buffer == NULL)
     {
         return;
     }
-
     if(dac_block < 0)
     {
         dac_block = 0;
     }
-
     if(dac_block > 3)
     {
         dac_block = 3;
     }
-
     start_color = (dac_block << 6);
     offset = (start_color * 3);
-
     memcpy(buffer, current_palette + offset, (64 * 3));
 }
 
 
 // WZD s24p04
-/* COPILOT */
 static void VGA_ReadScreenLine(int line, char *scanline_buffer)
 {
     int x;
     uint8_t *src;
-
     if(scanline_buffer == NULL)
     {
         return;
     }
-
     if((line < 0) || (line >= SCREEN_HEIGHT))
     {
         return;
     }
-
     src = current_video_page + (line * SCREEN_WIDTH);
-
     for(x = 0; x < SCREEN_WIDTH; x++)
     {
         scanline_buffer[x] = (char)src[x];
@@ -355,34 +344,27 @@ int Check_Release_Version(void)
 
 // WZD s24p07
 // MoO2  Module: capture  Screen_Flic_Capture()  Address: 01:001101F0
-/* GEMINI */
 void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr pict_seg)
 {
     int16_t width;
     int16_t height;
-
     Set_Page_Off();
-
     width = x2 - x1 + 1;
     height = y2 - y1 + 1;
-
     if(width < 0)
     {
         width = -width;
     }
-
     if(height < 0)
     {
         height = -height;
     }
-
     Create_Picture(width, height, pict_seg);
     Capture_Screen_Block((pict_seg + SZ_PARAGRAPH_B), x1, y1, x2, y2);
 }
 
 // WZD s24p08
 // MoO2  Module: shear  Capture_Screen_Block_()  Address: 01:0014791B
-/* GEMINI */
 void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
     byte_ptr buffer;
@@ -391,16 +373,13 @@ void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x
     int16_t height;
     int16_t itr_width;
     int16_t itr_height;
-
     width = x2 - x1 + 1;
     height = y2 - y1 + 1;
-
     buffer = frame_data;
     screen_page = current_video_page + (y1 * SCREEN_WIDTH) + x1;
-
-    for(itr_height = 0; itr_height < height; ++itr_height)
+    for(itr_width = 0; itr_width < width; ++itr_width)
     {
-        for(itr_width = 0; itr_width < width; ++itr_width)
+        for(itr_height = 0; itr_height < height; ++itr_height)
         {
             *buffer++ = *(screen_page + (itr_height * SCREEN_WIDTH) + itr_width);
         }

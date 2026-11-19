@@ -1,6 +1,6 @@
 /*
     WIZARDS.EXE
-        eg036
+        seg036
     MAGIC.EXE
         seg034
 */
@@ -444,7 +444,7 @@ MoO2
         /* CLAUDE */  /* REBUG */  /* asm: cmp [bp+character], KP_F11 - a byte compare */
         if(character == (int8_t)ST_KEY_F11)
         {
-            F11_Key__WIP();
+            F11_Key();
         }
         
         // if(character == ST_KEY_F12)
@@ -2698,7 +2698,7 @@ int16_t Wait_For_Input(void)
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
-                    F11_Key__WIP();
+                    F11_Key();
                 }
                 else if(charcode == ST_KEY_F12)
                 {
@@ -2725,7 +2725,7 @@ int16_t Wait_For_Input(void)
                 charcode = Read_Key();
                 if(charcode == ST_KEY_F11)
                 {
-                    F11_Key__WIP();
+                    F11_Key();
                 }
                 else if(charcode == ST_KEY_F12)
                 {

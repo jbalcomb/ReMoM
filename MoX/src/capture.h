@@ -25,7 +25,7 @@ extern "C" {
 */
 
 // WZD s24p01
-void F11_Key__WIP(void);
+void F11_Key(void);
 
 // WZD s24p02
 void Screen_Flic_Capture(void);
@@ -43,10 +43,10 @@ void Release_Version(void);
 int Check_Release_Version(void);
 
 // WZD s24p07
-/* COPILOT */ void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr pict_seg);
+void Screen_Picture_Capture(int16_t x1, int16_t y1, int16_t x2, int16_t y2, byte_ptr pict_seg);
 
 // WZD s24p08
-/* COPILOT */ void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+void Capture_Screen_Block(byte_ptr frame_data, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 
 
