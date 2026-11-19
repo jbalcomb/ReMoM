@@ -7,6 +7,7 @@
 */
 
 #include "../../STU/src/STU_LOG.h"
+#include "../../ext/stu_compat.h"
 
 #include "EXIT.h"
 
@@ -37,13 +38,15 @@
 
 
 
-int MemFreeWorst_KB = 64000;                    // dseg:3CC2  0xFA00  ? Bytes vs. Paragrphs ? 62.5 KB vs 4000 Pr ? sizeof VGA 320x200 ?
-char * cnst_Quit_Report1 = "Data";              // dseg:3CC4
-char * cnst_Quit_Report2 = " Free: ";           // dseg:3CC9
-char * cnst_Quit_Report3 = " bytes   Memory";   // dseg:3CD1
-char * cnst_Quit_Report4 = "k   Worst";         // dseg:3CE1
-char * cnst_Quit_Report5 = "k   EMM: ";         // dseg:3CEB
-char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
+// dseg:3CC2
+uint16_t MemFreeWorst_KB = 64000;  // (conventional memory is at most 640 KB)
+
+// dseg:3CC4  cnst_Quit_Report1 = "Data";              
+// dseg:3CC9  cnst_Quit_Report2 = " Free: ";           
+// dseg:3CD1  cnst_Quit_Report3 = " bytes   Memory";   
+// dseg:3CE1  cnst_Quit_Report4 = "k   Worst";         
+// dseg:3CEB  cnst_Quit_Report5 = "k   EMM: ";         
+// dseg:3CF5  cnst_Quit_Report6 = " blocks";           
 
 /* EOG_HACK */  // DONT  // WZD dseg:3CFD
 /* EOG_HACK */  // DONT  char cnst_ProgSwap_Error1[] = "Error- game file ";
@@ -58,36 +61,41 @@ char * cnst_Quit_Report6 = " blocks";           // dseg:3CF5
 */
 
 // WZD s05p01
-// TODO  void Exit_With_Size(void)
-// TODO  {
-// TODO      char temp_string[20];
-// TODO      char string[120];
-// TODO      unsigned int Current_FreeNearHeap_B;
-// TODO      unsigned int Worst_LargestFreeBlock_KB;
-// TODO      unsigned int Current_LargestFreeBlock_KB;
-// TODO      
-// TODO      Current_LargestFreeBlock_KB = dos_memfree_kb();
-// TODO      Worst_LargestFreeBlock_KB = MemFreeWorst_KB;
-// TODO      Current_FreeNearHeap_B = coreleft();
-// TODO      stu_strcpy(string, cnst_Quit_Report1);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_ltoa(Current_FreeNearHeap_B, temp_string, 10);  // Data Free: bytes
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report3);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_itoa(Current_LargestFreeBlock_KB, temp_string, 10);  // "Memory Free: k"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report4);
-// TODO      stu_strcat(string, cnst_Quit_Report2);
-// TODO      SDL_itoa(Worst_LargestFreeBlock_KB, temp_string, 10);  // "Worst Free k"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report5);
-// TODO      SDL_itoa(EMM_Pages_Reserved, temp_string, 10);  // "EMM: blocks"
-// TODO      stu_strcat(string, temp_string);
-// TODO      stu_strcat(string, cnst_Quit_Report6);
-// TODO  
-// TODO      Exit_With_Message(string);
-// TODO  }
+/*
+    Debug exit (F11_Key(), non-release builds only): exits with a memory report.
+    "Data Free: <near heap> bytes   Memory Free: <largest DOS block>k   Worst Free: <smallest seen>k   EMM: <reserved pages> blocks"
+    MAGIC.EXE has the same function (MGC s05p01).
+*/
+void Exit_With_Size(void)
+{
+    char number_string[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    char message[120] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint16_t near_heap_free_bytes = 0;
+    uint16_t worst_free_kb = 0;
+    uint16_t current_free_kb = 0;
+    // current_free_kb = dos_memfree_kb();
+    /* HACK */ current_free_kb = 0;  /* asm: call Dos_Free -- INT 21h AH=48h BX=FFFFh, the largest free DOS block in paragraphs >> 6 = KB; there is no DOS memory to ask */
+    worst_free_kb = MemFreeWorst_KB;
+    // near_heap_free_bytes = coreleft();
+    /* HACK */ near_heap_free_bytes = 0;  /* asm: call coreleft -- Borland RTL, the free bytes in the near heap; there is no near heap */
+    stu_strcpy(message, "Data");
+    stu_strcat(message, " Free: ");
+    stu_ltoa(near_heap_free_bytes, number_string, 10);
+    stu_strcat(message, number_string);
+    stu_strcat(message, " bytes   Memory");
+    stu_strcat(message, " Free: ");
+    stu_itoa(current_free_kb, number_string, 10);
+    stu_strcat(message, number_string);
+    stu_strcat(message, "k   Worst");
+    stu_strcat(message, " Free: ");
+    stu_itoa(worst_free_kb, number_string, 10);
+    stu_strcat(message, number_string);
+    stu_strcat(message, "k   EMM: ");
+    stu_itoa(EMM_Pages_Reserved, number_string, 10);
+    stu_strcat(message, number_string);
+    stu_strcat(message, " blocks");
+    Exit_With_Message(message);
+}
 
 
 // WZD s05p02

@@ -22,7 +22,7 @@ extern "C" {
 */
 
 // WZD s05p01
-// void Exit_With_Size(void);
+void Exit_With_Size(void);
 
 // WZD s05p02
 void Exit_With_Message(char * string);

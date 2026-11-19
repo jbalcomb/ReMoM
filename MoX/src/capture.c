@@ -11,6 +11,7 @@ MoO2
 #include "../../ext/stu_compat.h"
 
 #include "DOS.h"
+#include "EXIT.h"
 #include "MOX_DEF.h"
 #include "MOX_TYPE.h"
 #include "random.h"  /* g_random_call_count for CALL_TRACE */
@@ -38,20 +39,11 @@ static void VGA_ReadScreenLine(int line, char *scanline_buffer);
 // WZD dseg:7876
 int16_t release_flag = ST_FALSE;
 
-// WZD dseg:7878
-char cnst_Scrdmp00_Full[] = "SCRDMP00";
-
-// WZD dseg:7880
-char cnst_Scrdmp_Ext[] = ".FLI";
-
-// WZD dseg:7885
-char cnst_Scrdmp_0[] = "";
-
-// WZD dseg:7887
-char cnst_Scrdmp_Base[] = "SCRDMP";
-
-// WZD dseg:788E
-char cnst_WB7[] = "wb";
+// WZD dseg:7878  cnst_Scrdmp00_Full[] = "SCRDMP00";
+// WZD dseg:7880  cnst_Scrdmp_Ext[] = ".FLI";
+// WZD dseg:7885  cnst_Scrdmp_0[] = "";
+// WZD dseg:7887  cnst_Scrdmp_Base[] = "SCRDMP";
+// WZD dseg:788E  cnst_WB7[] = "wb";
 
 // WZD dseg:7891 00                                              align 2
 
@@ -159,7 +151,7 @@ void Screen_Flic_Capture(void)
     Save_Mouse_State();
 
     file_number = 0;
-    stu_strcpy(file_name, cnst_Scrdmp00_Full);
+    stu_strcpy(file_name, "SCRDMP00");  /* cnst_Scrdmp00_Full */
 
     /* Loop to find an unused filename SCRDMPxx.FLI */
     while(DIR(file_name, scanline_buffer) != 0)
@@ -167,7 +159,7 @@ void Screen_Flic_Capture(void)
         file_number++;
         if(file_number < 10)
         {
-            stu_strcpy(scanline_buffer, cnst_Scrdmp_0);
+            stu_strcpy(scanline_buffer, "");  /* cnst_Scrdmp_0 */
             stu_itoa(file_number, buffer, 10);
             stu_strcat(scanline_buffer, buffer);
         }
