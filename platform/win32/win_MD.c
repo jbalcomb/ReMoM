@@ -35,6 +35,8 @@
 static HCURSOR hwcur_current    = NULL;
 static int     hwcur_gate       = -1;   /* -1 = unresolved, else 0/1 from REMOM_HW_CURSOR */
 static int     hwcur_last_image = -1;
+static int     hwcur_last_width = 0;    /* size the current OS cursor was built at, in client pixels */
+static int     hwcur_last_height = 0;
 
 int Platform_HW_Cursor_Active(void)
 {
@@ -59,9 +61,9 @@ void Win_HW_Cursor_Apply(void)
 void Platform_HW_Cursor_Refresh(void)
 {
     int             image;
-    int             scale;
-    int             dim;
-    int             px, py, sx, sy;
+    int             cursor_width;
+    int             cursor_height;
+    int             px, py;
     const uint8_t * sprite;
     BITMAPV5HEADER  bi;
     HDC             screen_dc;
@@ -75,8 +77,12 @@ void Platform_HW_Cursor_Refresh(void)
     if(!Platform_HW_Cursor_Active()) { return; }
 
     image = Get_Pointer_Image_Number();
-    if(image == hwcur_last_image) { return; }   /* no shape change since the last build */
+    /* CLAUDE: the OS cursor is as big as 16 game pixels are on screen, in every scale mode (PLAN-Fullscreen.md phase 8). */
+    Viewport_Game_Size_In_Drawable(&win_viewport, HWCUR_DIM, HWCUR_DIM, &cursor_width, &cursor_height);
+    if((image == hwcur_last_image) && (cursor_width == hwcur_last_width) && (cursor_height == hwcur_last_height)) { return; }   /* no shape or size change since the last build */
     hwcur_last_image = image;
+    hwcur_last_width = cursor_width;
+    hwcur_last_height = cursor_height;
 
     if(image == 0)   /* crsr_None -> no cursor */
     {
@@ -94,16 +100,12 @@ void Platform_HW_Cursor_Refresh(void)
         return;
     }
 
-    scale = Platform_Get_Scale();
-    if(scale < 1) { scale = 1; }
-    dim = HWCUR_DIM * scale;
-
     /* 32-bit top-down BGRA DIB with per-pixel alpha (BI_BITFIELDS masks match the
        (a<<24)|(r<<16)|(g<<8)|b word written below). */
     memset(&bi, 0, sizeof(bi));
     bi.bV5Size        = sizeof(BITMAPV5HEADER);
-    bi.bV5Width       = dim;
-    bi.bV5Height      = -dim;   /* negative = top-down */
+    bi.bV5Width       = cursor_width;
+    bi.bV5Height      = -cursor_height;   /* negative = top-down */
     bi.bV5Planes      = 1;
     bi.bV5BitCount    = 32;
     bi.bV5Compression = BI_BITFIELDS;
@@ -124,11 +126,14 @@ void Platform_HW_Cursor_Refresh(void)
     sprite = mouse_palette + ((image - 1) * (HWCUR_DIM * HWCUR_DIM));
     dst = (uint32_t *)bits;
 
-    for (py = 0; py < HWCUR_DIM; py++)
+    /* Nearest-neighbour: each cursor pixel takes the sprite pixel it falls in, so the OS cursor matches the drawn size. */
+    for (py = 0; py < cursor_height; py++)
     {
-        for (px = 0; px < HWCUR_DIM; px++)
+        int sprite_y = (py * HWCUR_DIM) / cursor_height;
+        for (px = 0; px < cursor_width; px++)
         {
-            uint8_t  idx = sprite[px * HWCUR_DIM + py];   /* column-major, matching Draw_Mouse_On_Page_ */
+            int      sprite_x = (px * HWCUR_DIM) / cursor_width;
+            uint8_t  idx = sprite[sprite_x * HWCUR_DIM + sprite_y];   /* column-major, matching Draw_Mouse_On_Page_ */
             uint32_t argb;
             if(idx == HWCUR_TRANSPARENT)
             {
@@ -139,21 +144,14 @@ void Platform_HW_Cursor_Refresh(void)
                 PFL_Color c = platform_palette_buffer[idx];
                 argb = ((uint32_t)0xFFu << 24) | ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.b;
             }
-            /* nearest-neighbour upscale by the window scale so the OS cursor matches the drawn size */
-            for (sy = 0; sy < scale; sy++)
-            {
-                for (sx = 0; sx < scale; sx++)
-                {
-                    dst[(py * scale + sy) * dim + (px * scale + sx)] = argb;
-                }
-            }
+            dst[py * cursor_width + px] = argb;
         }
     }
 
     /* Monochrome AND mask.  Unused for blending because the color bitmap carries
        per-pixel alpha, but CreateIconIndirect still requires a mask of matching
        size; an all-zero mask lets the alpha channel decide every pixel. */
-    mask_bmp = CreateBitmap(dim, dim, 1, 1, NULL);
+    mask_bmp = CreateBitmap(cursor_width, cursor_height, 1, 1, NULL);
     if(mask_bmp == NULL)
     {
         DeleteObject(color_bmp);

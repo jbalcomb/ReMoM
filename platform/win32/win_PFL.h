@@ -23,6 +23,18 @@ extern int win_window_height;
 
 extern uint64_t win_ticks_startup;
 
+/* Viewport: where the game image is shown in the window, and the window <-> game mouse mapping (win_PFL.cpp).
+   PLAN-Fullscreen.md phase 8 -- the Win32 port of the SDL2 backend's phases 1-6. */
+#include "../include/Platform_Viewport.h"
+extern struct s_VIEWPORT win_viewport;
+int Win_Viewport_Refresh(void);  /* re-read the client size and recompute win_viewport; 1 if it changed (and logged) */
+void Win_Viewport_Log(void);     /* one INFO line describing win_viewport, and the same to the input metrics if on */
+
+/* Window states and mouse capture (win_PFL.cpp). */
+void Win_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
+void Win_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
+void Win_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+
 
 
 /* ========================================================================= */

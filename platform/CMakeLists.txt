@@ -29,6 +29,8 @@ add_library(Platform_Windowless STATIC
     windowless/windowless_State.c
     replay/Replay.c
     metrics/PFL_Perf.c
+    viewport/PFL_Viewport.c        # Replay.c writes the scale mode into the replay header (fullscreen PLAN phase 5)
+    viewport/PFL_Video_Settings.c
 )
 
 target_include_directories(Platform_Windowless PUBLIC
@@ -122,6 +124,12 @@ list(APPEND PLATFORM_SOURCES metrics/PFL_Input_Metrics.c)
 # this file is always compiled so the runtime gate and reporter link either way.
 list(APPEND PLATFORM_SOURCES metrics/PFL_Perf.c)
 
+# Viewport: where the game image goes in the window, and the window <-> game mouse mapping (fullscreen PLAN phase 1).
+# Pure C, backend-agnostic; unit-tested in platform/tests.
+list(APPEND PLATFORM_SOURCES viewport/PFL_Viewport.c)
+# [Video] settings from ReMoM.ini (fullscreen PLAN phase 3), shared by every windowed backend.
+list(APPEND PLATFORM_SOURCES viewport/PFL_Video_Settings.c)
+
 add_library(Platform STATIC ${PLATFORM_SOURCES})
 
 if(PLATFORM_DEFINES)
@@ -140,3 +148,5 @@ target_include_directories(Platform PRIVATE
 )
 
 target_link_libraries(Platform PRIVATE ${PLATFORM_LINK_LIBS})
+
+add_subdirectory(tests)

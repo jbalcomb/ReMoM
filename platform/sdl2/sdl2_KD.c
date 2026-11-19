@@ -48,6 +48,46 @@ In SDL2, ASCII keys have SDLK values equal to their ASCII code.
 Non-ASCII keys (F-keys, arrows, etc.) have the SDLK_SCANCODE_MASK bit set.
 
 */
+/* PLAN-Fullscreen.md phases 2 and 6: the window hotkeys. One named table, so the planned keymap feature can replace it (and
+   free F11 for the fullscreen toggle).
+     Alt+Enter (either Enter key)  fullscreen toggle -- the standard binding
+     Ctrl+L                        fullscreen toggle -- borrowed from Adobe Acrobat Reader, with Ctrl+H below
+     Ctrl+H                        borderless window toggle -- there is no standard hotkey for a borderless maximised window
+   The game never reads Ctrl, so Ctrl+H and Ctrl+L take nothing from it. */
+#define SDL2_WINDOW_HOTKEY_NONE        0
+#define SDL2_WINDOW_HOTKEY_FULLSCREEN  1
+#define SDL2_WINDOW_HOTKEY_BORDERLESS  2
+
+static const struct
+{
+    SDL_Keycode key_code;
+    uint16_t key_modifiers;  /* any of these held */
+    int action;              /* SDL2_WINDOW_HOTKEY_* */
+} sdl2_window_hotkeys[] = {
+    { SDLK_RETURN,   KMOD_ALT,  SDL2_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_KP_ENTER, KMOD_ALT,  SDL2_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_l,        KMOD_CTRL, SDL2_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_h,        KMOD_CTRL, SDL2_WINDOW_HOTKEY_BORDERLESS },
+};
+
+static SDL_Keycode sdl2_window_hotkey_held = SDLK_UNKNOWN;  /* a hotkey's key went down; swallow its release (the modifier may be up by then) */
+
+static int sdl2_Window_Hotkey(SDL_Keycode key_code, uint16_t key_modifiers)
+{
+    size_t hotkey_index;
+    for(hotkey_index = 0; hotkey_index < (sizeof(sdl2_window_hotkeys) / sizeof(sdl2_window_hotkeys[0])); hotkey_index++)
+    {
+        if(
+            (key_code == sdl2_window_hotkeys[hotkey_index].key_code) &&
+            ((key_modifiers & sdl2_window_hotkeys[hotkey_index].key_modifiers) != 0)
+        )
+        {
+            return sdl2_window_hotkeys[hotkey_index].action;
+        }
+    }
+    return SDL2_WINDOW_HOTKEY_NONE;
+}
+
 void Platform_Keyboard_Event(SDL_Event * sdl2_event)
 {
     SDL_Scancode sdl2_scan_code = 0;
@@ -75,6 +115,28 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
                 SDL_Event sdl2_push_event = { 0 };
                 sdl2_push_event.type = SDL_QUIT;
                 SDL_PushEvent(&sdl2_push_event);
+            }
+
+            /* PLAN-Fullscreen.md phases 2 and 6: the window hotkeys. Handled here and stopped -- never translated, never queued,
+               so the game never sees them and a recording never contains them. Key-repeat does not toggle again. */
+            {
+                int window_hotkey = sdl2_Window_Hotkey(sdl2_key_code, sdl2_key_modifiers);
+                if(window_hotkey != SDL2_WINDOW_HOTKEY_NONE)
+                {
+                    if(sdl2_event->key.repeat == 0)
+                    {
+                        if(window_hotkey == SDL2_WINDOW_HOTKEY_FULLSCREEN)
+                        {
+                            sdl2_Toggle_Fullscreen();
+                        }
+                        else
+                        {
+                            sdl2_Toggle_Borderless();
+                        }
+                    }
+                    sdl2_window_hotkey_held = sdl2_key_code;
+                    break;
+                }
             }
 
             // 1oom  if(!(Platform_Hotkey(sym, smod, c)))
@@ -111,6 +173,12 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
         {
             sdl2_key_code = sdl2_event->key.keysym.sym;
             sdl2_key_modifiers = sdl2_event->key.keysym.mod;
+            /* The release of a window hotkey's key is swallowed too (Alt or Ctrl may already be up by then). */
+            if((sdl2_window_hotkey_held != SDLK_UNKNOWN) && (sdl2_key_code == sdl2_window_hotkey_held))
+            {
+                sdl2_window_hotkey_held = SDLK_UNKNOWN;
+                break;
+            }
             if(sdl2_key_code & SDLK_SCANCODE_MASK)
             {
                 mox_key = key_xlat_scan[SDLK_TABLE_INDEX_FROM_SCANCODE(sdl2_key_code)];

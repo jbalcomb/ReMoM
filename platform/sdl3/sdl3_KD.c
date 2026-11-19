@@ -369,6 +369,46 @@ All SDLK_* values changed in SDL3 — no longer ASCII-mapped.
 We use scancode exclusively for key_xlat lookup.
 
 */
+/* PLAN-Fullscreen.md phases 2, 6 and 7: the window hotkeys -- the same table as the SDL2 backend. One named table, so the planned
+   keymap feature can replace it (and free F11 for the fullscreen toggle).
+     Alt+Enter (either Enter key)  fullscreen toggle -- the standard binding
+     Ctrl+L                        fullscreen toggle -- borrowed from Adobe Acrobat Reader, with Ctrl+H below
+     Ctrl+H                        borderless window toggle -- there is no standard hotkey for a borderless maximised window
+   The game never reads Ctrl, so Ctrl+H and Ctrl+L take nothing from it. */
+#define SDL3_WINDOW_HOTKEY_NONE        0
+#define SDL3_WINDOW_HOTKEY_FULLSCREEN  1
+#define SDL3_WINDOW_HOTKEY_BORDERLESS  2
+
+static const struct
+{
+    SDL_Keycode key_code;
+    SDL_Keymod key_modifiers;  /* any of these held */
+    int action;                /* SDL3_WINDOW_HOTKEY_* */
+} sdl3_window_hotkeys[] = {
+    { SDLK_RETURN,   SDL_KMOD_ALT,  SDL3_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_KP_ENTER, SDL_KMOD_ALT,  SDL3_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_L,        SDL_KMOD_CTRL, SDL3_WINDOW_HOTKEY_FULLSCREEN },
+    { SDLK_H,        SDL_KMOD_CTRL, SDL3_WINDOW_HOTKEY_BORDERLESS },
+};
+
+static SDL_Keycode sdl3_window_hotkey_held = SDLK_UNKNOWN;  /* a hotkey's key went down; swallow its release (the modifier may be up by then) */
+
+static int sdl3_Window_Hotkey(SDL_Keycode key_code, SDL_Keymod key_modifiers)
+{
+    size_t hotkey_index;
+    for(hotkey_index = 0; hotkey_index < (sizeof(sdl3_window_hotkeys) / sizeof(sdl3_window_hotkeys[0])); hotkey_index++)
+    {
+        if(
+            (key_code == sdl3_window_hotkeys[hotkey_index].key_code) &&
+            ((key_modifiers & sdl3_window_hotkeys[hotkey_index].key_modifiers) != 0)
+        )
+        {
+            return sdl3_window_hotkeys[hotkey_index].action;
+        }
+    }
+    return SDL3_WINDOW_HOTKEY_NONE;
+}
+
 void Platform_Keyboard_Event(SDL_Event * sdl3_event)
 {
     SDL_Scancode sdl3_scancode = 0;
@@ -396,6 +436,28 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
                 SDL_Event sdl3_push_event = { 0 };
                 sdl3_push_event.type = SDL_EVENT_QUIT;
                 SDL_PushEvent(&sdl3_push_event);
+            }
+
+            /* PLAN-Fullscreen.md phases 2, 6 and 7: the window hotkeys. Handled here and stopped -- never translated, never queued,
+               so the game never sees them and a recording never contains them. Key-repeat does not toggle again. */
+            {
+                int window_hotkey = sdl3_Window_Hotkey(sdl3_key_code, sdl3_key_modifiers);
+                if(window_hotkey != SDL3_WINDOW_HOTKEY_NONE)
+                {
+                    if(sdl3_event->key.repeat == false)
+                    {
+                        if(window_hotkey == SDL3_WINDOW_HOTKEY_FULLSCREEN)
+                        {
+                            sdl3_Toggle_Fullscreen();
+                        }
+                        else
+                        {
+                            sdl3_Toggle_Borderless();
+                        }
+                    }
+                    sdl3_window_hotkey_held = sdl3_key_code;
+                    break;
+                }
             }
 
             // 1oom  if(!(Platform_Hotkey(sym, smod, c)))
@@ -440,6 +502,12 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
             sdl3_key_code = sdl3_event->key.key;
             sdl3_scancode = sdl3_event->key.scancode;
             sdl3_key_modifiers = sdl3_event->key.mod;
+            /* The release of a window hotkey's key is swallowed too (Alt or Ctrl may already be up by then). */
+            if((sdl3_window_hotkey_held != SDLK_UNKNOWN) && (sdl3_key_code == sdl3_window_hotkey_held))
+            {
+                sdl3_window_hotkey_held = SDLK_UNKNOWN;
+                break;
+            }
             if(sdl3_scancode < SDL_SCANCODE_COUNT)
             {
                 mox_key = key_xlat[sdl3_scancode];

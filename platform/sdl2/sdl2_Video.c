@@ -10,11 +10,161 @@
 #include "../include/Platform_Perf.h"           /* CLAUDE: live frame-time readout (FR9/FR11) */
 
 #include "sdl2_PFL.h"
+#include "../../STU/src/STU_LOG.h"
 #include <SDL.h>
 
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>  /* getenv: REMOM_SHARP_BILINEAR_FAIL */
+
+
+
+/* Where the game image is shown. Starts as the default 1280x800 window at 4x so mouse mapping is valid before
+   Startup_Platform() refreshes it from the real window. */
+struct s_VIEWPORT sdl2_viewport = {
+    PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4,  /* window */
+    PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4,  /* drawable */
+    PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT,          /* game */
+    VIEWPORT_SCALE_MODE_INTEGER, VIEWPORT_PIXEL_ASPECT_SQUARE,
+    4,                                                      /* scale */
+    0, 0, PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4  /* rect */
+};
+
+int sdl2_Viewport_Refresh(void)
+{
+    struct s_VIEWPORT viewport;
+    int window_width = 0;
+    int window_height = 0;
+    int drawable_width = 0;
+    int drawable_height = 0;
+
+    if((sdl2_window == NULL) || (sdl2_renderer == NULL))
+    {
+        return 0;
+    }
+
+    SDL_GetWindowSize(sdl2_window, &window_width, &window_height);
+    if((SDL_GetRendererOutputSize(sdl2_renderer, &drawable_width, &drawable_height) != 0) || (drawable_width <= 0) || (drawable_height <= 0))
+    {
+        drawable_width = window_width;
+        drawable_height = window_height;
+    }
+    if((window_width <= 0) || (window_height <= 0))
+    {
+        return 0;  /* minimised: keep the last viewport */
+    }
+
+    Viewport_Compute(&viewport, window_width, window_height, drawable_width, drawable_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), VIEWPORT_PIXEL_ASPECT_SQUARE);  /* [Video] scale_mode */
+    if(Viewport_Equal(&viewport, &sdl2_viewport))
+    {
+        return 0;
+    }
+    sdl2_viewport = viewport;
+    sdl2_Mouse_Confine_Update();  /* a captured mouse follows the image's new rect */
+    sdl2_Viewport_Log();
+    return 1;
+}
+
+/*
+ * fit_sharp_bilinear (PLAN-Fullscreen.md phase 4): the frame is first drawn nearest-neighbour at the viewport's whole-number
+ * scale into this intermediate render target, then filtered linearly into the rect. Rebuilt only when that scale changes.
+ * If the renderer cannot make or use a render target the mode falls back to fit_nearest for the rest of the run, logged once.
+ * REMOM_SHARP_BILINEAR_FAIL=1 forces that fallback, to test it.
+ */
+static int sdl2_upscaled_scale = 0;                    /* the scale sdl2_texture_upscaled was built at; 0 = none */
+static int sdl2_sharp_bilinear_unavailable = 0;        /* fell back to fit_nearest */
+
+static void sdl2_Sharp_Bilinear_Give_Up(const char * reason)
+{
+    LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: fit_sharp_bilinear unavailable (%s) -- using fit_nearest", reason);
+    sdl2_sharp_bilinear_unavailable = 1;
+    if(sdl2_texture_upscaled != NULL)
+    {
+        SDL_DestroyTexture(sdl2_texture_upscaled);
+        sdl2_texture_upscaled = NULL;
+    }
+    sdl2_upscaled_scale = 0;
+}
+
+/* The intermediate target at the viewport's current scale. Returns 0 if sharp bilinear cannot be used. */
+static int sdl2_Sharp_Bilinear_Ready(void)
+{
+    int scale = sdl2_viewport.scale;
+
+    if(sdl2_sharp_bilinear_unavailable != 0)
+    {
+        return 0;
+    }
+    if((sdl2_texture_upscaled != NULL) && (sdl2_upscaled_scale == scale))
+    {
+        return 1;
+    }
+    if(sdl2_texture_upscaled != NULL)
+    {
+        SDL_DestroyTexture(sdl2_texture_upscaled);
+        sdl2_texture_upscaled = NULL;
+        sdl2_upscaled_scale = 0;
+    }
+    {
+        const char * fail_env = getenv("REMOM_SHARP_BILINEAR_FAIL");
+        if((fail_env != NULL) && (strcmp(fail_env, "1") == 0))
+        {
+            sdl2_Sharp_Bilinear_Give_Up("forced by REMOM_SHARP_BILINEAR_FAIL=1");
+            return 0;
+        }
+    }
+    if(SDL_RenderTargetSupported(sdl2_renderer) == SDL_FALSE)
+    {
+        sdl2_Sharp_Bilinear_Give_Up("the renderer has no render targets");
+        return 0;
+    }
+    sdl2_texture_upscaled = SDL_CreateTexture(sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, PLATFORM_SCREEN_WIDTH * scale, PLATFORM_SCREEN_HEIGHT * scale);
+    if(sdl2_texture_upscaled == NULL)
+    {
+        sdl2_Sharp_Bilinear_Give_Up(SDL_GetError());
+        return 0;
+    }
+    SDL_SetTextureScaleMode(sdl2_texture_upscaled, SDL_ScaleModeLinear);
+    sdl2_upscaled_scale = scale;
+    LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: fit_sharp_bilinear intermediate %dx%d (x%d), filtered to %dx%d", PLATFORM_SCREEN_WIDTH * scale, PLATFORM_SCREEN_HEIGHT * scale, scale, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
+    return 1;
+}
+
+/* Draw the frame (already in sdl2_texture) into the viewport's rect, with black around it. */
+void sdl2_Present_Image(void)
+{
+    SDL_Rect image_rect = { sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height };
+
+    if((sdl2_viewport.scale_mode == VIEWPORT_SCALE_MODE_FIT_SHARP_BILINEAR) && (sdl2_Sharp_Bilinear_Ready() != 0))
+    {
+        if(SDL_SetRenderTarget(sdl2_renderer, sdl2_texture_upscaled) == 0)
+        {
+            SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, NULL);  /* nearest-neighbour: sdl2_texture's scale mode */
+            SDL_SetRenderTarget(sdl2_renderer, NULL);
+            SDL_SetRenderDrawColor(sdl2_renderer, 0, 0, 0, 255);
+            SDL_RenderClear(sdl2_renderer);
+            SDL_RenderCopy(sdl2_renderer, sdl2_texture_upscaled, NULL, &image_rect);  /* linear */
+            return;
+        }
+        sdl2_Sharp_Bilinear_Give_Up(SDL_GetError());
+    }
+
+    SDL_SetRenderDrawColor(sdl2_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(sdl2_renderer);
+    SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, &image_rect);
+}
+
+void sdl2_Viewport_Log(void)
+{
+    LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
+    sdl2_Viewport_Note_Metrics();
+}
+
+void sdl2_Viewport_Note_Metrics(void)
+{
+    Input_Metrics_Note_Viewport(sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
+}
 
 
 /*
@@ -129,7 +279,10 @@ void Platform_Video_Update(void)
 
     SDL_UnlockTexture(sdl2_texture);
 
-    SDL_RenderCopy(sdl2_renderer, sdl2_texture, NULL, NULL);
+    /* The image in the viewport's rect, black bars around it. Clear every frame so the bars never keep stale pixels after a
+       resize. */
+    sdl2_Viewport_Refresh();
+    sdl2_Present_Image();
 
     /* CLAUDE: metrics -- bracket the present so block time (vsync stall) and inter-present interval
        are both measured.  Off path is one branch; the two SDL_GetTicks() only run when enabled. */

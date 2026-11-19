@@ -124,6 +124,23 @@ extern uint64_t sdl2_performance_counter;
 extern int sdl2_window_width;
 extern int sdl2_window_height;
 
+/* Viewport: where the game image is shown in the window, and the window <-> game mouse mapping (sdl2_Video.c). */
+#include "../include/Platform_Viewport.h"
+extern struct s_VIEWPORT sdl2_viewport;
+/* Re-read the window and drawable sizes and recompute sdl2_viewport. Returns 1 if it changed (and logs the new one). */
+int sdl2_Viewport_Refresh(void);
+void sdl2_Viewport_Log(void);  /* one INFO line describing sdl2_viewport (and the same to the input metrics, if on) */
+void sdl2_Viewport_Note_Metrics(void);  /* a #viewport line into the input metrics .fwv; no-op when they are off */
+void sdl2_Present_Image(void);  /* the frame into the viewport rect, per scale mode (sdl2_Video.c) */
+
+/* Window states, fullscreen and mouse capture (sdl2_PFL.c), PLAN-Fullscreen.md phases 2 and 6. */
+void sdl2_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
+void sdl2_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
+void sdl2_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+int sdl2_Is_Fullscreen(void);
+void sdl2_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */
+void sdl2_Mouse_Keep_On_Image(int window_x, int window_y);  /* captured: warp an off-image OS position back onto the image */
+
 
 
 // MOM_PFL.H  extern int platform_mouse_button_status;

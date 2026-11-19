@@ -366,11 +366,17 @@ void Mouse_Button_Handler(void)
 void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
 {
     /* OG: int16_t scale = 2; */
-    float screen_scale = (float)Platform_Get_Window_Width() / (float)SCREEN_WIDTH;
-    int16_t gx = (int16_t)(l_mx / screen_scale);
-    int16_t gy = (int16_t)(l_my / screen_scale);
+    /* BEGIN:   CLAUDE */
+    // float screen_scale = (float)Platform_Get_Window_Width() / (float)SCREEN_WIDTH;
+    // int16_t gx = (int16_t)(l_mx / screen_scale);
+    // int16_t gy = (int16_t)(l_my / screen_scale);
+    int16_t gx = 0;
+    int16_t gy = 0;
+    int16_t on_image = Platform_Window_To_Game(l_mx, l_my, &gx, &gy);  /* the platform maps window -> game through where it shows the image (letterbox, high-DPI); PLAN-Fullscreen.md phase 1 */
+    /* END:     CLAUDE */
 
-    if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
+    // if(l_mx < SCREEN_XMIN || l_my < SCREEN_YMIN || gx > SCREEN_XMAX || gy > SCREEN_YMAX)
+    /* CLAUDE */ if(on_image == ST_FALSE)  /* the same off-screen test, done by the platform, which also knows about the black bars */
     {
 #ifdef MOUSE_DEBUG
         MOUSE_LOG("MOUSEt=%llu UMH_OOB btn=%d wx=%d wy=%d gx=%d gy=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy);
@@ -378,7 +384,8 @@ void User_Mouse_Handler(int16_t buttons, int16_t l_mx, int16_t l_my)
         return;
     }
 #ifdef MOUSE_DEBUG
-    MOUSE_LOG("MOUSEt=%llu UMH btn=%d wx=%d wy=%d gx=%d gy=%d scale=%.2f enabled=%d interrupt=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy, screen_scale, mouse_enabled, mouse_interrupt_active);
+    // MOUSE_LOG("MOUSEt=%llu UMH btn=%d wx=%d wy=%d gx=%d gy=%d scale=%.2f enabled=%d interrupt=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy, screen_scale, mouse_enabled, mouse_interrupt_active);
+    /* CLAUDE */ MOUSE_LOG("MOUSEt=%llu UMH btn=%d wx=%d wy=%d gx=%d gy=%d scale=%d enabled=%d interrupt=%d\n", (unsigned long long)Platform_Get_Millies(), buttons, l_mx, l_my, gx, gy, Platform_Get_Scale(), mouse_enabled, mouse_interrupt_active);
 #endif
     pointer_x = gx;
     pointer_y = gy;

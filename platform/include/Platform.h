@@ -410,6 +410,28 @@ void Platform_Warp_Mouse(int16_t game_x, int16_t game_y);
 int Platform_Get_Window_Width(void);
 
 /**
+ * Window coordinates -> game coordinates (0..319, 0..199), through wherever the backend shows the game image (letterbox,
+ * high-DPI). The outputs are clamped to the game area. Returns ST_TRUE if the point is on the game image, ST_FALSE if it is
+ * outside it (a black bar, or outside the window). User_Mouse_Handler() ignores points that are not on the image.
+ */
+int16_t Platform_Window_To_Game(int window_x, int window_y, int16_t * game_x, int16_t * game_y);
+
+/**
+ * Game coordinates -> the window coordinates of the middle of that game pixel. The inverse of Platform_Window_To_Game():
+ * for injected input (replay, Automation Driver) that has to go through User_Mouse_Handler().
+ */
+void Platform_Game_To_Window(int16_t game_x, int16_t game_y, int * window_x, int * window_y);
+
+/**
+ * The [Video] settings from ReMoM.ini: the window state to start in (VIEWPORT_WINDOW_STATE_* in Platform_Viewport.h), and the
+ * scale mode (VIEWPORT_SCALE_MODE_*).
+ * Set by the application before Startup_Platform(); the windowed backend reads them. Defaults: windowed, integer.
+ */
+void Platform_Set_Video_Settings(int startup_window, int scale_mode);  /* VIEWPORT_WINDOW_STATE_*, VIEWPORT_SCALE_MODE_* */
+int Platform_Video_Startup_Window(void);
+int Platform_Video_Scale_Mode(void);
+
+/**
  * Query the current mouse position from the platform.
  * @param mx  Output: mouse X coordinate (0..319 in game space).
  * @param my  Output: mouse Y coordinate (0..199 in game space).

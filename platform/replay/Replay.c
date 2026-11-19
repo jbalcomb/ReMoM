@@ -15,6 +15,7 @@
 #include "../../platform/include/Platform.h"
 #include "../../platform/include/Platform_Keys.h"
 #include "../../platform/include/Platform_Replay.h"
+#include "../../platform/include/Platform_Viewport.h"  /* CLAUDE: Viewport_Scale_Mode_Name, for the replay header */
 
 #include "../../ext/stu_compat.h"
 #include "../../STU/src/STU_DBG.h"
@@ -168,6 +169,9 @@ int Platform_Record_Start(const char *filepath)
     fprintf(replay_file, "# ReMoM Replay v2\n");
     fprintf(replay_file, "# random_seed=%u\n", (unsigned)(replay_get_random_seed ? replay_get_random_seed() : 0));
     fprintf(replay_file, "# screen_scale=%d\n", Platform_Get_Scale());
+    /* CLAUDE: PLAN-Fullscreen.md phase 5 -- screen_scale is the viewport's whole-number scale when recording started; with scale_mode it only
+       describes the display.  Frames hold game coordinates, so playback never uses either to map the mouse. */
+    fprintf(replay_file, "# scale_mode=%s\n", Viewport_Scale_Mode_Name(Platform_Video_Scale_Mode()));
     fprintf(replay_file, "# frame_count=%-10u\n", 0u);
     fprintf(replay_file, "# idx,timestamp_ms,delta_ms,mouse_x,mouse_y,mouse_buttons,key_pressed,key_count,keys...\n");
 
@@ -246,6 +250,7 @@ int Platform_Replay_Start(const char *filepath)
     char line[256];
     unsigned random_seed = 0;
     unsigned recorded_screen_scale = 1;
+    char recorded_scale_mode[32] = "not_recorded";  /* CLAUDE: replays made before PLAN-Fullscreen.md phase 5 have no scale_mode line */
     unsigned frame_count = 0;
 
     if(recording || replaying)
@@ -294,6 +299,7 @@ int Platform_Replay_Start(const char *filepath)
             }
             stu_sscanf(line, "# random_seed=%u", &random_seed);
             stu_sscanf(line, "# screen_scale=%u", &recorded_screen_scale);
+            stu_sscanf(line, "# scale_mode=%31s", recorded_scale_mode);
             stu_sscanf(line, "# frame_count=%u", &frame_count);
         }
     }
@@ -317,7 +323,7 @@ int Platform_Replay_Start(const char *filepath)
     replay_log = Replay_Open_Log(filepath, "REPLAY");
     Log_Reset(&play_log);
 
-    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d)", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale());
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d, recorded_scale_mode=%s, current_scale_mode=%s)", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale(), recorded_scale_mode, Viewport_Scale_Mode_Name(Platform_Video_Scale_Mode()));
 
     return 0;
 }
@@ -636,14 +642,20 @@ int Replay_Inject_Frame(void)
     }
 
     /* Inject this frame.  Replay coordinates are in game-space (320x200).
-       User_Mouse_Handler() expects window-space and divides by current scale,
-       so convert game coords to current window coords. */
+       User_Mouse_Handler() expects window-space and maps it back through the
+       platform's viewport, so convert game coords to current window coords
+       the same way -- independent of window size, letterbox and DPI. */
     {
-        int current_screen_scale = Platform_Get_Scale();
-        int16_t wx = inject.mouse_x * (int16_t)current_screen_scale;
-        int16_t wy = inject.mouse_y * (int16_t)current_screen_scale;
+        int window_x = 0;
+        int window_y = 0;
+        int16_t wx = 0;
+        int16_t wy = 0;
         uint32_t play_key0 = (inject.key_count > 0) ? inject.keys[0] : 0;
         int play_state_changed = (inject.mouse_x != play_log.prev_mouse_x) || (inject.mouse_y != play_log.prev_mouse_y) || (inject.mouse_buttons != play_log.prev_mouse_buttons) || (inject.key_pressed != play_log.prev_key_pressed) || (play_key0 != play_log.prev_key0);
+
+        Platform_Game_To_Window(inject.mouse_x, inject.mouse_y, &window_x, &window_y);
+        wx = (int16_t)window_x;
+        wy = (int16_t)window_y;
 
         pointer_x = inject.mouse_x;
         pointer_y = inject.mouse_y;
@@ -683,7 +695,7 @@ int Replay_Inject_Frame(void)
            software cursor gets drawn (Check_Mouse_Shape, Save/Draw_Mouse_On_Page). */
         if(inject.mouse_buttons != 0)
         {
-            fprintf(PLAY_LOG, "PLAY CLICK  btn=%d at window=(%d,%d) -> game=(%d,%d)  mouse_enabled=%d  mouse_interrupt_active=%d\n", (int)inject.mouse_buttons, (int)wx, (int)wy, (int)(wx / current_screen_scale), (int)(wy / current_screen_scale), (int)mouse_enabled, (int)mouse_interrupt_active);
+            fprintf(PLAY_LOG, "PLAY CLICK  btn=%d at window=(%d,%d) -> game=(%d,%d)  mouse_enabled=%d  mouse_interrupt_active=%d\n", (int)inject.mouse_buttons, (int)wx, (int)wy, (int)inject.mouse_x, (int)inject.mouse_y, (int)mouse_enabled, (int)mouse_interrupt_active);
         }
         User_Mouse_Handler(inject.mouse_buttons, wx, wy);
         if(inject.mouse_buttons != 0)

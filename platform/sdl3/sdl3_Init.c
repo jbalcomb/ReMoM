@@ -96,7 +96,16 @@ void Startup_Platform(void)
     {
         SDL_Palette *pal = SDL_CreatePalette(256);
         assert(pal != NULL);
-        assert(SDL_SetSurfacePalette(sdl3_surface_RGB666, pal));
+        // assert(SDL_SetSurfacePalette(sdl3_surface_RGB666, pal));
+        /* CLAUDE: the call must run in Release too -- inside assert() it compiled away under NDEBUG, leaving the surface with no palette. */
+        {
+            bool palette_set = SDL_SetSurfacePalette(sdl3_surface_RGB666, pal);
+            if(palette_set == false)
+            {
+                LOG_ERROR(LOG_CAT_SDL3_INIT, "graphics: SDL_SetSurfacePalette failed: %s", SDL_GetError());
+            }
+            assert(palette_set);
+        }
         SDL_DestroyPalette(pal);
     }
     assert(SDL_GetSurfacePalette(sdl3_surface_RGB666) != NULL && "palette must survive DestroyPalette (refcounted)");
@@ -108,6 +117,18 @@ void Startup_Platform(void)
 
     sdl3_texture = SDL_CreateTexture(sdl3_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
     assert(sdl3_texture != NULL);
+    /* CLAUDE: PLAN-Fullscreen.md phase 7 -- integer and fit_nearest both sample nearest-neighbour (SDL3 textures default to linear). */
+    SDL_SetTextureScaleMode(sdl3_texture, SDL_SCALEMODE_NEAREST);
+
+    /* CLAUDE: PLAN-Fullscreen.md phase 7 -- the viewport from the real window, logged once even when it equals the default. */
+    if(sdl3_Viewport_Refresh() == 0)
+    {
+        sdl3_Viewport_Log();
+    }
+
+    /* CLAUDE: [Video] startup_window = borderless | fullscreen (ReMoM.ini): start in that state, exactly as if its hotkey had been
+       pressed (Ctrl+H / Alt+Enter). Windowed (the default) is the window just created. */
+    sdl3_Set_Window_State(Platform_Video_Startup_Window());
 
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
     if(Platform_HW_Cursor_Active())

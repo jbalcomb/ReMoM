@@ -52,7 +52,7 @@ Rollout order: SDL2 (the default backend) first, then SDL3, then Win32, then Lin
 11. As a player, I want Alt+Enter not to act as Enter in the game, so that toggling fullscreen never confirms a dialog or ends a turn.
 12. As a player, I want to resize the game window freely, so that I can pick a window size that suits my desktop.
 13. As a player, I want a resized window to use the same scaling and black-bar rules as fullscreen, so that resizing never distorts the image or breaks the mouse.
-14. As a player, I want to set `fullscreen = yes` in `ReMoM.ini`, so that the game starts fullscreen every time.
+14. As a player, I want to set `startup_window = fullscreen` (or `borderless`) in `ReMoM.ini`, so that the game starts that way every time.
 15. As a player, I want to set a scale mode in `ReMoM.ini` to fill more of the screen, so that I can trade pixel-perfect crispness for screen coverage if I prefer.
 16. As a player, I want a "fit (sharp bilinear)" mode, so that a non-integer fit doesn't produce uneven pixel widths.
 17. As a player, I want an invalid `[Video]` value in `ReMoM.ini` to fall back to the default with a log message, so that a typo never stops the game from starting.
@@ -122,7 +122,7 @@ Rollout order: SDL2 (the default backend) first, then SDL3, then Win32, then Lin
 6. **`[Video]` settings in `ReMoM.ini`.**
    - Read once at startup through the existing STU ini reader (the same one used for `[Paths]`).
    - **Keys:**
-     - `fullscreen = yes | no` — default `no`.
+     - `startup_window = windowed | borderless | fullscreen` — default `windowed`. It replaced `fullscreen = yes | no` (see Further Notes).
      - `scale_mode = integer | fit_nearest | fit_sharp_bilinear` — default `integer`.
    - Values are case-insensitive. An unknown value logs a warning and uses the default.
    - The game never writes the file. The shipped `ReMoM.ini` template gets a commented `[Video]` section documenting the keys.
@@ -164,5 +164,10 @@ Rollout order: SDL2 (the default backend) first, then SDL3, then Win32, then Lin
 
 - **Spike before coding the SDL2 slice:** check whether SDL2's logical-size + integer-scale presentation (and its window-to-logical mapping) matches the Viewport results exactly, letterbox offsets included, under HiDPI on the user's Windows machine. If it matches, Present can use it, and Viewport stays the single place mouse mapping happens and the reference the tests check. If it doesn't, Present draws into the Viewport rect directly. The SDL2 in use is 2.32.2.
 - **Fixing resize is the first tracer slice.** It needs the Viewport, routing every mouse path through it, letterboxed present, and drawable-size requery — with no fullscreen yet. Once a resized window maps the mouse correctly, the fullscreen toggle, capture, Alt+Enter and ini keys are a thin second slice.
-- **Phase 2 — borderless window mode** (requested by Xeth Nyrrow on the project's Discord). This is a borderless *windowed* mode: a window with no title bar or frame, separate from the borderless desktop fullscreen in phase 1. It uses the same Viewport, Present and mouse paths. Still to decide: whether it is a third display state alongside windowed and fullscreen, how it is chosen (a `ReMoM.ini` key and/or the toggle), and whether the window can be moved or resized without a frame.
+- **Borderless window mode — `PLAN-Fullscreen.md` phase 6, after the SDL2 fullscreen work and before the backend ports** (requested by Xeth Nyrrow on the project's Discord). This is a borderless *windowed* mode: a window with no title bar or frame, separate from the borderless desktop fullscreen in phase 1. It uses the same Viewport, Present and mouse paths. **Decided (2026-11-19):**
+  - It is a third window state: a borderless maximised window that fills the display's usable area, so the taskbar stays visible.
+  - `startup_window = windowed | borderless | fullscreen` replaces `fullscreen = yes | no`.
+  - Ctrl+H toggles between it and the framed window. Ctrl+L and Alt+Enter toggle fullscreen and return to whichever window state the game came from. Ctrl+H and Ctrl+L are borrowed from Adobe Acrobat Reader.
+  - It cannot be moved or resized.
+  - Details are in `PLAN-Fullscreen.md` phase 6.
 - **Logging:** use the backend's existing init/platform log categories. Log one line per toggle and per Viewport recompute (drawable size, mode, scale, rect). No per-frame logging.

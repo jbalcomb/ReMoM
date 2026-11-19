@@ -927,7 +927,8 @@ void Automation_Driver_Frame(void)
     char mox_character;
     uint32_t mox_mod;
     int16_t wx, wy;
-    int scale;
+    int window_x = 0;  /* Platform_Game_To_Window() outputs */
+    int window_y = 0;
 
     if(!driver_active) { return; }
     if(driver_action_index >= driver_action_count)
@@ -1053,9 +1054,10 @@ void Automation_Driver_Frame(void)
             case act_CLICK:
             case act_RCLICK:
             {
-                scale = Platform_Get_Scale();
-                wx = act->x * (int16_t)scale;
-                wy = act->y * (int16_t)scale;
+                /* Game -> window through the platform's viewport (letterbox, DPI); User_Mouse_Handler() maps it back. */
+                Platform_Game_To_Window(act->x, act->y, &window_x, &window_y);
+                wx = (int16_t)window_x;
+                wy = (int16_t)window_y;
                 /* Warp the OS cursor — Platform_Event_Handler polls SDL_GetMouseState
                    every Get_Input cycle and overwrites pointer_x/y with the OS cursor
                    position.  Without warping, the second click in a row gets reverted

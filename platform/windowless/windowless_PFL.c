@@ -248,6 +248,32 @@ int Platform_Get_Window_Width(void)
     return PLATFORM_SCREEN_WIDTH;
 }
 
+/* Windowless: window coordinates are game coordinates (scale 1, no bars). */
+int16_t Platform_Window_To_Game(int window_x, int window_y, int16_t * game_x, int16_t * game_y)
+{
+    int16_t on_image = ST_FALSE;
+    if(
+        (window_x >= PLATFORM_SCREEN_XMIN) &&
+        (window_y >= PLATFORM_SCREEN_YMIN) &&
+        (window_x <= PLATFORM_SCREEN_XMAX) &&
+        (window_y <= PLATFORM_SCREEN_YMAX)
+    )
+    {
+        on_image = ST_TRUE;
+    }
+    SETRANGE(window_x, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
+    SETRANGE(window_y, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+    *game_x = (int16_t)window_x;
+    *game_y = (int16_t)window_y;
+    return on_image;
+}
+
+void Platform_Game_To_Window(int16_t game_x, int16_t game_y, int * window_x, int * window_y)
+{
+    *window_x = game_x;
+    *window_y = game_y;
+}
+
 void Platform_Get_Mouse_Position_XY(int *mx, int *my)
 {
     *mx = (int)pointer_x;

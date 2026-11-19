@@ -127,7 +127,7 @@ you can skip the `-D` flags and just use:
 cmake --workflow --preset=MSVC-debug
 ```
 
-To use SDL3 instead, pass `-DUSE_SDL3=ON` (see [SDL3 backend](#sdl3-backend)).
+To use SDL3 instead, use the `MSVC-sdl3-nosound-debug` or `MSVC-sdl3-nosound-release` preset, or pass `-DUSE_SDL3=ON` (see [SDL3 backend](#sdl3-backend)).
 
 
 ## Configure Options
@@ -162,6 +162,20 @@ Or with CMake:
 cmake -B build -DUSE_SDL3=ON
 cmake --build build
 ```
+
+On Windows with Visual Studio 2022, the SDL3 presets find SDL3 in
+`C:\devellib\SDL3-3.4.2`:
+
+```sh
+cmake --preset MSVC-sdl3-nosound-debug
+cmake --build --preset MSVC-sdl3-nosound-debug
+```
+
+`MSVC-sdl3-nosound-release` is the Release build of the same thing.
+
+The SDL3 presets build without sound. The SDL3 audio code is written against the
+pre-release SDL_mixer 3 API (`Mix_*` functions). The released SDL3_mixer 3.x uses a
+different API (`MIX_*` functions), so SDL3 with sound does not compile yet.
 
 SDL3 packages may need to be built from source if not available in your
 distro. Source tarballs and build instructions are at:

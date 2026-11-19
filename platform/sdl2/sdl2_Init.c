@@ -264,6 +264,12 @@ void Startup_Platform(void)
 
     sdl2_renderer = sdl2_Create_Renderer_With_Fallback(sdl2_window);  /* CLAUDE: logs + software fallback */
     assert(sdl2_renderer != NULL);
+    /* Where the image goes, from the real window and drawable sizes, before the first frame or click. Logged even when it
+       matches the built-in default (the 1280x800 window), so every log records the startup viewport. */
+    if(sdl2_Viewport_Refresh() == 0)
+    {
+        sdl2_Viewport_Log();
+    }
 
     // Create the 8-bit paletted and the 32-bit RGBA screenbuffer surfaces.
 
@@ -279,6 +285,11 @@ void Startup_Platform(void)
 
     sdl2_texture = SDL_CreateTexture(sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT);
     assert(sdl2_texture != NULL);
+    SDL_SetTextureScaleMode(sdl2_texture, SDL_ScaleModeNearest);  /* integer and fit_nearest both sample nearest-neighbour, whatever the render-quality hint says */
+
+    /* [Video] startup_window = borderless | fullscreen (ReMoM.ini): start in that state, exactly as if its hotkey had been
+       pressed (Ctrl+H / Alt+Enter). PLAN-Fullscreen.md phases 3 and 6. Windowed (the default) is the window just created. */
+    sdl2_Set_Window_State(Platform_Video_Startup_Window());
 
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
     if(Platform_HW_Cursor_Active())
@@ -306,7 +317,7 @@ void Startup_Platform(void)
         if(im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
         {
             const char * im_path = (strcmp(im_env, "1") == 0) ? "remom_input_metrics.fwv" : im_env;
-            int im_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
+            int im_scale = Platform_Get_Scale();  /* the viewport's scale, not window width / 320 */
             int im_refresh = 0;
             SDL_DisplayMode im_mode;
             if(im_scale < 1) { im_scale = 1; }
@@ -315,6 +326,7 @@ void Startup_Platform(void)
                 im_refresh = im_mode.refresh_rate;
             }
             Input_Metrics_Init(im_path, "SDL2", SDL_GetCurrentVideoDriver(), im_scale, im_refresh);
+            sdl2_Viewport_Note_Metrics();  /* the real scale and rect; later changes are noted as they happen */
             LOG_INFO(LOG_CAT_SDL2_INIT, "CLAUDE: input metrics ENABLED -> %s", im_path);
         }
     }

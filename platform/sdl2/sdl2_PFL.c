@@ -85,7 +85,8 @@ void Platform_Register_Frame_Callback(void (*callback)(void))
 
 int Platform_Get_Scale(void)
 {
-    return platform_screen_scale;
+    /* The viewport's whole-number scale (game pixel -> drawable pixels). Was the fixed platform_screen_scale (4). */
+    return sdl2_viewport.scale;
 }
 
 uint64_t Platform_Get_Millies(void)
@@ -158,7 +159,6 @@ void Platform_Maybe_Move_Mouse(void)
 {
     int wx, wy;
     int gx, gy;
-    int screen_scale;
 
     if(Get_Pointer_Image_Number() == 0)  /* crsr_None — no cursor to draw */
     {
@@ -176,14 +176,15 @@ void Platform_Maybe_Move_Mouse(void)
     {
         int ix, iy;
         SDL_GetMouseState(&ix, &iy);
+        int16_t game_x = 0;
+        int16_t game_y = 0;
         wx = ix;
         wy = iy;
-        screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
-        if(screen_scale < 1) { screen_scale = 1; }
-        gx = wx / screen_scale;
-        gy = wy / screen_scale;
-        SETRANGE(gx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-        SETRANGE(gy, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+        /* Through the viewport (letterbox, high-DPI); off the image the pointer stays on the nearest edge. */
+        Platform_Window_To_Game(wx, wy, &game_x, &game_y);
+        sdl2_Mouse_Keep_On_Image(wx, wy);
+        gx = game_x;
+        gy = game_y;
     }
 
     /* CLAUDE: metrics -- note every sample (moved or not) so net motion between presents is correct. */
@@ -283,13 +284,40 @@ static void pfl_video_input_grab(bool grabbed)
 
     SDL_SetWindowGrab(sdl2_window, grabbed ? SDL_TRUE : SDL_FALSE);
 
-    if(pfl_option_relative_mouse)
+    /* The hardware cursor tracks the real OS cursor, which relative mode would hide and detach -- grab and confine only. */
+    if(pfl_option_relative_mouse && !Platform_HW_Cursor_Active())
     {
 
         SDL_SetRelativeMouseMode(grabbed ? SDL_TRUE : SDL_FALSE);
 
     }
 
+    sdl2_Mouse_Confine_Update();  /* PLAN-Fullscreen.md phase 2: captured -> confined to the image, released -> free */
+
+}
+
+/* While the mouse is captured, confine it to the game image (not just the window), so it can never sit in a black bar where
+   the drawn cursor would stick to the edge and clicks would be ignored. Released, the confinement is removed: SDL applies a
+   mouse rect whenever the window has mouse focus, so leaving it set would trap the cursor in a windowed game. Called when the
+   capture changes and whenever the viewport changes. */
+void sdl2_Mouse_Confine_Update(void)
+{
+    SDL_Rect image_rect = { 0, 0, 0, 0 };
+
+    if(sdl2_window == NULL)
+    {
+        return;
+    }
+    if(pfl_mouse_grabbed == false)
+    {
+        SDL_SetWindowMouseRect(sdl2_window, NULL);
+        return;
+    }
+    Viewport_Image_Rect_In_Window(&sdl2_viewport, &image_rect.x, &image_rect.y, &image_rect.w, &image_rect.h);
+    if(SDL_SetWindowMouseRect(sdl2_window, &image_rect) != 0)
+    {
+        LOG_WARN(LOG_CAT_SDL2_PFL, "graphics: could not confine the mouse to the image %d,%d %dx%d: %s", image_rect.x, image_rect.y, image_rect.w, image_rect.h, SDL_GetError());
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -299,13 +327,17 @@ static void pfl_video_input_grab(bool grabbed)
 // not a MoO1/MoM function
 static void pfl_mouse_grab(void)
 {
-    /* CLAUDE: HW-cursor prototype keeps the OS cursor visible; grabbing would hide it and enable
-       relative-mouse mode, both of which break native cursor tracking. */
-    if(Platform_HW_Cursor_Active()) { return; }
+    /* CLAUDE: the hardware cursor (the default) keeps the OS cursor visible and never uses relative mode -- both would break
+       native cursor tracking. Windowed it is never captured (click-to-capture is the software cursor's behaviour); fullscreen
+       captures it with a window grab and the image-rect confinement only (PLAN-Fullscreen.md phase 2). */
+    if(Platform_HW_Cursor_Active() && (sdl2_Is_Fullscreen() == 0)) { return; }
     if(!pfl_mouse_grabbed)
     {
         pfl_mouse_grabbed = true;
-        SDL_ShowCursor(SDL_DISABLE);
+        if(!Platform_HW_Cursor_Active())
+        {
+            SDL_ShowCursor(SDL_DISABLE);
+        }
         pfl_video_input_grab(true);
     }
 }
@@ -313,12 +345,181 @@ static void pfl_mouse_grab(void)
 // not a MoO1/MoM function
 static void pfl_mouse_ungrab(void)
 {
-    if(Platform_HW_Cursor_Active()) { return; }  /* CLAUDE: never grabbed under the HW-cursor prototype */
+    /* CLAUDE: the hardware cursor is captured only in fullscreen, and its OS cursor was never hidden. */
     if(pfl_mouse_grabbed)
     {
         pfl_mouse_grabbed = false;
-        SDL_ShowCursor(SDL_ENABLE);
+        if(!Platform_HW_Cursor_Active())
+        {
+            SDL_ShowCursor(SDL_ENABLE);
+        }
         pfl_video_input_grab(false);
+    }
+}
+
+/* PLAN-Fullscreen.md phases 2 and 6: the window states -- windowed, borderless window, fullscreen -- and the switches between them.
+   Fullscreen is borderless desktop fullscreen on the display the window is on (no mode or refresh-rate change). The borderless
+   window has no title bar or frame and fills that display's usable area, so the taskbar stays visible; it cannot be moved.
+   Fullscreen captures the mouse; the two window states release it. The SIZE_CHANGED event that follows redraws; the viewport is
+   refreshed here too so the mouse confinement is right immediately. */
+static int sdl2_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
+static int sdl2_window_state_before_fullscreen = VIEWPORT_WINDOW_STATE_WINDOWED;  /* where leaving fullscreen goes back to */
+static int sdl2_windowed_saved = 0;  /* the framed window's position and size, kept while borderless so it comes back the same */
+static int sdl2_windowed_x = 0;
+static int sdl2_windowed_y = 0;
+static int sdl2_windowed_width = 0;
+static int sdl2_windowed_height = 0;
+
+/* Frameless, not resizable, covering the usable area of the display the window is on. */
+static int sdl2_Make_Borderless_Window(void)
+{
+    SDL_Rect usable = { 0, 0, 0, 0 };
+    int display_index = SDL_GetWindowDisplayIndex(sdl2_window);
+
+    if((display_index < 0) || (SDL_GetDisplayUsableBounds(display_index, &usable) != 0) || (usable.w <= 0) || (usable.h <= 0))
+    {
+        LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: borderless window: no usable bounds for display %d: %s", display_index, SDL_GetError());
+        return -1;
+    }
+    SDL_SetWindowBordered(sdl2_window, SDL_FALSE);
+    SDL_SetWindowResizable(sdl2_window, SDL_FALSE);
+    SDL_SetWindowPosition(sdl2_window, usable.x, usable.y);
+    SDL_SetWindowSize(sdl2_window, usable.w, usable.h);
+    return 0;
+}
+
+void sdl2_Set_Window_State(int window_state)
+{
+    int from = sdl2_window_state;
+
+    window_state = Viewport_Window_State_Normalize(window_state);
+    if((sdl2_window == NULL) || (window_state == from))
+    {
+        return;
+    }
+
+    if(from == VIEWPORT_WINDOW_STATE_WINDOWED)
+    {
+        SDL_GetWindowPosition(sdl2_window, &sdl2_windowed_x, &sdl2_windowed_y);
+        SDL_GetWindowSize(sdl2_window, &sdl2_windowed_width, &sdl2_windowed_height);
+        sdl2_windowed_saved = 1;
+    }
+
+    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+    {
+        if(SDL_SetWindowFullscreen(sdl2_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+        {
+            LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: entering fullscreen failed: %s", SDL_GetError());
+            return;
+        }
+        sdl2_window_state_before_fullscreen = from;
+    }
+    else
+    {
+        if(from == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+        {
+            if(SDL_SetWindowFullscreen(sdl2_window, 0) != 0)
+            {
+                LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: leaving fullscreen failed: %s", SDL_GetError());
+                return;
+            }
+        }
+        if(window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
+        {
+            if(sdl2_Make_Borderless_Window() != 0)
+            {
+                window_state = VIEWPORT_WINDOW_STATE_WINDOWED;  /* stay a normal window rather than a half-made borderless one */
+            }
+        }
+        if(window_state == VIEWPORT_WINDOW_STATE_WINDOWED)
+        {
+            SDL_SetWindowBordered(sdl2_window, SDL_TRUE);
+            SDL_SetWindowResizable(sdl2_window, SDL_TRUE);
+            if((from == VIEWPORT_WINDOW_STATE_BORDERLESS) || (sdl2_window_state_before_fullscreen == VIEWPORT_WINDOW_STATE_BORDERLESS))
+            {
+                if(sdl2_windowed_saved != 0)
+                {
+                    SDL_SetWindowSize(sdl2_window, sdl2_windowed_width, sdl2_windowed_height);
+                    SDL_SetWindowPosition(sdl2_window, sdl2_windowed_x, sdl2_windowed_y);
+                }
+                else
+                {
+                    SDL_SetWindowSize(sdl2_window, PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4);  /* started borderless: the default window */
+                    SDL_SetWindowPosition(sdl2_window, SDL_WINDOWPOS_CENTERED_DISPLAY(SDL_GetWindowDisplayIndex(sdl2_window)), SDL_WINDOWPOS_CENTERED_DISPLAY(SDL_GetWindowDisplayIndex(sdl2_window)));
+                }
+            }
+        }
+    }
+
+    sdl2_window_state = window_state;
+    LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: %s (display %d)", Viewport_Window_State_Name(window_state), SDL_GetWindowDisplayIndex(sdl2_window));
+
+    sdl2_Viewport_Refresh();
+    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+    {
+        pfl_mouse_grab();
+    }
+    else
+    {
+        pfl_mouse_ungrab();
+    }
+    sdl2_Mouse_Confine_Update();
+}
+
+/* Alt+Enter / Ctrl+L: fullscreen, and back to the window state it came from. */
+void sdl2_Toggle_Fullscreen(void)
+{
+    if(sdl2_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+    {
+        sdl2_Set_Window_State(sdl2_window_state_before_fullscreen);
+    }
+    else
+    {
+        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
+    }
+}
+
+/* Ctrl+H: the borderless window, and back to the framed window. From fullscreen it goes to the borderless window. */
+void sdl2_Toggle_Borderless(void)
+{
+    if(sdl2_window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
+    {
+        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
+    }
+    else
+    {
+        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_BORDERLESS);
+    }
+}
+
+int sdl2_Is_Fullscreen(void)
+{
+    return ((sdl2_window != NULL) && ((SDL_GetWindowFlags(sdl2_window) & SDL_WINDOW_FULLSCREEN) != 0));
+}
+
+/* While captured, never let the OS mouse position sit off the game image: warp it to the nearest point on the image. SDL's
+   mouse rect (sdl2_Mouse_Confine_Update) is not enough on its own -- with relative mouse mode on, the OS position still ran
+   into the black bars (seen on Windows, SDL 2.32), leaving the drawn cursor stuck on the edge until the mouse came back across
+   the bar. Called by both mouse polls with the position they just read. */
+void sdl2_Mouse_Keep_On_Image(int window_x, int window_y)
+{
+    int image_x = 0;
+    int image_y = 0;
+    int image_width = 0;
+    int image_height = 0;
+    int target_x = window_x;
+    int target_y = window_y;
+
+    if((pfl_mouse_grabbed == false) || (sdl2_window == NULL))
+    {
+        return;
+    }
+    Viewport_Image_Rect_In_Window(&sdl2_viewport, &image_x, &image_y, &image_width, &image_height);
+    SETRANGE(target_x, image_x, image_x + image_width - 1);
+    SETRANGE(target_y, image_y, image_y + image_height - 1);
+    if((target_x != window_x) || (target_y != window_y))
+    {
+        SDL_WarpMouseInWindow(sdl2_window, target_x, target_y);
     }
 }
 
@@ -382,14 +583,16 @@ static void pfl_mouse_move(int dx, int dy)
 static void Platform_Update_Mouse_Position(int l_mx, int l_my)
 {
     /* OG: int screen_scale = 2; */
-    int screen_scale = sdl2_window_width / PLATFORM_SCREEN_WIDTH;
-    int gx = l_mx / screen_scale;
-    int gy = l_my / screen_scale;
+    int16_t game_x = 0;
+    int16_t game_y = 0;
+    int gx = 0;
+    int gy = 0;
 
-    if(l_mx < PLATFORM_SCREEN_XMIN || l_my < PLATFORM_SCREEN_YMIN || gx > PLATFORM_SCREEN_XMAX || gy > PLATFORM_SCREEN_YMAX)
-    {
-        return;
-    }
+    /* Through the viewport (letterbox, high-DPI). Off the image -- a black bar -- the pointer stops on the nearest edge. */
+    Platform_Window_To_Game(l_mx, l_my, &game_x, &game_y);
+    sdl2_Mouse_Keep_On_Image(l_mx, l_my);
+    gx = game_x;
+    gy = game_y;
     pointer_x = gx;
     pointer_y = gy;
     if(Input_Metrics_Active()) { Input_Metrics_Note_Poll(gx, gy); }  /* CLAUDE: metrics poll */
@@ -428,6 +631,13 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
             // hw_video_resize(0, 0);
         } break;
 
+        /* New window size, or moved to a display with a different scale: re-fit the image and redraw the bars. */
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+        case SDL_WINDOWEVENT_DISPLAY_CHANGED:
+        {
+            Platform_Video_Update();
+        } break;
+
         case SDL_WINDOWEVENT_EXPOSED:
         {
             Platform_Video_Update();
@@ -436,6 +646,12 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
         case SDL_WINDOWEVENT_FOCUS_GAINED:
         {
             Platform_Mouse_Input_Enable();
+            /* Back from Alt+Tab: fullscreen recaptures the mouse straight away (windowed waits for a click, as before). */
+            if(sdl2_Is_Fullscreen() != 0)
+            {
+                pfl_mouse_grab();
+                sdl2_Mouse_Confine_Update();
+            }
         } break;
 
         case SDL_WINDOWEVENT_FOCUS_LOST:

@@ -63,15 +63,33 @@ int16_t Platform_Get_Mouse_Button_State(void)
 
 void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 {
-    float screen_scale = (float)sdl3_window_width / (float)PLATFORM_SCREEN_WIDTH;
+    int window_x = 0;
+    int window_y = 0;
     /* CLAUDE */  Platform_Set_Warp_Guard();  /* prevent Platform_Maybe_Move_Mouse() from reading stale OS position */
-    SDL_WarpMouseInWindow(sdl3_window, game_x * screen_scale, game_y * screen_scale);
+    Platform_Game_To_Window(game_x, game_y, &window_x, &window_y);  /* through the viewport (letterbox, high-DPI) */
+    SDL_WarpMouseInWindow(sdl3_window, (float)window_x, (float)window_y);
 }
 
 
 int Platform_Get_Window_Width(void)
 {
     return sdl3_window_width;
+}
+
+/* CLAUDE: window <-> game through the shared Viewport (letterbox, fit modes, high-DPI). PLAN-Fullscreen.md phase 7. */
+int16_t Platform_Window_To_Game(int window_x, int window_y, int16_t * game_x, int16_t * game_y)
+{
+    int gx = 0;
+    int gy = 0;
+    int on_image = Viewport_Window_To_Game(&sdl3_viewport, window_x, window_y, &gx, &gy);
+    *game_x = (int16_t)gx;
+    *game_y = (int16_t)gy;
+    return (on_image != 0) ? ST_TRUE : ST_FALSE;
+}
+
+void Platform_Game_To_Window(int16_t game_x, int16_t game_y, int * window_x, int * window_y)
+{
+    Viewport_Game_To_Window(&sdl3_viewport, game_x, game_y, window_x, window_y);
 }
 
 
@@ -94,6 +112,8 @@ int Platform_Get_Window_Width(void)
 static SDL_Cursor * hwcur_current = NULL;
 static int          hwcur_gate = -1;   /* -1 = unresolved, else 0/1 from the env var */
 static int          hwcur_last_image = -1;
+static int          hwcur_last_width = 0;   /* size the current OS cursor was built at, in drawable pixels */
+static int          hwcur_last_height = 0;
 
 int Platform_HW_Cursor_Active(void)
 {
@@ -109,8 +129,9 @@ int Platform_HW_Cursor_Active(void)
 void Platform_HW_Cursor_Refresh(void)
 {
     int image;
-    int scale;
-    int px, py, sx, sy;
+    int cursor_width;
+    int cursor_height;
+    int px, py;
     const uint8_t * sprite;
     SDL_Surface * surf;
     SDL_Cursor * newcur;
@@ -120,8 +141,13 @@ void Platform_HW_Cursor_Refresh(void)
     if(!Platform_HW_Cursor_Active()) { return; }
 
     image = Get_Pointer_Image_Number();
-    if(image == hwcur_last_image) { return; }   /* no shape change since the last build */
+    /* The OS cursor is as big as 16 game pixels are on screen: the viewport rect over the game size, so it matches the drawn
+       image in every scale mode (PLAN-Fullscreen.md phases 5 and 7).  Rounded to the nearest pixel. */
+    Viewport_Game_Size_In_Drawable(&sdl3_viewport, HWCUR_DIM, HWCUR_DIM, &cursor_width, &cursor_height);
+    if((image == hwcur_last_image) && (cursor_width == hwcur_last_width) && (cursor_height == hwcur_last_height)) { return; }   /* no shape or size change since the last build */
     hwcur_last_image = image;
+    hwcur_last_width = cursor_width;
+    hwcur_last_height = cursor_height;
 
     if(image == 0)   /* crsr_None */
     {
@@ -134,21 +160,21 @@ void Platform_HW_Cursor_Refresh(void)
         return;
     }
 
-    scale = sdl3_window_width / PLATFORM_SCREEN_WIDTH;
-    if(scale < 1) { scale = 1; }
-
-    surf = SDL_CreateSurface(HWCUR_DIM * scale, HWCUR_DIM * scale, SDL_PIXELFORMAT_ARGB8888);
+    surf = SDL_CreateSurface(cursor_width, cursor_height, SDL_PIXELFORMAT_ARGB8888);
     if(surf == NULL) { return; }
 
     sprite = mouse_palette + ((image - 1) * (HWCUR_DIM * HWCUR_DIM));
     dst = (uint32_t *)surf->pixels;
     pitch_px = surf->pitch / 4;
 
-    for(py = 0; py < HWCUR_DIM; py++)
+    /* Nearest-neighbour: each cursor pixel takes the sprite pixel it falls in, so the OS cursor matches the drawn size. */
+    for(py = 0; py < cursor_height; py++)
     {
-        for(px = 0; px < HWCUR_DIM; px++)
+        int sprite_y = (py * HWCUR_DIM) / cursor_height;
+        for(px = 0; px < cursor_width; px++)
         {
-            uint8_t idx = sprite[px * HWCUR_DIM + py];   /* column-major, matching Draw_Mouse_On_Page_ */
+            int sprite_x = (px * HWCUR_DIM) / cursor_width;
+            uint8_t idx = sprite[sprite_x * HWCUR_DIM + sprite_y];   /* column-major, matching Draw_Mouse_On_Page_ */
             uint32_t argb;
             if(idx == HWCUR_TRANSPARENT)
             {
@@ -159,14 +185,7 @@ void Platform_HW_Cursor_Refresh(void)
                 PFL_Color c = platform_palette_buffer[idx];
                 argb = ((uint32_t)0xFFu << 24) | ((uint32_t)c.r << 16) | ((uint32_t)c.g << 8) | (uint32_t)c.b;
             }
-            /* nearest-neighbour upscale by the window scale so the OS cursor matches the drawn size */
-            for(sy = 0; sy < scale; sy++)
-            {
-                for(sx = 0; sx < scale; sx++)
-                {
-                    dst[(py * scale + sy) * pitch_px + (px * scale + sx)] = argb;
-                }
-            }
+            dst[py * pitch_px + px] = argb;
         }
     }
 

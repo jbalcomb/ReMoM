@@ -72,6 +72,8 @@ PLATFORM_CORE_SOURCES = \
     platform/capture/PFL_Capture.c \
     platform/metrics/PFL_Input_Metrics.c \
     platform/metrics/PFL_Perf.c \
+    platform/viewport/PFL_Viewport.c \
+    platform/viewport/PFL_Video_Settings.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl3
 else
@@ -87,6 +89,8 @@ PLATFORM_CORE_SOURCES = \
     platform/capture/PFL_Capture.c \
     platform/metrics/PFL_Input_Metrics.c \
     platform/metrics/PFL_Perf.c \
+    platform/viewport/PFL_Viewport.c \
+    platform/viewport/PFL_Video_Settings.c \
     platform/replay/Replay.c
 PLATFORM_BACKEND_DIR = platform/sdl2
 endif
@@ -129,6 +133,8 @@ libplatform_windowless_a_SOURCES = \
     platform/windowless/windowless_Audio.c \
     platform/windowless/windowless_State.c \
     platform/metrics/PFL_Perf.c \
+    platform/viewport/PFL_Viewport.c \
+    platform/viewport/PFL_Video_Settings.c \
     platform/replay/Replay.c
 
 libplatform_windowless_a_CFLAGS = $(AM_CFLAGS) \

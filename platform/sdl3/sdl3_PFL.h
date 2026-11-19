@@ -124,6 +124,23 @@ extern uint64_t sdl3_performance_counter;
 extern int sdl3_window_width;
 extern int sdl3_window_height;
 
+/* Viewport: where the game image is shown in the window, and the window <-> game mouse mapping (sdl3_Video.c).
+   PLAN-Fullscreen.md phase 7 -- the SDL3 port of the SDL2 backend's phases 1-6. */
+#include "../include/Platform_Viewport.h"
+extern struct s_VIEWPORT sdl3_viewport;
+/* Re-read the window and drawable sizes and recompute sdl3_viewport. Returns 1 if it changed (and logs the new one). */
+int sdl3_Viewport_Refresh(void);
+void sdl3_Viewport_Log(void);  /* one INFO line describing sdl3_viewport */
+void sdl3_Present_Image(void);  /* the frame into the viewport rect, per scale mode (sdl3_Video.c) */
+
+/* Window states, fullscreen and mouse capture (sdl3_PFL.c). */
+void sdl3_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
+void sdl3_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
+void sdl3_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+int sdl3_Is_Fullscreen(void);
+void sdl3_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */
+void sdl3_Mouse_Keep_On_Image(int window_x, int window_y);  /* captured: warp an off-image OS position back onto the image */
+
 
 
 // MOM_PFL.H  extern int platform_mouse_button_status;

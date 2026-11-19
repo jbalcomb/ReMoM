@@ -56,6 +56,24 @@ uint64_t win_ticks_startup;
 
 struct win32_offscreen_buffer win_video_back_buffer;
 
+/* CLAUDE: PLAN-Fullscreen.md phase 8. Where the game image is shown. Starts as the default 1280x800 window at 4x so mouse mapping
+   is valid before the window exists. */
+struct s_VIEWPORT win_viewport = {
+    PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4,  /* window */
+    PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4,  /* drawable: no separate pixel size -- the process is not DPI-aware */
+    PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT,          /* game */
+    VIEWPORT_SCALE_MODE_INTEGER, VIEWPORT_PIXEL_ASPECT_SQUARE,
+    4,                                                      /* scale */
+    0, 0, PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4  /* rect */
+};
+
+static int win_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
+static int win_window_state_before_fullscreen = VIEWPORT_WINDOW_STATE_WINDOWED;  /* where leaving fullscreen goes back to */
+static WINDOWPLACEMENT win_windowed_placement = { sizeof(WINDOWPLACEMENT) };  /* the framed window, kept while borderless or fullscreen */
+static int win_windowed_placement_saved = 0;
+static int win_mouse_captured = 0;  /* fullscreen: the cursor is clipped to the image (ClipCursor) */
+static void Win_Mouse_Confine_Update(void);
+
 /* Optional per-frame callback for synthetic input injection (DeMoM). */
 static void (*platform_frame_callback)(void) = NULL;
 
@@ -120,6 +138,14 @@ void Startup_Platform(void)
 
     Win_Init_Window();
 
+    /* CLAUDE: PLAN-Fullscreen.md phase 8 -- the viewport from the real window, logged once even when it equals the default; then
+       [Video] startup_window = borderless | fullscreen (ReMoM.ini), exactly as if its hotkey had been pressed. */
+    if(Win_Viewport_Refresh() == 0)
+    {
+        Win_Viewport_Log();
+    }
+    Win_Set_Window_State(Platform_Video_Startup_Window());
+
     /* CLAUDE: register the real title so the live readout appends to it, not to a default. */
     Perf_Live_Set_Base_Title(win_window_title);
 
@@ -140,6 +166,7 @@ void Startup_Platform(void)
             if(im_scale < 1) { im_scale = 1; }
             /* Win32 has no cheap refresh-rate query here; 0 = unknown (recorded in the header). */
             Input_Metrics_Init(im_path, "Win32", "gdi", im_scale, 0);
+            Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);  /* CLAUDE: phase 8 */
             LOG_INFO(LOG_CAT_WIN_PFL, "CLAUDE: input metrics ENABLED -> %s", im_path);
         }
     }
@@ -157,6 +184,7 @@ void Shutdown_Platform(void)
     LOG_DEBUG(LOG_CAT_PFL, "DEBUG: [%s, %d]: BEGIN: Shutdown_Platform()", __FILE__, __LINE__);
 #endif
     Input_Metrics_Shutdown();  /* CLAUDE: flush the input-metrics .fwv (also runs via atexit) */
+    ClipCursor(NULL);  /* CLAUDE: ClipCursor is system-wide -- never leave the cursor trapped after exit */
     ShowCursor(TRUE);
     timeEndPeriod(1);
     if(win_window)
@@ -172,11 +200,227 @@ void Shutdown_Platform(void)
 
 int Platform_Get_Scale(void)
 {
-    if(win_window_width <= 0)
+    // if(win_window_width <= 0)
+    // {
+    //     return 1;
+    // }
+    // return win_window_width / PLATFORM_SCREEN_WIDTH;
+    return win_viewport.scale;  /* CLAUDE: the viewport's whole-number scale (PLAN-Fullscreen.md phase 8) */
+}
+
+
+
+/* ========================================================================= */
+/*  CLAUDE: Viewport, window states, mouse capture -- PLAN-Fullscreen.md      */
+/*  phase 8, the Win32 port of the SDL2 backend's phases 1-6.                 */
+/* ========================================================================= */
+
+int Win_Viewport_Refresh(void)
+{
+    struct s_VIEWPORT viewport;
+    RECT client_rect;
+    int client_width;
+    int client_height;
+
+    if(win_window == NULL)
     {
-        return 1;
+        return 0;
     }
-    return win_window_width / PLATFORM_SCREEN_WIDTH;
+    GetClientRect(win_window, &client_rect);
+    client_width = client_rect.right - client_rect.left;
+    client_height = client_rect.bottom - client_rect.top;
+    if((client_width <= 0) || (client_height <= 0))
+    {
+        return 0;  /* minimised: keep the last viewport */
+    }
+    /* Not DPI-aware: Windows scales the window for us, so client coordinates are the pixels we draw into (window == drawable). */
+    Viewport_Compute(&viewport, client_width, client_height, client_width, client_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), VIEWPORT_PIXEL_ASPECT_SQUARE);  /* [Video] scale_mode */
+    if(Viewport_Equal(&viewport, &win_viewport))
+    {
+        return 0;
+    }
+    win_viewport = viewport;
+    Win_Mouse_Confine_Update();  /* a captured mouse follows the image's new rect */
+    Win_Viewport_Log();
+    return 1;
+}
+
+void Win_Viewport_Log(void)
+{
+    LOG_INFO(LOG_CAT_WIN_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, whole-number scale %d, image at %d,%d size %dx%d", win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
+    Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
+}
+
+/* Fullscreen captures the mouse: the cursor is clipped to the game image (in screen coordinates), so it can never sit in a black
+   bar. ClipCursor is system-wide, so it is released whenever the game is not fullscreen, loses focus, or the player middle-clicks,
+   and re-applied when the image moves. */
+static void Win_Mouse_Confine_Update(void)
+{
+    RECT clip_rect;
+    POINT top_left;
+    int image_x = 0;
+    int image_y = 0;
+    int image_width = 0;
+    int image_height = 0;
+
+    if((win_window == NULL) || (win_mouse_captured == 0))
+    {
+        ClipCursor(NULL);
+        return;
+    }
+    Viewport_Image_Rect_In_Window(&win_viewport, &image_x, &image_y, &image_width, &image_height);
+    top_left.x = image_x;
+    top_left.y = image_y;
+    ClientToScreen(win_window, &top_left);
+    clip_rect.left = top_left.x;
+    clip_rect.top = top_left.y;
+    clip_rect.right = top_left.x + image_width;
+    clip_rect.bottom = top_left.y + image_height;
+    if(ClipCursor(&clip_rect) == FALSE)
+    {
+        LOG_WARN(LOG_CAT_WIN_PFL, "graphics: could not confine the mouse to the image %d,%d %dx%d (error %lu)", image_x, image_y, image_width, image_height, (unsigned long)GetLastError());
+    }
+}
+
+static void Win_Mouse_Capture(int captured)
+{
+    win_mouse_captured = ((captured != 0) && (win_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)) ? 1 : 0;
+    Win_Mouse_Confine_Update();
+}
+
+/* A popup window (no title bar or frame) covering rect, on top. */
+static void Win_Make_Popup(const RECT * rect)
+{
+    LONG_PTR style = GetWindowLongPtrA(win_window, GWL_STYLE);
+    SetWindowLongPtrA(win_window, GWL_STYLE, (style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP);
+    SetWindowPos(win_window, HWND_TOP, rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top, SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
+}
+
+/* The window states: windowed (WS_OVERLAPPEDWINDOW), borderless window (WS_POPUP over the monitor's work area, so the taskbar stays
+   visible; not movable), fullscreen (WS_POPUP over the whole monitor -- borderless desktop fullscreen, no mode change). Going back
+   to the framed window restores the placement it had before. */
+void Win_Set_Window_State(int window_state)
+{
+    int from = win_window_state;
+    MONITORINFO monitor_info;
+
+    window_state = Viewport_Window_State_Normalize(window_state);
+    if((win_window == NULL) || (window_state == from))
+    {
+        return;
+    }
+
+    if(from == VIEWPORT_WINDOW_STATE_WINDOWED)
+    {
+        win_windowed_placement.length = sizeof(WINDOWPLACEMENT);
+        win_windowed_placement_saved = (GetWindowPlacement(win_window, &win_windowed_placement) != FALSE) ? 1 : 0;
+    }
+
+    if(window_state == VIEWPORT_WINDOW_STATE_WINDOWED)
+    {
+        LONG_PTR style = GetWindowLongPtrA(win_window, GWL_STYLE);
+        SetWindowLongPtrA(win_window, GWL_STYLE, (style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW);
+        if(win_windowed_placement_saved != 0)
+        {
+            SetWindowPlacement(win_window, &win_windowed_placement);
+        }
+        SetWindowPos(win_window, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+    }
+    else
+    {
+        memset(&monitor_info, 0, sizeof(monitor_info));
+        monitor_info.cbSize = sizeof(monitor_info);
+        if(GetMonitorInfoA(MonitorFromWindow(win_window, MONITOR_DEFAULTTONEAREST), &monitor_info) == FALSE)
+        {
+            LOG_ERROR(LOG_CAT_WIN_PFL, "graphics: %s failed: no monitor info (error %lu)", Viewport_Window_State_Name(window_state), (unsigned long)GetLastError());
+            return;
+        }
+        Win_Make_Popup((window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN) ? &monitor_info.rcMonitor : &monitor_info.rcWork);
+    }
+
+    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+    {
+        win_window_state_before_fullscreen = from;
+    }
+    win_window_state = window_state;
+    LOG_INFO(LOG_CAT_WIN_PFL, "graphics: %s", Viewport_Window_State_Name(window_state));
+
+    Win_Viewport_Refresh();
+    Win_Mouse_Capture((window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN) ? 1 : 0);
+    InvalidateRect(win_window, NULL, FALSE);  /* repaint the bars at the new size */
+}
+
+void Win_Toggle_Fullscreen(void)
+{
+    if(win_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+    {
+        Win_Set_Window_State(win_window_state_before_fullscreen);
+    }
+    else
+    {
+        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
+    }
+}
+
+void Win_Toggle_Borderless(void)
+{
+    if(win_window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
+    {
+        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
+    }
+    else
+    {
+        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_BORDERLESS);
+    }
+}
+
+/* The window hotkeys, the same bindings as the SDL backends (one named table, for the planned keymap feature):
+     Alt+Enter (either Enter key)  fullscreen toggle -- arrives as WM_SYSKEYDOWN
+     Ctrl+L                        fullscreen toggle -- borrowed from Adobe Acrobat Reader, with Ctrl+H below
+     Ctrl+H                        borderless window toggle
+   The game never reads Ctrl, so Ctrl+H and Ctrl+L take nothing from it. */
+#define WIN_WINDOW_HOTKEY_NONE        0
+#define WIN_WINDOW_HOTKEY_FULLSCREEN  1
+#define WIN_WINDOW_HOTKEY_BORDERLESS  2
+
+static const struct
+{
+    int vk_code;
+    int modifier_vk;  /* VK_MENU (Alt) or VK_CONTROL */
+    int action;       /* WIN_WINDOW_HOTKEY_* */
+} win_window_hotkeys[] = {
+    { VK_RETURN, VK_MENU,    WIN_WINDOW_HOTKEY_FULLSCREEN },  /* main and keypad Enter share VK_RETURN */
+    { 'L',       VK_CONTROL, WIN_WINDOW_HOTKEY_FULLSCREEN },
+    { 'H',       VK_CONTROL, WIN_WINDOW_HOTKEY_BORDERLESS },
+};
+
+/* Handle a window hotkey: toggles on the first key-down (not on auto-repeat). Returns 1 if the key was a hotkey, so the caller
+   stops it -- it is never translated, queued or recorded. */
+static int Win_Window_Hotkey(int vk_code, LPARAM lParam)
+{
+    size_t hotkey_index;
+    for(hotkey_index = 0; hotkey_index < (sizeof(win_window_hotkeys) / sizeof(win_window_hotkeys[0])); hotkey_index++)
+    {
+        if(
+            (vk_code == win_window_hotkeys[hotkey_index].vk_code) &&
+            ((GetKeyState(win_window_hotkeys[hotkey_index].modifier_vk) & 0x8000) != 0)
+        )
+        {
+            if((lParam & (1L << 30)) == 0)  /* bit 30: the key was already down -- auto-repeat */
+            {
+                if(win_window_hotkeys[hotkey_index].action == WIN_WINDOW_HOTKEY_FULLSCREEN)
+                {
+                    Win_Toggle_Fullscreen();
+                }
+                else
+                {
+                    Win_Toggle_Borderless();
+                }
+            }
+            return 1;
+        }
+    }
+    return 0;
 }
 
 
@@ -258,9 +502,114 @@ static void Win_Convert_Engine_Pixels_To_Back_Buffer(struct win32_offscreen_buff
  * Safe to call any time after Win_Init_Back_Buffer() — including from WM_PAINT
  * before the engine has initialized.
  */
+/*
+ * CLAUDE: fit_sharp_bilinear (PLAN-Fullscreen.md phases 4 and 8). GDI has no bilinear filter, so the frame is drawn nearest-neighbour
+ * at the viewport's whole-number scale into a memory bitmap, which StretchBlt's HALFTONE mode (GDI's smoothing filter, an area
+ * average) then scales into the rect. The bitmap is rebuilt only when that scale changes. If it cannot be made the mode falls back
+ * to fit_nearest for the rest of the run, logged once. REMOM_SHARP_BILINEAR_FAIL=1 forces that fallback, to test it.
+ */
+static HDC win_upscaled_dc = NULL;
+static HBITMAP win_upscaled_bitmap = NULL;
+static HGDIOBJ win_upscaled_previous_bitmap = NULL;
+static int win_upscaled_scale = 0;
+static int win_sharp_bilinear_unavailable = 0;
+
+static void Win_Sharp_Bilinear_Release(void)
+{
+    if(win_upscaled_dc != NULL)
+    {
+        SelectObject(win_upscaled_dc, win_upscaled_previous_bitmap);
+        DeleteDC(win_upscaled_dc);
+        win_upscaled_dc = NULL;
+    }
+    if(win_upscaled_bitmap != NULL)
+    {
+        DeleteObject(win_upscaled_bitmap);
+        win_upscaled_bitmap = NULL;
+    }
+    win_upscaled_scale = 0;
+}
+
+static void Win_Sharp_Bilinear_Give_Up(const char * reason)
+{
+    LOG_ERROR(LOG_CAT_WIN_PFL, "graphics: fit_sharp_bilinear unavailable (%s) -- using fit_nearest", reason);
+    win_sharp_bilinear_unavailable = 1;
+    Win_Sharp_Bilinear_Release();
+}
+
+static int Win_Sharp_Bilinear_Ready(HDC device_context)
+{
+    int scale = win_viewport.scale;
+
+    if(win_sharp_bilinear_unavailable != 0)
+    {
+        return 0;
+    }
+    if((win_upscaled_dc != NULL) && (win_upscaled_scale == scale))
+    {
+        return 1;
+    }
+    Win_Sharp_Bilinear_Release();
+    {
+        const char * fail_env = getenv("REMOM_SHARP_BILINEAR_FAIL");
+        if((fail_env != NULL) && (strcmp(fail_env, "1") == 0))
+        {
+            Win_Sharp_Bilinear_Give_Up("forced by REMOM_SHARP_BILINEAR_FAIL=1");
+            return 0;
+        }
+    }
+    win_upscaled_dc = CreateCompatibleDC(device_context);
+    win_upscaled_bitmap = CreateCompatibleBitmap(device_context, PLATFORM_SCREEN_WIDTH * scale, PLATFORM_SCREEN_HEIGHT * scale);
+    if((win_upscaled_dc == NULL) || (win_upscaled_bitmap == NULL))
+    {
+        Win_Sharp_Bilinear_Give_Up("could not create the intermediate bitmap");
+        return 0;
+    }
+    win_upscaled_previous_bitmap = SelectObject(win_upscaled_dc, win_upscaled_bitmap);
+    SetStretchBltMode(win_upscaled_dc, COLORONCOLOR);
+    win_upscaled_scale = scale;
+    LOG_INFO(LOG_CAT_WIN_PFL, "graphics: fit_sharp_bilinear intermediate %dx%d (x%d), filtered to %dx%d", PLATFORM_SCREEN_WIDTH * scale, PLATFORM_SCREEN_HEIGHT * scale, scale, win_viewport.rect_width, win_viewport.rect_height);
+    return 1;
+}
+
+/* Black over the parts of the client area outside the image rect -- the bars. Drawn every present, so they never keep stale pixels. */
+static void Win_Fill_Bars(HDC device_context)
+{
+    HBRUSH black = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    int client_width = win_viewport.window_width;
+    int client_height = win_viewport.window_height;
+    int left = win_viewport.rect_x;
+    int top = win_viewport.rect_y;
+    int right = win_viewport.rect_x + win_viewport.rect_width;
+    int bottom = win_viewport.rect_y + win_viewport.rect_height;
+    RECT bar;
+
+    if(top > 0) { SetRect(&bar, 0, 0, client_width, top); FillRect(device_context, &bar, black); }
+    if(bottom < client_height) { SetRect(&bar, 0, bottom, client_width, client_height); FillRect(device_context, &bar, black); }
+    if(left > 0) { SetRect(&bar, 0, top, left, bottom); FillRect(device_context, &bar, black); }
+    if(right < client_width) { SetRect(&bar, right, top, client_width, bottom); FillRect(device_context, &bar, black); }
+}
+
 static void Win_Blit_Back_Buffer(struct win32_offscreen_buffer *buffer, HDC device_context, int window_width, int window_height)
 {
-    StretchDIBits(device_context, 0, 0, window_width, window_height, 0, 0, buffer->Width, buffer->Height, buffer->Memory, &buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+    // StretchDIBits(device_context, 0, 0, window_width, window_height, 0, 0, buffer->Width, buffer->Height, buffer->Memory, &buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+    /* BEGIN:   CLAUDE */
+    /* PLAN-Fullscreen.md phase 8: the image in the viewport's rect, black bars around it, per scale mode. */
+    (void)window_width;
+    (void)window_height;
+    Win_Viewport_Refresh();
+    Win_Fill_Bars(device_context);
+    if((win_viewport.scale_mode == VIEWPORT_SCALE_MODE_FIT_SHARP_BILINEAR) && (Win_Sharp_Bilinear_Ready(device_context) != 0))
+    {
+        StretchDIBits(win_upscaled_dc, 0, 0, PLATFORM_SCREEN_WIDTH * win_upscaled_scale, PLATFORM_SCREEN_HEIGHT * win_upscaled_scale, 0, 0, buffer->Width, buffer->Height, buffer->Memory, &buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+        SetStretchBltMode(device_context, HALFTONE);
+        SetBrushOrgEx(device_context, 0, 0, NULL);  /* required after selecting HALFTONE */
+        StretchBlt(device_context, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height, win_upscaled_dc, 0, 0, PLATFORM_SCREEN_WIDTH * win_upscaled_scale, PLATFORM_SCREEN_HEIGHT * win_upscaled_scale, SRCCOPY);
+        return;
+    }
+    SetStretchBltMode(device_context, COLORONCOLOR);  /* nearest-neighbour: integer and fit_nearest */
+    StretchDIBits(device_context, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height, 0, 0, buffer->Width, buffer->Height, buffer->Memory, &buffer->Info, DIB_RGB_COLORS, SRCCOPY);
+    /* END:     CLAUDE */
 }
 
 void Platform_Video_Update(void)
@@ -443,20 +792,50 @@ void Pump_Paints(void)
 /*  Mouse                                                                    */
 /* ========================================================================= */
 
+/* CLAUDE: synthetic (injected) mouse button for Automation Driver / replay click playback -- see Platform.h. The Automation Driver
+   has called this since 986d71c7 (2026-07-29) but the Win32 backend never had it, so Win32 did not link; same as sdl2_MD.c. */
+static int16_t win_synthetic_mouse_button = 0;
+static int16_t win_synthetic_mouse_button_hold = 0;
+
+void Platform_Set_Synthetic_Mouse_Button(int16_t buttons)
+{
+    win_synthetic_mouse_button = buttons;
+    win_synthetic_mouse_button_hold = (buttons != 0) ? PLATFORM_SYNTHETIC_MOUSE_HOLD : 0;
+}
+
 int16_t Platform_Get_Mouse_Button_State(void)
 {
     int16_t buttons = 0;
     if(GetAsyncKeyState(VK_LBUTTON) & 0x8000) { buttons |= ST_LEFT_BUTTON; }
     if(GetAsyncKeyState(VK_RBUTTON) & 0x8000) { buttons |= ST_RIGHT_BUTTON; }
+    /* CLAUDE: OR in the synthetic press, returning it BEFORE decrementing the hold so this read still sees it; auto-release when the
+       hold expires so the caller's release spin-wait exits. */
+    if(win_synthetic_mouse_button != 0)
+    {
+        buttons |= win_synthetic_mouse_button;
+        if(win_synthetic_mouse_button_hold > 0)
+        {
+            win_synthetic_mouse_button_hold--;
+            if(win_synthetic_mouse_button_hold == 0)
+            {
+                win_synthetic_mouse_button = 0;
+            }
+        }
+    }
     return buttons;
 }
 
 void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
 {
-    int scale = Platform_Get_Scale();
+    // int scale = Platform_Get_Scale();
+    int window_x = 0;  /* CLAUDE */
+    int window_y = 0;  /* CLAUDE */
     POINT point;
-    point.x = (LONG)(game_x * scale);
-    point.y = (LONG)(game_y * scale);
+    // point.x = (LONG)(game_x * scale);
+    // point.y = (LONG)(game_y * scale);
+    Platform_Game_To_Window(game_x, game_y, &window_x, &window_y);  /* CLAUDE: through the viewport (letterbox, fit modes) */
+    point.x = (LONG)window_x;  /* CLAUDE */
+    point.y = (LONG)window_y;  /* CLAUDE */
     ClientToScreen(win_window, &point);
     SetCursorPos(point.x, point.y);
 }
@@ -473,19 +852,41 @@ int Platform_Get_Window_Width(void)
     return client_rect.right - client_rect.left;
 }
 
+/* CLAUDE: window <-> game through the shared Viewport (letterbox, fit modes). PLAN-Fullscreen.md phase 8. */
+int16_t Platform_Window_To_Game(int window_x, int window_y, int16_t * game_x, int16_t * game_y)
+{
+    int gx = 0;
+    int gy = 0;
+    int on_image = Viewport_Window_To_Game(&win_viewport, window_x, window_y, &gx, &gy);
+    *game_x = (int16_t)gx;
+    *game_y = (int16_t)gy;
+    return (on_image != 0) ? ST_TRUE : ST_FALSE;
+}
+
+void Platform_Game_To_Window(int16_t game_x, int16_t game_y, int * window_x, int * window_y)
+{
+    Viewport_Game_To_Window(&win_viewport, game_x, game_y, window_x, window_y);
+}
+
+/* Win32: the OS cursor position in GAME coordinates (unlike the SDL backends, which return window coordinates). */
 void Platform_Get_Mouse_Position_XY(int *mx, int *my)
 {
-    int scale = Platform_Get_Scale();
+    // int scale = Platform_Get_Scale();
+    int16_t game_x = 0;  /* CLAUDE */
+    int16_t game_y = 0;  /* CLAUDE */
     POINT cursor;
     GetCursorPos(&cursor);
     ScreenToClient(win_window, &cursor);
 
-    if(scale < 1) { scale = 1; }
-    *mx = (int)(cursor.x / scale);
-    *my = (int)(cursor.y / scale);
-
-    SETRANGE(*mx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
-    SETRANGE(*my, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+    // if(scale < 1) { scale = 1; }
+    // *mx = (int)(cursor.x / scale);
+    // *my = (int)(cursor.y / scale);
+    //
+    // SETRANGE(*mx, PLATFORM_SCREEN_XMIN, PLATFORM_SCREEN_XMAX);
+    // SETRANGE(*my, PLATFORM_SCREEN_YMIN, PLATFORM_SCREEN_YMAX);
+    Platform_Window_To_Game((int)cursor.x, (int)cursor.y, &game_x, &game_y);  /* CLAUDE: through the viewport, clamped to the image */
+    *mx = game_x;  /* CLAUDE */
+    *my = game_y;  /* CLAUDE */
 }
 
 void Platform_Maybe_Move_Mouse(void)
@@ -675,10 +1076,25 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_SYSKEYDOWN:
         {
+            /* CLAUDE: PLAN-Fullscreen.md phase 8 -- Alt+Enter comes here (Alt makes it a system key). Stopped: never reaches the game. */
+            if(Win_Window_Hotkey((int)wParam, lParam) != 0)
+            {
+                return 0;
+            }
             /* CLAUDE: diagnostic — some keys (F10, Alt+key, etc.) arrive as WM_SYSKEYDOWN rather than WM_KEYDOWN.  Log them so we can see if missed keys are landing here. */
 #ifdef STU_DEBUG
             LOG_TRACE(LOG_CAT_PFL, "WIN_KEY t=%llu WM_SYSKEYDOWN vk=0x%02X (%d) wParam=0x%llX lParam=0x%llX repeat=%d", (unsigned long long)Platform_Get_Millies(), (int)wParam, (int)wParam, (unsigned long long)wParam, (unsigned long long)lParam, (int)(lParam & 0xFFFF));
 #endif
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+
+        /* CLAUDE: the character for Alt+Enter -- swallowed, or DefWindowProc beeps (there is no menu for it to select). */
+        case WM_SYSCHAR:
+        {
+            if(wParam == VK_RETURN)
+            {
+                return 0;
+            }
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
 
@@ -688,6 +1104,12 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             int mox_key = 0;
             uint32_t mox_mod = 0;
             char mox_character = 0;
+
+            /* CLAUDE: PLAN-Fullscreen.md phase 8 -- Ctrl+L / Ctrl+H. Stopped: never translated, queued or recorded. */
+            if(Win_Window_Hotkey(vk_code, lParam) != 0)
+            {
+                break;
+            }
 
             if(vk_code >= 0 && vk_code < 256)
             {
@@ -782,6 +1204,7 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 LOG_TRACE(LOG_CAT_PFL, "WIN_BTN t=%llu WM_LBUTTONDOWN wx=%d wy=%d prev_edge=0x%X", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 1;
+                if(win_mouse_captured == 0) { Win_Mouse_Capture(1); }  /* CLAUDE: fullscreen re-captures on a click after a middle-click release */
                 User_Mouse_Handler(ST_LEFT_BUTTON, win_x, win_y);
             }
         } break;
@@ -802,8 +1225,15 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
                 LOG_TRACE(LOG_CAT_PFL, "WIN_BTN t=%llu WM_RBUTTONDOWN wx=%d wy=%d prev_edge=0x%X", (unsigned long long)Platform_Get_Millies(), (int)win_x, (int)win_y, (unsigned)platform_frame_mouse_buttons);
 #endif
                 platform_frame_mouse_buttons |= 2;
+                if(win_mouse_captured == 0) { Win_Mouse_Capture(1); }  /* CLAUDE: as WM_LBUTTONDOWN */
                 User_Mouse_Handler(ST_RIGHT_BUTTON, win_x, win_y);
             }
+        } break;
+
+        /* CLAUDE: middle-click releases the captured mouse, as in the SDL backends. */
+        case WM_MBUTTONDOWN:
+        {
+            Win_Mouse_Capture(0);
         } break;
 
 
@@ -813,6 +1243,26 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             GetClientRect(win_window, &client_rect);
             win_window_width = client_rect.right - client_rect.left;
             win_window_height = client_rect.bottom - client_rect.top;
+            /* CLAUDE: PLAN-Fullscreen.md phase 8 -- re-fit the image and repaint the bars at the new size. */
+            Win_Viewport_Refresh();
+            InvalidateRect(hWnd, NULL, FALSE);
+        } break;
+
+        /* CLAUDE: moved: a captured mouse's clip rect is in screen coordinates, so it follows the window. */
+        case WM_MOVE:
+        {
+            Win_Mouse_Confine_Update();
+        } break;
+
+        /* CLAUDE: the monitor's resolution changed under us: fullscreen / borderless re-fit to it. */
+        case WM_DISPLAYCHANGE:
+        {
+            int current_state = win_window_state;
+            if(current_state != VIEWPORT_WINDOW_STATE_WINDOWED)
+            {
+                win_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;  /* force the re-apply below */
+                Win_Set_Window_State(current_state);
+            }
         } break;
 
         case WM_ACTIVATEAPP:
@@ -822,10 +1272,12 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             if(wParam)
             {
                 Platform_Mouse_Input_Enable();
+                Win_Mouse_Capture(1);  /* CLAUDE: back from Alt+Tab: fullscreen recaptures straight away (no-op when windowed) */
             }
             else
             {
                 Platform_Mouse_Input_Disable();
+                Win_Mouse_Capture(0);  /* CLAUDE: ClipCursor is system-wide -- free the cursor for the other application */
             }
         } break;
 

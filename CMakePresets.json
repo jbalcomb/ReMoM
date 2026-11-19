@@ -116,6 +116,60 @@
             }
         },
         {
+            "name": "MSVC-sdl3-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (SDL3 backend, No Sound)",
+            "description": "VS2022 (x64), opt-in SDL3 backend with audio disabled: sdl3_Audio.c is written against the pre-release SDL_mixer 3 API (Mix_*), not the released SDL3_mixer 3.x (MIX_*). Needs SDL3 (e.g. C:/devellib/SDL3-3.4.2).",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                },
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
+            "name": "MSVC-sdl3-nosound-release",
+            "displayName": "VS2022 amd64 Release (SDL3 backend, No Sound)",
+            "description": "VS2022 (x64), opt-in SDL3 backend with audio disabled, Release. sdl3_Audio.c is written against the pre-release SDL_mixer 3 API (Mix_*), not the released SDL3_mixer 3.x (MIX_*). Needs SDL3 (e.g. C:/devellib/SDL3-3.4.2).",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                },
+                "USE_WIN32": {
+                    "type": "BOOL",
+                    "value": "FALSE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
             "name": "MSVC-win32-debug",
             "displayName": "VS2022 amd64 Debug (Win32 backend, silent)",
             "description": "Opt-in native Win32 backend (no SDL, no audio) -- self-contained, no DLLs.",
@@ -316,6 +370,28 @@
             ]
         },
         {
+            "name": "MSVC-sdl3-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (SDL3 backend, No Sound)",
+            "configurePreset": "MSVC-sdl3-nosound-debug",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD",
+                "ReMoM",
+                "DeMoM"
+            ]
+        },
+        {
+            "name": "MSVC-sdl3-nosound-release",
+            "displayName": "VS2022 amd64 Release (SDL3 backend, No Sound)",
+            "configurePreset": "MSVC-sdl3-nosound-release",
+            "configuration": "Release",
+            "targets": [
+                "ALL_BUILD",
+                "ReMoM",
+                "DeMoM"
+            ]
+        },
+        {
             "name": "MSVC-win32-debug",
             "displayName": "VS2022 amd64 Debug (Win32 backend, silent)",
             "configurePreset": "MSVC-win32-debug",
@@ -461,6 +537,18 @@
             "name": "MSVC-perf",
             "displayName": "VS2022 amd64 Release + perf zones",
             "configurePreset": "MSVC-perf",
+            "configuration": "Release"
+        },
+        {
+            "name": "MSVC-sdl3-nosound-debug",
+            "displayName": "VS2022 amd64 Debug (SDL3 backend, No Sound)",
+            "configurePreset": "MSVC-sdl3-nosound-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "MSVC-sdl3-nosound-release",
+            "displayName": "VS2022 amd64 Release (SDL3 backend, No Sound)",
+            "configurePreset": "MSVC-sdl3-nosound-release",
             "configuration": "Release"
         },
         {
