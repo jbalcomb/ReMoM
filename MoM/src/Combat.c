@@ -12045,8 +12045,10 @@ void Ranged_Animation(int16_t attacker_battle_unit_idx, int16_t defender_battle_
             projectile_anim_frame = ((projectile_anim_frame + 1) % 3);  // ; used with entity drawing type 3, steps 0 to 2
             niu_projectile_anim_frame_2 = ((niu_projectile_anim_frame_2 + 1) % 3);
         }
+        /* HACK  pacing */ Mark_Time();  /* asm has no Mark_Time/Release_Time here - the OG's speed came from a slow Combat_Screen_Draw; 2 ticks per frame matches Melee_Animation's OG pacing */
         Combat_Screen_Draw();
         PageFlip_FX();
+        /* HACK  pacing */ Release_Time(2);
         for(itr_msl = 0; itr_msl < m_missile_count; itr_msl++)
         {
             _missiles[itr_msl].travel_percent += travel_percent_step;
