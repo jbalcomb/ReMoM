@@ -73,16 +73,17 @@ protected:
     }
 };
 
-TEST_F(Capture_Screen_Block_test, CopiesRectangleInRowMajorOrder)
+// Pictures are stored column by column, the order Draw_Picture_ASM() reads them in.
+TEST_F(Capture_Screen_Block_test, CopiesRectangleInColumnMajorOrder)
 {
     std::vector<uint8_t> dest(9u, 0x00u);
 
     Capture_Screen_Block(dest.data(), 2, 3, 4, 5);
 
     size_t out = 0;
-    for (int y = 3; y <= 5; ++y)
+    for (int x = 2; x <= 4; ++x)
     {
-        for (int x = 2; x <= 4; ++x)
+        for (int y = 3; y <= 5; ++y)
         {
             const uint8_t expected = screen[static_cast<size_t>(y) * SCREEN_WIDTH + static_cast<size_t>(x)];
             EXPECT_EQ(dest[out], expected);
