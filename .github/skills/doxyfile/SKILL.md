@@ -1,8 +1,7 @@
 ---
-name: 'doxyfile'
+name: doxyfile
 description: 'Generate Doxygen comment for the current file'
-agent: 'agent'
-tools: ['search', 'read', 'edit']
+disable-model-invocation: true
 ---
 Generate a summary for [${fileBasename}](${file}), as a Doxygen style file commment.
 Do not replace existing comments.

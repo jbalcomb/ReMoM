@@ -88,9 +88,10 @@ void Input_Metrics_Record_Present(uint64_t t_before_ms, uint64_t t_after_ms);
  * Note where the game image is shown (PLAN-Fullscreen.md phase 5).  Writes one `#viewport` comment line into the
  * stream at this point in the timeline, so a session that is resized, switched to fullscreen or run in a fit mode
  * records the real scale and rect for the rows that follow it.  Call once after Input_Metrics_Init() and again on
- * every viewport change.  Sizes are in pixels; `scale` is the whole-number scale; the rect is in drawable pixels.
+ * every viewport change.  Sizes are in pixels; `scale` is the whole-number scale; the rect is in drawable pixels;
+ * `aspect_ratio` is the [Video] aspect_ratio name (PLAN-Aspect-Ratio.md phase 12).
  */
-void Input_Metrics_Note_Viewport(int window_width, int window_height, int drawable_width, int drawable_height, const char * scale_mode, int scale, int rect_x, int rect_y, int rect_width, int rect_height);
+void Input_Metrics_Note_Viewport(int window_width, int window_height, int drawable_width, int drawable_height, const char * scale_mode, const char * aspect_ratio, int scale, int rect_x, int rect_y, int rect_width, int rect_height);
 
 /**
  * Flush the ring buffer to the .fwv file and free it.  Idempotent; also runs via atexit().  Safe to

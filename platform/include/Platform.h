@@ -423,13 +423,14 @@ int16_t Platform_Window_To_Game(int window_x, int window_y, int16_t * game_x, in
 void Platform_Game_To_Window(int16_t game_x, int16_t game_y, int * window_x, int * window_y);
 
 /**
- * The [Video] settings from ReMoM.ini: the window state to start in (VIEWPORT_WINDOW_STATE_* in Platform_Viewport.h), and the
- * scale mode (VIEWPORT_SCALE_MODE_*).
- * Set by the application before Startup_Platform(); the windowed backend reads them. Defaults: windowed, integer.
+ * The [Video] settings from ReMoM.ini: the window state to start in (VIEWPORT_WINDOW_STATE_* in Platform_Viewport.h), the
+ * scale mode (VIEWPORT_SCALE_MODE_*), and the pixel aspect (VIEWPORT_PIXEL_ASPECT_*, from aspect_ratio).
+ * Set by the application before Startup_Platform(); the windowed backend reads them. Defaults: windowed, integer, 16:10 (square).
  */
-void Platform_Set_Video_Settings(int startup_window, int scale_mode);  /* VIEWPORT_WINDOW_STATE_*, VIEWPORT_SCALE_MODE_* */
+void Platform_Set_Video_Settings(int startup_window, int scale_mode, int pixel_aspect);  /* VIEWPORT_WINDOW_STATE_*, VIEWPORT_SCALE_MODE_*, VIEWPORT_PIXEL_ASPECT_* */
 int Platform_Video_Startup_Window(void);
 int Platform_Video_Scale_Mode(void);
+int Platform_Video_Pixel_Aspect(void);
 
 /**
  * Query the current mouse position from the platform.

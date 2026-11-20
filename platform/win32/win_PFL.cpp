@@ -121,8 +121,17 @@ static void Win_Blit_Back_Buffer(struct win32_offscreen_buffer *buffer, HDC devi
 
 void Startup_Platform(void)
 {
-    int w = win_window_width;
-    int h = win_window_height;
+    int w = 0;
+    int h = 0;
+
+    /* CLAUDE: [Video] aspect_ratio = 4:3 (PLAN-Aspect-Ratio.md phase 14): the window opens at the image's 4:3 shape, 1280x960, so
+       the image fills it at x4 with no bars. 16:10 keeps 1280x800. Before Win_Init_Window(), which sizes the window from these. */
+    if(Platform_Video_Pixel_Aspect() == VIEWPORT_PIXEL_ASPECT_4_3)
+    {
+        win_window_height = (win_window_width * 3) / 4;
+    }
+    w = win_window_width;
+    h = win_window_height;
 
 #ifdef STU_DEBUG
     LOG_INFO(LOG_CAT_WIN_PFL, "DEBUG: [%s, %d]: BEGIN: Startup_Platform()", __FILE__, __LINE__);
@@ -166,7 +175,7 @@ void Startup_Platform(void)
             if(im_scale < 1) { im_scale = 1; }
             /* Win32 has no cheap refresh-rate query here; 0 = unknown (recorded in the header). */
             Input_Metrics_Init(im_path, "Win32", "gdi", im_scale, 0);
-            Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);  /* CLAUDE: phase 8 */
+            Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), Viewport_Aspect_Ratio_Name(win_viewport.pixel_aspect), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);  /* CLAUDE: phase 8 */
             LOG_INFO(LOG_CAT_WIN_PFL, "CLAUDE: input metrics ENABLED -> %s", im_path);
         }
     }
@@ -234,7 +243,7 @@ int Win_Viewport_Refresh(void)
         return 0;  /* minimised: keep the last viewport */
     }
     /* Not DPI-aware: Windows scales the window for us, so client coordinates are the pixels we draw into (window == drawable). */
-    Viewport_Compute(&viewport, client_width, client_height, client_width, client_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), VIEWPORT_PIXEL_ASPECT_SQUARE);  /* [Video] scale_mode */
+    Viewport_Compute(&viewport, client_width, client_height, client_width, client_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), Platform_Video_Pixel_Aspect());  /* [Video] scale_mode, aspect_ratio */
     if(Viewport_Equal(&viewport, &win_viewport))
     {
         return 0;
@@ -247,8 +256,8 @@ int Win_Viewport_Refresh(void)
 
 void Win_Viewport_Log(void)
 {
-    LOG_INFO(LOG_CAT_WIN_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, whole-number scale %d, image at %d,%d size %dx%d", win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
-    Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
+    LOG_INFO(LOG_CAT_WIN_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, %s, whole-number scale %d, image at %d,%d size %dx%d", win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), Viewport_Aspect_Ratio_Name(win_viewport.pixel_aspect), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
+    Input_Metrics_Note_Viewport(win_viewport.window_width, win_viewport.window_height, win_viewport.drawable_width, win_viewport.drawable_height, Viewport_Scale_Mode_Name(win_viewport.scale_mode), Viewport_Aspect_Ratio_Name(win_viewport.pixel_aspect), win_viewport.scale, win_viewport.rect_x, win_viewport.rect_y, win_viewport.rect_width, win_viewport.rect_height);
 }
 
 /* Fullscreen captures the mouse: the cursor is clipped to the game image (in screen coordinates), so it can never sit in a black

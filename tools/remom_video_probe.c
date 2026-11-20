@@ -44,6 +44,8 @@
         remom_video_probe --once VD RD    # one attempt in-process (VD/RD may be "" = default)
                                           #   -- lets SDL's real error text reach the terminal
         remom_video_probe --timing        # display refresh rates + present-cadence/jitter
+        remom_video_probe --row-check [RD]  # which game row/column NEAREST scaling draws in each drawable row/column
+                                          #   (every render driver, or just RD); hidden window, nothing shown
 
     (--child and --child-timing are internal re-entry points used by the Windows spawn
     path; they are not meant to be typed by hand.)
@@ -790,6 +792,107 @@ static void probe_timing(void)
 #endif
 }
 
+/* --row-check: which drawable rows and columns a render driver's NEAREST scaling gives to which game pixels (PLAN-Aspect-Ratio.md
+   phase 11). See remom_row_check.h for the two rules, the test rects and the report. Each rect is drawn on a render target with
+   the same SDL_RenderCopy call shape ReMoM's present uses, then read back. */
+#include "remom_row_check.h"
+
+static int row_check_Driver(const char * render_driver)
+{
+    SDL_Window * window = NULL;
+    SDL_Renderer * renderer = NULL;
+    SDL_Texture * game = NULL;
+    SDL_Texture * target = NULL;
+    Uint32 * texels = NULL;
+    Uint32 * pixels = NULL;
+    int case_index = 0;
+    int result = 1;
+
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, render_driver);
+    window = SDL_CreateWindow("remom_video_probe --row-check", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 64, 64, SDL_WINDOW_HIDDEN);
+    if(window == NULL) { printf("  %-11s window failed: %s\n", render_driver, SDL_GetError()); return 1; }
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE);
+    if(renderer == NULL) { printf("  %-11s not available: %s\n", render_driver, SDL_GetError()); SDL_DestroyWindow(window); return 1; }
+    {
+        SDL_RendererInfo info;
+        SDL_GetRendererInfo(renderer, &info);
+        printf("  render driver %s (asked for %s)\n", info.name, render_driver);
+    }
+
+    game = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, ROW_CHECK_GAME_WIDTH, ROW_CHECK_GAME_HEIGHT);
+    target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, ROW_CHECK_TARGET_WIDTH, ROW_CHECK_TARGET_HEIGHT);
+    texels = (Uint32 *)malloc(sizeof(Uint32) * ROW_CHECK_GAME_WIDTH * ROW_CHECK_GAME_HEIGHT);
+    pixels = (Uint32 *)malloc(sizeof(Uint32) * ROW_CHECK_TARGET_WIDTH * ROW_CHECK_TARGET_HEIGHT);
+    if(game == NULL || target == NULL || texels == NULL || pixels == NULL) { printf("    setup failed: %s\n", SDL_GetError()); goto done; }
+
+    {
+        int x, y;
+        for(y = 0; y < ROW_CHECK_GAME_HEIGHT; y++)
+        {
+            for(x = 0; x < ROW_CHECK_GAME_WIDTH; x++)
+            {
+                texels[y * ROW_CHECK_GAME_WIDTH + x] = Row_Check_Texel(x, y);
+            }
+        }
+    }
+    SDL_UpdateTexture(game, NULL, texels, ROW_CHECK_GAME_WIDTH * (int)sizeof(Uint32));
+    SDL_SetTextureScaleMode(game, SDL_ScaleModeNearest);  /* as ReMoM's game texture (sdl2_Init.c) */
+    SDL_SetTextureBlendMode(game, SDL_BLENDMODE_NONE);
+
+    result = 0;
+    for(case_index = 0; case_index < ROW_CHECK_CASE_COUNT; case_index++)
+    {
+        const struct row_check_case * c = &ROW_CHECK_CASES[case_index];
+        SDL_Rect rect = { c->x, c->y, c->w, c->h };
+        SDL_Rect read_rect = { 0, 0, ROW_CHECK_TARGET_WIDTH, ROW_CHECK_TARGET_HEIGHT };
+        SDL_SetRenderTarget(renderer, target);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, game, NULL, &rect);  /* the same call shape ReMoM's present uses */
+        if(SDL_RenderReadPixels(renderer, &read_rect, SDL_PIXELFORMAT_ARGB8888, pixels, ROW_CHECK_TARGET_WIDTH * (int)sizeof(Uint32)) != 0)
+        {
+            printf("    %s: read back failed: %s\n", c->name, SDL_GetError());
+            result = 1;
+            continue;
+        }
+
+        /* Rows down the middle column of the rect, columns along its middle row; the rules and the report are shared with
+           remom_row_check_sdl3 and remom_row_check_gdi (remom_row_check.h). */
+        if(Row_Check_Report(c, pixels, ROW_CHECK_TARGET_WIDTH) == 0) { result = 1; }
+    }
+
+done:
+    free(texels);
+    free(pixels);
+    if(target != NULL) { SDL_DestroyTexture(target); }
+    if(game != NULL) { SDL_DestroyTexture(game); }
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    return result;
+}
+
+static int probe_row_check(int argc, char ** argv)
+{
+    int index = 0;
+    int failures = 0;
+    if(SDL_Init(SDL_INIT_VIDEO) != 0) { printf("SDL_Init failed: %s\n", SDL_GetError()); return 1; }
+    printf("row check: does NEAREST scaling put each drawable row/column in the game pixel its centre falls in?\n");
+    if(argc >= 3)
+    {
+        failures += row_check_Driver(argv[2]);
+    }
+    else
+    {
+        for(index = 0; index < RENDER_CANDIDATE_COUNT; index++)
+        {
+            failures += row_check_Driver(RENDER_CANDIDATES[index]);
+        }
+    }
+    SDL_Quit();
+    printf("result: %s\n", (failures == 0) ? "every driver follows the centre rule" : "at least one driver did not follow the centre rule (or was not available)");
+    return 0;
+}
+
 int main(int argc, char ** argv)
 {
     /* We claimed the entry point with SDL_MAIN_HANDLED; tell SDL its init assumptions hold. */
@@ -823,6 +926,11 @@ int main(int argc, char ** argv)
         if(case_index < 0 || case_index >= TIMING_CASE_COUNT) { return PROBE_INIT_FAILED; }
         probe_Harden_Child();
         return measure_cadence_here(&TIMING_CASES[case_index]);
+    }
+
+    if(argc >= 2 && strcmp(argv[1], "--row-check") == 0)
+    {
+        return probe_row_check(argc, argv);
     }
 
     if(argc >= 2 && strcmp(argv[1], "--once") == 0)

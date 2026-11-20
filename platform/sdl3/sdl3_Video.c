@@ -54,7 +54,7 @@ int sdl3_Viewport_Refresh(void)
         return 0;  /* minimised: keep the last viewport */
     }
 
-    Viewport_Compute(&viewport, window_width, window_height, drawable_width, drawable_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), VIEWPORT_PIXEL_ASPECT_SQUARE);  /* [Video] scale_mode */
+    Viewport_Compute(&viewport, window_width, window_height, drawable_width, drawable_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), Platform_Video_Pixel_Aspect());  /* [Video] scale_mode, aspect_ratio */
     if(Viewport_Equal(&viewport, &sdl3_viewport))
     {
         return 0;
@@ -67,7 +67,7 @@ int sdl3_Viewport_Refresh(void)
 
 void sdl3_Viewport_Log(void)
 {
-    LOG_INFO(LOG_CAT_SDL3_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl3_viewport.window_width, sdl3_viewport.window_height, sdl3_viewport.drawable_width, sdl3_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl3_viewport.scale_mode), sdl3_viewport.scale, sdl3_viewport.rect_x, sdl3_viewport.rect_y, sdl3_viewport.rect_width, sdl3_viewport.rect_height);
+    LOG_INFO(LOG_CAT_SDL3_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl3_viewport.window_width, sdl3_viewport.window_height, sdl3_viewport.drawable_width, sdl3_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl3_viewport.scale_mode), Viewport_Aspect_Ratio_Name(sdl3_viewport.pixel_aspect), sdl3_viewport.scale, sdl3_viewport.rect_x, sdl3_viewport.rect_y, sdl3_viewport.rect_width, sdl3_viewport.rect_height);
 }
 
 /*

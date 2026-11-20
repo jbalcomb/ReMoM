@@ -159,3 +159,16 @@ if(TARGET SDL2::SDL2)
         install(TARGETS remom_video_probe RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
 endif()
+
+
+# --- row checks: does a backend's nearest-neighbour scaling draw each row/column where the Viewport's mouse mapping counts it? ---
+#  PLAN-Aspect-Ratio.md phases 11, 13 and 14. The SDL2 check is remom_video_probe --row-check; these two cover SDL3's render
+#  drivers and the Win32 backend's GDI present. Dev/QA tools: not installed.
+if(TARGET SDL3::SDL3)
+    add_executable(remom_row_check_sdl3 remom_row_check_sdl3.c)
+    target_link_libraries(remom_row_check_sdl3 PRIVATE SDL3::SDL3)
+endif()
+if(WIN32)
+    add_executable(remom_row_check_gdi remom_row_check_gdi.c)
+    target_link_libraries(remom_row_check_gdi PRIVATE gdi32)
+endif()

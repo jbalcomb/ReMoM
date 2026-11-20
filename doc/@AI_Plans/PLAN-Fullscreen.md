@@ -268,11 +268,28 @@ All mapping goes through the shared Viewport.
 
 Run the SDL2 (and SDL3) behaviour on Linux under X11 and under XWayland/Wayland, through the WSL route and on native hardware where possible. Fix any platform-specific differences in fullscreen, capture or drawable size.
 
+### Implementation notes
+
+- **Decided (2026-11-19): the WSL testing below is enough for now.** The two manual criteria stay open until someone runs them on a real Linux desktop.
+- **WSL has no display here** (no WSLg), so the WSL route is build, tests and `--offscreen` runs only. The X11 and Wayland checks need a real Linux desktop.
+- **WSL versions:** clang 14 with SDL 2.0.20, Ubuntu 22.04's SDL2. Nothing in phases 1–8 needs a newer SDL2. SDL3 3.4.2 is built from source in `/usr/local`.
+- **One Linux-only fix:** `PFL_Viewport.c` used `NULL` without `<stddef.h>`. MSVC got it from another header, clang did not.
+- **`clang-nosound-debug` passes 61/61 tests on both SDL2 and SDL3** (`-DUSE_SDL3=ON`). The platform files compile with no warnings.
+- **Offscreen runs, all 9 window-state × scale-mode combinations, SDL2 and SDL3:** `[Video]` is read, the state is applied, and the rect is right on the 1024×768 dummy display:
+  - `integer`: ×3 at 32,84 960×600;
+  - `fit_nearest` and `fit_sharp_bilinear`: 1024×640 at 0,64.
+- **The SDL3 offscreen driver can't set a mouse rect**, so fullscreen logs a WARN when the capture or viewport changes (not per frame). The keep-on-image warp still holds the mouse on the image.
+- **`SDL_RENDER_DRIVER=software`**, the GLX-over-XWayland workaround, still runs `fit_sharp_bilinear`: the render target works on the software renderer.
+- **HiDPI:** neither SDL backend sets `SDL_WINDOW_ALLOW_HIGHDPI` / `SDL_WINDOW_HIGH_PIXEL_DENSITY`, so the drawable is always the window's size.
+  - On a scaled Wayland output, the compositor scales the whole window, so the image size and clicks are right by construction, but the image is soft.
+  - X11 has no per-window scaling.
+  - Setting the flag (a sharper image, drawable ≠ window) is left for phase 10, where Retina makes it matter. The Viewport already takes window and drawable sizes separately.
+
 ### Acceptance criteria
 
 - [ ] Phase 1–6 manual checklists pass on X11 and on Wayland/XWayland.
 - [ ] HiDPI scaling (fractional where the compositor supports it) gives correct image size and clicks.
-- [ ] Any renderer workarounds needed (GLX over XWayland) are documented in the graphics devel doc.
+- [x] Any renderer workarounds needed (GLX over XWayland) are documented in the graphics devel doc. (Already there: [Devel-Graphics.md](../@Devel/Devel-Graphics.md), "The fix for a user, right now". `SDL_RENDER_DRIVER=software` keeps every scale mode working.)
 
 ---
 

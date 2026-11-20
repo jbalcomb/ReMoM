@@ -37,8 +37,13 @@ extern "C" {
 #define VIEWPORT_WINDOW_STATE_BORDERLESS  1
 #define VIEWPORT_WINDOW_STATE_FULLSCREEN  2
 
-/* Pixel aspects. Only square pixels for now (320x200 shows as 16:10). */
+/* Pixel aspects ([Video] aspect_ratio in ReMoM.ini). PLAN-Aspect-Ratio.md.
+   SQUARE  square pixels: 320x200 shows as 16:10 (aspect_ratio = 16:10, the default)
+   4_3     the whole image shows as 4:3, as on a 1994 CRT: each game pixel is 1.2 times taller than it is wide
+           (aspect_ratio = 4:3). INTEGER is then the largest whole-number width that fits (320k x 240k), with uneven rows
+           except at x5; the fit modes are the largest 4:3 rect that fits. */
 #define VIEWPORT_PIXEL_ASPECT_SQUARE  0
+#define VIEWPORT_PIXEL_ASPECT_4_3     1
 
 struct s_VIEWPORT
 {
@@ -66,6 +71,9 @@ void Viewport_Compute(struct s_VIEWPORT * viewport, int window_width, int window
 /**
  * Window coordinates -> game coordinates. The outputs are clamped to the game area (a point in a black bar or outside the
  * window maps to the nearest edge pixel). Returns 1 if the point is on the game image, 0 if it was clamped.
+ * The row rule: a window coordinate maps to the game pixel its centre falls in, which is how every renderer's nearest-neighbour
+ * scaling picks the game pixel it draws (measured with `remom_video_probe --row-check`; PLAN-Aspect-Ratio.md phase 11), so what
+ * is clicked is what is drawn under the cursor even where game pixels are uneven (fit modes, and 4:3 rows).
  */
 int Viewport_Window_To_Game(const struct s_VIEWPORT * viewport, int window_x, int window_y, int * game_x, int * game_y);
 
@@ -87,6 +95,16 @@ void Viewport_Image_Rect_In_Window(const struct s_VIEWPORT * viewport, int * win
  * phases 5 and 7).
  */
 void Viewport_Game_Size_In_Drawable(const struct s_VIEWPORT * viewport, int game_width, int game_height, int * drawable_width, int * drawable_height);
+
+/** A VIEWPORT_PIXEL_ASPECT_* value, or SQUARE for anything else. */
+int Viewport_Pixel_Aspect_Normalize(int pixel_aspect);
+
+/** ReMoM.ini [Video] aspect_ratio names, case-insensitive: "16:10" (SQUARE) | "4:3" (4_3). Returns 1 and sets *pixel_aspect
+    if known, else 0 (unchanged). */
+int Viewport_Aspect_Ratio_From_Name(const char * name, int * pixel_aspect);
+
+/** The ReMoM.ini aspect_ratio name of a pixel aspect, for logging. */
+const char * Viewport_Aspect_Ratio_Name(int pixel_aspect);
 
 /** 1 if the two viewports have the same sizes, mode, scale and rect. */
 int Viewport_Equal(const struct s_VIEWPORT * viewport_a, const struct s_VIEWPORT * viewport_b);

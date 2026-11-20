@@ -55,7 +55,7 @@ int sdl2_Viewport_Refresh(void)
         return 0;  /* minimised: keep the last viewport */
     }
 
-    Viewport_Compute(&viewport, window_width, window_height, drawable_width, drawable_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), VIEWPORT_PIXEL_ASPECT_SQUARE);  /* [Video] scale_mode */
+    Viewport_Compute(&viewport, window_width, window_height, drawable_width, drawable_height, PLATFORM_SCREEN_WIDTH, PLATFORM_SCREEN_HEIGHT, Platform_Video_Scale_Mode(), Platform_Video_Pixel_Aspect());  /* [Video] scale_mode, aspect_ratio */
     if(Viewport_Equal(&viewport, &sdl2_viewport))
     {
         return 0;
@@ -157,13 +157,13 @@ void sdl2_Present_Image(void)
 
 void sdl2_Viewport_Log(void)
 {
-    LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
+    LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), Viewport_Aspect_Ratio_Name(sdl2_viewport.pixel_aspect), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
     sdl2_Viewport_Note_Metrics();
 }
 
 void sdl2_Viewport_Note_Metrics(void)
 {
-    Input_Metrics_Note_Viewport(sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
+    Input_Metrics_Note_Viewport(sdl2_viewport.window_width, sdl2_viewport.window_height, sdl2_viewport.drawable_width, sdl2_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl2_viewport.scale_mode), Viewport_Aspect_Ratio_Name(sdl2_viewport.pixel_aspect), sdl2_viewport.scale, sdl2_viewport.rect_x, sdl2_viewport.rect_y, sdl2_viewport.rect_width, sdl2_viewport.rect_height);
 }
 
 

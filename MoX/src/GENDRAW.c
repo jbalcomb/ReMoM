@@ -374,87 +374,56 @@ int16_t Confirmation_Box(char * text_string)
     int16_t Box_Height = 0;
     int16_t paragraph_height = 0;
     int16_t leave_screen = 0;
-
     Save_Alias_Colors();
-
     Set_Font_Colors_15(0, &COL_Dialog_Text[0]);
-
     Save_ScreenSeg();
- 
     // RESOURCE.LBX, 0  "CONFMBAK", ""
-    confirmation_background_top_seg = LBX_Reload(resource_lbx_file__ovr149, 0, _screen_seg);
-
     // RESOURCE.LBX, 1  "CONFMBAK", ""
+    // RESOURCE.LBX, 3  "CONFMBUT", "yes"
+    // RESOURCE.LBX, 4  "CONFMBUT", "no"
+    confirmation_background_top_seg = LBX_Reload(resource_lbx_file__ovr149, 0, _screen_seg);
     confirmation_background_bottom_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 1, _screen_seg);
-
-    // RESOURCE.LBX, 3  CONFMBUT    yes
     confirmation_button_yes_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 3, _screen_seg);
-
-    // RESOURCE.LBX, 4  CONFMBUT    no
     confirmation_button_no_seg = LBX_Reload_Next(resource_lbx_file__ovr149, 4, _screen_seg);
-
     Copy_On_To_Off_Page();
-
     message_box_text = text_string;
-
     /* OGBUG  the asm pushes only 15, 4, 4 (`add sp, 6`): Set_Font_Style()'s color3 is the caller's stack word, not 0 */
-    Set_Font_Style(4, 4, 15, 0);
-
+    Set_Font_Style(4, 4, 15, ST_NULL);
     paragraph_height = Get_Paragraph_Max_Height(166, text_string);
-
     Box_Height = paragraph_height + 34;
     message_box_x = 68 + confirmation_box_x_offset;
     message_box_y = ((SCREEN_HEIGHT - Box_Height) / 2) + confirmation_box_y_offset;
-
     Clear_Fields();
-
     confirmation_button_yes = Add_Button_Field((message_box_x + 101), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_yes_seg, str_hotkey_Y__ovr149, ST_UNDEFINED);
-
     confirmation_button_no = Add_Button_Field((message_box_x + 18), (message_box_y + paragraph_height + 15), str_empty_string__ovr149, confirmation_button_no_seg, str_hotkey_N__ovr149, ST_UNDEFINED);
-
     Text_Label_Index = Add_Hidden_Field(message_box_x, message_box_y, (message_box_x + 185), (message_box_y + 63), str_empty_string__ovr149, ST_UNDEFINED);
-
     hotkey_ESC = Add_Hidden_Field(0, 0, SCREEN_XMAX, SCREEN_YMAX, str_hotkey_ESC__ovr149, ST_UNDEFINED);
-
     Assign_Auto_Function(Confirmation_Box_Draw, 1);
-
     leave_screen = ST_FALSE;
-
     while(leave_screen == ST_FALSE)
     {
-
         // NOTE: This `abs()` means right-clicking on a Confirmation Box is equivalent to left-clicking
-        /* OGBUG  abs() turns Get_Input()'s -1 into 1, so the ST_UNDEFINED test below never fires, and the full-screen hotkey_ESC field is never tested: Esc or a click outside the box does not close it; only Yes / No do */
+        /* OGBUG  abs() turns Get_Input()'s -1 into 1, so the ST_UNDEFINED test below never fires; a click outside the box does not close it */
+        /* OGBUG  the full-screen hotkey_ESC field is never tested; Esc does not close it */
         input_field_idx = abs(Get_Input());
-
         if( (input_field_idx == ST_UNDEFINED) || (input_field_idx == confirmation_button_no) )
         {
             leave_screen = ST_TRUE;
             choice = ST_FALSE;
         }
-
         if(input_field_idx == confirmation_button_yes)
         {
             leave_screen = ST_TRUE;
             choice = ST_TRUE;
         }
-
         Confirmation_Box_Draw();
-        
         PageFlip_FX();
-
     }
-
     Deactivate_Auto_Function();
-
     Clear_Fields();
-
     Restore_Alias_Colors();
-
     Reset_Window();
-
     Restore_ScreenSeg();
-
     return choice;
 }
 
@@ -502,64 +471,41 @@ void Warn0(char * msg)
 // WZD o149p05
 // drake178: GUI_ShowRedMessage
 // MoO2  GENDRAW  Warning_Box_()
-/*
-*/
-/*
-
-*/
 void Warn(char * msg)
 {
     int16_t UU_var3 = 0;
     int16_t textbox_height = 0;
     int16_t max_para_height = 0;
-
     Save_ScreenSeg();
-
     // RESOURCE.LBX,  38  WARNBACK    warning top
     // RESOURCE.LBX,  39  WARNBACK    warning bottom
     // RESOURCE.LBX,  49  WARNBCK2    warning top
     // RESOURCE.LBX,  50  WARNBCK2    warning bottom
-
     m_warning_box_top_seg  = LBX_Reload(resource_lbx_file__ovr149, 38, _screen_seg);
     m_warning_box_bottom_seg   = LBX_Reload_Next(resource_lbx_file__ovr149, 39, _screen_seg);
     m_warning2_box_top_seg  = LBX_Reload_Next(resource_lbx_file__ovr149, 49, _screen_seg);
     m_warning2_box_bottom_seg   = LBX_Reload_Next(resource_lbx_file__ovr149, 50, _screen_seg);
-
     Save_Auto_Function();
-
     Save_Alias_Colors();
-
     Set_Font_Colors_15(0, COL_Dialog_Text);
-
     Copy_On_To_Off_Page();
-
     message_box_text = msg;
-
     Set_Font_Style(4, 4, 4, ST_NULL);
-
     max_para_height = Get_Paragraph_Max_Height(166, msg);
-
     textbox_height = max_para_height + 33;
-
     message_box_x = 68;
-
     message_box_y = ((200 - textbox_height) / 2);
-
     Assign_Auto_Function(Warn_Draw, 1);
-
     UU_var3 = 0;
     // Play_Standard_Click();
     /* CLAUDE */ /* HACK */
     /* MAGIC.EXE's Warning_Message (MGC ovr053) calls Play_Standard_Click_MGC here, WIZARDS.EXE's Warn calls Play_Standard_Click; the button sounds are only loaded on the WIZARDS side */
     if(g_magic_exe_context == ST_TRUE) { Play_Standard_Click_MGC(); } else { Play_Standard_Click(); }
     Wait_For_Input();
-
     Restore_Alias_Colors();
     Reset_Window();
     Restore_Auto_Function();
-
     Restore_ScreenSeg();
-
 }
 
 
@@ -568,15 +514,10 @@ void Warn(char * msg)
 void Warn_Draw(void)
 {
     int16_t max_para_height = 0;  // _SI_
-
     Set_Font_Style(4, 4, 4, ST_NULL);
-
     max_para_height = Get_Paragraph_Max_Height(166, message_box_text);
-
     Set_Page_Off();
-
     Set_Window(0, 0, SCREEN_XMAX, (message_box_y + max_para_height + 12));
-
     if(m_warning_type == 0)
     {
         Clipped_Draw(message_box_x, message_box_y, m_warning_box_top_seg);
@@ -585,9 +526,7 @@ void Warn_Draw(void)
     {
         Clipped_Draw(message_box_x, message_box_y, m_warning2_box_top_seg);
     }
-
     Reset_Window();
-
     if(m_warning_type == 0)
     {
         Set_Font_Colors_15(4, COL_Warning1);
@@ -596,17 +535,12 @@ void Warn_Draw(void)
     {
         Set_Font_Colors_15(4, COL_Warning2);
     }
-
     Set_Font_Style(4, 15, 15, ST_NULL);
-
     Print_Paragraph((message_box_x + 11), (message_box_y + 11), 166, message_box_text, 2);
     Print_Paragraph((message_box_x + 10), (message_box_y + 11), 166, message_box_text, 2);
-
     Set_Alias_Color(184);
     Set_Font_Style(4, 4, 4, ST_NULL);
-
     Print_Paragraph((message_box_x + 10), (message_box_y + 10), 166, message_box_text, 2);
-
     if(m_warning_type == 0)
     {
         FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), m_warning_box_bottom_seg);
@@ -615,7 +549,6 @@ void Warn_Draw(void)
     {
         FLIC_Draw(message_box_x, (message_box_y + max_para_height + 10), m_warning2_box_bottom_seg);
     }
-
 }
 
 

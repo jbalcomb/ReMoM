@@ -1,14 +1,14 @@
-[2026-07-29T17:29:54Z] [INFO ] [GENERAL                ] STU_GRAF.c:1163 STU_GRAF_Init: STU_GRAF: WINDOWLESS profile, 1 search dir(s)
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:509 stu_fopen: [FN-ENTER] name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:520 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'FONTS.LBX' not found on any search path
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:509 stu_fopen: [FN-ENTER] name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:520 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'MAINSCRN.LBX' not found on any search path
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:509 stu_fopen: [FN-ENTER] name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:520 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'WIZARDS.LBX' not found on any search path
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:509 stu_fopen: [FN-ENTER] name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [TRACE] [CALL_TRACE             ] stu_compat.h:520 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
-[2026-07-29T17:29:54Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'SPELLDAT.LBX' not found on any search path
-[2026-07-29T17:29:54Z] [ERROR] [GENERAL                ] ReMoM_Init.c:100 ReMoM_Preflight_Game_Data: Preflight: missing game data: FONTS.LBX, MAINSCRN.LBX, WIZARDS.LBX, SPELLDAT.LBX
+[2026-11-18T14:36:48Z] [INFO ] [GENERAL                ] STU_GRAF.c:1174 STU_GRAF_Init: STU_GRAF: WINDOWLESS profile, 1 search dir(s)
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:505 stu_fopen: [FN-ENTER] name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:515 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'FONTS.LBX' not found on any search path
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:505 stu_fopen: [FN-ENTER] name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:515 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'MAINSCRN.LBX' not found on any search path
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:505 stu_fopen: [FN-ENTER] name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:515 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'WIZARDS.LBX' not found on any search path
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:505 stu_fopen: [FN-ENTER] name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [TRACE] [CALL_TRACE             ] stu_compat.h:515 stu_fopen: [FN-EXIT]  name=fopen rng_call=0
+[2026-11-18T14:36:48Z] [INFO ] [GENERAL                ] STU_GRAF.c:247 STU_GRAF_Open_Asset: STU_GRAF: 'SPELLDAT.LBX' not found on any search path
+[2026-11-18T14:36:48Z] [ERROR] [GENERAL                ] ReMoM_Init.c:101 ReMoM_Preflight_Game_Data: Preflight: missing game data: FONTS.LBX, MAINSCRN.LBX, WIZARDS.LBX, SPELLDAT.LBX

@@ -172,6 +172,7 @@ int Platform_Record_Start(const char *filepath)
     /* CLAUDE: PLAN-Fullscreen.md phase 5 -- screen_scale is the viewport's whole-number scale when recording started; with scale_mode it only
        describes the display.  Frames hold game coordinates, so playback never uses either to map the mouse. */
     fprintf(replay_file, "# scale_mode=%s\n", Viewport_Scale_Mode_Name(Platform_Video_Scale_Mode()));
+    fprintf(replay_file, "# aspect_ratio=%s\n", Viewport_Aspect_Ratio_Name(Platform_Video_Pixel_Aspect()));  /* CLAUDE: PLAN-Aspect-Ratio.md phase 12 -- describes the display only, like scale_mode */
     fprintf(replay_file, "# frame_count=%-10u\n", 0u);
     fprintf(replay_file, "# idx,timestamp_ms,delta_ms,mouse_x,mouse_y,mouse_buttons,key_pressed,key_count,keys...\n");
 
@@ -251,6 +252,7 @@ int Platform_Replay_Start(const char *filepath)
     unsigned random_seed = 0;
     unsigned recorded_screen_scale = 1;
     char recorded_scale_mode[32] = "not_recorded";  /* CLAUDE: replays made before PLAN-Fullscreen.md phase 5 have no scale_mode line */
+    char recorded_aspect_ratio[32] = "not_recorded";  /* CLAUDE: replays made before PLAN-Aspect-Ratio.md phase 12 have no aspect_ratio line */
     unsigned frame_count = 0;
 
     if(recording || replaying)
@@ -300,6 +302,7 @@ int Platform_Replay_Start(const char *filepath)
             stu_sscanf(line, "# random_seed=%u", &random_seed);
             stu_sscanf(line, "# screen_scale=%u", &recorded_screen_scale);
             stu_sscanf(line, "# scale_mode=%31s", recorded_scale_mode);
+            stu_sscanf(line, "# aspect_ratio=%31s", recorded_aspect_ratio);
             stu_sscanf(line, "# frame_count=%u", &frame_count);
         }
     }
@@ -323,7 +326,7 @@ int Platform_Replay_Start(const char *filepath)
     replay_log = Replay_Open_Log(filepath, "REPLAY");
     Log_Reset(&play_log);
 
-    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d, recorded_scale_mode=%s, current_scale_mode=%s)", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale(), recorded_scale_mode, Viewport_Scale_Mode_Name(Platform_Video_Scale_Mode()));
+    LOG_INFO(LOG_CAT_REPLAY, "REPLAY: playback started <- %s  (%u frames, random_seed=%u, recorded_screen_scale=%u, current_scale=%d, recorded_scale_mode=%s, current_scale_mode=%s, recorded_aspect_ratio=%s, current_aspect_ratio=%s)", filepath, frame_count, random_seed, recorded_screen_scale, Platform_Get_Scale(), recorded_scale_mode, Viewport_Scale_Mode_Name(Platform_Video_Scale_Mode()), recorded_aspect_ratio, Viewport_Aspect_Ratio_Name(Platform_Video_Pixel_Aspect()));
 
     return 0;
 }

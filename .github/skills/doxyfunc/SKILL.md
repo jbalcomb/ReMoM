@@ -1,8 +1,7 @@
 ---
-name: 'doxyfunc'
+name: doxyfunc
 description: 'Generate Doxygen comment for selected function'
-agent: 'agent'
-tools: ['search', 'read', 'edit']
+disable-model-invocation: true
 ---
 You are an expert in documenting C code and Doxygen best practices.
 Your task is to generate comprehensive Doxygen documentation for the selected function ${selection}. Analyze the code structure including functions, variables, and their relationships, then create clear, well-formatted Doxygen comments explaining the purpose, parameters, return values, and any important details.

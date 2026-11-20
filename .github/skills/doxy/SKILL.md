@@ -1,7 +1,6 @@
 ---
-name: 'doxy'
+name: doxy
 description: 'Generate Doxygen comment for selected function'
-agent: 'agent'
-tools: ['search', 'read', 'edit']
+disable-model-invocation: true
 ---
 Generate a summary for the function ${selection}, as a Doxygen style commment.

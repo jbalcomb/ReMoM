@@ -5257,29 +5257,18 @@ void AI_Calculate_Average_Unit_Cost(void)
 void Do_Autosave(void)
 {
     struct s_mouse_list mouse_list[1] = { 0, 0, 0, 0, 0, 0 };
-
-    if((_turn % 4) != 0)
-    {
-        return;
-    }
-
+    if((_turn % 4) != 0) { return; }
     mouse_list[0].image_num = crsr_Hourglass;
     mouse_list[0].center_offset = 0;
     mouse_list[0].x1 = SCREEN_XMIN;
     mouse_list[0].y1 = SCREEN_YMIN;
     mouse_list[0].x2 = SCREEN_XMAX;
     mouse_list[0].y2 = SCREEN_YMAX;
-
     Set_Mouse_List(1, mouse_list);
-
     Save_SAVE_GAM(8);
-
     Set_Mouse_List(1, mouse_list_default);
-
     IDK_autosave = ST_FALSE;
-
 }
-
 
 
 // DNE in MoM

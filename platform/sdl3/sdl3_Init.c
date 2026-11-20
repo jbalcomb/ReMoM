@@ -59,6 +59,13 @@ void Startup_Platform(void)
     sdl3_performance_counter = SDL_GetPerformanceCounter();
     LOG_DEBUG(LOG_CAT_PFL, "sdl3_performance_counter: %llu", sdl3_performance_counter);
 
+    /* [Video] aspect_ratio = 4:3 (PLAN-Aspect-Ratio.md phase 13): the window opens at the image's 4:3 shape, 1280x960, so the
+       image fills it at x4 with no bars. 16:10 keeps 1280x800. */
+    if(Platform_Video_Pixel_Aspect() == VIEWPORT_PIXEL_ASPECT_4_3)
+    {
+        sdl3_window_height = (sdl3_window_width * 3) / 4;
+    }
+
     w = sdl3_window_width;
     h = sdl3_window_height;
     assert(w >= PLATFORM_SCREEN_WIDTH && "window width must be >= PLATFORM_SCREEN_WIDTH");

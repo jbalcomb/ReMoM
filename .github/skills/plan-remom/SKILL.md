@@ -1,3 +1,8 @@
+---
+name: plan-remom
+description: plan-reMoM
+disable-model-invocation: true
+---
 ## Plan: Cross-Platform Platform Layer Skeleton
 
 Build a minimal but production-oriented platform layer skeleton that separates OS concerns from game logic, uses SDL2 on Linux/macOS and native Win32 on Windows, and preserves gameplay behavior while allowing balanced modernization. The implementation should focus on extracting stable interfaces first, wiring build selection cleanly, and validating parity with smoke tests before deeper subsystem rewrites.

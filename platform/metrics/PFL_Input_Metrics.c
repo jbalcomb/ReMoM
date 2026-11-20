@@ -158,14 +158,14 @@ void Input_Metrics_Note_Poll(int game_x, int game_y)
     m_cur_y = game_y;
 }
 
-void Input_Metrics_Note_Viewport(int window_width, int window_height, int drawable_width, int drawable_height, const char * scale_mode, int scale, int rect_x, int rect_y, int rect_width, int rect_height)
+void Input_Metrics_Note_Viewport(int window_width, int window_height, int drawable_width, int drawable_height, const char * scale_mode, const char * aspect_ratio, int scale, int rect_x, int rect_y, int rect_width, int rect_height)
 {
     if(!m_active) { return; }
     if(m_file == NULL) { return; }
     /* A comment line between rows: it applies to every row after it (after_idx = rows written so far). */
-    fprintf(m_file, "#viewport after_idx=%llu window=%dx%d drawable=%dx%d scale_mode=%s scale=%d rect=%d,%d,%dx%d\n",
+    fprintf(m_file, "#viewport after_idx=%llu window=%dx%d drawable=%dx%d scale_mode=%s aspect_ratio=%s scale=%d rect=%d,%d,%dx%d\n",
             (unsigned long long)m_idx, window_width, window_height, drawable_width, drawable_height,
-            (scale_mode != NULL) ? scale_mode : "?", scale, rect_x, rect_y, rect_width, rect_height);
+            (scale_mode != NULL) ? scale_mode : "?", (aspect_ratio != NULL) ? aspect_ratio : "?", scale, rect_x, rect_y, rect_width, rect_height);
 }
 
 void Input_Metrics_Set_Reason(const char * reason)
