@@ -1,125 +1,59 @@
-# Master of Magic - Reassembled
-# ReMoM
+# ReMoM — Master of Magic, Reassembled
 
-Remaking the game 'Master of Magic' from 1994-95, all from disassembling the original executables and reassembling and translating it to C.
+**The 1994 classic, rebuilt from the original program and running natively on today's computers.**
 
-The goal of this project is to recreate a functional source code for Master of Magic, to allow the community to improve and expand the Simtex Universe to their hearts content.
+Master of Magic was Simtex's game of wizards, spellbooks and conquest across two worlds, Arcanus and Myrror. ReMoM brings it back as a native program for modern Windows and Linux, with no DOSBox and no emulator. It's the same game you remember: the same rules, the same AI and the same spells, running at the speed it always did, in a window or full screen.
 
-To get involved, or even just hang out with other MoM fans, join us on the the "Master of Magic - Fans" Discord Server.
-This particular project is hosted by the [#mom-reverse-engineering Channel](https://discord.gg/kSNA8bE6Wt), on that server.
+Bring your own copy of the game, and ReMoM does the rest.
 
-Alpha Demo Video:
-https://youtu.be/d-PlvxV_Ek0
-
-## Download and Play
-
-Pre-built, **engine-only** binaries are available on the [Releases](https://github.com/jbalcomb/ReMoM/releases) page. You supply your own original game data files.
-
-1. Download the artifact for your platform:
-   - **Windows:** the `.zip`, or run the `.exe` installer. Self-contained — the SDL runtime DLLs are bundled.
-   - **Linux:** the `.deb` on Debian/Ubuntu (`sudo apt install ./remom_<ver>_amd64.deb` — installs it properly, `apt` pulls in SDL2); the `.AppImage` on any other distro (self-contained); or the `.zip`/`.tar.gz` if you already have SDL2 installed.
-   - **macOS:** the `.zip`. It's unsigned, so on first run clear the quarantine flag: `xattr -dr com.apple.quarantine ReMoM`.
-2. Extract it (on Linux/macOS, `chmod +x` the AppImage / `ReMoM`).
-3. Copy your original **Master of Magic v1.31** game files (all `.LBX` files and `CONFIG.MOM`) into the same folder as the executable.
-4. Run `ReMoM`.
-
-See [PLAYING.md](PLAYING.md) for more details and troubleshooting. Maintainers cutting a release: see [RELEASES.md](RELEASES.md).
-
-## How to Build
-
-### Prerequisites
-
-- **CMake** 3.25+ (for preset support)
-- A rendering/audio backend, depending on platform/preset:
-  - **Windows (`MSVC-*` presets):** **SDL2** + **SDL2_mixer** (default) — CMake looks under `C:\devellib\` (e.g. `SDL2-2.32.2`, `SDL2_mixer-2.8.1`). The native **Win32** backend (no SDL) is opt-in via the `MSVC-win32-*` presets.
-  - **Linux / macOS:** **SDL2** + **SDL2_mixer** development files. SDL2 is the default backend; SDL3 is opt-in via `-DUSE_SDL3=ON` (use a no-sound preset to build without the mixer).
-- A C/C++ toolchain:
-  - **Windows:** Visual Studio 2022 (x64 C++ tools)
-  - **Linux:** GCC or Clang, plus Ninja or Make
-
-Build presets are defined in `CMakePresets.json`.
+▶ **[Watch the alpha demo](https://youtu.be/d-PlvxV_Ek0)**
 
 ---
 
-### Windows (MSVC)
+## What you need
 
-```powershell
-cmake --workflow --preset=MSVC-debug
-```
+- **Your own copy of Master of Magic, version 1.31.** The GOG and Steam releases and the original disks all work. ReMoM ships the engine only: the art, music and game data come from your copy.
+- **A 64-bit Windows or Linux computer.** macOS isn't supported yet.
 
-This runs configure, build, test, and package steps in one command. The `MSVC-*`
-presets use the **SDL2** backend (needs SDL2 + SDL2_mixer under `C:\devellib\`; see below).
+## Get it
 
-Explicitly without audio:
+Download the latest version from the **[Releases page](https://github.com/jbalcomb/ReMoM/releases/latest)**:
 
-```powershell
-cmake --workflow --preset=MSVC-nosound-debug
-```
+| You're on | Download | Then |
+|-----------|----------|------|
+| Windows | `ReMoM-<version>-Windows-AMD64.exe` | Run the installer. |
+| Windows, no install | `ReMoM-<version>-Windows-AMD64.zip` | Unzip it anywhere and run `ReMoM.exe`. |
+| Debian, Ubuntu, Mint, Pop!_OS | `remom_<version>_amd64.deb` | `sudo apt install ./remom_<version>_amd64.deb`, then find ReMoM in your applications menu. |
+| Any other Linux | `ReMoM-<version>-x86_64.AppImage` | `chmod +x` it, then run it. |
 
-Or run steps individually:
+**Start it up.** If Master of Magic is installed from GOG, Steam or the original CD in the usual place, ReMoM finds it by itself. If it can't, it tells you which files it's missing, and [PLAYING.md](PLAYING.md) shows how to point it at your game folder.
 
-```powershell
-cmake --preset MSVC-debug
-cmake --build --preset MSVC-debug
-ctest --preset MSVC-debug
-```
+**Your originals stay untouched.** ReMoM never writes to your Master of Magic folder. Saves and settings live in a folder of their own, so the original game keeps working exactly as before.
 
-The `MSVC-*` presets need SDL under `C:\devellib\` (e.g. `SDL2-2.32.2` + `SDL2_mixer-2.8.1`, or `SDL3-3.4.2` with `-DUSE_SDL3=ON`); pass `-DCMAKE_PREFIX_PATH=C:\your\path` to use a different location. For the self-contained **silent native-Win32** build (no SDL), use the `MSVC-win32-*` presets instead. See [BUILDING.md](BUILDING.md).
+## Made for modern screens
 
----
+- **Fullscreen from the start.** ReMoM opens full screen as a borderless window, so Alt+Tab is instant and your monitor never changes resolution. **Alt+Enter** switches to a normal window and back.
+- **Sharp pixels.** By default every game pixel is scaled up by the same whole number, so the art stays crisp, with no blur and no wobble.
+- **Or fill the screen.** Two other scale modes make the picture as big as your monitor allows. One keeps the pixels hard-edged; the other evens out their size with a slight soft edge.
+- **The 1994 picture shape.** On a CRT monitor, Master of Magic's pixels were a little taller than they were wide. Switch to 4:3 and the screen looks the way it did back then: rounder circles and the original proportions.
+- **Sound and music,** played through your computer's normal audio.
 
-### Linux (Kubuntu 24.04 / Ubuntu / Debian)
+[PLAYING.md](PLAYING.md) has the settings that choose how the game starts.
 
-#### 1. Install build tools
+## Is it finished?
 
-```bash
-sudo apt install build-essential cmake ninja-build curl pkg-config clang
-```
+Not yet, and we'd rather say so up front. ReMoM is rebuilt by hand from the original game program, one routine at a time, and the aim is to match the original exactly, bugs included. It's playable today. You'll still find rough edges, and every report helps.
 
-If your distro's CMake is too old (need 3.25+), install the latest from Kitware:
+**Found a bug?** Windows downloads include a diagnostic build, `ReMoM_diagnostic.exe`, that records what happened. Linux has a separate diagnostics download on the Releases page. [TESTING.md](TESTING.md) explains what to send us.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/jbalcomb/ReMoM/main/scripts/install-cmake-linux.sh | bash
-```
+## Join us
 
-#### 2. Install SDL2
+Players, testers and tinkerers hang out in the **[#mom-reverse-engineering](https://discord.gg/kSNA8bE6Wt)** channel on the *Master of Magic – Fans* Discord server. Come say hello.
 
-SDL2 is the default backend and is in the distro repos:
+## For developers and modders
 
-```bash
-sudo apt install libsdl2-dev libsdl2-mixer-dev
-```
-
-(SDL3 is optional — opt in with `-DUSE_SDL3=ON`; see [BUILDING.md](BUILDING.md). To build without audio, use the `clang-nosound-debug` preset.)
-
-#### 3. Build ReMoM
-
-```bash
-cmake --workflow --preset=clang-debug
-```
-
-Or run steps individually:
-
-```bash
-cmake --preset clang-debug
-cmake --build --preset clang-debug
-ctest --preset clang-debug
-```
+ReMoM is C source code that follows the original program closely, so you can read it, change it and build on it. Start with [CONTRIBUTING.md](CONTRIBUTING.md); [BUILDING.md](BUILDING.md) covers compiling it yourself.
 
 ---
 
-### Notes
-
-- All available presets are listed in `CMakePresets.json`.
-- GoogleTest v1.17.0 is fetched automatically via CMake's FetchContent — no manual install needed.
-- Game assets (LBX files, `CONFIG.MOM`) are expected in the `assets/` directory and are copied to the build output automatically.
-
-https://wiki.libsdl.org/SDL3/README-linux#build-dependencies
-
-sudo apt-get install build-essential git make \
-pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev \
-libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev \
-libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
-libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
-libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev \
-libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+*Master of Magic was created by Simtex and published by MicroProse in 1994. ReMoM is a fan project and includes none of the original game's art, music or data.*

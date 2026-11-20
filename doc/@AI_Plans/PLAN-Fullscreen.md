@@ -2,6 +2,15 @@
 
 > Source PRD: `PRD-Fullscreen.md`
 
+> **Changed 2026-11-20, after phase 8.** The phase 6 borderless window (a frameless window over the work area, taskbar visible) and its Ctrl+H hotkey were removed, and Ctrl+L went with them. Players mean the borderless window covering the whole monitor when they say "fullscreen", and that is the only fullscreen ReMoM has.
+> - `startup_window = fullscreen | windowed`, and the default is now `fullscreen`. The shipped `ReMoM.ini` sets it.
+> - **Alt+Enter** is the only window hotkey. It switches between fullscreen and the window.
+> - "Exclusive fullscreen" is the name for a display-mode change; ReMoM still has none.
+> - `[Video]` keys are read from the `ReMoM.ini` in the folder ReMoM starts in first, then from the per-user `ReMoM.ini`, so installed copies get them too.
+> - Win32: a display change while fullscreen now re-fits the window in place. It used to save the fullscreen popup as the window's placement, so leaving fullscreen gave a monitor-sized window.
+>
+> The phase notes below describe what was built at the time.
+
 ## Architectural decisions
 
 These apply to every phase:

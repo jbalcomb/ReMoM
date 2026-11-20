@@ -294,8 +294,8 @@ void Startup_Platform(void)
     assert(sdl2_texture != NULL);
     SDL_SetTextureScaleMode(sdl2_texture, SDL_ScaleModeNearest);  /* integer and fit_nearest both sample nearest-neighbour, whatever the render-quality hint says */
 
-    /* [Video] startup_window = borderless | fullscreen (ReMoM.ini): start in that state, exactly as if its hotkey had been
-       pressed (Ctrl+H / Alt+Enter). PLAN-Fullscreen.md phases 3 and 6. Windowed (the default) is the window just created. */
+    /* [Video] startup_window = fullscreen (ReMoM.ini, the default): start fullscreen, exactly as if Alt+Enter had been pressed.
+       PLAN-Fullscreen.md phases 3 and 6. Windowed is the window just created; leaving fullscreen comes back to it. */
     sdl2_Set_Window_State(Platform_Video_Startup_Window());
 
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */

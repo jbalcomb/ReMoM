@@ -377,36 +377,12 @@ static void pfl_mouse_ungrab(void)
     }
 }
 
-/* PLAN-Fullscreen.md phases 2, 6 and 7: the window states -- windowed, borderless window, fullscreen -- and the switches between
-   them. Fullscreen is borderless desktop fullscreen on the display the window is on (no mode or refresh-rate change). The
-   borderless window has no title bar or frame and fills that display's usable area, so the taskbar stays visible; it cannot be
-   moved. Fullscreen captures the mouse; the two window states release it. SDL3 applies window changes asynchronously, so each
-   switch waits for them (SDL_SyncWindow) before the viewport is re-read. */
+/* PLAN-Fullscreen.md phases 2, 6 and 7: the window states -- windowed and fullscreen -- and the switch between them. Fullscreen is
+   a borderless window covering the whole display the window is on (SDL's desktop fullscreen): no display-mode or refresh-rate
+   change. ReMoM has no exclusive fullscreen. Fullscreen captures the mouse; the window releases it. Leaving fullscreen, SDL puts
+   the window back where it was and the size it was. SDL3 applies window changes asynchronously, so each switch waits for them
+   (SDL_SyncWindow) before the viewport is re-read. */
 static int sdl3_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
-static int sdl3_window_state_before_fullscreen = VIEWPORT_WINDOW_STATE_WINDOWED;  /* where leaving fullscreen goes back to */
-static int sdl3_windowed_saved = 0;  /* the framed window's position and size, kept while borderless so it comes back the same */
-static int sdl3_windowed_x = 0;
-static int sdl3_windowed_y = 0;
-static int sdl3_windowed_width = 0;
-static int sdl3_windowed_height = 0;
-
-/* Frameless, not resizable, covering the usable area of the display the window is on. */
-static int sdl3_Make_Borderless_Window(void)
-{
-    SDL_Rect usable = { 0, 0, 0, 0 };
-    SDL_DisplayID display_id = SDL_GetDisplayForWindow(sdl3_window);
-
-    if((display_id == 0) || (SDL_GetDisplayUsableBounds(display_id, &usable) == false) || (usable.w <= 0) || (usable.h <= 0))
-    {
-        LOG_ERROR(LOG_CAT_SDL3_PFL, "graphics: borderless window: no usable bounds for display %u: %s", (unsigned)display_id, SDL_GetError());
-        return -1;
-    }
-    SDL_SetWindowBordered(sdl3_window, false);
-    SDL_SetWindowResizable(sdl3_window, false);
-    SDL_SetWindowPosition(sdl3_window, usable.x, usable.y);
-    SDL_SetWindowSize(sdl3_window, usable.w, usable.h);
-    return 0;
-}
 
 void sdl3_Set_Window_State(int window_state)
 {
@@ -418,13 +394,6 @@ void sdl3_Set_Window_State(int window_state)
         return;
     }
 
-    if(from == VIEWPORT_WINDOW_STATE_WINDOWED)
-    {
-        SDL_GetWindowPosition(sdl3_window, &sdl3_windowed_x, &sdl3_windowed_y);
-        SDL_GetWindowSize(sdl3_window, &sdl3_windowed_width, &sdl3_windowed_height);
-        sdl3_windowed_saved = 1;
-    }
-
     if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
     {
         SDL_SetWindowFullscreenMode(sdl3_window, NULL);  /* NULL = desktop fullscreen: no mode change */
@@ -433,44 +402,13 @@ void sdl3_Set_Window_State(int window_state)
             LOG_ERROR(LOG_CAT_SDL3_PFL, "graphics: entering fullscreen failed: %s", SDL_GetError());
             return;
         }
-        sdl3_window_state_before_fullscreen = from;
     }
     else
     {
-        if(from == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+        if(SDL_SetWindowFullscreen(sdl3_window, false) == false)
         {
-            if(SDL_SetWindowFullscreen(sdl3_window, false) == false)
-            {
-                LOG_ERROR(LOG_CAT_SDL3_PFL, "graphics: leaving fullscreen failed: %s", SDL_GetError());
-                return;
-            }
-            SDL_SyncWindow(sdl3_window);  /* back to a window before it is re-shaped below */
-        }
-        if(window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
-        {
-            if(sdl3_Make_Borderless_Window() != 0)
-            {
-                window_state = VIEWPORT_WINDOW_STATE_WINDOWED;  /* stay a normal window rather than a half-made borderless one */
-            }
-        }
-        if(window_state == VIEWPORT_WINDOW_STATE_WINDOWED)
-        {
-            SDL_SetWindowBordered(sdl3_window, true);
-            SDL_SetWindowResizable(sdl3_window, true);
-            if((from == VIEWPORT_WINDOW_STATE_BORDERLESS) || (sdl3_window_state_before_fullscreen == VIEWPORT_WINDOW_STATE_BORDERLESS))
-            {
-                if(sdl3_windowed_saved != 0)
-                {
-                    SDL_SetWindowSize(sdl3_window, sdl3_windowed_width, sdl3_windowed_height);
-                    SDL_SetWindowPosition(sdl3_window, sdl3_windowed_x, sdl3_windowed_y);
-                }
-                else
-                {
-                    SDL_DisplayID display_id = SDL_GetDisplayForWindow(sdl3_window);
-                    SDL_SetWindowSize(sdl3_window, PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4);  /* started borderless: the default window */
-                    SDL_SetWindowPosition(sdl3_window, (int)SDL_WINDOWPOS_CENTERED_DISPLAY(display_id), (int)SDL_WINDOWPOS_CENTERED_DISPLAY(display_id));
-                }
-            }
+            LOG_ERROR(LOG_CAT_SDL3_PFL, "graphics: leaving fullscreen failed: %s", SDL_GetError());
+            return;
         }
     }
     SDL_SyncWindow(sdl3_window);
@@ -490,29 +428,16 @@ void sdl3_Set_Window_State(int window_state)
     sdl3_Mouse_Confine_Update();
 }
 
-/* Alt+Enter / Ctrl+L: fullscreen, and back to the window state it came from. */
+/* Alt+Enter: fullscreen, and back to the window. */
 void sdl3_Toggle_Fullscreen(void)
 {
     if(sdl3_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
-    {
-        sdl3_Set_Window_State(sdl3_window_state_before_fullscreen);
-    }
-    else
-    {
-        sdl3_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
-    }
-}
-
-/* Ctrl+H: the borderless window, and back to the framed window. From fullscreen it goes to the borderless window. */
-void sdl3_Toggle_Borderless(void)
-{
-    if(sdl3_window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
     {
         sdl3_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
     }
     else
     {
-        sdl3_Set_Window_State(VIEWPORT_WINDOW_STATE_BORDERLESS);
+        sdl3_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
     }
 }
 

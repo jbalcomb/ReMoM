@@ -32,8 +32,7 @@ void Win_Viewport_Log(void);     /* one INFO line describing win_viewport, and t
 
 /* Window states and mouse capture (win_PFL.cpp). */
 void Win_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
-void Win_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
-void Win_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+void Win_Toggle_Fullscreen(void);  /* Alt+Enter: fullscreen <-> the window */
 
 
 

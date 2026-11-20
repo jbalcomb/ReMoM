@@ -29,12 +29,11 @@ extern "C" {
 #define VIEWPORT_SCALE_MODE_FIT_NEAREST         1
 #define VIEWPORT_SCALE_MODE_FIT_SHARP_BILINEAR  2
 
-/* Window states ([Video] startup_window in ReMoM.ini; Alt+Enter / Ctrl+L and Ctrl+H switch between them). PLAN-Fullscreen.md phase 6.
-   WINDOWED    a normal window with a title bar and frame, resizable (the default)
-   BORDERLESS  a window with no title bar or frame, filling the display's usable area (the taskbar stays visible); not movable
-   FULLSCREEN  borderless desktop fullscreen on the window's display, covering everything */
+/* Window states ([Video] startup_window in ReMoM.ini; Alt+Enter switches between them). PLAN-Fullscreen.md phase 6.
+   WINDOWED    a normal window with a title bar and frame, resizable
+   FULLSCREEN  a borderless window covering the whole display the window is on, taskbar included (the default). No display-mode
+               change: ReMoM has no exclusive fullscreen. */
 #define VIEWPORT_WINDOW_STATE_WINDOWED    0
-#define VIEWPORT_WINDOW_STATE_BORDERLESS  1
 #define VIEWPORT_WINDOW_STATE_FULLSCREEN  2
 
 /* Pixel aspects ([Video] aspect_ratio in ReMoM.ini). PLAN-Aspect-Ratio.md.
@@ -122,8 +121,7 @@ const char * Viewport_Scale_Mode_Name(int scale_mode);
 /** A VIEWPORT_WINDOW_STATE_* value, or WINDOWED for anything else. */
 int Viewport_Window_State_Normalize(int window_state);
 
-/** ReMoM.ini names, case-insensitive: "windowed" | "borderless" | "fullscreen". Returns 1 and sets *window_state if known,
-    else 0 (unchanged). */
+/** ReMoM.ini names, case-insensitive: "windowed" | "fullscreen". Returns 1 and sets *window_state if known, else 0 (unchanged). */
 int Viewport_Window_State_From_Name(const char * name, int * window_state);
 
 /** The ReMoM.ini name of a window state, for logging. */

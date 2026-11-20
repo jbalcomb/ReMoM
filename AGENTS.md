@@ -17,10 +17,27 @@ Ignore the Register annotations. (e.g., `_DI_`, `_SI_`, `_CX_`, etc.) They are j
 - **VERIFY against the asm before classifying anything as phantom.** Faithful-but-ugly code, `; `-style asm-derived comments, and reconstruction notes are NOT phantom — preserve them. When you cannot verify no-asm-counterpart, do NOT delete — ask.
 - **Deleting and style-matching are two COMPLETELY DIFFERENT concerns.** Style conformance (renaming a reconstructed local to `lower_snake_case`, whitespace/formatting) removes nothing — allowed. Deleting faithful code is forbidden.
 
+### Exception: branches `remom-mods` and `remom-warlord` only
+- **Scope:** this exception applies only when the checked-out branch is `remom-mods` or `remom-warlord` (check with `git branch --show-current`). On every other branch, `main` included, the hard rule above applies with no exception. The exception lives in `main`'s copy of this file only so that both branches see it; it does not apply on `main`. Merging this text into another branch does not carry the exception with it: when `remom-mods` becomes `main`, the rule for `main` is rewritten on purpose, not inherited. The plan is in `doc/@AI_Plans/PRD-Bug-Triage-For-Mods.md`.
+- **The reference is the frozen base branch.** That branch is the faithful 1.31 reconstruction running on modern systems. Until it exists, the reference is `main` at the commit where the branch left it. On these branches the game code may be restructured into a mod host, as long as the behaviour can still be checked against that reference.
+- **What may change:**
+  - Game code may be split at a rule or decision so that a mod supplies it, through a hook, a Lua rule, a data table, or a named C fix a mod switches on.
+  - The 1.31 behaviour of everything moved this way is supplied by the v1.31 mod. The engine does not keep a second copy of it behind an `#if` or a runtime switch.
+  - Code moved out of a function does not have to stay behind commented out. The frozen base branch holds the original.
+- **What does not change:**
+  - **The v1.31 mod must reproduce the reference.** The checks are the DeMoM goldens from the frozen base branch and OG-MoM's results in DOSBox with the same seed. Where the original reads memory ReMoM can't reproduce (`ub` rows in the bug ledger), DOSBox's values are recorded and injected. A restructuring isn't done until those checks pass with the v1.31 mod loaded.
+  - **Notes go with the code they describe.** Moved code keeps its `OGBUG`, `REBUG`, `; ` asm and drake178 comments word for word. It also keeps its 1.31 id comment (`// WZD o143p01`), so it can be found on the base branch.
+  - **Original-game bugs are never fixed in the engine.** A fix changes behaviour only when a mod asks for it: a bug-fix mod, a patch mod, or another mod.
+  - **Reconstruction errors are still fixed against the asm (`REBUG`)**, and the fix goes to `main` first, before the freeze, so the base branch gets it too.
+  - **Markers:**
+    - every change is marked `/* CLAUDE */`, as above;
+    - a call into the mod layer from game code is also marked `/* MOD */`, so every hook point can be found with `grep`.
+  - **Code that isn't being made moddable stays under the hard rule above.** That covers the platform layer, the MoX engine code, and any function a change doesn't need to touch.
+
 ## Style Guide
 - Use Allman style braces
 - Wrap block comments at 180 characters
-- Use "square", not "square"
+- Use "square", not "tile"
 
 ## Naming Conventions
 - Use lower_snake_case for variable names  (e.g., )
@@ -76,7 +93,7 @@ The same gate is also wired up as the VS Code task `check: safe-to-push` (`Tasks
 - Product requirements documents (`PRD-*.md`) and implementation plans live in `doc/@AI_Plans/`.
 
 ## Glossary of Terms
-- Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.0 code from IDA Pro 5.5)
+- Dasm stands for Disassembly  (the disassembley of the Borland C++ 3.1 code from IDA Pro 5.5)
 - DBG stands for Debug
 - DEDU stands for Deduce  (like a to-do list item where some code or logic needs figured out or validated and then documented)
 - DNE stands for Does Not Exist  (usually mean it seems like it should based on some similar code elsewhere or a bug or SimTex's coding style)

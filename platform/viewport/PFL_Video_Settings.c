@@ -10,7 +10,7 @@
 
 
 
-static int platform_video_startup_window = VIEWPORT_WINDOW_STATE_WINDOWED;  /* [Video] startup_window = windowed */
+static int platform_video_startup_window = VIEWPORT_WINDOW_STATE_FULLSCREEN;  /* [Video] startup_window = fullscreen */
 static int platform_video_scale_mode = VIEWPORT_SCALE_MODE_INTEGER;  /* [Video] scale_mode = integer */
 static int platform_video_pixel_aspect = VIEWPORT_PIXEL_ASPECT_SQUARE;  /* [Video] aspect_ratio = 16:10 (PLAN-Aspect-Ratio.md) */
 

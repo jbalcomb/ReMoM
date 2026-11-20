@@ -497,21 +497,19 @@ TEST(Viewport, WindowStateNamesAreCaseInsensitive)
     int window_state = -1;
     EXPECT_EQ(Viewport_Window_State_From_Name("windowed", &window_state), 1);
     EXPECT_EQ(window_state, VIEWPORT_WINDOW_STATE_WINDOWED);
-    EXPECT_EQ(Viewport_Window_State_From_Name("Borderless", &window_state), 1);
-    EXPECT_EQ(window_state, VIEWPORT_WINDOW_STATE_BORDERLESS);
     EXPECT_EQ(Viewport_Window_State_From_Name("FULLSCREEN", &window_state), 1);
     EXPECT_EQ(window_state, VIEWPORT_WINDOW_STATE_FULLSCREEN);
 
     window_state = -1;
     EXPECT_EQ(Viewport_Window_State_From_Name("yes", &window_state), 0);
-    EXPECT_EQ(Viewport_Window_State_From_Name("border-less", &window_state), 0);
+    EXPECT_EQ(Viewport_Window_State_From_Name("borderless", &window_state), 0);  /* the taskbar-visible window was removed */
     EXPECT_EQ(Viewport_Window_State_From_Name("", &window_state), 0);
     EXPECT_EQ(Viewport_Window_State_From_Name(nullptr, &window_state), 0);
     EXPECT_EQ(window_state, -1);
 
     EXPECT_STREQ(Viewport_Window_State_Name(VIEWPORT_WINDOW_STATE_WINDOWED), "windowed");
-    EXPECT_STREQ(Viewport_Window_State_Name(VIEWPORT_WINDOW_STATE_BORDERLESS), "borderless");
     EXPECT_STREQ(Viewport_Window_State_Name(VIEWPORT_WINDOW_STATE_FULLSCREEN), "fullscreen");
+    EXPECT_EQ(Viewport_Window_State_Normalize(1), VIEWPORT_WINDOW_STATE_WINDOWED);  /* the old borderless value */
     EXPECT_EQ(Viewport_Window_State_Normalize(99), VIEWPORT_WINDOW_STATE_WINDOWED);
 }
 

@@ -371,13 +371,9 @@ We use scancode exclusively for key_xlat lookup.
 */
 /* PLAN-Fullscreen.md phases 2, 6 and 7: the window hotkeys -- the same table as the SDL2 backend. One named table, so the planned
    keymap feature can replace it (and free F11 for the fullscreen toggle).
-     Alt+Enter (either Enter key)  fullscreen toggle -- the standard binding
-     Ctrl+L                        fullscreen toggle -- borrowed from Adobe Acrobat Reader, with Ctrl+H below
-     Ctrl+H                        borderless window toggle -- there is no standard hotkey for a borderless maximised window
-   The game never reads Ctrl, so Ctrl+H and Ctrl+L take nothing from it. */
+     Alt+Enter (either Enter key)  fullscreen toggle -- the standard binding */
 #define SDL3_WINDOW_HOTKEY_NONE        0
 #define SDL3_WINDOW_HOTKEY_FULLSCREEN  1
-#define SDL3_WINDOW_HOTKEY_BORDERLESS  2
 
 static const struct
 {
@@ -387,8 +383,6 @@ static const struct
 } sdl3_window_hotkeys[] = {
     { SDLK_RETURN,   SDL_KMOD_ALT,  SDL3_WINDOW_HOTKEY_FULLSCREEN },
     { SDLK_KP_ENTER, SDL_KMOD_ALT,  SDL3_WINDOW_HOTKEY_FULLSCREEN },
-    { SDLK_L,        SDL_KMOD_CTRL, SDL3_WINDOW_HOTKEY_FULLSCREEN },
-    { SDLK_H,        SDL_KMOD_CTRL, SDL3_WINDOW_HOTKEY_BORDERLESS },
 };
 
 static SDL_Keycode sdl3_window_hotkey_held = SDLK_UNKNOWN;  /* a hotkey's key went down; swallow its release (the modifier may be up by then) */
@@ -449,10 +443,6 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
                         if(window_hotkey == SDL3_WINDOW_HOTKEY_FULLSCREEN)
                         {
                             sdl3_Toggle_Fullscreen();
-                        }
-                        else
-                        {
-                            sdl3_Toggle_Borderless();
                         }
                     }
                     sdl3_window_hotkey_held = sdl3_key_code;

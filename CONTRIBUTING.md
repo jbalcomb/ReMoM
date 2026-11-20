@@ -2,6 +2,23 @@
 
 Reassembly of Master of Magic v1.31 (Simtex, 1995)
 
+ReMoM remakes Master of Magic by disassembling the original executables, then reassembling and translating them to C. The goal is working source code for the game, so the community can improve and expand the Simtex universe to their hearts' content. The reconstruction aims for 100% fidelity to the original program: the disassembly is the ground truth, and original-game bugs are kept, not fixed.
+
+The project's home is the [#mom-reverse-engineering](https://discord.gg/kSNA8bE6Wt) channel on the *Master of Magic – Fans* Discord server.
+
+## Where to find things
+
+| Document | What it covers |
+|----------|----------------|
+| [BUILDING.md](BUILDING.md) | Compiling ReMoM: prerequisites, SDL, CMake presets, Windows and Linux |
+| [AGENTS.md](AGENTS.md) | The house rules for editing reconstructed game code, naming and style (for people and AI agents alike) |
+| [TESTING.md](TESTING.md) | The diagnostic build, logs and crash reports (for testers) |
+| [RELEASES.md](RELEASES.md) | Cutting, publishing and rolling back a release |
+| [PLAYING.md](PLAYING.md) | The player's guide: data files, settings, save locations |
+| [doc/](doc/) | Notes on the game's internals, screen by screen and system by system |
+| [doc/@Devel/](doc/@Devel/) | Developer guides: DeMoM and the Automation Driver, logging, graphics, crash reports |
+| [doc/@AI_Plans/](doc/@AI_Plans/) | Product requirements and implementation plans |
+
 ## Project Overview
 
 ReMoM is a C-based reassembly/reconstruction of the classic DOS game Master of Magic. The codebase is organized into several libraries that mirror the original binary structure.
@@ -84,11 +101,14 @@ ctest --preset=MSVC-debug
 
 ### Naming Conventions
 
-- **Functions:** `PascalCase` (e.g., `City_Maximum_Size_NewGame`)
-- **Local variables:** `snake_case` (e.g., `map_square_count`)
-- **Global variables:** `_prefixed_snake_case` (e.g., `_world_maps`, `_CITIES`)
-- **Constants/macros:** `UPPER_SNAKE_CASE` (e.g., `WORLD_WIDTH`, `NUM_PLANES`)
-- **Enum values:** Context-dependent prefixed (e.g., `tt_Grasslands1`, `bt_AlchemistsGuild`)
+[AGENTS.md](AGENTS.md) is the authority on naming; this is a summary.
+
+- **Functions:** `Proper_Snake_Case` (e.g., `Simulate_World_Map_Generation`, `City_Maximum_Size_NewGame`)
+- **Variables:** `lower_snake_case` (e.g., `map_square_count`)
+- **Global variables:** new globals take a `g_` prefix (e.g., `g_graphics_cache_seg`). Names starting with `_` are reserved in C, so don't add new ones; the reconstructed globals keep their existing names (e.g., `_world_maps`, `_CITIES`).
+- **Constants and macros:** `UPPER_SNAKE_CASE` (e.g., `WORLD_WIDTH`, `NUM_PLANES`)
+- **Enum values:** a short prefix for the enum, then the name (e.g., `tt_Grasslands1`, `bt_AlchemistsGuild`)
+- **Shared modules:** name them by what they do, not by the first program that uses them. A `DeMoM_*` prefix on code that ReMoM also links reads as a layering violation.
 
 ### Testing
 

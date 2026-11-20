@@ -427,37 +427,70 @@ int main(int argc, char * argv[])
 
     /* CLAUDE: ReMoM.ini [Video] -- the window state to start in (PLAN-Fullscreen.md phase 6), how the image is scaled (phase 3), and
        the shape it is shown at (PLAN-Aspect-Ratio.md phase 11).
+       Each key is read from the ReMoM.ini in the folder ReMoM was started from (a repo build, a portable unzip), and if it is not
+       there, from the per-user ReMoM.ini (%APPDATA%\ReMoM\, ~/.config/ReMoM/) -- the same file [Paths] game_data is read from, so an
+       installed copy picks the settings up too.
        Read before Startup_Platform(), which creates the window. A missing key keeps the default; a value that is not understood is
        logged and the default is used, so a typo never stops the game from starting. */
     {
         char ini_value[64];
-        int startup_window = VIEWPORT_WINDOW_STATE_WINDOWED;
+        char user_ini_path[1024];
+        const char * video_ini_paths[2] = { "ReMoM.ini", NULL };
+        const char * video_key_names[3] = { "startup_window", "scale_mode", "aspect_ratio" };
+        const char * video_key_sources[3] = { NULL, NULL, NULL };
+        char video_key_values[3][64];
+        int video_ini_index;
+        int video_key_index;
+        int startup_window = VIEWPORT_WINDOW_STATE_FULLSCREEN;
         int scale_mode = VIEWPORT_SCALE_MODE_INTEGER;
         int pixel_aspect = VIEWPORT_PIXEL_ASPECT_SQUARE;
 
-        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Video", "startup_window", ini_value, sizeof(ini_value)) && (ini_value[0] != '\0'))
+        if(STU_GRAF_User_Config_Dir(user_ini_path, sizeof(user_ini_path) - 16))
         {
-            if(Viewport_Window_State_From_Name(ini_value, &startup_window) == 0)
+            strcat(user_ini_path, "ReMoM.ini");  /* the config dir ends with a separator */
+            video_ini_paths[1] = user_ini_path;
+        }
+        for(video_key_index = 0; video_key_index < 3; video_key_index++)
+        {
+            video_key_values[video_key_index][0] = '\0';
+            for(video_ini_index = 0; video_ini_index < 2; video_ini_index++)
             {
-                LOG_WARN(LOG_CAT_REMOM, "ReMoM.ini [Video] startup_window = \"%s\" is not windowed, borderless or fullscreen -- using windowed", ini_value);
+                if(
+                    (video_ini_paths[video_ini_index] != NULL) &&
+                    STU_GRAF_Read_Ini_Value(video_ini_paths[video_ini_index], "Video", video_key_names[video_key_index], ini_value, sizeof(ini_value)) &&
+                    (ini_value[0] != '\0')
+                )
+                {
+                    strcpy(video_key_values[video_key_index], ini_value);
+                    video_key_sources[video_key_index] = video_ini_paths[video_ini_index];
+                    break;
+                }
             }
         }
-        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Video", "scale_mode", ini_value, sizeof(ini_value)) && (ini_value[0] != '\0'))
+
+        if(video_key_sources[0] != NULL)
         {
-            if(Viewport_Scale_Mode_From_Name(ini_value, &scale_mode) == 0)
+            if(Viewport_Window_State_From_Name(video_key_values[0], &startup_window) == 0)
             {
-                LOG_WARN(LOG_CAT_REMOM, "ReMoM.ini [Video] scale_mode = \"%s\" is not integer, fit_nearest or fit_sharp_bilinear -- using integer", ini_value);
+                LOG_WARN(LOG_CAT_REMOM, "%s [Video] startup_window = \"%s\" is not windowed or fullscreen -- using fullscreen", video_key_sources[0], video_key_values[0]);
             }
         }
-        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Video", "aspect_ratio", ini_value, sizeof(ini_value)) && (ini_value[0] != '\0'))
+        if(video_key_sources[1] != NULL)
         {
-            if(Viewport_Aspect_Ratio_From_Name(ini_value, &pixel_aspect) == 0)
+            if(Viewport_Scale_Mode_From_Name(video_key_values[1], &scale_mode) == 0)
             {
-                LOG_WARN(LOG_CAT_REMOM, "ReMoM.ini [Video] aspect_ratio = \"%s\" is not 16:10 or 4:3 -- using 16:10", ini_value);
+                LOG_WARN(LOG_CAT_REMOM, "%s [Video] scale_mode = \"%s\" is not integer, fit_nearest or fit_sharp_bilinear -- using integer", video_key_sources[1], video_key_values[1]);
+            }
+        }
+        if(video_key_sources[2] != NULL)
+        {
+            if(Viewport_Aspect_Ratio_From_Name(video_key_values[2], &pixel_aspect) == 0)
+            {
+                LOG_WARN(LOG_CAT_REMOM, "%s [Video] aspect_ratio = \"%s\" is not 16:10 or 4:3 -- using 16:10", video_key_sources[2], video_key_values[2]);
             }
         }
         Platform_Set_Video_Settings(startup_window, scale_mode, pixel_aspect);
-        LOG_INFO(LOG_CAT_REMOM, "[Video] startup_window = %s, scale_mode = %s, aspect_ratio = %s", Viewport_Window_State_Name(startup_window), Viewport_Scale_Mode_Name(scale_mode), Viewport_Aspect_Ratio_Name(pixel_aspect));
+        LOG_INFO(LOG_CAT_REMOM, "[Video] startup_window = %s (%s), scale_mode = %s (%s), aspect_ratio = %s (%s)", Viewport_Window_State_Name(startup_window), (video_key_sources[0] != NULL) ? video_key_sources[0] : "default", Viewport_Scale_Mode_Name(scale_mode), (video_key_sources[1] != NULL) ? video_key_sources[1] : "default", Viewport_Aspect_Ratio_Name(pixel_aspect), (video_key_sources[2] != NULL) ? video_key_sources[2] : "default");
     }
 
     LOG_INFO(LOG_CAT_REMOM, "DEBUG: [%s, %d]: BEFORE: Startup_Platform()", __FILE__, __LINE__);

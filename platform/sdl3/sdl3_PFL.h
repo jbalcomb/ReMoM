@@ -135,8 +135,7 @@ void sdl3_Present_Image(void);  /* the frame into the viewport rect, per scale m
 
 /* Window states, fullscreen and mouse capture (sdl3_PFL.c). */
 void sdl3_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
-void sdl3_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
-void sdl3_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+void sdl3_Toggle_Fullscreen(void);  /* Alt+Enter: fullscreen <-> the window */
 int sdl3_Is_Fullscreen(void);
 void sdl3_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */
 void sdl3_Mouse_Keep_On_Image(int window_x, int window_y);  /* captured: warp an off-image OS position back onto the image */

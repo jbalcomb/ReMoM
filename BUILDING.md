@@ -72,63 +72,86 @@ statically link SDL and eliminate DLL dependencies at runtime.
 
 ## Building (CMake)
 
-CMake is the canonical build system. The named presets in `CMakePresets.json`
-(`clang-debug`, `clang-release`, `MSVC-release`, `macos-release`, …) are exactly
-what CI uses, so prefer them over ad-hoc `cmake -B build` invocations when you
-want to reproduce CI. For how releases are built and published, see
+CMake is the canonical build system. It needs **CMake 3.25+** for preset support. The named presets in
+`CMakePresets.json` (`clang-debug`, `MSVC-debug`, `MSVC-release`, …) are exactly what CI uses, so use them
+instead of ad-hoc `cmake -B build` invocations. For how releases are built and published, see
 [RELEASES.md](RELEASES.md).
 
-CMake defaults to the SDL2 backend. The custom Find modules in `cmake/`
-handle locating SDL2 and SDL2_mixer automatically via pkg-config on
-Linux/macOS, or via cache variables on Windows. On Windows the `MSVC-*`
-presets instead use the native **Win32** backend, which needs no SDL.
-
-### Linux / macOS (CMake)
-
-After installing the SDL2 dev packages (see above), CMake finds them
-automatically through pkg-config:
-
-```sh
-cmake -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
-```
-
-To build without audio:
-
-```sh
-cmake -B build -DDISABLE_AUDIO=ON
-cmake --build build
-```
+GoogleTest v1.17.0 is fetched automatically through CMake's FetchContent; there's nothing to install.
+Game assets (the `.LBX` files and `CONFIG.MOM`) are expected in `assets/` and are copied to the build
+output automatically.
 
 ### Windows (Visual Studio 2022)
 
-1. Download the SDL2 development package for Visual C++ from
-   https://github.com/libsdl-org/SDL/releases/tag/release-2.30.12
-   (the file named `SDL2-devel-2.30.12-VC.zip`).
-2. Extract it so the directory structure looks like
-   `C:\devellib\SDL2-2.30.12\include\`, `C:\devellib\SDL2-2.30.12\lib\x64\`, etc.
-3. Do the same for SDL2_mixer from
-   https://github.com/libsdl-org/SDL_mixer/releases/tag/release-2.8.1
-   (`SDL2_mixer-devel-2.8.1-VC.zip` → `C:\devellib\SDL2_mixer-2.8.1\`).
+You need Visual Studio 2022 with the x64 C++ tools.
 
-Then from the project root:
+The `MSVC-*` presets use the **SDL2** backend. CMake looks for SDL under `C:\devellib\`:
 
-```sh
-cmake -B build -DSDL2_DIR=C:\devellib\SDL2-2.30.12 -DSDL2_MIXER_DIR=C:\devellib\SDL2_mixer-2.8.1
-cmake --build build --config Debug
-```
+- SDL2: `C:\devellib\SDL2-2.32.2\` (from `SDL2-devel-2.32.2-VC.zip` on the
+  [SDL releases page](https://github.com/libsdl-org/SDL/releases))
+- SDL2_mixer: `C:\devellib\SDL2_mixer-2.8.1\` (from `SDL2_mixer-devel-2.8.1-VC.zip` on the
+  [SDL_mixer releases page](https://github.com/libsdl-org/SDL_mixer/releases))
 
-The default presets already point at `C:\devellib\SDL2-2.30.12` and
-`C:\devellib\SDL2_mixer-2.8.1`, so if you extract to those exact paths
-you can skip the `-D` flags and just use:
+Pass `-DCMAKE_PREFIX_PATH=C:\your\path` to use a different location.
+
+Configure, build, test and package in one command:
 
 ```sh
 cmake --workflow --preset=MSVC-debug
 ```
 
-To use SDL3 instead, use the `MSVC-sdl3-nosound-debug` or `MSVC-sdl3-nosound-release` preset, or pass `-DUSE_SDL3=ON` (see [SDL3 backend](#sdl3-backend)).
+Or step by step:
 
+```sh
+cmake --preset MSVC-debug
+cmake --build --preset MSVC-debug
+ctest --preset MSVC-debug
+```
+
+Other Windows presets:
+
+| Preset | Backend |
+|--------|---------|
+| `MSVC-nosound-debug` | SDL2, no audio |
+| `MSVC-win32-debug`, `MSVC-win32-release` | the native **Win32** (GDI) backend: no SDL, no audio, self-contained |
+| `MSVC-sdl3-nosound-debug`, `MSVC-sdl3-nosound-release` | SDL3 from `C:\devellib\SDL3-3.4.2\`, no audio (see [SDL3 Backend](#sdl3-backend)) |
+
+### Linux (Ubuntu / Debian / Kubuntu)
+
+Install the build tools and SDL2:
+
+```sh
+sudo apt install build-essential cmake ninja-build curl pkg-config clang
+sudo apt install libsdl2-dev libsdl2-mixer-dev
+```
+
+If your distro's CMake is older than 3.25, install the latest from Kitware:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/jbalcomb/ReMoM/main/scripts/install-cmake-linux.sh | bash
+```
+
+Then build:
+
+```sh
+cmake --workflow --preset=clang-debug
+```
+
+Or step by step:
+
+```sh
+cmake --preset clang-debug
+cmake --build --preset clang-debug
+ctest --preset clang-debug
+```
+
+To build without audio, use the `clang-nosound-debug` preset. `clang-release` has a configure preset but
+no build or test preset: build it with `cmake --build out/build/clang-release`.
+
+### macOS (CMake)
+
+`macos-debug` and `macos-release` presets exist, but the arm64 macOS linker currently rejects the
+game's packed DOS structures, so macOS doesn't build yet. See RELEASES.md, "Known limitations".
 
 ## Configure Options
 
@@ -182,6 +205,15 @@ distro. Source tarballs and build instructions are at:
 
 - https://github.com/libsdl-org/SDL/releases
 - https://github.com/libsdl-org/SDL_mixer/releases
+
+Building SDL3 itself from source on Linux needs these packages (from the
+[SDL3 Linux README](https://wiki.libsdl.org/SDL3/README-linux#build-dependencies)):
+
+```sh
+sudo apt-get install build-essential git make     pkg-config cmake ninja-build gnome-desktop-testing libasound2-dev libpulse-dev     libaudio-dev libfribidi-dev libjack-dev libsndio-dev libx11-dev libxext-dev     libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev     libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev     libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev libthai-dev     libpipewire-0.3-dev libwayland-dev libdecor-0-dev liburing-dev
+```
+
+`scripts/install-sdl3-linux.sh` automates the SDL3 build.
 
 ### SDL3 dependency packages (if available)
 

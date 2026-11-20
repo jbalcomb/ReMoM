@@ -133,8 +133,8 @@ void Startup_Platform(void)
         sdl3_Viewport_Log();
     }
 
-    /* CLAUDE: [Video] startup_window = borderless | fullscreen (ReMoM.ini): start in that state, exactly as if its hotkey had been
-       pressed (Ctrl+H / Alt+Enter). Windowed (the default) is the window just created. */
+    /* CLAUDE: [Video] startup_window = fullscreen (ReMoM.ini, the default): start fullscreen, exactly as if Alt+Enter had been
+       pressed. Windowed is the window just created; leaving fullscreen comes back to it. */
     sdl3_Set_Window_State(Platform_Video_Startup_Window());
 
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */

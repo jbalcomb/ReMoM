@@ -68,8 +68,7 @@ struct s_VIEWPORT win_viewport = {
 };
 
 static int win_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
-static int win_window_state_before_fullscreen = VIEWPORT_WINDOW_STATE_WINDOWED;  /* where leaving fullscreen goes back to */
-static WINDOWPLACEMENT win_windowed_placement = { sizeof(WINDOWPLACEMENT) };  /* the framed window, kept while borderless or fullscreen */
+static WINDOWPLACEMENT win_windowed_placement = { sizeof(WINDOWPLACEMENT) };  /* the window, kept while fullscreen: where leaving it goes back to */
 static int win_windowed_placement_saved = 0;
 static int win_mouse_captured = 0;  /* fullscreen: the cursor is clipped to the image (ClipCursor) */
 static void Win_Mouse_Confine_Update(void);
@@ -148,7 +147,7 @@ void Startup_Platform(void)
     Win_Init_Window();
 
     /* CLAUDE: PLAN-Fullscreen.md phase 8 -- the viewport from the real window, logged once even when it equals the default; then
-       [Video] startup_window = borderless | fullscreen (ReMoM.ini), exactly as if its hotkey had been pressed. */
+       [Video] startup_window = fullscreen (ReMoM.ini, the default), exactly as if Alt+Enter had been pressed. */
     if(Win_Viewport_Refresh() == 0)
     {
         Win_Viewport_Log();
@@ -297,21 +296,31 @@ static void Win_Mouse_Capture(int captured)
     Win_Mouse_Confine_Update();
 }
 
-/* A popup window (no title bar or frame) covering rect, on top. */
-static void Win_Make_Popup(const RECT * rect)
+/* Fullscreen: a popup window (no title bar or frame) over the whole monitor the window is on, on top -- a borderless window, no
+   display-mode change. Returns 0, or -1 if the monitor can't be found. */
+static int Win_Make_Fullscreen_Popup(void)
 {
-    LONG_PTR style = GetWindowLongPtrA(win_window, GWL_STYLE);
+    MONITORINFO monitor_info;
+    LONG_PTR style;
+
+    memset(&monitor_info, 0, sizeof(monitor_info));
+    monitor_info.cbSize = sizeof(monitor_info);
+    if(GetMonitorInfoA(MonitorFromWindow(win_window, MONITOR_DEFAULTTONEAREST), &monitor_info) == FALSE)
+    {
+        LOG_ERROR(LOG_CAT_WIN_PFL, "graphics: fullscreen failed: no monitor info (error %lu)", (unsigned long)GetLastError());
+        return -1;
+    }
+    style = GetWindowLongPtrA(win_window, GWL_STYLE);
     SetWindowLongPtrA(win_window, GWL_STYLE, (style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP);
-    SetWindowPos(win_window, HWND_TOP, rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top, SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
+    SetWindowPos(win_window, HWND_TOP, monitor_info.rcMonitor.left, monitor_info.rcMonitor.top, monitor_info.rcMonitor.right - monitor_info.rcMonitor.left, monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top, SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_SHOWWINDOW);
+    return 0;
 }
 
-/* The window states: windowed (WS_OVERLAPPEDWINDOW), borderless window (WS_POPUP over the monitor's work area, so the taskbar stays
-   visible; not movable), fullscreen (WS_POPUP over the whole monitor -- borderless desktop fullscreen, no mode change). Going back
-   to the framed window restores the placement it had before. */
+/* The window states: windowed (WS_OVERLAPPEDWINDOW) and fullscreen (WS_POPUP over the whole monitor -- a borderless window, no
+   display-mode change; ReMoM has no exclusive fullscreen). Going back to the window restores the placement it had before. */
 void Win_Set_Window_State(int window_state)
 {
     int from = win_window_state;
-    MONITORINFO monitor_info;
 
     window_state = Viewport_Window_State_Normalize(window_state);
     if((win_window == NULL) || (window_state == from))
@@ -319,13 +328,16 @@ void Win_Set_Window_State(int window_state)
         return;
     }
 
-    if(from == VIEWPORT_WINDOW_STATE_WINDOWED)
+    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
     {
         win_windowed_placement.length = sizeof(WINDOWPLACEMENT);
         win_windowed_placement_saved = (GetWindowPlacement(win_window, &win_windowed_placement) != FALSE) ? 1 : 0;
+        if(Win_Make_Fullscreen_Popup() != 0)
+        {
+            return;
+        }
     }
-
-    if(window_state == VIEWPORT_WINDOW_STATE_WINDOWED)
+    else
     {
         LONG_PTR style = GetWindowLongPtrA(win_window, GWL_STYLE);
         SetWindowLongPtrA(win_window, GWL_STYLE, (style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW);
@@ -335,22 +347,7 @@ void Win_Set_Window_State(int window_state)
         }
         SetWindowPos(win_window, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
     }
-    else
-    {
-        memset(&monitor_info, 0, sizeof(monitor_info));
-        monitor_info.cbSize = sizeof(monitor_info);
-        if(GetMonitorInfoA(MonitorFromWindow(win_window, MONITOR_DEFAULTTONEAREST), &monitor_info) == FALSE)
-        {
-            LOG_ERROR(LOG_CAT_WIN_PFL, "graphics: %s failed: no monitor info (error %lu)", Viewport_Window_State_Name(window_state), (unsigned long)GetLastError());
-            return;
-        }
-        Win_Make_Popup((window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN) ? &monitor_info.rcMonitor : &monitor_info.rcWork);
-    }
 
-    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
-    {
-        win_window_state_before_fullscreen = from;
-    }
     win_window_state = window_state;
     LOG_INFO(LOG_CAT_WIN_PFL, "graphics: %s", Viewport_Window_State_Name(window_state));
 
@@ -359,11 +356,12 @@ void Win_Set_Window_State(int window_state)
     InvalidateRect(win_window, NULL, FALSE);  /* repaint the bars at the new size */
 }
 
+/* Alt+Enter: fullscreen, and back to the window. */
 void Win_Toggle_Fullscreen(void)
 {
     if(win_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
     {
-        Win_Set_Window_State(win_window_state_before_fullscreen);
+        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
     }
     else
     {
@@ -371,36 +369,18 @@ void Win_Toggle_Fullscreen(void)
     }
 }
 
-void Win_Toggle_Borderless(void)
-{
-    if(win_window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
-    {
-        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
-    }
-    else
-    {
-        Win_Set_Window_State(VIEWPORT_WINDOW_STATE_BORDERLESS);
-    }
-}
-
 /* The window hotkeys, the same bindings as the SDL backends (one named table, for the planned keymap feature):
-     Alt+Enter (either Enter key)  fullscreen toggle -- arrives as WM_SYSKEYDOWN
-     Ctrl+L                        fullscreen toggle -- borrowed from Adobe Acrobat Reader, with Ctrl+H below
-     Ctrl+H                        borderless window toggle
-   The game never reads Ctrl, so Ctrl+H and Ctrl+L take nothing from it. */
+     Alt+Enter (either Enter key)  fullscreen toggle -- arrives as WM_SYSKEYDOWN */
 #define WIN_WINDOW_HOTKEY_NONE        0
 #define WIN_WINDOW_HOTKEY_FULLSCREEN  1
-#define WIN_WINDOW_HOTKEY_BORDERLESS  2
 
 static const struct
 {
     int vk_code;
-    int modifier_vk;  /* VK_MENU (Alt) or VK_CONTROL */
+    int modifier_vk;  /* VK_MENU (Alt) */
     int action;       /* WIN_WINDOW_HOTKEY_* */
 } win_window_hotkeys[] = {
     { VK_RETURN, VK_MENU,    WIN_WINDOW_HOTKEY_FULLSCREEN },  /* main and keypad Enter share VK_RETURN */
-    { 'L',       VK_CONTROL, WIN_WINDOW_HOTKEY_FULLSCREEN },
-    { 'H',       VK_CONTROL, WIN_WINDOW_HOTKEY_BORDERLESS },
 };
 
 /* Handle a window hotkey: toggles on the first key-down (not on auto-repeat). Returns 1 if the key was a hotkey, so the caller
@@ -420,10 +400,6 @@ static int Win_Window_Hotkey(int vk_code, LPARAM lParam)
                 if(win_window_hotkeys[hotkey_index].action == WIN_WINDOW_HOTKEY_FULLSCREEN)
                 {
                     Win_Toggle_Fullscreen();
-                }
-                else
-                {
-                    Win_Toggle_Borderless();
                 }
             }
             return 1;
@@ -1114,12 +1090,6 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             uint32_t mox_mod = 0;
             char mox_character = 0;
 
-            /* CLAUDE: PLAN-Fullscreen.md phase 8 -- Ctrl+L / Ctrl+H. Stopped: never translated, queued or recorded. */
-            if(Win_Window_Hotkey(vk_code, lParam) != 0)
-            {
-                break;
-            }
-
             if(vk_code >= 0 && vk_code < 256)
             {
                 mox_key = VK_to_MOX_KEY[vk_code];
@@ -1263,14 +1233,18 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
             Win_Mouse_Confine_Update();
         } break;
 
-        /* CLAUDE: the monitor's resolution changed under us: fullscreen / borderless re-fit to it. */
+        /* CLAUDE: the monitor's resolution changed under us: fullscreen re-fits to it. Re-made in place, so the saved window
+           placement (where leaving fullscreen goes back to) is kept. */
         case WM_DISPLAYCHANGE:
         {
-            int current_state = win_window_state;
-            if(current_state != VIEWPORT_WINDOW_STATE_WINDOWED)
+            if(win_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
             {
-                win_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;  /* force the re-apply below */
-                Win_Set_Window_State(current_state);
+                if(Win_Make_Fullscreen_Popup() == 0)
+                {
+                    Win_Viewport_Refresh();
+                    Win_Mouse_Confine_Update();
+                    InvalidateRect(hWnd, NULL, FALSE);
+                }
             }
         } break;
 

@@ -330,7 +330,7 @@ void Viewport_Game_Size_In_Drawable(const struct s_VIEWPORT * viewport, int game
 
 int Viewport_Window_State_Normalize(int window_state)
 {
-    if((window_state == VIEWPORT_WINDOW_STATE_BORDERLESS) || (window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN))
+    if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
     {
         return window_state;
     }
@@ -348,11 +348,6 @@ int Viewport_Window_State_From_Name(const char * name, int * window_state)
         *window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
         return 1;
     }
-    if(Viewport_Name_Equals(name, "borderless"))
-    {
-        *window_state = VIEWPORT_WINDOW_STATE_BORDERLESS;
-        return 1;
-    }
     if(Viewport_Name_Equals(name, "fullscreen"))
     {
         *window_state = VIEWPORT_WINDOW_STATE_FULLSCREEN;
@@ -365,8 +360,6 @@ const char * Viewport_Window_State_Name(int window_state)
 {
     switch(Viewport_Window_State_Normalize(window_state))
     {
-        case VIEWPORT_WINDOW_STATE_BORDERLESS:
-            return "borderless";
         case VIEWPORT_WINDOW_STATE_FULLSCREEN:
             return "fullscreen";
         default:

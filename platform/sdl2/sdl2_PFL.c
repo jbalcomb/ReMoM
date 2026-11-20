@@ -357,36 +357,12 @@ static void pfl_mouse_ungrab(void)
     }
 }
 
-/* PLAN-Fullscreen.md phases 2 and 6: the window states -- windowed, borderless window, fullscreen -- and the switches between them.
-   Fullscreen is borderless desktop fullscreen on the display the window is on (no mode or refresh-rate change). The borderless
-   window has no title bar or frame and fills that display's usable area, so the taskbar stays visible; it cannot be moved.
-   Fullscreen captures the mouse; the two window states release it. The SIZE_CHANGED event that follows redraws; the viewport is
-   refreshed here too so the mouse confinement is right immediately. */
+/* PLAN-Fullscreen.md phases 2 and 6: the window states -- windowed and fullscreen -- and the switch between them.
+   Fullscreen is a borderless window covering the whole display the window is on (SDL's desktop fullscreen): no display-mode or
+   refresh-rate change. ReMoM has no exclusive fullscreen. Fullscreen captures the mouse; the window releases it. Leaving fullscreen,
+   SDL puts the window back where it was and the size it was. The SIZE_CHANGED event that follows redraws; the viewport is refreshed
+   here too so the mouse confinement is right immediately. */
 static int sdl2_window_state = VIEWPORT_WINDOW_STATE_WINDOWED;
-static int sdl2_window_state_before_fullscreen = VIEWPORT_WINDOW_STATE_WINDOWED;  /* where leaving fullscreen goes back to */
-static int sdl2_windowed_saved = 0;  /* the framed window's position and size, kept while borderless so it comes back the same */
-static int sdl2_windowed_x = 0;
-static int sdl2_windowed_y = 0;
-static int sdl2_windowed_width = 0;
-static int sdl2_windowed_height = 0;
-
-/* Frameless, not resizable, covering the usable area of the display the window is on. */
-static int sdl2_Make_Borderless_Window(void)
-{
-    SDL_Rect usable = { 0, 0, 0, 0 };
-    int display_index = SDL_GetWindowDisplayIndex(sdl2_window);
-
-    if((display_index < 0) || (SDL_GetDisplayUsableBounds(display_index, &usable) != 0) || (usable.w <= 0) || (usable.h <= 0))
-    {
-        LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: borderless window: no usable bounds for display %d: %s", display_index, SDL_GetError());
-        return -1;
-    }
-    SDL_SetWindowBordered(sdl2_window, SDL_FALSE);
-    SDL_SetWindowResizable(sdl2_window, SDL_FALSE);
-    SDL_SetWindowPosition(sdl2_window, usable.x, usable.y);
-    SDL_SetWindowSize(sdl2_window, usable.w, usable.h);
-    return 0;
-}
 
 void sdl2_Set_Window_State(int window_state)
 {
@@ -398,13 +374,6 @@ void sdl2_Set_Window_State(int window_state)
         return;
     }
 
-    if(from == VIEWPORT_WINDOW_STATE_WINDOWED)
-    {
-        SDL_GetWindowPosition(sdl2_window, &sdl2_windowed_x, &sdl2_windowed_y);
-        SDL_GetWindowSize(sdl2_window, &sdl2_windowed_width, &sdl2_windowed_height);
-        sdl2_windowed_saved = 1;
-    }
-
     if(window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
     {
         if(SDL_SetWindowFullscreen(sdl2_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
@@ -412,42 +381,13 @@ void sdl2_Set_Window_State(int window_state)
             LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: entering fullscreen failed: %s", SDL_GetError());
             return;
         }
-        sdl2_window_state_before_fullscreen = from;
     }
     else
     {
-        if(from == VIEWPORT_WINDOW_STATE_FULLSCREEN)
+        if(SDL_SetWindowFullscreen(sdl2_window, 0) != 0)
         {
-            if(SDL_SetWindowFullscreen(sdl2_window, 0) != 0)
-            {
-                LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: leaving fullscreen failed: %s", SDL_GetError());
-                return;
-            }
-        }
-        if(window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
-        {
-            if(sdl2_Make_Borderless_Window() != 0)
-            {
-                window_state = VIEWPORT_WINDOW_STATE_WINDOWED;  /* stay a normal window rather than a half-made borderless one */
-            }
-        }
-        if(window_state == VIEWPORT_WINDOW_STATE_WINDOWED)
-        {
-            SDL_SetWindowBordered(sdl2_window, SDL_TRUE);
-            SDL_SetWindowResizable(sdl2_window, SDL_TRUE);
-            if((from == VIEWPORT_WINDOW_STATE_BORDERLESS) || (sdl2_window_state_before_fullscreen == VIEWPORT_WINDOW_STATE_BORDERLESS))
-            {
-                if(sdl2_windowed_saved != 0)
-                {
-                    SDL_SetWindowSize(sdl2_window, sdl2_windowed_width, sdl2_windowed_height);
-                    SDL_SetWindowPosition(sdl2_window, sdl2_windowed_x, sdl2_windowed_y);
-                }
-                else
-                {
-                    SDL_SetWindowSize(sdl2_window, PLATFORM_SCREEN_WIDTH * 4, PLATFORM_SCREEN_HEIGHT * 4);  /* started borderless: the default window */
-                    SDL_SetWindowPosition(sdl2_window, SDL_WINDOWPOS_CENTERED_DISPLAY(SDL_GetWindowDisplayIndex(sdl2_window)), SDL_WINDOWPOS_CENTERED_DISPLAY(SDL_GetWindowDisplayIndex(sdl2_window)));
-                }
-            }
+            LOG_ERROR(LOG_CAT_SDL2_PFL, "graphics: leaving fullscreen failed: %s", SDL_GetError());
+            return;
         }
     }
 
@@ -466,29 +406,16 @@ void sdl2_Set_Window_State(int window_state)
     sdl2_Mouse_Confine_Update();
 }
 
-/* Alt+Enter / Ctrl+L: fullscreen, and back to the window state it came from. */
+/* Alt+Enter: fullscreen, and back to the window. */
 void sdl2_Toggle_Fullscreen(void)
 {
     if(sdl2_window_state == VIEWPORT_WINDOW_STATE_FULLSCREEN)
-    {
-        sdl2_Set_Window_State(sdl2_window_state_before_fullscreen);
-    }
-    else
-    {
-        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
-    }
-}
-
-/* Ctrl+H: the borderless window, and back to the framed window. From fullscreen it goes to the borderless window. */
-void sdl2_Toggle_Borderless(void)
-{
-    if(sdl2_window_state == VIEWPORT_WINDOW_STATE_BORDERLESS)
     {
         sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_WINDOWED);
     }
     else
     {
-        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_BORDERLESS);
+        sdl2_Set_Window_State(VIEWPORT_WINDOW_STATE_FULLSCREEN);
     }
 }
 

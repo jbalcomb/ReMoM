@@ -12,8 +12,7 @@ You need the original game data files to play.
    - **Windows:** `ReMoM.exe`
    - **Linux:** see **Which Linux download?** below — the `.deb` to install it
      properly, or the `.AppImage` to just run it.
-   - **macOS:** `./ReMoM`. It's unsigned, so the first time clear the quarantine flag:
-     `xattr -dr com.apple.quarantine ReMoM`.
+   - **macOS:** not available yet.
 
    **ReMoM checks the usual GOG / Steam / CD install locations automatically** —
    if your Master of Magic is installed in one of those, it just works, with no
@@ -47,7 +46,7 @@ page and install the newer `.deb` over the top when one appears.
 **The AppImage has a portable mode the `.deb` does not.** Put your Master of Magic
 files in the same folder as the `.AppImage` and it keeps everything — data, saves,
 settings, logs — right there in a `remom_app_dir/` subfolder instead of your home directory.
-See [Devel-Linux-AppImage.md](doc/%23Devel/Devel-Linux-AppImage.md). An installed
+See [Devel-Linux-AppImage.md](doc/@Devel/Devel-Linux-AppImage.md). An installed
 `.deb` always uses the per-user folders below, which is what you want for a system
 install.
 
@@ -95,6 +94,36 @@ The path may contain spaces (no quotes needed). Put the file here:
 **Copy the files next to `ReMoM`.** Or just drop every `.LBX` file into the
 same folder as the executable — no config needed. (`CONFIG.MOM` is optional —
 it's the old DOS sound config; without it ReMoM just uses defaults.)
+
+## Fullscreen, window and picture
+
+ReMoM starts **fullscreen**: a borderless window covering your whole monitor, taskbar included. Your screen never changes
+resolution, and Alt+Tab is instant. (ReMoM has no *exclusive* fullscreen, the old kind that switches the monitor's resolution.)
+While you're in fullscreen, the mouse stays on the game picture until you Alt+Tab away.
+
+Press **Alt+Enter** at any time to switch to a normal window, which you can move and resize, and again to go back. The game
+itself never sees Alt+Enter, so it can't trigger anything in-game.
+
+To choose how ReMoM **starts**, add a `[Video]` section to your `ReMoM.ini`. It's the same file as in *Telling ReMoM where
+your data is* above, and you can create it if you don't have one:
+
+```ini
+[Video]
+startup_window = windowed
+scale_mode = integer
+aspect_ratio = 4:3
+```
+
+| Setting | Choices | Default |
+|---------|---------|---------|
+| `startup_window` | `fullscreen`: the whole monitor, as above.<br>`windowed`: a normal window you can move and resize. | `fullscreen` |
+| `scale_mode` | `integer`: the biggest whole-number scale that fits, black bars around it. Every pixel the same size, perfectly crisp.<br>`fit_nearest`: as big as the screen allows. Fills more of it, but some pixel rows and columns come out one screen pixel wider than others.<br>`fit_sharp_bilinear`: the same size as `fit_nearest`, every pixel the same size, with the edges between pixels softened very slightly. | `integer` |
+| `aspect_ratio` | `16:10`: square pixels.<br>`4:3`: the shape the game had on a 1994 monitor, each pixel a little taller than wide, so circles come out round. In a window, it opens at 1280x960. | `16:10` |
+
+A value ReMoM doesn't understand is ignored, and the default is used, so a typo never stops the game from starting.
+
+ReMoM also reads `[Video]` from a `ReMoM.ini` in the folder you start it from, and that one wins if both have the same
+setting. That's handy for a portable copy unzipped onto a USB stick.
 
 ## Where ReMoM keeps your saves and settings
 

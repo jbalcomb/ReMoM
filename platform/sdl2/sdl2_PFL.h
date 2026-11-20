@@ -135,8 +135,7 @@ void sdl2_Present_Image(void);  /* the frame into the viewport rect, per scale m
 
 /* Window states, fullscreen and mouse capture (sdl2_PFL.c), PLAN-Fullscreen.md phases 2 and 6. */
 void sdl2_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
-void sdl2_Toggle_Fullscreen(void);  /* Alt+Enter / Ctrl+L: fullscreen <-> the window state it came from */
-void sdl2_Toggle_Borderless(void);  /* Ctrl+H: borderless window <-> framed window; from fullscreen, the borderless window */
+void sdl2_Toggle_Fullscreen(void);  /* Alt+Enter: fullscreen <-> the window */
 int sdl2_Is_Fullscreen(void);
 void sdl2_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */
 void sdl2_Mouse_Keep_On_Image(int window_x, int window_y);  /* captured: warp an off-image OS position back onto the image */
