@@ -3669,7 +3669,8 @@ int16_t Newgame_Screen_4(void)
 
     Clear_Fields();
 
-    Disable_Cancel();
+    // Disable_Cancel();
+    /* CLAUDE */ /* REBUG */ Enable_Cancel();  /* asm: Newgame_Screen_4  call Clear_Fields / call Enable_Cancel */
 
     retorts_ptr = &_players[HUMAN_PLAYER_IDX].alchemy;
 

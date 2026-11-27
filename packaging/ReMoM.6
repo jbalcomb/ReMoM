@@ -94,10 +94,17 @@ by default
 .TP
 .B XDG_CONFIG_HOME
 .I ReMoM.ini
-is read from
+(the settings) is in
 .IR $XDG_CONFIG_HOME/ReMoM/ ,
 by default
 .IR ~/.config/ReMoM/ .
+ReMoM creates it on first run, every setting commented out and explained, with
+.I ReMoM_example.ini
+beside it. A
+.I ReMoM.ini
+next to the program (next to the
+.I .AppImage
+file for the AppImage) is used instead, as a whole file, if there is one.
 .TP
 .B XDG_STATE_HOME
 Log files are written to

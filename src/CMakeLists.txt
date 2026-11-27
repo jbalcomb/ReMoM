@@ -3,7 +3,7 @@
 #  ReMoM — windowed Master of Magic.
 # =========================================================================
 
-add_executable(ReMoM ReMoM.c ReMoM_Init.c Automation_Driver.c)
+add_executable(ReMoM ReMoM.c ReMoM_Init.c Automation_Driver.c Settings_Ini.c)
 
 add_custom_target(run_pre_build_task
     COMMAND ${CMAKE_COMMAND} -E echo "Running pre-build task..."

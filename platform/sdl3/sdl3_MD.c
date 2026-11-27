@@ -5,6 +5,8 @@
 
 #include <SDL3/SDL.h>
 
+#include "../../STU/src/STU_LOG.h"  /* CLAUDE: pointer-move diagnosis */
+
 #include <stdlib.h>  /* CLAUDE: getenv() for the HW-cursor gate */
 #include <string.h>  /* CLAUDE: strcmp() */
 
@@ -67,7 +69,31 @@ void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
     int window_y = 0;
     /* CLAUDE */  Platform_Set_Warp_Guard();  /* prevent Platform_Maybe_Move_Mouse() from reading stale OS position */
     Platform_Game_To_Window(game_x, game_y, &window_x, &window_y);  /* through the viewport (letterbox, high-DPI) */
+    if(sdl3_Mouse_Is_Relative() != 0)
+    {
+        sdl3_Mouse_Relative_Set(game_x, game_y);  /* CLAUDE: captured -- the game cursor is tracked here, not from the OS pointer */
+    }
+    /* CLAUDE: MUTTER-49.0-CRASH -- WAYLAND + CAPTURED: DO NOT WARP THE OS POINTER. Do not remove this check.
+       On GNOME 49 / mutter 49.0 (Ubuntu 25.10), SDL3 3.2's warp of a captured (relative-mode) pointer at startup crashed GNOME Shell,
+       and with it the player's whole desktop session: mutter logged "Invalid window geometry for xdg_surface" and died with SIGFPE
+       in meta_window_update_visibility (a divide by the window's size). Proven on 2026-11-26 in a throwaway login session: the same
+       binary crashed the shell with this warp and ran clean without it (and the SDL3 backend without the startup warp,
+       Init_Mouse_Driver in MoX/src/Mouse.c, never crashed). Captured, the warp is not needed: the real pointer is locked and hidden,
+       and the game cursor is the position set just above. (SDL2 2.32 on the same desktop made the same startup warp without a
+       crash.) */
+    if((sdl3_Mouse_Is_Relative() != 0) && (SDL_GetCurrentVideoDriver() != NULL) && (SDL_strcmp(SDL_GetCurrentVideoDriver(), "wayland") == 0))
+    {
+        LOG_DEBUG(LOG_CAT_PFL, "mouse: warp game %d,%d -- captured on Wayland: the game cursor moved, the OS pointer left alone (MUTTER-49.0-CRASH)", (int)game_x, (int)game_y);
+        return;
+    }
     SDL_WarpMouseInWindow(sdl3_window, (float)window_x, (float)window_y);
+    /* CLAUDE: pointer-move diagnosis (Linux: the start position and arrow keys) -- where it was asked to go, and where SDL says it is. */
+    {
+        float now_x = 0.0f;
+        float now_y = 0.0f;
+        SDL_GetMouseState(&now_x, &now_y);
+        LOG_DEBUG(LOG_CAT_PFL, "mouse: warp game %d,%d -> window %d,%d; SDL reports %d,%d (relative mode %d, mouse focus %s)", (int)game_x, (int)game_y, window_x, window_y, (int)now_x, (int)now_y, sdl3_Mouse_Is_Relative(), (SDL_GetMouseFocus() == sdl3_window) ? "this window" : "elsewhere");
+    }
 }
 
 
@@ -114,6 +140,8 @@ static int          hwcur_gate = -1;   /* -1 = unresolved, else 0/1 from the env
 static int          hwcur_last_image = -1;
 static int          hwcur_last_width = 0;   /* size the current OS cursor was built at, in drawable pixels */
 static int          hwcur_last_height = 0;
+static int          hwcur_overlay_gate = 0;            /* CLAUDE: draw the cursor over the picture while captured (Linux default) */
+static SDL_Texture * hwcur_overlay_texture = NULL;     /* CLAUDE: the same image as the OS cursor, for the overlay */
 
 int Platform_HW_Cursor_Active(void)
 {
@@ -122,8 +150,39 @@ int Platform_HW_Cursor_Active(void)
         const char * env = getenv("REMOM_HW_CURSOR");
         /* CLAUDE: default ON -- the hardware cursor is the shipped behaviour; only REMOM_HW_CURSOR=0 forces the software cursor. */
         hwcur_gate = (env != NULL && strcmp(env, "0") == 0) ? 0 : 1;
+#if defined(__linux__)
+        /* CLAUDE: Linux, by default, as in sdl2_MD.c: the OS cursor in a window, and while captured in fullscreen the cursor drawn
+           over the picture by ReMoM (sdl3_Cursor_Overlay_*), with the mouse in relative mode. With the OS cursor captured, GNOME's
+           XWayland neither enforces the confinement nor moves the pointer for the game, and the game's own software cursor, drawn
+           into the page, only moves at the game's 18 frames a second. The overlay is redrawn whenever the mouse moves.
+           REMOM_HW_CURSOR=1 forces the plain OS cursor, =0 the game's software cursor. */
+        hwcur_overlay_gate = ((hwcur_gate == 1) && ((env == NULL) || (strcmp(env, "1") != 0))) ? 1 : 0;
+#endif
     }
     return hwcur_gate;
+}
+
+int sdl3_Cursor_Overlay_Active(void)
+{
+    (void)Platform_HW_Cursor_Active();  /* resolves the gates */
+    return hwcur_overlay_gate;
+}
+
+/* CLAUDE: the cursor, drawn over the frame already rendered, at the game pointer position -- only while captured (relative mode),
+   where the OS cursor is hidden. Hotspot top-left, as for the OS cursor. */
+void sdl3_Cursor_Overlay_Draw(void)
+{
+    SDL_FRect cursor_rect = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+    if((sdl3_Cursor_Overlay_Active() == 0) || (sdl3_Mouse_Is_Relative() == 0) || (hwcur_overlay_texture == NULL) || (Get_Pointer_Image_Number() == 0))
+    {
+        return;
+    }
+    cursor_rect.x = (float)(sdl3_viewport.rect_x + (int)(((int64_t)pointer_x * sdl3_viewport.rect_width) / PLATFORM_SCREEN_WIDTH));
+    cursor_rect.y = (float)(sdl3_viewport.rect_y + (int)(((int64_t)pointer_y * sdl3_viewport.rect_height) / PLATFORM_SCREEN_HEIGHT));
+    cursor_rect.w = (float)hwcur_last_width;
+    cursor_rect.h = (float)hwcur_last_height;
+    SDL_RenderTexture(sdl3_renderer, hwcur_overlay_texture, NULL, &cursor_rect);
 }
 
 void Platform_HW_Cursor_Refresh(void)
@@ -191,6 +250,17 @@ void Platform_HW_Cursor_Refresh(void)
 
     /* Hotspot (0,0): the game treats the pointer position as the sprite's top-left for hit-testing. */
     newcur = SDL_CreateColorCursor(surf, 0, 0);
+    if(hwcur_overlay_gate != 0)
+    {
+        /* CLAUDE: the overlay draws this same image, already at its on-screen size */
+        if(hwcur_overlay_texture != NULL) { SDL_DestroyTexture(hwcur_overlay_texture); }
+        hwcur_overlay_texture = SDL_CreateTextureFromSurface(sdl3_renderer, surf);
+        if(hwcur_overlay_texture != NULL)
+        {
+            SDL_SetTextureBlendMode(hwcur_overlay_texture, SDL_BLENDMODE_BLEND);
+            SDL_SetTextureScaleMode(hwcur_overlay_texture, SDL_SCALEMODE_NEAREST);
+        }
+    }
     SDL_DestroySurface(surf);
     if(newcur != NULL)
     {

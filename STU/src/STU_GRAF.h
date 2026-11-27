@@ -91,6 +91,13 @@ void STU_GRAF_Set_User_Data_Dir(const char * dir);
    the log directory has to be known before the log file is opened. */
 int STU_GRAF_Read_Ini_Value(const char * ini_path, const char * section, const char * key, char * out, size_t cap);
 
+/* The settings file the player build uses (doc/@AI_Plans/PLAN-ReMoM-Ini.md): [Paths] game_data is read from it.  Set before
+   STU_GRAF_Init().  NULL or "" restores the default, <config dir>/ReMoM.ini. */
+void STU_GRAF_Set_Settings_Ini(const char * ini_path);
+
+/* Create dir and any missing parents, like `mkdir -p`.  Returns 1 if dir exists afterwards. */
+int STU_GRAF_Make_Path(const char * dir);
+
 /* Per-user *state* directory (with a trailing separator): the writable home for
    logs.  XDG_STATE_HOME/ReMoM on Linux, %LOCALAPPDATA%\ReMoM\logs on Windows,
    ~/Library/Logs/ReMoM on macOS.  Unlike the other resolvers this also *creates*

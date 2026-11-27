@@ -130,11 +130,16 @@ extern int sdl3_window_height;
 extern struct s_VIEWPORT sdl3_viewport;
 /* Re-read the window and drawable sizes and recompute sdl3_viewport. Returns 1 if it changed (and logs the new one). */
 int sdl3_Viewport_Refresh(void);
-void sdl3_Viewport_Log(void);  /* one INFO line describing sdl3_viewport */
+void sdl3_Viewport_Log(void);  /* one INFO line describing sdl3_viewport (and the same to the input metrics, if on) */
+void sdl3_Viewport_Note_Metrics(void);  /* CLAUDE: a #viewport line into the input metrics .fwv; no-op when they are off */
 void sdl3_Present_Image(void);  /* the frame into the viewport rect, per scale mode (sdl3_Video.c) */
 
 /* Window states, fullscreen and mouse capture (sdl3_PFL.c). */
 void sdl3_Set_Window_State(int window_state);  /* VIEWPORT_WINDOW_STATE_* */
+int sdl3_Mouse_Is_Relative(void);  /* CLAUDE: captured in relative mode: the game cursor is tracked from relative motion */
+void sdl3_Mouse_Relative_Set(int16_t game_x, int16_t game_y);  /* CLAUDE: move the captured game cursor (a warp, or the capture starting) */
+int sdl3_Cursor_Overlay_Active(void);  /* CLAUDE: Linux default -- while captured, ReMoM draws the cursor over the picture (sdl3_MD.c) */
+void sdl3_Cursor_Overlay_Draw(void);  /* CLAUDE: draw it over the frame just rendered, if captured */
 void sdl3_Toggle_Fullscreen(void);  /* Alt+Enter: fullscreen <-> the window */
 int sdl3_Is_Fullscreen(void);
 void sdl3_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */

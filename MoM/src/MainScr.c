@@ -2517,8 +2517,11 @@ void Move_Stack_DirKey(int16_t movement_direction)
     int16_t move_x = 0;
     int16_t move_y = 0;
 
+    /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: direction=%d stack_count=%d", (int)movement_direction, (int)_unit_stack_count);
+
     if(_unit_stack_count == 0)
     {
+        /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: no stack selected -- nothing moves");
         return;
     }
 
@@ -2526,8 +2529,11 @@ void Move_Stack_DirKey(int16_t movement_direction)
     /* CLAUDE */  /* REBUG */  /* asm: cmp movement_points, 0 / jg continue */
     if((movement_points = Stack_Moves_Active()) <= 0)
     {
+        /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: unit %d at %d,%d plane %d has movement_points=%d -- nothing moves", (int)_unit_stack[0].unit_idx, (int)_UNITS[_unit_stack[0].unit_idx].wx, (int)_UNITS[_unit_stack[0].unit_idx].wy, (int)_UNITS[_unit_stack[0].unit_idx].wp, (int)movement_points);
         return;
     }
+
+    /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: unit %d at %d,%d plane %d, movement_points=%d, all_units_moved=%d, map plane %d", (int)_unit_stack[0].unit_idx, (int)_UNITS[_unit_stack[0].unit_idx].wx, (int)_UNITS[_unit_stack[0].unit_idx].wy, (int)_UNITS[_unit_stack[0].unit_idx].wp, (int)movement_points, (int)all_units_moved, (int)_map_plane);
 
     if(all_units_moved == ST_FALSE)
     {
@@ -2612,6 +2618,8 @@ void Move_Stack_DirKey(int16_t movement_direction)
             move_y = WORLD_YMAX;
         }
 
+        /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: target %d,%d", (int)move_x, (int)move_y);
+
         // if(Stack_Has_PlanarTravel() == ST_TRUE)
         /* CLAUDE */  /* REBUG */  /* asm: or ax, ax / jnz loc_51769 - Move_Stack() at once when the stack has NO Planar Travel; the plane test is for stacks that have it */
         /* OGBUG  a stack without Planar Travel skips the plane test the mouse path makes: Move_Stack() plans the move on _map_plane, so with the other plane in view the unit walks by the other plane's map */
@@ -2641,7 +2649,9 @@ void Move_Stack_DirKey(int16_t movement_direction)
 
         /* CLAUDE */  /* asm loc_517BB: call near ptr Main_Screen_Reset - after both Move_Stack() paths and the warning */
         Main_Screen_Reset();
+        /* CLAUDE */ LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: after the move, unit %d is at %d,%d plane %d", (int)_unit_stack[0].unit_idx, (int)_UNITS[_unit_stack[0].unit_idx].wx, (int)_UNITS[_unit_stack[0].unit_idx].wy, (int)_UNITS[_unit_stack[0].unit_idx].wp);
     }
+    /* CLAUDE */ else { LOG_DEBUG(LOG_CAT_GENERAL, "Move_Stack_DirKey: all_units_moved is set -- nothing moves"); }
 
 }
 

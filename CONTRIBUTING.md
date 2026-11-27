@@ -68,6 +68,15 @@ To run all tests:
 ctest --preset=MSVC-debug
 ```
 
+## Developer hotkeys
+
+- **Ctrl+Alt+Shift+Q** quits the game. All three modifiers are required, in every backend (SDL2, SDL3, Win32), so a Q typed with
+  only one of them, such as a capital Q in a name, reaches the game as a Q. It exits at once, from any screen, without saving.
+  It is not a player feature and is not in `PLAYING.md`.
+- **Checking quit on Windows:** `python3 tools/window_quit_check.py out/build/MSVC-debug/bin/Debug/ReMoM.exe all` launches the build and
+  sends the window's X, Ctrl+Alt+Shift+Q and Alt+Q as real OS input, then checks that the first two exit at once, the third does not,
+  and the captured cursor is released. Works for the SDL2, SDL3 and Win32 builds; don't type while it runs.
+
 ## Coding Standards
 
 ### Types

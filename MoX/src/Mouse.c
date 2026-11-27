@@ -292,6 +292,8 @@ int16_t Init_Mouse_Driver(void)
 
     pointer_x = init_pointer_x;
     pointer_y = init_pointer_y;
+    /* CLAUDE: this warp, made by SDL3 on Wayland with the mouse captured, crashed GNOME Shell (mutter 49.0); the backend guards it -- see MUTTER-49.0-CRASH in platform/sdl3/sdl3_MD.c */
+    /* CLAUDE */ Platform_Warp_Mouse(init_pointer_x, init_pointer_y);  /* INT 33h 0 (reset) above puts the DOS mouse in the middle of the screen; without this the real pointer stays wherever it was (another monitor, a corner) and the first mouse read replaces 158,100 with that */
 
     // INT 33, 7  638
     // INT 33, 8  199

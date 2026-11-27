@@ -1105,9 +1105,16 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 #endif
 
             /* Ctrl+Alt+Q to quit */
-            if((mox_mod & MOX_MOD_CTRL) && (mox_mod & MOX_MOD_ALT) && vk_code == 'Q')
+            // if((mox_mod & MOX_MOD_CTRL) && (mox_mod & MOX_MOD_ALT) && vk_code == 'Q')
+            /* CLAUDE: quit is Ctrl+Alt+Shift+Q, all three held -- the same in every backend (the SDL ones quit on any one of them). */
+            if(((mox_mod & MOX_MOD_CTRL) != 0) && ((mox_mod & MOX_MOD_ALT) != 0) && ((mox_mod & MOX_MOD_SHIFT) != 0) && (vk_code == 'Q'))
             {
-                PostQuitMessage(0);
+                // PostQuitMessage(0);
+                /* CLAUDE: exit at once, as the SDL backends do (SDL_QUIT -> exit()). PostQuitMessage only set quit_game_flag, which the game
+                   reads on the main menu and the main map alone, so anywhere else the hotkey did nothing until you got back there.
+                   ClipCursor is system-wide: release a captured cursor first. The input metrics flush through atexit(). */
+                ClipCursor(NULL);
+                exit(EXIT_SUCCESS);
             }
 
             /* Generate character code for printable keys */
@@ -1291,7 +1298,12 @@ static LRESULT CALLBACK Win_Window_Proc(HWND hWnd, UINT message, WPARAM wParam, 
 
         case WM_CLOSE:
         {
-            quit_game_flag = ST_TRUE;
+            // quit_game_flag = ST_TRUE;
+            /* CLAUDE: the X (and Alt+F4) exit at once, from any screen, as in the SDL backends (SDL_QUIT -> exit()). Setting quit_game_flag
+               alone did nothing until the game reached the main menu or the main map -- in combat or a city the X was ignored, and the
+               game quit to DOS later, when the player got back to the map. ClipCursor is system-wide: release a captured cursor first. */
+            ClipCursor(NULL);
+            exit(EXIT_SUCCESS);
         } break;
 
         case WM_DESTROY:

@@ -425,7 +425,10 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
     {
         case SDL_EVENT_KEY_DOWN:
         {
-            if((sdl3_key_modifiers & (SDL_KMOD_SHIFT | SDL_KMOD_CTRL | SDL_KMOD_ALT)) && (sdl3_key_code == SDLK_Q))
+            // if((sdl3_key_modifiers & (SDL_KMOD_SHIFT | SDL_KMOD_CTRL | SDL_KMOD_ALT)) && (sdl3_key_code == SDLK_Q))
+            /* CLAUDE: quit is Ctrl+Alt+Shift+Q, all three held -- in every backend. Any one of them used to quit, so a capital Q typed into a name
+               quit the game. */
+            if(((sdl3_key_modifiers & SDL_KMOD_CTRL) != 0) && ((sdl3_key_modifiers & SDL_KMOD_ALT) != 0) && ((sdl3_key_modifiers & SDL_KMOD_SHIFT) != 0) && (sdl3_key_code == SDLK_Q))
             {
                 SDL_Event sdl3_push_event = { 0 };
                 sdl3_push_event.type = SDL_EVENT_QUIT;
@@ -463,15 +466,19 @@ void Platform_Keyboard_Event(SDL_Event * sdl3_event)
                 mox_character = 0;
 
                 /* For non-printable keys that still need a character code (backspace, enter, escape, tab) */
-                switch(sdl3_key_code)
-                {
-                    case SDLK_BACKSPACE: mox_character = '\b'; break;
-                    case SDLK_RETURN:    mox_character = '\r'; break;
-                    case SDLK_KP_ENTER:  mox_character = '\r'; break;  /* CLAUDE: Numpad Enter, as the OG */
-                    case SDLK_ESCAPE:    mox_character = 0x1B; break;
-                    case SDLK_TAB:       mox_character = '\t'; break;
-                    default: break;
-                }
+                // switch(sdl3_key_code)
+                // {
+                //     case SDLK_BACKSPACE: mox_character = '\b'; break;
+                //     case SDLK_RETURN:    mox_character = '\r'; break;
+                //     case SDLK_KP_ENTER:  mox_character = '\r'; break;  /* CLAUDE: Numpad Enter, as the OG */
+                //     case SDLK_ESCAPE:    mox_character = 0x1B; break;
+                //     case SDLK_TAB:       mox_character = '\t'; break;
+                //     default: break;
+                // }
+                /* CLAUDE: no character for these keys -- as sdl2_KD.c, which leaves every key below MOX_KEY_SPACE with character 0. Read_Key()
+                   returns the character whenever there is one, and these ASCII codes are not the MoX key codes: '\r' (0x0D) is ST_KEY_TAB, so
+                   Enter acted as Tab and did not pick the control under the mouse; '\b' (0x08) and '\t' (0x09) are not ST_KEY_BACKSPACE (0x0B)
+                   or ST_KEY_TAB (0x0D). With character 0, Read_Key() returns the key code from key_xlat[] (MOX_KEY_ENTER etc.). */
 
                 /* ignore printable ASCII range when expecting SDL_EVENT_TEXT_INPUT */
                 if(hw_textinput_active && mox_key >= MOX_KEY_SPACE && mox_key <= MOX_KEY_z)

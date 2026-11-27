@@ -58,6 +58,9 @@ static STU_GRAF_Profile g_profile = STU_GRAF_WINDOWLESS;
    default.  See STU_GRAF_Set_User_Data_Dir(). */
 static char g_user_data_dir_override[STU_GRAF_PATH_MAX] = { 0 };
 
+/* The settings file [Paths] game_data is read from.  Empty = <config dir>/ReMoM.ini.  See STU_GRAF_Set_Settings_Ini(). */
+static char g_settings_ini_path[STU_GRAF_PATH_MAX] = { 0 };
+
 /* True if the name is already a path (absolute or contains a separator), in
    which case STU_GRAF must not prepend a search directory. */
 static int graf_name_is_path(const char * name)
@@ -605,6 +608,11 @@ static int graf_mkpath(const char * dir)
     return graf_mkdir_one(tmp);
 }
 
+int STU_GRAF_Make_Path(const char * dir)
+{
+    return graf_mkpath(dir);
+}
+
 int STU_GRAF_User_State_Dir(char * out, size_t cap)
 {
     /* Placed after graf_mkpath so it can create the dir on resolution -- the log
@@ -976,13 +984,26 @@ int STU_GRAF_Read_Game_Data_From_Ini(const char * ini_path, char * out, size_t c
     return found;
 }
 
-/* Add the user's configured game-data dir (from <config>/ReMoM.ini) if present. */
+void STU_GRAF_Set_Settings_Ini(const char * ini_path)
+{
+    snprintf(g_settings_ini_path, sizeof(g_settings_ini_path), "%s", (ini_path != NULL) ? ini_path : "");
+}
+
+/* Add the user's configured game-data dir (from the settings file, else <config>/ReMoM.ini) if present. */
 static void graf_add_config_game_data(void)
 {
     char cfg_dir[STU_GRAF_PATH_MAX];
     char ini_path[STU_GRAF_PATH_MAX];
     char game_data[STU_GRAF_PATH_MAX];
 
+    if(g_settings_ini_path[0] != '\0')
+    {
+        if(STU_GRAF_Read_Game_Data_From_Ini(g_settings_ini_path, game_data, sizeof(game_data)))
+        {
+            STU_GRAF_Add_Search_Dir(game_data);
+        }
+        return;
+    }
     if(!STU_GRAF_User_Config_Dir(cfg_dir, sizeof(cfg_dir)))
     {
         return;

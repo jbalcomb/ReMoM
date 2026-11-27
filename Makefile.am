@@ -31,6 +31,7 @@ libstu_a_SOURCES = \
     STU/src/STU_FMT.c \
     STU/src/STU_GRAF.c \
     STU/src/STU_HASH.c \
+    STU/src/STU_INI.c \
     STU/src/STU_INT.c \
     STU/src/STU_JSON.c \
     STU/src/STU_LOG.c \
@@ -293,7 +294,8 @@ libmom_a_CFLAGS = $(AM_CFLAGS) \
 ReMoM_SOURCES = \
     src/ReMoM.c \
     src/ReMoM_Init.c \
-    src/Automation_Driver.c
+    src/Automation_Driver.c \
+    src/Settings_Ini.c
 
 ReMoM_CFLAGS = $(AM_CFLAGS) \
     $(SDL_CFLAGS) \

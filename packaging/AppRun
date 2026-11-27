@@ -1,53 +1,68 @@
 #!/bin/sh
-# ReMoM AppImage launcher.  See doc/#Devel/Devel-Linux-AppImage.md
+# ReMoM AppImage launcher.  See doc/@Devel/Devel-Linux-AppImage.md and doc/@AI_Plans/PLAN-ReMoM-Ini.md.
 #
 # 1. Point the loader at the bundled libraries (SDL2 etc.).
-# 2. Portable-mode heuristic: if the folder that physically holds the .AppImage
-#    also holds the game data (FONTS.LBX) or a prior remom_app_dir/ folder, keep
-#    the data + saves (MAGIC.SET) + settings (ReMoM.ini) + logs there -- in a
-#    remom_app_dir/ subfolder -- using $APPIMAGE so it works no matter the current
-#    directory.  Otherwise fall back to the normal per-user XDG dirs + GOG/Steam
-#    auto-detect.
-#
-#    The subfolder is deliberately NOT called "ReMoM": the player executable is
-#    named ReMoM, portable mode puts both in one folder, and a filesystem cannot
-#    hold a file and a directory of the same name.
+# 2. Tell ReMoM which folder the .AppImage file is in (REMOM_PROGRAM_DIR).  A ReMoM.ini there is used
+#    in place of ~/.config/ReMoM/ReMoM.ini, the same as a ReMoM.ini next to ReMoM.exe on Windows.
+#    ReMoM can't work this out itself: the program it runs is inside the read-only image ($APPDIR).
+# 3. If the Master of Magic files are in that folder too, use them as the game data.  Settings, saves
+#    and logs still go to the normal per-user folders (~/.config/ReMoM, ~/.local/share/ReMoM,
+#    ~/.local/state/ReMoM).
+# 4. Once only: move the settings and saves out of a remom_app_dir/ folder left by an older AppImage
+#    (0.99.1 and before switched to a "portable mode" there whenever the game files were next to it).
 
 # $APPDIR is set by the AppImage runtime; default it for an extracted/dev run.
 APPDIR="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib:${LD_LIBRARY_PATH}"
 BIN="${APPDIR}/usr/bin/ReMoM"
 
-# The folder that holds the .AppImage file itself -- NOT the read-only mount
-# ($APPDIR) and NOT the current directory. $APPIMAGE is set by the runtime.
+# The folder that holds the .AppImage file itself -- NOT the read-only mount ($APPDIR) and NOT the
+# current directory.  $APPIMAGE is set by the runtime.  An extracted/dev run has no .AppImage file:
+# it uses the current directory for the game-data check and leaves "next to the program" to ReMoM.
 if [ -n "${APPIMAGE}" ]; then
     HERE="$(dirname "$(readlink -f "${APPIMAGE}")")"
+    export REMOM_PROGRAM_DIR="${REMOM_PROGRAM_DIR:-${HERE}}"
 else
     HERE="$(pwd)"
 fi
 
-if [ -w "${HERE}" ] && { [ -e "${HERE}/FONTS.LBX" ] || [ -e "${HERE}/fonts.lbx" ] || [ -d "${HERE}/remom_app_dir" ]; }; then
-    # Writable files (MAGIC.SET, saves, ReMoM.ini, logs) go in
-    # <folder>/remom_app_dir/.  FORCE these (=, not :=) so the portable folder wins
-    # even when the desktop or a sandbox (snap/flatpak) has already set XDG_*_HOME.
-    # ReMoM appends "/$REMOM_APP_DIR" to each, collapsing data/config/state into
-    # one <folder>/remom_app_dir/.
-    export XDG_DATA_HOME="${HERE}"
-    export XDG_CONFIG_HOME="${HERE}"
-    export XDG_STATE_HOME="${HERE}"
+# Game data next to the .AppImage.  An explicit REMOM_DATA_DIR from the caller still wins.
+if [ -e "${HERE}/FONTS.LBX" ] || [ -e "${HERE}/fonts.lbx" ]; then
+    export REMOM_DATA_DIR="${REMOM_DATA_DIR:-${HERE}}"
+fi
 
-    # The app directory lands in the SAME folder as the executable here, so it must
-    # not be called "ReMoM" -- the player binary is now named ReMoM, and a file and
-    # a directory cannot share a name.  Only portable mode sets this; installed /
-    # XDG users keep ~/.local/share/ReMoM and need no migration.
-    export REMOM_APP_DIR="remom_app_dir"
-
-    # Read the game data here only if it is actually here.  If we triggered on a
-    # pre-existing ReMoM/ folder (portable saves) without the LBX data, leave the
-    # normal search path (REMOM_DATA_DIR / ReMoM.ini / GOG-Steam auto-detect).
-    if [ -e "${HERE}/FONTS.LBX" ] || [ -e "${HERE}/fonts.lbx" ]; then
-        export REMOM_DATA_DIR="${REMOM_DATA_DIR:-${HERE}}"
-    fi
+# One-time move from the old portable folder.  Copies, never overwrites a file already in the
+# per-user folders, and leaves MOVED.txt saying what went where so it runs once.  The folder itself,
+# and its logs, are left for the player to delete.
+OLD="${HERE}/remom_app_dir"
+if [ -d "${OLD}" ] && [ -w "${OLD}" ] && [ ! -e "${OLD}/MOVED.txt" ]; then
+    CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/ReMoM"
+    DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/ReMoM"
+    REPORT="ReMoM no longer keeps its settings and saves in this folder.  On $(date), they were copied:"
+    mkdir -p "${CONFIG_DIR}" "${DATA_DIR}"
+    for FILE in "${OLD}"/*; do
+        [ -f "${FILE}" ] || continue
+        NAME="$(basename "${FILE}")"
+        case "${NAME}" in
+            [Rr][Ee][Mm][Oo][Mm].[Ii][Nn][Ii])
+                DEST="${CONFIG_DIR}/ReMoM.ini" ;;
+            [Mm][Aa][Gg][Ii][Cc].[Ss][Ee][Tt]|[Cc][Oo][Nn][Ff][Ii][Gg].[Mm][Oo][Mm]|[Ss][Aa][Vv][Ee]*.[Gg][Aa][Mm])
+                DEST="${DATA_DIR}/${NAME}" ;;
+            *)
+                continue ;;
+        esac
+        if [ -e "${DEST}" ]; then
+            REPORT="${REPORT}
+  ${NAME}: not copied -- ${DEST} already exists, and was kept"
+        elif cp -p "${FILE}" "${DEST}"; then
+            REPORT="${REPORT}
+  ${NAME} -> ${DEST}"
+        else
+            REPORT="${REPORT}
+  ${NAME}: could not be copied to ${DEST}"
+        fi
+    done
+    printf '%s\n\nYou can delete this folder.\n' "${REPORT}" > "${OLD}/MOVED.txt"
 fi
 
 exec "${BIN}" "$@"

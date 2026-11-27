@@ -104,7 +104,10 @@ void Platform_Keyboard_Event(SDL_Event * sdl2_event)
     {
         case SDL_KEYDOWN:
         {
-            if((sdl2_key_modifiers & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT)) && (sdl2_key_code == SDLK_q))
+            // if((sdl2_key_modifiers & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT)) && (sdl2_key_code == SDLK_q))
+            /* CLAUDE: quit is Ctrl+Alt+Shift+Q, all three held -- in every backend. Any one of them used to quit, so a capital Q typed into a name
+               quit the game. */
+            if(((sdl2_key_modifiers & KMOD_CTRL) != 0) && ((sdl2_key_modifiers & KMOD_ALT) != 0) && ((sdl2_key_modifiers & KMOD_SHIFT) != 0) && (sdl2_key_code == SDLK_q))
             {
                 SDL_Event sdl2_push_event = { 0 };
                 sdl2_push_event.type = SDL_QUIT;

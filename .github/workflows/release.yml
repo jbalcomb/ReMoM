@@ -155,8 +155,14 @@ jobs:
             --executable "$REMOM_BIN" \
             --desktop-file packaging/remom.desktop \
             --icon-file packaging/remom.png \
-            --custom-apprun "$GITHUB_WORKSPACE/packaging/AppRun" \
-            --output appimage
+            --custom-apprun "$GITHUB_WORKSPACE/packaging/AppRun"
+
+          # Use the desktop's GLib, not a bundled one.  SDL2_mixer's MIDI libraries (libfluidsynth, libinstpatch) pull the
+          # build machine's GLib into the bundle; on a newer desktop, libdecor's GTK plugin (window title bars under Wayland)
+          # then loads the system GTK and GIO against that older GLib and fails ("undefined symbol: g_variant_builder_init_static"),
+          # so a window had no title bar and could not be moved.  Every desktop that runs this has GLib.
+          rm -fv AppDir/usr/lib/libglib-2.0.so* AppDir/usr/lib/libgobject-2.0.so* AppDir/usr/lib/libgmodule-2.0.so* AppDir/usr/lib/libgio-2.0.so* AppDir/usr/lib/libgthread-2.0.so*
+          ./linuxdeploy-plugin-appimage --appdir AppDir
 
       - name: Package binaries (ZIP + TGZ, engine-only)
         run: cmake --build out/build/clang-release --target package

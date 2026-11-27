@@ -36,6 +36,7 @@
 #include "../STU/src/STU_DBG.h"
 #include "../STU/src/STU_GRAF.h"
 #include "../STU/src/STU_LOG.h"
+#include "Settings_Ini.h"  /* CLAUDE: the ReMoM.ini in effect (PLAN-ReMoM-Ini.md) */
 #include "../STU/src/STU_TST.h"   /* CLAUDE: g_tst_patch_scenario, for --patch */
 #include "../STU/src/STU_WRLD.h"
 
@@ -233,6 +234,7 @@ static void Replay_Log_Field_Hit(void *log, int mouse_x, int mouse_y)
 // int SDL_main(int argc, char* argv[])
 int main(int argc, char * argv[])
 {
+    const char * settings_ini_path = NULL;  /* CLAUDE: the ReMoM.ini in effect (PLAN-ReMoM-Ini.md) */
 
 #ifdef STU_VALGRIND
     ReMoM_Report_Startup_Platform();
@@ -254,11 +256,16 @@ int main(int argc, char * argv[])
        to the executable while an installed game keeps %LOCALAPPDATA%\ReMoM\logs.  Config declaring
        intent, not the binary sniffing its environment.  Full precedence, unchanged otherwise:
        REMOM_LOG_DIR (env) -> [Paths] log_dir -> per-user state dir -> CWD. */
+    /* CLAUDE: every setting below comes from the one ReMoM.ini in effect (PLAN-ReMoM-Ini.md): the one next to the program if there
+       is one, else the config folder's, created if missing.  Found, created and updated here, before logging -- it says where the
+       log goes.  NULL when there is none: everything keeps its default. */
+    Settings_Ini_Startup();
+    settings_ini_path = Settings_Ini_Path();
     {
         char ini_log_dir[1024];
         char log_state_dir[1024];
 
-        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Paths", "log_dir", ini_log_dir, sizeof(ini_log_dir)) && (ini_log_dir[0] != '\0'))
+        if(STU_GRAF_Read_Ini_Value(settings_ini_path, "Paths", "log_dir", ini_log_dir, sizeof(ini_log_dir)) && (ini_log_dir[0] != '\0'))
         {
             STU_Log_Set_Base_Dir(ini_log_dir);
         }
@@ -268,7 +275,8 @@ int main(int argc, char * argv[])
         }
     }
 
-    STU_Log_Startup("ReMoM.ini");
+    STU_Log_Startup(settings_ini_path);
+    Settings_Ini_Log();
 
     /* CLAUDE: install crash reporting right after logging exists.  The handler flushes STU_LOG
        before reporting -- the log is buffered, so an abort otherwise discards the whole run's log.
@@ -298,6 +306,7 @@ int main(int argc, char * argv[])
 
     /* Resolve the game-data search path (env -> exe-dir -> CWD) before any
        asset load, so the installed / portable player boots without a manual cd. */
+    STU_GRAF_Set_Settings_Ini(settings_ini_path);  /* CLAUDE: [Paths] game_data from the ReMoM.ini in effect */
     STU_GRAF_Init(STU_GRAF_PLAYER);
 
     /* CLAUDE: ReMoM.ini [Paths] save_dir overrides the per-user *data* dir (saves, MAGIC.SET).
@@ -306,7 +315,7 @@ int main(int argc, char * argv[])
        STU_GRAF_Init so it survives the profile selection, and well before any save is opened. */
     {
         char ini_save_dir[1024];
-        if(STU_GRAF_Read_Ini_Value("ReMoM.ini", "Paths", "save_dir", ini_save_dir, sizeof(ini_save_dir)) && (ini_save_dir[0] != '\0'))
+        if(STU_GRAF_Read_Ini_Value(settings_ini_path, "Paths", "save_dir", ini_save_dir, sizeof(ini_save_dir)) && (ini_save_dir[0] != '\0'))
         {
             STU_GRAF_Set_User_Data_Dir(ini_save_dir);
         }
@@ -427,15 +436,13 @@ int main(int argc, char * argv[])
 
     /* CLAUDE: ReMoM.ini [Video] -- the window state to start in (PLAN-Fullscreen.md phase 6), how the image is scaled (phase 3), and
        the shape it is shown at (PLAN-Aspect-Ratio.md phase 11).
-       Each key is read from the ReMoM.ini in the folder ReMoM was started from (a repo build, a portable unzip), and if it is not
-       there, from the per-user ReMoM.ini (%APPDATA%\ReMoM\, ~/.config/ReMoM/) -- the same file [Paths] game_data is read from, so an
-       installed copy picks the settings up too.
+       Read from the ReMoM.ini in effect (PLAN-ReMoM-Ini.md), like every other setting.  The defaults here must match the ones
+       src/Settings_Ini.c writes into a player's file.
        Read before Startup_Platform(), which creates the window. A missing key keeps the default; a value that is not understood is
        logged and the default is used, so a typo never stops the game from starting. */
     {
         char ini_value[64];
-        char user_ini_path[1024];
-        const char * video_ini_paths[2] = { "ReMoM.ini", NULL };
+        const char * video_ini_paths[1] = { settings_ini_path };
         const char * video_key_names[3] = { "startup_window", "scale_mode", "aspect_ratio" };
         const char * video_key_sources[3] = { NULL, NULL, NULL };
         char video_key_values[3][64];
@@ -445,15 +452,10 @@ int main(int argc, char * argv[])
         int scale_mode = VIEWPORT_SCALE_MODE_INTEGER;
         int pixel_aspect = VIEWPORT_PIXEL_ASPECT_SQUARE;
 
-        if(STU_GRAF_User_Config_Dir(user_ini_path, sizeof(user_ini_path) - 16))
-        {
-            strcat(user_ini_path, "ReMoM.ini");  /* the config dir ends with a separator */
-            video_ini_paths[1] = user_ini_path;
-        }
         for(video_key_index = 0; video_key_index < 3; video_key_index++)
         {
             video_key_values[video_key_index][0] = '\0';
-            for(video_ini_index = 0; video_ini_index < 2; video_ini_index++)
+            for(video_ini_index = 0; video_ini_index < 1; video_ini_index++)
             {
                 if(
                     (video_ini_paths[video_ini_index] != NULL) &&

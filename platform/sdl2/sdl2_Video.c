@@ -283,6 +283,7 @@ void Platform_Video_Update(void)
        resize. */
     sdl2_Viewport_Refresh();
     sdl2_Present_Image();
+    sdl2_Cursor_Overlay_Draw();  /* CLAUDE: captured with the cursor drawn by ReMoM (the Linux default) -- no-op otherwise */
 
     /* CLAUDE: metrics -- bracket the present so block time (vsync stall) and inter-present interval
        are both measured.  Off path is one branch; the two SDL_GetTicks() only run when enabled. */

@@ -145,6 +145,88 @@ void Platform_Set_Warp_Guard(void)
     pfl_warp_guard_until = (uint64_t)SDL_GetTicks() + 100;
 }
 
+/* CLAUDE: the captured mouse (relative mouse mode: fullscreen with the software cursor). While captured, the game cursor is
+   tracked here from the relative motion alone. SDL's absolute position is not used: on Linux it is replaced by wherever the real
+   pointer is (seen on GNOME/XWayland: the first small move jumped the cursor to the picture's left edge, the real pointer being on
+   the monitor to the left), while the relative motion stays right. Moves are scaled from window pixels to game pixels by the
+   picture's size, with the remainders carried so slow movement isn't lost. */
+static int16_t pfl_captured_x = 158;
+static int16_t pfl_captured_y = 100;
+static int pfl_captured_remainder_x = 0;
+static int pfl_captured_remainder_y = 0;
+
+int sdl2_Mouse_Is_Relative(void)
+{
+    return (SDL_GetRelativeMouseMode() == SDL_TRUE) ? 1 : 0;
+}
+
+void sdl2_Mouse_Relative_Set(int16_t game_x, int16_t game_y)
+{
+    pfl_captured_x = game_x;
+    pfl_captured_y = game_y;
+    pfl_captured_remainder_x = 0;
+    pfl_captured_remainder_y = 0;
+    SDL_GetRelativeMouseState(NULL, NULL);  /* drop motion gathered before this position was set */
+}
+
+static void sdl2_Mouse_Relative_Move(int xrel, int yrel)
+{
+    int image_x = 0;
+    int image_y = 0;
+    int image_width = 0;
+    int image_height = 0;
+    int step = 0;
+    int position = 0;
+
+    Viewport_Image_Rect_In_Window(&sdl2_viewport, &image_x, &image_y, &image_width, &image_height);
+    if((image_width <= 0) || (image_height <= 0))
+    {
+        return;
+    }
+    pfl_captured_remainder_x += xrel * PLATFORM_SCREEN_WIDTH;
+    step = pfl_captured_remainder_x / image_width;
+    pfl_captured_remainder_x -= step * image_width;
+    position = pfl_captured_x + step;
+    SETRANGE(position, 0, PLATFORM_SCREEN_WIDTH - 1);
+    pfl_captured_x = (int16_t)position;
+
+    pfl_captured_remainder_y += yrel * PLATFORM_SCREEN_HEIGHT;
+    step = pfl_captured_remainder_y / image_height;
+    pfl_captured_remainder_y -= step * image_height;
+    position = pfl_captured_y + step;
+    SETRANGE(position, 0, PLATFORM_SCREEN_HEIGHT - 1);
+    pfl_captured_y = (int16_t)position;
+}
+
+/* Take the relative motion SDL has gathered since the last call. Called at every cursor update -- Platform_Maybe_Move_Mouse()
+   runs whenever events are pumped, between game frames too -- so the cursor moves as smoothly as it did when it followed SDL's
+   absolute position. (Moving it on SDL_MOUSEMOTION events instead held it to the game frame rate: 110-170 ms per frame in a
+   Debug build, which felt unresponsive.) */
+static void sdl2_Mouse_Relative_Update(void)
+{
+    int delta_x = 0;
+    int delta_y = 0;
+    SDL_GetRelativeMouseState(&delta_x, &delta_y);
+    /* Only while the real pointer is over the game window. On Wayland (XWayland included) the compositor locks the pointer to a
+       window only once the pointer is over it -- no program can pull it across from another monitor -- yet the relative motion
+       still arrives. Following it then moved the game cursor while the real pointer roamed the desktop, and the first click went
+       to whatever window was under the real pointer. Until the player moves the pointer onto the game, the cursor stays put. */
+    if(SDL_GetMouseFocus() != sdl2_window)
+    {
+        return;
+    }
+    if((delta_x != 0) || (delta_y != 0))
+    {
+        sdl2_Mouse_Relative_Move(delta_x, delta_y);
+    }
+}
+
+/* The captured game cursor as a window position, for the code that takes window coordinates. */
+static void sdl2_Mouse_Relative_Window_Point(int * window_x, int * window_y)
+{
+    Platform_Game_To_Window(pfl_captured_x, pfl_captured_y, window_x, window_y);
+}
+
 /* CLAUDE: Cursor refresh — decoupled from the game loop.
  *
  * Previously this function read the stale pointer_x/pointer_y (set only when Platform_Event_Handler
@@ -172,6 +254,13 @@ void Platform_Maybe_Move_Mouse(void)
         gx = pointer_x;
         gy = pointer_y;
     }
+    else if(sdl2_Mouse_Is_Relative() != 0)
+    {
+        /* CLAUDE: captured -- the position tracked from relative motion; it never leaves the picture. */
+        sdl2_Mouse_Relative_Update();
+        gx = pfl_captured_x;
+        gy = pfl_captured_y;
+    }
     else
     {
         int ix, iy;
@@ -194,10 +283,29 @@ void Platform_Maybe_Move_Mouse(void)
        entirely; just keep the engine's pointer position and cursor shape current for hit-testing. */
     if(Platform_HW_Cursor_Active())
     {
+        int cursor_moved = ((gx != pointer_x) || (gy != pointer_y));  /* CLAUDE: overlay */
         pointer_x = gx;
         pointer_y = gy;
         if(current_mouse_list_count >= 2) { Check_Mouse_Shape(gx, gy); }
         Platform_HW_Cursor_Refresh();
+        /* CLAUDE: captured with the cursor drawn by ReMoM -- present the last frame again with the cursor at its new place, so it
+           moves as often as the mouse does, not 18 times a second with the game's frames. */
+        if((cursor_moved != 0) && (sdl2_Cursor_Overlay_Active() != 0) && (sdl2_Mouse_Is_Relative() != 0))
+        {
+            sdl2_Present_Image();
+            sdl2_Cursor_Overlay_Draw();
+            if(Input_Metrics_Active())
+            {
+                uint64_t overlay_t0 = (uint64_t)SDL_GetTicks();
+                Input_Metrics_Set_Reason("cursor");
+                SDL_RenderPresent(sdl2_renderer);
+                Input_Metrics_Record_Present(overlay_t0, (uint64_t)SDL_GetTicks());
+            }
+            else
+            {
+                SDL_RenderPresent(sdl2_renderer);
+            }
+        }
         return;
     }
 
@@ -285,9 +393,14 @@ static void pfl_video_input_grab(bool grabbed)
     SDL_SetWindowGrab(sdl2_window, grabbed ? SDL_TRUE : SDL_FALSE);
 
     /* The hardware cursor tracks the real OS cursor, which relative mode would hide and detach -- grab and confine only. */
-    if(pfl_option_relative_mouse && !Platform_HW_Cursor_Active())
+    /* CLAUDE: ...unless ReMoM draws the cursor itself while captured (the Linux default, sdl2_Cursor_Overlay_Active()). */
+    if(pfl_option_relative_mouse && (!Platform_HW_Cursor_Active() || (sdl2_Cursor_Overlay_Active() != 0)))
     {
 
+        if(grabbed)
+        {
+            sdl2_Mouse_Relative_Set(pointer_x, pointer_y);  /* CLAUDE: the captured cursor starts where the game cursor is */
+        }
         SDL_SetRelativeMouseMode(grabbed ? SDL_TRUE : SDL_FALSE);
 
     }
@@ -572,6 +685,7 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
 
         case SDL_WINDOWEVENT_FOCUS_GAINED:
         {
+            LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: focus gained");  /* CLAUDE: startup focus diagnosis */
             Platform_Mouse_Input_Enable();
             /* Back from Alt+Tab: fullscreen recaptures the mouse straight away (windowed waits for a click, as before). */
             if(sdl2_Is_Fullscreen() != 0)
@@ -581,8 +695,18 @@ void Platform_Window_Event(SDL_WindowEvent *sdl2_window_event)
             }
         } break;
 
+        case SDL_WINDOWEVENT_ENTER:
+        case SDL_WINDOWEVENT_LEAVE:
+        {
+            int now_x = 0;
+            int now_y = 0;
+            SDL_GetMouseState(&now_x, &now_y);
+            LOG_DEBUG(LOG_CAT_SDL2_PFL, "mouse: pointer %s the window; SDL reports %d,%d", (sdl2_window_event->event == SDL_WINDOWEVENT_ENTER) ? "entered" : "left", now_x, now_y);  /* CLAUDE: pointer-move diagnosis */
+        } break;
+
         case SDL_WINDOWEVENT_FOCUS_LOST:
         {
+            LOG_INFO(LOG_CAT_SDL2_PFL, "graphics: focus lost");  /* CLAUDE: startup focus diagnosis */
             Platform_Mouse_Input_Disable();
         } break;
 
@@ -738,17 +862,26 @@ void Platform_Event_Handler(void)
                         pfl_mouse_grab();
                     }
                 }
-                // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
-                if(sdl2_event.button.button == SDL_BUTTON_LEFT)
+                /* CLAUDE: captured -- the click is where the captured game cursor is, not SDL's absolute position */
                 {
-                    platform_frame_mouse_buttons |= 1;
-                    User_Mouse_Handler(1 /*0b00000001*/, sdl2_event.button.x, sdl2_event.button.y);
-                }
-                // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_RIGHT)
-                if(sdl2_event.button.button == SDL_BUTTON_RIGHT)
-                {
-                    platform_frame_mouse_buttons |= 2;
-                    User_Mouse_Handler(2 /*0b00000010*/, sdl2_event.button.x, sdl2_event.button.y);
+                    int click_x = sdl2_event.button.x;
+                    int click_y = sdl2_event.button.y;
+                    if(sdl2_Mouse_Is_Relative() != 0)
+                    {
+                        sdl2_Mouse_Relative_Window_Point(&click_x, &click_y);
+                    }
+                    // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_LEFT)
+                    if(sdl2_event.button.button == SDL_BUTTON_LEFT)
+                    {
+                        platform_frame_mouse_buttons |= 1;
+                        User_Mouse_Handler(1 /*0b00000001*/, click_x, click_y);
+                    }
+                    // if(SDL_BUTTON(e.button.button) == SDL_BUTTON_RIGHT)
+                    if(sdl2_event.button.button == SDL_BUTTON_RIGHT)
+                    {
+                        platform_frame_mouse_buttons |= 2;
+                        User_Mouse_Handler(2 /*0b00000010*/, click_x, click_y);
+                    }
                 }
                 if(sdl2_event.button.button == SDL_BUTTON_MIDDLE)
                 {
@@ -800,6 +933,11 @@ void Platform_Event_Handler(void)
         int x;
         int y;
         SDL_GetMouseState(&x, &y);
+        if(sdl2_Mouse_Is_Relative() != 0)
+        {
+            sdl2_Mouse_Relative_Update();
+            sdl2_Mouse_Relative_Window_Point(&x, &y);  /* CLAUDE: captured -- the tracked position, not SDL's absolute one */
+        }
         if((x != 0) || (y != 0))
         {
             // // // // // hw_mouse_move(x, y);

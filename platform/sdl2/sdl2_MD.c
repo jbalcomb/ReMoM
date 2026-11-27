@@ -5,6 +5,8 @@
 
 #include <SDL.h>
 
+#include "../../STU/src/STU_LOG.h"  /* CLAUDE: pointer-move diagnosis */
+
 #include <stdlib.h>  /* CLAUDE: getenv() for the HW-cursor gate */
 #include <string.h>  /* CLAUDE: strcmp() */
 
@@ -67,7 +69,18 @@ void Platform_Warp_Mouse(int16_t game_x, int16_t game_y)
     int window_y = 0;
     /* CLAUDE */  Platform_Set_Warp_Guard();  /* prevent Platform_Maybe_Move_Mouse() from reading stale OS position */
     Platform_Game_To_Window(game_x, game_y, &window_x, &window_y);  /* through the viewport (letterbox, high-DPI) */
+    if(sdl2_Mouse_Is_Relative() != 0)
+    {
+        sdl2_Mouse_Relative_Set(game_x, game_y);  /* CLAUDE: captured -- the game cursor is tracked here, not from the OS pointer */
+    }
     SDL_WarpMouseInWindow(sdl2_window, window_x, window_y);
+    /* CLAUDE: pointer-move diagnosis (Linux: the start position and arrow keys) -- where it was asked to go, and where SDL says it is. */
+    {
+        int now_x = 0;
+        int now_y = 0;
+        SDL_GetMouseState(&now_x, &now_y);
+        LOG_DEBUG(LOG_CAT_PFL, "mouse: warp game %d,%d -> window %d,%d; SDL reports %d,%d (relative mode %d, mouse focus %s)", (int)game_x, (int)game_y, window_x, window_y, now_x, now_y, (int)SDL_GetRelativeMouseMode(), (SDL_GetMouseFocus() == sdl2_window) ? "this window" : "elsewhere");
+    }
 }
 
 
@@ -117,6 +130,8 @@ static int          hwcur_gate = -1;   /* -1 = unresolved, else 0/1 from the env
 static int          hwcur_last_image = -1;
 static int          hwcur_last_width = 0;   /* size the current OS cursor was built at, in drawable pixels */
 static int          hwcur_last_height = 0;
+static int          hwcur_overlay_gate = 0;            /* CLAUDE: draw the cursor over the picture while captured (Linux default) */
+static SDL_Texture * hwcur_overlay_texture = NULL;     /* CLAUDE: the same image as the OS cursor, for the overlay */
 
 int Platform_HW_Cursor_Active(void)
 {
@@ -125,8 +140,40 @@ int Platform_HW_Cursor_Active(void)
         const char * env = getenv("REMOM_HW_CURSOR");
         /* CLAUDE: default ON -- the hardware cursor is the shipped behaviour; only REMOM_HW_CURSOR=0 forces the software cursor. */
         hwcur_gate = (env != NULL && strcmp(env, "0") == 0) ? 0 : 1;
+#if defined(__linux__)
+        /* CLAUDE: Linux, by default: the OS cursor in a window, and while captured in fullscreen the cursor drawn over the picture by
+           ReMoM (sdl2_Cursor_Overlay_*), with the mouse in relative mode. With the OS cursor captured, GNOME's XWayland neither
+           enforces the confinement nor moves the pointer for the game -- the mouse wandered into the black bars and onto the other
+           monitor -- and the game's own software cursor, drawn into the page, only moves at the game's 18 frames a second, which
+           felt sluggish. The overlay is redrawn whenever the mouse moves. REMOM_HW_CURSOR=1 forces the plain OS cursor, =0 the
+           game's software cursor. */
+        hwcur_overlay_gate = ((hwcur_gate == 1) && ((env == NULL) || (strcmp(env, "1") != 0))) ? 1 : 0;
+#endif
     }
     return hwcur_gate;
+}
+
+int sdl2_Cursor_Overlay_Active(void)
+{
+    (void)Platform_HW_Cursor_Active();  /* resolves the gates */
+    return hwcur_overlay_gate;
+}
+
+/* CLAUDE: the cursor, drawn over the frame already rendered, at the game pointer position -- only while captured (relative mode),
+   where the OS cursor is hidden. Hotspot top-left, as for the OS cursor. */
+void sdl2_Cursor_Overlay_Draw(void)
+{
+    SDL_Rect cursor_rect = { 0, 0, 0, 0 };
+
+    if((sdl2_Cursor_Overlay_Active() == 0) || (sdl2_Mouse_Is_Relative() == 0) || (hwcur_overlay_texture == NULL) || (Get_Pointer_Image_Number() == 0))
+    {
+        return;
+    }
+    cursor_rect.x = sdl2_viewport.rect_x + (int)(((int64_t)pointer_x * sdl2_viewport.rect_width) / PLATFORM_SCREEN_WIDTH);
+    cursor_rect.y = sdl2_viewport.rect_y + (int)(((int64_t)pointer_y * sdl2_viewport.rect_height) / PLATFORM_SCREEN_HEIGHT);
+    cursor_rect.w = hwcur_last_width;
+    cursor_rect.h = hwcur_last_height;
+    SDL_RenderCopy(sdl2_renderer, hwcur_overlay_texture, NULL, &cursor_rect);
 }
 
 void Platform_HW_Cursor_Refresh(void)
@@ -195,6 +242,13 @@ void Platform_HW_Cursor_Refresh(void)
     /* Hotspot (0,0): the game treats the pointer position as the sprite's top-left for hit-testing
        (Draw_Mouse_On_Page_ draws at x,y with no offset), so a top-left hotspot lands clicks identically. */
     newcur = SDL_CreateColorCursor(surf, 0, 0);
+    if(hwcur_overlay_gate != 0)
+    {
+        /* CLAUDE: the overlay draws this same image */
+        if(hwcur_overlay_texture != NULL) { SDL_DestroyTexture(hwcur_overlay_texture); }
+        hwcur_overlay_texture = SDL_CreateTextureFromSurface(sdl2_renderer, surf);
+        if(hwcur_overlay_texture != NULL) { SDL_SetTextureBlendMode(hwcur_overlay_texture, SDL_BLENDMODE_BLEND); }
+    }
     SDL_FreeSurface(surf);
     if(newcur != NULL)
     {

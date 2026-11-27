@@ -43,12 +43,14 @@ your home directory — see below). There is no repository to add yet, so `apt`
 won't auto-update it; watch the [Releases](https://github.com/jbalcomb/ReMoM/releases)
 page and install the newer `.deb` over the top when one appears.
 
-**The AppImage has a portable mode the `.deb` does not.** Put your Master of Magic
-files in the same folder as the `.AppImage` and it keeps everything — data, saves,
-settings, logs — right there in a `remom_app_dir/` subfolder instead of your home directory.
-See [Devel-Linux-AppImage.md](doc/@Devel/Devel-Linux-AppImage.md). An installed
-`.deb` always uses the per-user folders below, which is what you want for a system
-install.
+**The AppImage can sit right in your Master of Magic folder.** Put the `.AppImage` in the
+folder with your game files and it uses them. Your settings, saves and logs still go in
+the per-user folders below, the same as with the `.deb`.
+
+Older AppImages (0.99.1 and before) kept settings and saves in a `remom_app_dir/` folder
+next to the `.AppImage` instead. The first time you run a newer one, it copies them to the
+per-user folders, without overwriting anything already there, and leaves a `MOVED.txt` in
+`remom_app_dir/` listing what went where. After that you can delete `remom_app_dir/`.
 
 ## Telling ReMoM where your data is
 
@@ -73,23 +75,16 @@ files:
 - **Windows (PowerShell):** `$env:REMOM_DATA_DIR = "D:\Master of Magic"; .\ReMoM.exe`
 - **Windows (cmd):** `set REMOM_DATA_DIR=D:\Master of Magic` then `ReMoM.exe`
 
-**`ReMoM.ini` — permanent, no environment variable.** Create a plain text file
-named `ReMoM.ini` containing:
+**`ReMoM.ini` — permanent, no environment variable.** Open your `ReMoM.ini` (see
+*Your settings file* below), find the `game_data` line, remove the `;` in front of it and
+put in your folder:
 
 ```ini
 [Paths]
-game_data=/games/Master of Magic
+game_data = /games/Master of Magic
 ```
 
-The path may contain spaces (no quotes needed). Put the file here:
-
-| OS | Location of `ReMoM.ini` |
-|----|-------------------------|
-| Linux | `~/.config/ReMoM/ReMoM.ini` |
-| Windows | `%APPDATA%\ReMoM\ReMoM.ini` |
-| macOS | `~/Library/Application Support/ReMoM/ReMoM.ini` |
-
-(Create the `ReMoM` folder if it doesn't exist.)
+The path may contain spaces (no quotes needed).
 
 **Copy the files next to `ReMoM`.** Or just drop every `.LBX` file into the
 same folder as the executable — no config needed. (`CONFIG.MOM` is optional —
@@ -104,8 +99,8 @@ While you're in fullscreen, the mouse stays on the game picture until you Alt+Ta
 Press **Alt+Enter** at any time to switch to a normal window, which you can move and resize, and again to go back. The game
 itself never sees Alt+Enter, so it can't trigger anything in-game.
 
-To choose how ReMoM **starts**, add a `[Video]` section to your `ReMoM.ini`. It's the same file as in *Telling ReMoM where
-your data is* above, and you can create it if you don't have one:
+To choose how ReMoM **starts**, edit the `[Video]` section of your `ReMoM.ini` (see *Your settings file* below). Remove the `;`
+in front of a setting to switch it on:
 
 ```ini
 [Video]
@@ -122,8 +117,25 @@ aspect_ratio = 4:3
 
 A value ReMoM doesn't understand is ignored, and the default is used, so a typo never stops the game from starting.
 
-ReMoM also reads `[Video]` from a `ReMoM.ini` in the folder you start it from, and that one wins if both have the same
-setting. That's handy for a portable copy unzipped onto a USB stick.
+## Your settings file
+
+ReMoM makes `ReMoM.ini` the first time you start it, with every setting in it switched off (a `;` at the start of the line)
+and explained, so the defaults are used until you change one:
+
+| OS | Location of `ReMoM.ini` |
+|----|-------------------------|
+| Windows | `%APPDATA%\ReMoM\ReMoM.ini` (paste `%APPDATA%\ReMoM` into the Explorer address bar) |
+| Linux | `~/.config/ReMoM/ReMoM.ini` |
+
+- **`ReMoM_example.ini`**, in the same folder, shows every setting at its default. ReMoM never reads it, and each new
+  version replaces it.
+- **When a new version adds settings**, they're added to your `ReMoM.ini`, switched off, with their explanation. Your file
+  as it was is kept beside it as `ReMoM_backup_<date and time>.ini`. Nothing you wrote is changed.
+- **A `ReMoM.ini` next to the program** (next to `ReMoM.exe`, or next to the `.AppImage` file) is used instead, if you make
+  one: that whole file, and nothing from the one above. It gets new settings, a backup and an example file the same way.
+  That's handy for a copy kept on a USB stick.
+
+To see which file ReMoM used, look for the `settings: using` line near the top of its log.
 
 ## Where ReMoM keeps your saves and settings
 

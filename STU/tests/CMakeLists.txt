@@ -7,6 +7,7 @@ add_executable(test_STU
 	test_STU_LOG_calltrace_off.cpp
 	test_STU_UTIL.cpp
 	test_STU_GRAF.cpp
+	test_STU_INI.cpp
 	test_STU_HASH.cpp
 	test_STU_GD.cpp
 )

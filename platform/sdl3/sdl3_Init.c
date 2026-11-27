@@ -3,6 +3,7 @@
 #include "Platform_Perf.h"  /* CLAUDE: live frame-time readout base title */
 
 #include "sdl3_Audio.h"
+#include "../include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
 
 #include "../../STU/src/STU_DBG.h"
 #include "../../STU/src/STU_LOG.h"
@@ -18,6 +19,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>  /* CLAUDE: getenv() */
+#include <string.h>  /* CLAUDE: strcmp() */
 
 /*
     Platform-Layer Screen Buffer / Window Surface
@@ -46,6 +49,27 @@ void Startup_Platform(void)
     int w;
     int h;
     SDL_WindowFlags sdl3_window_flags;
+
+#if defined(__linux__)
+    /* CLAUDE: on a Wayland desktop, SDL's own Wayland driver first, X11 (XWayland) if it can't start -- as in sdl2_Init.c. Under
+       XWayland SDL cannot tell where the real pointer is: the captured mouse wandered onto the other monitor and the first click
+       went to another window. Wayland reports the pointer entering and leaving truthfully and locks it once it is over the game.
+       SDL3 has its own default order; this makes the choice explicit. An explicit SDL_VIDEO_DRIVER (or the old SDL_VIDEODRIVER)
+       still wins. */
+    {
+        const char * video_driver_env = getenv("SDL_VIDEO_DRIVER");
+        const char * old_video_driver_env = getenv("SDL_VIDEODRIVER");
+        const char * wayland_display_env = getenv("WAYLAND_DISPLAY");
+        if(((video_driver_env == NULL) || (video_driver_env[0] == '\0')) && ((old_video_driver_env == NULL) || (old_video_driver_env[0] == '\0')) && (wayland_display_env != NULL) && (wayland_display_env[0] != '\0'))
+        {
+            SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland,x11");
+        }
+    }
+#endif
+
+    /* CLAUDE: a captured mouse (relative mode) moves with the desktop's pointer acceleration, as the pointer does everywhere else. SDL3's
+       default is raw, unaccelerated motion, which on Linux felt slow and laggy next to SDL2. */
+    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SYSTEM_SCALE, "1");
 
 #ifndef NO_SOUND_LIBRARY
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
@@ -137,6 +161,19 @@ void Startup_Platform(void)
        pressed. Windowed is the window just created; leaving fullscreen comes back to it. */
     sdl3_Set_Window_State(Platform_Video_Startup_Window());
 
+    /* CLAUDE: take the focus at startup, as sdl2_Init.c does. Without it the window came up fullscreen on Linux (GNOME) with the
+       keyboard still going to whatever had it before: ESC did nothing, and the game saw no input until clicked.
+       SDL_HINT_FORCE_RAISEWINDOW makes the raise a real activation request, which window managers honour where a plain raise is
+       treated as focus stealing. (SDL3 has no SDL_SetWindowInputFocus; SDL_RaiseWindow takes the focus.) SDL3, unlike SDL2,
+       already prefers its Wayland driver on a Wayland desktop. */
+#ifdef SDL_HINT_FORCE_RAISEWINDOW
+    SDL_SetHint(SDL_HINT_FORCE_RAISEWINDOW, "1");
+#endif
+    if(SDL_RaiseWindow(sdl3_window) == false)
+    {
+        LOG_INFO(LOG_CAT_PFL, "graphics: could not raise the window at startup: %s", SDL_GetError());
+    }
+
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
     if(Platform_HW_Cursor_Active())
     {
@@ -155,10 +192,33 @@ void Startup_Platform(void)
     sdl3_Audio_Init();
 #endif
 
+    /* CLAUDE: Platform-Input Layer 1 -- runtime-gated input responsiveness metrics, OFF by default, as in sdl2_Init.c.
+       REMOM_INPUT_METRICS=1 writes ./remom_input_metrics.fwv; =PATH writes PATH; unset/0 stays off.
+       See doc/@AI_Plans/{BRA,PRD,PLAN}-Platform-Input.md. */
+    {
+        const char * im_env = getenv("REMOM_INPUT_METRICS");
+        if(im_env != NULL && im_env[0] != '\0' && strcmp(im_env, "0") != 0)
+        {
+            const char * im_path = (strcmp(im_env, "1") == 0) ? "remom_input_metrics.fwv" : im_env;
+            int im_scale = Platform_Get_Scale();  /* the viewport's scale, not window width / 320 */
+            int im_refresh = 0;
+            const SDL_DisplayMode * im_mode = SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(sdl3_window));
+            if(im_scale < 1) { im_scale = 1; }
+            if(im_mode != NULL)
+            {
+                im_refresh = (int)(im_mode->refresh_rate + 0.5f);
+            }
+            Input_Metrics_Init(im_path, "SDL3", SDL_GetCurrentVideoDriver(), im_scale, im_refresh);
+            sdl3_Viewport_Note_Metrics();  /* the real scale and rect; later changes are noted as they happen */
+            LOG_INFO(LOG_CAT_PFL, "CLAUDE: input metrics ENABLED -> %s", im_path);
+        }
+    }
+
 }
 
 void Shutdown_Platform(void)
 {
+    Input_Metrics_Shutdown();  /* CLAUDE: flush the input-metrics .fwv (also runs via atexit) */
     SDL_ShowCursor();
 
 #ifndef NO_SOUND_LIBRARY

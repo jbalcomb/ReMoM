@@ -7,6 +7,7 @@
 #include "../../platform/include/Platform.h"
 #include "../include/Platform_Perf.h"  /* CLAUDE: live frame-time readout (FR9/FR11) */
 #include "../include/Platform_Capture.h"
+#include "../include/Platform_Input_Metrics.h"  /* CLAUDE: Platform-Input Layer 1 metrics */
 
 #include "sdl3_PFL.h"
 #include "../../STU/src/STU_LOG.h"
@@ -68,6 +69,13 @@ int sdl3_Viewport_Refresh(void)
 void sdl3_Viewport_Log(void)
 {
     LOG_INFO(LOG_CAT_SDL3_PFL, "graphics: viewport -- window %dx%d, drawable %dx%d pixels, %s, %s, whole-number scale %d, image at %d,%d size %dx%d", sdl3_viewport.window_width, sdl3_viewport.window_height, sdl3_viewport.drawable_width, sdl3_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl3_viewport.scale_mode), Viewport_Aspect_Ratio_Name(sdl3_viewport.pixel_aspect), sdl3_viewport.scale, sdl3_viewport.rect_x, sdl3_viewport.rect_y, sdl3_viewport.rect_width, sdl3_viewport.rect_height);
+    sdl3_Viewport_Note_Metrics();  /* CLAUDE */
+}
+
+/* CLAUDE: as sdl2_Viewport_Note_Metrics() */
+void sdl3_Viewport_Note_Metrics(void)
+{
+    Input_Metrics_Note_Viewport(sdl3_viewport.window_width, sdl3_viewport.window_height, sdl3_viewport.drawable_width, sdl3_viewport.drawable_height, Viewport_Scale_Mode_Name(sdl3_viewport.scale_mode), Viewport_Aspect_Ratio_Name(sdl3_viewport.pixel_aspect), sdl3_viewport.scale, sdl3_viewport.rect_x, sdl3_viewport.rect_y, sdl3_viewport.rect_width, sdl3_viewport.rect_height);
 }
 
 /*
@@ -313,9 +321,22 @@ void Platform_Video_Update(void)
        stale pixels after a resize. */
     sdl3_Viewport_Refresh();
     sdl3_Present_Image();
+    sdl3_Cursor_Overlay_Draw();  /* CLAUDE: captured with the cursor drawn by ReMoM (the Linux default) -- no-op otherwise */
 
     // assert(SDL_RenderPresent(sdl3_renderer));
-    /* CLAUDE */ sdl3_Video_Check(SDL_RenderPresent(sdl3_renderer), SDL3_VIDEO_CALL_RENDER_PRESENT);
+    // /* CLAUDE */ sdl3_Video_Check(SDL_RenderPresent(sdl3_renderer), SDL3_VIDEO_CALL_RENDER_PRESENT);
+    /* CLAUDE: metrics -- bracket the present so block time (vsync stall) and inter-present interval are both measured, as in
+       sdl2_Video.c. Off path is one branch; the two SDL_GetTicks() only run when enabled. */
+    if(Input_Metrics_Active())
+    {
+        uint64_t im_t0 = (uint64_t)SDL_GetTicks();
+        sdl3_Video_Check(SDL_RenderPresent(sdl3_renderer), SDL3_VIDEO_CALL_RENDER_PRESENT);
+        Input_Metrics_Record_Present(im_t0, (uint64_t)SDL_GetTicks());
+    }
+    else
+    {
+        sdl3_Video_Check(SDL_RenderPresent(sdl3_renderer), SDL3_VIDEO_CALL_RENDER_PRESENT);
+    }
 
     /* CLAUDE: live frame-time readout -- see Platform_Perf.h. */
     Perf_Live_Note_Present();

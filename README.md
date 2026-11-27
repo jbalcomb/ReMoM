@@ -38,7 +38,34 @@ Download the latest version from the **[Releases page](https://github.com/jbalco
 - **The 1994 picture shape.** On a CRT monitor, Master of Magic's pixels were a little taller than they were wide. Switch to 4:3 and the screen looks the way it did back then: rounder circles and the original proportions.
 - **Sound and music,** played through your computer's normal audio.
 
-[PLAYING.md](PLAYING.md) has the settings that choose how the game starts.
+## Settings: `ReMoM.ini`
+
+ReMoM keeps its settings in a plain text file called `ReMoM.ini`. It makes the file the first time you start the game, with every setting listed and explained:
+
+| You're on | Your `ReMoM.ini` is in |
+|-----------|------------------------|
+| Windows | `%APPDATA%\ReMoM\` (paste that into the Explorer address bar) |
+| Linux | `~/.config/ReMoM/` |
+
+Open it in any text editor. A `;` at the start of a line switches that setting off, so the default is used. To change a setting, remove the `;` and edit the value:
+
+```ini
+[Video]
+scale_mode = fit_sharp_bilinear
+```
+
+| Setting | What it does | Choices (default first) |
+|---------|--------------|-------------------------|
+| `game_data` | Where your Master of Magic files are, if ReMoM didn't find them by itself | a folder |
+| `startup_window` | Whether the game starts fullscreen or in a window | `fullscreen`, `windowed` |
+| `scale_mode` | How the picture is enlarged | `integer` (sharpest), `fit_nearest` (biggest), `fit_sharp_bilinear` (biggest, evenly sized pixels) |
+| `aspect_ratio` | The picture's shape | `16:10` (square pixels), `4:3` (as on a 1994 monitor) |
+
+A setting ReMoM doesn't understand is ignored, so a typo never stops the game from starting.
+
+**New versions add their new settings for you.** They go into your `ReMoM.ini` switched off, with their explanation, and your file as it was is kept as `ReMoM_backup_<date and time>.ini`. Beside it, `ReMoM_example.ini` always shows every setting at its default. ReMoM never reads that one, and each new version replaces it.
+
+**Keeping everything in one folder?** A `ReMoM.ini` next to `ReMoM.exe`, or next to the `.AppImage` file, is used instead of the one above: that whole file, and nothing from the other. [PLAYING.md](PLAYING.md) explains each setting in full.
 
 ## Is it finished?
 

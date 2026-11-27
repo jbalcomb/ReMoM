@@ -139,6 +139,10 @@ void sdl2_Toggle_Fullscreen(void);  /* Alt+Enter: fullscreen <-> the window */
 int sdl2_Is_Fullscreen(void);
 void sdl2_Mouse_Confine_Update(void);  /* confine a captured mouse to the image rect; free it when released */
 void sdl2_Mouse_Keep_On_Image(int window_x, int window_y);  /* captured: warp an off-image OS position back onto the image */
+int sdl2_Mouse_Is_Relative(void);  /* CLAUDE: captured in relative mode: the game cursor is tracked from relative motion */
+void sdl2_Mouse_Relative_Set(int16_t game_x, int16_t game_y);  /* CLAUDE: move the captured game cursor (a warp, or the capture starting) */
+int sdl2_Cursor_Overlay_Active(void);  /* CLAUDE: Linux default -- while captured, ReMoM draws the cursor over the picture (sdl2_MD.c) */
+void sdl2_Cursor_Overlay_Draw(void);  /* CLAUDE: draw it over the frame just rendered, if captured */
 
 
 

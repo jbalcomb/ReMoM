@@ -448,8 +448,9 @@ void ReMoM_Init_Engine(void)
     Release_Version();
 
     Allocate_Data_Space(6100);
-    
-    Disable_Cancel();
+
+    // Disable_Cancel();
+    /* CLAUDE */ /* REBUG */ Enable_Cancel();  /* asm: MAGIC _main  call j_Allocate_Data_Space / call Enable_Cancel / call Load_Palette -- MAGIC.EXE never calls Disable_Cancel; with it, ESC returned -1 from Get_Input and could not skip the logos or the intro */
 
     Load_Palette(0, ST_UNDEFINED, 0);
     Apply_Palette();

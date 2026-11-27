@@ -322,5 +322,5 @@ never published; otherwise bump PATCH).
 | `cmake/remom_version.h.in` | Template for the generated version header. |
 | `CMakePresets.json` | `MSVC-release`, `clang-release`, `linux-package-release`, `macos-release` (+ debug) presets used by CI. |
 | `packaging/remom.desktop`, `packaging/remom.png` | Desktop entry + icon. Shared by the `.deb` install rules and the AppImage's `linuxdeploy` step, so the two can't drift. |
-| `packaging/AppRun` | AppImage launcher (portable-mode detection). |
+| `packaging/AppRun` | AppImage launcher: bundled libraries, the `.AppImage`'s folder as `REMOM_PROGRAM_DIR`, game data beside it, and the one-time move off the old `remom_app_dir/`. |
 | `tools/do_github_release.py` | One-command release: bump → tag → push → watch CI → publish the draft on green. |

@@ -252,6 +252,27 @@
             }
         },
         {
+            "name": "clang-sdl3-nosound-debug",
+            "displayName": "Linux Clang Debug (SDL3 backend, No Sound)",
+            "description": "Using Clang compilers on Linux, opt-in SDL3 backend with audio disabled: sdl3_Audio.c is written against the pre-release SDL_mixer 3 API (Mix_*), not the released SDL3_mixer 3.x (MIX_*). Needs SDL3 (e.g. libsdl3-dev).",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "DISABLE_AUDIO": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                },
+                "USE_SDL3": {
+                    "type": "BOOL",
+                    "value": "TRUE"
+                }
+            }
+        },
+        {
             "name": "clang-debug",
             "displayName": "Linux Clang",
             "description": "Using Clang compilers on Linux",
@@ -417,6 +438,17 @@
             "name": "clang-nosound-debug",
             "displayName": "Linux Clang (No Sound)",
             "configurePreset": "clang-nosound-debug",
+            "configuration": "Debug",
+            "targets": [
+                "all",
+                "ReMoM",
+                "DeMoM"
+            ]
+        },
+        {
+            "name": "clang-sdl3-nosound-debug",
+            "displayName": "Linux Clang Debug (SDL3 backend, No Sound)",
+            "configurePreset": "clang-sdl3-nosound-debug",
             "configuration": "Debug",
             "targets": [
                 "all",

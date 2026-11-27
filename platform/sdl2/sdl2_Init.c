@@ -226,6 +226,17 @@ void Startup_Platform(void)
         }
     }
 
+#if defined(__linux__)
+    /* CLAUDE: on a Wayland desktop, SDL's own Wayland driver first, X11 (XWayland) if it can't start. SDL2 picks X11 by default,
+       and under XWayland it cannot tell where the real pointer is: the captured mouse wandered onto the other monitor and the
+       first click went to another window. Wayland reports the pointer entering and leaving truthfully and locks it once it is
+       over the game. An explicit SDL_VIDEODRIVER still wins. */
+    if(((getenv("SDL_VIDEODRIVER") == NULL) || (getenv("SDL_VIDEODRIVER")[0] == '\0')) && (getenv("WAYLAND_DISPLAY") != NULL) && (getenv("WAYLAND_DISPLAY")[0] != '\0'))
+    {
+        SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
+    }
+#endif
+
 #ifndef NO_SOUND_LIBRARY
     SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 #else
@@ -297,6 +308,19 @@ void Startup_Platform(void)
     /* [Video] startup_window = fullscreen (ReMoM.ini, the default): start fullscreen, exactly as if Alt+Enter had been pressed.
        PLAN-Fullscreen.md phases 3 and 6. Windowed is the window just created; leaving fullscreen comes back to it. */
     sdl2_Set_Window_State(Platform_Video_Startup_Window());
+
+    /* CLAUDE: take the focus at startup.  Without this the window came up fullscreen on Linux (GNOME, X11 and Wayland) with the
+       keyboard still going to whatever had it before and the pointer left on the other monitor: ESC did nothing, and the game saw
+       no input until clicked.  SDL_HINT_FORCE_RAISEWINDOW makes the raise a real activation request (on X11, _NET_ACTIVE_WINDOW as
+       a pager would send it), which window managers honour where a plain raise is treated as focus stealing. */
+#ifdef SDL_HINT_FORCE_RAISEWINDOW
+    SDL_SetHint(SDL_HINT_FORCE_RAISEWINDOW, "1");
+#endif
+    SDL_RaiseWindow(sdl2_window);
+    if(SDL_SetWindowInputFocus(sdl2_window) != 0)
+    {
+        LOG_INFO(LOG_CAT_SDL2_INIT, "graphics: could not set the input focus at startup: %s", SDL_GetError());
+    }
 
     /* CLAUDE: HW-cursor prototype shows the OS cursor; the default path hides it and software-draws. */
     if(Platform_HW_Cursor_Active())

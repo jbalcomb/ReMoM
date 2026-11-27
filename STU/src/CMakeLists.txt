@@ -16,6 +16,7 @@ set(LIBSTU_SOURCES
     STU_GD_MoM.c
     STU_GRAF.c
     STU_HASH.c
+    STU_INI.c
     STU_INIT.c
     STU_INT.c
     STU_JSON.c
