@@ -80,9 +80,10 @@ FetchContent_MakeAvailable(googletest)
 # Custom Find modules for SDL2 (from chocolate-doom)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# SDL backend selection: SDL2 (default) or SDL3 (opt-in with -DUSE_SDL3=ON)
+# SDL backend: SDL2, which every release uses. USE_SDL3 builds the SDL3 backend, in development for developers only: no sound or music
+# yet (see BUILDING.md, "SDL3 (in development)"); it is not an alternative to SDL2.
 # https://wiki.libsdl.org/SDL3/README/cmake
-option(USE_SDL3 "Use SDL3 instead of SDL2 (default: SDL2)" OFF)
+option(USE_SDL3 "SDL3 backend: in development, for developers only, no sound (default: SDL2)" OFF)
 
 option(USE_WIN32 "Use native Win32 backend instead of SDL (no SDL dependency)" OFF)
 

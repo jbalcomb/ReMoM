@@ -18,9 +18,10 @@ working directory at runtime.
 - **SDL2_mixer** development libraries (optional, for audio)
 - autoconf, automake, pkg-config (for ./configure builds)
 
-Optionally, you can build with **SDL3** instead (`--with-sdl3`), but SDL3
-is relatively new and may not be in your distro's default package
-repositories yet. See the [SDL3 backend](#sdl3-backend) section below.
+**SDL3** is a future feature, in development for developers only. It is not an
+alternative to the SDL2 backend (or, on Windows, to the native Win32 backend): no
+release is built with it, and it has no sound or music yet. See
+[SDL3 (in development)](#sdl3-in-development) below.
 
 
 ## Installing Dependencies
@@ -114,7 +115,7 @@ Other Windows presets:
 |--------|---------|
 | `MSVC-nosound-debug` | SDL2, no audio |
 | `MSVC-win32-debug`, `MSVC-win32-release` | the native **Win32** (GDI) backend: no SDL, no audio, self-contained |
-| `MSVC-sdl3-nosound-debug`, `MSVC-sdl3-nosound-release` | SDL3 from `C:\devellib\SDL3-3.4.2\`, no audio (see [SDL3 Backend](#sdl3-backend)) |
+| `MSVC-sdl3-nosound-debug`, `MSVC-sdl3-nosound-release` | SDL3, **in development, for developers only**: no sound or music (see [SDL3 (in development)](#sdl3-in-development)) |
 
 ### Linux (Ubuntu / Debian / Kubuntu)
 
@@ -157,7 +158,7 @@ game's packed DOS structures, so macOS doesn't build yet. See RELEASES.md, "Know
 
 | Option                | Default | Description                              |
 |-----------------------|---------|------------------------------------------|
-| `--with-sdl3`        | no      | Use SDL3 instead of SDL2                 |
+| `--with-sdl3`        | no      | SDL3 backend, in development, for developers only; no sound (see [SDL3 (in development)](#sdl3-in-development)) |
 | `--enable-static-sdl` | no      | Link SDL statically (no DLLs at runtime) |
 | `--disable-audio`     | enabled | Build without SDL_mixer / sound support  |
 
@@ -170,35 +171,53 @@ make
 ```
 
 
-## SDL3 Backend
+## SDL3 (in development)
 
-To build with SDL3 instead of SDL2:
+The SDL3 backend is a future feature, kept building for developers. It is not an
+alternative to the SDL2 backend, which every release uses, or to the native Win32
+backend on Windows. Graphics, input, fullscreen and the mouse work on Windows and Linux;
+**it has no sound and no music**, for two reasons:
+
+1. **The mixer API changed.** `platform/sdl3/sdl3_Audio.c` was written against the
+   pre-release SDL3_mixer API (`Mix_*` functions, like SDL2_mixer's). The released
+   SDL3_mixer 3.x is a rewrite with a different API (`MIX_Mixer`, `MIX_Audio`,
+   `MIX_Track`, `MIX_*` functions), so SDL3 with sound does not compile.
+2. **MIDI.** Master of Magic's music is XMIDI, which ReMoM converts to standard MIDI
+   and hands to the mixer. Porting to the `MIX_*` API would give sound effects, not
+   music:
+   - SDL3_mixer 3.2.0 has **no native-MIDI decoder**. The released Windows build plays
+     its music through Windows' own built-in synthesizer, SDL2_mixer's `NATIVEMIDI`
+     decoder, with nothing extra shipped. SDL3_mixer cannot do that.
+   - Its MIDI decoders are **FluidSynth** and **TiMidity**: software synthesizers that
+     need a soundfont (FluidSynth) or a patch set (TiMidity). FluidSynth takes the
+     soundfont per file (`MIX_PROP_DECODER_FLUIDSYNTH_SOUNDFONT_PATH_STRING`) and, on
+     Linux, falls back to `/usr/share/sounds/sf2/default-GM.sf2`; TiMidity reads
+     `TIMIDITY_CFG` or `/etc/timidity*.cfg`. Both are on by default in SDL3_mixer's own
+     CMake build, but FluidSynth is left out of its vendored builds.
+   - The prebuilt Windows SDL3_mixer 3.2.0 (`C:\devellib\SDL3_mixer-3.2.0`) has neither:
+     its decoders are WAV, STBVORBIS, DRFLAC, VOC, AIFF, AU, DRMP3, SINEWAVE and RAW.
+   - Ubuntu 25.10 packages SDL3, SDL3_image and SDL3_ttf, but **not SDL3_mixer**.
+
+   So SDL3 music needs SDL3_mixer built from source with FluidSynth; and on Windows
+   either a FluidSynth DLL and a General MIDI soundfont shipped with the game, or a
+   separate path to Windows' built-in synthesizer. That choice is still open.
+
+Build it with the SDL3 presets, which turn sound off:
 
 ```sh
-./configure --with-sdl3
-make
-```
-
-Or with CMake:
-
-```sh
-cmake -B build -DUSE_SDL3=ON
-cmake --build build
-```
-
-On Windows with Visual Studio 2022, the SDL3 presets find SDL3 in
-`C:\devellib\SDL3-3.4.2`:
-
-```sh
-cmake --preset MSVC-sdl3-nosound-debug
+cmake --preset MSVC-sdl3-nosound-debug          # Windows: SDL3 from C:\devellib\SDL3-3.4.2
 cmake --build --preset MSVC-sdl3-nosound-debug
+cmake --preset clang-sdl3-nosound-debug         # Linux: SDL3 from your distro (libsdl3-dev)
+cmake --build --preset clang-sdl3-nosound-debug
 ```
 
-`MSVC-sdl3-nosound-release` is the Release build of the same thing.
+`MSVC-sdl3-nosound-release` is the Windows Release build. With autotools, use
+`./configure --with-sdl3 --disable-audio`: without `--disable-audio`, an installed SDL3_mixer is
+picked up and the old audio code fails to compile.
 
-The SDL3 presets build without sound. The SDL3 audio code is written against the
-pre-release SDL_mixer 3 API (`Mix_*` functions). The released SDL3_mixer 3.x uses a
-different API (`MIX_*` functions), so SDL3 with sound does not compile yet.
+On Linux, test SDL3 changes in a throwaway login session, never on a desktop with work
+open: on GNOME 49 / mutter 49.0 an SDL3 pointer warp crashed GNOME Shell and the whole
+session (see `MUTTER-49.0-CRASH` in `platform/sdl3/sdl3_MD.c`).
 
 SDL3 packages may need to be built from source if not available in your
 distro. Source tarballs and build instructions are at:
@@ -217,7 +236,7 @@ sudo apt-get install build-essential git make     pkg-config cmake ninja-build g
 
 ### SDL3 dependency packages (if available)
 
-**Debian / Ubuntu:** `libsdl3-dev libsdl3-mixer-dev`
+**Debian / Ubuntu:** `libsdl3-dev` (Ubuntu 25.10 has no SDL3_mixer package)
 **Fedora:** `SDL3-devel SDL3_mixer-devel`
 **macOS:** `brew install sdl3 sdl3_mixer`
 **MSYS2:** `mingw-w64-x86_64-SDL3 mingw-w64-x86_64-SDL3_mixer`

@@ -22,7 +22,7 @@ AC_ARG_ENABLE([static-sdl],
     [], [enable_static_sdl=no])
 
 AC_ARG_WITH([sdl3],
-    AS_HELP_STRING([--with-sdl3], [Use SDL3 instead of SDL2 for ReMoM (default: SDL2). DeMoM is always windowless.]),
+    AS_HELP_STRING([--with-sdl3], [SDL3 backend for ReMoM: in development, for developers only, no sound -- use with --disable-audio (default: SDL2). DeMoM is always windowless.]),
     [], [with_sdl3=no])
 
 # Performance instrumentation -- the Autotools twin of the PERF_INSTRUMENT CMake option
