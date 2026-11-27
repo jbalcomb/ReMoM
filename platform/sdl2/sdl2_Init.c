@@ -226,11 +226,13 @@ void Startup_Platform(void)
         }
     }
 
-#if defined(__linux__)
+#if defined(__linux__) && defined(SDL_HINT_VIDEODRIVER)
     /* CLAUDE: on a Wayland desktop, SDL's own Wayland driver first, X11 (XWayland) if it can't start. SDL2 picks X11 by default,
        and under XWayland it cannot tell where the real pointer is: the captured mouse wandered onto the other monitor and the
        first click went to another window. Wayland reports the pointer entering and leaving truthfully and locks it once it is
-       over the game. An explicit SDL_VIDEODRIVER still wins. */
+       over the game. An explicit SDL_VIDEODRIVER still wins.
+       SDL_HINT_VIDEODRIVER is SDL 2.0.22 and later; built against an older SDL2 (Ubuntu 22.04 has 2.0.20: the .deb CI job), the
+       choice is left to SDL, which is X11. */
     if(((getenv("SDL_VIDEODRIVER") == NULL) || (getenv("SDL_VIDEODRIVER")[0] == '\0')) && (getenv("WAYLAND_DISPLAY") != NULL) && (getenv("WAYLAND_DISPLAY")[0] != '\0'))
     {
         SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
