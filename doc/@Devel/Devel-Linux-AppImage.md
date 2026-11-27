@@ -141,9 +141,12 @@ Players never asked for it, and it silently ignored `~/.config/ReMoM/ReMoM.ini`,
 
 - `ReMoM.ini` is copied to `~/.config/ReMoM/`, and `MAGIC.SET`, `CONFIG.MOM` and `SAVE*.GAM` to
   `~/.local/share/ReMoM/` (names matched case-insensitively);
-- a file already at the destination is kept, never overwritten;
+- a file already at the destination is kept, never overwritten; if the two are identical (`cmp -s`) the report says so, and if
+  they differ the folder's copy is marked "still only here", with both modification dates;
 - `remom_app_dir/MOVED.txt` lists what went where, and its presence stops the move running again;
-- the folder and its old logs are left for the player to delete.
+- the folder and its old logs are left for the player to delete. `MOVED.txt` says the folder can be deleted only when nothing is
+  marked "still only here" (a differing file, or one that could not be copied); otherwise it says to keep it. (0.99.2's first build
+  said "You can delete this folder" even when a newer save in it had not been copied.)
 
 `STU_GRAF` still honours `REMOM_APP_DIR` (a bare directory name; separators, `.` and `..` are
 rejected), but nothing sets it any more.
