@@ -386,17 +386,27 @@ void Init_Summoning_Circle_And_Spell_Of_Mastery(void)
         
         _players[itr_players].som_research_cost = spell_data_table[spl_Spell_Of_Mastery].research_cost;
 
+        // if(
+        //     (_players[itr_players].spellranks[0] == 11)
+        //     &&
+        //     (_players[itr_players].spellranks[1] == 11)
+        //     &&
+        //     (_players[itr_players].spellranks[2] == 11)
+        //     &&
+        //     (_players[itr_players].spellranks[3] == 11)
+        //     &&
+        //     (_players[itr_players].spellranks[4] == 11)
+        // )
+        /* BEGIN:   REBUG */
+        /* CLAUDE */ /* REBUG */ /* asm: jz loc_52776 on each realm == 11 (OR); jnz skip only after realm 4 */
         if(
-            (_players[itr_players].spellranks[0] == 11)
-            &&
-            (_players[itr_players].spellranks[1] == 11)
-            &&
-            (_players[itr_players].spellranks[2] == 11)
-            &&
-            (_players[itr_players].spellranks[3] == 11)
-            &&
+            (_players[itr_players].spellranks[0] == 11) ||
+            (_players[itr_players].spellranks[1] == 11) ||
+            (_players[itr_players].spellranks[2] == 11) ||
+            (_players[itr_players].spellranks[3] == 11) ||
             (_players[itr_players].spellranks[4] == 11)
         )
+        /* END:     REBUG */
         {
             _players[itr_players].som_research_cost -= 3000;
         }
