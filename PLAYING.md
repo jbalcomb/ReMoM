@@ -50,7 +50,10 @@ the per-user folders below, the same as with the `.deb`.
 Older AppImages (0.99.1 and before) kept settings and saves in a `remom_app_dir/` folder
 next to the `.AppImage` instead. The first time you run a newer one, it copies them to the
 per-user folders, without overwriting anything already there, and leaves a `MOVED.txt` in
-`remom_app_dir/` listing what went where. After that you can delete `remom_app_dir/`.
+`remom_app_dir/` listing what went where. Read it before deleting the folder: a save or setting
+that is different from the one already in the per-user folder is not copied, and `MOVED.txt`
+marks it "still only here", with both dates, so you can choose which one to keep. When nothing is
+marked, `MOVED.txt` says the folder can be deleted.
 
 ## Telling ReMoM where your data is
 

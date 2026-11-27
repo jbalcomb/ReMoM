@@ -33,12 +33,15 @@ fi
 
 # One-time move from the old portable folder.  Copies, never overwrites a file already in the
 # per-user folders, and leaves MOVED.txt saying what went where so it runs once.  The folder itself,
-# and its logs, are left for the player to delete.
+# and its logs, are left for the player to delete -- and MOVED.txt says it can be deleted only when
+# nothing in it is left un-copied: a file that differs from the one already in the per-user folder
+# (an older or newer save, say) is still only here.
 OLD="${HERE}/remom_app_dir"
 if [ -d "${OLD}" ] && [ -w "${OLD}" ] && [ ! -e "${OLD}/MOVED.txt" ]; then
     CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/ReMoM"
     DATA_DIR="${XDG_DATA_HOME:-${HOME}/.local/share}/ReMoM"
-    REPORT="ReMoM no longer keeps its settings and saves in this folder.  On $(date), they were copied:"
+    REPORT="ReMoM no longer keeps its settings and saves in this folder.  On $(date), it moved them to the normal per-user folders:"
+    ONLY_HERE=0   # 1 when a file here was not copied and is not identical to the one kept
     mkdir -p "${CONFIG_DIR}" "${DATA_DIR}"
     for FILE in "${OLD}"/*; do
         [ -f "${FILE}" ] || continue
@@ -51,18 +54,30 @@ if [ -d "${OLD}" ] && [ -w "${OLD}" ] && [ ! -e "${OLD}/MOVED.txt" ]; then
             *)
                 continue ;;
         esac
-        if [ -e "${DEST}" ]; then
+        if [ -e "${DEST}" ] && command -v cmp >/dev/null 2>&1 && cmp -s "${FILE}" "${DEST}"; then
             REPORT="${REPORT}
-  ${NAME}: not copied -- ${DEST} already exists, and was kept"
+  ${NAME}: already in ${DEST}, identical -- nothing to copy"
+        elif [ -e "${DEST}" ]; then
+            ONLY_HERE=1
+            REPORT="${REPORT}
+  ${NAME}: NOT copied, and still only here.  ${DEST} already exists and is different, so it was kept.
+      this folder's copy:  $(date -r "${FILE}" '+%Y-%m-%d %H:%M' 2>/dev/null)
+      the kept copy:       $(date -r "${DEST}" '+%Y-%m-%d %H:%M' 2>/dev/null)
+      To use this folder's copy instead, copy it over the kept one."
         elif cp -p "${FILE}" "${DEST}"; then
             REPORT="${REPORT}
   ${NAME} -> ${DEST}"
         else
+            ONLY_HERE=1
             REPORT="${REPORT}
-  ${NAME}: could not be copied to ${DEST}"
+  ${NAME}: could not be copied to ${DEST}, and is still only here"
         fi
     done
-    printf '%s\n\nYou can delete this folder.\n' "${REPORT}" > "${OLD}/MOVED.txt"
+    if [ "${ONLY_HERE}" -eq 1 ]; then
+        printf '%s\n\nKeep this folder until you have dealt with the files marked "still only here":\nthey are not anywhere else.  Everything else in it can go.\n' "${REPORT}" > "${OLD}/MOVED.txt"
+    else
+        printf '%s\n\nEverything here is now in the per-user folders, so you can delete this folder.\n' "${REPORT}" > "${OLD}/MOVED.txt"
+    fi
 fi
 
 exec "${BIN}" "$@"
