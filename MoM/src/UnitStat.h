@@ -26,6 +26,7 @@ extern SAMB_ptr unit_figure_seg;
 // int16_t unitview_window;
 extern int16_t uv_specials_list_index;
 extern int16_t uv_multipage;
+/* CLAUDE */ extern int16_t uv_hero;  /* Production_Screen clears it -- see the OGBUG note there */
 extern int16_t uv_specials_list_count;
 extern struct s_UV_List * uv_specials_list_array;
 // int32_t uv_specials_fields_ability_flags[8];

@@ -1,0 +1,46 @@
+# test_prod_after_hero.hms -- DeMoM_ProdScr_After_Hero: the Production Screen opened right after a hero's unit window.
+#
+# Production_Screen did not reset uv_hero (an OGBUG; see ProdScr.c), so after a hero's unit window its first
+# Production_Screen_Add_Fields -> UV_Add_Specials_Fields showed 4 specials for a unit with fewer, read past the end of
+# prod_specials_list, and crashed in FLIC_Get_Width (community report, Linux AppImage; same stack here on Windows and Linux).
+#
+# SAVECMBT.GAM: the human hero is unit 75 (hero slot 1), in Bremen (14,13); New Haven (19,12) builds High Men Pikemen
+# (unit type 112, 2 specials).
+wait_screen Main_Screen
+wait 1s
+
+# Armies screen; left-click hero portrait 1 (ArmyList_Hero_Portrait_Coords: x1 = 12 + 265, y1 = 5, 32 x 32):
+# selects the hero's stack and returns to the Main Screen
+key a
+wait_screen Armies_Screen
+wait 1s
+click 293 21
+wait_screen Main_Screen
+wait 1s
+
+# right-click the first figure in the Main Screen's unit window -> Unit_Statistics_Popup for the hero (sets uv_hero)
+rclick 255 89
+wait 2s
+escape
+wait 1s
+
+# C: Center_Map on the stack at (14,13) -> map view origin (8,8)
+key c
+wait 1s
+
+# right-click New Haven (19,12): ((19 - 8) * 20 + 10, 20 + (12 - 8) * 18 + 9) -> City Screen
+rclick 230 101
+wait_screen City_Screen
+wait 1s
+
+# C (Change) -> Production Screen -- crashed here
+key c
+wait 2s
+
+# leave the Production Screen, then the City Screen
+escape
+wait 1s
+key o
+wait_screen Main_Screen
+wait 1s
+quit

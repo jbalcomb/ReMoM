@@ -233,6 +233,15 @@ void Production_Screen(void)
 
     uv_specials_list_index = 0;
     uv_multipage = ST_FALSE;
+    /* OGBUG  Production_Screen does not reset uv_hero (asm: no write to uv_hero between entry and the first Production_Screen_Add_Fields; only
+              Unit_Statistics_Popup, Thing_View_Draw__WIP, UV_Setup_HireScr and UV_Setup_ProdScr write it).  After a hero's unit window it is still
+              ST_TRUE, so the first Production_Screen_Add_Fields -> UV_Add_Specials_Fields shows 4 specials for a unit with fewer and reads past the end
+              of prod_specials_list, until the first Production_Screen_Draw -> Thing_View_Draw__WIP clears it.  The list sits 20 bytes before the unit
+              window's uv_specials_list_array in near_buffer (Near_Allocate_First(80) here, (100) in Unit_View_Allocate), so those entries are leftover,
+              misaligned bytes of the hero's list.  OG 1.31 (STU-DOSBox, SAVECMBT.GAM, hero window -> New Haven -> Change): uv_hero=1 for 4 frames with
+              2 specials and picts[2..3] = segment 0000 -- harmless in real mode.  ReMoM's 64-bit pointers fault in FLIC_Get_Width.  Clear it here, as
+              UV_Setup_ProdScr does when another product is picked; nothing visible changes, since OG never draws those entries.  Test: DeMoM_ProdScr_After_Hero. */
+    /* CLAUDE */ uv_hero = ST_FALSE;
 
     if(uv_specials_list_count > 9)
     {

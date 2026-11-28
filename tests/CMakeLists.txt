@@ -66,6 +66,7 @@ demom_stage_workdir(AIBehavior       DEBUG_ONLY FILES "${DEMOM_TEST_ASSETS}/MAGI
 demom_stage_workdir(Combat_Strategic FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
 demom_stage_workdir(Cast_Summon      FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
 demom_stage_workdir(AI_Dead_Units    FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
+demom_stage_workdir(ProdScr_After_Hero FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET" "${DEMOM_TEST_ASSETS}/SAVECMBT.GAM")
 demom_stage_workdir(L61              FILES "${DEMOM_TEST_ASSETS}/MAGIC.SET")
 
 # --- Smoke Test: World Generation ---
@@ -418,6 +419,48 @@ add_test(
 set_tests_properties(DeMoM_Combat_Strategic_Assertions PROPERTIES
     FIXTURES_REQUIRED DeMoM_Combat_Strategic
     LABELS "demom;integration;combat"
+)
+
+
+
+# =========================================================================
+#  Production Screen right after a hero's unit window  (community crash report)
+#
+#  Loads SAVECMBT.GAM and, through the real input path, opens the hero's unit
+#  window, then a city building a unit with 2 specials, then Change.  Production_Screen
+#  did not reset uv_hero (an OGBUG, see ProdScr.c), so UV_Add_Specials_Fields read
+#  past the end of prod_specials_list and crashed in FLIC_Get_Width.  Without the
+#  fix the run step crashes (checked: Windows Debug and Release, Linux Release).
+#  The check step proves the scenario reached the hero's unit window, the City
+#  Screen and back, so a pass is not a scenario that silently went nowhere.
+# =========================================================================
+
+add_test(
+    NAME DeMoM_ProdScr_After_Hero_Run
+    COMMAND $<TARGET_FILE:DeMoM>
+        --load SAVECMBT.GAM
+        --scenario "${DEMOM_TEST_ASSETS}/test_prod_after_hero.hms"
+    WORKING_DIRECTORY "${DEMOM_WORK_ROOT}/ProdScr_After_Hero"
+)
+set_tests_properties(DeMoM_ProdScr_After_Hero_Run PROPERTIES
+    ENVIRONMENT "REMOM_DATA_DIR=${DEMOM_TEST_DATA_DIR}"
+    FIXTURES_REQUIRED DeMoM_ProdScr_After_Hero_Workdir
+    TIMEOUT 90
+    FIXTURES_SETUP DeMoM_ProdScr_After_Hero
+    LABELS "demom;integration;ui"
+)
+
+add_test(
+    NAME DeMoM_ProdScr_After_Hero_Check
+    COMMAND ${CMAKE_COMMAND}
+        -DLOG=${DEMOM_WORK_ROOT}/ProdScr_After_Hero/remom_log_new.txt
+        "-DREQUIRE=wait satisfied (type=9 target=102/0)|rect=(246,78)-(267,105)|wait satisfied (type=9 target=100/0)|Scenario complete"
+        "-DFORBID=TIMEOUT on state-aware wait|[stu-brak]"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/check_log_lines.cmake"
+)
+set_tests_properties(DeMoM_ProdScr_After_Hero_Check PROPERTIES
+    FIXTURES_REQUIRED DeMoM_ProdScr_After_Hero
+    LABELS "demom;integration;ui"
 )
 
 
