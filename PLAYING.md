@@ -183,6 +183,12 @@ lost).
   back to the old software cursor by setting `REMOM_HW_CURSOR=0` (same way you'd
   set `REMOM_DATA_DIR` above).
 
+- **Linux: sound effects but no music** — the music needs a General MIDI
+  soundfont, which your distro installs separately: `soundfont-fluid` on Arch
+  and CachyOS, `fluid-soundfont-gm` on Debian, Ubuntu and Fedora. ReMoM looks
+  for it in the usual places. If yours is somewhere else, point ReMoM at the
+  `.sf2` file: `SDL_SOUNDFONTS=/path/to/soundfont.sf2 ./ReMoM`.
+
 ## Links
 
 - Project page: https://github.com/jbalcomb/ReMoM

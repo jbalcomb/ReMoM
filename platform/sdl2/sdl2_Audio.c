@@ -201,11 +201,74 @@ static void suppress_fluidsynth_meta_spam(void)
 static void suppress_fluidsynth_meta_spam(void) { }
 #endif
 
+/* CLAUDE: On Linux, SDL2_mixer plays music with FluidSynth, which needs a General MIDI soundfont (.sf2).  Unless SDL_SOUNDFONTS is set, SDL2_mixer
+   (2.0.4 and 2.8.0, Mix_GetSoundFonts() in music.c) tries one file only, /usr/share/sounds/sf2/FluidR3_GM.sf2, where Debian and Ubuntu put it.
+   Elsewhere (Arch and CachyOS put it in /usr/share/soundfonts/) FluidSynth refuses to open, SDL2_mixer falls back to its TiMidity, which needs a
+   timidity.cfg that most desktops don't have, and the game has no music.  The AppImage bundles SDL2_mixer and FluidSynth but no soundfont.
+   So: if SDL2_mixer found none by itself, look in the other usual places and hand it the first one there.
+   Debian and Ubuntu also build SDL2_mixer with MIX_INIT_SOUNDFONT_PATHS="/usr/share/sounds/sf3/default-GM.sf3" (debian/rules, bug #715461), which
+   Mix_OpenAudio() installs when nothing is set yet -- and a set path beats SDL_SOUNDFONTS.  The AppImage bundles that Ubuntu build, so on Arch it
+   looks only for that sf3 file, and a player's SDL_SOUNDFONTS was overridden.  So whatever is found, SDL_SOUNDFONTS included, is set here with
+   Mix_SetSoundFonts(), which keeps Mix_OpenAudio() from replacing it.  Must run before Mix_Init(MIX_INIT_MID), which opens FluidSynth. */
+#if defined(__linux__)
+static void sdl2_Audio_Find_Soundfont(void)
+{
+    static const char * const soundfont_paths[] =
+    {
+        "/usr/share/soundfonts/FluidR3_GM.sf2",     /* Arch, CachyOS: soundfont-fluid (checked); Fedora: fluid-soundfont-gm (not checked) */
+        "/usr/share/soundfonts/default.sf2",        /* a distro's default-soundfont link (not checked) */
+        "/usr/share/sounds/sf2/default-GM.sf2",     /* Debian, Ubuntu: the default General MIDI soundfont link */
+        "/usr/share/sounds/sf3/default-GM.sf3",     /* Debian, Ubuntu: SDL2_mixer's own built-in default (debian/rules) */
+        "/usr/share/sounds/sf2/TimGM6mb.sf2",       /* Debian, Ubuntu: timgm6mb-soundfont (checked) */
+    };
+    const char * found = Mix_GetSoundFonts();  /* SDL_SOUNDFONTS, or /usr/share/sounds/sf2/FluidR3_GM.sf2 if it is there */
+    size_t itr = 0;
+
+    if(found != NULL)
+    {
+        char * found_copy = SDL_strdup(found);  /* Mix_SetSoundFonts() frees its own copy first; never hand it that copy back */
+        if(found_copy != NULL && Mix_SetSoundFonts(found_copy) != 0)
+        {
+            LOG_INFO(LOG_CAT_SDL2_AUDIO, "soundfont: %s (SDL_SOUNDFONTS, or SDL2_mixer's own search)", found_copy);
+        }
+        else
+        {
+            LOG_WARN(LOG_CAT_SDL2_AUDIO, "soundfont: Mix_SetSoundFonts(%s) failed: %s", found, Mix_GetError());
+        }
+        SDL_free(found_copy);
+        return;
+    }
+
+    for(itr = 0; itr < sizeof(soundfont_paths) / sizeof(soundfont_paths[0]); itr++)
+    {
+        FILE * file = fopen(soundfont_paths[itr], "rb");
+        if(file != NULL)
+        {
+            fclose(file);
+            if(Mix_SetSoundFonts(soundfont_paths[itr]) == 0)
+            {
+                LOG_WARN(LOG_CAT_SDL2_AUDIO, "soundfont: Mix_SetSoundFonts(%s) failed: %s", soundfont_paths[itr], Mix_GetError());
+                continue;
+            }
+            LOG_INFO(LOG_CAT_SDL2_AUDIO, "soundfont: %s", soundfont_paths[itr]);
+            return;
+        }
+    }
+
+    LOG_WARN(LOG_CAT_SDL2_AUDIO, "soundfont: none found, so no music unless TiMidity is set up.  Install soundfont-fluid (Arch, CachyOS) or fluid-soundfont-gm (Debian, Ubuntu, Fedora), or set SDL_SOUNDFONTS to an .sf2 file.");
+}
+#else
+static void sdl2_Audio_Find_Soundfont(void) { }
+#endif
+
 void sdl2_Audio_Init(void)
 {
     /* Must run before Mix_Init: SDL2_mixer initializes its MIDI backend there,
        which is when FluidSynth may start emitting meta-event chatter. */
     suppress_fluidsynth_meta_spam();
+
+    /* CLAUDE: also before Mix_Init -- see sdl2_Audio_Find_Soundfont(). */
+    sdl2_Audio_Find_Soundfont();
 
     // // // // // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);  // Expands to: AUDIO_S16SYS
     // // // // Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 2048);
@@ -374,6 +437,11 @@ int16_t Platform_Audio_Play_Sound(void *sound_buffer, uint32_t sound_buffer_size
                with MSVC via the MSVC-sdl2-debug preset. */
             SDL_RWops* sdl2_rw_ops_xmi = SDL_RWFromConstMem(xmi_sound_buffer, xmi_sound_buffer_size);
             m->music = Mix_LoadMUSType_RW(sdl2_rw_ops_xmi, m->sdlmtype, 0);
+            /* CLAUDE: a failed load used to be silent; on Linux the usual cause is no soundfont (see sdl2_Audio_Find_Soundfont()). */
+            if(m->music == NULL)
+            {
+                LOG_WARN(LOG_CAT_SDL2_AUDIO, "Mix_LoadMUSType_RW() failed on music (type %d): %s", (int)m->sdlmtype, Mix_GetError());
+            }
             SDL_FreeRW(sdl2_rw_ops_xmi);
             free(xmi_sound_buffer);
             // ...
